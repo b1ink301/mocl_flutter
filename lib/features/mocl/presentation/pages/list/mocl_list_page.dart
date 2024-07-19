@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
 
 import '../../../domain/entities/mocl_user_info.dart';
@@ -95,7 +94,7 @@ class _ListViewState extends State<_ListView> {
     ListItem listItem,
   ) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(18, 10, 4, 10),
+      padding: const EdgeInsets.fromLTRB(18, 12, 4, 12),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.max,
@@ -104,9 +103,9 @@ class _ListViewState extends State<_ListView> {
           Text(
             listItem.title.trim(),
             textAlign: TextAlign.start,
-            style: const TextStyle(fontSize: 16),
+            style: const TextStyle(fontSize: 17),
           ),
-          const SizedBox(height: 8),
+          const SizedBox(height: 10),
           buildBottomView(
             context,
             listItem.userInfo,

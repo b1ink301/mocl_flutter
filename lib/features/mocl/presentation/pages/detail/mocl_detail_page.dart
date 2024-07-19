@@ -86,11 +86,10 @@ class _DetailViewState extends State<_DetailView> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const SizedBox(height: 10),
                 const Divider(),
                 HtmlWidget(
                   result.data.bodyHtml,
-                  textStyle: const TextStyle(fontSize: 16),
+                  textStyle: const TextStyle(fontSize: 17),
                   onTapUrl: (url) async {
                     final Uri uri = Uri.parse(url);
                     if (!await launchUrl(uri)) {
@@ -115,10 +114,17 @@ class _DetailViewState extends State<_DetailView> {
     if (comments.isEmpty) return const SizedBox.shrink();
     return Column(
       children: [
+        const SizedBox(height: 10),
         const Divider(),
-        Padding(
-          padding: const EdgeInsets.symmetric(vertical: 10),
-          child: Text('댓글 (${comments.length})'),
+        SizedBox(
+          height: 56,
+          child: Container(
+            alignment: Alignment.centerLeft,
+            child: Text(
+              '댓글 (${comments.length})',
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+          ),
         ),
         const Divider(),
         ListView.separated(
@@ -130,8 +136,14 @@ class _DetailViewState extends State<_DetailView> {
           itemBuilder: (BuildContext context, int index) {
             var comment = comments[index];
             var userInfo = comment.userInfo;
+            // var replyView;
+            // if (comment.isReply) {
+            //   replyView = const Spacer(flex: 3,);
+            // } else {
+            //   replyView = const Spacer();
+            // }
             return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10),
+              padding: const EdgeInsets.symmetric(vertical: 12),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -156,7 +168,7 @@ class _DetailViewState extends State<_DetailView> {
                   const SizedBox(height: 10.0),
                   HtmlWidget(
                     comment.bodyHtml,
-                    textStyle: const TextStyle(fontSize: 16),
+                    textStyle: const TextStyle(fontSize: 17),
                   ),
                 ],
               ),
@@ -181,10 +193,12 @@ class HeaderDelegate extends SliverPersistentHeaderDelegate {
   @override
   Widget build(
       BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 16, 4, 0),
+    return Center(
       child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisSize: MainAxisSize.max,
         children: [
+          const SizedBox(width: 16),
           CachedNetworkImage(
             imageUrl: _userInfo.nickImage,
             fit: BoxFit.contain,
@@ -203,10 +217,10 @@ class HeaderDelegate extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => 40;
+  double get maxExtent => 56;
 
   @override
-  double get minExtent => 40;
+  double get minExtent => 56;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
