@@ -12,11 +12,13 @@ import '../../../domain/usecases/get_list.dart';
 class ListController extends GetxController {
   final ScrollController scrollController = ScrollController();
   final GetList _getList;
-  late final MainItem _mainItem;
+  final MainItem _mainItem = Get.arguments;
   final PagingController<int, ListItem> pagingController =
       PagingController(firstPageKey: 1);
 
   ListController({required GetList getList}) : _getList = getList;
+
+  String getAppbarTitle() => _mainItem.text;
 
   @override
   void onInit() async {
@@ -39,6 +41,7 @@ class ListController extends GetxController {
     var params = GetListParams(mainItem: item, page: page);
     var result = await _getList(params);
     debugPrint('fetchPage result=$result');
+
     if (result is ResultSuccess) {
       var data = result as ResultSuccess<List<ListItem>>;
       debugPrint('initMainList length=${data.data.length}');
@@ -53,9 +56,5 @@ class ListController extends GetxController {
       pagingController.error = result.failure;
     } else if (result is ResultLoading) {
     }
-  }
-
-  void setMainItem(MainItem mainItem) {
-    _mainItem = mainItem;
   }
 }

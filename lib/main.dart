@@ -28,7 +28,8 @@ class MoclApp extends StatelessWidget {
   Widget build(BuildContext context) => GetMaterialApp(
         theme: MoclTheme.lightTheme,
         darkTheme: MoclTheme.darkTheme,
-        initialRoute: '/main',
+        defaultTransition: Transition.cupertino,
+        initialRoute: Routes.MAIN,
         initialBinding: GlobalBindings(),
         getPages: [
           GetPage(
@@ -43,13 +44,15 @@ class MoclApp extends StatelessWidget {
           ),
           GetPage(
             name: Routes.LIST,
-            page: () => ListPage(mainItem: Get.arguments as MainItem),
+            page: () => const ListPage(),
             binding: ListBindings(),
+            popGesture: true,
           ),
           GetPage(
             name: Routes.DETAIL,
-            page: () => DetailPage(listItem: Get.arguments as ListItem),
+            page: () => const DetailPage(),
             binding: DetailBindings(),
+            popGesture: true,
           )
         ],
       );

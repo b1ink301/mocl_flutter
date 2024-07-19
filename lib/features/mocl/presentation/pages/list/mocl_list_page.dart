@@ -11,14 +11,7 @@ import '../mocl_routes.dart';
 import 'mocl_list_controller.dart';
 
 class ListPage extends GetView<ListController> {
-  final MainItem _mainItem;
-
-  ListPage({
-    super.key,
-    required MainItem mainItem,
-  }) : _mainItem = mainItem {
-    controller.setMainItem(_mainItem);
-  }
+  const ListPage({super.key});
 
   Widget buildTitle() => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -28,16 +21,16 @@ class ListPage extends GetView<ListController> {
             fontSize: 12,
           ),
           MessageWidget(
-            message: _mainItem.text,
+            message: controller.getAppbarTitle(),
           ),
         ],
       );
 
   SliverAppBar buildAppbar(BuildContext context) => SliverAppBar(
         title: buildTitle(),
-        expandedHeight: 50.0,
         automaticallyImplyLeading: false,
-        elevation: 18,
+        // elevation: 8,
+        // scrolledUnderElevation: 8,
         floating: true,
         pinned: false,
         actions: [
@@ -55,16 +48,14 @@ class ListPage extends GetView<ListController> {
           controller: controller.scrollController,
           slivers: <Widget>[
             buildAppbar(context),
-            _ListView(mainItem: _mainItem),
+            const _ListView(),
           ],
         ),
       );
 }
 
 class _ListView extends StatefulWidget {
-  final MainItem mainItem;
-
-  const _ListView({super.key, required this.mainItem});
+  const _ListView({super.key});
 
   @override
   _ListViewState createState() => _ListViewState();
@@ -104,7 +95,7 @@ class _ListViewState extends State<_ListView> {
     ListItem listItem,
   ) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(18, 4, 4, 4),
+      padding: const EdgeInsets.fromLTRB(18, 10, 4, 10),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.max,
@@ -120,6 +111,7 @@ class _ListViewState extends State<_ListView> {
             context,
             listItem.userInfo,
             listItem.reply,
+            listItem.time,
           ),
         ],
       ),
@@ -130,6 +122,7 @@ class _ListViewState extends State<_ListView> {
     BuildContext context,
     UserInfo userInfo,
     String reply,
+    String time,
   ) =>
       Row(
         children: [
@@ -140,8 +133,10 @@ class _ListViewState extends State<_ListView> {
           ),
           const Spacer(),
           Text(userInfo.nickName),
+          const Spacer(),
+          Text(time),
           const Spacer(
-            flex: 40,
+            flex: 30,
           ),
           buildRoundText(context, reply),
           const Spacer(),
@@ -154,13 +149,13 @@ Widget buildRoundText(BuildContext context, String text) {
   return Container(
     padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
     decoration: BoxDecoration(
-      color: Theme.of(context).primaryColor,
-      borderRadius: BorderRadius.circular(10), // 둥근 타원형 모양 설정
+      color: Theme.of(context).highlightColor,
+      borderRadius: BorderRadius.circular(10),
     ),
     child: Text(
       text,
       style: const TextStyle(
-        color: Colors.white,
+        // color: Colors.white,
         fontSize: 11,
       ),
     ),
