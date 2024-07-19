@@ -86,7 +86,6 @@ class MainController extends GetxController {
   }
 
   void closeSteam() {
-    debugPrint('closeSteam');
     _mainListStreamController.close();
   }
 

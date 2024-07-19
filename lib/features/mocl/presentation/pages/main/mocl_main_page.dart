@@ -19,7 +19,8 @@ class MainPage extends GetView<MainController> {
 
   AppBar buildAppbar(BuildContext context) => AppBar(
         title: buildTitle(),
-        elevation: 8,
+        // elevation: 8,
+        // scrolledUnderElevation: 8,
         actions: [
           IconButton(
             onPressed: () => showAddDialog(context),
@@ -31,7 +32,7 @@ class MainPage extends GetView<MainController> {
   @override
   Widget build(BuildContext context) => Scaffold(
         appBar: buildAppbar(context),
-        body: _MainBody(siteType: controller.siteType),
+        body: const _MainBody(),
       );
 
   void showAddDialog(
@@ -44,9 +45,7 @@ class MainPage extends GetView<MainController> {
 }
 
 class _MainBody extends StatefulWidget {
-  final SiteType siteType;
-
-  const _MainBody({required this.siteType});
+  const _MainBody({super.key});
 
   @override
   State<_MainBody> createState() => _MainBodyState();
@@ -77,7 +76,7 @@ class _MainBodyState extends State<_MainBody> {
         child: MessageWidget(message: '항목이 비워 있습니다.'),
       );
     } else {
-      return ListView.builder(
+      return ListView.separated(
         itemCount: result.data.length,
         itemBuilder: (context, index) {
           final item = result.data[index];
@@ -93,8 +92,15 @@ class _MainBodyState extends State<_MainBody> {
                   _controller.gotoListPage(item);
                 },
               ),
-              const DividerWidget(),
             ],
+          );
+        },
+        separatorBuilder: (BuildContext context, int index) {
+          return Divider(
+            height: 1,
+            thickness: 1,
+            indent: 12,
+            endIndent: 8,
           );
         },
       );
