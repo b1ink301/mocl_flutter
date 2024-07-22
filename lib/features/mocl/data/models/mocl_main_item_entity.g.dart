@@ -102,7 +102,7 @@ MainItemEntity _mainItemEntityDeserialize(
   object.orderBy = reader.readLong(offsets[1]);
   object.siteType = _MainItemEntitysiteTypeValueEnumMap[
           reader.readStringOrNull(offsets[2])] ??
-      SiteType.Clien;
+      SiteType.clien;
   object.text = reader.readString(offsets[3]);
   object.type = reader.readLong(offsets[4]);
   object.url = reader.readString(offsets[5]);
@@ -123,7 +123,7 @@ P _mainItemEntityDeserializeProp<P>(
     case 2:
       return (_MainItemEntitysiteTypeValueEnumMap[
               reader.readStringOrNull(offset)] ??
-          SiteType.Clien) as P;
+          SiteType.clien) as P;
     case 3:
       return (reader.readString(offset)) as P;
     case 4:
@@ -136,14 +136,14 @@ P _mainItemEntityDeserializeProp<P>(
 }
 
 const _MainItemEntitysiteTypeEnumValueMap = {
-  r'Clien': r'Clien',
-  r'Damoang': r'Damoang',
-  r'None': r'None',
+  r'clien': r'clien',
+  r'damoang': r'damoang',
+  r'none': r'none',
 };
 const _MainItemEntitysiteTypeValueEnumMap = {
-  r'Clien': SiteType.Clien,
-  r'Damoang': SiteType.Damoang,
-  r'None': SiteType.None,
+  r'clien': SiteType.clien,
+  r'damoang': SiteType.damoang,
+  r'none': SiteType.none,
 };
 
 Id _mainItemEntityGetId(MainItemEntity object) {

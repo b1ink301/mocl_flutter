@@ -1,13 +1,4 @@
-import 'package:get_it/get_it.dart';
-import 'package:mocl_flutter/features/mocl/domain/usecases/get_main_list_from_json.dart';
-import 'package:mocl_flutter/features/mocl/presentation/block/main_data_json_bloc.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
-import '../data/datasources/mocl_local_database.dart';
-import '../data/datasources/mocl_main_data_source.dart';
-import '../domain/usecases/get_main_list.dart';
-import '../domain/usecases/set_main_list.dart';
-import 'block/main_data_bloc.dart';
 
 /*
 final sl = GetIt.instance;

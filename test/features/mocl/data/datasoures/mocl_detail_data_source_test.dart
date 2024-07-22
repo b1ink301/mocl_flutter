@@ -1,25 +1,18 @@
-import 'package:flutter/services.dart';
+import 'dart:developer';
+
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mockito/mockito.dart';
-import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/mocl_detail_data_source.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/mocl_list_data_source.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/mocl_local_database.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/mocl_main_data_source.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/damoang_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/models/mocl_main_item_data.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 
 // import './mocl_local_data_source_test.mocks.dart';
 
 // @GenerateMocks([MainDataSource])
 void main() async {
-  const SiteType siteType = SiteType.Damoang;
   late final DetailDataSource detailDataSource;
   late final BaseParser parser;
 
@@ -47,11 +40,11 @@ void main() async {
   });
 
   test('리스트 목록을 가져온다.', () async {
-    print("result=$item");
+    log("result=$item");
 
     ResultSuccess<Details> result =
         await detailDataSource.getDetail(item) as ResultSuccess<Details>;
-    print("result=${result.data.bodyHtml}");
+    log("result=${result.data.bodyHtml}");
 
     expect(result, isA<ResultSuccess<Details>>());
   });

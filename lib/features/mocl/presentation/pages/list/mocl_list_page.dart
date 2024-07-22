@@ -1,11 +1,13 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
 
 import '../../../domain/entities/mocl_user_info.dart';
+import '../../models/mocl_list_item_wrapper.dart';
 import '../mocl_routes.dart';
 import 'mocl_list_controller.dart';
 
@@ -28,8 +30,7 @@ class ListPage extends GetView<ListController> {
   SliverAppBar buildAppbar(BuildContext context) => SliverAppBar(
         title: buildTitle(),
         automaticallyImplyLeading: false,
-        // elevation: 8,
-        // scrolledUnderElevation: 8,
+        toolbarHeight: 60,
         floating: true,
         pinned: false,
         actions: [
@@ -54,7 +55,7 @@ class ListPage extends GetView<ListController> {
 }
 
 class _ListView extends StatefulWidget {
-  const _ListView({super.key});
+  const _ListView();
 
   @override
   _ListViewState createState() => _ListViewState();
@@ -70,12 +71,22 @@ class _ListViewState extends State<_ListView> {
 
   @override
   PagedSliverList build(BuildContext context) =>
-      PagedSliverList<int, ListItem>.separated(
+      PagedSliverList<int, ListItemWrapper>.separated(
         pagingController: _listController.pagingController,
-        builderDelegate: PagedChildBuilderDelegate<ListItem>(
+        builderDelegate: PagedChildBuilderDelegate<ListItemWrapper>(
           itemBuilder: (context, item, index) => InkWell(
-            child: buildListItem(context, item),
-            onTap: () => Get.toNamed(Routes.DETAIL, arguments: item),
+            child: ValueListenableBuilder(
+                valueListenable: item.isReadNotifier,
+                builder: (BuildContext context, value, Widget? child) =>
+                    buildListItem(context, item)),
+            onTap: () async {
+              var isReadFlag =
+                  await Get.toNamed(Routes.DETAIL, arguments: item.item);
+              log('isReadFlag=$isReadFlag');
+              if (isReadFlag && item.isReadNotifier.value == false) {
+                _listController.setReadFlag(item);
+              }
+            },
           ),
         ),
         separatorBuilder: (context, index) => const Divider(
@@ -91,8 +102,13 @@ class _ListViewState extends State<_ListView> {
 
   Widget buildListItem(
     BuildContext context,
-    ListItem listItem,
+    ListItemWrapper listItemWrapper,
   ) {
+    var textStyle = Theme.of(context).textTheme.bodyMedium;
+    var listItem = listItemWrapper.item;
+    if (listItemWrapper.isReadNotifier.value) {
+      textStyle = textStyle?.copyWith(color: const Color(0xFF888888));
+    }
     return Padding(
       padding: const EdgeInsets.fromLTRB(18, 12, 4, 12),
       child: Column(
@@ -103,7 +119,7 @@ class _ListViewState extends State<_ListView> {
           Text(
             listItem.title.trim(),
             textAlign: TextAlign.start,
-            style: const TextStyle(fontSize: 17),
+            style: textStyle,
           ),
           const SizedBox(height: 10),
           buildBottomView(
@@ -130,33 +146,37 @@ class _ListViewState extends State<_ListView> {
             fit: BoxFit.contain,
             width: 18,
           ),
-          const Spacer(),
-          Text(userInfo.nickName),
-          const Spacer(),
-          Text(time),
-          const Spacer(
-            flex: 30,
+          const SizedBox(width: 8),
+          Text(
+            userInfo.nickName,
+            style: Theme.of(context).textTheme.bodySmall,
           ),
-          buildRoundText(context, reply),
+          const SizedBox(width: 8),
+          Text(
+            time,
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
           const Spacer(),
+          buildRoundText(context, reply),
+          const SizedBox(width: 8),
         ],
       );
 }
 
-Widget buildRoundText(BuildContext context, String text) {
+Widget buildRoundText(
+  BuildContext context,
+  String text,
+) {
   if (text.isEmpty) return const SizedBox.shrink();
   return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
     decoration: BoxDecoration(
-      color: Theme.of(context).highlightColor,
+      border: Border.all(color: Theme.of(context).textTheme.labelSmall!.color!),
       borderRadius: BorderRadius.circular(10),
     ),
     child: Text(
       text,
-      style: const TextStyle(
-        // color: Colors.white,
-        fontSize: 11,
-      ),
+      style: Theme.of(context).textTheme.labelSmall,
     ),
   );
 }

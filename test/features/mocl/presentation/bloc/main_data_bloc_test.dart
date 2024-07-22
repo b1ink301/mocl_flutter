@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/services.dart';
@@ -15,7 +16,7 @@ import 'package:mocl_flutter/features/mocl/presentation/block/main_data_bloc.dar
 import 'package:mocl_flutter/features/mocl/presentation/block/main_data_json_bloc.dart';
 
 void main() async {
-  const SiteType siteType = SiteType.Damoang;
+  const SiteType siteType = SiteType.damoang;
   late MainDataBloc mainDataBloc;
   late MainDataJsonBloc mainDataJsonBloc;
   late GetMainList getMainList;
@@ -64,7 +65,7 @@ void main() async {
 
   test('test', () {
     mainDataBloc.add(GetMainDataEvent(siteType: siteType));
-    print('mainDataBloc.state=${mainDataBloc.state}');
+    log('mainDataBloc.state=${mainDataBloc.state}');
   });
 
   blocTest(

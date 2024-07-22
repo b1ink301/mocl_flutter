@@ -1,4 +1,5 @@
-import 'package:flutter/cupertino.dart';
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/mocl_main_controller.dart';
@@ -16,33 +17,23 @@ class ShowAddDialog extends GetView<MainController> {
   ShowAddDialog({super.key});
 
   @override
-  Widget build(BuildContext context) =>
-      AlertDialog(
+  Widget build(BuildContext context) => AlertDialog(
         title: const Text('게시판 선택'),
         content: SizedBox(
-          width: MediaQuery
-              .of(context)
-              .size
-              .width * 0.6,
-          height: MediaQuery
-              .of(context)
-              .size
-              .width * 0.8,
+          width: MediaQuery.of(context).size.width * 0.6,
+          height: MediaQuery.of(context).size.width * 0.8,
           child: StreamBuilder<Result>(
             stream: controller.getListFromJson(controller.siteType),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
-                debugPrint(
-                    "snapshot=${snapshot.data.runtimeType}, status=${snapshot
-                        .data}");
+                log("snapshot=${snapshot.data.runtimeType}, status=${snapshot.data}");
                 if (snapshot.data is ResultLoading) {
                   return const LoadingWidget();
                 } else if (snapshot.data is ResultInitial) {
                   return const LoadingWidget();
-                } else if (snapshot.data
-                is ResultSuccess<List<MainItem>>) {
-                  var result = snapshot.requireData
-                  as ResultSuccess<List<MainItem>>;
+                } else if (snapshot.data is ResultSuccess<List<MainItem>>) {
+                  var result =
+                      snapshot.requireData as ResultSuccess<List<MainItem>>;
                   return ListView.builder(
                     shrinkWrap: true,
                     itemCount: result.data.length,
@@ -73,8 +64,7 @@ class ShowAddDialog extends GetView<MainController> {
                 } else if (snapshot.data is ResultFailure) {
                   return const MessageWidget(message: 'MainDataError');
                 } else {
-                  return const MessageWidget(
-                      message: 'MainDataError else');
+                  return const MessageWidget(message: 'MainDataError else');
                 }
               } else {
                 return const LoadingWidget();
@@ -85,7 +75,7 @@ class ShowAddDialog extends GetView<MainController> {
         actions: [
           TextButton(
             onPressed: () async {
-              debugPrint('selectedItems=$selectedItems');
+              log('selectedItems=$selectedItems');
               await controller.setList(controller.siteType, selectedItems);
               Get.back();
             },

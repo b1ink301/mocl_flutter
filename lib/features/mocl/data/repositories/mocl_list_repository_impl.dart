@@ -1,6 +1,7 @@
 import 'dart:core';
 
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
 import '../../domain/entities/mocl_result.dart';
 import '../../domain/repositories/list_repository.dart';
@@ -17,5 +18,15 @@ class ListRepositoryImpl extends ListRepository {
   Future<Result> getList({
     required MainItem item,
     required int page,
-  }) => listDataSource.getList(item, page);
+  }) =>
+      listDataSource.getList(item, page);
+
+  @override
+  Future<Result> setReadFlag({
+    required SiteType siteType,
+    required int boardId,
+  }) async {
+    var result = listDataSource.setReadFlag(siteType, boardId);
+    return ResultSuccess(data: result);
+  }
 }

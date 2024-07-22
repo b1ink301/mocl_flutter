@@ -3,7 +3,6 @@ import 'package:html/parser.dart';
 import 'package:http/http.dart' as http;
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 
 import '../../../../core/error/failures.dart';
 import '../../domain/entities/mocl_result.dart';

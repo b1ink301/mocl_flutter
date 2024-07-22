@@ -1,14 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:get_storage/get_storage.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/mocl_theme.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/mocl_detail_bindings.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/mocl_detail_page.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/mocl_main_bindings.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/mocl_routes.dart';
 
+import 'features/mocl/presentation/SwipeBackTransition.dart';
 import 'features/mocl/presentation/pages/home/mocl_home_bindings.dart';
 import 'features/mocl/presentation/pages/home/mocl_home_page.dart';
 import 'features/mocl/presentation/pages/list/mocl_list_bindings.dart';
@@ -47,12 +46,14 @@ class MoclApp extends StatelessWidget {
             page: () => const ListPage(),
             binding: ListBindings(),
             popGesture: true,
+            customTransition: SwipeBackTransition(),
           ),
           GetPage(
             name: Routes.DETAIL,
             page: () => const DetailPage(),
             binding: DetailBindings(),
             popGesture: true,
+            customTransition: SwipeBackTransition(),
           )
         ],
       );

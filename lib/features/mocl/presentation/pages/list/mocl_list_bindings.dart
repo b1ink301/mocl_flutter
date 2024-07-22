@@ -1,6 +1,7 @@
 import 'package:get/get.dart';
 import 'package:mocl_flutter/features/mocl/data/repositories/mocl_list_repository_impl.dart';
 import 'package:mocl_flutter/features/mocl/domain/repositories/list_repository.dart';
+import 'package:mocl_flutter/features/mocl/domain/usecases/set_read_flag.dart';
 
 import '../../../data/datasources/mocl_list_data_source.dart';
 import '../../../data/datasources/parser/base_parser.dart';
@@ -17,7 +18,10 @@ class ListBindings extends Bindings {
     );
 
     Get.put<ListDataSource>(
-      ListDataSourceImpl(parser: Get.find()),
+      ListDataSourceImpl(
+        localDatabase: Get.find(),
+        parser: Get.find(),
+      ),
       permanent: true,
     );
 
@@ -27,9 +31,13 @@ class ListBindings extends Bindings {
     );
 
     Get.lazyPut(() => GetList(listRepository: Get.find()));
+    Get.lazyPut(() => SetReadFlag(listRepository: Get.find()));
 
-    Get.lazyPut<ListController>(() => ListController(
-      getList: Get.find(),
-    ));
+    Get.lazyPut<ListController>(
+      () => ListController(
+        getList: Get.find(),
+        setReadFlag: Get.find(),
+      ),
+    );
   }
 }

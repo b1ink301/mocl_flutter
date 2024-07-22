@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -15,6 +17,7 @@ class DetailPage extends GetView<DetailController> {
 
   Widget buildTitle() => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
         children: [
           const MessageWidget(
             message: '다모앙',
@@ -26,38 +29,80 @@ class DetailPage extends GetView<DetailController> {
         ],
       );
 
-  SliverAppBar buildAppbar(BuildContext context) => SliverAppBar(
-        title: buildTitle(),
-        // expandedHeight: 50.0,
-        automaticallyImplyLeading: false,
-        // elevation: 8,
-        floating: true,
-        pinned: false,
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.refresh),
-          )
-        ],
-      );
+  SliverAppBar buildAppbar(BuildContext context) {
+    return SliverAppBar(
+      title: buildTitle(),
+      flexibleSpace: LayoutBuilder(
+        builder: (BuildContext context, BoxConstraints constraints) {
+          return const FlexibleSpaceBar(
+            title: SizedBox.shrink(),
+            collapseMode: CollapseMode.none,
+          );
+        },
+      ),
+      toolbarHeight: 40 + calculateTitleHeight(context),
+      automaticallyImplyLeading: false,
+      // elevation: 8,
+      floating: true,
+      pinned: false,
+      actions: [
+        IconButton(
+          onPressed: () {},
+          icon: const Icon(Icons.refresh),
+        )
+      ],
+    );
+  }
+
+  double calculateTitleHeight(BuildContext context) {
+    final textPainter = TextPainter(
+      text: TextSpan(
+        text: controller.getAppbarTitle(), // 텍스트 가져오기
+        style: Theme.of(context).textTheme.bodyMedium, // 텍스트 스타일 적용
+      ),
+      maxLines: 2, // 최대 3줄
+      textDirection: TextDirection.ltr,
+    )..layout(minWidth: 0, maxWidth: MediaQuery.of(context).size.width - 60);
+
+    final titleHeight = textPainter.height;
+    log('titleHeight = $titleHeight');
+    return titleHeight; // 텍스트 높이 반환
+  }
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        body: CustomScrollView(
-          controller: controller.scrollController,
-          slivers: <Widget>[
-            buildAppbar(context),
-            SliverPersistentHeader(
-              pinned: false,
-              delegate: HeaderDelegate(userInfo: controller.userInfo),
-            ),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(18, 0, 4, 0),
-                child: _DetailView(),
+  Widget build(BuildContext context) => PopScope(
+        canPop: false,
+        onPopInvoked: (didPop) {
+          log('onPopInvoked=$didPop');
+          if (didPop) return;
+
+          Get.back<bool>(result: controller.isReadFlag);
+        },
+        child: Scaffold(
+          body: CustomScrollView(
+            controller: controller.scrollController,
+            slivers: <Widget>[
+              buildAppbar(context),
+              // SliverPersistentHeader(
+              //   pinned: false,
+              //   delegate: HeaderDelegate(
+              //     userInfo: controller.userInfo,
+              //   ),
+              // ),
+              // const SliverToBoxAdapter(
+              //   child: Divider(
+              //     indent: 16,
+              //     endIndent: 4,
+              //   ),
+              // ),
+              SliverToBoxAdapter(
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(18, 0, 4, 0),
+                  child: _DetailView(),
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       );
 }
@@ -73,23 +118,29 @@ class _DetailViewState extends State<_DetailView> {
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<Result>(
-      stream: detailController.deailStream.asBroadcastStream(),
+      stream: detailController.detailStream.asBroadcastStream(),
       builder: (BuildContext context, AsyncSnapshot<Result> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator()); // 로딩 중 표시
+          return const Padding(
+            padding: EdgeInsets.only(top: 16.0),
+            child: Center(child: CircularProgressIndicator()),
+          );
         }
         if (snapshot.hasData && snapshot.data is ResultSuccess) {
           var result = snapshot.data as ResultSuccess<Details>;
+          detailController.setReadFlag();
           return SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
+                _buildHeader(detailController.userInfo),
                 const Divider(),
+                const SizedBox(height: 10),
                 HtmlWidget(
                   result.data.bodyHtml,
-                  textStyle: const TextStyle(fontSize: 17),
+                  textStyle: Theme.of(context).textTheme.bodyMedium,
                   onTapUrl: (url) async {
                     final Uri uri = Uri.parse(url);
                     if (!await launchUrl(uri)) {
@@ -99,7 +150,10 @@ class _DetailViewState extends State<_DetailView> {
                   },
                 ),
                 const SizedBox(height: 10),
-                buildComments(result.data.comments),
+                buildComments(
+                  context,
+                  result.data.comments,
+                ),
               ],
             ),
           );
@@ -110,19 +164,67 @@ class _DetailViewState extends State<_DetailView> {
     );
   }
 
-  Widget buildComments(List<CommentItem> comments) {
-    if (comments.isEmpty) return const SizedBox.shrink();
+  Widget _buildHeader(UserInfo userInfo) {
+    return SizedBox(
+      height: 42,
+      child: Center(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            CachedNetworkImage(
+              imageUrl: userInfo.nickImage,
+              fit: BoxFit.contain,
+              width: 18,
+            ),
+            const Spacer(),
+            Text(
+              userInfo.nickName,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            // const Spacer(),
+            // Text('comment.time'),
+            const Spacer(
+              flex: 30,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  Widget buildComments(
+    BuildContext context,
+    List<CommentItem> comments,
+  ) {
+    Widget buildRefreshButton() => SizedBox(
+          height: 56,
+          child: Center(
+            child: Text(
+              '새로고침',
+              style: Theme.of(context).textTheme.bodyMedium,
+            ),
+          ),
+        );
+
+    if (comments.isEmpty) {
+      return Column(children: [
+        const Divider(),
+        buildRefreshButton(),
+      ]);
+    }
+
     return Column(
       children: [
         const SizedBox(height: 10),
         const Divider(),
         SizedBox(
-          height: 56,
-          child: Container(
+          height: 42,
+          child: Align(
             alignment: Alignment.centerLeft,
             child: Text(
               '댓글 (${comments.length})',
-              style: const TextStyle(fontWeight: FontWeight.bold),
+              style: Theme.of(context).textTheme.bodyMedium,
             ),
           ),
         ),
@@ -136,14 +238,9 @@ class _DetailViewState extends State<_DetailView> {
           itemBuilder: (BuildContext context, int index) {
             var comment = comments[index];
             var userInfo = comment.userInfo;
-            // var replyView;
-            // if (comment.isReply) {
-            //   replyView = const Spacer(flex: 3,);
-            // } else {
-            //   replyView = const Spacer();
-            // }
+            var left = comment.isReply ? 16.0 : 0.0;
             return Padding(
-              padding: const EdgeInsets.symmetric(vertical: 12),
+              padding: EdgeInsets.only(left: left, top: 12, bottom: 10),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 mainAxisSize: MainAxisSize.min,
@@ -156,19 +253,30 @@ class _DetailViewState extends State<_DetailView> {
                         fit: BoxFit.contain,
                         width: 18,
                       ),
-                      const Spacer(),
-                      Text(userInfo.nickName),
-                      const Spacer(),
-                      Text(comment.time),
-                      const Spacer(
-                        flex: 30,
+                      const SizedBox(width: 8),
+                      Text(
+                        userInfo.nickName,
+                        style: Theme.of(context).textTheme.bodySmall,
                       ),
+                      const SizedBox(width: 8),
+                      Text(
+                        comment.time,
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      const Spacer(),
                     ],
                   ),
                   const SizedBox(height: 10.0),
                   HtmlWidget(
                     comment.bodyHtml,
-                    textStyle: const TextStyle(fontSize: 17),
+                    textStyle: Theme.of(context).textTheme.bodyMedium,
+                    onTapUrl: (url) async {
+                      final Uri uri = Uri.parse(url);
+                      if (!await launchUrl(uri)) {
+                        throw Exception('Could not launch $uri');
+                      }
+                      return true;
+                    },
                   ),
                 ],
               ),
@@ -176,10 +284,7 @@ class _DetailViewState extends State<_DetailView> {
           },
         ),
         const Divider(),
-        const SizedBox(
-          height: 56,
-          child: Center(child: Text('새로고침')),
-        ),
+        buildRefreshButton(),
       ],
     );
   }
@@ -205,7 +310,10 @@ class HeaderDelegate extends SliverPersistentHeaderDelegate {
             width: 18,
           ),
           const Spacer(),
-          Text(_userInfo.nickName),
+          Text(
+            _userInfo.nickName,
+            style: Theme.of(context).textTheme.bodySmall,
+          ),
           // const Spacer(),
           // Text('comment.time'),
           const Spacer(
@@ -217,10 +325,10 @@ class HeaderDelegate extends SliverPersistentHeaderDelegate {
   }
 
   @override
-  double get maxExtent => 56;
+  double get maxExtent => 42;
 
   @override
-  double get minExtent => 56;
+  double get minExtent => 42;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {

@@ -1,4 +1,5 @@
 import 'dart:core';
+import 'dart:developer';
 
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/models/mocl_main_item_data.dart';
@@ -36,7 +37,7 @@ class MainRepositoryImpl extends MainRepository {
   }) async {
     try {
       final result = await mainDataSource.set(siteType, list);
-      print("setMainList result=$result");
+      log("setMainList result=$result");
       return ResultSuccess<List<int>>(data: result);
     } on Exception {
       return ResultFailure<Failure>(failure: SetMainFailure());
@@ -71,14 +72,5 @@ class MainRepositoryImpl extends MainRepository {
     } on Exception {
       return ResultFailure<Failure>(failure: GetMainFailure());
     }
-  }
-
-  @override
-  Stream<Result> getList({
-    required MainItem item,
-    required int page,
-  }) async* {
-    yield ResultLoading();
-    yield ResultSuccess(data: List.empty());
   }
 }

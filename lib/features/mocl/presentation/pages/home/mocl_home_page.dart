@@ -1,13 +1,9 @@
-import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:get/get.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/main/mocl_main_page.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
+import 'dart:developer';
 
-import '../list/mocl_list_bindings.dart';
-import '../list/mocl_list_page.dart';
-import 'mocl_home_controller.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/mocl_routes.dart';
+
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -35,10 +31,10 @@ class _HomePageState extends State<HomePage> {
     return PageView.builder(
       controller: _pageController,
       onPageChanged: (index) {
-        debugPrint('onPageChanged=$index');
+        log('onPageChanged=$index');
         switch(index) {
-          case 0: Get.toNamed('/main');
-          case 1: Get.toNamed('/list');
+          case 0: Get.toNamed(Routes.MAIN);
+          case 1: Get.toNamed(Routes.LIST);
         }
       },
       itemCount: 2,

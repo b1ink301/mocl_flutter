@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:isar/isar.dart';
@@ -12,7 +14,7 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
 // @GenerateMocks([MainDataSource])
 void main() async {
-  const SiteType siteType = SiteType.Damoang;
+  const SiteType siteType = SiteType.damoang;
   late MainDataSource mainDataSource;
   late LocalDatabase localDatabase;
 
@@ -49,7 +51,7 @@ void main() async {
 
   test('Json 파일로 부터 MainItemData 목록을 얻어온다.', () async {
     final result = await mainDataSource.getAllFromJson(siteType);
-    print("result.length=${result.length}");
+    log("result.length=${result.length}");
     // expect(result, equals(List<MainItemData>.empty()));
     expect(result.length, 23);
   });
@@ -57,7 +59,7 @@ void main() async {
   test('Json 파일로 부터 MainItemData 목록을 얻어 mainItem 목록로 변환한다.', () async {
     final result = await mainDataSource.getAllFromJson(siteType);
     var mainItemList = result.map((item) => item.toMainItem(siteType)).toList();
-    print("mainItemList=$mainItemList");
+    log("mainItemList=$mainItemList");
     expect(mainItemList, isA<List<MainItem>>());
   });
 
@@ -65,13 +67,13 @@ void main() async {
     final dataList = await mainDataSource.getAllFromJson(siteType);
     var mainItemList = dataList.map((item) => item.toMainItem(siteType)).toList();
     var result = await mainDataSource.set(siteType, mainItemList);
-    print("result=$result");
+    log("result=$result");
     expect(result, isA<List<Id>>());
   });
 
   test('DB에서 메인 목록을 조회 한다.', () async {
     final result = await localDatabase.getMainItems(siteType);
-    print("result=$result");
+    log("result=$result");
     expect(result, isA<List<MainItemEntity>>());
   });
 }

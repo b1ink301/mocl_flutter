@@ -1,9 +1,9 @@
-import 'dart:async';
-
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/usecases/set_read_flag.dart';
+import 'package:mocl_flutter/features/mocl/presentation/models/mocl_list_item_wrapper.dart';
 
 import '../../../domain/entities/mocl_main_item.dart';
 import '../../../domain/entities/mocl_result.dart';
@@ -12,11 +12,16 @@ import '../../../domain/usecases/get_list.dart';
 class ListController extends GetxController {
   final ScrollController scrollController = ScrollController();
   final GetList _getList;
+  final SetReadFlag _setReadFlag;
   final MainItem _mainItem = Get.arguments;
-  final PagingController<int, ListItem> pagingController =
+  final PagingController<int, ListItemWrapper> pagingController =
       PagingController(firstPageKey: 1);
 
-  ListController({required GetList getList}) : _getList = getList;
+  ListController({
+    required GetList getList,
+    required SetReadFlag setReadFlag,
+  })  : _getList = getList,
+        _setReadFlag = setReadFlag;
 
   String getAppbarTitle() => _mainItem.text;
 
@@ -46,15 +51,31 @@ class ListController extends GetxController {
       var data = result as ResultSuccess<List<ListItem>>;
       debugPrint('initMainList length=${data.data.length}');
       final isLastPage = result.data.isEmpty;
+      var list = result.data
+          .map(
+            (item) => ListItemWrapper(
+              item: item,
+              isReadNotifier: ValueNotifier(item.isRead),
+            ),
+          )
+          .toList();
       if (isLastPage) {
-        pagingController.appendLastPage(result.data);
+        pagingController.appendLastPage(list);
       } else {
         final nextPageKey = pagingController.nextPageKey! + 1;
-        pagingController.appendPage(result.data, nextPageKey);
+        pagingController.appendPage(list, nextPageKey);
       }
     } else if (result is ResultFailure) {
       pagingController.error = result.failure;
-    } else if (result is ResultLoading) {
-    }
+    } else if (result is ResultLoading) {}
+  }
+
+  void setReadFlag(ListItemWrapper itemWrapper) async {
+    itemWrapper.isReadNotifier.value = true;
+    SetReadFlagParams params = SetReadFlagParams(
+      siteType: _mainItem.siteType,
+      boardId: itemWrapper.item.id,
+    );
+    await _setReadFlag(params);
   }
 }
