@@ -21,7 +21,6 @@ class _CheckBoxListTitleState extends State<CheckBoxListTitleWidget> {
   bool _isChecked = false;
   late final ValueChanged<bool?>? onChanged;
 
-
   @override
   void initState() {
     super.initState();

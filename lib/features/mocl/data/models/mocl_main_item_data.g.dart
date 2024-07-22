@@ -27,7 +27,7 @@ Map<String, dynamic> _$$MainItemDataImplToJson(_$MainItemDataImpl instance) =>
     };
 
 const _$SiteTypeEnumMap = {
-  SiteType.Clien: 'Clien',
-  SiteType.Damoang: 'Damoang',
-  SiteType.None: 'None',
+  SiteType.clien: 'clien',
+  SiteType.damoang: 'damoang',
+  SiteType.none: 'none',
 };

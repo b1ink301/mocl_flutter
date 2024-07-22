@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -11,7 +12,6 @@ import '../../domain/usecases/set_main_list.dart';
 import 'main_data_bloc.dart';
 
 part 'main_data_json_event.dart';
-
 part 'main_data_json_state.dart';
 
 class MainDataJsonBloc extends Bloc<MainDataJsonEvent, MainDataJsonState> {
@@ -33,13 +33,13 @@ class MainDataJsonBloc extends Bloc<MainDataJsonEvent, MainDataJsonState> {
     MainDataJsonEvent event,
     Emitter<MainDataJsonState> emit,
   ) async {
-    print('MainDataJsonBloc event=$event');
+    log('MainDataJsonBloc event=$event');
     switch (event) {
       case GetMainDataFromJsonEvent():
         emit(const MainDataJsonState.loading());
         _mainStreamController.add(const MainDataState.initial());
         var params = GetMainParams(siteType: event.siteType);
-        var result = await getMainListFromJson.call(params);
+        var result = getMainListFromJson.call(params);
         switch(result) {
         }
         // result.fold((failure) {

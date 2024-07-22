@@ -8,7 +8,7 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import '../../../../fixtures/fixture_reader.dart';
 
 void main() async {
-  const currentSiteType = SiteType.Damoang;
+  const currentSiteType = SiteType.damoang;
 
   const mainItemModel = MainItemData(
     orderBy: 1,

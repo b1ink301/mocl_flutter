@@ -17,7 +17,7 @@ class MainController extends GetxController {
   final SetMainList _setMainList;
   final GetMainListFromJson _getMainListFromJson;
 
-  final SiteType siteType = GetStorage().read('SiteType') ?? SiteType.Damoang;
+  final SiteType siteType = GetStorage().read('SiteType') ?? SiteType.damoang;
 
   MainController({
     required GetMainList getMainList,
@@ -37,9 +37,9 @@ class MainController extends GetxController {
 
   String siteName() {
     var title = switch (siteType) {
-      SiteType.Clien => '클리앙',
-      SiteType.Damoang => '다모앙',
-      SiteType.None => 'None',
+      SiteType.clien => '클리앙',
+      SiteType.damoang => '다모앙',
+      SiteType.none => 'None',
     };
     return title;
   }

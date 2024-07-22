@@ -1,5 +1,5 @@
 enum SiteType {
-  Clien,
-  Damoang,
-  None,
+  clien,
+  damoang,
+  none,
 }

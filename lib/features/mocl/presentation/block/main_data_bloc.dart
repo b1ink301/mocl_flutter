@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
@@ -28,7 +29,7 @@ class MainDataBloc extends Bloc<MainDataEvent, MainDataState> {
     MainDataEvent event,
     Emitter<MainDataState> emit,
   ) async {
-    print('MainDataBloc event=$event');
+    log('MainDataBloc event=$event');
     switch (event) {
       case GetMainDataEvent():
 

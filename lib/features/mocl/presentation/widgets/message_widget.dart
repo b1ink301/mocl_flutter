@@ -19,6 +19,7 @@ class MessageWidget extends StatelessWidget {
             // backgroundColor: Colors.black12,
           ),
           textAlign: TextAlign.start,
+          maxLines: 3,
         ),
       );
 }

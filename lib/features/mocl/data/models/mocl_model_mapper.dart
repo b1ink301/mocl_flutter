@@ -40,7 +40,7 @@ class MainItemMapper {
     MainItemData item,
   ) {
     var entity = MainItemEntity();
-    entity.siteType = item.siteType ?? SiteType.None;
+    entity.siteType = item.siteType ?? SiteType.none;
     entity.board = item.board;
     entity.type = item.type;
     entity.text = item.text;

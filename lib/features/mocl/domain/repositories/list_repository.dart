@@ -8,4 +8,9 @@ abstract class ListRepository {
     required MainItem item,
     required int page,
   });
+
+  Future<Result> setReadFlag({
+    required SiteType siteType,
+    required int boardId,
+  });
 }

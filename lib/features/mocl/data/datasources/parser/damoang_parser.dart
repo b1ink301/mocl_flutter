@@ -1,10 +1,12 @@
+import 'dart:developer';
+
 import 'package:html/dom.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
-
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 
 import '../../../domain/entities/mocl_details.dart';
+import '../../../domain/entities/mocl_site_type.dart';
 import 'base_parser.dart';
 
 class DamoangParser extends BaseParser {
@@ -16,90 +18,91 @@ class DamoangParser extends BaseParser {
 
   @override
   Future<Result> detail(Document document) async {
-    final container = document.querySelector("article[id=bo_v]");
+    final container = document.querySelector('article[id=bo_v]');
     final title =
-        container?.querySelector("header > h1[id=bo_v_title]")?.text ?? "";
+        container?.querySelector('header > h1[id=bo_v_title]')?.text ?? '';
     final timeElement = container?.querySelector(
-        "section[id=bo_v_info] > div.d-flex > div > span.orangered");
+        'section[id=bo_v_info] > div.d-flex > div > span.orangered');
     final time = timeElement?.text.trim() ??
         container
-            ?.querySelectorAll("section[id=bo_v_info] > div.d-flex > div")
+            ?.querySelectorAll('section[id=bo_v_info] > div.d-flex > div')
             .elementAt(1)
             .text
-            .trim() ?? '';
+            .trim() ??
+        '';
     final Element? bodyHtml =
-        container?.querySelector("section[id=bo_v_atc] > div[id=bo_v_con]");
+        container?.querySelector('section[id=bo_v_atc] > div[id=bo_v_con]');
     bodyHtml
-        ?.querySelectorAll("input, button")
+        ?.querySelectorAll('input, button')
         .forEach((element) => element.remove());
 
     final headerElements = container
-        ?.querySelectorAll("section[id=bo_v_info] > div.gap-1 > div.pe-2");
+        ?.querySelectorAll('section[id=bo_v_info] > div.gap-1 > div.pe-2');
     headerElements?.forEach((element) => element
-        .querySelectorAll("i, span.visually-hidden")
+        .querySelectorAll('i, span.visually-hidden')
         .forEach((e) => e.remove()));
-    final viewCount = headerElements?.first.text ?? "";
+    final viewCount = headerElements?.first.text ?? '';
     final authorIp = container
-            ?.querySelector("section[id=bo_v_info] > div > div.me-auto")
+            ?.querySelector('section[id=bo_v_info] > div > div.me-auto')
             ?.attributes['data-bs-title'] ??
-        "";
+        '';
     final user = container
             ?.querySelector(
-                "section[id=bo_v_info] > div > div.me-auto > span.sv_wrap > a.sv_member")
+                'section[id=bo_v_info] > div > div.me-auto > span.sv_wrap > a.sv_member')
             ?.text
             .trim() ??
-        "";
+        '';
     final nickName = user;
     final nickImage = container
             ?.querySelector(
-                "div.post_view > div.post_contact > span.contact_name > span.nickimg > img")
+                'div.post_view > div.post_contact > span.contact_name > span.nickimg > img')
             ?.attributes['src'] ??
-        "";
-    final likeCount = headerElements?.elementAtOrNull(2)?.text.trim() ?? "";
+        '';
+    final likeCount = headerElements?.elementAtOrNull(2)?.text.trim() ?? '';
 
     var index = 0;
     final comments = container
-            ?.querySelectorAll("div[id=viewcomment] > section > article")
+            ?.querySelectorAll('div[id=viewcomment] > section > article')
             .map((element) {
               final nickElement = element.querySelector(
-                  "div.comment-list-wrap > header > div.d-flex > div.me-2 > span.d-inline-block > span.sv_wrap > a.sv_member");
-              final url = nickElement?.attributes['href'] ?? "";
+                  'div.comment-list-wrap > header > div.d-flex > div.me-2 > span.d-inline-block > span.sv_wrap > a.sv_member');
+              final url = nickElement?.attributes['href'] ?? '';
               final uri = Uri.parse(url);
-              final id = uri.queryParameters['mb_id'] ?? "-1";
-              final nickName = nickElement?.text.trim() ?? "";
+              final id = uri.queryParameters['mb_id'] ?? '-1';
+              final nickName = nickElement?.text.trim() ?? '';
               final isReply = element.querySelector(
-                      "div.comment-list-wrap > header > div > div.me-2 > i.bi") !=
+                      'div.comment-list-wrap > header > div > div.me-2 > i.bi') !=
                   null;
               final ip = element
                       .querySelector(
-                          "div.comment_info > div.comment_info_area > div.comment_ip > span.ip_address")
+                          'div.comment_info > div.comment_info_area > div.comment_ip > span.ip_address')
                       ?.text ??
-                  "";
+                  '';
               final time =
-                  element.querySelector("div.ms-auto > span.orangered")?.text ??
-                      "";
+                  element.querySelector('div.ms-auto > span.orangered')?.text ??
+                      '';
               final nickImage = nickElement
-                      ?.querySelector("span.profile_img > img.mb-photo")
+                      ?.querySelector('span.profile_img > img.mb-photo')
                       ?.attributes['src'] ??
-                  "";
+                  '';
               final likeCount = element
                       .querySelector(
-                          "div.comment-content > div > button > span")
+                          'div.comment-content > div > button > span')
                       ?.text ??
-                  "";
+                  '';
               final body =
-                  element.querySelector("div.comment-content > div.na-convert");
+                  element.querySelector('div.comment-content > div.na-convert');
               body
-                  ?.querySelectorAll("input, span.name, button")
+                  ?.querySelectorAll('input, span.name, button')
                   .forEach((e) => e.remove());
               final video = element
-                      .querySelector("div.comment-video > video > source")
+                      .querySelector('div.comment-video > video > source')
                       ?.attributes['src'] ??
-                  "";
+                  '';
               final img = element
-                      .querySelector("div.comment-img > img")
+                      .querySelector('div.comment-img > img')
                       ?.attributes['src'] ??
-                  "";
+                  '';
 
               return CommentItem(
                 id: index++,
@@ -125,7 +128,7 @@ class DamoangParser extends BaseParser {
       title: title,
       viewCount: viewCount,
       likeCount: likeCount,
-      csrf: "",
+      csrf: '',
       time: time,
       userInfo: UserInfo(
         id: user,
@@ -141,7 +144,11 @@ class DamoangParser extends BaseParser {
   }
 
   @override
-  Future<Result> list(Document document, int lastIndex) async {
+  Future<Result> list(
+    Document document,
+    int lastIndex,
+    Future<bool> Function(int) isRead,
+  ) async {
     var elementList = document.querySelectorAll(
         'form[id=fboardlist] > section[id=bo_list] > ul.list-group > li.list-group-item > div.d-flex');
 
@@ -222,7 +229,6 @@ class DamoangParser extends BaseParser {
         nickName: nickName,
         nickImage: nickImage,
       );
-
       ListItem item = ListItem(
         id: id,
         title: title.trim(),
@@ -237,7 +243,7 @@ class DamoangParser extends BaseParser {
         hit: hit.trim(),
         userInfo: userInfo,
         hasImage: hasImage,
-        isRead: false,
+        isRead: await isRead(id),
       );
 
       return item;

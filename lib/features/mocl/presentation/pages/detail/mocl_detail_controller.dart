@@ -1,8 +1,8 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/simple/get_controllers.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_detail.dart';
 
@@ -13,18 +13,19 @@ class DetailController extends GetxController {
   final ScrollController scrollController = ScrollController();
   final GetDetail _getDetail;
   final ListItem _listItem = Get.arguments;
+  bool isReadFlag = false;
 
   DetailController({required GetDetail getDetail}) : _getDetail = getDetail;
 
-  final _detilStreamController = StreamController<Result>.broadcast();
+  final _detailStreamController = StreamController<Result>.broadcast();
 
-  Stream<Result> get deailStream => _detilStreamController.stream;
+  Stream<Result> get detailStream => _detailStreamController.stream;
   UserInfo get userInfo => _listItem.userInfo;
 
   @override
   void onClose() {
     super.onClose();
-    _detilStreamController.close();
+    _detailStreamController.close();
   }
 
   @override
@@ -36,16 +37,22 @@ class DetailController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    log('onInit');
+    isReadFlag = _listItem.isRead;
     getDetail(_listItem);
   }
 
   void getDetail(ListItem item) async {
-    _detilStreamController.add(ResultLoading());
+    _detailStreamController.add(ResultLoading());
     var params = GetDetailParams(item: item);
     var result = await _getDetail(params);
-    _detilStreamController.add(result);
+    _detailStreamController.add(result);
   }
 
   String getAppbarSmallTitle() => _listItem.boardTitle;
   String getAppbarTitle() => _listItem.title;
+
+  void setReadFlag() {
+    isReadFlag = true;
+  }
 }

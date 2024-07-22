@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
@@ -15,7 +17,7 @@ import './mocl_main_repository_test.mocks.dart';
 
 @GenerateMocks([MainDataSource, ListDataSource])
 void main() {
-  const SiteType siteType = SiteType.Damoang;
+  const SiteType siteType = SiteType.damoang;
   late MockMainDataSource mockMainDataSource;
   late MainRepository moclRepository;
 
@@ -48,7 +50,7 @@ void main() {
       // act
       final result = await moclRepository.getMainList(siteType: siteType) as ResultFailure;
       var expected = ResultFailure<Failure>(failure: GetMainFailure());
-      print('result=$result, expected=$expected');
+      log('result=$result, expected=$expected');
 
       // assert
       await expectLater(result.runtimeType, expected.runtimeType);
@@ -66,7 +68,7 @@ void main() {
       // verify(mockMainDataSource.get(siteType));
 
       var expected = ResultSuccess(data: const <MainItem>[]);
-      print('result=$result, expected=$expected');
+      log('result=$result, expected=$expected');
 
       // assert
       expect(result.runtimeType, expected.runtimeType);
@@ -87,7 +89,7 @@ void main() {
       var data = <MainItem>[mainItem];
       // var expected = emitsInOrder([ResultSuccess(data: data)]);
       var expected = ResultSuccess(data: data);
-      print('result=$result, expected=$expected');
+      log('result=$result, expected=$expected');
 
       // assert
       expect(result, expected);

@@ -2,10 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/mocl_show_add_dialog.dart';
 
-import '../../widgets/divider_widget.dart';
 import '../../widgets/loading_widget.dart';
 import '../../widgets/message_widget.dart';
 import 'mocl_main_controller.dart';
@@ -19,6 +17,7 @@ class MainPage extends GetView<MainController> {
 
   AppBar buildAppbar(BuildContext context) => AppBar(
         title: buildTitle(),
+        toolbarHeight: 60,
         // elevation: 8,
         // scrolledUnderElevation: 8,
         actions: [
@@ -45,7 +44,7 @@ class MainPage extends GetView<MainController> {
 }
 
 class _MainBody extends StatefulWidget {
-  const _MainBody({super.key});
+  const _MainBody();
 
   @override
   State<_MainBody> createState() => _MainBodyState();
@@ -86,7 +85,10 @@ class _MainBodyState extends State<_MainBody> {
             children: [
               ListTile(
                 minTileHeight: 64,
-                title: Text(item.text),
+                title: Text(
+                  item.text,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
                 onTap: () {
                   debugPrint('onTap item=$item');
                   _controller.gotoListPage(item);
@@ -96,7 +98,7 @@ class _MainBodyState extends State<_MainBody> {
           );
         },
         separatorBuilder: (BuildContext context, int index) {
-          return Divider(
+          return const Divider(
             height: 1,
             thickness: 1,
             indent: 12,
