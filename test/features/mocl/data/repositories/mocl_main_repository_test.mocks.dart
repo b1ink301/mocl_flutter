@@ -129,4 +129,36 @@ class MockListDataSource extends _i1.Mock implements _i7.ListDataSource {
           ),
         )),
       ) as _i3.Future<_i8.Result>);
+
+  @override
+  _i3.Future<int> setReadFlag(
+    _i5.SiteType? siteType,
+    int? boardId,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #setReadFlag,
+          [
+            siteType,
+            boardId,
+          ],
+        ),
+        returnValue: _i3.Future<int>.value(0),
+      ) as _i3.Future<int>);
+
+  @override
+  _i3.Future<bool> isReadFlag(
+    _i5.SiteType? siteType,
+    int? boardId,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #isReadFlag,
+          [
+            siteType,
+            boardId,
+          ],
+        ),
+        returnValue: _i3.Future<bool>.value(false),
+      ) as _i3.Future<bool>);
 }

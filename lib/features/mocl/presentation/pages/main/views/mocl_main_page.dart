@@ -1,28 +1,30 @@
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/main/mocl_show_add_dialog.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/main/views/mocl_show_add_dialog.dart';
 
-import '../../widgets/loading_widget.dart';
-import '../../widgets/message_widget.dart';
-import 'mocl_main_controller.dart';
+import '../../../widgets/loading_widget.dart';
+import '../../../widgets/message_widget.dart';
+import '../controllers/mocl_main_controller.dart';
+import 'mocl_drawer_widget.dart';
 
 class MainPage extends GetView<MainController> {
   const MainPage({super.key});
 
-  MessageWidget buildTitle() => MessageWidget(
+  Widget _buildTitle() => Obx(() => MessageWidget(
         message: controller.siteName(),
-      );
+      ));
 
-  AppBar buildAppbar(BuildContext context) => AppBar(
-        title: buildTitle(),
+  AppBar _buildAppbar(BuildContext context) => AppBar(
+        title: _buildTitle(),
         toolbarHeight: 60,
         // elevation: 8,
         // scrolledUnderElevation: 8,
         actions: [
           IconButton(
-            onPressed: () => showAddDialog(context),
+            onPressed: () => _showAddDialog(context),
             icon: const Icon(Icons.add),
           )
         ],
@@ -30,11 +32,12 @@ class MainPage extends GetView<MainController> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: buildAppbar(context),
+        drawer: DrawerWidget(onChangeSite: controller.changeSite),
+        appBar: _buildAppbar(context),
         body: const _MainBody(),
       );
 
-  void showAddDialog(
+  void _showAddDialog(
     BuildContext context,
   ) =>
       showDialog(

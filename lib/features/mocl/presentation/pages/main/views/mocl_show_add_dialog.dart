@@ -2,13 +2,13 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/main/mocl_main_controller.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/main/controllers/mocl_main_controller.dart';
 
-import '../../../domain/entities/mocl_main_item.dart';
-import '../../../domain/entities/mocl_result.dart';
-import '../../widgets/check_box_list_title_widget.dart';
-import '../../widgets/loading_widget.dart';
-import '../../widgets/message_widget.dart';
+import '../../../../domain/entities/mocl_main_item.dart';
+import '../../../../domain/entities/mocl_result.dart';
+import '../../../widgets/check_box_list_title_widget.dart';
+import '../../../widgets/loading_widget.dart';
+import '../../../widgets/message_widget.dart';
 
 @immutable
 class ShowAddDialog extends GetView<MainController> {
@@ -26,7 +26,7 @@ class ShowAddDialog extends GetView<MainController> {
           width: MediaQuery.of(context).size.width * 0.65,
           height: MediaQuery.of(context).size.height * 0.6,
           child: StreamBuilder<Result>(
-            stream: controller.getListFromJson(controller.siteType),
+            stream: controller.getListFromJson(controller.siteType.value),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 log("snapshot=${snapshot.data.runtimeType}, status=${snapshot.data}");
@@ -85,7 +85,7 @@ class ShowAddDialog extends GetView<MainController> {
           TextButton(
             onPressed: () async {
               log('selectedItems=$selectedItems');
-              await controller.setList(controller.siteType, selectedItems);
+              await controller.setList(controller.siteType.value, selectedItems);
               Get.back();
             },
             child: const Text('닫기'),

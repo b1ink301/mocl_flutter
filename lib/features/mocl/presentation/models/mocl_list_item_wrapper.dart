@@ -12,10 +12,8 @@ class ListItemWrapper {
 
   ListItemWrapper copyWith({
     bool? isRead,
-  }) {
-    return ListItemWrapper(
+  }) => ListItemWrapper(
       item: item,
       isReadNotifier: isRead != null ? ValueNotifier(isRead) : isReadNotifier,
     );
-  }
 }

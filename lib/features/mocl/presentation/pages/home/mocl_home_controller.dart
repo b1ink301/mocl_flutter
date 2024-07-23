@@ -1,22 +1,45 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/mocl_routes.dart';
 
 class HomeController extends GetxController {
-  var page = 0.obs;
-  var controller = PageController().obs;
+  final PageController pageController = PageController(initialPage: 0);
+  final currentPage = 0.obs;
 
-  onPageChanged(index) {
-    page.value = index;
+  changePage(int index) {
+    currentPage.value = index;
+    // pageController.jumpToPage(index);
+
+    switch(index) {
+      case 0 : Get.toNamed(Routes.MAIN);
+      case 1 : Get.toNamed(Routes.LIST);
+      case 2 : Get.toNamed(Routes.DETAIL);
+    }
   }
 
-  animateTo(int page) {
-    if (controller.value.hasClients) {
-      controller.value.animateToPage(page,
-          duration: const Duration(milliseconds: 300), curve: Curves.easeIn);
+  animateTo(page) {
+    if (pageController.hasClients) {
+      pageController.animateToPage(
+        page,
+        duration: const Duration(milliseconds: 300),
+        curve: Curves.easeIn,
+      );
     }
   }
 
   resetController(int page) {
-    controller.value = PageController(initialPage: page);
+    // controller = PageController(initialPage: page);
+  }
+
+  @override
+  void onInit() {
+    super.onInit();
+    // changePage(0);
+  }
+
+  @override
+  void dispose() {
+    pageController.dispose();
+    super.dispose();
   }
 }
