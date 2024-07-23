@@ -27,6 +27,8 @@ class MainController extends GetxController {
         _setMainList = setMainList,
         _getMainListFromJson = getMainListFromJson;
 
+  // Rx<Result> data = ResultLoading().obs;
+
   final _mainListStreamController = StreamController<Result>.broadcast();
 
   Stream<Result> get mainListStream => _mainListStreamController.stream;
@@ -52,10 +54,12 @@ class MainController extends GetxController {
   }
 
   void initMainList(SiteType siteType) async {
+    // data.value = ResultLoading();
     _mainListStreamController.add(ResultLoading());
     var params = GetMainParams(siteType: siteType);
     var result = await _getMainList(params) as ResultSuccess<List<MainItem>>;
     debugPrint('initMainList length=${result.data.length}');
+    // data.value = result;
     _mainListStreamController.add(result);
   }
 

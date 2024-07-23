@@ -18,10 +18,13 @@ class ShowAddDialog extends GetView<MainController> {
 
   @override
   Widget build(BuildContext context) => AlertDialog(
-        title: const Text('게시판 선택'),
+        title: Text(
+          '게시판 선택',
+          style: Theme.of(context).textTheme.headlineSmall,
+        ),
         content: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.6,
-          height: MediaQuery.of(context).size.width * 0.8,
+          width: MediaQuery.of(context).size.width * 0.65,
+          height: MediaQuery.of(context).size.height * 0.6,
           child: StreamBuilder<Result>(
             stream: controller.getListFromJson(controller.siteType),
             builder: (context, snapshot) {
@@ -34,33 +37,39 @@ class ShowAddDialog extends GetView<MainController> {
                 } else if (snapshot.data is ResultSuccess<List<MainItem>>) {
                   var result =
                       snapshot.requireData as ResultSuccess<List<MainItem>>;
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: result.data.length,
-                    itemBuilder: (context, index) {
-                      final item = result.data[index];
+                  return ListView.separated(
+                      shrinkWrap: true,
+                      itemCount: result.data.length,
+                      itemBuilder: (context, index) {
+                        final item = result.data[index];
 
-                      if (item.hasItem) {
-                        selectedItems.add(item);
-                      }
-                      return Column(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          CheckBoxListTitleWidget(
-                            text: item.text,
-                            checked: item.hasItem,
-                            onChanged: (value) {
-                              if (value == true) {
-                                selectedItems.add(item);
-                              } else {
-                                selectedItems.remove(item);
-                              }
-                            },
-                          )
-                        ],
-                      );
-                    },
-                  );
+                        if (item.hasItem) {
+                          selectedItems.add(item);
+                        }
+                        return Column(
+                          mainAxisSize: MainAxisSize.max,
+                          children: [
+                            CheckBoxListTitleWidget(
+                              text: item.text,
+                              checked: item.hasItem,
+                              onChanged: (value) {
+                                if (value == true) {
+                                  selectedItems.add(item);
+                                } else {
+                                  selectedItems.remove(item);
+                                }
+                              },
+                            )
+                          ],
+                        );
+                      },
+                      separatorBuilder: (BuildContext context, int index) =>
+                          const Divider(
+                            height: 1,
+                            thickness: 1,
+                            indent: 12,
+                            endIndent: 8,
+                          ));
                 } else if (snapshot.data is ResultFailure) {
                   return const MessageWidget(message: 'MainDataError');
                 } else {

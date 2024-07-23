@@ -43,7 +43,7 @@ class ListDataSourceImpl extends ListDataSource {
     log('getList response = ${response.statusCode}');
     if (response.statusCode == 200) {
       var document = parse(response.body);
-      return await parser.list(document, -1, isRead);
+      return await parser.list(document, -1, item.text, isRead,);
     } else {
       return await Future<ResultFailure<Failure>>.value(
           ResultFailure(failure: GetListFailure()));

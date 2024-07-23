@@ -14,11 +14,11 @@ import 'mocl_list_controller.dart';
 class ListPage extends GetView<ListController> {
   const ListPage({super.key});
 
-  Widget buildTitle() => Column(
+  Widget _buildTitle() => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const MessageWidget(
-            message: '다모앙',
+          MessageWidget(
+            message: controller.getAppbarSmallTitle(),
             fontSize: 12,
           ),
           MessageWidget(
@@ -27,15 +27,15 @@ class ListPage extends GetView<ListController> {
         ],
       );
 
-  SliverAppBar buildAppbar(BuildContext context) => SliverAppBar(
-        title: buildTitle(),
+  SliverAppBar _buildAppbar(BuildContext context) => SliverAppBar(
+        title: _buildTitle(),
         automaticallyImplyLeading: false,
         toolbarHeight: 60,
         floating: true,
         pinned: false,
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () => controller.reload(),
             icon: const Icon(Icons.refresh),
           )
         ],
@@ -44,10 +44,9 @@ class ListPage extends GetView<ListController> {
   @override
   Widget build(BuildContext context) => Scaffold(
         body: CustomScrollView(
-          // physics: const BouncingScrollPhysics(),
           controller: controller.scrollController,
           slivers: <Widget>[
-            buildAppbar(context),
+            _buildAppbar(context),
             const _ListView(),
           ],
         ),
@@ -65,11 +64,6 @@ class _ListViewState extends State<_ListView> {
   final ListController _listController = Get.find();
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   PagedSliverList build(BuildContext context) =>
       PagedSliverList<int, ListItemWrapper>.separated(
         pagingController: _listController.pagingController,
@@ -83,7 +77,7 @@ class _ListViewState extends State<_ListView> {
               var isReadFlag =
                   await Get.toNamed(Routes.DETAIL, arguments: item.item);
               log('isReadFlag=$isReadFlag');
-              if (isReadFlag && item.isReadNotifier.value == false) {
+              if (isReadFlag!=null && isReadFlag && item.isReadNotifier.value == false) {
                 _listController.setReadFlag(item);
               }
             },
@@ -95,11 +89,6 @@ class _ListViewState extends State<_ListView> {
         ),
       );
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   Widget buildListItem(
     BuildContext context,
     ListItemWrapper listItemWrapper,
@@ -107,11 +96,12 @@ class _ListViewState extends State<_ListView> {
     var textStyle = Theme.of(context).textTheme.bodyMedium;
     var listItem = listItemWrapper.item;
     if (listItemWrapper.isReadNotifier.value) {
-      textStyle = textStyle?.copyWith(color: const Color(0xFF888888));
+      textStyle = textStyle?.copyWith(color: const Color(0xFF777777));
     }
     return Padding(
       padding: const EdgeInsets.fromLTRB(18, 12, 4, 12),
       child: Column(
+        key: Key(listItem.id.toString()),
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.start,

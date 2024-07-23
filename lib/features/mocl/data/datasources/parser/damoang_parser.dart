@@ -1,12 +1,9 @@
-import 'dart:developer';
-
 import 'package:html/dom.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 
 import '../../../domain/entities/mocl_details.dart';
-import '../../../domain/entities/mocl_site_type.dart';
 import 'base_parser.dart';
 
 class DamoangParser extends BaseParser {
@@ -147,6 +144,7 @@ class DamoangParser extends BaseParser {
   Future<Result> list(
     Document document,
     int lastIndex,
+    String boardTitle,
     Future<bool> Function(int) isRead,
   ) async {
     var elementList = document.querySelectorAll(
@@ -238,7 +236,7 @@ class DamoangParser extends BaseParser {
         time: time.trim(),
         url: url.trim(),
         board: board,
-        boardTitle: 'boardTitle',
+        boardTitle: boardTitle,
         like: like.trim(),
         hit: hit.trim(),
         userInfo: userInfo,

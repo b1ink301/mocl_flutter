@@ -15,12 +15,12 @@ import 'mocl_detail_controller.dart';
 class DetailPage extends GetView<DetailController> {
   const DetailPage({super.key});
 
-  Widget buildTitle() => Column(
+  Widget _buildTitle() => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisSize: MainAxisSize.min,
         children: [
-          const MessageWidget(
-            message: '다모앙',
+          MessageWidget(
+            message: controller.getAppbarSmallTitle(),
             fontSize: 13,
           ),
           MessageWidget(
@@ -29,9 +29,9 @@ class DetailPage extends GetView<DetailController> {
         ],
       );
 
-  SliverAppBar buildAppbar(BuildContext context) {
+  SliverAppBar _buildAppbar(BuildContext context) {
     return SliverAppBar(
-      title: buildTitle(),
+      title: _buildTitle(),
       flexibleSpace: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           return const FlexibleSpaceBar(
@@ -40,21 +40,21 @@ class DetailPage extends GetView<DetailController> {
           );
         },
       ),
-      toolbarHeight: 40 + calculateTitleHeight(context),
+      toolbarHeight: 40 + _calculateTitleHeight(context),
       automaticallyImplyLeading: false,
       // elevation: 8,
       floating: true,
       pinned: false,
       actions: [
         IconButton(
-          onPressed: () {},
+          onPressed: () => controller.reload(),
           icon: const Icon(Icons.refresh),
         )
       ],
     );
   }
 
-  double calculateTitleHeight(BuildContext context) {
+  double _calculateTitleHeight(BuildContext context) {
     final textPainter = TextPainter(
       text: TextSpan(
         text: controller.getAppbarTitle(), // 텍스트 가져오기
@@ -72,7 +72,7 @@ class DetailPage extends GetView<DetailController> {
   @override
   Widget build(BuildContext context) => PopScope(
         canPop: false,
-        onPopInvoked: (didPop) {
+        onPopInvoked: (didPop) async {
           log('onPopInvoked=$didPop');
           if (didPop) return;
 
@@ -82,7 +82,7 @@ class DetailPage extends GetView<DetailController> {
           body: CustomScrollView(
             controller: controller.scrollController,
             slivers: <Widget>[
-              buildAppbar(context),
+              _buildAppbar(context),
               // SliverPersistentHeader(
               //   pinned: false,
               //   delegate: HeaderDelegate(
@@ -116,8 +116,7 @@ class _DetailViewState extends State<_DetailView> {
   final DetailController detailController = Get.find();
 
   @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<Result>(
+  Widget build(BuildContext context) => StreamBuilder<Result>(
       stream: detailController.detailStream.asBroadcastStream(),
       builder: (BuildContext context, AsyncSnapshot<Result> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -150,19 +149,22 @@ class _DetailViewState extends State<_DetailView> {
                   },
                 ),
                 const SizedBox(height: 10),
-                buildComments(
+                _buildComments(
                   context,
                   result.data.comments,
                 ),
+                const Divider(),
               ],
             ),
           );
         } else {
-          return const MessageWidget(message: 'message');
+          return const Padding(
+            padding: EdgeInsets.only(top: 16.0),
+            child: Center(child: CircularProgressIndicator()),
+          );
         }
       },
     );
-  }
 
   Widget _buildHeader(UserInfo userInfo) {
     return SizedBox(
@@ -193,7 +195,7 @@ class _DetailViewState extends State<_DetailView> {
     );
   }
 
-  Widget buildComments(
+  Widget _buildComments(
     BuildContext context,
     List<CommentItem> comments,
   ) {

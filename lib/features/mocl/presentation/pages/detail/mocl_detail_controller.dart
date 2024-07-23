@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
@@ -37,7 +36,6 @@ class DetailController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    log('onInit');
     isReadFlag = _listItem.isRead;
     getDetail(_listItem);
   }
@@ -52,7 +50,10 @@ class DetailController extends GetxController {
   String getAppbarSmallTitle() => _listItem.boardTitle;
   String getAppbarTitle() => _listItem.title;
 
-  void setReadFlag() {
-    isReadFlag = true;
+  void setReadFlag() => isReadFlag = true;
+
+  void reload() {
+    scrollController.jumpTo(0);
+    getDetail(_listItem);
   }
 }
