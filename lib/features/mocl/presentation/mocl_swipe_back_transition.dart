@@ -4,13 +4,13 @@ import 'package:get/get.dart';
 class SwipeBackTransition extends CustomTransition {
   @override
   Widget buildTransition(
-      BuildContext context,
-      Curve? curve,
-      Alignment? alignment,
-      Animation<double> animation,
-      Animation<double> secondaryAnimation,
-      Widget child,
-      ) {
+    BuildContext context,
+    Curve? curve,
+    Alignment? alignment,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
     return GestureDetector(
       onHorizontalDragUpdate: (details) {
         if (details.delta.dx > 10) {

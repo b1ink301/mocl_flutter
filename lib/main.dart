@@ -7,7 +7,7 @@ import 'package:mocl_flutter/features/mocl/presentation/pages/detail/mocl_detail
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/mocl_main_bindings.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/mocl_routes.dart';
 
-import 'features/mocl/presentation/SwipeBackTransition.dart';
+import 'features/mocl/presentation/mocl_swipe_back_transition.dart';
 import 'features/mocl/presentation/pages/home/mocl_home_bindings.dart';
 import 'features/mocl/presentation/pages/home/mocl_home_page.dart';
 import 'features/mocl/presentation/pages/list/mocl_list_bindings.dart';

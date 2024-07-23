@@ -54,13 +54,7 @@ class _MainBodyState extends State<_MainBody> {
   final MainController _controller = Get.find();
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   void dispose() {
-    debugPrint('dispose');
     _controller.closeSteam();
     super.dispose();
   }
@@ -68,7 +62,7 @@ class _MainBodyState extends State<_MainBody> {
   @override
   Widget build(BuildContext context) => buildBodyContent(context);
 
-  Widget buildResultSuccess(ResultSuccess<List<MainItem>> result) {
+  Widget _buildResultSuccess(ResultSuccess<List<MainItem>> result) {
     if (result.data.isEmpty) {
       return const Padding(
         padding: EdgeInsets.all(8.0),
@@ -109,6 +103,21 @@ class _MainBodyState extends State<_MainBody> {
     }
   }
 
+  // Widget buildBodyContent(BuildContext context) => Obx(() {
+  //       switch (_controller.data) {
+  //         case ResultLoading():
+  //           return const Padding(
+  //             padding: EdgeInsets.all(8.0),
+  //             child: MessageWidget(message: '항목이 비워 있습니다.'),
+  //           );
+  //         case ResultSuccess():
+  //           var result = _controller.data as ResultSuccess<List<MainItem>>;
+  //           return buildResultSuccess(result);
+  //         default:
+  //           return const MessageWidget(message: 'MainDataError');
+  //       }
+  //     });
+
   Widget buildBodyContent(
     BuildContext context,
   ) =>
@@ -124,7 +133,7 @@ class _MainBodyState extends State<_MainBody> {
               } else if (snapshot.data is ResultSuccess) {
                 var result =
                     snapshot.requireData as ResultSuccess<List<MainItem>>;
-                return buildResultSuccess(result);
+                return _buildResultSuccess(result);
               } else if (snapshot.data is ResultFailure) {
                 return const MessageWidget(message: 'MainDataError');
               } else {

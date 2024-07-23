@@ -24,13 +24,13 @@ void main() {
   });
 
   test('main 유즈케이스는 빈값을 리턴한다.', () async {
-    provideDummy<Result>(ResultSuccess<List<MainItem>>(data: []));
+    provideDummy<Result>(ResultSuccess<List<MainItem>>(data: const []));
 
     when(mockMainRepository.getMainList(siteType: anyNamed('siteType')))
-        .thenAnswer((_) async => ResultSuccess<List<MainItem>>(data: []));
+        .thenAnswer((_) async => ResultSuccess<List<MainItem>>(data: const []));
 
     var result = await getMainList(getMainParams);
-    var expected = ResultSuccess<List<MainItem>>(data: []);
+    var expected = ResultSuccess<List<MainItem>>(data: const []);
     log('result=$result, expected=$expected');
     expect(result, expected);
   });

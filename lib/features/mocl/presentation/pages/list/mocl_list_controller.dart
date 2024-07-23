@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_read_flag.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/mocl_list_item_wrapper.dart';
 
@@ -24,6 +25,11 @@ class ListController extends GetxController {
         _setReadFlag = setReadFlag;
 
   String getAppbarTitle() => _mainItem.text;
+  String getAppbarSmallTitle() => switch(_mainItem.siteType) {
+    SiteType.clien => '클리앙',
+    SiteType.damoang => '다모앙',
+    _ => ''
+  };
 
   @override
   void onInit() async {
@@ -78,4 +84,6 @@ class ListController extends GetxController {
     );
     await _setReadFlag(params);
   }
+
+  void reload() => pagingController.refresh();
 }

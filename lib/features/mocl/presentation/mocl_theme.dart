@@ -49,9 +49,9 @@ class MoclTheme {
           thickness: 1,
         ),
         textTheme: const TextTheme(
-          bodyMedium: TextStyle(color: Color(0xFF000000), fontSize: 17),
-          bodySmall: TextStyle(color: Color(0xFFAAAAAA), fontSize: 15),
-          labelSmall: TextStyle(color: Color(0xFFAAAAAA), fontSize: 11),
+          bodyMedium: TextStyle(color: Color(0xFFAAAAAA), fontSize: 17),
+          bodySmall: TextStyle(color: Color(0xFF888888), fontSize: 15),
+          labelSmall: TextStyle(color: Color(0xFF666666), fontSize: 11),
         ),
         primaryColor: const Color(0xFF292929),
         scaffoldBackgroundColor: const Color(0xFF333333),

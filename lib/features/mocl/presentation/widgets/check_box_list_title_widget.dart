@@ -14,12 +14,11 @@ class CheckBoxListTitleWidget extends StatefulWidget {
 
   @override
   State<StatefulWidget> createState() =>
-      _CheckBoxListTitleState()..onChanged = onChanged;
+      _CheckBoxListTitleState();
 }
 
 class _CheckBoxListTitleState extends State<CheckBoxListTitleWidget> {
   bool _isChecked = false;
-  late final ValueChanged<bool?>? onChanged;
 
   @override
   void initState() {
@@ -34,7 +33,7 @@ class _CheckBoxListTitleState extends State<CheckBoxListTitleWidget> {
         onChanged: (value) {
           setState(() {
             _isChecked = value!;
-            onChanged?.call(_isChecked);
+            widget.onChanged?.call(_isChecked);
           });
         },
         activeColor: Colors.blueAccent,
