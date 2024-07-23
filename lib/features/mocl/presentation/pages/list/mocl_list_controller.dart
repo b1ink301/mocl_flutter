@@ -51,7 +51,6 @@ class ListController extends GetxController {
     debugPrint('fetchPage item=$item, page=$page');
     var params = GetListParams(mainItem: item, page: page);
     var result = await _getList(params);
-    debugPrint('fetchPage result=$result');
 
     if (result is ResultSuccess) {
       var data = result as ResultSuccess<List<ListItem>>;
@@ -77,12 +76,14 @@ class ListController extends GetxController {
   }
 
   void setReadFlag(ListItemWrapper itemWrapper) async {
-    itemWrapper.isReadNotifier.value = true;
-    SetReadFlagParams params = SetReadFlagParams(
-      siteType: _mainItem.siteType,
-      boardId: itemWrapper.item.id,
-    );
-    await _setReadFlag(params);
+    if(itemWrapper.isReadNotifier.value == false) {
+      itemWrapper.isReadNotifier.value = true;
+      SetReadFlagParams params = SetReadFlagParams(
+        siteType: _mainItem.siteType,
+        boardId: itemWrapper.item.id,
+      );
+      await _setReadFlag(params);
+    }
   }
 
   void reload() => pagingController.refresh();

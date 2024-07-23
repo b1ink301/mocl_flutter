@@ -1,0 +1,1 @@
+const String EXTRA_SITE_TYPE = 'SiteType';

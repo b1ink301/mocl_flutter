@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:developer';
 
 import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
@@ -7,17 +8,17 @@ import 'package:mocl_flutter/features/mocl/domain/usecases/get_main_list.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_main_list_from_json.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_main_list.dart';
 
-import '../../../domain/entities/mocl_main_item.dart';
-import '../../../domain/entities/mocl_result.dart';
-import '../../../domain/entities/mocl_site_type.dart';
-import '../mocl_routes.dart';
+import '../../../../domain/entities/mocl_main_item.dart';
+import '../../../../domain/entities/mocl_result.dart';
+import '../../../../domain/entities/mocl_site_type.dart';
+import '../../../common/const.dart';
+import '../../mocl_routes.dart';
 
 class MainController extends GetxController {
   final GetMainList _getMainList;
   final SetMainList _setMainList;
   final GetMainListFromJson _getMainListFromJson;
-
-  final SiteType siteType = GetStorage().read('SiteType') ?? SiteType.damoang;
+  late final Rx<SiteType> siteType;
 
   MainController({
     required GetMainList getMainList,
@@ -27,7 +28,10 @@ class MainController extends GetxController {
         _setMainList = setMainList,
         _getMainListFromJson = getMainListFromJson;
 
-  // Rx<Result> data = ResultLoading().obs;
+  SiteType _getCurrentSiteType() {
+    final siteTypeName = GetStorage().read(EXTRA_SITE_TYPE) ?? SiteType.damoang.name;
+    return SiteType.values.firstWhere((e) => e.name == siteTypeName);
+  }
 
   final _mainListStreamController = StreamController<Result>.broadcast();
 
@@ -38,7 +42,7 @@ class MainController extends GetxController {
   }
 
   String siteName() {
-    var title = switch (siteType) {
+    var title = switch (siteType.value) {
       SiteType.clien => '클리앙',
       SiteType.damoang => '다모앙',
       SiteType.none => 'None',
@@ -49,14 +53,14 @@ class MainController extends GetxController {
   @override
   void onInit() async {
     super.onInit();
-
-    initMainList(siteType);
+    siteType = _getCurrentSiteType().obs;
+    initMainList();
   }
 
-  void initMainList(SiteType siteType) async {
+  void initMainList() async {
     // data.value = ResultLoading();
     _mainListStreamController.add(ResultLoading());
-    var params = GetMainParams(siteType: siteType);
+    var params = GetMainParams(siteType: siteType.value);
     var result = await _getMainList(params) as ResultSuccess<List<MainItem>>;
     debugPrint('initMainList length=${result.data.length}');
     // data.value = result;
@@ -71,7 +75,7 @@ class MainController extends GetxController {
     var result = await _setMainList(params);
 
     if (result is ResultSuccess<List<int>>) {
-      initMainList(siteType);
+      initMainList();
       return Future.value(result.data);
     }
 
@@ -89,12 +93,20 @@ class MainController extends GetxController {
     super.dispose();
   }
 
-  void closeSteam() {
-    _mainListStreamController.close();
-  }
+  void closeSteam() => _mainListStreamController.close();
 
   void gotoListPage(MainItem item) => Get.toNamed(
         Routes.LIST,
         arguments: item,
       );
+
+  Future<void> changeSite(SiteType siteType) async {
+    log('changeSite=$siteType');
+    if (this.siteType.value != siteType) {
+      this.siteType.value = siteType;
+
+      initMainList();
+      await GetStorage().writeIfNull(EXTRA_SITE_TYPE, siteType.name);
+    }
+  }
 }

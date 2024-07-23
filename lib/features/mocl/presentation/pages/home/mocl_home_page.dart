@@ -1,8 +1,9 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/mocl_routes.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/detail/mocl_detail_page.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/home/mocl_home_controller.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_list_page.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/main/views/mocl_main_page.dart';
 
 
 class HomePage extends StatefulWidget {
@@ -13,34 +14,16 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-  final PageController _pageController = PageController(initialPage: 0);
+  final HomeController homeController = Get.find();
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  void dispose() {
-    _pageController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return PageView.builder(
-      controller: _pageController,
-      onPageChanged: (index) {
-        log('onPageChanged=$index');
-        switch(index) {
-          case 0: Get.toNamed(Routes.MAIN);
-          case 1: Get.toNamed(Routes.LIST);
-        }
-      },
-      itemCount: 2,
-      itemBuilder: (context, index) {
-        return Container();
-      },
+  Widget build(BuildContext context) => PageView(
+      controller: homeController.pageController,
+      onPageChanged: homeController.changePage,
+      children: const [
+        MainPage(),
+        ListPage(),
+        DetailPage(),
+      ],
     );
-  }
 }

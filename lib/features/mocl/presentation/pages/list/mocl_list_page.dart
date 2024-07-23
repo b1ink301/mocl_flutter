@@ -66,18 +66,19 @@ class _ListViewState extends State<_ListView> {
   @override
   PagedSliverList build(BuildContext context) =>
       PagedSliverList<int, ListItemWrapper>.separated(
+        // addAutomaticKeepAlives: false,
         pagingController: _listController.pagingController,
         builderDelegate: PagedChildBuilderDelegate<ListItemWrapper>(
           itemBuilder: (context, item, index) => InkWell(
             child: ValueListenableBuilder(
                 valueListenable: item.isReadNotifier,
                 builder: (BuildContext context, value, Widget? child) =>
-                    buildListItem(context, item)),
+                    _buildListItem(context, item)),
             onTap: () async {
               var isReadFlag =
                   await Get.toNamed(Routes.DETAIL, arguments: item.item);
               log('isReadFlag=$isReadFlag');
-              if (isReadFlag!=null && isReadFlag && item.isReadNotifier.value == false) {
+              if (isReadFlag!=null && isReadFlag) {
                 _listController.setReadFlag(item);
               }
             },
@@ -89,7 +90,7 @@ class _ListViewState extends State<_ListView> {
         ),
       );
 
-  Widget buildListItem(
+  Widget _buildListItem(
     BuildContext context,
     ListItemWrapper listItemWrapper,
   ) {
@@ -102,17 +103,14 @@ class _ListViewState extends State<_ListView> {
       padding: const EdgeInsets.fromLTRB(18, 12, 4, 12),
       child: Column(
         key: Key(listItem.id.toString()),
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            listItem.title.trim(),
-            textAlign: TextAlign.start,
+            listItem.title,
             style: textStyle,
           ),
           const SizedBox(height: 10),
-          buildBottomView(
+          _buildBottomView(
             context,
             listItem.userInfo,
             listItem.reply,
@@ -123,7 +121,7 @@ class _ListViewState extends State<_ListView> {
     );
   }
 
-  Widget buildBottomView(
+  Widget _buildBottomView(
     BuildContext context,
     UserInfo userInfo,
     String reply,
