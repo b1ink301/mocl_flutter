@@ -4,17 +4,18 @@ class CheckBoxListTitleWidget extends StatefulWidget {
   final String text;
   final ValueChanged<bool?>? onChanged;
   final bool checked;
+  final TextStyle? textStyle;
 
   const CheckBoxListTitleWidget({
     super.key,
     required this.text,
     required this.checked,
     this.onChanged,
+    this.textStyle,
   });
 
   @override
-  State<StatefulWidget> createState() =>
-      _CheckBoxListTitleState();
+  State<StatefulWidget> createState() => _CheckBoxListTitleState();
 }
 
 class _CheckBoxListTitleState extends State<CheckBoxListTitleWidget> {
@@ -29,7 +30,10 @@ class _CheckBoxListTitleState extends State<CheckBoxListTitleWidget> {
   @override
   Widget build(BuildContext context) => CheckboxListTile(
         value: _isChecked,
-        title: Text(widget.text),
+        title: Text(
+          widget.text,
+          style: widget.textStyle,
+        ),
         onChanged: (value) {
           setState(() {
             _isChecked = value!;

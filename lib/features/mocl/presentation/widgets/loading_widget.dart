@@ -7,11 +7,12 @@ class LoadingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return SizedBox(
-      height: MediaQuery.of(context).size.height / 3,
-      child: const Center(
-        child: CircularProgressIndicator(),
-      ),
+    return Padding(
+      padding: const EdgeInsets.only(top: 16.0),
+      child: Center(
+          child: CircularProgressIndicator(
+            color: Theme.of(context).indicatorColor,
+          )),
     );
   }
 }

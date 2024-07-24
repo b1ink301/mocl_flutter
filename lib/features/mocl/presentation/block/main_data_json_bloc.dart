@@ -6,7 +6,6 @@ import 'package:equatable/equatable.dart';
 
 import '../../domain/entities/mocl_main_item.dart';
 import '../../domain/entities/mocl_site_type.dart';
-import '../../domain/usecases/get_main_list.dart';
 import '../../domain/usecases/get_main_list_from_json.dart';
 import '../../domain/usecases/set_main_list.dart';
 import 'main_data_bloc.dart';
@@ -38,8 +37,7 @@ class MainDataJsonBloc extends Bloc<MainDataJsonEvent, MainDataJsonState> {
       case GetMainDataFromJsonEvent():
         emit(const MainDataJsonState.loading());
         _mainStreamController.add(const MainDataState.initial());
-        var params = GetMainParams(siteType: event.siteType);
-        var result = getMainListFromJson.call(params);
+        var result = getMainListFromJson.call(event.siteType);
         switch(result) {
         }
         // result.fold((failure) {

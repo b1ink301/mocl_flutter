@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
 import '../../../../domain/entities/mocl_site_type.dart';
 
@@ -18,6 +19,7 @@ class DrawerWidget extends StatelessWidget {
             ),
             ListTile(
               title: const Text('다모앙'),
+              titleTextStyle: Theme.of(context).textTheme.bodyMedium,
               onTap: () async {
                 if (context.mounted) {
                   Navigator.of(context).pop();
@@ -33,6 +35,7 @@ class DrawerWidget extends StatelessWidget {
             ),
             ListTile(
               title: const Text('클리앙'),
+              titleTextStyle: Theme.of(context).textTheme.bodyMedium,
               onTap: () async {
                 if (context.mounted) {
                   Navigator.of(context).pop();
@@ -48,10 +51,25 @@ class DrawerWidget extends StatelessWidget {
             ),
             ListTile(
               title: const Text('설정'),
+              titleTextStyle: Theme.of(context).textTheme.bodyMedium,
               onTap: () {
                 // Get.toNamed(Routes.SETTING);
+
+                Get.snackbar(
+                  'Mocl',
+                  '미구현',
+                  // colorText: Colors.white,
+                  // backgroundColor: Colors.red,
+                  // snackPosition: SnackPosition.TOP,
+                );
+
                 Navigator.of(context).pop();
               },
+            ),
+            const Spacer(),
+            ListTile(
+              title: const Text(''),
+              titleTextStyle: Theme.of(context).textTheme.bodySmall,
             ),
           ],
         ),

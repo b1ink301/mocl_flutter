@@ -15,12 +15,10 @@ import 'get_main_list_test.mocks.dart';
 void main() {
   late final GetMainList getMainList;
   late final MockMainRepository mockMainRepository;
-  late final GetMainParams getMainParams;
 
   setUpAll(() {
     mockMainRepository = MockMainRepository();
     getMainList = GetMainList(mainRepository: mockMainRepository);
-    getMainParams = const GetMainParams(siteType: SiteType.damoang);
   });
 
   test('main 유즈케이스는 빈값을 리턴한다.', () async {
@@ -29,7 +27,7 @@ void main() {
     when(mockMainRepository.getMainList(siteType: anyNamed('siteType')))
         .thenAnswer((_) async => ResultSuccess<List<MainItem>>(data: const []));
 
-    var result = await getMainList(getMainParams);
+    var result = await getMainList(SiteType.damoang);
     var expected = ResultSuccess<List<MainItem>>(data: const []);
     log('result=$result, expected=$expected');
     expect(result, expected);

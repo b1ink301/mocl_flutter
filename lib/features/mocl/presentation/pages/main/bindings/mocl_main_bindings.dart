@@ -31,6 +31,8 @@ class MainBindings extends Bindings {
           getMainList: Get.find(),
           getMainListFromJson: Get.find(),
           setMainList: Get.find(),
+          setSiteType: Get.find(),
+          getSiteType: Get.find(),
         ));
   }
 }

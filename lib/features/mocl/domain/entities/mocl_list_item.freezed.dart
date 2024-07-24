@@ -20,7 +20,6 @@ mixin _$ListItem {
   String get title => throw _privateConstructorUsedError;
   String get reply => throw _privateConstructorUsedError;
   String get category => throw _privateConstructorUsedError;
-  String get image => throw _privateConstructorUsedError;
   String get time => throw _privateConstructorUsedError;
   String get url => throw _privateConstructorUsedError;
   String get board => throw _privateConstructorUsedError;
@@ -46,7 +45,6 @@ abstract class $ListItemCopyWith<$Res> {
       String title,
       String reply,
       String category,
-      String image,
       String time,
       String url,
       String board,
@@ -75,7 +73,6 @@ class _$ListItemCopyWithImpl<$Res, $Val extends ListItem>
     Object? title = null,
     Object? reply = null,
     Object? category = null,
-    Object? image = null,
     Object? time = null,
     Object? url = null,
     Object? board = null,
@@ -102,10 +99,6 @@ class _$ListItemCopyWithImpl<$Res, $Val extends ListItem>
       category: null == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
-              as String,
-      image: null == image
-          ? _value.image
-          : image // ignore: cast_nullable_to_non_nullable
               as String,
       time: null == time
           ? _value.time
@@ -160,7 +153,6 @@ abstract class _$$ListItemImplCopyWith<$Res>
       String title,
       String reply,
       String category,
-      String image,
       String time,
       String url,
       String board,
@@ -187,7 +179,6 @@ class __$$ListItemImplCopyWithImpl<$Res>
     Object? title = null,
     Object? reply = null,
     Object? category = null,
-    Object? image = null,
     Object? time = null,
     Object? url = null,
     Object? board = null,
@@ -214,10 +205,6 @@ class __$$ListItemImplCopyWithImpl<$Res>
       category: null == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
-              as String,
-      image: null == image
-          ? _value.image
-          : image // ignore: cast_nullable_to_non_nullable
               as String,
       time: null == time
           ? _value.time
@@ -267,7 +254,6 @@ class _$ListItemImpl implements _ListItem {
       required this.title,
       required this.reply,
       required this.category,
-      required this.image,
       required this.time,
       required this.url,
       required this.board,
@@ -286,8 +272,6 @@ class _$ListItemImpl implements _ListItem {
   final String reply;
   @override
   final String category;
-  @override
-  final String image;
   @override
   final String time;
   @override
@@ -309,7 +293,7 @@ class _$ListItemImpl implements _ListItem {
 
   @override
   String toString() {
-    return 'ListItem(id: $id, title: $title, reply: $reply, category: $category, image: $image, time: $time, url: $url, board: $board, boardTitle: $boardTitle, like: $like, hit: $hit, userInfo: $userInfo, hasImage: $hasImage, isRead: $isRead)';
+    return 'ListItem(id: $id, title: $title, reply: $reply, category: $category, time: $time, url: $url, board: $board, boardTitle: $boardTitle, like: $like, hit: $hit, userInfo: $userInfo, hasImage: $hasImage, isRead: $isRead)';
   }
 
   @override
@@ -322,7 +306,6 @@ class _$ListItemImpl implements _ListItem {
             (identical(other.reply, reply) || other.reply == reply) &&
             (identical(other.category, category) ||
                 other.category == category) &&
-            (identical(other.image, image) || other.image == image) &&
             (identical(other.time, time) || other.time == time) &&
             (identical(other.url, url) || other.url == url) &&
             (identical(other.board, board) || other.board == board) &&
@@ -338,22 +321,8 @@ class _$ListItemImpl implements _ListItem {
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      title,
-      reply,
-      category,
-      image,
-      time,
-      url,
-      board,
-      boardTitle,
-      like,
-      hit,
-      userInfo,
-      hasImage,
-      isRead);
+  int get hashCode => Object.hash(runtimeType, id, title, reply, category, time,
+      url, board, boardTitle, like, hit, userInfo, hasImage, isRead);
 
   @JsonKey(ignore: true)
   @override
@@ -368,7 +337,6 @@ abstract class _ListItem implements ListItem {
       required final String title,
       required final String reply,
       required final String category,
-      required final String image,
       required final String time,
       required final String url,
       required final String board,
@@ -387,8 +355,6 @@ abstract class _ListItem implements ListItem {
   String get reply;
   @override
   String get category;
-  @override
-  String get image;
   @override
   String get time;
   @override

@@ -13,7 +13,6 @@ class ListItem with _$ListItem {
     required String title,
     required String reply,
     required String category,
-    required String image,
     required String time,
     required String url,
     required String board,

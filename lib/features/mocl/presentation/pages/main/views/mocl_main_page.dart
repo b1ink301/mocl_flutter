@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
@@ -65,11 +64,20 @@ class _MainBodyState extends State<_MainBody> {
   @override
   Widget build(BuildContext context) => buildBodyContent(context);
 
-  Widget _buildResultSuccess(ResultSuccess<List<MainItem>> result) {
+  Widget _buildResultSuccess(
+    BuildContext context,
+    ResultSuccess<List<MainItem>> result,
+  ) {
     if (result.data.isEmpty) {
-      return const Padding(
-        padding: EdgeInsets.all(8.0),
-        child: MessageWidget(message: '항목이 비워 있습니다.'),
+      return Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Text(
+          '항목이 없습니다\n오른쪽 상단의 +버튼을 눌려서\n항목을 추가해주세요',
+          style: TextStyle(
+            fontSize: 16,
+            color: Theme.of(context).indicatorColor,
+          ),
+        ),
       );
     } else {
       return ListView.separated(
@@ -121,32 +129,28 @@ class _MainBodyState extends State<_MainBody> {
   //       }
   //     });
 
-  Widget buildBodyContent(
-    BuildContext context,
-  ) =>
-      StreamBuilder<Result>(
-          stream: _controller.mainListStream.asBroadcastStream(),
-          builder: (context, snapshot) {
-            if (snapshot.hasData) {
-              debugPrint("runtimeType=${snapshot.data.runtimeType}");
-              if (snapshot.data is ResultLoading) {
-                return const LoadingWidget();
-              } else if (snapshot.data is ResultInitial) {
-                return const LoadingWidget();
-              } else if (snapshot.data is ResultSuccess) {
-                var result =
-                    snapshot.requireData as ResultSuccess<List<MainItem>>;
-                return _buildResultSuccess(result);
-              } else if (snapshot.data is ResultFailure) {
-                return const MessageWidget(message: 'MainDataError');
-              } else {
-                return const MessageWidget(message: 'MainDataError');
-              }
-            } else {
-              return const Padding(
-                padding: EdgeInsets.all(10.0),
-                child: MessageWidget(message: '항목이 없습니다.'),
-              );
-            }
-          });
+  Widget buildBodyContent(BuildContext context) => StreamBuilder<Result>(
+      stream: _controller.mainListStream.asBroadcastStream(),
+      builder: (context, snapshot) {
+        if (snapshot.hasData) {
+          debugPrint("runtimeType=${snapshot.data.runtimeType}");
+          if (snapshot.data is ResultLoading) {
+            return const LoadingWidget();
+          } else if (snapshot.data is ResultInitial) {
+            return const LoadingWidget();
+          } else if (snapshot.data is ResultSuccess) {
+            var result = snapshot.requireData as ResultSuccess<List<MainItem>>;
+            return _buildResultSuccess(context, result);
+          } else if (snapshot.data is ResultFailure) {
+            return const MessageWidget(message: 'MainDataError');
+          } else {
+            return const MessageWidget(message: 'MainDataError');
+          }
+        } else {
+          return const Padding(
+            padding: EdgeInsets.all(10.0),
+            child: MessageWidget(message: '항목이 없습니다.'),
+          );
+        }
+      });
 }

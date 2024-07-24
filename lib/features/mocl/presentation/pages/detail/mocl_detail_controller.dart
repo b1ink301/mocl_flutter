@@ -42,8 +42,7 @@ class DetailController extends GetxController {
 
   void getDetail(ListItem item) async {
     _detailStreamController.add(ResultLoading());
-    var params = GetDetailParams(item: item);
-    var result = await _getDetail(params);
+    var result = await _getDetail(item);
     _detailStreamController.add(result);
   }
 

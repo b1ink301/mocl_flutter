@@ -1,6 +1,5 @@
 import 'dart:developer';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -8,6 +7,9 @@ import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.d
 
 import '../../../domain/entities/mocl_user_info.dart';
 import '../../models/mocl_list_item_wrapper.dart';
+import '../../widgets/image_widget.dart';
+import '../../widgets/loading_widget.dart';
+import '../../widgets/round_text_widget.dart';
 import '../mocl_routes.dart';
 import 'mocl_list_controller.dart';
 
@@ -78,11 +80,13 @@ class _ListViewState extends State<_ListView> {
               var isReadFlag =
                   await Get.toNamed(Routes.DETAIL, arguments: item.item);
               log('isReadFlag=$isReadFlag');
-              if (isReadFlag!=null && isReadFlag) {
+              if (isReadFlag != null && isReadFlag) {
                 _listController.setReadFlag(item);
               }
             },
           ),
+          newPageProgressIndicatorBuilder: (context) => const LoadingWidget(),
+          firstPageProgressIndicatorBuilder: (context) => const LoadingWidget(),
         ),
         separatorBuilder: (context, index) => const Divider(
           indent: 16,
@@ -129,11 +133,7 @@ class _ListViewState extends State<_ListView> {
   ) =>
       Row(
         children: [
-          CachedNetworkImage(
-            imageUrl: userInfo.nickImage,
-            fit: BoxFit.contain,
-            width: 18,
-          ),
+          ImageWidget(url: userInfo.nickImage),
           const SizedBox(width: 8),
           Text(
             userInfo.nickName,
@@ -145,26 +145,8 @@ class _ListViewState extends State<_ListView> {
             style: Theme.of(context).textTheme.bodySmall,
           ),
           const Spacer(),
-          buildRoundText(context, reply),
+          RoundTextWidget(text: reply),
           const SizedBox(width: 8),
         ],
       );
-}
-
-Widget buildRoundText(
-  BuildContext context,
-  String text,
-) {
-  if (text.isEmpty) return const SizedBox.shrink();
-  return Container(
-    padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
-    decoration: BoxDecoration(
-      border: Border.all(color: Theme.of(context).textTheme.labelSmall!.color!),
-      borderRadius: BorderRadius.circular(10),
-    ),
-    child: Text(
-      text,
-      style: Theme.of(context).textTheme.labelSmall,
-    ),
-  );
 }

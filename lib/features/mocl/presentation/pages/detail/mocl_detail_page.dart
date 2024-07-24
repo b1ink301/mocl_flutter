@@ -9,6 +9,8 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../domain/entities/mocl_result.dart';
+import '../../widgets/image_widget.dart';
+import '../../widgets/loading_widget.dart';
 import '../../widgets/message_widget.dart';
 import 'mocl_detail_controller.dart';
 
@@ -120,10 +122,7 @@ class _DetailViewState extends State<_DetailView> {
       stream: detailController.detailStream.asBroadcastStream(),
       builder: (BuildContext context, AsyncSnapshot<Result> snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Padding(
-            padding: EdgeInsets.only(top: 16.0),
-            child: Center(child: CircularProgressIndicator()),
-          );
+          return const LoadingWidget();
         }
         if (snapshot.hasData && snapshot.data is ResultSuccess) {
           var result = snapshot.data as ResultSuccess<Details>;
@@ -158,13 +157,9 @@ class _DetailViewState extends State<_DetailView> {
             ),
           );
         } else {
-          return const Padding(
-            padding: EdgeInsets.only(top: 16.0),
-            child: Center(child: CircularProgressIndicator()),
-          );
+          return const LoadingWidget();
         }
-      },
-    );
+      });
 
   Widget _buildHeader(UserInfo userInfo) {
     return SizedBox(
@@ -174,11 +169,7 @@ class _DetailViewState extends State<_DetailView> {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
           children: [
-            CachedNetworkImage(
-              imageUrl: userInfo.nickImage,
-              fit: BoxFit.contain,
-              width: 18,
-            ),
+            ImageWidget(url: userInfo.nickImage),
             const Spacer(),
             Text(
               userInfo.nickName,
@@ -204,7 +195,10 @@ class _DetailViewState extends State<_DetailView> {
           child: Center(
             child: Text(
               '새로고침',
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(color: Theme.of(context).indicatorColor),
             ),
           ),
         );
@@ -226,7 +220,10 @@ class _DetailViewState extends State<_DetailView> {
             alignment: Alignment.centerLeft,
             child: Text(
               '댓글 (${comments.length})',
-              style: Theme.of(context).textTheme.bodyMedium,
+              style: Theme.of(context)
+                  .textTheme
+                  .bodyMedium
+                  ?.copyWith(color: Theme.of(context).indicatorColor),
             ),
           ),
         ),
@@ -250,11 +247,7 @@ class _DetailViewState extends State<_DetailView> {
                 children: [
                   Row(
                     children: [
-                      CachedNetworkImage(
-                        imageUrl: userInfo.nickImage,
-                        fit: BoxFit.contain,
-                        width: 18,
-                      ),
+                      ImageWidget(url: userInfo.nickImage),
                       const SizedBox(width: 8),
                       Text(
                         userInfo.nickName,

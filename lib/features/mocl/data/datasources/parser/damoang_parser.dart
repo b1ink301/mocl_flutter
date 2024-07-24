@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:html/dom.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
@@ -147,6 +149,7 @@ class DamoangParser extends BaseParser {
     String boardTitle,
     Future<bool> Function(int) isRead,
   ) async {
+    log('DamoangParser list');
     var elementList = document.querySelectorAll(
         'form[id=fboardlist] > section[id=bo_list] > ul.list-group > li.list-group-item > div.d-flex');
 
@@ -165,7 +168,7 @@ class DamoangParser extends BaseParser {
       var link = infoElement?.querySelector("div.d-flex > div > a");
       if (link == null) return null;
 
-      var url = link.attributes["href"] ?? '';
+      var url = link.attributes["href"]?.trim() ?? '';
       var uri = Uri.parse(url);
       var idString = uri.pathSegments.lastOrNull ?? '-1';
       var id = int.tryParse(idString) ?? -1; // int 파싱 오류 처리
@@ -196,7 +199,7 @@ class DamoangParser extends BaseParser {
         }
       }
 
-      var title = link.text;
+      var title = link.text.trim();
 
       var timeElement = infoElement
           ?.querySelector("div > div.d-flex > div.wr-date > span.da-list-date");
@@ -205,7 +208,7 @@ class DamoangParser extends BaseParser {
 
       var nickImage = metaElement
               ?.querySelector("span.profile_img > img.mb-photo")
-              ?.attributes["src"] ??
+              ?.attributes["src"]?.trim() ??
           '';
       var hitElement =
           infoElement?.querySelector("div > div.d-flex > div.wr-num.order-4");
@@ -229,16 +232,15 @@ class DamoangParser extends BaseParser {
       );
       ListItem item = ListItem(
         id: id,
-        title: title.trim(),
-        reply: reply.trim(),
-        category: category.trim(),
-        image: nickImage.trim(),
-        time: time.trim(),
-        url: url.trim(),
+        title: title,
+        reply: reply,
+        category: category,
+        time: time,
+        url: url,
         board: board,
         boardTitle: boardTitle,
-        like: like.trim(),
-        hit: hit.trim(),
+        like: like,
+        hit: hit,
         userInfo: userInfo,
         hasImage: hasImage,
         isRead: await isRead(id),
