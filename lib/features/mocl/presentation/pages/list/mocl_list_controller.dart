@@ -32,7 +32,7 @@ class ListController extends GetxController {
   };
 
   @override
-  void onInit() async {
+  void onInit() {
     super.onInit();
 
     pagingController.addPageRequestListener((pageKey) {

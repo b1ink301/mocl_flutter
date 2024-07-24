@@ -26,7 +26,7 @@ class ShowAddDialog extends GetView<MainController> {
           width: MediaQuery.of(context).size.width * 0.65,
           height: MediaQuery.of(context).size.height * 0.6,
           child: StreamBuilder<Result>(
-            stream: controller.getListFromJson(controller.siteType.value),
+            stream: controller.getListFromJson(),
             builder: (context, snapshot) {
               if (snapshot.hasData) {
                 log("snapshot=${snapshot.data.runtimeType}, status=${snapshot.data}");
@@ -47,11 +47,11 @@ class ShowAddDialog extends GetView<MainController> {
                           selectedItems.add(item);
                         }
                         return Column(
-                          mainAxisSize: MainAxisSize.max,
                           children: [
                             CheckBoxListTitleWidget(
                               text: item.text,
                               checked: item.hasItem,
+                              textStyle: Theme.of(context).textTheme.bodyMedium,
                               onChanged: (value) {
                                 if (value == true) {
                                   selectedItems.add(item);
@@ -85,10 +85,13 @@ class ShowAddDialog extends GetView<MainController> {
           TextButton(
             onPressed: () async {
               log('selectedItems=$selectedItems');
-              await controller.setList(controller.siteType.value, selectedItems);
+              await controller.setList(selectedItems);
               Get.back();
             },
-            child: const Text('닫기'),
+            child: Text(
+              '닫기',
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
           ),
         ],
       );

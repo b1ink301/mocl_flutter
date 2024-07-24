@@ -32,8 +32,8 @@ void main() async {
     parser = DamoangParser();
     localDatabase = LocalDatabase();
     listDataSource = ListDataSourceImpl(
-      parser: parser,
       localDatabase: localDatabase,
+      parser: parser,
     );
   });
 

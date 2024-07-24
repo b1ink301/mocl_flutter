@@ -2,6 +2,10 @@ import 'package:equatable/equatable.dart';
 
 import '../../features/mocl/domain/entities/mocl_result.dart';
 
+abstract class UseCaseNoFuture<Type, Params> {
+  Type call(Params params);
+}
+
 abstract class UseCase<Type, Params> {
   Future<Result> call(Params params);
 }

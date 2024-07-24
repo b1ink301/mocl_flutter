@@ -22,7 +22,6 @@ void main() async {
     title: '사설 댓글팀 보면 여론조작하는 세력을 놔두는거 같아요',
     reply: '',
     category: '',
-    image: '',
     time: '',
     url: 'https://damoang.net/free/1310241',
     board: 'free',

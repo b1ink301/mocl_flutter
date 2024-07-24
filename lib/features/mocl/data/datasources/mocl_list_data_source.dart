@@ -25,10 +25,19 @@ abstract class ListDataSource {
 }
 
 class ListDataSourceImpl extends ListDataSource {
-  final BaseParser parser;
   final LocalDatabase localDatabase;
+  final BaseParser parser;
 
-  ListDataSourceImpl({required this.localDatabase, required this.parser});
+  ListDataSourceImpl({
+    required this.localDatabase,
+    required this.parser,
+  });
+
+  // BaseParser getParser() {
+  //   var tag = preferences.getSiteType().name;
+  //   log('getParser=$tag');
+  //   return Get.find(tag: tag);
+  // }
 
   @override
   Future<Result> getList(MainItem item, int page) async {
@@ -43,7 +52,12 @@ class ListDataSourceImpl extends ListDataSource {
     log('getList response = ${response.statusCode}');
     if (response.statusCode == 200) {
       var document = parse(response.body);
-      return await parser.list(document, -1, item.text, isRead,);
+      return await parser.list(
+        document,
+        -1,
+        item.text,
+        isRead,
+      );
     } else {
       return await Future<ResultFailure<Failure>>.value(
           ResultFailure(failure: GetListFailure()));
