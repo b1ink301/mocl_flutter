@@ -18,6 +18,8 @@ class ListController extends GetxController {
   final PagingController<int, ListItemWrapper> pagingController =
       PagingController(firstPageKey: 1);
 
+  int lastId = -1;
+
   ListController({
     required GetList getList,
     required SetReadFlag setReadFlag,
@@ -25,18 +27,14 @@ class ListController extends GetxController {
         _setReadFlag = setReadFlag;
 
   String getAppbarTitle() => _mainItem.text;
-  String getAppbarSmallTitle() => switch(_mainItem.siteType) {
-    SiteType.clien => '클리앙',
-    SiteType.damoang => '다모앙',
-    _ => ''
-  };
+  String getAppbarSmallTitle() => _mainItem.siteType.title;
 
   @override
   void onInit() {
     super.onInit();
 
     pagingController.addPageRequestListener((pageKey) {
-      _fetchPage(_mainItem, pageKey);
+      _fetchPage(pageKey);
     });
   }
 
@@ -47,9 +45,9 @@ class ListController extends GetxController {
     pagingController.dispose();
   }
 
-  void _fetchPage(MainItem item, int page) async {
-    debugPrint('fetchPage item=$item, page=$page');
-    var params = GetListParams(mainItem: item, page: page);
+  void _fetchPage(int page) async {
+    debugPrint('fetchPage item=$_mainItem, page=$page, lastId=$lastId');
+    var params = GetListParams(mainItem: _mainItem, page: page, lastId: lastId);
     var result = await _getList(params);
 
     if (result is ResultSuccess) {
@@ -64,6 +62,7 @@ class ListController extends GetxController {
             ),
           )
           .toList();
+      lastId = list.lastOrNull?.item.id ?? -1;
       if (isLastPage) {
         pagingController.appendLastPage(list);
       } else {

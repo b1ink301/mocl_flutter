@@ -11,7 +11,7 @@ class GetMainListFromJson extends StreamUseCase<List<MainItem>, SiteType> {
   GetMainListFromJson({required this.mainRepository});
 
   @override
-  Stream<Result> call(SiteType siteType) async* {
-    yield* mainRepository.getMainListFromJson(siteType: siteType);
+  Stream<Result> call(SiteType params) async* {
+    yield* mainRepository.getMainListFromJson(siteType: params);
   }
 }

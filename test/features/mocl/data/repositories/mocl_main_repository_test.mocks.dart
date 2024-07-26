@@ -109,6 +109,7 @@ class MockListDataSource extends _i1.Mock implements _i7.ListDataSource {
   _i3.Future<_i8.Result> getList(
     _i4.MainItem? item,
     int? page,
+    int? lastId,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -116,6 +117,7 @@ class MockListDataSource extends _i1.Mock implements _i7.ListDataSource {
           [
             item,
             page,
+            lastId,
           ],
         ),
         returnValue: _i3.Future<_i8.Result>.value(_i9.dummyValue<_i8.Result>(
@@ -125,6 +127,7 @@ class MockListDataSource extends _i1.Mock implements _i7.ListDataSource {
             [
               item,
               page,
+              lastId,
             ],
           ),
         )),

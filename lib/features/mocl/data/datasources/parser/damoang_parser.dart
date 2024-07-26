@@ -19,7 +19,7 @@ class DamoangParser extends BaseParser {
   Future<Result> detail(Document document) async {
     final container = document.querySelector('article[id=bo_v]');
     final title =
-        container?.querySelector('header > h1[id=bo_v_title]')?.text ?? '';
+        container?.querySelector('header > h1[id=bo_v_title]')?.text.trim() ?? '';
     final timeElement = container?.querySelector(
         'section[id=bo_v_info] > div.d-flex > div > span.orangered');
     final time = timeElement?.text.trim() ??
@@ -145,7 +145,7 @@ class DamoangParser extends BaseParser {
   @override
   Future<Result> list(
     Document document,
-    int lastIndex,
+    int lastId,
     String boardTitle,
     Future<bool> Function(int) isRead,
   ) async {
@@ -172,8 +172,8 @@ class DamoangParser extends BaseParser {
       var uri = Uri.parse(url);
       var idString = uri.pathSegments.lastOrNull ?? '-1';
       var id = int.tryParse(idString) ?? -1; // int 파싱 오류 처리
-
-      if (id > 0 && id <= lastIndex) {
+      log('lastId=$lastId, id=$id');
+      if (id > 0 && lastId > 0 && id > lastId) {
         return null;
       }
 

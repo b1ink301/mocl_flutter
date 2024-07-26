@@ -11,6 +11,6 @@ class GetDetail extends UseCase<List<MainItem>, ListItem> {
   GetDetail({required this.detailRepository});
 
   @override
-  Future<Result> call(ListItem item) async =>
-      detailRepository.getDetail(item: item);
+  Future<Result> call(ListItem params) async =>
+      detailRepository.getDetail(item: params);
 }

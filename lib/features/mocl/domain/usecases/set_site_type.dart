@@ -9,7 +9,7 @@ class SetSiteType extends UseCaseNoFuture<void, SiteType> {
 
   @override
   void call(
-    SiteType siteType,
+    SiteType params,
   ) =>
-      settingsRepository.setSiteType(siteType);
+      settingsRepository.setSiteType(params);
 }

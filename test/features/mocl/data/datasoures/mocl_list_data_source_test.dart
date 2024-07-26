@@ -42,7 +42,7 @@ void main() async {
     log("result=$item");
 
     ResultSuccess<List<ListItem>> result =
-        await listDataSource.getList(item, 0) as ResultSuccess<List<ListItem>>;
+        await listDataSource.getList(item, 0, -1) as ResultSuccess<List<ListItem>>;
     log("result=${result.data.length}");
 
     expect(result, isA<ResultSuccess<List<ListItem>>>());

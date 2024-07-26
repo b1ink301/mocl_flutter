@@ -68,7 +68,6 @@ class _ListViewState extends State<_ListView> {
   @override
   PagedSliverList build(BuildContext context) =>
       PagedSliverList<int, ListItemWrapper>.separated(
-        // addAutomaticKeepAlives: false,
         pagingController: _listController.pagingController,
         builderDelegate: PagedChildBuilderDelegate<ListItemWrapper>(
           itemBuilder: (context, item, index) => InkWell(
@@ -134,7 +133,6 @@ class _ListViewState extends State<_ListView> {
       Row(
         children: [
           ImageWidget(url: userInfo.nickImage),
-          const SizedBox(width: 8),
           Text(
             userInfo.nickName,
             style: Theme.of(context).textTheme.bodySmall,

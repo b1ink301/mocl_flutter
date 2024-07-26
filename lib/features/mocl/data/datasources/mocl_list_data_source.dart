@@ -11,7 +11,7 @@ import '../../domain/entities/mocl_result.dart';
 import 'mocl_local_database.dart';
 
 abstract class ListDataSource {
-  Future<Result> getList(MainItem item, int page);
+  Future<Result> getList(MainItem item, int page, int lastId);
 
   Future<int> setReadFlag(
     SiteType siteType,
@@ -40,21 +40,22 @@ class ListDataSourceImpl extends ListDataSource {
   // }
 
   @override
-  Future<Result> getList(MainItem item, int page) async {
+  Future<Result> getList(MainItem item, int page, int lastId) async {
     Future<bool> isRead(int id) async => isReadFlag(item.siteType, id);
 
     final url = Uri.parse("${item.url}?page=$page");
     log('getList = $url');
-    // final headers = {
-    //   'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:126.0) Gecko/20100101 Firefox/126.0',
-    // };
-    final response = await http.Client().get(url);
+    final headers = {
+      'User-Agent':
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:126.0) Gecko/20100101 Firefox/126.0',
+    };
+    final response = await http.Client().get(url, headers: headers);
     log('getList response = ${response.statusCode}');
     if (response.statusCode == 200) {
       var document = parse(response.body);
       return await parser.list(
         document,
-        -1,
+        lastId,
         item.text,
         isRead,
       );

@@ -7,6 +7,7 @@ abstract class ListRepository {
   Future<Result> getList({
     required MainItem item,
     required int page,
+    required int lastId,
   });
 
   Future<Result> setReadFlag({

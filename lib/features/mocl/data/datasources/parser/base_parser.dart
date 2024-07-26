@@ -5,7 +5,7 @@ import '../../../domain/entities/mocl_result.dart';
 abstract class BaseParser {
   Future<Result> list(
     Document document,
-    int lastIndex,
+    int lastId,
     String boardTitle,
     Future<bool> Function(int) isRead,
   );
