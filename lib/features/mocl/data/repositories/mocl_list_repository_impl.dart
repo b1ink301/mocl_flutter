@@ -18,8 +18,9 @@ class ListRepositoryImpl extends ListRepository {
   Future<Result> getList({
     required MainItem item,
     required int page,
+    required int lastId,
   }) =>
-      listDataSource.getList(item, page);
+      listDataSource.getList(item, page, lastId);
 
   @override
   Future<Result> setReadFlag({

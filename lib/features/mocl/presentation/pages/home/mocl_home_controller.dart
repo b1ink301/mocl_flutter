@@ -32,12 +32,6 @@ class HomeController extends GetxController {
   }
 
   @override
-  void onInit() {
-    super.onInit();
-    // changePage(0);
-  }
-
-  @override
   void dispose() {
     pageController.dispose();
     super.dispose();

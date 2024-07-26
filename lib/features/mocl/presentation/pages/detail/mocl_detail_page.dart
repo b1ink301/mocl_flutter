@@ -25,8 +25,10 @@ class DetailPage extends GetView<DetailController> {
             message: controller.getAppbarSmallTitle(),
             fontSize: 13,
           ),
-          MessageWidget(
-            message: controller.getAppbarTitle(),
+          Obx(
+            () => MessageWidget(
+              message: controller.getAppbarTitle().value,
+            ),
           ),
         ],
       );
@@ -59,7 +61,7 @@ class DetailPage extends GetView<DetailController> {
   double _calculateTitleHeight(BuildContext context) {
     final textPainter = TextPainter(
       text: TextSpan(
-        text: controller.getAppbarTitle(), // 텍스트 가져오기
+        text: controller.getAppbarTitle().value, // 텍스트 가져오기
         style: Theme.of(context).textTheme.bodyMedium, // 텍스트 스타일 적용
       ),
       maxLines: 2, // 최대 3줄
@@ -77,7 +79,6 @@ class DetailPage extends GetView<DetailController> {
         onPopInvoked: (didPop) async {
           log('onPopInvoked=$didPop');
           if (didPop) return;
-
           Get.back<bool>(result: controller.isReadFlag);
         },
         child: Scaffold(
@@ -85,18 +86,6 @@ class DetailPage extends GetView<DetailController> {
             controller: controller.scrollController,
             slivers: <Widget>[
               _buildAppbar(context),
-              // SliverPersistentHeader(
-              //   pinned: false,
-              //   delegate: HeaderDelegate(
-              //     userInfo: controller.userInfo,
-              //   ),
-              // ),
-              // const SliverToBoxAdapter(
-              //   child: Divider(
-              //     indent: 16,
-              //     endIndent: 4,
-              //   ),
-              // ),
               SliverToBoxAdapter(
                 child: Padding(
                   padding: const EdgeInsets.fromLTRB(18, 0, 4, 0),
@@ -127,18 +116,30 @@ class _DetailViewState extends State<_DetailView> {
         if (snapshot.hasData && snapshot.data is ResultSuccess) {
           var result = snapshot.data as ResultSuccess<Details>;
           detailController.setReadFlag();
+          var hexColor =
+              detailController.getHexColor(Theme.of(context).indicatorColor);
+
           return SingleChildScrollView(
             child: Column(
               mainAxisAlignment: MainAxisAlignment.start,
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildHeader(detailController.userInfo),
+                _buildHeader(detailController.userInfo, detailController.time),
                 const Divider(),
                 const SizedBox(height: 10),
                 HtmlWidget(
                   result.data.bodyHtml,
+                  customStylesBuilder: (element) {
+                    if (element.localName == 'a') {
+                      return {
+                        'color': hexColor,
+                        'text-decoration': 'underline',
+                      };
+                    }
+                  },
                   textStyle: Theme.of(context).textTheme.bodyMedium,
+                  renderMode: RenderMode.column,
                   onTapUrl: (url) async {
                     final Uri uri = Uri.parse(url);
                     if (!await launchUrl(uri)) {
@@ -161,30 +162,28 @@ class _DetailViewState extends State<_DetailView> {
         }
       });
 
-  Widget _buildHeader(UserInfo userInfo) {
-    return SizedBox(
-      height: 42,
-      child: Center(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            ImageWidget(url: userInfo.nickImage),
-            const Spacer(),
-            Text(
-              userInfo.nickName,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-            // const Spacer(),
-            // Text('comment.time'),
-            const Spacer(
-              flex: 30,
-            ),
-          ],
+  Widget _buildHeader(UserInfo userInfo, String time) => SizedBox(
+        height: 42,
+        child: Center(
+          child: Row(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              ImageWidget(url: userInfo.nickImage),
+              Text(
+                userInfo.nickName,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                time,
+                style: Theme.of(context).textTheme.bodySmall,
+              ),
+              const Spacer(),
+            ],
+          ),
         ),
-      ),
-    );
-  }
+      );
 
   Widget _buildComments(
     BuildContext context,
@@ -248,7 +247,6 @@ class _DetailViewState extends State<_DetailView> {
                   Row(
                     children: [
                       ImageWidget(url: userInfo.nickImage),
-                      const SizedBox(width: 8),
                       Text(
                         userInfo.nickName,
                         style: Theme.of(context).textTheme.bodySmall,

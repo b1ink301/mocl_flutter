@@ -16,10 +16,13 @@ class ImageWidget extends StatelessWidget {
       return const SizedBox.shrink();
     }
 
-    return CachedNetworkImage(
-      imageUrl: url,
-      fit: BoxFit.contain,
-      height: 18,
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: CachedNetworkImage(
+        imageUrl: url,
+        fit: BoxFit.contain,
+        height: 17,
+      ),
     );
   }
 }

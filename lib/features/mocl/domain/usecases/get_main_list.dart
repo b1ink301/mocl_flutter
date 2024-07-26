@@ -12,6 +12,6 @@ class GetMainList extends UseCase<List<MainItem>, SiteType> {
 
   @override
   Future<Result> call(
-      SiteType siteType,
-  ) async => await mainRepository.getMainList(siteType: siteType);
+      SiteType params,
+  ) async => await mainRepository.getMainList(siteType: params);
 }

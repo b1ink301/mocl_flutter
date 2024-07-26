@@ -20,10 +20,11 @@ class DetailDataSourceImpl extends DetailDataSource {
   Future<Result> getDetail(ListItem item) async {
     final url = Uri.parse(item.url);
     debugPrint('getDetail = $url');
-    // final headers = {
-    //   'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:126.0) Gecko/20100101 Firefox/126.0',
-    // };
-    final response = await http.Client().get(url);
+    final headers = {
+      'User-Agent':
+          'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:126.0) Gecko/20100101 Firefox/126.0',
+    };
+    final response = await http.Client().get(url, headers: headers);
     debugPrint('getDetail response = ${response.statusCode}');
     if (response.statusCode == 200) {
       var document = parse(response.body);

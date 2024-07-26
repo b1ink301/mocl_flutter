@@ -172,7 +172,7 @@ class ClienParser extends BaseParser {
   @override
   Future<Result> list(
     Document document,
-    int lastIndex,
+    int lastId,
     String boardTitle,
     Future<bool> Function(int p1) isRead,
   ) async {
@@ -180,7 +180,7 @@ class ClienParser extends BaseParser {
     var elementList = document.querySelectorAll("a.list_item.symph-row");
     var resultList = await Future.wait(elementList.map((element) async {
       var id = int.tryParse(element.attributes['data-board-sn'] ?? '') ?? 0;
-      if (lastIndex >= 1 && lastIndex <= id) {
+      if (id > 0 && lastId > 0 && id > lastId) {
         return null;
       }
 
