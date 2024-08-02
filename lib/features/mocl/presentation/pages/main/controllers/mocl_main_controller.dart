@@ -15,7 +15,7 @@ import '../../../../domain/entities/mocl_result.dart';
 import '../../../../domain/entities/mocl_site_type.dart';
 import '../../mocl_routes.dart';
 
-class MainController extends GetxController {
+class MainController extends GetxController with StateMixin<List<MainItem>> {
   final GetMainList _getMainList;
   final SetMainList _setMainList;
   final GetMainListFromJson _getMainListFromJson;
@@ -35,13 +35,15 @@ class MainController extends GetxController {
         _setSiteType = setSiteType,
         _getSiteType = getSiteType;
 
-  final _mainListStreamController = StreamController<Result>.broadcast();
+  // final _mainListStreamController = StreamController<Result>.broadcast();
+  // Stream<Result> get mainListStream => _mainListStreamController.stream;
+  // Stream<Result> getList() async* {
+  //   yield* mainListStream;
+  // }
 
-  Stream<Result> get mainListStream => _mainListStreamController.stream;
+  final Rx<Result> _data = Rx<Result>(ResultLoading());
 
-  Stream<Result> getList() async* {
-    yield* mainListStream;
-  }
+  Rx<Result> get data => _data;
 
   String siteName() => siteType.value.title;
 
@@ -53,13 +55,22 @@ class MainController extends GetxController {
   }
 
   void initMainList() async {
-    // data.value = ResultLoading();
-    _mainListStreamController.add(ResultLoading());
-    var result =
-        await _getMainList(siteType.value) as ResultSuccess<List<MainItem>>;
-    debugPrint('initMainList length=${result.data.length}');
-    // data.value = result;
-    _mainListStreamController.add(result);
+    change(null, status: RxStatus.loading());
+    // _data.value = ResultLoading();
+    // _mainListStreamController.add(ResultLoading());
+    var result = await _getMainList(siteType.value);
+
+    if (result is ResultSuccess<List<MainItem>>) {
+      debugPrint('initMainList length=${result.data.length}');
+      if (result.data.isEmpty) {
+        change(null, status: RxStatus.empty());
+      } else {
+        change(result.data, status: RxStatus.success());
+      }
+    } else if (result is ResultFailure) {
+      change(null, status: RxStatus.error());
+    }
+    // _mainListStreamController.add(result);
   }
 
   Future<List<int>> setList(
@@ -80,13 +91,13 @@ class MainController extends GetxController {
     yield* _getMainListFromJson(siteType.value);
   }
 
-  @override
-  void dispose() {
-    closeSteam();
-    super.dispose();
-  }
+  // @override
+  // void dispose() {
+  //   // closeSteam();
+  //   super.dispose();
+  // }
 
-  void closeSteam() => _mainListStreamController.close();
+  // void closeSteam() => _mainListStreamController.close();
 
   void gotoListPage(MainItem item) => Get.toNamed(
         Routes.LIST,

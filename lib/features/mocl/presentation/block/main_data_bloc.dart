@@ -5,6 +5,7 @@ import 'package:bloc/bloc.dart';
 import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
 import '../../domain/usecases/get_main_list.dart';
@@ -32,18 +33,13 @@ class MainDataBloc extends Bloc<MainDataEvent, MainDataState> {
     log('MainDataBloc event=$event');
     switch (event) {
       case GetMainDataEvent():
-
         emit(const MainDataState.initial());
-        // var params = GetMainParams(siteType: event.siteType);
-        // var result = await getMainList.call(params);
-        // result.fold((failure) {
-        //   print('GetMainDataEvent failure=$failure');
-        //   emit(const MainDataState.failure("failure"));
-        // }, (data) {
-        //   print('MainDataBloc event=$data');
-        //   emit(MainDataState.success(data));
-        // });
-        break;
+        var result = await getMainList.call(event.siteType);
+        if (result is ResultSuccess) {
+          emit(MainDataState.success(result.data));
+        } else if (result is ResultFailure) {
+          emit(const MainDataState.failure("failure"));
+        }
       case SetMainDataEvent():
         break;
     }

@@ -85,5 +85,8 @@ class ListController extends GetxController {
     }
   }
 
-  void reload() => pagingController.refresh();
+  void reload() {
+    lastId = -1;
+    pagingController.refresh();
+  }
 }

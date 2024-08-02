@@ -6,6 +6,7 @@ class MoclTheme {
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFF595D66),
           foregroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
           systemOverlayStyle:
               SystemUiOverlayStyle(statusBarColor: Color(0xFF4d5057)),
         ),
@@ -22,6 +23,7 @@ class MoclTheme {
         // ),
         // listTileTheme: ListTileThemeData(),
         indicatorColor: const Color(0xFF0E7EA3),
+        highlightColor: const Color(0xFFAAAAAA),
         primaryColor: const Color(0xFF595D66),
         scaffoldBackgroundColor: const Color(0xFFEAEBE6),
         dialogBackgroundColor: const Color(0xFFEAEBE6),
@@ -32,8 +34,8 @@ class MoclTheme {
         ),
         textTheme: const TextTheme(
           bodyMedium: TextStyle(color: Color(0xFF111111), fontSize: 17),
-          bodySmall: TextStyle(color: Color(0xFF555555), fontSize: 15),
-          labelSmall: TextStyle(color: Color(0xFF555555), fontSize: 10),
+          bodySmall: TextStyle(color: Color(0xFF888888), fontSize: 14),
+          labelSmall: TextStyle(color: Color(0xFF888888), fontSize: 10),
           headlineSmall: TextStyle(color: Color(0xFF555555), fontSize: 16),
         ),
       );
@@ -42,6 +44,7 @@ class MoclTheme {
         appBarTheme: const AppBarTheme(
           backgroundColor: Color(0xFF292929),
           foregroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
           systemOverlayStyle:
               SystemUiOverlayStyle(statusBarColor: Color(0xFF1f1f1f)),
         ),
@@ -51,9 +54,10 @@ class MoclTheme {
           thickness: 1,
         ),
         indicatorColor: const Color(0xFFFF4081),
+        highlightColor: const Color(0xFF888888),
         textTheme: const TextTheme(
           bodyMedium: TextStyle(color: Color(0xFFEEEEEE), fontSize: 17),
-          bodySmall: TextStyle(color: Color(0xFFAAAAAA), fontSize: 15),
+          bodySmall: TextStyle(color: Color(0xFFAAAAAA), fontSize: 14),
           labelSmall: TextStyle(color: Color(0xFFAAAAAA), fontSize: 10),
           headlineSmall: TextStyle(color: Color(0xFFAAAAAA), fontSize: 16),
         ),

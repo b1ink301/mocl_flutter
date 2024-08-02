@@ -176,11 +176,10 @@ class ClienParser extends BaseParser {
     String boardTitle,
     Future<bool> Function(int p1) isRead,
   ) async {
-    log('ClienParser list');
     var elementList = document.querySelectorAll("a.list_item.symph-row");
     var resultList = await Future.wait(elementList.map((element) async {
       var id = int.tryParse(element.attributes['data-board-sn'] ?? '') ?? 0;
-      if (id > 0 && lastId > 0 && id > lastId) {
+      if (id <= 0 || lastId > 0 && id >= lastId) {
         return null;
       }
 

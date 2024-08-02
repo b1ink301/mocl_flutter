@@ -169,11 +169,11 @@ class DamoangParser extends BaseParser {
       if (link == null) return null;
 
       var url = link.attributes["href"]?.trim() ?? '';
-      var uri = Uri.parse(url);
+      var uri = Uri.tryParse(url);
+      if (uri==null) return null;
       var idString = uri.pathSegments.lastOrNull ?? '-1';
-      var id = int.tryParse(idString) ?? -1; // int 파싱 오류 처리
-      log('lastId=$lastId, id=$id');
-      if (id > 0 && lastId > 0 && id > lastId) {
+      var id = int.tryParse(idString) ?? -1;
+      if (id <= 0 || lastId > 0 && id >= lastId) {
         return null;
       }
 
