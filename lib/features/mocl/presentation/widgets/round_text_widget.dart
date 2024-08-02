@@ -17,7 +17,7 @@ class RoundTextWidget extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
       decoration: BoxDecoration(
         border:
-            Border.all(color: Theme.of(context).textTheme.labelSmall!.color!),
+            Border.all(color: textStyle?.color ?? const Color(0xFF000000)),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(

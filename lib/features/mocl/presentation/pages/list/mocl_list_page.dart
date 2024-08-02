@@ -77,10 +77,10 @@ class _ListViewState extends State<_ListView> {
                 builder: (BuildContext context, value, Widget? child) =>
                     _buildListItem(context, item)),
             onTap: () async {
-              var isReadFlag =
-                  await Get.toNamed(Routes.DETAIL, arguments: item.item);
+              await Get.toNamed(Routes.DETAIL, arguments: item.item);
+              var isReadFlag = Get.parameters.remove(Routes.DETAIL);
               log('isReadFlag=$isReadFlag');
-              if (isReadFlag != null && isReadFlag) {
+              if (isReadFlag != null) {
                 _listController.setReadFlag(item);
               }
             },
@@ -100,11 +100,13 @@ class _ListViewState extends State<_ListView> {
   ) {
     var textStyle = Theme.of(context).textTheme.bodyMedium;
     var smallTextStyle = Theme.of(context).textTheme.bodySmall;
+    var badgeTextStyle = Theme.of(context).textTheme.labelSmall;
     var listItem = listItemWrapper.item;
     if (listItemWrapper.isReadNotifier.value) {
-      textStyle = textStyle?.copyWith(color: Theme.of(context).highlightColor);
-      smallTextStyle =
-          smallTextStyle?.copyWith(color: Theme.of(context).highlightColor);
+      var color = Theme.of(context).highlightColor;
+      textStyle = textStyle?.copyWith(color: color);
+      badgeTextStyle = badgeTextStyle?.copyWith(color: color);
+      smallTextStyle = smallTextStyle?.copyWith(color: color);
     }
     return Padding(
       padding: const EdgeInsets.fromLTRB(18, 12, 4, 12),
@@ -123,6 +125,7 @@ class _ListViewState extends State<_ListView> {
             listItem.reply,
             listItem.time,
             smallTextStyle,
+            badgeTextStyle,
           ),
         ],
       ),
@@ -135,6 +138,7 @@ class _ListViewState extends State<_ListView> {
     String reply,
     String time,
     TextStyle? textStyle,
+    TextStyle? badgeTextStyle,
   ) =>
       Row(
         children: [
@@ -151,7 +155,7 @@ class _ListViewState extends State<_ListView> {
           const Spacer(),
           RoundTextWidget(
             text: reply,
-            textStyle: textStyle,
+            textStyle: badgeTextStyle,
           ),
           const SizedBox(width: 8),
         ],

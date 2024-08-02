@@ -75,29 +75,18 @@ class DetailPage extends GetView<DetailController> {
   }
 
   @override
-  Widget build(BuildContext context) => PopScope(
-        canPop: false,
-        onPopInvoked: (didPop) async {
-          log('onPopInvoked=$didPop');
-          if (didPop) {
-            // Get.key.currentState?.pop<bool>(controller.isReadFlag);
-            return;
-          }
-          Get.back<bool>(result: controller.isReadFlag);
-        },
-        child: Scaffold(
-          body: CustomScrollView(
-            controller: controller.scrollController,
-            slivers: <Widget>[
-              _buildAppbar(context),
-              SliverToBoxAdapter(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(18, 0, 4, 0),
-                  child: _DetailView(),
-                ),
+  Widget build(BuildContext context) => Scaffold(
+        body: CustomScrollView(
+          controller: controller.scrollController,
+          slivers: <Widget>[
+            _buildAppbar(context),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(18, 0, 4, 0),
+                child: _DetailView(),
               ),
-            ],
-          ),
+            ),
+          ],
         ),
       );
 }
@@ -120,6 +109,7 @@ class _DetailViewState extends State<_DetailView> {
         if (snapshot.hasData && snapshot.data is ResultSuccess) {
           var result = snapshot.data as ResultSuccess<Details>;
           detailController.setReadFlag();
+
           var hexColor =
               detailController.getHexColor(Theme.of(context).indicatorColor);
 
@@ -194,15 +184,17 @@ class _DetailViewState extends State<_DetailView> {
     BuildContext context,
     List<CommentItem> comments,
   ) {
-    Widget buildRefreshButton() => SizedBox(
-          height: 56,
-          child: Center(
+    Widget buildRefreshButton() => InkWell(
+          onTap: () => detailController.reload(),
+          child: Container(
+            width: double.infinity, // 가로 꽉 채우기
+            height: 56,
+            alignment: Alignment.center,
             child: Text(
               '새로고침',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: Theme.of(context).indicatorColor),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).indicatorColor,
+                  ),
             ),
           ),
         );

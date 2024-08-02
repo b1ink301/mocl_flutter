@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/views/mocl_show_add_dialog.dart';
 
 import '../../../widgets/loading_widget.dart';
