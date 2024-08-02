@@ -9,6 +9,7 @@ import 'package:mocl_flutter/features/mocl/domain/usecases/get_detail.dart';
 
 import '../../../domain/entities/mocl_result.dart';
 import '../../../domain/entities/mocl_user_info.dart';
+import '../mocl_routes.dart';
 
 class DetailController extends GetxController {
   final ScrollController scrollController = ScrollController();
@@ -63,7 +64,10 @@ class DetailController extends GetxController {
   String getAppbarSmallTitle() => _listItem.boardTitle;
   RxString getAppbarTitle() => _appBarTitle;
 
-  void setReadFlag() => isReadFlag = true;
+  void setReadFlag() {
+    isReadFlag = true;
+    Get.parameters[Routes.DETAIL] = 'read';
+  }
 
   void reload() {
     scrollController.jumpTo(0);

@@ -1,4 +1,3 @@
-import 'dart:developer';
 
 import 'package:html/dom.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
