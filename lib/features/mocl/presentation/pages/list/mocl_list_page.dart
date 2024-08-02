@@ -23,6 +23,7 @@ class ListPage extends GetView<ListController> {
             message: controller.getAppbarSmallTitle(),
             fontSize: 12,
           ),
+          const SizedBox(height: 4),
           MessageWidget(
             message: controller.getAppbarTitle(),
           ),
@@ -32,7 +33,7 @@ class ListPage extends GetView<ListController> {
   SliverAppBar _buildAppbar(BuildContext context) => SliverAppBar(
         title: _buildTitle(),
         automaticallyImplyLeading: false,
-        toolbarHeight: 60,
+        toolbarHeight: 64,
         floating: true,
         pinned: false,
         actions: [
@@ -98,9 +99,12 @@ class _ListViewState extends State<_ListView> {
     ListItemWrapper listItemWrapper,
   ) {
     var textStyle = Theme.of(context).textTheme.bodyMedium;
+    var smallTextStyle = Theme.of(context).textTheme.bodySmall;
     var listItem = listItemWrapper.item;
     if (listItemWrapper.isReadNotifier.value) {
-      textStyle = textStyle?.copyWith(color: const Color(0xFF777777));
+      textStyle = textStyle?.copyWith(color: Theme.of(context).highlightColor);
+      smallTextStyle =
+          smallTextStyle?.copyWith(color: Theme.of(context).highlightColor);
     }
     return Padding(
       padding: const EdgeInsets.fromLTRB(18, 12, 4, 12),
@@ -112,12 +116,13 @@ class _ListViewState extends State<_ListView> {
             listItem.title,
             style: textStyle,
           ),
-          const SizedBox(height: 10),
+          const SizedBox(height: 8),
           _buildBottomView(
             context,
             listItem.userInfo,
             listItem.reply,
             listItem.time,
+            smallTextStyle,
           ),
         ],
       ),
@@ -129,21 +134,25 @@ class _ListViewState extends State<_ListView> {
     UserInfo userInfo,
     String reply,
     String time,
+    TextStyle? textStyle,
   ) =>
       Row(
         children: [
           ImageWidget(url: userInfo.nickImage),
           Text(
             userInfo.nickName,
-            style: Theme.of(context).textTheme.bodySmall,
+            style: textStyle,
           ),
           const SizedBox(width: 8),
           Text(
             time,
-            style: Theme.of(context).textTheme.bodySmall,
+            style: textStyle,
           ),
           const Spacer(),
-          RoundTextWidget(text: reply),
+          RoundTextWidget(
+            text: reply,
+            textStyle: textStyle,
+          ),
           const SizedBox(width: 8),
         ],
       );

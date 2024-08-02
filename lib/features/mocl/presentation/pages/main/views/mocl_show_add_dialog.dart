@@ -44,19 +44,26 @@ class ShowAddDialog extends GetView<MainController> {
                         final item = result.data[index];
 
                         if (item.hasItem) {
-                          selectedItems.add(item);
+                          if (!selectedItems.contains(item)) {
+                            selectedItems.add(item);
+                          }
                         }
+
                         return Column(
                           children: [
                             CheckBoxListTitleWidget(
                               text: item.text,
-                              checked: item.hasItem,
+                              checked: item.hasItem || selectedItems.contains(item),
                               textStyle: Theme.of(context).textTheme.bodyMedium,
                               onChanged: (value) {
                                 if (value == true) {
-                                  selectedItems.add(item);
+                                  if (!selectedItems.contains(item)) {
+                                    selectedItems.add(item);
+                                  }
                                 } else {
-                                  selectedItems.remove(item);
+                                  if (selectedItems.contains(item)) {
+                                    selectedItems.remove(item);
+                                  }
                                 }
                               },
                             )

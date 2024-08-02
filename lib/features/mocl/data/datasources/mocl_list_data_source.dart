@@ -33,17 +33,16 @@ class ListDataSourceImpl extends ListDataSource {
     required this.parser,
   });
 
-  // BaseParser getParser() {
-  //   var tag = preferences.getSiteType().name;
-  //   log('getParser=$tag');
-  //   return Get.find(tag: tag);
-  // }
-
   @override
   Future<Result> getList(MainItem item, int page, int lastId) async {
     Future<bool> isRead(int id) async => isReadFlag(item.siteType, id);
-
-    final url = Uri.parse("${item.url}?page=$page");
+    var params = '';
+    if (item.siteType == SiteType.clien) {
+      params = '&od=T31&category=0&po=$page';
+    } else {
+      params = 'page=$page';
+    }
+    final url = Uri.parse("${item.url}?$params");
     log('getList = $url');
     final headers = {
       'User-Agent':

@@ -11,7 +11,10 @@ dependencies:
     sdk: flutter
 
   cupertino_icons: ^1.0.6
+
+  # HTML 파서
   html: ^0.15.4
+  # HTML Widget
   flutter_widget_from_html: ^0.15.1
   # Service locator
   get_it: ^7.7.0
@@ -22,8 +25,8 @@ dependencies:
   # Functional programming thingies
   dartz: ^0.10.1
   # Remote API
-#  data_connection_checker: ^0.3.4
   internet_connection_checker_plus: ^2.4.2
+  # Http Client
   http: ^1.2.1
   # Local cache
   shared_preferences: ^2.2.3
@@ -31,18 +34,26 @@ dependencies:
   json_annotation: ^4.9.0
 
   # NoSQL
-#  hive: ^2.2.3
-#  hive_flutter: ^1.1.0
   isar: ^3.1.0
   isar_flutter_libs: ^3.1.0
 
+  # Path
   path_provider: ^2.1.3
+
+  # class 자동화
   freezed_annotation: ^2.4.1
+
+  # GetX
   get: ^4.6.6
   get_storage: ^2.1.1
+
+  # 무한 스크롤 리스트
   infinite_scroll_pagination: ^4.0.0
+
+  # 이미지 캐시
   cached_network_image: ^3.3.1
 
+  # URL 런처
   url_launcher: ^6.3.0
 
 dev_dependencies:
@@ -52,7 +63,6 @@ dev_dependencies:
   flutter_lints: ^4.0.0
   build_runner: ^2.4.11
   json_serializable: ^6.8.0
-#  hive_generator: ^2.0.1
   mockito: ^5.4.4
   isar_generator: ^3.1.0+1
   freezed: ^2.5.2

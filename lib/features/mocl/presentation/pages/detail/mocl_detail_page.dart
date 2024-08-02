@@ -25,6 +25,7 @@ class DetailPage extends GetView<DetailController> {
             message: controller.getAppbarSmallTitle(),
             fontSize: 13,
           ),
+          const SizedBox(height: 4),
           Obx(
             () => MessageWidget(
               message: controller.getAppbarTitle().value,
@@ -78,7 +79,10 @@ class DetailPage extends GetView<DetailController> {
         canPop: false,
         onPopInvoked: (didPop) async {
           log('onPopInvoked=$didPop');
-          if (didPop) return;
+          if (didPop) {
+            // Get.key.currentState?.pop<bool>(controller.isReadFlag);
+            return;
+          }
           Get.back<bool>(result: controller.isReadFlag);
         },
         child: Scaffold(
@@ -137,6 +141,7 @@ class _DetailViewState extends State<_DetailView> {
                         'text-decoration': 'underline',
                       };
                     }
+                    return null;
                   },
                   textStyle: Theme.of(context).textTheme.bodyMedium,
                   renderMode: RenderMode.column,
@@ -209,6 +214,9 @@ class _DetailViewState extends State<_DetailView> {
       ]);
     }
 
+    var hexColor =
+        detailController.getHexColor(Theme.of(context).indicatorColor);
+
     return Column(
       children: [
         const SizedBox(height: 10),
@@ -263,6 +271,15 @@ class _DetailViewState extends State<_DetailView> {
                   HtmlWidget(
                     comment.bodyHtml,
                     textStyle: Theme.of(context).textTheme.bodyMedium,
+                    customStylesBuilder: (element) {
+                      if (element.localName == 'a') {
+                        return {
+                          'color': hexColor,
+                          'text-decoration': 'underline',
+                        };
+                      }
+                      return null;
+                    },
                     onTapUrl: (url) async {
                       final Uri uri = Uri.parse(url);
                       if (!await launchUrl(uri)) {

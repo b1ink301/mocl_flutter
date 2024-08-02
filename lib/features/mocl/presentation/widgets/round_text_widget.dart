@@ -2,8 +2,9 @@ import 'package:flutter/material.dart';
 
 class RoundTextWidget extends StatelessWidget {
   final String text;
+  final TextStyle? textStyle;
 
-  const RoundTextWidget({super.key, required this.text});
+  const RoundTextWidget({super.key, required this.text, this.textStyle});
 
   @override
   Widget build(BuildContext context) => _buildRoundText(context);
@@ -21,7 +22,7 @@ class RoundTextWidget extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: Theme.of(context).textTheme.labelSmall,
+        style: textStyle,
       ),
     );
   }
