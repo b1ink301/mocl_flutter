@@ -11,12 +11,13 @@ import 'mocl_drawer_widget.dart';
 class MainPage extends GetView<MainController> {
   const MainPage({super.key});
 
-  Widget _buildTitle() => Obx(() => MessageWidget(
+  Widget _buildTitle(BuildContext context) => Obx(() => MessageWidget(
         message: controller.siteName(),
+        textStyle: Theme.of(context).textTheme.labelMedium,
       ));
 
   AppBar _buildAppbar(BuildContext context) => AppBar(
-        title: _buildTitle(),
+        title: _buildTitle(context),
         titleSpacing: 0,
         toolbarHeight: 60,
         // elevation: 8,
