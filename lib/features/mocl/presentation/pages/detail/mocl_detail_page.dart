@@ -36,8 +36,7 @@ class DetailPage extends GetView<DetailController> {
         ],
       );
 
-  SliverAppBar _buildAppbar(BuildContext context) {
-    return SliverAppBar(
+  SliverAppBar _buildAppbar(BuildContext context) => SliverAppBar(
       title: _buildTitle(context),
       flexibleSpace: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
@@ -59,7 +58,6 @@ class DetailPage extends GetView<DetailController> {
         )
       ],
     );
-  }
 
   @override
   Widget build(BuildContext context) => Scaffold(

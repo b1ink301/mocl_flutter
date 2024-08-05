@@ -52,6 +52,11 @@ class MainController extends GetxController with StateMixin<List<MainItem>> {
   void onInit() async {
     super.onInit();
     siteType = _getSiteType(NoParams()).obs;
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
     initMainList();
   }
 

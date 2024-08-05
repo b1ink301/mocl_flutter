@@ -48,6 +48,11 @@ class DetailController extends GetxController {
     super.onInit();
     _appBarTitle.value = _listItem.title;
     isReadFlag = _listItem.isRead;
+  }
+
+  @override
+  void onReady() {
+    super.onReady();
     getDetail(_listItem);
   }
 
@@ -95,7 +100,7 @@ class DetailController extends GetxController {
       maxLines: 2,
       textDirection: TextDirection.ltr,
     )..layout(
-        minWidth: 0, maxWidth: MediaQuery.of(context).size.width - 24 - 16 * 2);
+        minWidth: 0, maxWidth: MediaQuery.of(context).size.width - (24 + 16 * 3));
 
     final titleHeight = textPainter.height + 4;
     log('titleHeight = $titleHeight');
