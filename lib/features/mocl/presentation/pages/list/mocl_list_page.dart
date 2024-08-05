@@ -16,24 +16,26 @@ import 'mocl_list_controller.dart';
 class ListPage extends GetView<ListController> {
   const ListPage({super.key});
 
-  Widget _buildTitle() => Column(
+  Widget _buildTitle(BuildContext context) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           MessageWidget(
             message: controller.getAppbarSmallTitle(),
-            fontSize: 12,
+            textStyle:
+                Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 12),
           ),
           const SizedBox(height: 4),
           MessageWidget(
+            textStyle: Theme.of(context).textTheme.labelMedium,
             message: controller.getAppbarTitle(),
           ),
         ],
       );
 
   SliverAppBar _buildAppbar(BuildContext context) => SliverAppBar(
-        title: _buildTitle(),
+        title: _buildTitle(context),
         automaticallyImplyLeading: false,
-        toolbarHeight: 64,
+        toolbarHeight: 60,
         floating: true,
         pinned: false,
         actions: [
@@ -109,7 +111,7 @@ class _ListViewState extends State<_ListView> {
       smallTextStyle = smallTextStyle?.copyWith(color: color);
     }
     return Padding(
-      padding: const EdgeInsets.fromLTRB(18, 12, 4, 12),
+      padding: const EdgeInsets.fromLTRB(16, 8, 4, 8),
       child: Column(
         key: Key(listItem.id.toString()),
         crossAxisAlignment: CrossAxisAlignment.start,

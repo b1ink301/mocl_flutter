@@ -1,4 +1,5 @@
-import 'dart:developer';
+import 'dart:developer' as dev;
+import 'dart:math';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -17,26 +18,27 @@ import 'mocl_detail_controller.dart';
 class DetailPage extends GetView<DetailController> {
   const DetailPage({super.key});
 
-  Widget _buildTitle() => Column(
+  Widget _buildTitle(BuildContext context) => Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
+        // mainAxisSize: MainAxisSize.min,
         children: [
           MessageWidget(
             message: controller.getAppbarSmallTitle(),
-            fontSize: 13,
+            textStyle:
+                Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 12),
           ),
           const SizedBox(height: 4),
           Obx(
             () => MessageWidget(
-              message: controller.getAppbarTitle().value,
-            ),
+                message: controller.getAppbarTitle().value,
+                textStyle: Theme.of(context).textTheme.labelMedium),
           ),
         ],
       );
 
   SliverAppBar _buildAppbar(BuildContext context) {
     return SliverAppBar(
-      title: _buildTitle(),
+      title: _buildTitle(context),
       flexibleSpace: LayoutBuilder(
         builder: (BuildContext context, BoxConstraints constraints) {
           return const FlexibleSpaceBar(
@@ -45,7 +47,7 @@ class DetailPage extends GetView<DetailController> {
           );
         },
       ),
-      toolbarHeight: 40 + _calculateTitleHeight(context),
+      toolbarHeight: controller.calculateTitleHeight(),
       automaticallyImplyLeading: false,
       // elevation: 8,
       floating: true,
@@ -59,21 +61,6 @@ class DetailPage extends GetView<DetailController> {
     );
   }
 
-  double _calculateTitleHeight(BuildContext context) {
-    final textPainter = TextPainter(
-      text: TextSpan(
-        text: controller.getAppbarTitle().value, // 텍스트 가져오기
-        style: Theme.of(context).textTheme.bodyMedium, // 텍스트 스타일 적용
-      ),
-      maxLines: 2, // 최대 3줄
-      textDirection: TextDirection.ltr,
-    )..layout(minWidth: 0, maxWidth: MediaQuery.of(context).size.width - 60);
-
-    final titleHeight = textPainter.height;
-    log('titleHeight = $titleHeight');
-    return titleHeight; // 텍스트 높이 반환
-  }
-
   @override
   Widget build(BuildContext context) => Scaffold(
         body: CustomScrollView(
@@ -82,7 +69,7 @@ class DetailPage extends GetView<DetailController> {
             _buildAppbar(context),
             SliverToBoxAdapter(
               child: Padding(
-                padding: const EdgeInsets.fromLTRB(18, 0, 4, 0),
+                padding: const EdgeInsets.fromLTRB(16, 0, 4, 0),
                 child: _DetailView(),
               ),
             ),
@@ -222,7 +209,7 @@ class _DetailViewState extends State<_DetailView> {
               style: Theme.of(context)
                   .textTheme
                   .bodyMedium
-                  ?.copyWith(color: Theme.of(context).indicatorColor),
+                  ?.copyWith(color: Theme.of(context).indicatorColor, fontSize: 15),
             ),
           ),
         ),

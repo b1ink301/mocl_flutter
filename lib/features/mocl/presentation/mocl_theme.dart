@@ -37,6 +37,7 @@ class MoclTheme {
           bodySmall: TextStyle(color: Color(0xFF888888), fontSize: 14),
           labelSmall: TextStyle(color: Color(0xFF888888), fontSize: 10),
           headlineSmall: TextStyle(color: Color(0xFF555555), fontSize: 16),
+          labelMedium: TextStyle(color: Colors.white, fontSize: 16),
         ),
       );
 
@@ -60,6 +61,7 @@ class MoclTheme {
           bodySmall: TextStyle(color: Color(0xFFAAAAAA), fontSize: 14),
           labelSmall: TextStyle(color: Color(0xFFAAAAAA), fontSize: 10),
           headlineSmall: TextStyle(color: Color(0xFFAAAAAA), fontSize: 16),
+          labelMedium: TextStyle(color: Colors.white, fontSize: 16),
         ),
         primaryColor: const Color(0xFF292929),
         scaffoldBackgroundColor: const Color(0xFF333333),
