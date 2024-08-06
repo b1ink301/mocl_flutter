@@ -39,6 +39,12 @@ class MoclTheme {
           headlineSmall: TextStyle(color: Color(0xFF555555), fontSize: 16),
           labelMedium: TextStyle(color: Colors.white, fontSize: 16),
         ),
+        // pageTransitionsTheme: const PageTransitionsTheme(
+        //   builders: {
+        //     TargetPlatform.android: CupertinoPageTransitionsBuilder(),
+        //     TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        //   },
+        // ),
       );
 
   static ThemeData get darkTheme => ThemeData(
@@ -66,5 +72,11 @@ class MoclTheme {
         primaryColor: const Color(0xFF292929),
         scaffoldBackgroundColor: const Color(0xFF333333),
         dialogBackgroundColor: const Color(0xFF333333),
+        // pageTransitionsTheme: const PageTransitionsTheme(
+        //   builders: {
+        //     TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
+        //     TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
+        //   },
+        // ),
       );
 }
