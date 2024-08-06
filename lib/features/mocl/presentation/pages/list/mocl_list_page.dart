@@ -10,7 +10,7 @@ import '../../models/mocl_list_item_wrapper.dart';
 import '../../widgets/image_widget.dart';
 import '../../widgets/loading_widget.dart';
 import '../../widgets/round_text_widget.dart';
-import '../mocl_routes.dart';
+import '../../routes/mocl_app_pages.dart';
 import 'mocl_list_controller.dart';
 
 class ListPage extends GetView<ListController> {
@@ -22,7 +22,7 @@ class ListPage extends GetView<ListController> {
           MessageWidget(
             message: controller.getAppbarSmallTitle(),
             textStyle:
-                Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 12),
+                Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 11),
           ),
           const SizedBox(height: 4),
           MessageWidget(
@@ -80,10 +80,11 @@ class _ListViewState extends State<_ListView> {
                     _buildListItem(context, item)),
             onTap: () async {
               await Get.toNamed(Routes.DETAIL, arguments: item.item);
-              var isReadFlag = Get.parameters.remove(Routes.DETAIL);
+              var isReadFlag = Get.findOrNull<bool>(tag: Routes.DETAIL);
               log('isReadFlag=$isReadFlag');
               if (isReadFlag != null) {
                 _listController.setReadFlag(item);
+                Get.delete<bool>(tag: Routes.DETAIL);
               }
             },
           ),

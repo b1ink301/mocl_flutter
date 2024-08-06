@@ -71,7 +71,8 @@ class ListController extends GetxController {
       }
     } else if (result is ResultFailure) {
       pagingController.error = result.failure;
-    } else if (result is ResultLoading) {}
+    } else if (result is ResultLoading) {
+    }
   }
 
   void setReadFlag(ListItemWrapper itemWrapper) async {
