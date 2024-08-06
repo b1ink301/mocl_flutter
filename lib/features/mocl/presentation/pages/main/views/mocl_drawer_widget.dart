@@ -14,8 +14,15 @@ class DrawerWidget extends StatelessWidget {
         child: Column(
           children: [
             Container(
-              height: 200,
+              height: 240,
               color: Theme.of(context).primaryColor,
+              child: Center(
+                child: Image.asset(
+                  'assets/icon.png',
+                  width: 100,
+                  height: 100,
+                ),
+              ),
             ),
             ListTile(
               title: const Text('다모앙'),

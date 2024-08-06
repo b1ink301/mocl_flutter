@@ -1,12 +1,9 @@
-import 'dart:developer';
-
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../widgets/image_widget.dart';
 import '../../widgets/loading_widget.dart';
@@ -25,7 +22,7 @@ class DetailPage extends GetView<DetailController> {
             textStyle:
                 Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 11),
           ),
-          const SizedBox(height: 4),
+          const SizedBox(height: 2),
           Obx(
             () => MessageWidget(
                 message: controller.getAppbarTitle().value,
@@ -37,12 +34,11 @@ class DetailPage extends GetView<DetailController> {
   SliverAppBar _buildAppbar(BuildContext context) => SliverAppBar(
         title: _buildTitle(context),
         flexibleSpace: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) {
-            return const FlexibleSpaceBar(
-              title: SizedBox.shrink(),
-              collapseMode: CollapseMode.none,
-            );
-          },
+          builder: (BuildContext context, BoxConstraints constraints) =>
+              const FlexibleSpaceBar(
+            title: SizedBox.shrink(),
+            collapseMode: CollapseMode.none,
+          ),
         ),
         toolbarHeight: controller.calculateTitleHeight(),
         automaticallyImplyLeading: false,
@@ -53,25 +49,42 @@ class DetailPage extends GetView<DetailController> {
           IconButton(
             onPressed: () => controller.reload(),
             icon: const Icon(Icons.refresh),
-          )
+          ),
+          PopupMenuButton<String>(
+            onSelected: (String value) {
+              switch (value) {
+                case 'OpenBrowser':
+                  controller.openBrowserByMenu();
+                  break;
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              return [
+                const PopupMenuItem(
+                  value: 'OpenBrowser',
+                  child: Text('브라우저로 열기'),
+                ),
+              ];
+            },
+          ),
         ],
       );
 
   @override
   Widget build(BuildContext context) => Scaffold(
-    body: CustomScrollView(
-      controller: controller.scrollController,
-      slivers: <Widget>[
-        _buildAppbar(context),
-        SliverToBoxAdapter(
-          child: Padding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 4, 0),
-            child: _DetailView(),
-          ),
+        body: CustomScrollView(
+          controller: controller.scrollController,
+          slivers: <Widget>[
+            _buildAppbar(context),
+            SliverToBoxAdapter(
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(16, 0, 4, 0),
+                child: _DetailView(),
+              ),
+            ),
+          ],
         ),
-      ],
-    ),
-  );
+      );
 }
 
 class _DetailView extends StatefulWidget {
@@ -88,8 +101,10 @@ class _DetailViewState extends State<_DetailView> {
           if (data == null) return const SizedBox.shrink();
           _detailController.setReadFlag();
 
-          var hexColor =
-              _detailController.getHexColor(Theme.of(context).indicatorColor);
+          final theme = Theme.of(context);
+          final hexColor = _detailController.getHexColor(theme.indicatorColor);
+          final bodySmall = theme.textTheme.bodySmall;
+          final bodyMedium = theme.textTheme.bodyMedium;
 
           return SingleChildScrollView(
             child: Column(
@@ -98,7 +113,10 @@ class _DetailViewState extends State<_DetailView> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 _buildHeader(
-                    _detailController.userInfo, _detailController.time),
+                  _detailController.userInfo,
+                  _detailController.time,
+                  bodySmall,
+                ),
                 const Divider(),
                 const SizedBox(height: 10),
                 HtmlWidget(
@@ -112,21 +130,17 @@ class _DetailViewState extends State<_DetailView> {
                     }
                     return null;
                   },
-                  textStyle: Theme.of(context).textTheme.bodyMedium,
+                  textStyle: bodyMedium,
                   renderMode: RenderMode.column,
-                  onTapUrl: (url) async {
-                    final Uri uri = Uri.parse(url);
-                    if (!await launchUrl(uri)) {
-                      throw Exception('Could not launch $uri');
-                    }
-                    return true;
-                  },
+                  onTapUrl: (url) => _detailController.openBrowser(url),
                 ),
                 const SizedBox(height: 10),
                 _buildComments(
                   context,
                   hexColor,
                   data.data.comments,
+                  bodySmall,
+                  bodyMedium,
                 ),
                 const Divider(),
               ],
@@ -146,7 +160,12 @@ class _DetailViewState extends State<_DetailView> {
         ),
       );
 
-  Widget _buildHeader(UserInfo userInfo, String time) => SizedBox(
+  Widget _buildHeader(
+    UserInfo userInfo,
+    String time,
+    TextStyle? bodySmall,
+  ) =>
+      SizedBox(
         height: 42,
         child: Center(
           child: Row(
@@ -156,12 +175,12 @@ class _DetailViewState extends State<_DetailView> {
               ImageWidget(url: userInfo.nickImage),
               Text(
                 userInfo.nickName,
-                style: Theme.of(context).textTheme.bodySmall,
+                style: bodySmall,
               ),
               const SizedBox(width: 8),
               Text(
                 time,
-                style: Theme.of(context).textTheme.bodySmall,
+                style: bodySmall,
               ),
               const Spacer(),
             ],
@@ -173,6 +192,8 @@ class _DetailViewState extends State<_DetailView> {
     BuildContext context,
     String hexColor,
     List<CommentItem> comments,
+    TextStyle? bodySmall,
+    TextStyle? bodyMedium,
   ) {
     Widget buildRefreshButton() => InkWell(
           onTap: () => _detailController.reload(),
@@ -182,9 +203,9 @@ class _DetailViewState extends State<_DetailView> {
             alignment: Alignment.center,
             child: Text(
               '새로고침',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                    color: Theme.of(context).indicatorColor,
-                  ),
+              style: bodyMedium?.copyWith(
+                color: Theme.of(context).indicatorColor,
+              ),
             ),
           ),
         );
@@ -206,7 +227,7 @@ class _DetailViewState extends State<_DetailView> {
             alignment: Alignment.centerLeft,
             child: Text(
               '댓글 (${comments.length})',
-              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+              style: bodyMedium?.copyWith(
                   color: Theme.of(context).indicatorColor, fontSize: 15),
             ),
           ),
@@ -234,12 +255,12 @@ class _DetailViewState extends State<_DetailView> {
                       ImageWidget(url: userInfo.nickImage),
                       Text(
                         userInfo.nickName,
-                        style: Theme.of(context).textTheme.bodySmall,
+                        style: bodySmall,
                       ),
                       const SizedBox(width: 8),
                       Text(
                         comment.time,
-                        style: Theme.of(context).textTheme.bodySmall,
+                        style: bodySmall,
                       ),
                       const Spacer(),
                     ],
@@ -247,7 +268,7 @@ class _DetailViewState extends State<_DetailView> {
                   const SizedBox(height: 10.0),
                   HtmlWidget(
                     comment.bodyHtml,
-                    textStyle: Theme.of(context).textTheme.bodyMedium,
+                    textStyle: bodyMedium,
                     customStylesBuilder: (element) {
                       if (element.localName == 'a') {
                         return {
@@ -257,13 +278,7 @@ class _DetailViewState extends State<_DetailView> {
                       }
                       return null;
                     },
-                    onTapUrl: (url) async {
-                      final Uri uri = Uri.parse(url);
-                      if (!await launchUrl(uri)) {
-                        throw Exception('Could not launch $uri');
-                      }
-                      return true;
-                    },
+                    onTapUrl: (url) => _detailController.openBrowser(url),
                   ),
                 ],
               ),

@@ -4,7 +4,6 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:mocl_flutter/core/usecases/usecase.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_main_list.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_main_list_from_json.dart';
@@ -37,15 +36,9 @@ class MainController extends GetxController with StateMixin<List<MainItem>> {
         _setSiteType = setSiteType,
         _getSiteType = getSiteType;
 
-  // final _mainListStreamController = StreamController<Result>.broadcast();
-  // Stream<Result> get mainListStream => _mainListStreamController.stream;
-  // Stream<Result> getList() async* {
-  //   yield* mainListStream;
-  // }
+  final Rx<Result> _dataFromJson = Rx<Result>(ResultLoading());
 
-  final Rx<Result> _data = Rx<Result>(ResultLoading());
-
-  Rx<Result> get data => _data;
+  Rx<Result> get dataFromJson => _dataFromJson;
 
   String siteName() => siteType.value.title;
 
@@ -63,9 +56,7 @@ class MainController extends GetxController with StateMixin<List<MainItem>> {
 
   void initMainList() async {
     change(LoadingStatus());
-    // _data.value = ResultLoading();
-    // _mainListStreamController.add(ResultLoading());
-    var result = await _getMainList(siteType.value);
+    final result = await _getMainList(siteType.value);
 
     if (result is ResultSuccess<List<MainItem>>) {
       debugPrint('initMainList length=${result.data.length}');
@@ -77,14 +68,16 @@ class MainController extends GetxController with StateMixin<List<MainItem>> {
     } else if (result is ResultFailure) {
       change(ErrorStatus(result));
     }
-    // _mainListStreamController.add(result);
   }
 
   Future<List<int>> setList(
     List<MainItem> selectedItems,
   ) async {
-    var params = SetMainParams(siteType: siteType.value, list: selectedItems);
-    var result = await _setMainList(params);
+    final params = SetMainParams(
+      siteType: siteType.value,
+      list: selectedItems,
+    );
+    final result = await _setMainList(params);
 
     if (result is ResultSuccess<List<int>>) {
       initMainList();
@@ -94,17 +87,10 @@ class MainController extends GetxController with StateMixin<List<MainItem>> {
     return Future.value(List.empty());
   }
 
-  Stream<Result> getListFromJson() async* {
-    yield* _getMainListFromJson(siteType.value);
+  void getListFromJson() async {
+    _dataFromJson.value = ResultLoading();
+    _dataFromJson.value = await _getMainListFromJson(siteType.value);
   }
-
-  // @override
-  // void dispose() {
-  //   // closeSteam();
-  //   super.dispose();
-  // }
-
-  // void closeSteam() => _mainListStreamController.close();
 
   void gotoListPage(MainItem item) => Get.toNamed(
         Routes.LIST,

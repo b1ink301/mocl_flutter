@@ -67,7 +67,7 @@ class MockMainRepository extends _i1.Mock implements _i2.MainRepository {
       ) as _i3.Future<_i4.Result>);
 
   @override
-  _i3.Stream<_i4.Result> getMainListFromJson(
+  _i3.Future<_i4.Result> getMainListFromJson(
           {required _i5.SiteType? siteType}) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -75,8 +75,15 @@ class MockMainRepository extends _i1.Mock implements _i2.MainRepository {
           [],
           {#siteType: siteType},
         ),
-        returnValue: _i3.Stream<_i4.Result>.empty(),
-      ) as _i3.Stream<_i4.Result>);
+        returnValue: _i3.Future<_i4.Result>.value(_i6.dummyValue<_i4.Result>(
+          this,
+          Invocation.method(
+            #getMainListFromJson,
+            [],
+            {#siteType: siteType},
+          ),
+        )),
+      ) as _i3.Future<_i4.Result>);
 
   @override
   _i3.Future<_i4.Result> setMainList({

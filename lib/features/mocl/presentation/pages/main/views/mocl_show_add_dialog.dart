@@ -17,89 +17,84 @@ class ShowAddDialog extends GetView<MainController> {
   ShowAddDialog({super.key});
 
   @override
-  Widget build(BuildContext context) => AlertDialog(
-        title: Text(
-          '게시판 선택',
-          style: Theme.of(context).textTheme.headlineSmall,
-        ),
-        content: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.65,
-          height: MediaQuery.of(context).size.height * 0.6,
-          child: StreamBuilder<Result>(
-            stream: controller.getListFromJson(),
-            builder: (context, snapshot) {
-              if (snapshot.hasData) {
-                log("snapshot=${snapshot.data.runtimeType}, status=${snapshot.data}");
-                if (snapshot.data is ResultLoading) {
-                  return const LoadingWidget();
-                } else if (snapshot.data is ResultInitial) {
-                  return const LoadingWidget();
-                } else if (snapshot.data is ResultSuccess<List<MainItem>>) {
-                  var result =
-                      snapshot.requireData as ResultSuccess<List<MainItem>>;
-                  return ListView.separated(
-                      shrinkWrap: true,
-                      itemCount: result.data.length,
-                      itemBuilder: (context, index) {
-                        final item = result.data[index];
+  Widget build(BuildContext context) {
+    controller.getListFromJson();
 
-                        if (item.hasItem) {
-                          if (!selectedItems.contains(item)) {
-                            selectedItems.add(item);
+    return AlertDialog(
+      title: Text(
+        '게시판 선택',
+        style: Theme.of(context).textTheme.headlineSmall,
+      ),
+      content: SizedBox(
+        width: MediaQuery.of(context).size.width * 0.65,
+        height: MediaQuery.of(context).size.height * 0.6,
+        child: Obx(() {
+          final data = controller.dataFromJson.value;
+          if (data is ResultLoading) {
+            return const LoadingWidget();
+          } else if (data is ResultInitial) {
+            return const LoadingWidget();
+          } else if (data is ResultSuccess<List<MainItem>>) {
+            return ListView.separated(
+                shrinkWrap: true,
+                itemCount: data.data.length,
+                itemBuilder: (context, index) {
+                  final item = data.data[index];
+
+                  if (item.hasItem) {
+                    if (!selectedItems.contains(item)) {
+                      selectedItems.add(item);
+                    }
+                  }
+
+                  return Column(
+                    children: [
+                      CheckBoxListTitleWidget(
+                        text: item.text,
+                        checked: item.hasItem || selectedItems.contains(item),
+                        textStyle: Theme.of(context).textTheme.bodyMedium,
+                        onChanged: (value) {
+                          if (value == true) {
+                            if (!selectedItems.contains(item)) {
+                              selectedItems.add(item);
+                            }
+                          } else {
+                            if (selectedItems.contains(item)) {
+                              selectedItems.remove(item);
+                            }
                           }
-                        }
-
-                        return Column(
-                          children: [
-                            CheckBoxListTitleWidget(
-                              text: item.text,
-                              checked: item.hasItem || selectedItems.contains(item),
-                              textStyle: Theme.of(context).textTheme.bodyMedium,
-                              onChanged: (value) {
-                                if (value == true) {
-                                  if (!selectedItems.contains(item)) {
-                                    selectedItems.add(item);
-                                  }
-                                } else {
-                                  if (selectedItems.contains(item)) {
-                                    selectedItems.remove(item);
-                                  }
-                                }
-                              },
-                            )
-                          ],
-                        );
-                      },
-                      separatorBuilder: (BuildContext context, int index) =>
-                          const Divider(
-                            height: 1,
-                            thickness: 1,
-                            indent: 12,
-                            endIndent: 8,
-                          ));
-                } else if (snapshot.data is ResultFailure) {
-                  return const MessageWidget(message: 'MainDataError');
-                } else {
-                  return const MessageWidget(message: 'MainDataError else');
-                }
-              } else {
-                return const LoadingWidget();
-              }
-            },
+                        },
+                      )
+                    ],
+                  );
+                },
+                separatorBuilder: (BuildContext context, int index) =>
+                    const Divider(
+                      height: 1,
+                      thickness: 1,
+                      indent: 12,
+                      endIndent: 8,
+                    ));
+          } else if (data is ResultFailure) {
+            return const MessageWidget(message: 'MainDataError');
+          } else {
+            return const MessageWidget(message: 'MainDataError else');
+          }
+        }),
+      ),
+      actions: [
+        TextButton(
+          onPressed: () async {
+            log('selectedItems=$selectedItems');
+            await controller.setList(selectedItems);
+            Get.closeAllDialogs();
+          },
+          child: Text(
+            '닫기',
+            style: Theme.of(context).textTheme.headlineSmall,
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () async {
-              log('selectedItems=$selectedItems');
-              await controller.setList(selectedItems);
-              Get.back();
-            },
-            child: Text(
-              '닫기',
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-          ),
-        ],
-      );
+      ],
+    );
+  }
 }

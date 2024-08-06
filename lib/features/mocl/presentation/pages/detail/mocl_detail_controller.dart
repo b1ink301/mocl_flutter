@@ -7,6 +7,7 @@ import 'package:get/get.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_detail.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../domain/entities/mocl_result.dart';
 import '../../../domain/entities/mocl_user_info.dart';
@@ -85,6 +86,13 @@ class DetailController extends GetxController
     getDetail(_listItem);
   }
 
+  void openBrowserByMenu() => openBrowser(_listItem.url);
+
+  Future<bool> openBrowser(String url) async {
+    final Uri uri = Uri.parse(url);
+    return await launchUrl(uri);
+  }
+
   double calculateTitleHeight() {
     var context = Get.context;
     if (context == null) return 30;
@@ -98,7 +106,7 @@ class DetailController extends GetxController
       textDirection: TextDirection.ltr,
     )..layout(
         minWidth: 0,
-        maxWidth: MediaQuery.of(context).size.width - (24 + 16 * 3));
+        maxWidth: MediaQuery.of(context).size.width - (24 * 2 + 16 * 4));
 
     final titleHeight = textPainter.height + 4;
     log('titleHeight = $titleHeight');

@@ -45,11 +45,10 @@ class MainRepositoryImpl extends MainRepository {
   }
 
   @override
-  Stream<Result> getMainListFromJson({
+  Future<Result> getMainListFromJson({
     required SiteType siteType,
-  }) async* {
+  }) async {
     try {
-      yield ResultLoading();
       final mainData = await mainDataSource.getAllFromJson(siteType);
       final result = mainData.map((data) => data.toMainItem(siteType));
       var futures = result.map((item) async {
@@ -58,9 +57,9 @@ class MainRepositoryImpl extends MainRepository {
       }).toList();
 
       var list = await Future.wait(futures);
-      yield ResultSuccess<List<MainItem>>(data: list);
+      return ResultSuccess<List<MainItem>>(data: list);
     } on Exception {
-      yield ResultFailure<Failure>(failure: GetMainFailure());
+      return ResultFailure<Failure>(failure: GetMainFailure());
     }
   }
 
