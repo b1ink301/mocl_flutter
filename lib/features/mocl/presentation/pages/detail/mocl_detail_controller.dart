@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:developer';
 import 'dart:math' as math;
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
@@ -11,15 +10,15 @@ import 'package:mocl_flutter/features/mocl/domain/usecases/get_detail.dart';
 
 import '../../../domain/entities/mocl_result.dart';
 import '../../../domain/entities/mocl_user_info.dart';
-import '../mocl_routes.dart';
+import '../../routes/mocl_app_pages.dart';
 
-class DetailController extends GetxController {
+class DetailController extends GetxController
+    with StateMixin<ResultSuccess<Details>> {
   final ScrollController scrollController = ScrollController();
   final GetDetail _getDetail;
   final ListItem _listItem = Get.arguments;
   final RxString _appBarTitle = ''.obs;
   final RxDouble _appBarHeight = 60.0.obs;
-  bool isReadFlag = false;
 
   DetailController({required GetDetail getDetail}) : _getDetail = getDetail;
 
@@ -47,7 +46,6 @@ class DetailController extends GetxController {
   void onInit() {
     super.onInit();
     _appBarTitle.value = _listItem.title;
-    isReadFlag = _listItem.isRead;
   }
 
   @override
@@ -61,15 +59,17 @@ class DetailController extends GetxController {
   }
 
   void getDetail(ListItem item) async {
-    _detailStreamController.add(ResultLoading());
+    change(LoadingStatus());
     var result = await _getDetail(item);
     if (result is ResultSuccess) {
       var details = result as ResultSuccess<Details>;
       _appBarTitle.value = details.data.title;
       // _appBarHeight.value = calculateTitleHeight();
+      change(SuccessStatus(details));
       log('appBarTitle = ${details.data.title}');
+    } else if (result is ResultFailure) {
+      change(ErrorStatus(result));
     }
-    _detailStreamController.add(result);
   }
 
   String getAppbarSmallTitle() => _listItem.boardTitle;
@@ -78,10 +78,7 @@ class DetailController extends GetxController {
 
   RxDouble getAppbarHeight() => _appBarHeight;
 
-  void setReadFlag() {
-    isReadFlag = true;
-    Get.parameters[Routes.DETAIL] = 'read';
-  }
+  void setReadFlag() => Get.put<bool>(true, tag: Routes.DETAIL);
 
   void reload() {
     scrollController.jumpTo(0);
@@ -100,7 +97,8 @@ class DetailController extends GetxController {
       maxLines: 2,
       textDirection: TextDirection.ltr,
     )..layout(
-        minWidth: 0, maxWidth: MediaQuery.of(context).size.width - (24 + 16 * 3));
+        minWidth: 0,
+        maxWidth: MediaQuery.of(context).size.width - (24 + 16 * 3));
 
     final titleHeight = textPainter.height + 4;
     log('titleHeight = $titleHeight');

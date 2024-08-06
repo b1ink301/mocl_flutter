@@ -1,5 +1,4 @@
-import 'dart:developer' as dev;
-import 'dart:math';
+import 'dart:developer';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +8,6 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../domain/entities/mocl_result.dart';
 import '../../widgets/image_widget.dart';
 import '../../widgets/loading_widget.dart';
 import '../../widgets/message_widget.dart';
@@ -25,7 +23,7 @@ class DetailPage extends GetView<DetailController> {
           MessageWidget(
             message: controller.getAppbarSmallTitle(),
             textStyle:
-                Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 12),
+                Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 11),
           ),
           const SizedBox(height: 4),
           Obx(
@@ -37,43 +35,43 @@ class DetailPage extends GetView<DetailController> {
       );
 
   SliverAppBar _buildAppbar(BuildContext context) => SliverAppBar(
-      title: _buildTitle(context),
-      flexibleSpace: LayoutBuilder(
-        builder: (BuildContext context, BoxConstraints constraints) {
-          return const FlexibleSpaceBar(
-            title: SizedBox.shrink(),
-            collapseMode: CollapseMode.none,
-          );
-        },
-      ),
-      toolbarHeight: controller.calculateTitleHeight(),
-      automaticallyImplyLeading: false,
-      // elevation: 8,
-      floating: true,
-      pinned: false,
-      actions: [
-        IconButton(
-          onPressed: () => controller.reload(),
-          icon: const Icon(Icons.refresh),
-        )
-      ],
-    );
+        title: _buildTitle(context),
+        flexibleSpace: LayoutBuilder(
+          builder: (BuildContext context, BoxConstraints constraints) {
+            return const FlexibleSpaceBar(
+              title: SizedBox.shrink(),
+              collapseMode: CollapseMode.none,
+            );
+          },
+        ),
+        toolbarHeight: controller.calculateTitleHeight(),
+        automaticallyImplyLeading: false,
+        // elevation: 8,
+        floating: true,
+        pinned: false,
+        actions: [
+          IconButton(
+            onPressed: () => controller.reload(),
+            icon: const Icon(Icons.refresh),
+          )
+        ],
+      );
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        body: CustomScrollView(
-          controller: controller.scrollController,
-          slivers: <Widget>[
-            _buildAppbar(context),
-            SliverToBoxAdapter(
-              child: Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 4, 0),
-                child: _DetailView(),
-              ),
-            ),
-          ],
+    body: CustomScrollView(
+      controller: controller.scrollController,
+      slivers: <Widget>[
+        _buildAppbar(context),
+        SliverToBoxAdapter(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 4, 0),
+            child: _DetailView(),
+          ),
         ),
-      );
+      ],
+    ),
+  );
 }
 
 class _DetailView extends StatefulWidget {
@@ -82,21 +80,16 @@ class _DetailView extends StatefulWidget {
 }
 
 class _DetailViewState extends State<_DetailView> {
-  final DetailController detailController = Get.find();
+  final DetailController _detailController = Get.find();
 
   @override
-  Widget build(BuildContext context) => StreamBuilder<Result>(
-      stream: detailController.detailStream.asBroadcastStream(),
-      builder: (BuildContext context, AsyncSnapshot<Result> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const LoadingWidget();
-        }
-        if (snapshot.hasData && snapshot.data is ResultSuccess) {
-          var result = snapshot.data as ResultSuccess<Details>;
-          detailController.setReadFlag();
+  Widget build(BuildContext context) => _detailController.obx(
+        (data) {
+          if (data == null) return const SizedBox.shrink();
+          _detailController.setReadFlag();
 
           var hexColor =
-              detailController.getHexColor(Theme.of(context).indicatorColor);
+              _detailController.getHexColor(Theme.of(context).indicatorColor);
 
           return SingleChildScrollView(
             child: Column(
@@ -104,11 +97,12 @@ class _DetailViewState extends State<_DetailView> {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                _buildHeader(detailController.userInfo, detailController.time),
+                _buildHeader(
+                    _detailController.userInfo, _detailController.time),
                 const Divider(),
                 const SizedBox(height: 10),
                 HtmlWidget(
-                  result.data.bodyHtml,
+                  data.data.bodyHtml,
                   customStylesBuilder: (element) {
                     if (element.localName == 'a') {
                       return {
@@ -131,16 +125,26 @@ class _DetailViewState extends State<_DetailView> {
                 const SizedBox(height: 10),
                 _buildComments(
                   context,
-                  result.data.comments,
+                  hexColor,
+                  data.data.comments,
                 ),
                 const Divider(),
               ],
             ),
           );
-        } else {
-          return const LoadingWidget();
-        }
-      });
+        },
+        onLoading: const LoadingWidget(),
+        onError: (error) => Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Text(
+            '에러가 발생했습니다',
+            style: TextStyle(
+              fontSize: 16,
+              color: Theme.of(context).indicatorColor,
+            ),
+          ),
+        ),
+      );
 
   Widget _buildHeader(UserInfo userInfo, String time) => SizedBox(
         height: 42,
@@ -167,10 +171,11 @@ class _DetailViewState extends State<_DetailView> {
 
   Widget _buildComments(
     BuildContext context,
+    String hexColor,
     List<CommentItem> comments,
   ) {
     Widget buildRefreshButton() => InkWell(
-          onTap: () => detailController.reload(),
+          onTap: () => _detailController.reload(),
           child: Container(
             width: double.infinity, // 가로 꽉 채우기
             height: 56,
@@ -191,9 +196,6 @@ class _DetailViewState extends State<_DetailView> {
       ]);
     }
 
-    var hexColor =
-        detailController.getHexColor(Theme.of(context).indicatorColor);
-
     return Column(
       children: [
         const SizedBox(height: 10),
@@ -204,10 +206,8 @@ class _DetailViewState extends State<_DetailView> {
             alignment: Alignment.centerLeft,
             child: Text(
               '댓글 (${comments.length})',
-              style: Theme.of(context)
-                  .textTheme
-                  .bodyMedium
-                  ?.copyWith(color: Theme.of(context).indicatorColor, fontSize: 15),
+              style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                  color: Theme.of(context).indicatorColor, fontSize: 15),
             ),
           ),
         ),
