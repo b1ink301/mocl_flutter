@@ -4,17 +4,18 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:mocl_flutter/core/usecases/usecase.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_main_list.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_main_list_from_json.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_main_list.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_site_type.dart';
+import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
 
 import '../../../../domain/entities/mocl_main_item.dart';
 import '../../../../domain/entities/mocl_result.dart';
 import '../../../../domain/entities/mocl_site_type.dart';
-import '../../mocl_routes.dart';
 
 class MainController extends GetxController with StateMixin<List<MainItem>> {
   final GetMainList _getMainList;
@@ -61,7 +62,7 @@ class MainController extends GetxController with StateMixin<List<MainItem>> {
   }
 
   void initMainList() async {
-    change(null, status: RxStatus.loading());
+    change(LoadingStatus());
     // _data.value = ResultLoading();
     // _mainListStreamController.add(ResultLoading());
     var result = await _getMainList(siteType.value);
@@ -69,12 +70,12 @@ class MainController extends GetxController with StateMixin<List<MainItem>> {
     if (result is ResultSuccess<List<MainItem>>) {
       debugPrint('initMainList length=${result.data.length}');
       if (result.data.isEmpty) {
-        change(null, status: RxStatus.empty());
+        change(EmptyStatus());
       } else {
-        change(result.data, status: RxStatus.success());
+        change(SuccessStatus(result.data));
       }
     } else if (result is ResultFailure) {
-      change(null, status: RxStatus.error());
+      change(ErrorStatus(result));
     }
     // _mainListStreamController.add(result);
   }

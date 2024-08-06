@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/mocl_routes.dart';
+import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
 
 import '../../domain/entities/mocl_main_item.dart';
 

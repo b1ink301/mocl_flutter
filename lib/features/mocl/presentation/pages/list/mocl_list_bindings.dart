@@ -9,29 +9,28 @@ import '../../../data/datasources/mocl_list_data_source.dart';
 import '../../../domain/usecases/get_list.dart';
 import 'mocl_list_controller.dart';
 
-class ListBindings extends Bindings {
+class ListBindings extends Binding {
   @override
-  void dependencies() {
-    var tag = Get.find<GetSiteType>().call(NoParams()).name;
-    Get.lazyPut<ListDataSource>(
+  List<Bind> dependencies() => [
+    Bind.lazyPut<ListDataSource>(
         () => ListDataSourceImpl(
         localDatabase: Get.find(),
-        parser: Get.find(tag: tag),
+        parser: Get.find(tag: Get.find<GetSiteType>().call(NoParams()).name),
       ),
-    );
+    ),
 
-    Get.put<ListRepository>(
+    Bind.put<ListRepository>(
       ListRepositoryImpl(listDataSource: Get.find()),
-    );
+    ),
 
-    Get.lazyPut(() => GetList(listRepository: Get.find()));
-    Get.lazyPut(() => SetReadFlag(listRepository: Get.find()));
+    Bind.lazyPut(() => GetList(listRepository: Get.find())),
+    Bind.lazyPut(() => SetReadFlag(listRepository: Get.find())),
 
-    Get.lazyPut<ListController>(
+    Bind.lazyPut<ListController>(
       () => ListController(
         getList: Get.find(),
         setReadFlag: Get.find(),
       ),
-    );
-  }
+    )
+  ];
 }

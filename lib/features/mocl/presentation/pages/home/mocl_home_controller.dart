@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/mocl_routes.dart';
+
+import '../../routes/mocl_app_pages.dart';
 
 class HomeController extends GetxController {
   final PageController pageController = PageController(initialPage: 0);
