@@ -3,71 +3,24 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
 
-import '../../../domain/entities/mocl_list_item.dart';
-import '../../../domain/entities/mocl_user_info.dart';
-import '../../models/mocl_list_item_wrapper.dart';
-import '../../widgets/image_widget.dart';
-import '../../widgets/loading_widget.dart';
-import '../../widgets/round_text_widget.dart';
-import '../../routes/mocl_app_pages.dart';
-import 'mocl_list_controller.dart';
+import '../../../../domain/entities/mocl_list_item.dart';
+import '../../../../domain/entities/mocl_user_info.dart';
+import '../../../models/mocl_list_item_wrapper.dart';
+import '../../../routes/mocl_app_pages.dart';
+import '../../../widgets/image_widget.dart';
+import '../../../widgets/loading_widget.dart';
+import '../../../widgets/round_text_widget.dart';
+import '../controllers/mocl_list_controller.dart';
 
-class ListPage extends GetView<ListController> {
-  const ListPage({super.key});
-
-  Widget _buildTitle(BuildContext context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          MessageWidget(
-            message: controller.getAppbarSmallTitle(),
-            textStyle:
-                Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 11),
-          ),
-          const SizedBox(height: 2),
-          MessageWidget(
-            textStyle: Theme.of(context).textTheme.labelMedium,
-            message: controller.getAppbarTitle(),
-          ),
-        ],
-      );
-
-  SliverAppBar _buildAppbar(BuildContext context) => SliverAppBar(
-        title: _buildTitle(context),
-        automaticallyImplyLeading: false,
-        toolbarHeight: 60,
-        // scrolledUnderElevation: 8,
-        floating: true,
-        pinned: false,
-        actions: [
-          IconButton(
-            onPressed: () => controller.reload(),
-            icon: const Icon(Icons.refresh),
-          )
-        ],
-      );
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        body: CustomScrollView(
-          controller: controller.scrollController,
-          slivers: <Widget>[
-            _buildAppbar(context),
-            const _ListView(),
-          ],
-        ),
-      );
-}
-
-class _ListView extends StatefulWidget {
-  const _ListView();
+class ListView extends StatefulWidget {
+  const ListView({super.key});
 
   @override
   _ListViewState createState() => _ListViewState();
 }
 
-class _ListViewState extends State<_ListView> {
+class _ListViewState extends State<ListView> {
   final ListController _listController = Get.find();
 
   @override

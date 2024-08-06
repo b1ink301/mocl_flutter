@@ -6,9 +6,9 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_read_flag.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/mocl_list_item_wrapper.dart';
 
-import '../../../domain/entities/mocl_main_item.dart';
-import '../../../domain/entities/mocl_result.dart';
-import '../../../domain/usecases/get_list.dart';
+import '../../../../domain/entities/mocl_main_item.dart';
+import '../../../../domain/entities/mocl_result.dart';
+import '../../../../domain/usecases/get_list.dart';
 
 class ListController extends GetxController {
   final ScrollController scrollController = ScrollController();
