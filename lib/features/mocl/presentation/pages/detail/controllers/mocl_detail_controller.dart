@@ -9,9 +9,9 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_detail.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../domain/entities/mocl_result.dart';
-import '../../../domain/entities/mocl_user_info.dart';
-import '../../routes/mocl_app_pages.dart';
+import '../../../../domain/entities/mocl_result.dart';
+import '../../../../domain/entities/mocl_user_info.dart';
+import '../../../routes/mocl_app_pages.dart';
 
 class DetailController extends GetxController
     with StateMixin<ResultSuccess<Details>> {
@@ -99,8 +99,8 @@ class DetailController extends GetxController
 
     final textPainter = TextPainter(
       text: TextSpan(
-        text: _appBarTitle.value, // 텍스트 가져오기
-        style: Theme.of(context).textTheme.labelMedium, // 텍스트 스타일 적용
+        text: _appBarTitle.value,
+        style: Theme.of(context).textTheme.labelMedium,
       ),
       maxLines: 2,
       textDirection: TextDirection.ltr,

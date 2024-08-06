@@ -5,9 +5,9 @@ import 'package:mocl_flutter/features/mocl/domain/repositories/list_repository.d
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_read_flag.dart';
 
-import '../../../data/datasources/mocl_list_data_source.dart';
-import '../../../domain/usecases/get_list.dart';
-import 'mocl_list_controller.dart';
+import '../../../../data/datasources/mocl_list_data_source.dart';
+import '../../../../domain/usecases/get_list.dart';
+import '../controllers/mocl_list_controller.dart';
 
 class ListBindings extends Binding {
   @override

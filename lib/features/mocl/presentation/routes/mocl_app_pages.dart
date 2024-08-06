@@ -1,9 +1,9 @@
 import 'package:get/get.dart';
 
-import '../pages/detail/mocl_detail_bindings.dart';
-import '../pages/detail/mocl_detail_page.dart';
-import '../pages/list/mocl_list_bindings.dart';
-import '../pages/list/mocl_list_page.dart';
+import '../pages/detail/bindings/mocl_detail_bindings.dart';
+import '../pages/detail/views/mocl_detail_page.dart';
+import '../pages/list/bindings/mocl_list_bindings.dart';
+import '../pages/list/views/mocl_list_page.dart';
 import '../pages/main/bindings/mocl_main_bindings.dart';
 import '../pages/main/views/mocl_main_page.dart';
 import '../pages/mocl_global_bindings.dart';
