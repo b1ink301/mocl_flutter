@@ -27,8 +27,7 @@ class ListPage extends GetView<ListController> {
   SliverAppBar _buildAppbar(BuildContext context) => SliverAppBar(
         title: _buildTitle(context),
         automaticallyImplyLeading: false,
-        toolbarHeight: 60,
-        // scrolledUnderElevation: 8,
+        centerTitle: false,
         floating: true,
         pinned: false,
         actions: [
@@ -41,12 +40,21 @@ class ListPage extends GetView<ListController> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        body: CustomScrollView(
-          controller: controller.scrollController,
-          slivers: <Widget>[
-            _buildAppbar(context),
-            const view.ListView(),
-          ],
+        body: NotificationListener<ScrollNotification>(
+          onNotification: (ScrollNotification scrollInfo) {
+            if (scrollInfo.metrics.pixels ==
+                scrollInfo.metrics.maxScrollExtent) {
+              controller.loadMoreItems();
+            }
+            return true;
+          },
+          child: CustomScrollView(
+            physics: const AlwaysScrollableScrollPhysics(),
+            slivers: <Widget>[
+              _buildAppbar(context),
+              const view.ListView(),
+            ],
+          ),
         ),
       );
 }

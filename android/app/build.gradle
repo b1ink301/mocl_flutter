@@ -65,6 +65,11 @@ android {
       shrinkResources false
       signingConfig = signingConfigs.release
     }
+    debug {
+      minifyEnabled false
+      shrinkResources false
+      signingConfig = signingConfigs.release
+    }
   }
   kotlinOptions {
     jvmTarget = '1.8'

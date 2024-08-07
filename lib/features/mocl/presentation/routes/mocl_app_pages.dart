@@ -20,19 +20,19 @@ class AppPages {
       preventDuplicates: true,
       name: Routes.MAIN,
       page: () => const MainPage(),
-      bindings: [GlobalBindings(), MainBindings()],
+      bindings: [MainBindings()],
     ),
     GetPage(
       name: Routes.LIST,
       page: () => const ListPage(),
-      bindings: [GlobalBindings(), ListBindings()],
+      bindings: [ListBindings()],
       popGesture: true,
       // customTransition: SwipeBackTransition(),
     ),
     GetPage(
       name: Routes.DETAIL,
       page: () => const DetailPage(),
-      bindings: [GlobalBindings(), DetailBindings()],
+      bindings: [DetailBindings()],
       popGesture: true,
       // customTransition: SwipeBackTransition(),
     )

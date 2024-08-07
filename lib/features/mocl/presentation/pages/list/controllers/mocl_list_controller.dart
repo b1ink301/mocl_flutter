@@ -11,12 +11,13 @@ import '../../../../domain/entities/mocl_result.dart';
 import '../../../../domain/usecases/get_list.dart';
 
 class ListController extends GetxController {
-  final ScrollController scrollController = ScrollController();
   final GetList _getList;
   final SetReadFlag _setReadFlag;
   final MainItem _mainItem = Get.arguments;
-  final PagingController<int, ListItemWrapper> pagingController =
-      PagingController(firstPageKey: 1);
+
+  final RxList<ListItemWrapper> items = <ListItemWrapper>[].obs;
+  final RxBool isLoading = false.obs;
+  int _currentPage = 1;
 
   int lastId = -1;
 
@@ -32,46 +33,40 @@ class ListController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-
-    pagingController.addPageRequestListener((pageKey) {
-      _fetchPage(pageKey);
-    });
+    loadMoreItems();
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-    scrollController.dispose();
-    pagingController.dispose();
-  }
+  Future<void> loadMoreItems() async {
+    if (isLoading.value) return;
+    isLoading.value = true;
 
-  void _fetchPage(int page) async {
-    debugPrint('fetchPage item=$_mainItem, page=$page, lastId=$lastId');
-    var params = GetListParams(mainItem: _mainItem, page: page, lastId: lastId);
-    var result = await _getList(params);
+    try {
+      debugPrint('fetchPage item=$_mainItem, page=$_currentPage, lastId=$lastId');
+      var params = GetListParams(mainItem: _mainItem, page: _currentPage, lastId: lastId);
+      var result = await _getList(params);
 
-    if (result is ResultSuccess) {
-      var data = result as ResultSuccess<List<ListItem>>;
-      debugPrint('initMainList length=${data.data.length}');
-      final isLastPage = result.data.isEmpty;
-      var list = result.data
-          .map(
-            (item) => ListItemWrapper(
-              item: item,
-              isReadNotifier: ValueNotifier(item.isRead),
-            ),
-          )
-          .toList();
-      lastId = list.lastOrNull?.item.id ?? -1;
-      if (isLastPage) {
-        pagingController.appendLastPage(list);
-      } else {
-        final nextPageKey = pagingController.nextPageKey! + 1;
-        pagingController.appendPage(list, nextPageKey);
+      if (result is ResultSuccess) {
+        final data = result as ResultSuccess<List<ListItem>>;
+        debugPrint('loadMoreItems length=${data.data.length}');
+        final newWrappedItems = result.data
+            .map(
+              (item) => ListItemWrapper(
+            item: item,
+            isReadNotifier: ValueNotifier(item.isRead),
+          ),
+        )
+            .toList();
+        lastId = newWrappedItems.lastOrNull?.item.id ?? -1;
+        items.addAll(newWrappedItems);
+        _currentPage++;
+      } else if (result is ResultFailure) {
+      } else if (result is ResultLoading) {
       }
-    } else if (result is ResultFailure) {
-      pagingController.error = result.failure;
-    } else if (result is ResultLoading) {
+    } catch (e) {
+      // 에러 처리
+      Get.log('Error loading more items: $e');
+    } finally {
+      isLoading.value = false;
     }
   }
 
@@ -88,6 +83,8 @@ class ListController extends GetxController {
 
   void reload() {
     lastId = -1;
-    pagingController.refresh();
+    items.clear();
+    _currentPage = 1;
+    loadMoreItems();
   }
 }

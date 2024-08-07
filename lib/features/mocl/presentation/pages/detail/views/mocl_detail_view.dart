@@ -23,73 +23,73 @@ class _DetailViewState extends State<DetailView> {
   @override
   Widget build(BuildContext context) => _detailController.obx(
         (data) {
-      if (data == null) return const SizedBox.shrink();
-      _detailController.setReadFlag();
+          if (data == null) return const SizedBox.shrink();
+          _detailController.setReadFlag();
 
-      final theme = Theme.of(context);
-      final hexColor = _detailController.getHexColor(theme.indicatorColor);
-      final bodySmall = theme.textTheme.bodySmall;
-      final bodyMedium = theme.textTheme.bodyMedium;
+          final theme = Theme.of(context);
+          final hexColor = _detailController.getHexColor(theme.indicatorColor);
+          final bodySmall = theme.textTheme.bodySmall;
+          final bodyMedium = theme.textTheme.bodyMedium;
 
-      return SingleChildScrollView(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.start,
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildHeader(
-              _detailController.userInfo,
-              _detailController.time,
-              bodySmall,
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(
+                  _detailController.userInfo,
+                  _detailController.time,
+                  bodySmall,
+                ),
+                const Divider(),
+                const SizedBox(height: 10),
+                HtmlWidget(
+                  data.data.bodyHtml,
+                  customStylesBuilder: (element) {
+                    if (element.localName == 'a') {
+                      return {
+                        'color': hexColor,
+                        'text-decoration': 'underline',
+                      };
+                    }
+                    return null;
+                  },
+                  textStyle: bodyMedium,
+                  renderMode: RenderMode.column,
+                  onTapUrl: (url) => _detailController.openBrowser(url),
+                ),
+                const SizedBox(height: 10),
+                _buildComments(
+                  context,
+                  hexColor,
+                  data.data.comments,
+                  bodySmall,
+                  bodyMedium,
+                ),
+                const Divider(),
+              ],
             ),
-            const Divider(),
-            const SizedBox(height: 10),
-            HtmlWidget(
-              data.data.bodyHtml,
-              customStylesBuilder: (element) {
-                if (element.localName == 'a') {
-                  return {
-                    'color': hexColor,
-                    'text-decoration': 'underline',
-                  };
-                }
-                return null;
-              },
-              textStyle: bodyMedium,
-              renderMode: RenderMode.column,
-              onTapUrl: (url) => _detailController.openBrowser(url),
+          );
+        },
+        onLoading: const LoadingWidget(),
+        onError: (error) => Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Text(
+            '에러가 발생했습니다',
+            style: TextStyle(
+              fontSize: 16,
+              color: Theme.of(context).indicatorColor,
             ),
-            const SizedBox(height: 10),
-            _buildComments(
-              context,
-              hexColor,
-              data.data.comments,
-              bodySmall,
-              bodyMedium,
-            ),
-            const Divider(),
-          ],
+          ),
         ),
       );
-    },
-    onLoading: const LoadingWidget(),
-    onError: (error) => Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: Text(
-        '에러가 발생했습니다',
-        style: TextStyle(
-          fontSize: 16,
-          color: Theme.of(context).indicatorColor,
-        ),
-      ),
-    ),
-  );
 
   Widget _buildHeader(
-      UserInfo userInfo,
-      String time,
-      TextStyle? bodySmall,
-      ) =>
+    UserInfo userInfo,
+    String time,
+    TextStyle? bodySmall,
+  ) =>
       SizedBox(
         height: 42,
         child: Center(
@@ -114,26 +114,26 @@ class _DetailViewState extends State<DetailView> {
       );
 
   Widget _buildComments(
-      BuildContext context,
-      String hexColor,
-      List<CommentItem> comments,
-      TextStyle? bodySmall,
-      TextStyle? bodyMedium,
-      ) {
+    BuildContext context,
+    String hexColor,
+    List<CommentItem> comments,
+    TextStyle? bodySmall,
+    TextStyle? bodyMedium,
+  ) {
     Widget buildRefreshButton() => InkWell(
-      onTap: () => _detailController.reload(),
-      child: Container(
-        width: double.infinity, // 가로 꽉 채우기
-        height: 56,
-        alignment: Alignment.center,
-        child: Text(
-          '새로고침',
-          style: bodyMedium?.copyWith(
-            color: Theme.of(context).indicatorColor,
+          onTap: () => _detailController.reload(),
+          child: Container(
+            width: double.infinity, // 가로 꽉 채우기
+            height: 56,
+            alignment: Alignment.center,
+            child: Text(
+              '새로고침',
+              style: bodyMedium?.copyWith(
+                color: Theme.of(context).indicatorColor,
+              ),
+            ),
           ),
-        ),
-      ),
-    );
+        );
 
     if (comments.isEmpty) {
       return Column(children: [
@@ -168,44 +168,40 @@ class _DetailViewState extends State<DetailView> {
             var comment = comments[index];
             var userInfo = comment.userInfo;
             var left = comment.isReply ? 16.0 : 0.0;
-            return Padding(
-              padding: EdgeInsets.only(left: left, top: 12, bottom: 10),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
+            return ListTile(
+              key: Key(comment.id.toString()),
+              contentPadding: EdgeInsets.only(left: left, top: 8, bottom: 8),
+              title: Row(
                 children: [
-                  Row(
-                    children: [
-                      ImageWidget(url: userInfo.nickImage),
-                      Text(
-                        userInfo.nickName,
-                        style: bodySmall,
-                      ),
-                      const SizedBox(width: 8),
-                      Text(
-                        comment.time,
-                        style: bodySmall,
-                      ),
-                      const Spacer(),
-                    ],
+                  ImageWidget(url: userInfo.nickImage),
+                  Text(
+                    userInfo.nickName,
+                    style: bodySmall,
                   ),
-                  const SizedBox(height: 10.0),
-                  HtmlWidget(
-                    comment.bodyHtml,
-                    textStyle: bodyMedium,
-                    customStylesBuilder: (element) {
-                      if (element.localName == 'a') {
-                        return {
-                          'color': hexColor,
-                          'text-decoration': 'underline',
-                        };
-                      }
-                      return null;
-                    },
-                    onTapUrl: (url) => _detailController.openBrowser(url),
+                  const SizedBox(width: 8),
+                  Text(
+                    comment.time,
+                    style: bodySmall,
                   ),
+                  const Spacer(),
                 ],
+              ),
+              subtitle: Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: HtmlWidget(
+                  comment.bodyHtml,
+                  textStyle: bodyMedium,
+                  customStylesBuilder: (element) {
+                    if (element.localName == 'a') {
+                      return {
+                        'color': hexColor,
+                        'text-decoration': 'underline',
+                      };
+                    }
+                    return null;
+                  },
+                  onTapUrl: (url) => _detailController.openBrowser(url),
+                ),
               ),
             );
           },
