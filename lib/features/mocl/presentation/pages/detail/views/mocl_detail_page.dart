@@ -8,37 +8,29 @@ import 'mocl_detail_view.dart';
 class DetailPage extends GetView<DetailController> {
   const DetailPage({super.key});
 
-  Widget _buildTitle(BuildContext context) => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          MessageWidget(
-            message: controller.getAppbarSmallTitle(),
-            textStyle:
-                Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 11),
-          ),
-          const SizedBox(height: 2),
-          Obx(
-            () => MessageWidget(
-                message: controller.getAppbarTitle().value,
-                textStyle: Theme.of(context).textTheme.labelMedium),
-          ),
-        ],
-      );
+  Widget _buildTitle(BuildContext context) => SafeArea(
+    child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            MessageWidget(
+              message: controller.getAppbarSmallTitle(),
+              textStyle:
+                  Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 11),
+            ),
+            const SizedBox(height: 2),
+            Obx(
+              () => MessageWidget(
+                  message: controller.getAppbarTitle().value,
+                  textStyle: Theme.of(context).textTheme.labelMedium),
+            ),
+          ],
+        ),
+  );
 
   SliverAppBar _buildAppbar(BuildContext context) => SliverAppBar(
         title: _buildTitle(context),
-        flexibleSpace: LayoutBuilder(
-          builder: (BuildContext context, BoxConstraints constraints) =>
-              const FlexibleSpaceBar(
-            title: SizedBox.shrink(),
-            collapseMode: CollapseMode.none,
-          ),
-        ),
         toolbarHeight: controller.calculateTitleHeight(),
         automaticallyImplyLeading: false,
-        // elevation: 8,
-        floating: true,
-        pinned: false,
         actions: [
           IconButton(
             onPressed: () => controller.reload(),

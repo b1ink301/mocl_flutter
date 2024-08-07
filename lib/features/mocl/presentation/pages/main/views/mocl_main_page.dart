@@ -18,7 +18,8 @@ class MainPage extends GetView<MainController> {
   AppBar _buildAppbar(BuildContext context) => AppBar(
         title: _buildTitle(context),
         titleSpacing: 0,
-        toolbarHeight: 60,
+        centerTitle: false,
+        // toolbarHeight: 60,
         // elevation: 8,
         // scrolledUnderElevation: 8,
         actions: [

@@ -4,11 +4,15 @@ import 'package:flutter/services.dart';
 class MoclTheme {
   static ThemeData get lightTheme => ThemeData(
         appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF595D66),
+          color: Color(0xFF595D66),
           foregroundColor: Colors.white,
           surfaceTintColor: Colors.white,
-          systemOverlayStyle:
-              SystemUiOverlayStyle(statusBarColor: Color(0xFF4d5057)),
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Color(0xFF4d5057),
+            systemNavigationBarIconBrightness: Brightness.light,
+            statusBarIconBrightness: Brightness.light,
+            statusBarBrightness: Brightness.dark,
+          ),
         ),
         // colorScheme: const ColorScheme(
         //   brightness: Brightness.light,
@@ -49,11 +53,15 @@ class MoclTheme {
 
   static ThemeData get darkTheme => ThemeData(
         appBarTheme: const AppBarTheme(
-          backgroundColor: Color(0xFF292929),
+          color: Color(0xFF292929),
           foregroundColor: Colors.white,
           surfaceTintColor: Colors.white,
-          systemOverlayStyle:
-              SystemUiOverlayStyle(statusBarColor: Color(0xFF1f1f1f)),
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Color(0xFF1f1f1f),
+            systemNavigationBarIconBrightness: Brightness.light,
+            statusBarIconBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
+          ),
         ),
         dividerTheme: const DividerThemeData(
           color: Color(0xFF222222),

@@ -1,17 +1,10 @@
-import 'dart:developer';
-
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 
-import '../../../../domain/entities/mocl_list_item.dart';
-import '../../../../domain/entities/mocl_user_info.dart';
-import '../../../models/mocl_list_item_wrapper.dart';
 import '../../../routes/mocl_app_pages.dart';
-import '../../../widgets/image_widget.dart';
-import '../../../widgets/loading_widget.dart';
-import '../../../widgets/round_text_widget.dart';
 import '../controllers/mocl_list_controller.dart';
+import 'mocl_cached_list_item.dart';
 
 class ListView extends StatefulWidget {
   const ListView({super.key});
@@ -20,6 +13,70 @@ class ListView extends StatefulWidget {
   _ListViewState createState() => _ListViewState();
 }
 
+class _ListViewState extends State<ListView> {
+  final ScrollController _scrollController = ScrollController();
+  final ListController _listController = Get.find();
+
+  @override
+  void initState() {
+    super.initState();
+    _scrollController.addListener(_onScroll);
+  }
+
+  void _onScroll() {
+    if (_scrollController.position.pixels ==
+        _scrollController.position.maxScrollExtent) {
+      _listController.loadMoreItems();
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => Obx(
+        () => SliverList.separated(
+          itemBuilder: (BuildContext context, int index) {
+            if (index < _listController.items.length) {
+              final item = _listController.items[index];
+              if (kDebugMode) {
+                Get.log('SliverList index=$index');
+              }
+              return CachedListItem(
+                key: ValueKey(item.item.id),
+                item: item,
+                onTap: () async {
+                  await Get.toNamed(Routes.DETAIL, arguments: item.item);
+                  var isReadFlag = Get.findOrNull<bool>(tag: Routes.DETAIL);
+                  if (isReadFlag != null) {
+                    _listController.setReadFlag(item);
+                    Get.delete<bool>(tag: Routes.DETAIL);
+                  }
+                },
+              );
+            }
+            // 로딩 인디케이터 표시
+            if (index == _listController.items.length &&
+                _listController.isLoading.value) {
+              return const Center(child: CircularProgressIndicator());
+            }
+            return null;
+          },
+          separatorBuilder: (BuildContext context, int index) => const Divider(
+            indent: 16,
+            endIndent: 4,
+          ),
+          itemCount: _listController.items.length +
+              (_listController.isLoading.value ? 1 : 0),
+        ),
+      );
+}
+
+/*
 class _ListViewState extends State<ListView> {
   final ListController _listController = Get.find();
 
@@ -37,70 +94,59 @@ class _ListViewState extends State<ListView> {
     return PagedSliverList<int, ListItemWrapper>.separated(
       pagingController: _listController.pagingController,
       builderDelegate: PagedChildBuilderDelegate<ListItemWrapper>(
-        itemBuilder: (context, item, index) => InkWell(
-          child: ValueListenableBuilder(
+        itemBuilder: (context, item, index) {
+          if (kDebugMode) {
+            Get.log('PagedSliverList index=$index, key=${item.item.id}');
+          }
+          return KeyedSubtree(
+            key: Key(item.item.id.toString()),
+            child: ValueListenableBuilder<bool>(
               valueListenable: item.isReadNotifier,
-              builder: (BuildContext context, value, Widget? child) =>
-                  _buildListItem(
+              builder: (BuildContext context, value, Widget? child) {
+                if (kDebugMode) {
+                  Get.log(
+                      'ValueListenableBuilder value=$value, child=${child?.runtimeType}');
+                }
+
+                return ListTile(
+                  dense: true,
+                  contentPadding: const EdgeInsets.fromLTRB(16, 0, 4, 0),
+                  title: Text(
+                    item.item.title,
+                    style: value ? readTextStyle : textStyle,
+                  ),
+                  subtitle: _buildBottomView(
                     context,
-                    item.item,
-                    item.isReadNotifier.value ? readTextStyle : textStyle,
-                    item.isReadNotifier.value
-                        ? readSmallTextStyle
-                        : smallTextStyle,
-                    item.isReadNotifier.value
-                        ? readBadgeTextStyle
-                        : badgeTextStyle,
-                  )),
-          onTap: () async {
-            await Get.toNamed(Routes.DETAIL, arguments: item.item);
-            var isReadFlag = Get.findOrNull<bool>(tag: Routes.DETAIL);
-            log('isReadFlag=$isReadFlag');
-            if (isReadFlag != null) {
-              _listController.setReadFlag(item);
-              Get.delete<bool>(tag: Routes.DETAIL);
-            }
-          },
-        ),
-        newPageProgressIndicatorBuilder: (context) => const LoadingWidget(),
+                    item.item.userInfo,
+                    item.item.reply,
+                    item.item.time,
+                    value ? readSmallTextStyle : smallTextStyle,
+                    value ? readBadgeTextStyle : badgeTextStyle,
+                  ),
+                  onTap: () async {
+                    await Get.toNamed(Routes.DETAIL, arguments: item.item);
+                    var isReadFlag = Get.findOrNull<bool>(tag: Routes.DETAIL);
+                    log('isReadFlag=$isReadFlag');
+                    if (isReadFlag != null) {
+                      _listController.setReadFlag(item);
+                      Get.delete<bool>(tag: Routes.DETAIL);
+                    }
+                  },
+                );
+              },
+            ),
+          );
+        },
+        // newPageProgressIndicatorBuilder: (context) => const LoadingWidget(),
         firstPageProgressIndicatorBuilder: (context) => const LoadingWidget(),
       ),
       separatorBuilder: (context, index) => const Divider(
+        key: Key('divider'),
         indent: 16,
         endIndent: 4,
       ),
     );
   }
-
-  Widget _buildListItem(
-    BuildContext context,
-    ListItem listItem,
-    TextStyle? textStyle,
-    TextStyle? smallTextStyle,
-    TextStyle? badgeTextStyle,
-  ) =>
-      Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 4, 8),
-        child: Column(
-          key: Key(listItem.id.toString()),
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              listItem.title,
-              style: textStyle,
-            ),
-            const SizedBox(height: 8),
-            _buildBottomView(
-              context,
-              listItem.userInfo,
-              listItem.reply,
-              listItem.time,
-              smallTextStyle,
-              badgeTextStyle,
-            ),
-          ],
-        ),
-      );
 
   Widget _buildBottomView(
     BuildContext context,
@@ -110,24 +156,27 @@ class _ListViewState extends State<ListView> {
     TextStyle? textStyle,
     TextStyle? badgeTextStyle,
   ) =>
-      Row(
-        children: [
-          ImageWidget(url: userInfo.nickImage),
-          Text(
-            userInfo.nickName,
-            style: textStyle,
-          ),
-          const SizedBox(width: 8),
-          Text(
-            time,
-            style: textStyle,
-          ),
-          const Spacer(),
-          RoundTextWidget(
-            text: reply,
-            textStyle: badgeTextStyle,
-          ),
-          const SizedBox(width: 8),
-        ],
+      Padding(
+        padding: const EdgeInsets.only(top: 8.0),
+        child: Row(
+          children: [
+            ImageWidget(url: userInfo.nickImage),
+            Text(
+              userInfo.nickName,
+              style: textStyle,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              time,
+              style: textStyle,
+            ),
+            const Spacer(),
+            RoundTextWidget(
+              text: reply,
+              textStyle: badgeTextStyle,
+            ),
+            const SizedBox(width: 8),
+          ],
+        ),
       );
-}
+}*/
