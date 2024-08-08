@@ -19,7 +19,7 @@ class DetailController extends GetxController
   final GetDetail _getDetail;
   final ListItem _listItem = Get.arguments;
   final RxString _appBarTitle = ''.obs;
-  final RxDouble _appBarHeight = 60.0.obs;
+  final RxDouble _appBarHeight = 64.0.obs;
 
   DetailController({required GetDetail getDetail}) : _getDetail = getDetail;
 
@@ -47,6 +47,7 @@ class DetailController extends GetxController
   void onInit() {
     super.onInit();
     _appBarTitle.value = _listItem.title;
+    _appBarHeight.value = _calculateTitleHeight();
   }
 
   @override
@@ -55,17 +56,18 @@ class DetailController extends GetxController
     getDetail(_listItem);
   }
 
-  String getHexColor(Color color) {
-    return '#${color.value.toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}';
-  }
+  String getHexColor(Color color) =>
+      '#${color.value.toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}';
 
   void getDetail(ListItem item) async {
     change(LoadingStatus());
-    var result = await _getDetail(item);
+    final result = await _getDetail(item);
     if (result is ResultSuccess) {
-      var details = result as ResultSuccess<Details>;
-      _appBarTitle.value = details.data.title;
-      // _appBarHeight.value = calculateTitleHeight();
+      final details = result as ResultSuccess<Details>;
+      if (_appBarTitle.value != details.data.title) {
+        _appBarTitle.value = details.data.title;
+        _appBarHeight.value = _calculateTitleHeight();
+      }
       change(SuccessStatus(details));
       log('appBarTitle = ${details.data.title}');
     } else if (result is ResultFailure) {
@@ -75,9 +77,9 @@ class DetailController extends GetxController
 
   String getAppbarSmallTitle() => _listItem.boardTitle;
 
-  RxString getAppbarTitle() => _appBarTitle;
+  RxString get appbarTitle => _appBarTitle;
 
-  RxDouble getAppbarHeight() => _appBarHeight;
+  RxDouble get appBarHeight => _appBarHeight;
 
   void setReadFlag() => Get.put<bool>(true, tag: Routes.DETAIL);
 
@@ -93,24 +95,25 @@ class DetailController extends GetxController
     return await launchUrl(uri);
   }
 
-  double calculateTitleHeight() {
+  double _calculateTitleHeight() {
     var context = Get.context;
-    if (context == null) return 30;
+    if (context == null) return 34;
 
     final textPainter = TextPainter(
       text: TextSpan(
         text: _appBarTitle.value,
         style: Theme.of(context).textTheme.labelMedium,
       ),
-      maxLines: 2,
+      maxLines: 3,
       textDirection: TextDirection.ltr,
     )..layout(
         minWidth: 0,
-        maxWidth: MediaQuery.of(context).size.width - (24 * 2 + 16 * 4));
+        maxWidth:
+            MediaQuery.of(context).size.width - (24 * 2 + 16 * 4 + 16 + 4));
 
-    final titleHeight = textPainter.height + 4;
+    final titleHeight = textPainter.height;
     log('titleHeight = $titleHeight');
 
-    return math.max(30, titleHeight) + 30; // 텍스트 높이 반환
+    return math.max(30, titleHeight) + 34; // 텍스트 높이 반환
   }
 }

@@ -19,9 +19,7 @@ class MainPage extends GetView<MainController> {
         title: _buildTitle(context),
         titleSpacing: 0,
         centerTitle: false,
-        // toolbarHeight: 60,
-        // elevation: 8,
-        // scrolledUnderElevation: 8,
+        toolbarHeight: 64,
         actions: [
           IconButton(
             onPressed: () => Get.dialog(ShowAddDialog()),

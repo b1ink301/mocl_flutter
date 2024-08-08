@@ -26,10 +26,13 @@ class ListPage extends GetView<ListController> {
 
   SliverAppBar _buildAppbar(BuildContext context) => SliverAppBar(
         title: _buildTitle(context),
+        flexibleSpace:
+            Container(color: Theme.of(context).appBarTheme.backgroundColor),
         automaticallyImplyLeading: false,
         centerTitle: false,
         floating: true,
         pinned: false,
+        toolbarHeight: 64,
         actions: [
           IconButton(
             onPressed: () => controller.reload(),
@@ -41,13 +44,7 @@ class ListPage extends GetView<ListController> {
   @override
   Widget build(BuildContext context) => Scaffold(
         body: NotificationListener<ScrollNotification>(
-          onNotification: (ScrollNotification scrollInfo) {
-            if (scrollInfo.metrics.pixels ==
-                scrollInfo.metrics.maxScrollExtent) {
-              controller.loadMoreItems();
-            }
-            return true;
-          },
+          onNotification: controller.checkLoadMoreItems,
           child: CustomScrollView(
             physics: const AlwaysScrollableScrollPhysics(),
             slivers: <Widget>[

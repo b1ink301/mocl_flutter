@@ -27,14 +27,14 @@ dependencies:
   # Remote API
 #  internet_connection_checker_plus: ^2.4.2
   # Http Client
-  http: ^1.2.1
+  http: ^1.2.2
   # Local cache
   shared_preferences: ^2.2.3
   # json
   json_annotation: ^4.9.0
   # NoSQL
-  isar: ^3.1.0
-  isar_flutter_libs: ^3.1.0
+  isar: ^3.1.0+1
+  isar_flutter_libs: ^3.1.0+1
   # Path
   path_provider: ^2.1.3
   # class 자동화
@@ -45,12 +45,14 @@ dependencies:
   # 무한 스크롤 리스트
   infinite_scroll_pagination: ^4.0.0
   # 이미지 캐시
-  cached_network_image: ^3.3.1
+  cached_network_image: ^3.4.0
   # URL 런처
   url_launcher: ^6.3.0
   # swipe back
   #cupertino_back_gesture: ^0.1.0
 #  swipeable_page_route: ^0.4.3
+  flutter_native_splash: ^2.4.1
+  gif: ^2.3.0
 
 dev_dependencies:
   flutter_test:
@@ -63,7 +65,7 @@ dev_dependencies:
   isar_generator: ^3.1.0+1
   freezed: ^2.5.2
   analyzer: ^5.13.0
-  test: ^1.25.2
+  test: ^1.25.7
 #  bloc_test: ^9.1.7
 
 flutter:

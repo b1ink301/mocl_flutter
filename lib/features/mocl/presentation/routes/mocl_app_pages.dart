@@ -6,7 +6,6 @@ import '../pages/list/bindings/mocl_list_bindings.dart';
 import '../pages/list/views/mocl_list_page.dart';
 import '../pages/main/bindings/mocl_main_bindings.dart';
 import '../pages/main/views/mocl_main_page.dart';
-import '../pages/mocl_global_bindings.dart';
 
 part 'mocl_routes.dart';
 

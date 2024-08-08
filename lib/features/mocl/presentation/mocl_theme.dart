@@ -59,8 +59,8 @@ class MoclTheme {
           systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: Color(0xFF1f1f1f),
             systemNavigationBarIconBrightness: Brightness.light,
-            statusBarIconBrightness: Brightness.dark,
-            statusBarBrightness: Brightness.light,
+            statusBarIconBrightness: Brightness.light,
+            statusBarBrightness: Brightness.dark,
           ),
         ),
         dividerTheme: const DividerThemeData(

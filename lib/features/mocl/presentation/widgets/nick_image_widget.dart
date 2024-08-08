@@ -1,10 +1,10 @@
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:gif/gif.dart';
 
-class ImageWidget extends StatelessWidget {
+class NickImageWidget extends StatelessWidget {
   final String url;
 
-  const ImageWidget({super.key, required this.url});
+  const NickImageWidget({super.key, required this.url});
 
   @override
   Widget build(BuildContext context) {
@@ -18,9 +18,8 @@ class ImageWidget extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.only(right: 8),
-      child: CachedNetworkImage(
-        imageUrl: url,
-        fit: BoxFit.contain,
+      child: Gif(
+        image: NetworkImage(url),
         height: 17,
       ),
     );
