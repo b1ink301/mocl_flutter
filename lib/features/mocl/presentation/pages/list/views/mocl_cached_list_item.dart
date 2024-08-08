@@ -22,11 +22,12 @@ class CachedListItem extends StatefulWidget {
 class _CachedListItemState extends State<CachedListItem>
     with AutomaticKeepAliveClientMixin {
   @override
-  bool get wantKeepAlive => false;
+  bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
     super.build(context);
+
     final theme = Theme.of(context);
     final textStyle = theme.textTheme.bodyMedium;
     final smallTextStyle = theme.textTheme.bodySmall;
