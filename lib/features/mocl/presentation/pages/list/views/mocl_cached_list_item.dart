@@ -1,9 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../domain/entities/mocl_user_info.dart';
 import '../../../models/mocl_list_item_wrapper.dart';
-import '../../../widgets/image_widget.dart';
+import '../../../widgets/nick_image_widget.dart';
 import '../../../widgets/round_text_widget.dart';
 
 class CachedListItem extends StatefulWidget {
@@ -17,7 +16,7 @@ class CachedListItem extends StatefulWidget {
   });
 
   @override
-  _CachedListItemState createState() => _CachedListItemState();
+  State createState() => _CachedListItemState();
 }
 
 class _CachedListItemState extends State<CachedListItem>
@@ -38,7 +37,7 @@ class _CachedListItemState extends State<CachedListItem>
       valueListenable: widget.item.isReadNotifier,
       builder: (context, isRead, _) => ListTile(
         dense: true,
-        contentPadding: const EdgeInsets.fromLTRB(16, 0, 4, 0),
+        contentPadding: const EdgeInsets.fromLTRB(16, 4, 4, 4),
         title: AnimatedDefaultTextStyle(
           style: isRead ? textStyle!.copyWith(color: color) : textStyle!,
           duration: const Duration(milliseconds: 200),
@@ -69,7 +68,7 @@ class _CachedListItemState extends State<CachedListItem>
         padding: const EdgeInsets.only(top: 8.0),
         child: Row(
           children: [
-            ImageWidget(url: userInfo.nickImage),
+            NickImageWidget(url: userInfo.nickImage),
             Text(userInfo.nickName, style: textStyle),
             const SizedBox(width: 8),
             Text(time, style: textStyle),

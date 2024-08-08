@@ -20,7 +20,7 @@ class MessageWidget extends StatelessWidget {
             fontSize: fontSize ?? 16,
           ),
           textAlign: TextAlign.start,
-          maxLines: 2,
+          maxLines: 3,
         ),
       );
 }

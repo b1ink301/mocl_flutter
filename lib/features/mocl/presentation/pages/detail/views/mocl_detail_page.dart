@@ -8,28 +8,28 @@ import 'mocl_detail_view.dart';
 class DetailPage extends GetView<DetailController> {
   const DetailPage({super.key});
 
-  Widget _buildTitle(BuildContext context) => SafeArea(
-    child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            MessageWidget(
-              message: controller.getAppbarSmallTitle(),
-              textStyle:
-                  Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 11),
-            ),
-            const SizedBox(height: 2),
-            Obx(
-              () => MessageWidget(
-                  message: controller.getAppbarTitle().value,
-                  textStyle: Theme.of(context).textTheme.labelMedium),
-            ),
-          ],
-        ),
-  );
+  Widget _buildTitle(BuildContext context) => Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          MessageWidget(
+            message: controller.getAppbarSmallTitle(),
+            textStyle:
+                Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 11),
+          ),
+          const SizedBox(height: 2),
+          Obx(
+            () => MessageWidget(
+                message: controller.appbarTitle.value,
+                textStyle: Theme.of(context).textTheme.labelMedium),
+          ),
+        ],
+      );
 
   SliverAppBar _buildAppbar(BuildContext context) => SliverAppBar(
+        flexibleSpace:
+            Container(color: Theme.of(context).appBarTheme.backgroundColor),
         title: _buildTitle(context),
-        toolbarHeight: controller.calculateTitleHeight(),
+        toolbarHeight: controller.appBarHeight.value,
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
@@ -61,12 +61,9 @@ class DetailPage extends GetView<DetailController> {
         body: CustomScrollView(
           controller: controller.scrollController,
           slivers: <Widget>[
-            _buildAppbar(context),
+            Obx(() => _buildAppbar(context)),
             const SliverToBoxAdapter(
-              child: Padding(
-                padding: EdgeInsets.fromLTRB(16, 0, 4, 0),
-                child: DetailView(),
-              ),
+              child: DetailView(),
             ),
           ],
         ),

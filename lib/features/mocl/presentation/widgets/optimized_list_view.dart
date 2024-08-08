@@ -12,7 +12,7 @@ class OptimizedListView extends StatefulWidget {
   });
 
   @override
-  _OptimizedListViewState createState() => _OptimizedListViewState();
+  State createState() => _OptimizedListViewState();
 }
 
 class _OptimizedListViewState extends State<OptimizedListView> {

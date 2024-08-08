@@ -1,12 +1,11 @@
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
 
 import '../../../../domain/entities/mocl_details.dart';
 import '../../../../domain/entities/mocl_user_info.dart';
-import '../../../widgets/image_widget.dart';
+import '../../../widgets/nick_image_widget.dart';
 import '../../../widgets/loading_widget.dart';
 import '../controllers/mocl_detail_controller.dart';
 
@@ -21,69 +20,72 @@ class _DetailViewState extends State<DetailView> {
   final DetailController _detailController = Get.find();
 
   @override
-  Widget build(BuildContext context) => _detailController.obx(
-        (data) {
-          if (data == null) return const SizedBox.shrink();
-          _detailController.setReadFlag();
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.fromLTRB(16, 0, 4, 0),
+    child: _detailController.obx(
+          (data) {
+            if (data == null) return const SizedBox.shrink();
+            _detailController.setReadFlag();
 
-          final theme = Theme.of(context);
-          final hexColor = _detailController.getHexColor(theme.indicatorColor);
-          final bodySmall = theme.textTheme.bodySmall;
-          final bodyMedium = theme.textTheme.bodyMedium;
+            final theme = Theme.of(context);
+            final hexColor = _detailController.getHexColor(theme.indicatorColor);
+            final bodySmall = theme.textTheme.bodySmall;
+            final bodyMedium = theme.textTheme.bodyMedium;
 
-          return SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(
-                  _detailController.userInfo,
-                  _detailController.time,
-                  bodySmall,
-                ),
-                const Divider(),
-                const SizedBox(height: 10),
-                HtmlWidget(
-                  data.data.bodyHtml,
-                  customStylesBuilder: (element) {
-                    if (element.localName == 'a') {
-                      return {
-                        'color': hexColor,
-                        'text-decoration': 'underline',
-                      };
-                    }
-                    return null;
-                  },
-                  textStyle: bodyMedium,
-                  renderMode: RenderMode.column,
-                  onTapUrl: (url) => _detailController.openBrowser(url),
-                ),
-                const SizedBox(height: 10),
-                _buildComments(
-                  context,
-                  hexColor,
-                  data.data.comments,
-                  bodySmall,
-                  bodyMedium,
-                ),
-                const Divider(),
-              ],
-            ),
-          );
-        },
-        onLoading: const LoadingWidget(),
-        onError: (error) => Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Text(
-            '에러가 발생했습니다',
-            style: TextStyle(
-              fontSize: 16,
-              color: Theme.of(context).indicatorColor,
+            return SingleChildScrollView(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  _buildHeader(
+                    _detailController.userInfo,
+                    _detailController.time,
+                    bodySmall,
+                  ),
+                  const Divider(),
+                  const SizedBox(height: 10),
+                  HtmlWidget(
+                    data.data.bodyHtml,
+                    customStylesBuilder: (element) {
+                      if (element.localName == 'a') {
+                        return {
+                          'color': hexColor,
+                          'text-decoration': 'underline',
+                        };
+                      }
+                      return null;
+                    },
+                    textStyle: bodyMedium,
+                    renderMode: RenderMode.column,
+                    onTapUrl: (url) => _detailController.openBrowser(url),
+                  ),
+                  const SizedBox(height: 10),
+                  _buildComments(
+                    context,
+                    hexColor,
+                    data.data.comments,
+                    bodySmall,
+                    bodyMedium,
+                  ),
+                  const Divider(),
+                ],
+              ),
+            );
+          },
+          onLoading: const LoadingWidget(),
+          onError: (error) => Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Text(
+              '에러가 발생했습니다',
+              style: TextStyle(
+                fontSize: 16,
+                color: Theme.of(context).indicatorColor,
+              ),
             ),
           ),
         ),
-      );
+  );
 
   Widget _buildHeader(
     UserInfo userInfo,
@@ -97,7 +99,7 @@ class _DetailViewState extends State<DetailView> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.max,
             children: [
-              ImageWidget(url: userInfo.nickImage),
+              NickImageWidget(url: userInfo.nickImage),
               Text(
                 userInfo.nickName,
                 style: bodySmall,
@@ -170,10 +172,10 @@ class _DetailViewState extends State<DetailView> {
             var left = comment.isReply ? 16.0 : 0.0;
             return ListTile(
               key: Key(comment.id.toString()),
-              contentPadding: EdgeInsets.only(left: left, top: 8, bottom: 8),
+              contentPadding: EdgeInsets.only(left: left, top: 4, bottom: 4),
               title: Row(
                 children: [
-                  ImageWidget(url: userInfo.nickImage),
+                  NickImageWidget(url: userInfo.nickImage),
                   Text(
                     userInfo.nickName,
                     style: bodySmall,

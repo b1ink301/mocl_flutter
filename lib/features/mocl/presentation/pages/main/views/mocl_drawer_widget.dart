@@ -14,18 +14,21 @@ class DrawerWidget extends StatelessWidget {
         child: Column(
           children: [
             Container(
-              height: 240,
+              padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+              height: 220,
               color: Theme.of(context).primaryColor,
               child: Center(
-                child: Image.asset(
-                  'assets/icon.png',
-                  width: 100,
-                  height: 100,
+                child: ClipOval(
+                  child: Image.asset(
+                    'assets/icon.png',
+                    width: 80,
+                    height: 80,
+                  ),
                 ),
               ),
             ),
             ListTile(
-              title: const Text('다모앙'),
+              title: Text(SiteType.damoang.title),
               titleTextStyle: Theme.of(context).textTheme.bodyMedium,
               onTap: () async {
                 if (context.mounted) {
@@ -41,7 +44,7 @@ class DrawerWidget extends StatelessWidget {
               endIndent: 8,
             ),
             ListTile(
-              title: const Text('클리앙'),
+              title: Text(SiteType.clien.title),
               titleTextStyle: Theme.of(context).textTheme.bodyMedium,
               onTap: () async {
                 if (context.mounted) {
