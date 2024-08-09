@@ -59,8 +59,7 @@ class ListDataSourceImpl extends ListDataSource {
         isRead,
       );
     } else {
-      return await Future<ResultFailure<Failure>>.value(
-          ResultFailure(failure: GetListFailure()));
+      return ResultFailure(failure: GetListFailure());
     }
   }
 

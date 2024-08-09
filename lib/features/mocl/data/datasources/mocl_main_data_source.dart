@@ -55,7 +55,7 @@ class MainDataSourceImpl extends MainDataSource {
       return decodedData.map((item) => MainItemData.fromJson(item)).toList();
     } on Exception catch (e) {
       debugPrint("getAllFromJson - ${e.toString()}");
-      return Future.value(List.empty());
+      return List.empty();
     }
   }
 

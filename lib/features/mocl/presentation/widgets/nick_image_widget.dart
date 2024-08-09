@@ -15,7 +15,6 @@ class NickImageWidget extends StatelessWidget {
     if (uri == null) {
       return const SizedBox.shrink();
     }
-
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: Gif(

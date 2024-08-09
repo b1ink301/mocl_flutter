@@ -30,8 +30,7 @@ class DetailDataSourceImpl extends DetailDataSource {
       var document = parse(response.body);
       return await parser.detail(document);
     } else {
-      return await Future<ResultFailure<Failure>>.value(
-          ResultFailure(failure: GetDetailFailure()));
+      return ResultFailure(failure: GetDetailFailure());
     }
   }
 }

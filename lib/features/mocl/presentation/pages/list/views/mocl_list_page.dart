@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -12,6 +14,7 @@ class ListPage extends GetView<ListController> {
         smallTitle: RxString(controller.getAppbarSmallTitle()),
         title: RxString(controller.getAppbarTitle()),
         toolbarHeight: RxDouble(64.0),
+        automaticallyImplyLeading: Platform.isMacOS,
         hasObx: false,
         actions: [
           IconButton(
@@ -23,15 +26,12 @@ class ListPage extends GetView<ListController> {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        body: NotificationListener<ScrollNotification>(
-          onNotification: controller.checkLoadMoreItems,
-          child: CustomScrollView(
-            physics: const AlwaysScrollableScrollPhysics(),
-            slivers: <Widget>[
-              _buildAppbar(context),
-              const view.ListView(),
-            ],
-          ),
+        body: CustomScrollView(
+          controller: controller.scrollController,
+          slivers: <Widget>[
+            _buildAppbar(context),
+            const view.ListView(),
+          ],
         ),
       );
 }

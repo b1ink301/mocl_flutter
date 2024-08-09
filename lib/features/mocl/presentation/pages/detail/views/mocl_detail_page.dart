@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,6 +13,7 @@ class DetailPage extends GetView<DetailController> {
   Widget _buildAppbar(BuildContext context) => AppbarDualTextWidget(
         title: controller.appbarTitle,
         smallTitle: RxString(controller.getAppbarSmallTitle()),
+        automaticallyImplyLeading: Platform.isMacOS,
         toolbarHeight: controller.appBarHeight,
         actions: [
           IconButton(
@@ -26,11 +29,11 @@ class DetailPage extends GetView<DetailController> {
               }
             },
             itemBuilder: (BuildContext context) => [
-                const PopupMenuItem(
-                  value: 0,
-                  child: Text('브라우저로 열기'),
-                ),
-              ],
+              const PopupMenuItem(
+                value: 0,
+                child: Text('브라우저로 열기'),
+              ),
+            ],
           ),
         ],
       );
