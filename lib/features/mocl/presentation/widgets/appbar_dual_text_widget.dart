@@ -56,6 +56,7 @@ class AppbarDualTextWidget extends StatelessWidget {
             .of(context)
             .appBarTheme
             .backgroundColor),
+        titleSpacing: automaticallyImplyLeading ? 0 : NavigationToolbar.kMiddleSpacing,
         automaticallyImplyLeading: automaticallyImplyLeading,
         centerTitle: false,
         floating: true,

@@ -1,53 +1,40 @@
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 
+import '../../../models/mocl_list_item_wrapper.dart';
 import '../controllers/mocl_list_controller.dart';
 import 'mocl_cached_list_item.dart';
+import 'mocl_text_styles.dart';
 
-class ListView extends StatefulWidget {
+class ListView extends GetView<ListController> {
   const ListView({super.key});
 
   @override
-  State createState() => _ListViewState();
-}
+  Widget build(BuildContext context) => _buildList(context);
 
-class _ListViewState extends State<ListView> {
-  final ListController _listController = Get.find();
+  PagedSliverList _buildList(BuildContext context) {
+    final textStyles = TextStyles.getTextStyles(context);
 
-  @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
-  Widget build(BuildContext context) => Obx(
-        () => SliverList.separated(
-          itemBuilder: (BuildContext context, int index) {
-            if (index < _listController.items.length) {
-              final item = _listController.items[index];
-              if (kDebugMode) {
-                Get.log('SliverList index=$index');
-              }
-              return CachedListItem(
-                key: ValueKey(item.item.id),
-                item: item,
-                onTap: () => _listController.toDetail(item),
-              );
-            }
-            if (index == _listController.items.length &&
-                _listController.isLoadingMore.value) {
-              return const LoadingWidget();
-            }
-            return null;
-          },
-          separatorBuilder: (context, index) => const Divider(
-            indent: 16,
-            endIndent: 4,
+    return PagedSliverList<int, ListItemWrapper>.separated(
+      pagingController: controller.pagingController,
+      builderDelegate: PagedChildBuilderDelegate<ListItemWrapper>(
+        itemBuilder: (context, item, index) => KeyedSubtree(
+          key: ValueKey(item.item.id),
+          child: CachedListItem(
+            item: item,
+            textStyles: textStyles,
+            onTap: () => controller.toDetail(item),
           ),
-          itemCount: _listController.items.length +
-              (_listController.isLoadingMore.value ? 1 : 0),
         ),
-      );
+        newPageProgressIndicatorBuilder: (context) => const LoadingWidget(),
+        firstPageProgressIndicatorBuilder: (context) => const LoadingWidget(),
+      ),
+      separatorBuilder: (context, index) => const Divider(
+        indent: 16,
+        endIndent: 4,
+      ),
+    );
+  }
 }

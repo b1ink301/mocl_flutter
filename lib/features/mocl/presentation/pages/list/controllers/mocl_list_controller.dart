@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_read_flag.dart';
@@ -11,14 +12,13 @@ import '../../../../domain/usecases/get_list.dart';
 import '../../../routes/mocl_app_pages.dart';
 
 class ListController extends GetxController {
+  final ScrollController scrollController = ScrollController();
   final GetList _getList;
   final SetReadFlag _setReadFlag;
   final MainItem _mainItem = Get.arguments;
+  final PagingController<int, ListItemWrapper> pagingController =
+      PagingController(firstPageKey: 1);
 
-  final RxList<ListItemWrapper> items = <ListItemWrapper>[].obs;
-  final RxBool isLoadingMore = false.obs;
-
-  int _currentPage = 1;
   int lastId = -1;
 
   ListController({
@@ -34,55 +34,46 @@ class ListController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    _loadMoreItems();
+
+    pagingController.addPageRequestListener((pageKey) {
+      _fetchPage(pageKey);
+    });
   }
 
-  bool checkLoadMoreItems(ScrollNotification scrollInfo) {
-    // if (scrollInfo.metrics.pixels ==
-    //     scrollInfo.metrics.maxScrollExtent) {
-    //   controller.loadMoreItems();
-    // }
-    if (scrollInfo is ScrollUpdateNotification) {
-      final metrics = scrollInfo.metrics;
-      if (metrics.pixels >= metrics.maxScrollExtent - (3 * 70.0)) {
-        _loadMoreItems();
+  @override
+  void dispose() {
+    super.dispose();
+    scrollController.dispose();
+    pagingController.dispose();
+  }
+
+  void _fetchPage(int page) async {
+    debugPrint('fetchPage item=$_mainItem, page=$page, lastId=$lastId');
+    var params = GetListParams(mainItem: _mainItem, page: page, lastId: lastId);
+    var result = await _getList(params);
+
+    if (result is ResultSuccess) {
+      var data = result as ResultSuccess<List<ListItem>>;
+      debugPrint('initMainList length=${data.data.length}');
+      final isLastPage = result.data.isEmpty;
+      var list = result.data
+          .map(
+            (item) => ListItemWrapper(
+              item: item,
+              isReadNotifier: ValueNotifier(item.isRead),
+            ),
+          )
+          .toList();
+      lastId = list.lastOrNull?.item.id ?? -1;
+      if (isLastPage) {
+        pagingController.appendLastPage(list);
+      } else {
+        final nextPageKey = pagingController.nextPageKey! + 1;
+        pagingController.appendPage(list, nextPageKey);
       }
-    }
-    return true;
-  }
-
-  Future<void> _loadMoreItems() async {
-    if (isLoadingMore.value) return;
-    isLoadingMore.value = true;
-
-    try {
-      debugPrint(
-          'fetchPage item=$_mainItem, page=$_currentPage, lastId=$lastId');
-      var params = GetListParams(
-          mainItem: _mainItem, page: _currentPage, lastId: lastId);
-      var result = await _getList(params);
-
-      if (result is ResultSuccess) {
-        final data = result as ResultSuccess<List<ListItem>>;
-        debugPrint('loadMoreItems length=${data.data.length}');
-        final newWrappedItems = result.data
-            .map(
-              (item) => ListItemWrapper(
-                item: item,
-                isReadNotifier: ValueNotifier(item.isRead),
-              ),
-            )
-            .toList();
-        lastId = newWrappedItems.lastOrNull?.item.id ?? -1;
-        items.addAll(newWrappedItems);
-        _currentPage++;
-      } else if (result is ResultFailure) {
-      } else if (result is ResultLoading) {}
-    } catch (e) {
-      Get.log('Error loading more items: $e');
-    } finally {
-      isLoadingMore.value = false;
-    }
+    } else if (result is ResultFailure) {
+      pagingController.error = result.failure;
+    } else if (result is ResultLoading) {}
   }
 
   void setReadFlag(ListItemWrapper itemWrapper) async {
@@ -98,9 +89,7 @@ class ListController extends GetxController {
 
   void reload() {
     lastId = -1;
-    _currentPage = 1;
-    items.clear();
-    _loadMoreItems();
+    pagingController.refresh();
   }
 
   void toDetail(ListItemWrapper item) async {

@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:get/get.dart';
@@ -20,15 +23,30 @@ class _DetailViewState extends State<DetailView> {
   final DetailController _detailController = Get.find();
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.fromLTRB(16, 0, 4, 0),
-    child: _detailController.obx(
+  Widget build(BuildContext context) {
+    if (Platform.isMacOS) {
+      return Listener(
+        onPointerDown: (PointerDownEvent event) {
+          if (event.buttons == kSecondaryMouseButton) {
+            Get.back();
+          }
+        },
+        child: _buildView(context),
+      );
+    }
+    return _buildView(context);
+  }
+
+  Widget _buildView(BuildContext context) => Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 4, 0),
+        child: _detailController.obx(
           (data) {
             if (data == null) return const SizedBox.shrink();
             _detailController.setReadFlag();
 
             final theme = Theme.of(context);
-            final hexColor = _detailController.getHexColor(theme.indicatorColor);
+            final hexColor =
+                _detailController.getHexColor(theme.indicatorColor);
             final bodySmall = theme.textTheme.bodySmall;
             final bodyMedium = theme.textTheme.bodyMedium;
 
@@ -85,7 +103,7 @@ class _DetailViewState extends State<DetailView> {
             ),
           ),
         ),
-  );
+      );
 
   Widget _buildHeader(
     UserInfo userInfo,

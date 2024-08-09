@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:get/get.dart';
 
 import '../pages/detail/bindings/mocl_detail_bindings.dart';
@@ -25,15 +27,15 @@ class AppPages {
       name: Routes.LIST,
       page: () => const ListPage(),
       bindings: [ListBindings()],
-      popGesture: true,
-      // customTransition: SwipeBackTransition(),
+      popGesture: !Platform.isMacOS,
+      gestureWidth: (context) => context.width * 0.5,
     ),
     GetPage(
       name: Routes.DETAIL,
       page: () => const DetailPage(),
       bindings: [DetailBindings()],
-      popGesture: true,
-      // customTransition: SwipeBackTransition(),
+      popGesture: !Platform.isMacOS,
+      gestureWidth: (context) => context.width * 0.5,
     )
   ];
 }

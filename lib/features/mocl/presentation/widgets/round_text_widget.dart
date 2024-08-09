@@ -14,6 +14,7 @@ class RoundTextWidget extends StatelessWidget {
   ) {
     if (text.isEmpty) return const SizedBox.shrink();
     return Container(
+      key: ValueKey(text),
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
       decoration: BoxDecoration(
         border:
