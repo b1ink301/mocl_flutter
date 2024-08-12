@@ -127,7 +127,6 @@ class _DetailViewState extends State<DetailView> {
                 time,
                 style: bodySmall,
               ),
-              const Spacer(),
             ],
           ),
         ),

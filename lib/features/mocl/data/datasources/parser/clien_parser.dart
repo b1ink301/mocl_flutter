@@ -1,21 +1,26 @@
-
-import 'package:html/dom.dart';
+import 'package:dio/dio.dart';
+import 'package:html/parser.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 
 import '../../../domain/entities/mocl_details.dart';
 import '../../../domain/entities/mocl_list_item.dart';
+import '../../../domain/entities/mocl_site_type.dart';
 import '../../../domain/entities/mocl_user_info.dart';
 
 class ClienParser extends BaseParser {
   @override
-  Future<Result> comment(Document document) {
+  SiteType get siteType => SiteType.clien;
+
+  @override
+  Future<Result> comment(Response response) {
     // TODO: implement comment
     throw UnimplementedError();
   }
 
   @override
-  Future<Result> detail(Document document) async {
+  Future<Result> detail(Response response) async {
+    var document = parse(response.data);
     var index = 0;
     final container =
         document.querySelector('body > div.nav_container > div.content_view');
@@ -170,11 +175,12 @@ class ClienParser extends BaseParser {
 
   @override
   Future<Result> list(
-    Document document,
+      Response response,
     int lastId,
     String boardTitle,
-    Future<bool> Function(int p1) isRead,
+    Future<bool> Function(SiteType, int) isRead,
   ) async {
+    var document = parse(response.data);
     var elementList = document.querySelectorAll("a.list_item.symph-row");
     var resultList = await Future.wait(elementList.map((element) async {
       var id = int.tryParse(element.attributes['data-board-sn'] ?? '') ?? 0;
@@ -266,7 +272,7 @@ class ClienParser extends BaseParser {
         hit: hit,
         userInfo: userInfo,
         hasImage: hasImage,
-        isRead: await isRead(id),
+        isRead: await isRead(siteType, id),
       );
 
       return item;

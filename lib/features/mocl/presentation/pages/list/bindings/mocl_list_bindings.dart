@@ -12,25 +12,24 @@ import '../controllers/mocl_list_controller.dart';
 class ListBindings extends Binding {
   @override
   List<Bind> dependencies() => [
-    Bind.lazyPut<ListDataSource>(
-        () => ListDataSourceImpl(
-        localDatabase: Get.find(),
-        parser: Get.find(tag: Get.find<GetSiteType>().call(NoParams()).name),
-      ),
-    ),
-
-    Bind.put<ListRepository>(
-      ListRepositoryImpl(listDataSource: Get.find()),
-    ),
-
-    Bind.lazyPut(() => GetList(listRepository: Get.find())),
-    Bind.lazyPut(() => SetReadFlag(listRepository: Get.find())),
-
-    Bind.lazyPut<ListController>(
-      () => ListController(
-        getList: Get.find(),
-        setReadFlag: Get.find(),
-      ),
-    )
-  ];
+        Bind.lazyPut<ListDataSource>(
+          () => ListDataSourceImpl(
+            apiClient: Get.find(),
+            localDatabase: Get.find(),
+            parser:
+                Get.find(tag: Get.find<GetSiteType>().call(NoParams()).name),
+          ),
+        ),
+        Bind.put<ListRepository>(
+          ListRepositoryImpl(listDataSource: Get.find()),
+        ),
+        Bind.lazyPut(() => GetList(listRepository: Get.find())),
+        Bind.lazyPut(() => SetReadFlag(listRepository: Get.find())),
+        Bind.lazyPut<ListController>(
+          () => ListController(
+            getList: Get.find(),
+            setReadFlag: Get.find(),
+          ),
+        )
+      ];
 }

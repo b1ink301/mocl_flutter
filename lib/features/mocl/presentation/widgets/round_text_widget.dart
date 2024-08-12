@@ -17,12 +17,12 @@ class RoundTextWidget extends StatelessWidget {
       key: ValueKey(text),
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
       decoration: BoxDecoration(
-        border:
-            Border.all(color: textStyle?.color ?? const Color(0xFF000000)),
+        border: Border.all(color: textStyle?.color ?? const Color(0xFF000000)),
         borderRadius: BorderRadius.circular(10),
       ),
       child: Text(
         text,
+        maxLines: 1,
         style: textStyle,
       ),
     );
