@@ -5,6 +5,7 @@ import 'package:mocl_flutter/features/mocl/data/datasources/mocl_list_data_sourc
 import 'package:mocl_flutter/features/mocl/data/datasources/mocl_local_database.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/damoang_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/http/mocl_api_client.dart';
 import 'package:mocl_flutter/features/mocl/data/models/mocl_main_item_data.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
@@ -18,6 +19,7 @@ void main() async {
   late final ListDataSource listDataSource;
   late final BaseParser parser;
   late final LocalDatabase localDatabase;
+  late final ApiClient apiClient;
 
   const mainItemModel = MainItemData(
     orderBy: 1,
@@ -29,11 +31,13 @@ void main() async {
   );
 
   setUpAll(() {
+    apiClient = ApiClient();
     parser = DamoangParser();
     localDatabase = LocalDatabase();
     listDataSource = ListDataSourceImpl(
       localDatabase: localDatabase,
       parser: parser,
+      apiClient: apiClient,
     );
   });
 
@@ -41,8 +45,8 @@ void main() async {
     var item = mainItemModel.toMainItem(siteType);
     log("result=$item");
 
-    ResultSuccess<List<ListItem>> result =
-        await listDataSource.getList(item, 0, -1) as ResultSuccess<List<ListItem>>;
+    ResultSuccess<List<ListItem>> result = await listDataSource.getList(
+        item, 0, -1) as ResultSuccess<List<ListItem>>;
     log("result=${result.data.length}");
 
     expect(result, isA<ResultSuccess<List<ListItem>>>());

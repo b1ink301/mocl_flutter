@@ -11,8 +11,8 @@ class ListPage extends GetView<ListController> {
   const ListPage({super.key});
 
   Widget _buildAppbar(BuildContext context) => AppbarDualTextWidget(
-        smallTitle: RxString(controller.getAppbarSmallTitle()),
-        title: RxString(controller.getAppbarTitle()),
+        smallTitle: RxString(controller.appbarSmallTitle),
+        title: RxString(controller.appbarTitle),
         toolbarHeight: RxDouble(64.0),
         automaticallyImplyLeading: Platform.isMacOS,
         hasObx: false,
@@ -28,6 +28,7 @@ class ListPage extends GetView<ListController> {
   Widget build(BuildContext context) => Scaffold(
         body: CustomScrollView(
           controller: controller.scrollController,
+          cacheExtent: 0,
           slivers: <Widget>[
             _buildAppbar(context),
             const view.ListView(),

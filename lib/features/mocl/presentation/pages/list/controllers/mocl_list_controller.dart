@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
@@ -27,9 +28,9 @@ class ListController extends GetxController {
   })  : _getList = getList,
         _setReadFlag = setReadFlag;
 
-  String getAppbarTitle() => _mainItem.text;
+  String get appbarTitle => _mainItem.text;
 
-  String getAppbarSmallTitle() => _mainItem.siteType.title;
+  String get appbarSmallTitle => _mainItem.siteType.title;
 
   @override
   void onInit() {
@@ -47,33 +48,54 @@ class ListController extends GetxController {
     pagingController.dispose();
   }
 
-  void _fetchPage(int page) async {
-    debugPrint('fetchPage item=$_mainItem, page=$page, lastId=$lastId');
+  Future<void> _fetchPage(int page) async {
+    debugPrint('Fetching page: item=$_mainItem, page=$page, lastId=$lastId');
     var params = GetListParams(mainItem: _mainItem, page: page, lastId: lastId);
-    var result = await _getList(params);
 
-    if (result is ResultSuccess) {
-      var data = result as ResultSuccess<List<ListItem>>;
-      debugPrint('initMainList length=${data.data.length}');
-      final isLastPage = result.data.isEmpty;
-      var list = result.data
-          .map(
-            (item) => ListItemWrapper(
+    try {
+      var result = await _getList(params);
+
+      if (result is ResultSuccess<List<ListItem>>) {
+        debugPrint('Fetched items: ${result.data.length}');
+
+        // 백그라운드 isolate에서 데이터 처리
+        final list = await compute(_processListItems, result.data);
+
+        // 메인 쓰레드로 돌아와서 UI 업데이트
+        _updatePagingController(list, page);
+      } else if (result is ResultFailure) {
+        debugPrint('Error fetching page: ${result.failure}');
+        pagingController.error = result.failure;
+      }
+    } catch (e) {
+      debugPrint('Unexpected error: $e');
+      pagingController.error = e;
+    }
+  }
+
+  // 백그라운드에서 실행될 함수
+  static List<ListItemWrapper> _processListItems(List<ListItem> items) {
+    return items
+        .map((item) => ListItemWrapper(
               item: item,
               isReadNotifier: ValueNotifier(item.isRead),
-            ),
-          )
-          .toList();
-      lastId = list.lastOrNull?.item.id ?? -1;
-      if (isLastPage) {
-        pagingController.appendLastPage(list);
-      } else {
-        final nextPageKey = pagingController.nextPageKey! + 1;
-        pagingController.appendPage(list, nextPageKey);
-      }
-    } else if (result is ResultFailure) {
-      pagingController.error = result.failure;
-    } else if (result is ResultLoading) {}
+            ))
+        .toList();
+  }
+
+  // UI 업데이트를 위한 함수
+  void _updatePagingController(List<ListItemWrapper> list, int page) {
+    if (list.isNotEmpty) {
+      lastId = list.last.item.id;
+    }
+
+    final isLastPage = list.isEmpty;
+    if (isLastPage) {
+      pagingController.appendLastPage(list);
+    } else {
+      final nextPageKey = page + 1;
+      pagingController.appendPage(list, nextPageKey);
+    }
   }
 
   void setReadFlag(ListItemWrapper itemWrapper) async {
@@ -93,8 +115,8 @@ class ListController extends GetxController {
   }
 
   void toDetail(ListItemWrapper item) async {
-    final listItem = item.item
-        .copyWith(boardTitle: '${_mainItem.siteType.title} > ${item.item.boardTitle}');
+    final listItem = item.item.copyWith(
+        boardTitle: '${_mainItem.siteType.title} > ${item.item.boardTitle}');
     await Get.toNamed(Routes.DETAIL, arguments: listItem);
 
     final isReadFlag = Get.findOrNull<bool>(tag: Routes.DETAIL);

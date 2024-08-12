@@ -13,6 +13,7 @@ class DetailBindings extends Binding {
   List<Bind> dependencies() => [
         Bind.lazyPut<DetailDataSource>(
           () => DetailDataSourceImpl(
+            apiClient: Get.find(),
             parser:
                 Get.find(tag: Get.find<GetSiteType>().call(NoParams()).name),
           ),

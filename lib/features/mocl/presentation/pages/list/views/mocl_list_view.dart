@@ -18,22 +18,24 @@ class ListView extends GetView<ListController> {
     final textStyles = TextStyles.getTextStyles(context);
 
     return PagedSliverList<int, ListItemWrapper>.separated(
+      itemExtent: 84,
       pagingController: controller.pagingController,
+      shrinkWrapFirstPageIndicators: true,
       builderDelegate: PagedChildBuilderDelegate<ListItemWrapper>(
-        itemBuilder: (context, item, index) => KeyedSubtree(
-          key: ValueKey(item.item.id),
-          child: CachedListItem(
-            item: item,
-            textStyles: textStyles,
-            onTap: () => controller.toDetail(item),
-          ),
+        itemBuilder: (context, item, index) => CachedListItem(
+          key: ValueKey(item.item.id.toString()),
+          item: item,
+          textStyles: textStyles,
+          onTap: () => controller.toDetail(item),
         ),
         newPageProgressIndicatorBuilder: (context) => const LoadingWidget(),
         firstPageProgressIndicatorBuilder: (context) => const LoadingWidget(),
       ),
       separatorBuilder: (context, index) => const Divider(
+        key: ValueKey('divider'),
         indent: 16,
         endIndent: 4,
+        height: 1,
       ),
     );
   }

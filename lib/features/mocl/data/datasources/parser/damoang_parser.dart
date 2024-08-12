@@ -1,25 +1,33 @@
 import 'dart:developer';
 
+import 'package:dio/dio.dart';
 import 'package:html/dom.dart';
+import 'package:html/parser.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 
 import '../../../domain/entities/mocl_details.dart';
+import '../../../domain/entities/mocl_site_type.dart';
 import 'base_parser.dart';
 
 class DamoangParser extends BaseParser {
   @override
-  Future<Result> comment(Document document) {
+  SiteType get siteType => SiteType.damoang;
+
+  @override
+  Future<Result> comment(Response response) {
     // TODO: implement comment
     throw UnimplementedError();
   }
 
   @override
-  Future<Result> detail(Document document) async {
+  Future<Result> detail(Response response) async {
+    var document = parse(response.data);
     final container = document.querySelector('article[id=bo_v]');
     final title =
-        container?.querySelector('header > h1[id=bo_v_title]')?.text.trim() ?? '';
+        container?.querySelector('header > h1[id=bo_v_title]')?.text.trim() ??
+            '';
     final timeElement = container?.querySelector(
         'section[id=bo_v_info] > div.d-flex > div > span.orangered');
     final time = timeElement?.text.trim() ??
@@ -144,12 +152,13 @@ class DamoangParser extends BaseParser {
 
   @override
   Future<Result> list(
-    Document document,
+    Response response,
     int lastId,
     String boardTitle,
-    Future<bool> Function(int) isRead,
+    Future<bool> Function(SiteType, int) isRead,
   ) async {
     log('DamoangParser list');
+    var document = parse(response.data);
     var elementList = document.querySelectorAll(
         'form[id=fboardlist] > section[id=bo_list] > ul.list-group > li.list-group-item > div.d-flex');
 
@@ -170,7 +179,7 @@ class DamoangParser extends BaseParser {
 
       var url = link.attributes["href"]?.trim() ?? '';
       var uri = Uri.tryParse(url);
-      if (uri==null) return null;
+      if (uri == null) return null;
       var idString = uri.pathSegments.lastOrNull ?? '-1';
       var id = int.tryParse(idString) ?? -1;
       if (id <= 0 || lastId > 0 && id >= lastId) {
@@ -208,7 +217,8 @@ class DamoangParser extends BaseParser {
 
       var nickImage = metaElement
               ?.querySelector("span.profile_img > img.mb-photo")
-              ?.attributes["src"]?.trim() ??
+              ?.attributes["src"]
+              ?.trim() ??
           '';
       var hitElement =
           infoElement?.querySelector("div > div.d-flex > div.wr-num.order-4");
@@ -243,7 +253,7 @@ class DamoangParser extends BaseParser {
         hit: hit,
         userInfo: userInfo,
         hasImage: hasImage,
-        isRead: await isRead(id),
+        isRead: await isRead(siteType, id),
       );
 
       return item;
