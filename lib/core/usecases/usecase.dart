@@ -1,17 +1,16 @@
 import 'package:equatable/equatable.dart';
 
-import '../../features/mocl/domain/entities/mocl_result.dart';
 
-abstract class UseCaseNoFuture<Type, Params> {
+abstract class UseCase<Type, Params> {
   Type call(Params params);
 }
 
-abstract class UseCase<Type, Params> {
-  Future<Result> call(Params params);
+abstract class FutureUseCase<Type, Params> {
+  Future<Type> call(Params params);
 }
 
 abstract class StreamUseCase<Type, Params> {
-  Stream<Result> call(Params params);
+  Stream<Type> call(Params params);
 }
 
 class NoParams extends Equatable {

@@ -24,6 +24,7 @@ class DetailBindings extends Binding {
         Bind.lazyPut(() => GetDetail(detailRepository: Get.find())),
         Bind.lazyPut<DetailController>(() => DetailController(
               getDetail: Get.find(),
+              siteType: Get.find<GetSiteType>().call(NoParams())
             ))
       ];
 }

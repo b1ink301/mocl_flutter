@@ -4,7 +4,11 @@ class RoundTextWidget extends StatelessWidget {
   final String text;
   final TextStyle? textStyle;
 
-  const RoundTextWidget({super.key, required this.text, this.textStyle});
+  const RoundTextWidget({
+    super.key,
+    required this.text,
+    this.textStyle,
+  });
 
   @override
   Widget build(BuildContext context) => _buildRoundText(context);
@@ -12,10 +16,10 @@ class RoundTextWidget extends StatelessWidget {
   Widget _buildRoundText(
     BuildContext context,
   ) {
-    if (text.isEmpty) return const SizedBox.shrink();
+    if (text.isEmpty || text == '0') return const SizedBox.shrink();
     return Container(
       key: ValueKey(text),
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 1),
+      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 0),
       decoration: BoxDecoration(
         border: Border.all(color: textStyle?.color ?? const Color(0xFF000000)),
         borderRadius: BorderRadius.circular(10),

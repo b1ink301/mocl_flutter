@@ -39,7 +39,7 @@ class MoclTheme {
         textTheme: const TextTheme(
           bodyMedium: TextStyle(color: Color(0xFF111111), fontSize: 17),
           bodySmall: TextStyle(color: Color(0xFF888888), fontSize: 14),
-          labelSmall: TextStyle(color: Color(0xFF888888), fontSize: 10),
+          labelSmall: TextStyle(color: Color(0xFF888888), fontSize: 11),
           headlineSmall: TextStyle(color: Color(0xFF555555), fontSize: 16),
           labelMedium: TextStyle(color: Colors.white, fontSize: 16),
         ),
@@ -73,7 +73,7 @@ class MoclTheme {
         textTheme: const TextTheme(
           bodyMedium: TextStyle(color: Color(0xFFEEEEEE), fontSize: 17),
           bodySmall: TextStyle(color: Color(0xFFAAAAAA), fontSize: 14),
-          labelSmall: TextStyle(color: Color(0xFFAAAAAA), fontSize: 10),
+          labelSmall: TextStyle(color: Color(0xFFAAAAAA), fontSize: 11),
           headlineSmall: TextStyle(color: Color(0xFFAAAAAA), fontSize: 16),
           labelMedium: TextStyle(color: Colors.white, fontSize: 16),
         ),
