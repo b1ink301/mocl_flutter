@@ -7,11 +7,11 @@ import 'dart:async' as _i3;
 
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i9;
-import 'package:mocl_flutter/features/mocl/data/datasources/mocl_list_data_source.dart'
+import 'package:mocl_flutter/features/mocl/data/datasources/list_data_source.dart'
     as _i7;
-import 'package:mocl_flutter/features/mocl/data/datasources/mocl_main_data_source.dart'
+import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart'
     as _i2;
-import 'package:mocl_flutter/features/mocl/data/models/mocl_main_item_data.dart'
+import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart'
     as _i6;
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart'
     as _i4;
@@ -68,24 +68,25 @@ class MockMainDataSource extends _i1.Mock implements _i2.MainDataSource {
       ) as _i3.Future<List<int>>);
 
   @override
-  _i3.Future<List<_i6.MainItemData>> getAllFromJson(_i5.SiteType? siteType) =>
+  _i3.Future<List<_i6.MainItemModel>> getAllFromJson(_i5.SiteType? siteType) =>
       (super.noSuchMethod(
         Invocation.method(
           #getAllFromJson,
           [siteType],
         ),
         returnValue:
-            _i3.Future<List<_i6.MainItemData>>.value(<_i6.MainItemData>[]),
-      ) as _i3.Future<List<_i6.MainItemData>>);
+            _i3.Future<List<_i6.MainItemModel>>.value(<_i6.MainItemModel>[]),
+      ) as _i3.Future<List<_i6.MainItemModel>>);
 
   @override
-  _i3.Future<int> deleteAll(_i5.SiteType? siteType) => (super.noSuchMethod(
+  _i3.Future<void> deleteAll(_i5.SiteType? siteType) => (super.noSuchMethod(
         Invocation.method(
           #deleteAll,
           [siteType],
         ),
-        returnValue: _i3.Future<int>.value(0),
-      ) as _i3.Future<int>);
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 
   @override
   _i3.Future<bool> hasItem(_i4.MainItem? item) => (super.noSuchMethod(
@@ -134,20 +135,21 @@ class MockListDataSource extends _i1.Mock implements _i7.ListDataSource {
       ) as _i3.Future<_i8.Result>);
 
   @override
-  _i3.Future<int> setReadFlag(
+  _i3.Future<void> setReadFlag(
     _i5.SiteType? siteType,
-    int? boardId,
+    int? id,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
           #setReadFlag,
           [
             siteType,
-            boardId,
+            id,
           ],
         ),
-        returnValue: _i3.Future<int>.value(0),
-      ) as _i3.Future<int>);
+        returnValue: _i3.Future<void>.value(),
+        returnValueForMissingStub: _i3.Future<void>.value(),
+      ) as _i3.Future<void>);
 
   @override
   _i3.Future<bool> isReadFlag(

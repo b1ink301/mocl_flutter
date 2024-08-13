@@ -1,12 +1,12 @@
 import 'dart:developer';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/mocl_list_data_source.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/mocl_local_database.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/list_data_source.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/local_database.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/damoang_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/mocl_api_client.dart';
-import 'package:mocl_flutter/features/mocl/data/models/mocl_main_item_data.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/api_client.dart';
+import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
@@ -21,7 +21,7 @@ void main() async {
   late final LocalDatabase localDatabase;
   late final ApiClient apiClient;
 
-  const mainItemModel = MainItemData(
+  const mainItemModel = MainItemModel(
     orderBy: 1,
     board: "free",
     type: 0,
@@ -42,7 +42,7 @@ void main() async {
   });
 
   test('리스트 목록을 가져온다.', () async {
-    var item = mainItemModel.toMainItem(siteType);
+    var item = mainItemModel.toEntity(siteType);
     log("result=$item");
 
     ResultSuccess<List<ListItem>> result = await listDataSource.getList(

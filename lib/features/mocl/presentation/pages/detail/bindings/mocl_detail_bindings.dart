@@ -1,5 +1,5 @@
 import 'package:get/get.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/mocl_detail_data_source.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/detail_data_source.dart';
 
 import '../../../../../../core/usecases/usecase.dart';
 import '../../../../data/repositories/mocl_detail_repository_impl.dart';

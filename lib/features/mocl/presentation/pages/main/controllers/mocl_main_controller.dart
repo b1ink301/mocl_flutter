@@ -70,7 +70,7 @@ class MainController extends GetxController with StateMixin<List<MainItem>> {
     }
   }
 
-  Future<List<int>> setList(
+  Future<int> setList(
     List<MainItem> selectedItems,
   ) async {
     final params = SetMainParams(
@@ -79,12 +79,12 @@ class MainController extends GetxController with StateMixin<List<MainItem>> {
     );
     final result = await _setMainList(params);
 
-    if (result is ResultSuccess<List<int>>) {
+    if (result is ResultSuccess<int>) {
       initMainList();
-      return Future.value(result.data);
+      return result.data;
     }
 
-    return Future.value(List.empty());
+    return -1;
   }
 
   void getListFromJson() async {

@@ -1,14 +1,14 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:mocl_flutter/features/mocl/data/models/mocl_model_mapper.dart';
+import 'package:mocl_flutter/features/mocl/data/models/model_mapper.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
-part 'mocl_main_item_data.freezed.dart';
-part 'mocl_main_item_data.g.dart';
+part 'main_item_model.freezed.dart';
+part 'main_item_model.g.dart';
 
 @freezed
-class MainItemData with _$MainItemData {
-  const factory MainItemData({
+class MainItemModel with _$MainItemModel {
+  const factory MainItemModel({
     @JsonKey(name: 'no')
     required int orderBy,
     required String board,
@@ -19,15 +19,15 @@ class MainItemData with _$MainItemData {
     SiteType? siteType,
   }) = _MainItemData;
 
-  factory MainItemData.fromJson(Map<String, Object?> json) =>
-      _$MainItemDataFromJson(json);
+  factory MainItemModel.fromJson(Map<String, Object?> json) =>
+      _$MainItemModelFromJson(json);
 
   // @override
   // Map<String, dynamic> toJson() => _$MainItemDataToJson(this);
 }
 
-extension MainItemDataExtention on MainItemData {
-  MainItem toMainItem(SiteType siteType) => MainItemMapper.toMainItem(
+extension MainItemDataExtention on MainItemModel {
+  MainItem toEntity(SiteType siteType) => MainItemMapper.toEntity(
         this,
         siteType,
       );

@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 
-import '../../../../data/datasources/mocl_main_data_source.dart';
+import '../../../../data/datasources/main_data_source.dart';
 import '../../../../data/repositories/mocl_main_repository_impl.dart';
 import '../../../../domain/repositories/main_repository.dart';
 import '../../../../domain/usecases/get_main_list.dart';

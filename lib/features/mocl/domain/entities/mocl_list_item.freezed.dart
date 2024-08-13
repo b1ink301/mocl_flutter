@@ -30,7 +30,9 @@ mixin _$ListItem {
   bool get hasImage => throw _privateConstructorUsedError;
   bool get isRead => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ListItem
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ListItemCopyWith<ListItem> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -66,6 +68,8 @@ class _$ListItemCopyWithImpl<$Res, $Val extends ListItem>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ListItem
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -172,6 +176,8 @@ class __$$ListItemImplCopyWithImpl<$Res>
       _$ListItemImpl _value, $Res Function(_$ListItemImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ListItem
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -324,7 +330,9 @@ class _$ListItemImpl implements _ListItem {
   int get hashCode => Object.hash(runtimeType, id, title, reply, category, time,
       url, board, boardTitle, like, hit, userInfo, hasImage, isRead);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ListItem
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ListItemImplCopyWith<_$ListItemImpl> get copyWith =>
@@ -373,8 +381,11 @@ abstract class _ListItem implements ListItem {
   bool get hasImage;
   @override
   bool get isRead;
+
+  /// Create a copy of ListItem
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ListItemImplCopyWith<_$ListItemImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
