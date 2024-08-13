@@ -5,7 +5,7 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
 import '../../domain/entities/mocl_result.dart';
 import '../../domain/repositories/list_repository.dart';
-import '../datasources/mocl_list_data_source.dart';
+import '../datasources/list_data_source.dart';
 
 class ListRepositoryImpl extends ListRepository {
   final ListDataSource listDataSource;

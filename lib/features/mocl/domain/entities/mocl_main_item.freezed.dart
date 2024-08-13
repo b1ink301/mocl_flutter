@@ -24,7 +24,9 @@ mixin _$MainItem {
   int get orderBy => throw _privateConstructorUsedError;
   bool get hasItem => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of MainItem
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $MainItemCopyWith<MainItem> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -54,6 +56,8 @@ class _$MainItemCopyWithImpl<$Res, $Val extends MainItem>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of MainItem
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -124,6 +128,8 @@ class __$$MainItemImplCopyWithImpl<$Res>
       _$MainItemImpl _value, $Res Function(_$MainItemImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of MainItem
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -220,7 +226,9 @@ class _$MainItemImpl implements _MainItem {
   int get hashCode => Object.hash(
       runtimeType, siteType, board, type, text, url, orderBy, hasItem);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of MainItem
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$MainItemImplCopyWith<_$MainItemImpl> get copyWith =>
@@ -251,8 +259,11 @@ abstract class _MainItem implements MainItem {
   int get orderBy;
   @override
   bool get hasItem;
+
+  /// Create a copy of MainItem
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$MainItemImplCopyWith<_$MainItemImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'mocl_main_item_data.dart';
+part of 'main_item_model.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator

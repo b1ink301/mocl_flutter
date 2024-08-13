@@ -1,17 +1,17 @@
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/mocl_api_client.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/api_client.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
 import '../../domain/entities/mocl_result.dart';
-import 'mocl_local_database.dart';
+import 'local_database.dart';
 
 abstract class ListDataSource {
   Future<Result> getList(MainItem item, int page, int lastId);
 
-  Future<int> setReadFlag(
+  Future<void> setReadFlag(
     SiteType siteType,
-    int boardId,
+    int id,
   );
 
   Future<bool> isReadFlag(
@@ -45,11 +45,11 @@ class ListDataSourceImpl extends ListDataSource {
     );
 
   @override
-  Future<int> setReadFlag(
+  Future<void> setReadFlag(
     SiteType siteType,
-    int boardId,
+    int id,
   ) async =>
-      localDatabase.setRead(siteType, boardId);
+      localDatabase.setRead(siteType, id);
 
   @override
   Future<bool> isReadFlag(

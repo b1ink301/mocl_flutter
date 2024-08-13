@@ -6,7 +6,7 @@ import 'package:mocl_flutter/features/mocl/domain/usecases/get_site_type.dart';
 import '../../data/datasources/parser/base_parser.dart';
 import '../../data/datasources/parser/clien_parser.dart';
 import '../../data/datasources/parser/damoang_parser.dart';
-import '../../data/datasources/mocl_api_client.dart';
+import '../../data/datasources/api_client.dart';
 import '../../domain/entities/mocl_site_type.dart';
 import '../../domain/usecases/set_site_type.dart';
 

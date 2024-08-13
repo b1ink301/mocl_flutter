@@ -1,14 +1,13 @@
 import 'dart:core';
-import 'dart:developer';
 
 import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/features/mocl/data/models/mocl_main_item_data.dart';
+import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 
 import '../../domain/entities/mocl_result.dart';
 import '../../domain/entities/mocl_site_type.dart';
 import '../../domain/repositories/main_repository.dart';
-import '../datasources/mocl_main_data_source.dart';
+import '../datasources/main_data_source.dart';
 
 class MainRepositoryImpl extends MainRepository {
   final MainDataSource mainDataSource;
@@ -36,9 +35,8 @@ class MainRepositoryImpl extends MainRepository {
     required List<MainItem> list,
   }) async {
     try {
-      final result = await mainDataSource.set(siteType, list);
-      log("setMainList result=$result");
-      return ResultSuccess<List<int>>(data: result);
+      await mainDataSource.set(siteType, list);
+      return ResultSuccess<int>(data: list.length);
     } on Exception {
       return ResultFailure<Failure>(failure: SetMainFailure());
     }
@@ -50,7 +48,7 @@ class MainRepositoryImpl extends MainRepository {
   }) async {
     try {
       final mainData = await mainDataSource.getAllFromJson(siteType);
-      final result = mainData.map((data) => data.toMainItem(siteType));
+      final result = mainData.map((data) => data.toEntity(siteType));
       var futures = result.map((item) async {
         var hasItem = await mainDataSource.hasItem(item);
         return item.copyWith(hasItem: hasItem);

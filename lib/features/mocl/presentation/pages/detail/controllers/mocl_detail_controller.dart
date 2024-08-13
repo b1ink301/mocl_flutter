@@ -30,11 +30,6 @@ class DetailController extends GetxController
   String get time => _listItem.time;
 
   @override
-  void onClose() {
-    super.onClose();
-  }
-
-  @override
   void dispose() {
     super.dispose();
     scrollController.dispose();

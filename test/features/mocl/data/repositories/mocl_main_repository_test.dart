@@ -4,9 +4,9 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/mocl_list_data_source.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/mocl_main_data_source.dart';
-import 'package:mocl_flutter/features/mocl/data/models/mocl_main_item_data.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/list_data_source.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart';
+import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/mocl/data/repositories/mocl_main_repository_impl.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
@@ -28,7 +28,7 @@ void main() {
     );
   });
 
-  const mainItemModel = MainItemData(
+  const mainItemModel = MainItemModel(
     orderBy: 1,
     board: "notice",
     type: 0,
@@ -37,18 +37,18 @@ void main() {
     siteType: siteType,
   );
 
-  final mainItem = mainItemModel.toMainItem(siteType);
+  final mainItem = mainItemModel.toEntity(siteType);
 
   group("메인 목록", () {
     test('메인 목록 요청시 에러 발생', () async {
       // arrange
-      when(mockMainDataSource.get(any))
-          .thenThrow(GetMainException());
+      when(mockMainDataSource.get(any)).thenThrow(GetMainException());
 
       verifyZeroInteractions(mockMainDataSource);
 
       // act
-      final result = await moclRepository.getMainList(siteType: siteType) as ResultFailure;
+      final result =
+          await moclRepository.getMainList(siteType: siteType) as ResultFailure;
       var expected = ResultFailure<Failure>(failure: GetMainFailure());
       log('result=$result, expected=$expected');
 
@@ -63,7 +63,8 @@ void main() {
 
       // verifyZeroInteractions(moclRepository);
       // act
-      final result = await moclRepository.getMainList(siteType: siteType) as ResultSuccess;
+      final result =
+          await moclRepository.getMainList(siteType: siteType) as ResultSuccess;
 
       // verify(mockMainDataSource.get(siteType));
 
@@ -82,7 +83,8 @@ void main() {
       // verifyZeroInteractions(mockMainDataSource);
       // act
 
-      var result = await moclRepository.getMainList(siteType: siteType) as ResultSuccess;
+      var result =
+          await moclRepository.getMainList(siteType: siteType) as ResultSuccess;
 
       // verify(mockMainDataSource.get(siteType)).called(1);
 
