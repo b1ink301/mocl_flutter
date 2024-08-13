@@ -4,6 +4,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 
 import '../../../models/mocl_list_item_wrapper.dart';
+import '../../../widgets/divider_widget.dart';
 import '../controllers/mocl_list_controller.dart';
 import 'mocl_cached_list_item.dart';
 import 'mocl_text_styles.dart';
@@ -18,12 +19,11 @@ class ListView extends GetView<ListController> {
     final textStyles = TextStyles.getTextStyles(context);
 
     return PagedSliverList<int, ListItemWrapper>.separated(
-      itemExtent: 84,
       pagingController: controller.pagingController,
       shrinkWrapFirstPageIndicators: true,
       builderDelegate: PagedChildBuilderDelegate<ListItemWrapper>(
         itemBuilder: (context, item, index) => CachedListItem(
-          key: ValueKey(item.item.id.toString()),
+          siteType: controller.siteType,
           item: item,
           textStyles: textStyles,
           onTap: () => controller.toDetail(item),
@@ -31,12 +31,7 @@ class ListView extends GetView<ListController> {
         newPageProgressIndicatorBuilder: (context) => const LoadingWidget(),
         firstPageProgressIndicatorBuilder: (context) => const LoadingWidget(),
       ),
-      separatorBuilder: (context, index) => const Divider(
-        key: ValueKey('divider'),
-        indent: 16,
-        endIndent: 4,
-        height: 1,
-      ),
+      separatorBuilder: (context, index) => const DividerWidget(),
     );
   }
 }

@@ -1,5 +1,5 @@
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/http/mocl_api_client.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/mocl_api_client.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 

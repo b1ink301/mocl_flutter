@@ -5,7 +5,7 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import '../entities/mocl_result.dart';
 import '../repositories/list_repository.dart';
 
-class GetList extends UseCase<List<MainItem>, GetListParams> {
+class GetList extends FutureUseCase<Result, GetListParams> {
   final ListRepository listRepository;
 
   GetList({required this.listRepository});

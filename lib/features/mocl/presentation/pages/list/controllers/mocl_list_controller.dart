@@ -29,8 +29,8 @@ class ListController extends GetxController {
         _setReadFlag = setReadFlag;
 
   String get appbarTitle => _mainItem.text;
-
-  String get appbarSmallTitle => _mainItem.siteType.title;
+  String get appbarSmallTitle => siteType.title;
+  SiteType get siteType => _mainItem.siteType;
 
   @override
   void onInit() {

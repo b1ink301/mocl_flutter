@@ -5,7 +5,7 @@ import 'package:mocl_flutter/features/mocl/domain/repositories/list_repository.d
 import '../../../../core/usecases/usecase.dart';
 import '../entities/mocl_site_type.dart';
 
-class SetReadFlag extends UseCase<int, SetReadFlagParams> {
+class SetReadFlag extends FutureUseCase<Result, SetReadFlagParams> {
   final ListRepository listRepository;
 
   SetReadFlag({required this.listRepository});

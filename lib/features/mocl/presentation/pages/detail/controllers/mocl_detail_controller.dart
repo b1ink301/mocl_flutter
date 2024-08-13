@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_detail.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -20,12 +21,9 @@ class DetailController extends GetxController
   final ListItem _listItem = Get.arguments;
   final RxString _appBarTitle = ''.obs;
   final RxDouble _appBarHeight = 64.0.obs;
+  final SiteType siteType;
 
-  DetailController({required GetDetail getDetail}) : _getDetail = getDetail;
-
-  final _detailStreamController = StreamController<Result>.broadcast();
-
-  Stream<Result> get detailStream => _detailStreamController.stream;
+  DetailController({required GetDetail getDetail, required this.siteType}) : _getDetail = getDetail;
 
   UserInfo get userInfo => _listItem.userInfo;
 
@@ -34,7 +32,6 @@ class DetailController extends GetxController
   @override
   void onClose() {
     super.onClose();
-    _detailStreamController.close();
   }
 
   @override

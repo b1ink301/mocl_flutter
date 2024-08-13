@@ -8,8 +8,8 @@ import 'package:get/get.dart';
 
 import '../../../../domain/entities/mocl_details.dart';
 import '../../../../domain/entities/mocl_user_info.dart';
-import '../../../widgets/nick_image_widget.dart';
 import '../../../widgets/loading_widget.dart';
+import '../../../widgets/nick_image_widget.dart';
 import '../controllers/mocl_detail_controller.dart';
 
 class DetailView extends StatefulWidget {
@@ -38,7 +38,7 @@ class _DetailViewState extends State<DetailView> {
   }
 
   Widget _buildView(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 4, 0),
+        padding: const EdgeInsets.fromLTRB(16, 0, 8, 0),
         child: _detailController.obx(
           (data) {
             if (data == null) return const SizedBox.shrink();
@@ -117,7 +117,10 @@ class _DetailViewState extends State<DetailView> {
             crossAxisAlignment: CrossAxisAlignment.center,
             mainAxisSize: MainAxisSize.max,
             children: [
-              NickImageWidget(url: userInfo.nickImage),
+              NickImageWidget(
+                url: userInfo.nickImage,
+                siteType: _detailController.siteType,
+              ),
               Text(
                 userInfo.nickName,
                 style: bodySmall,
@@ -192,7 +195,10 @@ class _DetailViewState extends State<DetailView> {
               contentPadding: EdgeInsets.only(left: left, top: 4, bottom: 4),
               title: Row(
                 children: [
-                  NickImageWidget(url: userInfo.nickImage),
+                  NickImageWidget(
+                    url: userInfo.nickImage,
+                    siteType: _detailController.siteType,
+                  ),
                   Text(
                     userInfo.nickName,
                     style: bodySmall,
@@ -202,7 +208,7 @@ class _DetailViewState extends State<DetailView> {
                     comment.time,
                     style: bodySmall,
                   ),
-                  const Spacer(),
+                  // const Spacer(),
                 ],
               ),
               subtitle: Padding(
@@ -239,32 +245,32 @@ class HeaderDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Center(
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          const SizedBox(width: 16),
-          CachedNetworkImage(
-            imageUrl: _userInfo.nickImage,
-            fit: BoxFit.contain,
-            width: 18,
-          ),
-          const Spacer(),
-          Text(
-            _userInfo.nickName,
-            style: Theme.of(context).textTheme.bodySmall,
-          ),
-          // const Spacer(),
-          // Text('comment.time'),
-          const Spacer(
-            flex: 30,
-          ),
-        ],
-      ),
-    );
-  }
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) =>
+      Center(
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            const SizedBox(width: 16),
+            CachedNetworkImage(
+              imageUrl: _userInfo.nickImage,
+              fit: BoxFit.contain,
+              width: 18,
+            ),
+            const SizedBox(width: 8),
+            Text(
+              _userInfo.nickName,
+              style: Theme.of(context).textTheme.bodySmall,
+            ),
+            // const Spacer(),
+            // Text('comment.time'),
+            const Spacer(),
+          ],
+        ),
+      );
 
   @override
   double get maxExtent => 42;
