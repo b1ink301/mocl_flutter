@@ -1,78 +1,64 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/main/providers/main_provider.dart';
+import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
 
 import '../../../../domain/entities/mocl_main_item.dart';
 import '../../../widgets/loading_widget.dart';
-import '../controllers/mocl_main_controller.dart';
 
-class MainView extends StatefulWidget {
-  const MainView({super.key});
+class MainView extends ConsumerWidget {
+  final SiteType siteType;
 
-  @override
-  State<MainView> createState() => _MainBodyState();
-}
-
-class _MainBodyState extends State<MainView> {
-  final MainController _controller = Get.find();
+  const MainView({super.key, required this.siteType});
 
   @override
-  Widget build(BuildContext context) => buildBodyContent(context);
-
-  Widget _buildResultSuccess(
-    BuildContext context,
-    List<MainItem> data,
-  ) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final textStyle = Theme.of(context).textTheme.bodyMedium;
-    return ListView.separated(
-      itemCount: data.length,
-      itemBuilder: (context, index) {
-        final item = data[index];
-        return Column(
-          key: Key(item.board),
-          // mainAxisSize: MainAxisSize.max,
-          children: [
-            ListTile(
-              minTileHeight: 64,
-              title: Text(
-                item.text,
-                style: textStyle,
-              ),
-              onTap: () => _controller.gotoListPage(item),
-            ),
-          ],
-        );
+    final resultAsync = ref.watch(mainListStateProvider);
+    debugPrint('[MainView] resultAsync = $resultAsync');
+
+    return resultAsync.when(
+      data: (result) {
+        debugPrint('[MainView] result = ${result.runtimeType}');
+
+        if (result is ResultSuccess<List<MainItem>>) {
+          return ListView.separated(
+            itemCount: result.data.length,
+            itemBuilder: (context, index) {
+              final item = result.data[index];
+              return ListTile(
+                key: ValueKey(item.board),
+                minTileHeight: 64,
+                title: Text(
+                  item.text,
+                  style: textStyle,
+                ),
+                onTap: () => context.push(Routes.LIST, extra: item),
+              );
+            },
+            separatorBuilder: (BuildContext context, int index) =>
+                const DividerWidget(),
+          );
+        } else {
+          return MessageWidget(message: 'message ${result.runtimeType}');
+        }
       },
-      separatorBuilder: (BuildContext context, int index) =>
-          const DividerWidget(),
+      error: (e, s) => Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Text(
+          '에러가 발생했습니다',
+          style: TextStyle(
+            fontSize: 16,
+            color: Theme.of(context).indicatorColor,
+          ),
+        ),
+      ),
+      loading: () => const LoadingWidget(),
     );
   }
-
-  Widget buildBodyContent(BuildContext context) => _controller.obx(
-        (data) {
-          if (data == null) return const SizedBox.shrink();
-          return _buildResultSuccess(context, data);
-        },
-        onLoading: const LoadingWidget(),
-        onEmpty: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Text(
-            '항목이 없습니다\n오른쪽 상단의 +버튼을 눌려서\n항목을 추가해주세요',
-            style: TextStyle(
-              fontSize: 16,
-              color: Theme.of(context).indicatorColor,
-            ),
-          ),
-        ),
-        onError: (error) => Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Text(
-            '에러가 발생했습니다',
-            style: TextStyle(
-              fontSize: 16,
-              color: Theme.of(context).indicatorColor,
-            ),
-          ),
-        ),
-      );
 }

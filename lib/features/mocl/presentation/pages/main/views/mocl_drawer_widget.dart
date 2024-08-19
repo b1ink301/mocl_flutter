@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 import '../../../../domain/entities/mocl_site_type.dart';
 
 class DrawerWidget extends StatelessWidget {
   const DrawerWidget({super.key, required this.onChangeSite});
 
-  final Future<void> Function(SiteType) onChangeSite;
+  final void Function(SiteType) onChangeSite;
 
   @override
   Widget build(BuildContext context) => Drawer(
@@ -34,7 +33,7 @@ class DrawerWidget extends StatelessWidget {
                 if (context.mounted) {
                   Navigator.of(context).pop();
                 }
-                await onChangeSite(SiteType.damoang);
+                onChangeSite(SiteType.damoang);
               },
             ),
             const Divider(
@@ -50,7 +49,7 @@ class DrawerWidget extends StatelessWidget {
                 if (context.mounted) {
                   Navigator.of(context).pop();
                 }
-                await onChangeSite(SiteType.clien);
+                onChangeSite(SiteType.clien);
               },
             ),
             const Divider(
@@ -64,14 +63,6 @@ class DrawerWidget extends StatelessWidget {
               titleTextStyle: Theme.of(context).textTheme.bodyMedium,
               onTap: () {
                 // Get.toNamed(Routes.SETTING);
-
-                Get.snackbar(
-                  'Mocl',
-                  '미구현',
-                  // colorText: Colors.white,
-                  // backgroundColor: Colors.red,
-                  // snackPosition: SnackPosition.TOP,
-                );
 
                 Navigator.of(context).pop();
               },

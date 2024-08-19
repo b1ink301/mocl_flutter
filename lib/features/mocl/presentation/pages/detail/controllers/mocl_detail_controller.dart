@@ -1,34 +1,16 @@
-import 'dart:async';
-import 'dart:developer';
-import 'dart:math' as math;
-
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_detail.dart';
-import 'package:url_launcher/url_launcher.dart';
 
-import '../../../../domain/entities/mocl_result.dart';
-import '../../../../domain/entities/mocl_user_info.dart';
-import '../../../routes/mocl_app_pages.dart';
-
-class DetailController extends GetxController
-    with StateMixin<ResultSuccess<Details>> {
+class DetailController {
   final ScrollController scrollController = ScrollController();
   final GetDetail _getDetail;
-  final ListItem _listItem = Get.arguments;
-  final RxString _appBarTitle = ''.obs;
-  final RxDouble _appBarHeight = 64.0.obs;
   final SiteType siteType;
 
   DetailController({required GetDetail getDetail, required this.siteType}) : _getDetail = getDetail;
 
-  UserInfo get userInfo => _listItem.userInfo;
 
-  String get time => _listItem.time;
-
+  /*
   @override
   void dispose() {
     super.dispose();
@@ -107,5 +89,5 @@ class DetailController extends GetxController
     log('titleHeight = $titleHeight');
 
     return math.max(30, titleHeight) + 34; // 텍스트 높이 반환
-  }
+  }*/
 }

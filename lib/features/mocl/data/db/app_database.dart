@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:floor/floor.dart';
+import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/features/mocl/data/db/dao/is_read_dao.dart';
 import 'package:mocl_flutter/features/mocl/data/db/dao/main_dao.dart';
 import 'package:mocl_flutter/features/mocl/data/db/entities/main_item_data.dart';

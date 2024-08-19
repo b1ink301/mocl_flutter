@@ -1,11 +1,11 @@
 import 'dart:developer';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/api_client.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/list_data_source.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/local_database.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/damoang_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/api_client.dart';
+import 'package:mocl_flutter/features/mocl/data/db/app_database.dart';
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
@@ -17,9 +17,10 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 void main() async {
   const SiteType siteType = SiteType.damoang;
   late final ListDataSource listDataSource;
-  late final BaseParser parser;
+  late final DamoangParser parser;
   late final LocalDatabase localDatabase;
   late final ApiClient apiClient;
+  late final AppDatabase appDatabase;
 
   const mainItemModel = MainItemModel(
     orderBy: 1,
@@ -30,13 +31,13 @@ void main() async {
     siteType: siteType,
   );
 
-  setUpAll(() {
+  setUpAll(() async {
+    appDatabase = await $FloorAppDatabase.databaseBuilder('mocl.db').build();
     apiClient = ApiClient();
     parser = DamoangParser();
-    localDatabase = LocalDatabase();
+    localDatabase = LocalDatabase(database: appDatabase);
     listDataSource = ListDataSourceImpl(
       localDatabase: localDatabase,
-      parser: parser,
       apiClient: apiClient,
     );
   });
@@ -46,7 +47,7 @@ void main() async {
     log("result=$item");
 
     ResultSuccess<List<ListItem>> result = await listDataSource.getList(
-        item, 0, -1) as ResultSuccess<List<ListItem>>;
+        item, 0, -1, parser) as ResultSuccess<List<ListItem>>;
     log("result=${result.data.length}");
 
     expect(result, isA<ResultSuccess<List<ListItem>>>());

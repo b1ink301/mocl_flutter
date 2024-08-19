@@ -10,7 +10,7 @@ abstract class ListRepository {
     required int lastId,
   });
 
-  Future<Result> setReadFlag({
+  Future<int> setReadFlag({
     required SiteType siteType,
     required int boardId,
   });

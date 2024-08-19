@@ -39,7 +39,6 @@ void main() async {
     parser = DamoangParser();
     apiClient = ApiClient();
     detailDataSource = DetailDataSourceImpl(
-      parser: parser,
       apiClient: apiClient,
     );
   });
@@ -48,7 +47,7 @@ void main() async {
     log("result=$item");
 
     ResultSuccess<Details> result =
-        await detailDataSource.getDetail(item) as ResultSuccess<Details>;
+        await detailDataSource.getDetail(item, parser) as ResultSuccess<Details>;
     log("result=${result.data.bodyHtml}");
 
     expect(result, isA<ResultSuccess<Details>>());

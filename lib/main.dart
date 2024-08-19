@@ -1,34 +1,27 @@
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/features/mocl/presentation/mocl_theme.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/mocl_global_bindings.dart';
 
-import 'features/mocl/data/datasources/local_database.dart';
 import 'features/mocl/presentation/common/mocl_custom_scroll_behavior.dart';
+import 'features/mocl/presentation/injection.dart';
 import 'features/mocl/presentation/routes/mocl_app_pages.dart';
 
-void main() {
-  Future.wait(
-    [
-      GetStorage.init(),
-      Get.put(LocalDatabase(), permanent: true).init(),
-    ],
-  );
-  runApp(const MoclApp());
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await configureDependencies();
+  runApp(const ProviderScope(
+    child: MoclApp(),
+  ));
 }
 
 class MoclApp extends StatelessWidget {
   const MoclApp({super.key});
 
   @override
-  Widget build(BuildContext context) => GetMaterialApp(
+  Widget build(BuildContext context) => MaterialApp.router(
         scrollBehavior: CustomScrollBehavior(),
         theme: MoclTheme.lightTheme,
         darkTheme: MoclTheme.darkTheme,
-        defaultTransition: Transition.cupertino,
-        binds: GlobalBindings().dependencies(),
-        initialRoute: AppPages.initial,
-        getPages: AppPages.routes,
+        routerConfig: AppPages.router,
       );
 }

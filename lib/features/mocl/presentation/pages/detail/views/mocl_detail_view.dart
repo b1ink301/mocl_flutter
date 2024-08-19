@@ -3,32 +3,37 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:get/get.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/detail/providers/detail_provider.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/main/providers/main_provider.dart';
 
 import '../../../../domain/entities/mocl_details.dart';
+import '../../../../domain/entities/mocl_list_item.dart';
+import '../../../../domain/entities/mocl_site_type.dart';
 import '../../../../domain/entities/mocl_user_info.dart';
 import '../../../widgets/loading_widget.dart';
 import '../../../widgets/nick_image_widget.dart';
-import '../controllers/mocl_detail_controller.dart';
 
-class DetailView extends StatefulWidget {
-  const DetailView({super.key});
+class DetailView extends ConsumerStatefulWidget {
+  final ListItem listItem;
+
+  const DetailView({super.key, required this.listItem});
 
   @override
-  State<StatefulWidget> createState() => _DetailViewState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _DetailViewState();
 }
 
-class _DetailViewState extends State<DetailView> {
-  final DetailController _detailController = Get.find();
-
+class _DetailViewState extends ConsumerState<DetailView> {
   @override
   Widget build(BuildContext context) {
     if (Platform.isMacOS) {
       return Listener(
         onPointerDown: (PointerDownEvent event) {
           if (event.buttons == kSecondaryMouseButton) {
-            Get.back();
+            context.pop();
           }
         },
         child: _buildView(context),
@@ -37,19 +42,23 @@ class _DetailViewState extends State<DetailView> {
     return _buildView(context);
   }
 
-  Widget _buildView(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 8, 0),
-        child: _detailController.obx(
-          (data) {
-            if (data == null) return const SizedBox.shrink();
-            _detailController.setReadFlag();
+  String getHexColor(Color color) =>
+      '#${color.value.toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}';
 
-            final theme = Theme.of(context);
-            final hexColor =
-                _detailController.getHexColor(theme.indicatorColor);
-            final bodySmall = theme.textTheme.bodySmall;
-            final bodyMedium = theme.textTheme.bodyMedium;
+  Widget _buildView(BuildContext context) {
+    final resultAsync = ref.watch(detailStateProvider(widget.listItem));
+    final siteType = ref.read(currentSiteTypeProvider);
 
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 8, 0),
+      child: resultAsync.when(
+        data: (data) {
+          final theme = Theme.of(context);
+          final hexColor = getHexColor(theme.indicatorColor);
+          final bodySmall = theme.textTheme.bodySmall;
+          final bodyMedium = theme.textTheme.bodyMedium;
+
+          if (data is ResultSuccess<Details>) {
             return SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
@@ -57,8 +66,9 @@ class _DetailViewState extends State<DetailView> {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _buildHeader(
-                    _detailController.userInfo,
-                    _detailController.time,
+                    siteType,
+                    widget.listItem.userInfo,
+                    widget.listItem.time,
                     bodySmall,
                   ),
                   const Divider(),
@@ -76,11 +86,12 @@ class _DetailViewState extends State<DetailView> {
                     },
                     textStyle: bodyMedium,
                     renderMode: RenderMode.column,
-                    onTapUrl: (url) => _detailController.openBrowser(url),
+                    // onTapUrl: (url) => _detailController.openBrowser(url),
                   ),
                   const SizedBox(height: 10),
                   _buildComments(
                     context,
+                    siteType,
                     hexColor,
                     data.data.comments,
                     bodySmall,
@@ -90,22 +101,22 @@ class _DetailViewState extends State<DetailView> {
                 ],
               ),
             );
-          },
-          onLoading: const LoadingWidget(),
-          onError: (error) => Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Text(
-              '에러가 발생했습니다',
-              style: TextStyle(
-                fontSize: 16,
-                color: Theme.of(context).indicatorColor,
-              ),
-            ),
-          ),
-        ),
-      );
+          } else {
+            return const SizedBox.shrink();
+          }
+        },
+        error: (err, stack) {
+          return const SizedBox.shrink();
+        },
+        loading: () {
+          return const LoadingWidget();
+        },
+      ),
+    );
+  }
 
   Widget _buildHeader(
+    SiteType siteType,
     UserInfo userInfo,
     String time,
     TextStyle? bodySmall,
@@ -119,7 +130,7 @@ class _DetailViewState extends State<DetailView> {
             children: [
               NickImageWidget(
                 url: userInfo.nickImage,
-                siteType: _detailController.siteType,
+                siteType: siteType,
               ),
               Text(
                 userInfo.nickName,
@@ -137,13 +148,14 @@ class _DetailViewState extends State<DetailView> {
 
   Widget _buildComments(
     BuildContext context,
+    SiteType siteType,
     String hexColor,
     List<CommentItem> comments,
     TextStyle? bodySmall,
     TextStyle? bodyMedium,
   ) {
     Widget buildRefreshButton() => InkWell(
-          onTap: () => _detailController.reload(),
+          // onTap: () => _detailController.reload(),
           child: Container(
             width: double.infinity, // 가로 꽉 채우기
             height: 56,
@@ -197,7 +209,7 @@ class _DetailViewState extends State<DetailView> {
                 children: [
                   NickImageWidget(
                     url: userInfo.nickImage,
-                    siteType: _detailController.siteType,
+                    siteType: siteType,
                   ),
                   Text(
                     userInfo.nickName,
@@ -225,7 +237,7 @@ class _DetailViewState extends State<DetailView> {
                     }
                     return null;
                   },
-                  onTapUrl: (url) => _detailController.openBrowser(url),
+                  // onTapUrl: (url) => _detailController.openBrowser(url),
                 ),
               ),
             );
