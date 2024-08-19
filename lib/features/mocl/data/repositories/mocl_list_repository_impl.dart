@@ -1,18 +1,39 @@
 import 'dart:core';
 
+import 'package:injectable/injectable.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
 import '../../domain/entities/mocl_result.dart';
 import '../../domain/repositories/list_repository.dart';
 import '../datasources/list_data_source.dart';
+import '../datasources/parser/parser_factory.dart';
 
+@Injectable(as: ListRepository)
 class ListRepositoryImpl extends ListRepository {
-  final ListDataSource listDataSource;
+  final ListDataSource dataSource;
+  final BaseParser parser;
 
   ListRepositoryImpl({
-    required this.listDataSource,
-  });
+    required this.dataSource,
+    required ParserFactory parserFactory,
+  }) : parser = parserFactory.createParser();
+
+  // ListRepositoryImpl({
+  //   required this.dataSource,
+  //   @factoryParam required this.parser,
+  // });
+  //
+  // @factoryMethod
+  // static ListRepository create(
+  //     ListDataSource listDataSource,
+  //     ParserFactory parserFactory,
+  //     ) =>
+  //     ListRepositoryImpl(
+  //       dataSource: listDataSource,
+  //       parser: parserFactory.createParser(),
+  //     );
 
   @override
   Future<Result> getList({
@@ -20,14 +41,12 @@ class ListRepositoryImpl extends ListRepository {
     required int page,
     required int lastId,
   }) =>
-      listDataSource.getList(item, page, lastId);
+      dataSource.getList(item, page, lastId, parser);
 
   @override
-  Future<Result> setReadFlag({
+  Future<int> setReadFlag({
     required SiteType siteType,
     required int boardId,
-  }) async {
-    var result = listDataSource.setReadFlag(siteType, boardId);
-    return ResultSuccess(data: result);
-  }
+  }) =>
+      dataSource.setReadFlag(siteType, boardId);
 }

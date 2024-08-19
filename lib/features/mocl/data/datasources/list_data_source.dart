@@ -1,5 +1,6 @@
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
+import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/api_client.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
@@ -7,9 +8,14 @@ import '../../domain/entities/mocl_result.dart';
 import 'local_database.dart';
 
 abstract class ListDataSource {
-  Future<Result> getList(MainItem item, int page, int lastId);
+  Future<Result> getList(
+    MainItem item,
+    int page,
+    int lastId,
+    BaseParser parser,
+  );
 
-  Future<void> setReadFlag(
+  Future<int> setReadFlag(
     SiteType siteType,
     int id,
   );
@@ -20,14 +26,13 @@ abstract class ListDataSource {
   );
 }
 
+@LazySingleton(as: ListDataSource)
 class ListDataSourceImpl extends ListDataSource {
   final LocalDatabase localDatabase;
-  final BaseParser parser;
   final ApiClient apiClient;
 
   ListDataSourceImpl({
     required this.localDatabase,
-    required this.parser,
     required this.apiClient,
   });
 
@@ -36,16 +41,18 @@ class ListDataSourceImpl extends ListDataSource {
     MainItem item,
     int page,
     int lastId,
-  ) => apiClient.getList(
-      item,
-      page,
-      lastId,
-      parser,
-      isReadFlag,
-    );
+    BaseParser parser,
+  ) =>
+      apiClient.getList(
+        item,
+        page,
+        lastId,
+        parser,
+        isReadFlag,
+      );
 
   @override
-  Future<void> setReadFlag(
+  Future<int> setReadFlag(
     SiteType siteType,
     int id,
   ) async =>

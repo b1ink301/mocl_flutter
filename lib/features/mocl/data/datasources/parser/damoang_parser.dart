@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:dio/dio.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
+import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
@@ -11,6 +12,7 @@ import '../../../domain/entities/mocl_details.dart';
 import '../../../domain/entities/mocl_site_type.dart';
 import 'base_parser.dart';
 
+@lazySingleton
 class DamoangParser extends BaseParser {
   @override
   SiteType get siteType => SiteType.damoang;
@@ -162,7 +164,9 @@ class DamoangParser extends BaseParser {
     var elementList = document.querySelectorAll(
         'form[id=fboardlist] > section[id=bo_list] > ul.list-group > li.list-group-item > div.d-flex');
 
-    var resultList = await Future.wait(elementList.map((element) async {
+    var resultList = <ListItem>[];
+
+    for (var element in elementList) {
       var category = element
               .querySelector('div.wr-num > div > span')
               ?.text
@@ -171,40 +175,38 @@ class DamoangParser extends BaseParser {
               .firstOrNull ??
           '';
 
-      if (category == "공지" || category == "홍보") return null;
+      if (category == "공지" || category == "홍보") continue;
 
       var infoElement = element.querySelector('div.flex-grow-1');
       var link = infoElement?.querySelector("div.d-flex > div > a");
-      if (link == null) return null;
+      if (link == null) continue;
 
       var url = link.attributes["href"]?.trim() ?? '';
       var uri = Uri.tryParse(url);
-      if (uri == null) return null;
+      if (uri == null) continue;
       var idString = uri.pathSegments.lastOrNull ?? '-1';
       var id = int.tryParse(idString) ?? -1;
-      if (id <= 0 || lastId > 0 && id >= lastId) {
-        return null;
-      }
+      if (id <= 0 || lastId > 0 && id >= lastId) continue;
 
       var metaElement = infoElement?.querySelector(
           'div.da-list-meta > div.d-flex > div.wr-name > span.sv_wrap > a.sv_member');
       var profile = metaElement?.attributes['href'] ?? '';
       var nickName = metaElement?.text.trim() ?? '';
       var userId = Uri.parse(profile).queryParameters['mb_id'] ?? '';
+
       var reply = infoElement
-              ?.querySelector("div.d-flex > div > span.count-plus")
-              ?.text
-              .trim() ??
+              ?.querySelectorAll("div.d-flex > div.d-inline-flex > a")
+              .map((a) => a.querySelector('span.count-plus')?.text.trim())
+              .firstWhere((text) => text != null && text.isNotEmpty,
+                  orElse: () => '') ??
           '';
 
       var board = '';
       var end = url.lastIndexOf("/");
       if (end > 0) {
         var start = url.lastIndexOf("/", end - 1);
-        try {
+        if (start >= 0) {
           board = url.substring(start + 1, end);
-        } on RangeError {
-          // 범위 오류 처리
         }
       }
 
@@ -220,6 +222,7 @@ class DamoangParser extends BaseParser {
               ?.attributes["src"]
               ?.trim() ??
           '';
+
       var hitElement =
           infoElement?.querySelector("div > div.d-flex > div.wr-num.order-4");
       hitElement?.querySelector("span.visually-hidden")?.remove();
@@ -235,12 +238,9 @@ class DamoangParser extends BaseParser {
               ?.hasContent() ??
           false;
 
-      UserInfo userInfo = UserInfo(
-        id: userId,
-        nickName: nickName,
-        nickImage: nickImage,
-      );
-      ListItem item = ListItem(
+      var isReadStatus = await isRead(siteType, id);
+
+      var item = ListItem(
         id: id,
         title: title,
         reply: reply,
@@ -251,17 +251,18 @@ class DamoangParser extends BaseParser {
         boardTitle: boardTitle,
         like: like,
         hit: hit,
-        userInfo: userInfo,
+        userInfo: UserInfo(
+          id: userId,
+          nickName: nickName,
+          nickImage: nickImage,
+        ),
         hasImage: hasImage,
-        isRead: await isRead(siteType, id),
+        isRead: isReadStatus,
       );
 
-      return item;
-    }));
+      resultList.add(item);
+    }
 
-    var data =
-        resultList.where((item) => item != null).cast<ListItem>().toList();
-
-    return ResultSuccess<List<ListItem>>(data: data);
+    return ResultSuccess<List<ListItem>>(data: resultList);
   }
 }

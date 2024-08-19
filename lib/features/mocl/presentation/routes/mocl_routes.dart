@@ -8,4 +8,5 @@ abstract class Routes {
   static const LIST = '/list';
   static const DETAIL = '/detail';
   static const SETTING = '/setting';
+  static const SET_MAIN_DLG = 'set_main_dialog';
 }

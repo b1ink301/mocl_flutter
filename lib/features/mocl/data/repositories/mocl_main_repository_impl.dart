@@ -1,5 +1,6 @@
 import 'dart:core';
 
+import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
@@ -9,12 +10,11 @@ import '../../domain/entities/mocl_site_type.dart';
 import '../../domain/repositories/main_repository.dart';
 import '../datasources/main_data_source.dart';
 
+@LazySingleton(as: MainRepository)
 class MainRepositoryImpl extends MainRepository {
   final MainDataSource mainDataSource;
 
-  MainRepositoryImpl({
-    required this.mainDataSource,
-  });
+  MainRepositoryImpl({required this.mainDataSource});
 
   @override
   Stream<Result> getMainListStream({

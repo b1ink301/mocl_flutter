@@ -6,11 +6,13 @@
 import 'dart:async' as _i3;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i9;
+import 'package:mockito/src/dummies.dart' as _i10;
 import 'package:mocl_flutter/features/mocl/data/datasources/list_data_source.dart'
     as _i7;
 import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart'
     as _i2;
+import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart'
+    as _i9;
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart'
     as _i6;
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart'
@@ -111,6 +113,7 @@ class MockListDataSource extends _i1.Mock implements _i7.ListDataSource {
     _i4.MainItem? item,
     int? page,
     int? lastId,
+    _i9.BaseParser? parser,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -119,9 +122,10 @@ class MockListDataSource extends _i1.Mock implements _i7.ListDataSource {
             item,
             page,
             lastId,
+            parser,
           ],
         ),
-        returnValue: _i3.Future<_i8.Result>.value(_i9.dummyValue<_i8.Result>(
+        returnValue: _i3.Future<_i8.Result>.value(_i10.dummyValue<_i8.Result>(
           this,
           Invocation.method(
             #getList,
@@ -129,13 +133,14 @@ class MockListDataSource extends _i1.Mock implements _i7.ListDataSource {
               item,
               page,
               lastId,
+              parser,
             ],
           ),
         )),
       ) as _i3.Future<_i8.Result>);
 
   @override
-  _i3.Future<void> setReadFlag(
+  _i3.Future<int> setReadFlag(
     _i5.SiteType? siteType,
     int? id,
   ) =>
@@ -147,9 +152,8 @@ class MockListDataSource extends _i1.Mock implements _i7.ListDataSource {
             id,
           ],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i3.Future<int>.value(0),
+      ) as _i3.Future<int>);
 
   @override
   _i3.Future<bool> isReadFlag(

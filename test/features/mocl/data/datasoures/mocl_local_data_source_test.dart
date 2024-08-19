@@ -4,6 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/local_database.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart';
+import 'package:mocl_flutter/features/mocl/data/db/app_database.dart';
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/mocl/data/db/entities/main_item_data.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
@@ -16,6 +17,7 @@ void main() async {
   const SiteType siteType = SiteType.damoang;
   late MainDataSource mainDataSource;
   late LocalDatabase localDatabase;
+  late final AppDatabase appDatabase;
 
   setUpAll(() async {
     // TestWidgetsFlutterBinding.ensureInitialized();
@@ -27,10 +29,9 @@ void main() async {
             (MethodCall methodCall) async {
           return './';
         });
-
-    localDatabase = LocalDatabase();
+    appDatabase = await $FloorAppDatabase.databaseBuilder('mocl.db').build();
+    localDatabase = LocalDatabase(database: appDatabase);
     mainDataSource = MainDataSourceImpl(localDatabase: localDatabase);
-    await localDatabase.init();
   });
 
   // tearDownAll(() async => await localDatabase.close());
