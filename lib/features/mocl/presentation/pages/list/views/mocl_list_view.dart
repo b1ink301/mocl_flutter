@@ -54,7 +54,12 @@ class _ListViewState extends ConsumerState<ListView> {
             textStyles: textStyles,
             onTap: () async {
               var result = await context.push(Routes.DETAIL, extra: item.item);
-              debugPrint('[PagedChildBuilderDelegate] result = $result');
+              var isRead = ref.watch(isReadStateProvider);
+              if (isRead && !item.isReadNotifier.value) {
+
+              }
+              debugPrint('[PagedChildBuilderDelegate] isRead = $isRead');
+              // ref.read(isReadStateProvider.notifier).init();
             },
           ),
           newPageProgressIndicatorBuilder: (context) => const LoadingWidget(),

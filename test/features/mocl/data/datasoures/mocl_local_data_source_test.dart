@@ -30,7 +30,7 @@ void main() async {
           return './';
         });
     appDatabase = await $FloorAppDatabase.databaseBuilder('mocl.db').build();
-    localDatabase = LocalDatabase(database: appDatabase);
+    localDatabase = LocalDatabase(database: Future.value(appDatabase));
     mainDataSource = MainDataSourceImpl(localDatabase: localDatabase);
   });
 

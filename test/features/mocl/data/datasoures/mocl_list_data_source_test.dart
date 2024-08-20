@@ -33,9 +33,9 @@ void main() async {
 
   setUpAll(() async {
     appDatabase = await $FloorAppDatabase.databaseBuilder('mocl.db').build();
-    apiClient = ApiClient();
+    apiClient = ApiClient.getInstance();
     parser = DamoangParser();
-    localDatabase = LocalDatabase(database: appDatabase);
+    localDatabase = LocalDatabase(database: Future.value(appDatabase));
     listDataSource = ListDataSourceImpl(
       localDatabase: localDatabase,
       apiClient: apiClient,

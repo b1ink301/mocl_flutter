@@ -17,10 +17,10 @@ dependencies:
   # HTML Widget
   flutter_widget_from_html: ^0.15.1
   # Service locator
-  injectable: ^2.4.4
-  get_it: ^7.7.0
+#  injectable: ^2.4.4
+#  get_it: ^7.7.0
   # Bloc for state management
-  flutter_bloc: ^8.1.6
+#  flutter_bloc: ^8.1.6
   # Value equality
   equatable: ^2.0.5
   # Functional programming thingies
@@ -78,7 +78,7 @@ dev_dependencies:
   freezed: ^2.5.2
   analyzer: ^6.7.0
   test: ^1.25.7
-  bloc_test: ^9.1.7
+#  bloc_test: ^9.1.7
   floor_generator: ^1.5.0
   riverpod_generator: ^2.4.2
   riverpod_lint: ^2.3.12

@@ -1,28 +1,19 @@
 import 'package:mocl_flutter/core/usecases/usecase.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/features/mocl/domain/usecases/get_main_list.dart';
-import 'package:mocl_flutter/features/mocl/domain/usecases/get_main_list_from_json.dart';
-import 'package:mocl_flutter/features/mocl/domain/usecases/get_site_type.dart';
+import 'package:mocl_flutter/features/mocl/presentation/di/use_case_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../domain/entities/mocl_main_item.dart';
 import '../../../../domain/entities/mocl_result.dart';
 import '../../../../domain/usecases/set_main_list.dart';
-import '../../../../domain/usecases/set_site_type.dart';
-import '../../../injection.dart';
 
 part 'main_provider.g.dart';
-
-// @riverpod
-// FutureOr<Result> getMain(GetMainRef ref) {
-//   final siteType = ref.watch(currentSiteTypeStateProvider);
-//   return getIt<GetMainList>().call(siteType);
-// }
 
 @riverpod
 FutureOr<Result> getMainDialog(GetMainDialogRef ref) {
   final siteType = ref.watch(currentSiteTypeStateProvider);
-  return getIt<GetMainListFromJson>().call(siteType);
+  final getMainListFromJson = ref.watch(getMainListFromJsonProvider);
+  return getMainListFromJson(siteType);
 }
 
 @Riverpod(keepAlive: true)
@@ -43,14 +34,16 @@ class MainListState extends _$MainListState {
   Future<void> setList(List<MainItem> items) async {
     final siteType = ref.watch(currentSiteTypeStateProvider);
     final param = SetMainParams(siteType: siteType, list: items);
-    await getIt<SetMainList>().call(param);
+    await ref.watch(setMainListProvider).call(param);
 
     reload();
   }
 
   Future<Result> _getList() {
     final siteType = ref.watch(currentSiteTypeStateProvider);
-    return getIt<GetMainList>().call(siteType);
+    final getMainList = ref.watch(getMainListProvider);
+
+    return getMainList(siteType);
   }
 }
 
@@ -83,8 +76,8 @@ String mainTitle(MainTitleRef ref) {
 // });
 
 @riverpod
-SiteType currentSiteType(CurrentSiteTypeRef ref) {
-  final getSiteType = getIt<GetSiteType>();
+Future<SiteType> currentSiteType(CurrentSiteTypeRef ref) {
+  final getSiteType = ref.watch(getSiteTypeProvider);
   return getSiteType(NoParams());
 }
 
@@ -104,13 +97,15 @@ class CurrentSiteTypeState extends _$CurrentSiteTypeState {
   SiteType build() => _getSiteType();
 
   SiteType _getSiteType() {
-    final getSiteType = getIt<GetSiteType>();
-    return getSiteType(NoParams());
+    return ref.read(currentSiteTypeProvider).maybeWhen(
+          data: (data) => data,
+          orElse: () => SiteType.damoang,
+        );
   }
 
   void setSiteType(SiteType newSiteType) {
     if (state != newSiteType) {
-      final setSiteType = getIt<SetSiteType>();
+      final setSiteType = ref.read(setSiteTypeProvider);
       setSiteType(newSiteType);
       state = newSiteType;
     }

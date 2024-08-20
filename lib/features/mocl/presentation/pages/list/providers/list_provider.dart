@@ -1,13 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
+import 'package:mocl_flutter/features/mocl/presentation/di/use_case_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../domain/entities/mocl_list_item.dart';
 import '../../../../domain/entities/mocl_result.dart';
 import '../../../../domain/usecases/get_list.dart';
-import '../../../injection.dart';
 import '../../../models/mocl_list_item_wrapper.dart';
 
 part 'list_provider.g.dart';
@@ -42,7 +43,7 @@ class ListState extends _$ListState {
         GetListParams(mainItem: _mainItem, page: page, lastId: lastId);
 
     try {
-      final getList = getIt<GetList>();
+      final getList = ref.read(getListProvider);
       final result = await getList(params);
 
       if (result is ResultSuccess<List<ListItem>>) {
@@ -79,5 +80,21 @@ class ListState extends _$ListState {
       final nextPageKey = page + 1;
       pagingController.appendPage(list, nextPageKey);
     }
+  }
+}
+
+final isReadProvider = StateProvider((ref) => false);
+
+@riverpod
+class IsReadState extends _$IsReadState {
+  @override
+  bool build() => ref.watch(isReadProvider);
+
+  void setRead() {
+    ref.read(isReadProvider.notifier).state = true;
+  }
+
+  void init() {
+    ref.read(isReadProvider.notifier).state = false;
   }
 }

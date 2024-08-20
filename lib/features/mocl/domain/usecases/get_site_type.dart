@@ -1,14 +1,12 @@
-import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/core/usecases/usecase.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/repositories/settings_repository.dart';
 
-@injectable
-class GetSiteType extends UseCase<SiteType, void> {
+class GetSiteType extends UseCase<Future<SiteType>, void> {
   final SettingsRepository settingsRepository;
 
   GetSiteType({required this.settingsRepository});
 
   @override
-  SiteType call(void params) => settingsRepository.getSiteType();
+  Future<SiteType> call(void params) => settingsRepository.getSiteType();
 }

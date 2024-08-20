@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/core/util/read_json_from_assets.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/local_database.dart';
 import 'package:mocl_flutter/features/mocl/data/db/entities/main_item_data.dart';
@@ -20,7 +19,6 @@ abstract class MainDataSource {
   Future<bool> hasItem(MainItem item);
 }
 
-@LazySingleton(as: MainDataSource)
 class MainDataSourceImpl extends MainDataSource {
   final LocalDatabase localDatabase;
 

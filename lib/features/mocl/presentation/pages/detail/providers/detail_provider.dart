@@ -2,12 +2,12 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/features/mocl/presentation/di/use_case_provider.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../../../domain/entities/mocl_list_item.dart';
 import '../../../../domain/entities/mocl_result.dart';
-import '../../../../domain/usecases/get_detail.dart';
-import '../../../injection.dart';
 
 part 'detail_provider.g.dart';
 
@@ -22,14 +22,16 @@ class DetailState extends _$DetailState {
   }
 
   Future<Result> _getDetail(ListItem item) {
-    final getDetail = getIt<GetDetail>();
-    final result =  getDetail(item);
+    final getDetail = ref.read(getDetailProvider);
+    final result = getDetail(item);
+
+    ref.read(isReadStateProvider.notifier).setRead();
 
     // if (result is ResultSuccess<Details>){
     //   var aa = result as ResultSuccess<Details>;
     //   aa.data.title;
-    //
-    //   ref.read(appBarHeightStateProvider(c))
+
+    // ref.read(appBarHeightStateProvider());
     // }
     return result;
   }
@@ -47,7 +49,6 @@ class DetailState extends _$DetailState {
 
 @riverpod
 class AppBarHeightState extends _$AppBarHeightState {
-
   @override
   double build(BuildContext context, String text) {
     return _calculateTitleHeight(context, text);
@@ -63,7 +64,8 @@ class AppBarHeightState extends _$AppBarHeightState {
       textDirection: TextDirection.ltr,
     )..layout(
         minWidth: 0,
-        maxWidth: MediaQuery.of(context).size.width - (24 * 2 + 16 * 4 + 16 + 4));
+        maxWidth:
+            MediaQuery.of(context).size.width - (24 * 2 + 16 * 4 + 16 + 4));
 
     final titleHeight = textPainter.height;
     debugPrint('titleHeight = $titleHeight');
@@ -71,4 +73,3 @@ class AppBarHeightState extends _$AppBarHeightState {
     return max(30, titleHeight) + 34; // 텍스트 높이 반환
   }
 }
-

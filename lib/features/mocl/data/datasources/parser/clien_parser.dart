@@ -1,6 +1,5 @@
 import 'package:dio/dio.dart';
 import 'package:html/parser.dart';
-import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 
@@ -9,7 +8,6 @@ import '../../../domain/entities/mocl_list_item.dart';
 import '../../../domain/entities/mocl_site_type.dart';
 import '../../../domain/entities/mocl_user_info.dart';
 
-@lazySingleton
 class ClienParser extends BaseParser {
   @override
   SiteType get siteType => SiteType.clien;

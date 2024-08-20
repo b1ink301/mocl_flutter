@@ -37,7 +37,7 @@ void main() async {
 
   setUpAll(() {
     parser = DamoangParser();
-    apiClient = ApiClient();
+    apiClient = ApiClient.getInstance();
     detailDataSource = DetailDataSourceImpl(
       apiClient: apiClient,
     );
