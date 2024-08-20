@@ -6,31 +6,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/providers/detail_provider.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/providers/main_provider.dart';
-import 'package:swipeable_page_route/swipeable_page_route.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 
-import '../../../../domain/entities/mocl_details.dart';
-import '../../../../domain/entities/mocl_list_item.dart';
-import '../../../../domain/entities/mocl_site_type.dart';
-import '../../../../domain/entities/mocl_user_info.dart';
-import '../../../widgets/loading_widget.dart';
-import '../../../widgets/nick_image_widget.dart';
-import '../../list/providers/list_provider.dart';
-
-class DetailView extends ConsumerStatefulWidget {
+class DetailView extends ConsumerWidget {
   final ListItem listItem;
 
   const DetailView({super.key, required this.listItem});
 
   @override
-  ConsumerState<ConsumerStatefulWidget> createState() => _DetailViewState();
-}
-
-class _DetailViewState extends ConsumerState<DetailView> {
-  @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     if (Platform.isMacOS) {
       return Listener(
         onPointerDown: (PointerDownEvent event) {
@@ -38,17 +31,17 @@ class _DetailViewState extends ConsumerState<DetailView> {
             context.pop();
           }
         },
-        child: _buildView(context),
+        child: _buildView(context, ref),
       );
     }
-    return _buildView(context);
+    return _buildView(context, ref);
   }
 
   String getHexColor(Color color) =>
       '#${color.value.toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}';
 
-  Widget _buildView(BuildContext context) {
-    final resultAsync = ref.watch(detailStateProvider(widget.listItem));
+  Widget _buildView(BuildContext context, WidgetRef ref) {
+    final resultAsync = ref.watch(detailStateProvider(listItem));
     final siteType = ref.read(currentSiteTypeStateProvider);
 
     return Padding(
@@ -61,6 +54,13 @@ class _DetailViewState extends ConsumerState<DetailView> {
           final bodyMedium = theme.textTheme.bodyMedium;
 
           if (data is ResultSuccess<Details>) {
+            WidgetsBinding.instance.addPostFrameCallback((_) {
+              var title = data.data.title;
+              ref
+                  .read(appBarHeightStateProvider.notifier)
+                  .update(context, title);
+              ref.read(isReadStateProvider.notifier).setRead();
+            });
 
             return SingleChildScrollView(
               child: Column(
@@ -70,8 +70,8 @@ class _DetailViewState extends ConsumerState<DetailView> {
                 children: [
                   _buildHeader(
                     siteType,
-                    widget.listItem.userInfo,
-                    widget.listItem.time,
+                    listItem.userInfo,
+                    listItem.time,
                     bodySmall,
                   ),
                   const Divider(),

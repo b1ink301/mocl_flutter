@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/providers/main_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
-
-import '../../../../domain/entities/mocl_main_item.dart';
-import '../../../widgets/loading_widget.dart';
 
 class MainView extends ConsumerWidget {
   final SiteType siteType;

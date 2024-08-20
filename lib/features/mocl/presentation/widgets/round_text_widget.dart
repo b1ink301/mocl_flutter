@@ -18,7 +18,6 @@ class RoundTextWidget extends StatelessWidget {
   ) {
     if (text.isEmpty || text == '0') return const SizedBox.shrink();
     return Container(
-      key: ValueKey(text),
       padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 0),
       decoration: BoxDecoration(
         border: Border.all(color: textStyle?.color ?? const Color(0xFF000000)),

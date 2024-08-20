@@ -1,12 +1,16 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/usecases/set_read_flag.dart';
+import 'package:mocl_flutter/features/mocl/presentation/di/use_case_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 
-import '../../../models/mocl_list_item_wrapper.dart';
+import '../../../models/readable_list_item.dart';
 import '../../../routes/mocl_app_pages.dart';
 import '../../../widgets/divider_widget.dart';
 import 'mocl_cached_list_item.dart';
@@ -44,26 +48,40 @@ class _ListViewState extends ConsumerState<ListView> {
   }
 
   Widget _buildPagedList(TextStyles textStyles) =>
-      PagedSliverList<int, ListItemWrapper>.separated(
+      PagedSliverList<int, ReadableListItem>.separated(
         pagingController: listState.pagingController,
+        addAutomaticKeepAlives: false,
+        addSemanticIndexes: false,
         shrinkWrapFirstPageIndicators: true,
-        builderDelegate: PagedChildBuilderDelegate<ListItemWrapper>(
-          itemBuilder: (context, item, index) => CachedListItem(
+        addRepaintBoundaries: false,
+        builderDelegate: PagedChildBuilderDelegate<ReadableListItem>(
+          itemBuilder: (context, item, index) {
+            log('PagedSliverList index=$index, item=${item.item.id}');
+            return CachedListItem(
             siteType: widget.mainItem.siteType,
             item: item,
             textStyles: textStyles,
             onTap: () async {
-              var result = await context.push(Routes.DETAIL, extra: item.item);
-              var isRead = ref.watch(isReadStateProvider);
-              if (isRead && !item.isReadNotifier.value) {
+              await context.push(Routes.DETAIL, extra: item.item);
 
+              var isRead = ref.watch(isReadStateProvider);
+              if (isRead) {
+                item.markAsRead();
+                var params = SetReadFlagParams(
+                  siteType: widget.mainItem.siteType,
+                  boardId: item.item.id,
+                );
+                ref.read(setReadProvider).whenOrNull(
+                      data: (setRead) => setRead.call(params),
+                    );
+                ref.watch(isReadStateProvider.notifier).clear();
               }
               debugPrint('[PagedChildBuilderDelegate] isRead = $isRead');
-              // ref.read(isReadStateProvider.notifier).init();
             },
-          ),
-          newPageProgressIndicatorBuilder: (context) => const LoadingWidget(),
-          firstPageProgressIndicatorBuilder: (context) => const LoadingWidget(),
+          );
+          },
+          // newPageProgressIndicatorBuilder: (context) => const LoadingWidget(),
+          // firstPageProgressIndicatorBuilder: (context) => const LoadingWidget(),
         ),
         separatorBuilder: (context, index) => const DividerWidget(),
       );
