@@ -6,7 +6,7 @@ part of 'main_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getMainDialogHash() => r'a27bdbb1602df43c0d90479888e948a6a43cc4f1';
+String _$getMainDialogHash() => r'82af37b3623f41387ff5edac36c7d75eb9f6a8c7';
 
 /// See also [getMainDialog].
 @ProviderFor(getMainDialog)
@@ -35,11 +35,11 @@ final mainTitleProvider = AutoDisposeProvider<String>.internal(
 );
 
 typedef MainTitleRef = AutoDisposeProviderRef<String>;
-String _$currentSiteTypeHash() => r'a00cf2e5b41760ebb44cc924724bf6fce59e5d00';
+String _$currentSiteTypeHash() => r'e5609ac321ff47b1179915ea5c01000e3f15ead4';
 
 /// See also [currentSiteType].
 @ProviderFor(currentSiteType)
-final currentSiteTypeProvider = AutoDisposeProvider<SiteType>.internal(
+final currentSiteTypeProvider = AutoDisposeFutureProvider<SiteType>.internal(
   currentSiteType,
   name: r'currentSiteTypeProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -49,8 +49,8 @@ final currentSiteTypeProvider = AutoDisposeProvider<SiteType>.internal(
   allTransitiveDependencies: null,
 );
 
-typedef CurrentSiteTypeRef = AutoDisposeProviderRef<SiteType>;
-String _$mainListStateHash() => r'3f5b06e8da3ef131e83513b16dcd48978f1f3bf9';
+typedef CurrentSiteTypeRef = AutoDisposeFutureProviderRef<SiteType>;
+String _$mainListStateHash() => r'd73b8373603f9b16ba4999c186c42f98d869df3c';
 
 /// See also [MainListState].
 @ProviderFor(MainListState)
@@ -67,7 +67,7 @@ final mainListStateProvider =
 
 typedef _$MainListState = AsyncNotifier<Result>;
 String _$currentSiteTypeStateHash() =>
-    r'bc9123728cab9d013cfbb1cd459e1a368c1ead3d';
+    r'381d1c5a28315321c4eb1d502b341f08457a01cd';
 
 /// See also [CurrentSiteTypeState].
 @ProviderFor(CurrentSiteTypeState)

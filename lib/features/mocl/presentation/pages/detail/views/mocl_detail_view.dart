@@ -9,6 +9,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/providers/detail_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/providers/main_provider.dart';
+import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 import '../../../../domain/entities/mocl_details.dart';
 import '../../../../domain/entities/mocl_list_item.dart';
@@ -16,6 +17,7 @@ import '../../../../domain/entities/mocl_site_type.dart';
 import '../../../../domain/entities/mocl_user_info.dart';
 import '../../../widgets/loading_widget.dart';
 import '../../../widgets/nick_image_widget.dart';
+import '../../list/providers/list_provider.dart';
 
 class DetailView extends ConsumerStatefulWidget {
   final ListItem listItem;
@@ -47,7 +49,7 @@ class _DetailViewState extends ConsumerState<DetailView> {
 
   Widget _buildView(BuildContext context) {
     final resultAsync = ref.watch(detailStateProvider(widget.listItem));
-    final siteType = ref.read(currentSiteTypeProvider);
+    final siteType = ref.read(currentSiteTypeStateProvider);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 8, 0),
@@ -59,6 +61,7 @@ class _DetailViewState extends ConsumerState<DetailView> {
           final bodyMedium = theme.textTheme.bodyMedium;
 
           if (data is ResultSuccess<Details>) {
+
             return SingleChildScrollView(
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,

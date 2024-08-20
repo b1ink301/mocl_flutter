@@ -1,6 +1,5 @@
 import 'dart:core';
 
-import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
@@ -10,11 +9,10 @@ import '../../domain/entities/mocl_site_type.dart';
 import '../../domain/repositories/main_repository.dart';
 import '../datasources/main_data_source.dart';
 
-@LazySingleton(as: MainRepository)
 class MainRepositoryImpl extends MainRepository {
-  final MainDataSource mainDataSource;
+  final MainDataSource dataSource;
 
-  MainRepositoryImpl({required this.mainDataSource});
+  MainRepositoryImpl({required this.dataSource});
 
   @override
   Stream<Result> getMainListStream({
@@ -22,7 +20,7 @@ class MainRepositoryImpl extends MainRepository {
   }) async* {
     yield ResultLoading();
     try {
-      final result = await mainDataSource.get(siteType);
+      final result = await dataSource.get(siteType);
       yield ResultSuccess<List<MainItem>>(data: result);
     } on Exception {
       yield ResultFailure<Failure>(failure: GetMainFailure());
@@ -35,7 +33,7 @@ class MainRepositoryImpl extends MainRepository {
     required List<MainItem> list,
   }) async {
     try {
-      await mainDataSource.set(siteType, list);
+      await dataSource.set(siteType, list);
       return ResultSuccess<int>(data: list.length);
     } on Exception {
       return ResultFailure<Failure>(failure: SetMainFailure());
@@ -47,10 +45,10 @@ class MainRepositoryImpl extends MainRepository {
     required SiteType siteType,
   }) async {
     try {
-      final mainData = await mainDataSource.getAllFromJson(siteType);
+      final mainData = await dataSource.getAllFromJson(siteType);
       final result = mainData.map((data) => data.toEntity(siteType));
       var futures = result.map((item) async {
-        var hasItem = await mainDataSource.hasItem(item);
+        var hasItem = await dataSource.hasItem(item);
         return item.copyWith(hasItem: hasItem);
       }).toList();
 
@@ -64,7 +62,7 @@ class MainRepositoryImpl extends MainRepository {
   @override
   Future<Result> getMainList({required SiteType siteType}) async {
     try {
-      var result = await mainDataSource.get(siteType);
+      var result = await dataSource.get(siteType);
       return ResultSuccess(data: result);
     } on Exception {
       return ResultFailure<Failure>(failure: GetMainFailure());

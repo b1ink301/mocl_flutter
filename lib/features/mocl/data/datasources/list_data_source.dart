@@ -1,4 +1,3 @@
-import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/api_client.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
@@ -26,7 +25,6 @@ abstract class ListDataSource {
   );
 }
 
-@LazySingleton(as: ListDataSource)
 class ListDataSourceImpl extends ListDataSource {
   final LocalDatabase localDatabase;
   final ApiClient apiClient;

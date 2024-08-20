@@ -24,7 +24,7 @@ void main() {
   setUpAll(() {
     mockMainDataSource = MockMainDataSource();
     moclRepository = MainRepositoryImpl(
-      mainDataSource: mockMainDataSource,
+      dataSource: mockMainDataSource,
     );
   });
 
