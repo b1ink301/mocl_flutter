@@ -11,14 +11,13 @@ import 'package:mocl_flutter/features/mocl/data/di/repository_provider.dart';
 
 import '../datasources/main_data_source.dart';
 
-final appDatabaseProvider = FutureProvider<AppDatabase>((ref) {
-  return $FloorAppDatabase.databaseBuilder('mocl.db').build();
-});
+final appDatabaseProvider = FutureProvider<AppDatabase>(
+    (ref) => $FloorAppDatabase.databaseBuilder('mocl.db').build());
 
-final localDatabaseProvider = StateProvider<LocalDatabase>((ref) {
-  final database = ref.read(appDatabaseProvider.future);
+final localDatabaseProvider = Provider<LocalDatabase>((ref) {
+  final database = ref.watch(appDatabaseProvider.future);
   return LocalDatabase(database: database);
-}, dependencies: [appDatabaseProvider]);
+});
 
 final mainDatasourceProvider = Provider<MainDataSource>((ref) {
   final localDatabase = ref.watch(localDatabaseProvider);
@@ -36,7 +35,7 @@ final detailDatasourceProvider = Provider<DetailDataSource>((ref) {
   return DetailDataSourceImpl(apiClient: apiClient);
 });
 
-final parserFactoryProvider = Provider.autoDispose<ParserFactory>((ref) {
+final parserFactoryProvider = Provider<ParserFactory>((ref) {
   final settingsRepository = ref.watch(settingsRepositoryProvider);
   return ParserFactory(
     clienParser: ClienParser(),

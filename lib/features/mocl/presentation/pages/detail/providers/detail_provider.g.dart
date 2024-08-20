@@ -169,171 +169,21 @@ class _DetailStateProviderElement
   ListItem get item => (origin as DetailStateProvider).item;
 }
 
-String _$appBarHeightStateHash() => r'd7c7547fe0cf1393e4c663d473e9994380e4dcbb';
-
-abstract class _$AppBarHeightState
-    extends BuildlessAutoDisposeNotifier<double> {
-  late final BuildContext context;
-  late final String text;
-
-  double build(
-    BuildContext context,
-    String text,
-  );
-}
+String _$appBarHeightStateHash() => r'8628637257b92c053e59ab6b372302f87047ec88';
 
 /// See also [AppBarHeightState].
 @ProviderFor(AppBarHeightState)
-const appBarHeightStateProvider = AppBarHeightStateFamily();
+final appBarHeightStateProvider =
+    AutoDisposeNotifierProvider<AppBarHeightState, double>.internal(
+  AppBarHeightState.new,
+  name: r'appBarHeightStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$appBarHeightStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
-/// See also [AppBarHeightState].
-class AppBarHeightStateFamily extends Family<double> {
-  /// See also [AppBarHeightState].
-  const AppBarHeightStateFamily();
-
-  /// See also [AppBarHeightState].
-  AppBarHeightStateProvider call(
-    BuildContext context,
-    String text,
-  ) {
-    return AppBarHeightStateProvider(
-      context,
-      text,
-    );
-  }
-
-  @override
-  AppBarHeightStateProvider getProviderOverride(
-    covariant AppBarHeightStateProvider provider,
-  ) {
-    return call(
-      provider.context,
-      provider.text,
-    );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'appBarHeightStateProvider';
-}
-
-/// See also [AppBarHeightState].
-class AppBarHeightStateProvider
-    extends AutoDisposeNotifierProviderImpl<AppBarHeightState, double> {
-  /// See also [AppBarHeightState].
-  AppBarHeightStateProvider(
-    BuildContext context,
-    String text,
-  ) : this._internal(
-          () => AppBarHeightState()
-            ..context = context
-            ..text = text,
-          from: appBarHeightStateProvider,
-          name: r'appBarHeightStateProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$appBarHeightStateHash,
-          dependencies: AppBarHeightStateFamily._dependencies,
-          allTransitiveDependencies:
-              AppBarHeightStateFamily._allTransitiveDependencies,
-          context: context,
-          text: text,
-        );
-
-  AppBarHeightStateProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.context,
-    required this.text,
-  }) : super.internal();
-
-  final BuildContext context;
-  final String text;
-
-  @override
-  double runNotifierBuild(
-    covariant AppBarHeightState notifier,
-  ) {
-    return notifier.build(
-      context,
-      text,
-    );
-  }
-
-  @override
-  Override overrideWith(AppBarHeightState Function() create) {
-    return ProviderOverride(
-      origin: this,
-      override: AppBarHeightStateProvider._internal(
-        () => create()
-          ..context = context
-          ..text = text,
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        context: context,
-        text: text,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeNotifierProviderElement<AppBarHeightState, double>
-      createElement() {
-    return _AppBarHeightStateProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is AppBarHeightStateProvider &&
-        other.context == context &&
-        other.text == text;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, context.hashCode);
-    hash = _SystemHash.combine(hash, text.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
-}
-
-mixin AppBarHeightStateRef on AutoDisposeNotifierProviderRef<double> {
-  /// The parameter `context` of this provider.
-  BuildContext get context;
-
-  /// The parameter `text` of this provider.
-  String get text;
-}
-
-class _AppBarHeightStateProviderElement
-    extends AutoDisposeNotifierProviderElement<AppBarHeightState, double>
-    with AppBarHeightStateRef {
-  _AppBarHeightStateProviderElement(super.provider);
-
-  @override
-  BuildContext get context => (origin as AppBarHeightStateProvider).context;
-  @override
-  String get text => (origin as AppBarHeightStateProvider).text;
-}
+typedef _$AppBarHeightState = AutoDisposeNotifier<double>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

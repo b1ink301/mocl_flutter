@@ -1,5 +1,4 @@
 import 'package:floor/floor.dart';
-import 'package:mocl_flutter/features/mocl/data/db/entities/main_item_data.dart';
 import 'package:mocl_flutter/features/mocl/data/db/entities/read_item_data.dart';
 
 @dao

@@ -10,12 +10,11 @@ import 'package:mocl_flutter/features/mocl/domain/repositories/main_repository.d
 import 'package:mocl_flutter/features/mocl/domain/repositories/settings_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final sharedPreferencesProvider = FutureProvider((ref) {
-  return SharedPreferences.getInstance().then((pref) => pref);
-});
+final sharedPreferencesProvider = FutureProvider(
+    (ref) => SharedPreferences.getInstance().then((pref) => pref));
 
 final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {
-  final prefs = ref.read(sharedPreferencesProvider.future);
+  final prefs = ref.watch(sharedPreferencesProvider.future);
   return SettingsRepositoryImpl(prefs: prefs);
 });
 
@@ -24,16 +23,16 @@ final mainRepositoryProvider = Provider<MainRepository>((ref) {
   return MainRepositoryImpl(dataSource: datasource);
 });
 
-final listRepositoryProvider = Provider.autoDispose<ListRepository>((ref) {
+final listRepositoryProvider = Provider<ListRepository>((ref) {
   final datasource = ref.watch(listDatasourceProvider);
-  final parserFactory = ref.read(parserFactoryProvider);
+  final parserFactory = ref.watch(parserFactoryProvider);
   return ListRepositoryImpl(
       dataSource: datasource, parserFactory: parserFactory);
 });
 
 final detailRepositoryProvider = Provider<DetailRepository>((ref) {
   final datasource = ref.watch(detailDatasourceProvider);
-  final parserFactory = ref.read(parserFactoryProvider);
+  final parserFactory = ref.watch(parserFactoryProvider);
   return DetailRepositoryImpl(
       dataSource: datasource, parserFactory: parserFactory);
 });

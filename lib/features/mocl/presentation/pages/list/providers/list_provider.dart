@@ -9,14 +9,14 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import '../../../../domain/entities/mocl_list_item.dart';
 import '../../../../domain/entities/mocl_result.dart';
 import '../../../../domain/usecases/get_list.dart';
-import '../../../models/mocl_list_item_wrapper.dart';
+import '../../../models/readable_list_item.dart';
 
 part 'list_provider.g.dart';
 
 @riverpod
 class ListState extends _$ListState {
   late final MainItem _mainItem;
-  final PagingController<int, ListItemWrapper> pagingController =
+  final PagingController<int, ReadableListItem> pagingController =
       PagingController(firstPageKey: 1);
   int lastId = -1;
 
@@ -50,11 +50,11 @@ class ListState extends _$ListState {
         debugPrint('Fetched items: ${result.data.length}');
 
         final list = result.data
-            .map((item) => ListItemWrapper(
+            .map((item) => ReadableListItem(
                   item: item,
-                  isReadNotifier: ValueNotifier(item.isRead),
+                  readNotifier: ValueNotifier(item.isRead),
                 ))
-            .toList();
+            .toList().sublist(0, 10);
 
         _updatePagingController(list, page);
       } else if (result is ResultFailure) {
@@ -68,7 +68,7 @@ class ListState extends _$ListState {
   }
 
   // UI 업데이트를 위한 함수
-  void _updatePagingController(List<ListItemWrapper> list, int page) {
+  void _updatePagingController(List<ReadableListItem> list, int page) {
     if (list.isNotEmpty) {
       lastId = list.last.item.id;
     }
@@ -85,7 +85,7 @@ class ListState extends _$ListState {
 
 final isReadProvider = StateProvider((ref) => false);
 
-@riverpod
+@Riverpod(keepAlive: true)
 class IsReadState extends _$IsReadState {
   @override
   bool build() => ref.watch(isReadProvider);
@@ -94,7 +94,7 @@ class IsReadState extends _$IsReadState {
     ref.read(isReadProvider.notifier).state = true;
   }
 
-  void init() {
+  void clear() {
     ref.read(isReadProvider.notifier).state = false;
   }
 }
