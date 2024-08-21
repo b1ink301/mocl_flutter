@@ -48,8 +48,10 @@ class _ListViewState extends ConsumerState<ListView> {
               itemCount: data.length,
               itemBuilder: (BuildContext context, int index) {
                 final item = data[index];
-                log('[SliverList] index=$index, item=${item.item.id}');
-                return _buildCachedListItem(item, textStyles, context, ref);
+                return KeyedSubtree(
+                  key: Key(item.item.id.toString()),
+                  child: _buildCachedListItem(context, item, textStyles),
+                );
               },
               separatorBuilder: (context, index) => const DividerWidget(),
             ),
@@ -60,10 +62,9 @@ class _ListViewState extends ConsumerState<ListView> {
           );
 
   CachedListItem _buildCachedListItem(
+    BuildContext context,
     item,
     TextStyles textStyles,
-    BuildContext context,
-    WidgetRef ref,
   ) =>
       CachedListItem(
         siteType: widget.mainItem.siteType,

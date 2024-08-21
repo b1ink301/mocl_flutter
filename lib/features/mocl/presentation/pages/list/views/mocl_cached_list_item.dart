@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
@@ -23,12 +25,11 @@ class CachedListItem extends StatelessWidget {
   Widget build(BuildContext context) => InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
+          padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildTitle(),
-              const SizedBox(height: 8),
               _buildBottomView(
                 item.item.userInfo.id,
                 _buildNickImage(),
@@ -44,16 +45,14 @@ class CachedListItem extends StatelessWidget {
   Widget _buildTitle() => ValueListenableBuilder<bool>(
       valueListenable: item.readNotifier,
       builder: (context, isRead, child) {
-        return SizedBox(
-          height: 24,
-          child: Text(
-            item.item.title,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: isRead
-                ? textStyles.readTitleTextStyle
-                : textStyles.titleTextStyle,
-          ),
+        log('[CachedListItem] title=${item.item.title}, child=$child');
+        return Text(
+          item.item.title,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: isRead
+              ? textStyles.readTitleTextStyle
+              : textStyles.titleTextStyle,
         );
       });
 
@@ -112,8 +111,9 @@ class CachedListItem extends StatelessWidget {
   ) {
     if (id.isEmpty) return const SizedBox.shrink();
 
-    return SizedBox(
-      height: 20,
+    return Container(
+      padding: const EdgeInsets.only(top: 10),
+      height: 30,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.start,
         children: [
@@ -122,7 +122,6 @@ class CachedListItem extends StatelessWidget {
           time,
           const Spacer(),
           badge,
-          const SizedBox(width: 4),
         ],
       ),
     );
