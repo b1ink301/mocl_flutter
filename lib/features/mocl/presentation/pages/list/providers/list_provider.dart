@@ -46,7 +46,7 @@ class ListState extends _$ListState {
     // pagingController.dispose();
   }
 
-  void _fetchPage(int page) async {
+  Future<void> _fetchPage(int page) async {
     if (_isLoadingMore) return;
     _isLoadingMore = true;
     debugPrint('Fetching page: item=$_mainItem, page=$page, lastId=$_lastId');
@@ -64,7 +64,7 @@ class ListState extends _$ListState {
         final list = result.data
             .map((item) => ReadableListItem(
                   item: item,
-                  readNotifier: ValueNotifier(item.isRead),
+                  isRead: item.isRead,
                 ))
             .toList();
 
@@ -84,7 +84,7 @@ class ListState extends _$ListState {
     }
   }
 
-  void _loadMoreItems() => _fetchPage(_currentPage);
+  void _loadMoreItems() async => await _fetchPage(_currentPage);
 
   bool checkLoadMoreItems(ScrollNotification scrollInfo) {
     if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {

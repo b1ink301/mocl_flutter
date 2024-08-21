@@ -14,6 +14,7 @@ class NickImageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    return const SizedBox.shrink();
     if (url.isEmpty) {
       return const SizedBox.shrink();
     }
@@ -21,6 +22,7 @@ class NickImageWidget extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(right: 8),
       child: Gif(
+        key: ValueKey(url),
         image: NetworkImage(url),
         height: 17,
         width: siteType == SiteType.damoang ? 17 : 63.8,
