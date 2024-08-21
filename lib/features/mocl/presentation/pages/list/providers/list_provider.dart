@@ -1,7 +1,7 @@
+import 'dart:developer';
+
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/use_case_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -15,32 +15,44 @@ part 'list_provider.g.dart';
 
 @riverpod
 class ListState extends _$ListState {
-  late final MainItem _mainItem;
-  final PagingController<int, ReadableListItem> pagingController =
-      PagingController(firstPageKey: 1);
-  int lastId = -1;
+  late MainItem _mainItem;
+
+  int _lastId = -1;
+  int _currentPage = 1;
+  bool _isLoadingMore = false;
 
   @override
-  FutureOr<Result> build() => ResultLoading();
-
-  void init(MainItem item) {
-    _mainItem = item;
-    pagingController.addPageRequestListener((pageKey) {
-      _fetchPage(pageKey);
-    });
+  FutureOr<List<ReadableListItem>> build() {
+    return [];
   }
 
-  void refresh() => pagingController.refresh();
+  void init(MainItem item) {
+    log('[ListState] init=$item');
+
+    state = const AsyncValue.loading();
+    _mainItem = item;
+    _loadMoreItems();
+  }
+
+  void refresh() {
+    state = const AsyncValue.loading();
+    _lastId = -1;
+    _currentPage = 1;
+    _isLoadingMore = false;
+    _loadMoreItems();
+  }
 
   void dispose() {
-    pagingController.dispose();
+    // pagingController.dispose();
   }
 
   void _fetchPage(int page) async {
-    debugPrint('Fetching page: item=$_mainItem, page=$page, lastId=$lastId');
+    if (_isLoadingMore) return;
+    _isLoadingMore = true;
+    debugPrint('Fetching page: item=$_mainItem, page=$page, lastId=$_lastId');
 
     final params =
-        GetListParams(mainItem: _mainItem, page: page, lastId: lastId);
+        GetListParams(mainItem: _mainItem, page: page, lastId: _lastId);
 
     try {
       final getList = ref.read(getListProvider);
@@ -54,32 +66,47 @@ class ListState extends _$ListState {
                   item: item,
                   readNotifier: ValueNotifier(item.isRead),
                 ))
-            .toList().sublist(0, 10);
+            .toList();
 
         _updatePagingController(list, page);
       } else if (result is ResultFailure) {
         debugPrint('Error fetching page: ${result.failure}');
-        pagingController.error = result.failure;
+        // pagingController.error = result.failure;
+        state =
+            AsyncValue.error(Exception('ResultFailure'), StackTrace.current);
       }
     } catch (e) {
       debugPrint('Unexpected error: $e');
-      pagingController.error = e;
+      // pagingController.error = e;
+      state = AsyncValue.error(e, StackTrace.current);
+    } finally {
+      _isLoadingMore = false;
     }
+  }
+
+  void _loadMoreItems() => _fetchPage(_currentPage);
+
+  bool checkLoadMoreItems(ScrollNotification scrollInfo) {
+    if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
+      _loadMoreItems();
+    }
+    return true;
   }
 
   // UI 업데이트를 위한 함수
   void _updatePagingController(List<ReadableListItem> list, int page) {
     if (list.isNotEmpty) {
-      lastId = list.last.item.id;
+      _lastId = list.last.item.id;
     }
 
-    final isLastPage = list.isEmpty;
-    if (isLastPage) {
-      pagingController.appendLastPage(list);
-    } else {
-      final nextPageKey = page + 1;
-      pagingController.appendPage(list, nextPageKey);
-    }
+    state.maybeWhen(data: (previousList) {
+      final data = List<ReadableListItem>.from(previousList)..addAll(list);
+      state = AsyncValue.data(data);
+    }, orElse: () {
+      state = AsyncValue.data(list);
+    });
+
+    _currentPage++;
   }
 }
 
