@@ -38,6 +38,8 @@ class ListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final mainItem = GoRouterState.of(context).extra as MainItem;
 
+    log('ListPage build=$mainItem');
+
     return Scaffold(
       body: Consumer(
         builder: (context, ref, child) {
@@ -45,7 +47,7 @@ class ListPage extends StatelessWidget {
             onNotification:
                 ref.read(listStateProvider.notifier).checkLoadMoreItems,
             child: CustomScrollView(
-              cacheExtent: 0,
+              // cacheExtent: 0,
               physics: const AlwaysScrollableScrollPhysics(),
               slivers: <Widget>[
                 _buildAppbar(context, mainItem.siteType.title, mainItem.text),

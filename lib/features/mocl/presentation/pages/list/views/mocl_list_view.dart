@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_read_flag.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/use_case_provider.dart';
+import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/views/mocl_cached_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/views/mocl_text_styles.dart';
@@ -42,14 +43,14 @@ class _ListViewState extends ConsumerState<ListView> {
   Widget _buildPagedList(TextStyles textStyles) =>
       ref.watch(listStateProvider).when(
             data: (data) => SliverList.separated(
-              addAutomaticKeepAlives: false,
-              addSemanticIndexes: false,
-              addRepaintBoundaries: false,
+              // addAutomaticKeepAlives: false,
+              // addSemanticIndexes: false,
+              // addRepaintBoundaries: false,
               itemCount: data.length,
               itemBuilder: (BuildContext context, int index) {
                 final item = data[index];
                 return KeyedSubtree(
-                  key: Key(item.item.id.toString()),
+                  key: ValueKey(item.item.id.toString()),
                   child: _buildCachedListItem(context, item, textStyles),
                 );
               },
@@ -58,17 +59,18 @@ class _ListViewState extends ConsumerState<ListView> {
             error: (error, stackTrace) => SliverToBoxAdapter(
               child: MessageWidget(message: error.toString()),
             ),
-            loading: () => const SliverToBoxAdapter(child: LoadingWidget()),
+            loading: () => const SliverToBoxAdapter(key: ValueKey('loading'), child: LoadingWidget()),
           );
 
   CachedListItem _buildCachedListItem(
     BuildContext context,
-    item,
+    ReadableListItem item,
     TextStyles textStyles,
   ) =>
       CachedListItem(
         siteType: widget.mainItem.siteType,
-        item: item,
+        item: item.item,
+        isRead: item.isRead,
         textStyles: textStyles,
         onTap: () async {
           await context.push(Routes.DETAIL, extra: item.item);
