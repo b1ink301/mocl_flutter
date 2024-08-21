@@ -19,42 +19,34 @@ class AppPages {
     initialLocation: initial,
     routes: <RouteBase>[
       GoRoute(
-        path: Routes.MAIN,
-        pageBuilder: (BuildContext context, GoRouterState state) {
-          return SwipeablePage(
-            builder: (context) => const MainPage()
-          );
-        },
-        routes: [
-          GoRoute(
-            path: Routes.SET_MAIN_DLG,
-            pageBuilder: (BuildContext context, GoRouterState state) =>
-                CupertinoModalPopupPage(
-                  builder: (BuildContext context) {
-                    return SetListDialog();
-                  },
-                ),
-          ),
-        ]
-      ),
-
+          path: Routes.MAIN,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            return SwipeablePage(builder: (context) => const MainPage());
+          },
+          routes: [
+            GoRoute(
+              path: Routes.SET_MAIN_DLG,
+              pageBuilder: (BuildContext context, GoRouterState state) =>
+                  CupertinoModalPopupPage(
+                builder: (BuildContext context) {
+                  return SetListDialog();
+                },
+              ),
+            ),
+          ]),
       GoRoute(
         path: Routes.LIST,
         pageBuilder: (BuildContext context, GoRouterState state) =>
-            SwipeablePage(
-              builder: (context) {
-                return const ListPage();
-              }
-            ),
+            SwipeablePage(builder: (context) {
+          return const ListPage();
+        }),
       ),
       GoRoute(
         path: Routes.DETAIL,
         pageBuilder: (BuildContext context, GoRouterState state) =>
-            SwipeablePage(
-              builder: (context) {
-                return const DetailPage();
-              }
-            ),
+            SwipeablePage(builder: (context) {
+          return const DetailPage();
+        }),
       )
     ],
   );

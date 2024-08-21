@@ -6,12 +6,12 @@ part of 'list_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$listStateHash() => r'd8d36bda2ff106efccfdedb70391b7170becf8b6';
+String _$listStateHash() => r'23da0acec9b32adbe7dd5de547900e12f39ff65b';
 
 /// See also [ListState].
 @ProviderFor(ListState)
-final listStateProvider =
-    AutoDisposeAsyncNotifierProvider<ListState, Result>.internal(
+final listStateProvider = AutoDisposeAsyncNotifierProvider<ListState,
+    List<ReadableListItem>>.internal(
   ListState.new,
   name: r'listStateProvider',
   debugGetCreateSourceHash:
@@ -20,7 +20,7 @@ final listStateProvider =
   allTransitiveDependencies: null,
 );
 
-typedef _$ListState = AutoDisposeAsyncNotifier<Result>;
+typedef _$ListState = AutoDisposeAsyncNotifier<List<ReadableListItem>>;
 String _$isReadStateHash() => r'ce9a9620d1ab7b5a31cbd143fc1972f2ec69b4d5';
 
 /// See also [IsReadState].
