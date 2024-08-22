@@ -11,51 +11,58 @@ import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/lis
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/views/mocl_list_view.dart'
     as view;
 import 'package:mocl_flutter/features/mocl/presentation/widgets/appbar_dual_text_widget.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
 
 class ListPage extends StatelessWidget {
   const ListPage({super.key});
 
-  Widget _buildAppbar(
-    BuildContext context,
-    String smallTitle,
-    String title,
-  ) =>
-      AppbarDualTextWidget(
-        smallTitle: smallTitle,
-        title: title,
-        automaticallyImplyLeading: Platform.isMacOS,
-        actions: [
-          Consumer(
-              builder: (context, ref, child) => IconButton(
-                    onPressed: () =>
-                        ref.read(listStateProvider.notifier).refresh(),
-                    icon: const Icon(Icons.refresh),
-                  ))
-        ],
-      );
+  Widget _buildAppbar(BuildContext context, MainItem mainItem, WidgetRef ref) {
+    return AppbarDualTextWidget(
+      smallTitle: mainItem.siteType.title,
+      title: mainItem.text,
+      automaticallyImplyLeading: Platform.isMacOS,
+      actions: [
+        IconButton(
+          onPressed: () => ref.read(listStateProvider(item: mainItem).notifier).refresh(),
+          icon: const Icon(Icons.refresh),
+        )
+      ],
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final mainItem = GoRouterState.of(context).extra as MainItem;
+    final mainItem = GoRouterState.of(context).extra as MainItem?;
 
-    log('ListPage build=$mainItem');
+    if (mainItem == null) {
+      return _buildErrorView(context);
+    }
 
     return Scaffold(
       body: Consumer(
-        builder: (context, ref, child) {
-          return NotificationListener<ScrollNotification>(
-            onNotification:
-                ref.read(listStateProvider.notifier).checkLoadMoreItems,
-            child: CustomScrollView(
-              // cacheExtent: 0,
-              physics: const AlwaysScrollableScrollPhysics(),
-              slivers: <Widget>[
-                _buildAppbar(context, mainItem.siteType.title, mainItem.text),
-                view.ListView(mainItem: mainItem),
-              ],
-            ),
-          );
-        },
+        builder: (context, ref, _) => _buildBody(context, ref, mainItem),
+      ),
+    );
+  }
+
+  Widget _buildBody(BuildContext context, WidgetRef ref, MainItem mainItem) {
+    return NotificationListener<ScrollNotification>(
+      onNotification: ref.read(listStateProvider(item: mainItem).notifier).checkLoadMoreItems,
+      child: CustomScrollView(
+        cacheExtent: view.ListView.itemExtent * 3,
+        slivers: <Widget>[
+          _buildAppbar(context, mainItem, ref),
+          view.ListView(mainItem: mainItem),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildErrorView(BuildContext context) {
+    return Center(
+      child: TextButton(
+        onPressed: () => context.pop(),
+        child: const MessageWidget(message: '알 수 없는 에러 발생'),
       ),
     );
   }

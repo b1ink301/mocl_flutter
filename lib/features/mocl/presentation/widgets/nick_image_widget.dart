@@ -14,7 +14,6 @@ class NickImageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const SizedBox.shrink();
     if (url.isEmpty) {
       return const SizedBox.shrink();
     }

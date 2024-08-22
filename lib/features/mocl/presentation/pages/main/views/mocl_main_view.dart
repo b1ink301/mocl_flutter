@@ -19,45 +19,53 @@ class MainView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final textStyle = Theme.of(context).textTheme.bodyMedium;
     final resultAsync = ref.watch(mainListStateProvider);
-    debugPrint('[MainView] resultAsync = $resultAsync');
 
     return resultAsync.when(
-      data: (result) {
-        debugPrint('[MainView] result = ${result.runtimeType}');
+      data: (result) => _buildDataView(context, result, textStyle),
+      error: (e, s) => _buildErrorView(context),
+      loading: () => const LoadingWidget(),
+    );
+  }
 
-        if (result is ResultSuccess<List<MainItem>>) {
-          return ListView.separated(
-            itemCount: result.data.length,
-            itemBuilder: (context, index) {
-              final item = result.data[index];
-              return ListTile(
-                key: ValueKey(item.board),
-                minTileHeight: 64,
-                title: Text(
-                  item.text,
-                  style: textStyle,
-                ),
-                onTap: () => context.push(Routes.LIST, extra: item),
-              );
-            },
-            separatorBuilder: (BuildContext context, int index) =>
-                const DividerWidget(),
-          );
-        } else {
-          return MessageWidget(message: 'message ${result.runtimeType}');
-        }
-      },
-      error: (e, s) => Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Text(
-          '에러가 발생했습니다',
-          style: TextStyle(
-            fontSize: 16,
-            color: Theme.of(context).indicatorColor,
-          ),
+  Widget _buildDataView(
+      BuildContext context, Result result, TextStyle? textStyle) {
+    if (result is ResultSuccess<List<MainItem>>) {
+      return _buildListView(context, result.data, textStyle);
+    } else {
+      return MessageWidget(message: 'Unexpected result: ${result.runtimeType}');
+    }
+  }
+
+  Widget _buildListView(
+      BuildContext context, List<MainItem> items, TextStyle? textStyle) {
+    return ListView.separated(
+      itemCount: items.length,
+      itemBuilder: (context, index) =>
+          _buildListItem(context, items[index], textStyle),
+      separatorBuilder: (_, __) => const DividerWidget(),
+    );
+  }
+
+  Widget _buildListItem(
+      BuildContext context, MainItem item, TextStyle? textStyle) {
+    return ListTile(
+      key: ValueKey(item.board),
+      minTileHeight: 64,
+      title: Text(item.text, style: textStyle),
+      onTap: () => context.push(Routes.LIST, extra: item),
+    );
+  }
+
+  Widget _buildErrorView(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(12.0),
+      child: Text(
+        '에러가 발생했습니다',
+        style: TextStyle(
+          fontSize: 16,
+          color: Theme.of(context).indicatorColor,
         ),
       ),
-      loading: () => const LoadingWidget(),
     );
   }
 }
