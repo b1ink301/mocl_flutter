@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>ANDROID_CLIENT_ID</key>
+	<string>275270612301-3jajhso3ce2c9ungjkgifi3em060uupa.apps.googleusercontent.com</string>
+	<key>API_KEY</key>
+	<string>AIzaSyDo8cW-g5I7BltfZZ5qSh65RRdDtdJitco</string>
+	<key>GCM_SENDER_ID</key>
+	<string>275270612301</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>net.b1ink.moclFlutter</string>
+	<key>PROJECT_ID</key>
+	<string>mocl-b418e</string>
+	<key>STORAGE_BUCKET</key>
+	<string>mocl-b418e.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:275270612301:ios:0cc80825e1e542a2123304</string>
+	<key>DATABASE_URL</key>
+	<string>https://mocl-b418e.firebaseio.com</string>
+</dict>
+</plist>

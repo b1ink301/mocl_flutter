@@ -13,14 +13,12 @@ class MessageWidget extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => IntrinsicHeight(
-        child: Text(
-          message,
-          style: textStyle ?? TextStyle(
-            fontSize: fontSize ?? 16,
-          ),
-          textAlign: TextAlign.start,
-          maxLines: 3,
-        ),
-      );
+  Widget build(BuildContext context) => Text(
+    message,
+    style: textStyle ?? TextStyle(
+      fontSize: fontSize ?? 16,
+    ),
+    textAlign: TextAlign.start,
+    maxLines: 3,
+  );
 }

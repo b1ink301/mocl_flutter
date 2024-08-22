@@ -13,35 +13,33 @@ import 'mocl_main_view.dart';
 class MainPage extends ConsumerWidget {
   const MainPage({super.key});
 
+  AppBar _buildAppBar(BuildContext context, String title, WidgetRef ref) =>
+      AppBar(
+        title: _buildTitle(context, title),
+        titleSpacing: 0,
+        centerTitle: false,
+        toolbarHeight: 64,
+        actions: [_buildAddButton(context, ref)],
+      );
+
   Widget _buildTitle(BuildContext context, String title) => MessageWidget(
         message: title,
         textStyle: Theme.of(context).textTheme.labelMedium,
       );
 
-  AppBar _buildAppBar(BuildContext context, String title) => AppBar(
-        title: _buildTitle(context, title),
-        titleSpacing: 0,
-        centerTitle: false,
-        toolbarHeight: 64,
-        actions: [
-          Consumer(
-            builder: (BuildContext context, WidgetRef ref, Widget? child) =>
-                IconButton(
-              onPressed: () async {
-                final result = await context.push<List<MainItem>>(
-                    '${Routes.MAIN}/${Routes.SET_MAIN_DLG}');
-
-                if (result != null) {
-                  await ref
-                      .read(mainListStateProvider.notifier)
-                      .setList(result);
-                }
-              },
-              icon: const Icon(Icons.add),
-            ),
-          )
-        ],
+  Widget _buildAddButton(BuildContext context, WidgetRef ref) => IconButton(
+        onPressed: () => _handleAddButtonPress(context, ref),
+        icon: const Icon(Icons.add),
       );
+
+  Future<void> _handleAddButtonPress(
+      BuildContext context, WidgetRef ref) async {
+    final result = await context
+        .push<List<MainItem>>('${Routes.MAIN}/${Routes.SET_MAIN_DLG}');
+    if (result != null) {
+      await ref.read(mainListStateProvider.notifier).setList(result);
+    }
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -49,15 +47,13 @@ class MainPage extends ConsumerWidget {
     final SiteType currentSiteType = ref.watch(currentSiteTypeStateProvider);
     final String appTitle = ref.watch(mainTitleProvider);
 
-    final drawerWidget = DrawerWidget(
-      onChangeSite: (siteType) {
-        ref.read(currentSiteTypeStateProvider.notifier).setSiteType(siteType);
-      },
-    );
-
     return Scaffold(
-      drawer: drawerWidget,
-      appBar: _buildAppBar(context, appTitle),
+      drawer: DrawerWidget(
+        onChangeSite: (siteType) => ref
+            .read(currentSiteTypeStateProvider.notifier)
+            .setSiteType(siteType),
+      ),
+      appBar: _buildAppBar(context, appTitle, ref),
       body: MainView(siteType: currentSiteType),
     );
   }

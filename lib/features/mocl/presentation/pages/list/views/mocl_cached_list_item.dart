@@ -7,9 +7,10 @@ import 'package:mocl_flutter/features/mocl/presentation/pages/list/views/mocl_te
 import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/round_text_widget.dart';
 
+@immutable
 class CachedListItem extends StatelessWidget {
   final ListItem item;
-  final bool isRead;
+  final ValueNotifier<bool> isRead;
   final SiteType siteType;
   final TextStyles textStyles;
   final VoidCallback onTap;
@@ -24,67 +25,72 @@ class CachedListItem extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => InkWell(
+  Widget build(BuildContext context) => ListTile(
         onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 12, 12),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTitle(),
-              _buildBottomView(
-                item.userInfo.id,
-                _buildNickImage(),
-                _buildNickName(),
-                _buildTime(),
-                _buildBadge(),
-              ),
-            ],
-          ),
+        contentPadding: const EdgeInsets.fromLTRB(16, 0, 12, 0),
+        title: _buildTitle(),
+        subtitle: _buildBottomView(
+          item.userInfo.id,
+          _buildNickImage(),
+          _buildNickName(),
+          _buildTime(),
+          _buildBadge(),
         ),
       );
 
-  Widget _buildTitle() {
-    log('_buildTitle = ${item.title}');
-    return SizedBox(
-      height: 24,
-      child: Text(
-        item.title,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        // style:
-        //     isRead ? textStyles.readTitleTextStyle : textStyles.titleTextStyle,
-      ),
-    );
-  }
+  Widget _buildTitle() => SizedBox(
+        height: 24,
+        child: ValueListenableBuilder(
+          builder: (context, isRead, _) => Text(
+            item.title,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: isRead
+                ? textStyles.readTitleTextStyle
+                : textStyles.titleTextStyle,
+          ),
+          valueListenable: isRead,
+        ),
+      );
 
   Widget _buildNickName() {
     if (item.userInfo.nickName.isEmpty) {
       return const SizedBox.shrink();
     }
-    debugPrint('[_buildNickName] title = ${item.title}');
     return Padding(
       padding: const EdgeInsets.only(right: 8.0),
-      child: Text(
-        item.userInfo.nickName,
-        maxLines: 1,
-        style:
-            isRead ? textStyles.readSmallTextStyle : textStyles.smallTextStyle,
+      child: ValueListenableBuilder(
+        builder: (context, isRead, _) => Text(
+          item.userInfo.nickName,
+          maxLines: 1,
+          style: isRead
+              ? textStyles.readSmallTextStyle
+              : textStyles.smallTextStyle,
+        ),
+        valueListenable: isRead,
       ),
     );
   }
 
-  Widget _buildTime() => Text(
-        item.time,
-        maxLines: 1,
-        style:
-            isRead ? textStyles.readSmallTextStyle : textStyles.smallTextStyle,
+  Widget _buildTime() => ValueListenableBuilder(
+        builder: (context, isRead, _) => Text(
+          item.time,
+          maxLines: 1,
+          style: isRead
+              ? textStyles.readSmallTextStyle
+              : textStyles.smallTextStyle,
+        ),
+        valueListenable: isRead,
       );
 
-  Widget _buildBadge() => RoundTextWidget(
-        text: item.reply,
-        textStyle:
-            isRead ? textStyles.readBadgeTextStyle : textStyles.badgeTextStyle,
+  Widget _buildBadge() => ValueListenableBuilder(
+        builder: (context, isRead, _) => RoundTextWidget(
+          text: item.reply,
+          textStyle: isRead
+              ? textStyles.readBadgeTextStyle
+              : textStyles.badgeTextStyle,
+        ),
+        valueListenable: isRead,
       );
 
   Widget _buildNickImage() =>
@@ -108,8 +114,8 @@ class CachedListItem extends StatelessWidget {
           nickImage,
           nickName,
           time,
-          // const Spacer(),
-          // badge,
+          const Spacer(),
+          badge,
         ],
       ),
     );
