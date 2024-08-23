@@ -1,4 +1,3 @@
-import 'dart:developer';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -7,53 +6,54 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_provider.dart';
+import 'package:mocl_flutter/features/mocl/presentation/di/view_model_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/views/mocl_list_view.dart'
     as view;
 import 'package:mocl_flutter/features/mocl/presentation/widgets/appbar_dual_text_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
 
-class ListPage extends StatelessWidget {
+class ListPage extends ConsumerWidget {
   const ListPage({super.key});
 
-  Widget _buildAppbar(BuildContext context, MainItem mainItem, WidgetRef ref) {
-    return AppbarDualTextWidget(
-      smallTitle: mainItem.siteType.title,
-      title: mainItem.text,
-      automaticallyImplyLeading: Platform.isMacOS,
-      actions: [
-        IconButton(
-          onPressed: () =>
-              ref.read(listStateProvider(item: mainItem).notifier).refresh(),
-          icon: const Icon(Icons.refresh),
-        )
-      ],
-    );
-  }
+  Widget _buildAppbar(
+    BuildContext context,
+    String smallTitle,
+    String title,
+    void Function() refresh,
+  ) =>
+      AppbarDualTextWidget(
+        smallTitle: smallTitle,
+        title: title,
+        automaticallyImplyLeading: Platform.isMacOS,
+        actions: [
+          IconButton(
+            onPressed: () => refresh(),
+            icon: const Icon(Icons.refresh),
+          )
+        ],
+      );
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final mainItem = GoRouterState.of(context).extra as MainItem?;
-
     if (mainItem == null) {
       return _buildErrorView(context);
     }
 
+    final viewModel = ref.watch(listViewModelProvider(mainItem).notifier);
+
     return Scaffold(
-      body: Consumer(
-        builder: (context, ref, _) => _buildBody(context, ref, mainItem),
+      body: CustomScrollView(
+        cacheExtent: 100,
+        slivers: <Widget>[
+          _buildAppbar(context, mainItem.siteType.title, mainItem.text, () {
+            viewModel.refresh();
+          }),
+          view.ListView(viewModel: viewModel),
+        ],
       ),
     );
   }
-
-  Widget _buildBody(BuildContext context, WidgetRef ref, MainItem mainItem) =>
-      CustomScrollView(
-        cacheExtent: view.ListView.itemExtent * 3,
-        slivers: <Widget>[
-          _buildAppbar(context, mainItem, ref),
-          view.ListView(mainItem: mainItem),
-        ],
-      );
 
   Widget _buildErrorView(BuildContext context) {
     return Center(
