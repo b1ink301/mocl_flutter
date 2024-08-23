@@ -24,7 +24,7 @@ class ListState extends _$ListState {
   Future<List<ReadableListItem>?> build({required MainItem item}) {
     state = const AsyncValue.loading();
     _mainItem = item;
-    return _fetchPage(_currentPage);
+    return _fetchPage(1);
   }
 
   void refresh() {
@@ -32,7 +32,7 @@ class ListState extends _$ListState {
     _lastId = -1;
     _currentPage = 1;
     ref.read(isLoadingMoreProvider.notifier).state = false;
-    _loadMoreItems();
+    loadMoreItems();
   }
 
   Future<List<ReadableListItem>?> _fetchPage(int page) async {
@@ -53,6 +53,7 @@ class ListState extends _$ListState {
                   isRead: ValueNotifier(item.isRead),
                 ))
             .toList();
+        _currentPage = page + 1;
 
         return list;
       } else if (result is ResultFailure) {
@@ -67,7 +68,7 @@ class ListState extends _$ListState {
     return null;
   }
 
-  void _loadMoreItems() async {
+  void loadMoreItems() async {
     final isLoadingMore = ref.read(isLoadingMoreProvider);
     if (isLoadingMore) return;
     ref.read(isLoadingMoreProvider.notifier).state = true;
@@ -83,7 +84,7 @@ class ListState extends _$ListState {
 
   bool checkLoadMoreItems(ScrollNotification scrollInfo) {
     if (scrollInfo.metrics.pixels == scrollInfo.metrics.maxScrollExtent) {
-      _loadMoreItems();
+      loadMoreItems();
     }
     return true;
   }
@@ -93,7 +94,6 @@ class ListState extends _$ListState {
     if (list.isNotEmpty) {
       _lastId = list.last.item.id;
     }
-
     state.maybeWhen(data: (previousList) {
       if (previousList != null) {
         final data = List<ReadableListItem>.from(previousList)..addAll(list);
@@ -104,8 +104,6 @@ class ListState extends _$ListState {
     }, orElse: () {
       state = AsyncValue.data(list);
     });
-
-    _currentPage++;
   }
 }
 

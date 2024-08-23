@@ -23,7 +23,8 @@ class ListPage extends StatelessWidget {
       automaticallyImplyLeading: Platform.isMacOS,
       actions: [
         IconButton(
-          onPressed: () => ref.read(listStateProvider(item: mainItem).notifier).refresh(),
+          onPressed: () =>
+              ref.read(listStateProvider(item: mainItem).notifier).refresh(),
           icon: const Icon(Icons.refresh),
         )
       ],
@@ -45,18 +46,14 @@ class ListPage extends StatelessWidget {
     );
   }
 
-  Widget _buildBody(BuildContext context, WidgetRef ref, MainItem mainItem) {
-    return NotificationListener<ScrollNotification>(
-      onNotification: ref.read(listStateProvider(item: mainItem).notifier).checkLoadMoreItems,
-      child: CustomScrollView(
+  Widget _buildBody(BuildContext context, WidgetRef ref, MainItem mainItem) =>
+      CustomScrollView(
         cacheExtent: view.ListView.itemExtent * 3,
         slivers: <Widget>[
           _buildAppbar(context, mainItem, ref),
           view.ListView(mainItem: mainItem),
         ],
-      ),
-    );
-  }
+      );
 
   Widget _buildErrorView(BuildContext context) {
     return Center(
