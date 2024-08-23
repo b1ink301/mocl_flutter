@@ -16,6 +16,7 @@ import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/lis
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/providers/main_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DetailView extends ConsumerWidget {
   final ListItem listItem;
@@ -89,17 +90,19 @@ class DetailView extends ConsumerWidget {
                     },
                     textStyle: bodyMedium,
                     renderMode: RenderMode.column,
-                    // onTapUrl: (url) => _detailController.openBrowser(url),
+                    onTapUrl: (url) async => await openBrowser(url),
                   ),
                   const SizedBox(height: 10),
                   _buildComments(
-                    context,
-                    siteType,
-                    hexColor,
-                    data.data.comments,
-                    bodySmall,
-                    bodyMedium,
-                  ),
+                      context,
+                      siteType,
+                      hexColor,
+                      data.data.comments,
+                      bodySmall,
+                      bodyMedium,
+                      () => ref
+                          .watch(detailStateProvider(listItem).notifier)
+                          .refresh()),
                   const Divider(),
                 ],
               ),
@@ -156,9 +159,10 @@ class DetailView extends ConsumerWidget {
     List<CommentItem> comments,
     TextStyle? bodySmall,
     TextStyle? bodyMedium,
+    void Function() refresh,
   ) {
     Widget buildRefreshButton() => InkWell(
-          // onTap: () => _detailController.reload(),
+          onTap: refresh,
           child: Container(
             width: double.infinity, // 가로 꽉 채우기
             height: 56,
@@ -240,7 +244,7 @@ class DetailView extends ConsumerWidget {
                     }
                     return null;
                   },
-                  // onTapUrl: (url) => _detailController.openBrowser(url),
+                  onTapUrl: (url) async => await openBrowser(url),
                 ),
               ),
             );
@@ -250,6 +254,11 @@ class DetailView extends ConsumerWidget {
         buildRefreshButton(),
       ],
     );
+  }
+
+  Future<bool> openBrowser(String url) async {
+    final Uri uri = Uri.parse(url);
+    return await launchUrl(uri);
   }
 }
 

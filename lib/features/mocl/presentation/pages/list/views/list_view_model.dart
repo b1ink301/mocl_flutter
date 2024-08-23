@@ -19,6 +19,7 @@ class ListViewModel extends BaseViewModel {
 
   final PagingController<int, ReadableListItem> pagingController =
       PagingController(firstPageKey: 1);
+
   int _lastId = -1;
 
   ListViewModel({
@@ -35,7 +36,10 @@ class ListViewModel extends BaseViewModel {
     });
   }
 
-  void refresh() => pagingController.refresh();
+  void refresh() {
+    _lastId = -1;
+    pagingController.refresh();
+  }
 
   @override
   void dispose() {
