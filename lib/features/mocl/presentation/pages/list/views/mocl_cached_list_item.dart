@@ -29,7 +29,7 @@ class CachedListItem extends StatelessWidget {
     log('CachedListItem title=${item.title}');
     return ListTile(
         onTap: onTap,
-        contentPadding: const EdgeInsets.fromLTRB(16, 8, 12, 8),
+        contentPadding: const EdgeInsets.fromLTRB(16, 4, 12, 4),
         title: _buildTitle(),
         subtitle: _buildBottomView(item.userInfo.id),
       );

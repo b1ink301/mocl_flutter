@@ -44,7 +44,7 @@ final getDetailProvider = Provider((ref) {
   return GetDetail(detailRepository: detailRepository);
 });
 
-final setReadProvider = FutureProvider((ref) {
+final setReadProvider = Provider((ref) {
   final listRepository = ref.watch(listRepositoryProvider);
   return SetReadFlag(listRepository: listRepository);
 });
