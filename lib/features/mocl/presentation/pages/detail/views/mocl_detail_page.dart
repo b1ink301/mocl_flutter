@@ -7,6 +7,7 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/providers/detail_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/views/mocl_detail_view.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/appbar_dual_text_widget.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class DetailPage extends StatelessWidget {
   const DetailPage({super.key});
@@ -31,7 +32,7 @@ class DetailPage extends StatelessWidget {
                 onSelected: (int value) {
                   switch (value) {
                     case 0:
-                      // controller.openBrowserByMenu();
+                      openBrowser(item.url);
                       break;
                     case 1:
                       break;
@@ -66,5 +67,10 @@ class DetailPage extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  Future<bool> openBrowser(String url) async {
+    final Uri uri = Uri.parse(url);
+    return await launchUrl(uri);
   }
 }

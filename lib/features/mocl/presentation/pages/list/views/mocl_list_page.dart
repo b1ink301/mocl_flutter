@@ -27,7 +27,7 @@ class ListPage extends ConsumerWidget {
         automaticallyImplyLeading: Platform.isMacOS,
         actions: [
           IconButton(
-            onPressed: () => refresh(),
+            onPressed: refresh,
             icon: const Icon(Icons.refresh),
           )
         ],
