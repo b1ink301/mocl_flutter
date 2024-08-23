@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_read_flag.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/use_case_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
@@ -46,8 +45,15 @@ class ListView extends ConsumerWidget {
     TextStyles textStyles,
   ) {
     final isLoading = ref.watch(isLoadingMoreProvider);
-    return SliverFixedExtentList.builder(
+    return SliverList.separated(
       itemBuilder: (BuildContext context, int index) {
+        if (!isLoading && data.length - 3 == index) {
+          WidgetsBinding.instance.addPostFrameCallback((_) {
+            ref
+                .read(listStateProvider(item: mainItem).notifier)
+                .loadMoreItems();
+          });
+        }
         if (index == data.length) {
           return isLoading ? const LoadingWidget() : const SizedBox.shrink();
         }
@@ -58,27 +64,14 @@ class ListView extends ConsumerWidget {
           (item) => _handleItemTap(context, ref, item),
         );
       },
+      // findChildIndexCallback: (Key key) {
+      //   final ValueKey<String> valueKey = key as ValueKey<String>;
+      //   return data.indexWhere((item) => item.item.id.toString() == valueKey.value);
+      // },
       itemCount: data.length + 1,
-      itemExtent: ListView.itemExtent,
+      separatorBuilder: (_, index) => const DividerWidget(),
     );
   }
-
-  Widget _buildPagedList(
-    List<ReadableListItem> data,
-    TextStyles textStyles,
-    ItemTapCallback onItemTap,
-  ) =>
-      SliverFixedExtentList.builder(
-        addAutomaticKeepAlives: false,
-        addSemanticIndexes: false,
-        addRepaintBoundaries: false,
-        itemCount: data.length,
-        itemBuilder: (BuildContext context, int index) {
-          final item = data[index];
-          return _buildCachedListItem(context, item, textStyles, onItemTap);
-        },
-        itemExtent: itemExtent,
-      );
 
   Widget _buildCachedListItem(
     BuildContext context,
@@ -86,18 +79,15 @@ class ListView extends ConsumerWidget {
     TextStyles textStyles,
     ItemTapCallback onItemTap,
   ) =>
-      Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          CachedListItem(
-            siteType: mainItem.siteType,
-            item: item.item,
-            isRead: item.isRead,
-            textStyles: textStyles,
-            onTap: () => onItemTap(item),
-          ),
-          const DividerWidget(endIndent: 0, indent: 0),
-        ],
+      RepaintBoundary(
+        key: ValueKey(item.item.id.toString()),
+        child: CachedListItem(
+          siteType: mainItem.siteType,
+          item: item.item,
+          isRead: item.isRead,
+          textStyles: textStyles,
+          onTap: () => onItemTap(item),
+        ),
       );
 
   Future<void> _handleItemTap(

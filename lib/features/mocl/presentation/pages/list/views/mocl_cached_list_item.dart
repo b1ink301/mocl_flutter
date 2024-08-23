@@ -25,45 +25,42 @@ class CachedListItem extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => ListTile(
+  Widget build(BuildContext context) {
+    log('CachedListItem title=${item.title}');
+    return ListTile(
         onTap: onTap,
-        contentPadding: const EdgeInsets.fromLTRB(16, 0, 12, 0),
+        contentPadding: const EdgeInsets.fromLTRB(16, 8, 12, 8),
         title: _buildTitle(),
-        subtitle: _buildBottomView(
-          item.userInfo.id,
-          _buildNickImage(),
-          _buildNickName(),
-          _buildTime(),
-          _buildBadge(),
-        ),
+        subtitle: _buildBottomView(item.userInfo.id),
       );
+  }
 
   Widget _buildTitle() => SizedBox(
-        height: 24,
-        child: ValueListenableBuilder(
-          builder: (context, isRead, _) => Text(
+        // height: 24,
+        child: ValueListenableBuilder<bool>(
+          valueListenable: isRead,
+          builder: (context, isReadValue, child) => Text(
             item.title,
-            maxLines: 1,
+            maxLines: 3,
             overflow: TextOverflow.ellipsis,
-            style: isRead
+            style: isReadValue
                 ? textStyles.readTitleTextStyle
                 : textStyles.titleTextStyle,
           ),
-          valueListenable: isRead,
         ),
       );
 
-  Widget _buildNickName() {
+  Widget? _buildNickName() {
     if (item.userInfo.nickName.isEmpty) {
-      return const SizedBox.shrink();
+      return null;
     }
     return Padding(
       padding: const EdgeInsets.only(right: 8.0),
       child: ValueListenableBuilder(
-        builder: (context, isRead, _) => Text(
+        builder: (context, isReadValue, _) => Text(
           item.userInfo.nickName,
           maxLines: 1,
-          style: isRead
+          style: isReadValue
               ? textStyles.readSmallTextStyle
               : textStyles.smallTextStyle,
         ),
@@ -73,10 +70,10 @@ class CachedListItem extends StatelessWidget {
   }
 
   Widget _buildTime() => ValueListenableBuilder(
-        builder: (context, isRead, _) => Text(
+        builder: (context, isReadValue, _) => Text(
           item.time,
           maxLines: 1,
-          style: isRead
+          style: isReadValue
               ? textStyles.readSmallTextStyle
               : textStyles.smallTextStyle,
         ),
@@ -84,40 +81,37 @@ class CachedListItem extends StatelessWidget {
       );
 
   Widget _buildBadge() => ValueListenableBuilder(
-        builder: (context, isRead, _) => RoundTextWidget(
+        builder: (context, isReadValue, _) => RoundTextWidget(
           text: item.reply,
-          textStyle: isRead
+          textStyle: isReadValue
               ? textStyles.readBadgeTextStyle
               : textStyles.badgeTextStyle,
         ),
         valueListenable: isRead,
       );
 
-  Widget _buildNickImage() =>
+  Widget? _buildNickImage() =>
       NickImageWidget(url: item.userInfo.nickImage, siteType: siteType);
 
-  Widget _buildBottomView(
+  Widget? _buildBottomView(
     String id,
-    Widget nickImage,
-    Widget nickName,
-    Widget time,
-    Widget badge,
   ) {
-    if (id.isEmpty) return const SizedBox.shrink();
+    if (id.isEmpty) null;
 
-    return Container(
-      padding: const EdgeInsets.only(top: 10),
-      height: 30,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.start,
-        children: [
-          nickImage,
-          nickName,
-          time,
-          const Spacer(),
-          badge,
-        ],
-      ),
-    );
+    return Column(children: [
+      const SizedBox(height: 10),
+      SizedBox(
+        height: 20,
+        child: Row(
+          children: [
+            _buildNickImage(),
+            _buildNickName(),
+            _buildTime(),
+            const Spacer(),
+            _buildBadge()
+          ].whereType<Widget>().toList(),
+        ),
+      )
+    ]);
   }
 }
