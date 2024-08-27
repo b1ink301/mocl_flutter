@@ -33,8 +33,8 @@ class MainRepositoryImpl extends MainRepository {
     required List<MainItem> list,
   }) async {
     try {
-      await dataSource.set(siteType, list);
-      return ResultSuccess<int>(data: list.length);
+      final result = await dataSource.set(siteType, list);
+      return ResultSuccess<List<int>>(data: result);
     } on Exception {
       return ResultFailure<Failure>(failure: SetMainFailure());
     }

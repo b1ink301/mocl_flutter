@@ -2,10 +2,10 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:swipeable_page_route/swipeable_page_route.dart';
 
-import '../pages/detail/views/mocl_detail_page.dart';
-import '../pages/list/views/mocl_list_page.dart';
-import '../pages/main/views/mocl_main_page.dart';
-import '../pages/main/views/set_list_dialog.dart';
+import '../pages/detail/mocl_detail_page.dart';
+import '../pages/list/mocl_list_page.dart';
+import '../pages/main/mocl_main_page.dart';
+import '../pages/main/set_list_dialog.dart';
 import '../widgets/dialog_page.dart';
 
 part 'mocl_routes.dart';

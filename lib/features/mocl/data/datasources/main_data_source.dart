@@ -38,13 +38,14 @@ class MainDataSourceImpl extends MainDataSource {
   Future<List<int>> set(
     SiteType siteType,
     List<MainItem> list,
-  ) {
+  ) async {
     var entities = list.map((item) {
       var data = MainItemMapper.fromEntityToModel(item);
       return MainItemMapper.fromModelToEntity(data);
     }).toList();
 
     debugPrint("MainDataSource=${entities.length}, siteType=$siteType");
+    await localDatabase.deleteAll(siteType);
     return localDatabase.setMainItems(siteType, entities);
   }
 

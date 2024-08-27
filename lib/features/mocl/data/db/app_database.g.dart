@@ -146,7 +146,7 @@ class _$MainDao extends MainDao {
 
   @override
   Future<List<MainItemData>> findAll() async {
-    return _queryAdapter.queryList('SELECT * FROM main',
+    return _queryAdapter.queryList('SELECT * FROM main ORDER BY orderBy ASC',
         mapper: (Map<String, Object?> row) => MainItemData(
             board: row['board'] as String,
             orderBy: row['orderBy'] as int,
@@ -158,7 +158,8 @@ class _$MainDao extends MainDao {
 
   @override
   Future<List<MainItemData>> findBySiteType(SiteType siteType) async {
-    return _queryAdapter.queryList('SELECT * FROM main WHERE siteType = ?1',
+    return _queryAdapter.queryList(
+        'SELECT * FROM main WHERE siteType = ?1 ORDER BY orderBy ASC',
         mapper: (Map<String, Object?> row) => MainItemData(
             board: row['board'] as String,
             orderBy: row['orderBy'] as int,
@@ -185,6 +186,12 @@ class _$MainDao extends MainDao {
   @override
   Future<void> deleteAll() async {
     await _queryAdapter.queryNoReturn('DELETE FROM main');
+  }
+
+  @override
+  Future<void> deleteAllBySiteType(SiteType siteType) async {
+    await _queryAdapter.queryNoReturn('DELETE FROM main WHERE siteType = ?1',
+        arguments: [siteType.index]);
   }
 
   @override

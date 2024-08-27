@@ -22,11 +22,8 @@ class ListRepositoryImpl extends ListRepository {
     required MainItem item,
     required int page,
     required int lastId,
-  }) async {
-    var parser = await parserFactory.createParser();
-    return dataSource.getList(
-          item, page, lastId, parser);
-  }
+  }) => dataSource.getList(
+          item, page, lastId, parserFactory.createParser());
 
   @override
   Future<int> setReadFlag({
