@@ -8,14 +8,18 @@ import 'package:mocl_flutter/features/mocl/data/datasources/parser/parser_factor
 import 'package:mocl_flutter/features/mocl/data/db/app_database.dart';
 import 'package:mocl_flutter/features/mocl/data/di/network_provider.dart';
 import 'package:mocl_flutter/features/mocl/data/di/repository_provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../datasources/main_data_source.dart';
 
-final appDatabaseProvider = FutureProvider<AppDatabase>(
-    (ref) => $FloorAppDatabase.databaseBuilder('mocl.db').build());
+final appDatabaseProvider =
+    Provider<AppDatabase>((ref) => throw UnimplementedError());
+
+final sharedPreferencesProvider =
+    Provider<SharedPreferences>((ref) => throw UnimplementedError());
 
 final localDatabaseProvider = Provider<LocalDatabase>((ref) {
-  final database = ref.watch(appDatabaseProvider.future);
+  final database = ref.watch(appDatabaseProvider);
   return LocalDatabase(database: database);
 });
 

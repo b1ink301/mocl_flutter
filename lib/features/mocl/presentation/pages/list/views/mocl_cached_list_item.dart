@@ -2,7 +2,6 @@ import 'dart:developer';
 
 import 'package:flutter/material.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/views/mocl_text_styles.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/round_text_widget.dart';
@@ -11,13 +10,11 @@ import 'package:mocl_flutter/features/mocl/presentation/widgets/round_text_widge
 class CachedListItem extends StatelessWidget {
   final ListItem item;
   final ValueNotifier<bool> isRead;
-  final SiteType siteType;
   final TextStyles textStyles;
   final VoidCallback onTap;
 
   const CachedListItem({
     super.key,
-    required this.siteType,
     required this.item,
     required this.isRead,
     required this.onTap,
@@ -28,11 +25,11 @@ class CachedListItem extends StatelessWidget {
   Widget build(BuildContext context) {
     log('CachedListItem title=${item.title}');
     return ListTile(
-        onTap: onTap,
-        contentPadding: const EdgeInsets.fromLTRB(16, 4, 12, 4),
-        title: _buildTitle(),
-        subtitle: _buildBottomView(item.userInfo.id),
-      );
+      onTap: onTap,
+      contentPadding: const EdgeInsets.fromLTRB(16, 4, 12, 4),
+      title: _buildTitle(),
+      subtitle: _buildBottomView(item.userInfo.id),
+    );
   }
 
   Widget _buildTitle() => SizedBox(
@@ -90,8 +87,7 @@ class CachedListItem extends StatelessWidget {
         valueListenable: isRead,
       );
 
-  Widget? _buildNickImage() =>
-      NickImageWidget(url: item.userInfo.nickImage, siteType: siteType);
+  Widget? _buildNickImage() => NickImageWidget(url: item.userInfo.nickImage);
 
   Widget? _buildBottomView(
     String id,
