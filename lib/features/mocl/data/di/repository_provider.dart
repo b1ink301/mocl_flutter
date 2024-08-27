@@ -10,11 +10,8 @@ import 'package:mocl_flutter/features/mocl/domain/repositories/main_repository.d
 import 'package:mocl_flutter/features/mocl/domain/repositories/settings_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-final sharedPreferencesProvider = FutureProvider(
-    (ref) => SharedPreferences.getInstance().then((pref) => pref));
-
 final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {
-  final prefs = ref.watch(sharedPreferencesProvider.future);
+  final prefs = ref.watch(sharedPreferencesProvider);
   return SettingsRepositoryImpl(prefs: prefs);
 });
 

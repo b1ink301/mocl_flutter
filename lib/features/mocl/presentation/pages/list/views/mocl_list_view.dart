@@ -32,7 +32,6 @@ class ListView extends StatelessWidget {
             return RepaintBoundary(
               key: ValueKey(item.item.id.toString()),
               child: CachedListItem(
-                siteType: viewModel.mainItem.siteType,
                 item: item.item,
                 isRead: item.isRead,
                 textStyles: textStyles,

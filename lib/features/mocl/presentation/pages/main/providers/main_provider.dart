@@ -34,8 +34,7 @@ class MainListState extends _$MainListState {
   Future<void> setList(List<MainItem> items) async {
     final siteType = ref.watch(currentSiteTypeStateProvider);
     final param = SetMainParams(siteType: siteType, list: items);
-    await ref.watch(setMainListProvider).call(param);
-
+    await ref.read(setMainListProvider).call(param);
     reload();
   }
 
@@ -76,32 +75,17 @@ String mainTitle(MainTitleRef ref) {
 // });
 
 @riverpod
-Future<SiteType> currentSiteType(CurrentSiteTypeRef ref) {
+SiteType currentSiteType(CurrentSiteTypeRef ref) {
   final getSiteType = ref.watch(getSiteTypeProvider);
   return getSiteType(NoParams());
 }
-
-// @riverpod
-// void changeSiteType(ChangeSiteTypeRef ref, SiteType newSiteType) {
-//   final siteType = ref.read(currentSiteTypeProvider);
-//   if (siteType != newSiteType) {
-//     ref.read(currentSiteTypeProvider.notifier).state = newSiteType;
-//     final setSiteType = getIt<SetSiteType>();
-//     setSiteType(newSiteType);
-//   }
-// }
 
 @Riverpod(keepAlive: true)
 class CurrentSiteTypeState extends _$CurrentSiteTypeState {
   @override
   SiteType build() => _getSiteType();
 
-  SiteType _getSiteType() {
-    return ref.read(currentSiteTypeProvider).maybeWhen(
-          data: (data) => data,
-          orElse: () => SiteType.damoang,
-        );
-  }
+  SiteType _getSiteType() => ref.read(currentSiteTypeProvider);
 
   void setSiteType(SiteType newSiteType) {
     if (state != newSiteType) {
@@ -111,18 +95,3 @@ class CurrentSiteTypeState extends _$CurrentSiteTypeState {
     }
   }
 }
-
-// @riverpod
-// SiteType changeSiteTypeState(ChangeSiteTypeStateRef ref) {
-//   final siteType = ref.watch(currentSiteTypeProvider);
-//
-//   ref.listen<SiteType>(currentSiteTypeProvider, (_, newSiteType) {
-//     if (newSiteType != siteType) {
-//       final setSiteType = getIt<SetSiteType>();
-//       setSiteType(newSiteType);
-//       ref.state = newSiteType;
-//     }
-//   });
-//
-//   return siteType;
-// }

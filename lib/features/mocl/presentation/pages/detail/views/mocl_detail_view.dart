@@ -1,27 +1,25 @@
+import 'dart:async';
 import 'dart:io';
 
-import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/detail/providers/detail_provider.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_provider.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/main/providers/main_provider.dart';
+import 'package:mocl_flutter/features/mocl/presentation/di/view_model_provider.dart';
+import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 class DetailView extends ConsumerWidget {
-  final ListItem listItem;
+  final ReadableListItem item;
 
-  const DetailView({super.key, required this.listItem});
+  const DetailView({
+    super.key,
+    required this.item,
+  });
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -42,8 +40,9 @@ class DetailView extends ConsumerWidget {
       '#${color.value.toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}';
 
   Widget _buildView(BuildContext context, WidgetRef ref) {
-    final resultAsync = ref.watch(detailStateProvider(listItem));
-    final siteType = ref.read(currentSiteTypeStateProvider);
+    final resultAsync =
+        ref.watch(detailViewModelProvider(item).select((vm) => vm.data));
+    final viewModel = ref.watch(detailViewModelProvider(item).notifier);
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 8, 0),
@@ -54,62 +53,50 @@ class DetailView extends ConsumerWidget {
           final bodySmall = theme.textTheme.bodySmall;
           final bodyMedium = theme.textTheme.bodyMedium;
 
-          if (data is ResultSuccess<Details>) {
-            WidgetsBinding.instance.addPostFrameCallback((_) {
-              var title = data.data.title;
-              ref
-                  .read(appBarHeightStateProvider.notifier)
-                  .update(context, title);
-              ref.read(isReadStateProvider.notifier).setRead();
-            });
-
-            return SingleChildScrollView(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  _buildHeader(
-                    siteType,
-                    listItem.userInfo,
-                    listItem.time,
-                    bodySmall,
-                  ),
-                  const Divider(),
-                  const SizedBox(height: 10),
-                  HtmlWidget(
-                    data.data.bodyHtml,
-                    customStylesBuilder: (element) {
-                      if (element.localName == 'a') {
-                        return {
-                          'color': hexColor,
-                          'text-decoration': 'underline',
-                        };
-                      }
-                      return null;
-                    },
-                    textStyle: bodyMedium,
-                    renderMode: RenderMode.column,
-                    onTapUrl: (url) async => await openBrowser(url),
-                  ),
-                  const SizedBox(height: 10),
-                  _buildComments(
-                      context,
-                      siteType,
-                      hexColor,
-                      data.data.comments,
-                      bodySmall,
-                      bodyMedium,
-                      () => ref
-                          .watch(detailStateProvider(listItem).notifier)
-                          .refresh()),
-                  const Divider(),
-                ],
-              ),
-            );
-          } else {
-            return const SizedBox.shrink();
-          }
+          return SingleChildScrollView(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                _buildHeader(
+                  item.item.userInfo,
+                  item.item.time,
+                  bodySmall,
+                ),
+                const Divider(),
+                const SizedBox(height: 10),
+                HtmlWidget(
+                  data.bodyHtml,
+                  customStylesBuilder: (element) {
+                    if (element.localName == 'a') {
+                      return {
+                        'color': hexColor,
+                        'text-decoration': 'underline',
+                      };
+                    }
+                    return null;
+                  },
+                  textStyle: bodyMedium,
+                  renderMode: RenderMode.column,
+                  onTapUrl: ref
+                      .watch(detailViewModelProvider(item).notifier)
+                      .openBrowser,
+                ),
+                const SizedBox(height: 10),
+                _buildComments(
+                  context,
+                  hexColor,
+                  data.comments,
+                  bodySmall,
+                  bodyMedium,
+                  viewModel.refresh,
+                  viewModel.openBrowser,
+                ),
+                const Divider(),
+              ],
+            ),
+          );
         },
         error: (err, stack) {
           return const SizedBox.shrink();
@@ -122,7 +109,6 @@ class DetailView extends ConsumerWidget {
   }
 
   Widget _buildHeader(
-    SiteType siteType,
     UserInfo userInfo,
     String time,
     TextStyle? bodySmall,
@@ -136,7 +122,6 @@ class DetailView extends ConsumerWidget {
             children: [
               NickImageWidget(
                 url: userInfo.nickImage,
-                siteType: siteType,
               ),
               Text(
                 userInfo.nickName,
@@ -154,12 +139,12 @@ class DetailView extends ConsumerWidget {
 
   Widget _buildComments(
     BuildContext context,
-    SiteType siteType,
     String hexColor,
     List<CommentItem> comments,
     TextStyle? bodySmall,
     TextStyle? bodyMedium,
     void Function() refresh,
+    FutureOr<bool> Function(String) openUrl,
   ) {
     Widget buildRefreshButton() => InkWell(
           onTap: refresh,
@@ -216,7 +201,6 @@ class DetailView extends ConsumerWidget {
                 children: [
                   NickImageWidget(
                     url: userInfo.nickImage,
-                    siteType: siteType,
                   ),
                   Text(
                     userInfo.nickName,
@@ -244,7 +228,7 @@ class DetailView extends ConsumerWidget {
                     }
                     return null;
                   },
-                  onTapUrl: (url) async => await openBrowser(url),
+                  onTapUrl: openUrl,
                 ),
               ),
             );
@@ -254,56 +238,5 @@ class DetailView extends ConsumerWidget {
         buildRefreshButton(),
       ],
     );
-  }
-
-  Future<bool> openBrowser(String url) async {
-    final Uri uri = Uri.parse(url);
-    return await launchUrl(uri);
-  }
-}
-
-class HeaderDelegate extends SliverPersistentHeaderDelegate {
-  final UserInfo _userInfo;
-
-  HeaderDelegate({required UserInfo userInfo}) : _userInfo = userInfo;
-
-  @override
-  Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) =>
-      Center(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            const SizedBox(width: 16),
-            CachedNetworkImage(
-              imageUrl: _userInfo.nickImage,
-              fit: BoxFit.contain,
-              width: 18,
-            ),
-            const SizedBox(width: 8),
-            Text(
-              _userInfo.nickName,
-              style: Theme.of(context).textTheme.bodySmall,
-            ),
-            // const Spacer(),
-            // Text('comment.time'),
-            const Spacer(),
-          ],
-        ),
-      );
-
-  @override
-  double get maxExtent => 42;
-
-  @override
-  double get minExtent => 42;
-
-  @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
-    return false;
   }
 }

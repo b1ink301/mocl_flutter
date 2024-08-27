@@ -15,7 +15,7 @@ dependencies:
   # HTML 파서
   html: ^0.15.4
   # HTML Widget
-  flutter_widget_from_html: ^0.15.1
+  flutter_widget_from_html: ^0.15.2
   # Service locator
 #  injectable: ^2.4.4
 #  get_it: ^7.7.0

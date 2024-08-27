@@ -35,11 +35,11 @@ final mainTitleProvider = AutoDisposeProvider<String>.internal(
 );
 
 typedef MainTitleRef = AutoDisposeProviderRef<String>;
-String _$currentSiteTypeHash() => r'e5609ac321ff47b1179915ea5c01000e3f15ead4';
+String _$currentSiteTypeHash() => r'd15b997315f01900d89100a10e08ddb96418fea7';
 
 /// See also [currentSiteType].
 @ProviderFor(currentSiteType)
-final currentSiteTypeProvider = AutoDisposeFutureProvider<SiteType>.internal(
+final currentSiteTypeProvider = AutoDisposeProvider<SiteType>.internal(
   currentSiteType,
   name: r'currentSiteTypeProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -49,8 +49,8 @@ final currentSiteTypeProvider = AutoDisposeFutureProvider<SiteType>.internal(
   allTransitiveDependencies: null,
 );
 
-typedef CurrentSiteTypeRef = AutoDisposeFutureProviderRef<SiteType>;
-String _$mainListStateHash() => r'd73b8373603f9b16ba4999c186c42f98d869df3c';
+typedef CurrentSiteTypeRef = AutoDisposeProviderRef<SiteType>;
+String _$mainListStateHash() => r'923c7fec365173e53d80fda4ceee3cc8db9a1886';
 
 /// See also [MainListState].
 @ProviderFor(MainListState)

@@ -13,9 +13,9 @@ import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_ite
 import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
 
 class ListViewModel extends BaseViewModel {
-  final MainItem mainItem;
-  final GetList getList;
-  final SetReadFlag setReadFlag;
+  final MainItem _mainItem;
+  final GetList _getList;
+  final SetReadFlag _setReadFlag;
 
   final PagingController<int, ReadableListItem> pagingController =
       PagingController(firstPageKey: 1);
@@ -23,14 +23,16 @@ class ListViewModel extends BaseViewModel {
   int _lastId = -1;
 
   ListViewModel({
-    required this.getList,
-    required this.setReadFlag,
-    required this.mainItem,
-  }) {
-    init();
+    required MainItem mainItem,
+    required GetList getList,
+    required SetReadFlag setReadFlag,
+  })  : _mainItem = mainItem,
+        _getList = getList,
+        _setReadFlag = setReadFlag {
+    _init();
   }
 
-  void init() {
+  void _init() {
     pagingController.addPageRequestListener((pageKey) {
       _fetchPage(pageKey);
     });
@@ -48,13 +50,13 @@ class ListViewModel extends BaseViewModel {
   }
 
   void _fetchPage(int page) async {
-    log('Fetching page: item=$mainItem, page=$page, lastId=$_lastId');
+    log('Fetching page: item=$_mainItem, page=$page, lastId=$_lastId');
 
     final params =
-        GetListParams(mainItem: mainItem, page: page, lastId: _lastId);
+        GetListParams(mainItem: _mainItem, page: page, lastId: _lastId);
 
     try {
-      final result = await getList(params);
+      final result = await _getList(params);
 
       if (result is ResultSuccess<List<ListItem>>) {
         log('Fetched items: ${result.data.length}');
@@ -64,8 +66,7 @@ class ListViewModel extends BaseViewModel {
                   item: item,
                   isRead: ValueNotifier(item.isRead),
                 ))
-            .toList()
-            .sublist(0, 10);
+            .toList();
 
         _updatePagingController(list, page);
       } else if (result is ResultFailure) {
@@ -94,19 +95,14 @@ class ListViewModel extends BaseViewModel {
 
   Future<void> handleItemTap(
       BuildContext context, ReadableListItem item) async {
-    await context.push(Routes.DETAIL, extra: item.item);
-    // var isRead = ref.watch(isReadStateProvider);
-    // if (isRead) {
-    //   await _markItemAsRead(ref, item);
-    // }
-    // log('[PagedChildBuilderDelegate] isRead = $isRead');
+    await context.push(Routes.DETAIL, extra: item);
   }
 
-  Future<void> _markItemAsRead(ReadableListItem item) async {
+  Future<void> markItemAsRead(ReadableListItem item) async {
     item.markAsRead();
     var params =
-        SetReadFlagParams(siteType: mainItem.siteType, boardId: item.item.id);
-    await setReadFlag(params);
+        SetReadFlagParams(siteType: _mainItem.siteType, boardId: item.item.id);
+    await _setReadFlag(params);
     // ref.read(isReadStateProvider.notifier).clear();
   }
 }

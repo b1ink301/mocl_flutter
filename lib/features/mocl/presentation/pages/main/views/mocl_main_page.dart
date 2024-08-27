@@ -1,25 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/main/providers/main_provider.dart';
-import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
-
-import '../../../../domain/entities/mocl_site_type.dart';
-import '../../../widgets/message_widget.dart';
-import 'mocl_drawer_widget.dart';
-import 'mocl_main_view.dart';
+import 'package:mocl_flutter/features/mocl/presentation/di/view_model_provider.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/main/views/mocl_drawer_widget.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/main/views/mocl_main_view.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
 
 class MainPage extends ConsumerWidget {
   const MainPage({super.key});
 
-  AppBar _buildAppBar(BuildContext context, String title, WidgetRef ref) =>
+  AppBar _buildAppBar(
+    BuildContext context,
+    String title,
+    void Function(BuildContext context) handleAddButton,
+  ) =>
       AppBar(
         title: _buildTitle(context, title),
         titleSpacing: 0,
         centerTitle: false,
         toolbarHeight: 64,
-        actions: [_buildAddButton(context, ref)],
+        actions: [
+          IconButton(
+            onPressed: () => handleAddButton(context),
+            icon: const Icon(Icons.add),
+          )
+        ],
       );
 
   Widget _buildTitle(BuildContext context, String title) => MessageWidget(
@@ -27,34 +31,18 @@ class MainPage extends ConsumerWidget {
         textStyle: Theme.of(context).textTheme.labelMedium,
       );
 
-  Widget _buildAddButton(BuildContext context, WidgetRef ref) => IconButton(
-        onPressed: () => _handleAddButtonPress(context, ref),
-        icon: const Icon(Icons.add),
-      );
-
-  Future<void> _handleAddButtonPress(
-      BuildContext context, WidgetRef ref) async {
-    final result = await context
-        .push<List<MainItem>>('${Routes.MAIN}/${Routes.SET_MAIN_DLG}');
-    if (result != null) {
-      await ref.read(mainListStateProvider.notifier).setList(result);
-    }
-  }
-
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    // final siteType = ref.watch(currentSiteTypeProvider.select((value) => value));
-    final SiteType currentSiteType = ref.watch(currentSiteTypeStateProvider);
-    final String appTitle = ref.watch(mainTitleProvider);
+    final appBarTitle =
+        ref.watch(mainViewModelProvider.select((vm) => vm.appBarTitle()));
+    final viewModel = ref.read(mainViewModelProvider.notifier);
 
     return Scaffold(
       drawer: DrawerWidget(
-        onChangeSite: (siteType) => ref
-            .read(currentSiteTypeStateProvider.notifier)
-            .setSiteType(siteType),
+        onChangeSite: (siteType) => viewModel.changeSiteType(siteType),
       ),
-      appBar: _buildAppBar(context, appTitle, ref),
-      body: MainView(siteType: currentSiteType),
+      appBar: _buildAppBar(context, appBarTitle, viewModel.showSetListDlg),
+      body: const MainView(),
     );
   }
 }
