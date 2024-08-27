@@ -1,16 +1,12 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:gif/gif.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
 class NickImageWidget extends StatelessWidget {
   final String url;
-  final SiteType siteType;
 
   const NickImageWidget({
     super.key,
     required this.url,
-    required this.siteType,
   });
 
   @override
@@ -34,7 +30,6 @@ class NickImageWidget extends StatelessWidget {
       child: CachedNetworkImage(
           key: ValueKey(url),
           height: 17,
-          width: siteType == SiteType.damoang ? 17 : 63.8,
           imageUrl: url,
           errorWidget: (context, url, error) => const SizedBox.shrink()),
     );

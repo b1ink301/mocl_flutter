@@ -7,45 +7,43 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import '../db/app_database.dart';
 
 class LocalDatabase {
-  final Future<AppDatabase> database;
+  final AppDatabase _database;
 
-  LocalDatabase({required this.database});
+  LocalDatabase({required AppDatabase database}) : _database = database;
 
   Future<List<MainItemData>> getMainItems(
     SiteType siteType,
   ) =>
-      database.then((db) => db.mainDao.findBySiteType(siteType));
+      _database.mainDao.findBySiteType(siteType);
 
   Future<List<int>> setMainItems(
     SiteType siteType,
     List<MainItemData> entities,
   ) =>
-      database.then((db) => db.mainDao.insertList(entities));
+      _database.mainDao.insertList(entities);
 
   Future<void> deleteAll(
     SiteType siteType,
   ) =>
-      database.then((db) => db.mainDao.deleteAll());
+      _database.mainDao.deleteAllBySiteType(siteType);
 
   Future<bool> hasItem(
     SiteType siteType,
     MainItemData entity,
   ) =>
-      database.then((db) =>
-          db.mainDao.findByBoard(entity.board).then((data) => data != null));
+      _database.mainDao.findByBoard(entity.board).then((data) => data != null);
 
   Future<bool> isRead(
     SiteType siteType,
     int id,
   ) =>
-      database
-          .then((db) => db.isReadDao.findById(id).then((data) => data != null));
+      _database.isReadDao.findById(id).then((data) => data != null);
 
   Future<int> setRead(
     SiteType siteType,
     int id,
   ) {
     final entity = ReadItemData(siteType: siteType, id: id);
-    return database.then((db) => db.isReadDao.insert(entity));
+    return _database.isReadDao.insert(entity);
   }
 }

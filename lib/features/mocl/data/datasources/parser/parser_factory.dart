@@ -18,9 +18,8 @@ class ParserFactory {
   })  : _clienParser = clienParser,
         _damoangParser = damoangParser;
 
-  Future<BaseParser> createParser() =>
-      settingsRepository.getSiteType().then((type) {
-        debugPrint('ParserFactory type=$type');
-        return type == SiteType.damoang ? _damoangParser : _clienParser;
-      });
+  BaseParser createParser() =>
+      settingsRepository.getSiteType() == SiteType.damoang
+          ? _damoangParser
+          : _clienParser;
 }

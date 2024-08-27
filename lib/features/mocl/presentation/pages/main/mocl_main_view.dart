@@ -2,38 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/main/providers/main_provider.dart';
+import 'package:mocl_flutter/features/mocl/presentation/di/view_model_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
 
 class MainView extends ConsumerWidget {
-  final SiteType siteType;
-
-  const MainView({super.key, required this.siteType});
+  const MainView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textStyle = Theme.of(context).textTheme.bodyMedium;
-    final resultAsync = ref.watch(mainListStateProvider);
+    final resultAsync = ref.watch(mainViewModelProvider.select((vm) => vm.data));
 
     return resultAsync.when(
-      data: (result) => _buildDataView(context, result, textStyle),
+      data: (result) => _buildListView(context, result, textStyle),
       error: (e, s) => _buildErrorView(context),
       loading: () => const LoadingWidget(),
     );
-  }
-
-  Widget _buildDataView(
-      BuildContext context, Result result, TextStyle? textStyle) {
-    if (result is ResultSuccess<List<MainItem>>) {
-      return _buildListView(context, result.data, textStyle);
-    } else {
-      return MessageWidget(message: 'Unexpected result: ${result.runtimeType}');
-    }
   }
 
   Widget _buildListView(

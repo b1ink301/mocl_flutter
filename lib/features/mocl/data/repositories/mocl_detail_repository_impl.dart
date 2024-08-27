@@ -18,9 +18,6 @@ class DetailRepositoryImpl extends DetailRepository {
   });
 
   @override
-  Future<Result> getDetail({required ListItem item}) async {
-    var parser = await parserFactory.createParser();
-    log('[getDetail] parser = ${parser.runtimeType}');
-    return dataSource.getDetail(item, parser);
-  }
+  Future<Result> getDetail({required ListItem item}) =>
+      dataSource.getDetail(item, parserFactory.createParser());
 }
