@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/view_model_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/detail/views/mocl_detail_view.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/detail/mocl_detail_view.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/appbar_dual_text_widget.dart';
 
 class DetailPage extends ConsumerWidget {

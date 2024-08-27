@@ -189,6 +189,12 @@ class _$MainDao extends MainDao {
   }
 
   @override
+  Future<void> deleteAllBySiteType(SiteType siteType) async {
+    await _queryAdapter.queryNoReturn('DELETE FROM main WHERE siteType = ?1',
+        arguments: [siteType.index]);
+  }
+
+  @override
   Future<int> insertItem(MainItemData entity) {
     return _mainItemDataInsertionAdapter.insertAndReturnId(
         entity, OnConflictStrategy.replace);

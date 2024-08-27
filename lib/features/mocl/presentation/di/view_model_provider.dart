@@ -2,11 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/use_case_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/list/views/list_view_model.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/main/views/main_dlg_view_model.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/main/views/main_view_model.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/list/list_view_model.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/main/main_dlg_view_model.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/main/main_view_model.dart';
 
-import '../pages/detail/views/detail_view_model.dart';
+import '../pages/detail/detail_view_model.dart';
 
 final mainViewModelProvider =
     ChangeNotifierProvider.autoDispose<MainViewModel>((ref) {

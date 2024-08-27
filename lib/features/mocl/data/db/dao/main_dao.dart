@@ -21,4 +21,7 @@ abstract class MainDao {
 
   @Query("DELETE FROM main")
   Future<void> deleteAll();
+
+  @Query("DELETE FROM main WHERE siteType = :siteType")
+  Future<void> deleteAllBySiteType(SiteType siteType);
 }

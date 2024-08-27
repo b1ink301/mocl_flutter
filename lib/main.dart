@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -13,29 +15,34 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await Firebase.initializeApp(
-    options: DefaultFirebaseOptions.currentPlatform,
-  );
-  const fatalError = true;
-  PlatformDispatcher.instance.onError = (error, stack) {
-    if (fatalError) {
-      FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-    } else {
-      FirebaseCrashlytics.instance.recordError(error, stack);
-    }
-    return true;
-  };
+
+  if (Platform.isAndroid) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    const fatalError = true;
+    PlatformDispatcher.instance.onError = (error, stack) {
+      if (fatalError) {
+        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      } else {
+        FirebaseCrashlytics.instance.recordError(error, stack);
+      }
+      return true;
+    };
+  }
   final sharedPreferences = await SharedPreferences.getInstance();
   final appDatabase =
       await $FloorAppDatabase.databaseBuilder('mocl.db').build();
 
-  runApp(ProviderScope(
-    overrides: [
-      sharedPreferencesProvider.overrideWithValue(sharedPreferences),
-      appDatabaseProvider.overrideWithValue(appDatabase),
-    ],
-    child: MoclApp(),
-  ));
+  runApp(
+    ProviderScope(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(sharedPreferences),
+        appDatabaseProvider.overrideWithValue(appDatabase),
+      ],
+      child: const MoclApp(),
+    ),
+  );
 }
 
 class MoclApp extends StatelessWidget {
