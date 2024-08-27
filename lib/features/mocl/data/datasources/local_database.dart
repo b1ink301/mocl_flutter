@@ -25,7 +25,7 @@ class LocalDatabase {
   Future<void> deleteAll(
     SiteType siteType,
   ) =>
-      _database.mainDao.deleteAll();
+      _database.mainDao.deleteAllBySiteType(siteType);
 
   Future<bool> hasItem(
     SiteType siteType,

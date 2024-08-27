@@ -6,6 +6,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_list.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_read_flag.dart';
 import 'package:mocl_flutter/features/mocl/presentation/base/base_view_model.dart';
@@ -31,6 +32,9 @@ class ListViewModel extends BaseViewModel {
         _setReadFlag = setReadFlag {
     _init();
   }
+
+  String get smallTitle => _mainItem.siteType.title;
+  String get title => _mainItem.text;
 
   void _init() {
     pagingController.addPageRequestListener((pageKey) {

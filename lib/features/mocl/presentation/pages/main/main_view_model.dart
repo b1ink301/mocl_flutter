@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/cupertino.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -16,7 +14,6 @@ import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.da
 
 class MainViewModel extends BaseViewModel {
   final GetMainList _getMainList;
-  final GetSiteType _getSiteType;
   final SetSiteType _setSiteType;
   final SetMainList _setMainList;
 
@@ -26,62 +23,50 @@ class MainViewModel extends BaseViewModel {
     required SetSiteType setSiteType,
     required SetMainList setMainList,
   })  : _getMainList = getMainList,
-        _getSiteType = getSiteType,
         _setMainList = setMainList,
         _setSiteType = setSiteType {
-    init();
+    siteType = getSiteType(NoParams());
   }
 
-  AsyncValue<Result> _data = const AsyncValue.loading();
+  AsyncValue<List<MainItem>> _data = const AsyncValue.loading();
 
-  AsyncValue<Result> get data => _data;
+  AsyncValue<List<MainItem>> get data => _data;
 
   SiteType _siteType = SiteType.none;
 
   SiteType get siteType => _siteType;
 
   set siteType(SiteType newSiteType) {
-    log('siteType newSiteType=$newSiteType, _siteType=$_siteType');
     if (_siteType != newSiteType) {
       _siteType = newSiteType;
       _setSiteType(newSiteType);
       getList(_siteType);
-      notifyListeners();
     }
   }
 
-  void init() {
-    siteType = _getSiteType(NoParams());
-  }
-
-  void reload() {
-    getList(_siteType);
-    notifyListeners();
-  }
+  Future<void> reload() => getList(_siteType);
 
   String appBarTitle() => _siteType.title;
 
   Future<void> getList(SiteType siteType) async {
-    _data = const AsyncValue.loading();
+    _data = const AsyncLoading();
     notifyListeners();
 
     try {
       final result = await _getMainList(siteType);
       if (result is ResultSuccess<List<MainItem>>) {
-        _data = AsyncValue.data(result);
+        _data = AsyncData(result.data);
       } else if (result is ResultFailure) {
-        _data = AsyncValue.error(result, StackTrace.current);
+        _data = AsyncError(result, StackTrace.current);
       }
     } catch (error, stackTrace) {
-      _data = AsyncValue.error(error, stackTrace);
+      _data = AsyncError(error, stackTrace);
+    } finally {
+      notifyListeners();
     }
-
-    notifyListeners();
   }
 
-  void changeSiteType(SiteType newSiteType) {
-    siteType = newSiteType;
-  }
+  void changeSiteType(SiteType newSiteType) => siteType = newSiteType;
 
   void showSetListDlg(BuildContext context) async {
     final result = await context
@@ -94,7 +79,7 @@ class MainViewModel extends BaseViewModel {
   Future<Result> _setList(List<MainItem> list) async {
     final params = SetMainParams(siteType: _siteType, list: list);
     final result = await _setMainList.call(params);
-    reload();
+    await reload();
     return result;
   }
 }

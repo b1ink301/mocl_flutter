@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../domain/entities/mocl_site_type.dart';
+import '../../../domain/entities/mocl_site_type.dart';
 
 class DrawerWidget extends StatelessWidget {
   const DrawerWidget({super.key, required this.onChangeSite});
