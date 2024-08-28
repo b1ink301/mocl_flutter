@@ -37,11 +37,9 @@ final mainDlgViewModelProvider =
 final listViewModelProvider = ChangeNotifierProvider.autoDispose
     .family<ListViewModel, MainItem>((ref, item) {
   final getList = ref.watch(getListProvider);
-  final setReadFlag = ref.watch(setReadProvider);
 
   return ListViewModel(
     getList: getList,
-    setReadFlag: setReadFlag,
     mainItem: item,
   );
 });
@@ -49,8 +47,12 @@ final listViewModelProvider = ChangeNotifierProvider.autoDispose
 final detailViewModelProvider = ChangeNotifierProvider.autoDispose
     .family<DetailViewModel, ReadableListItem>((ref, item) {
   final getDetail = ref.watch(getDetailProvider);
+  final setReadFlag = ref.watch(setReadProvider);
+  final getSiteType = ref.watch(getSiteTypeProvider);
   return DetailViewModel(
     listItem: item,
     getDetail: getDetail,
+    setReadFlag: setReadFlag,
+    getSiteType: getSiteType,
   );
 });

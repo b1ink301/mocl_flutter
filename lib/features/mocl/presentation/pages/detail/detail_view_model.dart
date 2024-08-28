@@ -3,17 +3,23 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mocl_flutter/core/usecases/usecase.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_detail.dart';
+import 'package:mocl_flutter/features/mocl/domain/usecases/get_site_type.dart';
+import 'package:mocl_flutter/features/mocl/domain/usecases/set_read_flag.dart';
 import 'package:mocl_flutter/features/mocl/presentation/base/base_view_model.dart';
-import 'package:mocl_flutter/features/mocl/presentation/di/view_model_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 class DetailViewModel extends BaseViewModel {
   final ReadableListItem _listItem;
   final GetDetail _getDetail;
+  final SetReadFlag _setReadFlag;
+  late SiteType _siteType;
+
   AsyncValue<Details> _data = const AsyncValue.loading();
 
   AsyncValue<Details> get data => _data;
@@ -25,8 +31,12 @@ class DetailViewModel extends BaseViewModel {
   DetailViewModel({
     required ReadableListItem listItem,
     required GetDetail getDetail,
+    required SetReadFlag setReadFlag,
+    required GetSiteType getSiteType,
   })  : _listItem = listItem,
+        _setReadFlag = setReadFlag,
         _getDetail = getDetail {
+    _siteType = getSiteType(NoParams());
     _getData();
   }
 
@@ -54,7 +64,14 @@ class DetailViewModel extends BaseViewModel {
     return await launchUrl(uri);
   }
 
-  void _markAsRead() => _listItem.markAsRead();
+  Future<void> _markAsRead() async {
+    if (!_listItem.isRead.value) {
+      _listItem.markAsRead();
+      var params =
+          SetReadFlagParams(siteType: _siteType, boardId: _listItem.item.id);
+      await _setReadFlag(params);
+    }
+  }
 
   double _calculateTitleHeight(
     String text,

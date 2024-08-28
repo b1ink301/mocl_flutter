@@ -43,7 +43,7 @@ class ListPage extends ConsumerWidget {
 
     return Scaffold(
       body: CustomScrollView(
-        cacheExtent: 0,
+        cacheExtent: 100,
         slivers: <Widget>[
           _buildAppbar(
             context,
