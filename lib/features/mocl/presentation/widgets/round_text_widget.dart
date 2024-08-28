@@ -3,11 +3,19 @@ import 'package:flutter/material.dart';
 class RoundTextWidget extends StatelessWidget {
   final String text;
   final TextStyle? textStyle;
+  final EdgeInsetsGeometry padding;
+  final Color? borderColor;
+  final Color? backgroundColor;
+  final double borderRadius;
 
   const RoundTextWidget({
     super.key,
     required this.text,
     this.textStyle,
+    this.padding = const EdgeInsets.symmetric(horizontal: 5, vertical: 0),
+    this.borderColor,
+    this.backgroundColor,
+    this.borderRadius = 10.0,
   });
 
   @override
@@ -17,16 +25,20 @@ class RoundTextWidget extends StatelessWidget {
     BuildContext context,
   ) {
     if (text.isEmpty || text == '0') return const SizedBox.shrink();
+    final effectiveTextStyle = textStyle ?? DefaultTextStyle.of(context).style;
+    final effectiveBorderColor = borderColor ?? effectiveTextStyle.color ?? const Color(0xFF000000);
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 5, vertical: 0),
+      padding: padding,
       decoration: BoxDecoration(
-        border: Border.all(color: textStyle?.color ?? const Color(0xFF000000)),
-        borderRadius: BorderRadius.circular(10),
+        color: backgroundColor,
+        border: Border.all(color: effectiveBorderColor),
+        borderRadius: BorderRadius.circular(borderRadius),
       ),
       child: Text(
         text,
         maxLines: 1,
-        style: textStyle,
+        style: effectiveTextStyle,
       ),
     );
   }

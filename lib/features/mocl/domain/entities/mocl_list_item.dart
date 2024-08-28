@@ -23,4 +23,20 @@ class ListItem with _$ListItem {
     required bool hasImage,
     required bool isRead,
   }) = _ListItem;
+
+  factory ListItem.empty() => ListItem(
+        id: -1,
+        title: '',
+        reply: '',
+        category: '',
+        time: '',
+        url: '',
+        board: '',
+        boardTitle: '',
+        like: '',
+        hit: '',
+        userInfo: UserInfo(id: '', nickName: '', nickImage: ''),
+        hasImage: false,
+        isRead: false,
+      );
 }

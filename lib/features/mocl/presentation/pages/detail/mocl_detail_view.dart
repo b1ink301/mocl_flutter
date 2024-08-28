@@ -150,7 +150,7 @@ class DetailView extends ConsumerWidget {
           onTap: refresh,
           child: Container(
             width: double.infinity, // 가로 꽉 채우기
-            height: 56,
+            height: 58,
             alignment: Alignment.center,
             child: Text(
               '새로고침',

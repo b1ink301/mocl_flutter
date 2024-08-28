@@ -3,11 +3,12 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_text_styles.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/round_text_widget.dart';
 
 @immutable
-class CachedListItem extends StatelessWidget{
+class CachedListItem extends StatelessWidget {
   final ListItem item;
   final ValueNotifier<bool> isRead;
   final TextStyles textStyles;
@@ -22,27 +23,28 @@ class CachedListItem extends StatelessWidget{
   });
 
   @override
-  Widget build(BuildContext context) {
-    log('[CachedListItem] item=${item.title}');
-    return ValueListenableBuilder<bool>(
-      valueListenable: isRead,
-      builder: (context, isReadValue, _) {
-        return ListTile(
-          onTap: onTap,
-          contentPadding: const EdgeInsets.fromLTRB(16, 4, 12, 4),
-          title: Text(
-            item.title,
-            maxLines: 3,
-            overflow: TextOverflow.ellipsis,
-            style: isReadValue
-                ? textStyles.readTitleTextStyle
-                : textStyles.titleTextStyle,
-          ),
-          subtitle: _buildBottomView(isReadValue),
-        );
-      },
-    );
-  }
+  Widget build(BuildContext context) => ValueListenableBuilder<bool>(
+        valueListenable: isRead,
+        builder: (context, isReadValue, _) {
+          return ListTile(
+            onTap: onTap,
+            minVerticalPadding: 0,
+            contentPadding: const EdgeInsets.fromLTRB(16, 10, 12, 10),
+            title: SizedBox(
+              height: 24,
+              child: Text(
+                item.title,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: isReadValue
+                    ? textStyles.readTitleTextStyle
+                    : textStyles.titleTextStyle,
+              ),
+            ),
+            subtitle: _buildBottomView(isReadValue),
+          );
+        },
+      );
 
   Widget? _buildBottomView(bool isReadValue) {
     if (item.userInfo.id.isEmpty) return null;
@@ -84,6 +86,8 @@ class CachedListItem extends StatelessWidget{
             ],
           ),
         ),
+        const SizedBox(height: 11),
+        const DividerWidget(indent: 0, endIndent: 0),
       ],
     );
   }

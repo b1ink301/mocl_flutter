@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/list_view_model.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_cached_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_text_styles.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 
 typedef ItemTapCallback = Future<void> Function(ReadableListItem item);
@@ -21,11 +21,12 @@ class ListView extends StatelessWidget {
   }
 
   Widget _buildPagedList(TextStyles textStyles) =>
-      PagedSliverList<int, ReadableListItem>.separated(
+      PagedSliverList<int, ReadableListItem>(
         pagingController: viewModel.pagingController,
-        addAutomaticKeepAlives: false,
+        // addAutomaticKeepAlives: false,
         addSemanticIndexes: false,
         addRepaintBoundaries: false,
+        prototypeItem: CachedListItem(item: ListItem.empty(), isRead: ValueNotifier(false), onTap: () {}, textStyles: textStyles,),
         shrinkWrapFirstPageIndicators: true,
         builderDelegate: PagedChildBuilderDelegate<ReadableListItem>(
           itemBuilder: (context, item, index) =>
@@ -33,7 +34,7 @@ class ListView extends StatelessWidget {
           newPageProgressIndicatorBuilder: (context) => const LoadingWidget(),
           firstPageProgressIndicatorBuilder: (context) => const LoadingWidget(),
         ),
-        separatorBuilder: (context, index) => const DividerWidget(),
+        // separatorBuilder: (context, index) => const DividerWidget(),
       );
 
   Widget _buildCachedItem(

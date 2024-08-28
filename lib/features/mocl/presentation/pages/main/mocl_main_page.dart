@@ -34,22 +34,21 @@ class MainPage extends BaseStatelessView<MainViewModel> {
       );
 
   @override
-  Widget build(BuildContext context) {
-    return Consumer(
-      builder: (context, ref, child) {
-        final appBarTitle =
-            ref.watch(viewModelProvider.select((vm) => vm.appBarTitle()));
-        final viewModel = ref.read(viewModelProvider.notifier);
-        return Scaffold(
-          drawer: DrawerWidget(
-            onChangeSite: (siteType) => viewModel.changeSiteType(siteType),
-          ),
-          appBar: _buildAppBar(context, appBarTitle, viewModel.showSetListDlg),
-          body: const MainView(),
-        );
-      },
-    );
-  }
+  Widget build(BuildContext context) => Consumer(
+        builder: (context, ref, child) {
+          final appBarTitle =
+              ref.watch(viewModelProvider.select((vm) => vm.appBarTitle()));
+          final viewModel = ref.read(viewModelProvider.notifier);
+          return Scaffold(
+            drawer: DrawerWidget(
+              onChangeSite: (siteType) => viewModel.changeSiteType(siteType),
+            ),
+            appBar:
+                _buildAppBar(context, appBarTitle, viewModel.showSetListDlg),
+            body: const MainView(),
+          );
+        },
+      );
 
   // @override
   @override

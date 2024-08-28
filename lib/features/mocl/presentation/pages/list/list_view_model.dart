@@ -8,7 +8,6 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_list.dart';
-import 'package:mocl_flutter/features/mocl/domain/usecases/set_read_flag.dart';
 import 'package:mocl_flutter/features/mocl/presentation/base/base_view_model.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
@@ -16,7 +15,6 @@ import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.da
 class ListViewModel extends BaseViewModel {
   final MainItem _mainItem;
   final GetList _getList;
-  final SetReadFlag _setReadFlag;
 
   final PagingController<int, ReadableListItem> pagingController =
       PagingController(firstPageKey: 1);
@@ -26,10 +24,8 @@ class ListViewModel extends BaseViewModel {
   ListViewModel({
     required MainItem mainItem,
     required GetList getList,
-    required SetReadFlag setReadFlag,
   })  : _mainItem = mainItem,
-        _getList = getList,
-        _setReadFlag = setReadFlag {
+        _getList = getList {
     _init();
   }
 
@@ -100,13 +96,5 @@ class ListViewModel extends BaseViewModel {
   Future<void> handleItemTap(
       BuildContext context, ReadableListItem item) async {
     await context.push(Routes.DETAIL, extra: item);
-  }
-
-  Future<void> markItemAsRead(ReadableListItem item) async {
-    item.markAsRead();
-    var params =
-        SetReadFlagParams(siteType: _mainItem.siteType, boardId: item.item.id);
-    await _setReadFlag(params);
-    // ref.read(isReadStateProvider.notifier).clear();
   }
 }
