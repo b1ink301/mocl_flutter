@@ -15,18 +15,18 @@ class ListView extends StatelessWidget {
   const ListView({super.key, required this.viewModel});
 
   @override
-  Widget build(BuildContext context) {
-    final textStyles = TextStyles.getTextStyles(context);
-    return _buildPagedList(textStyles);
-  }
+  Widget build(BuildContext context) =>
+      _buildPagedList(TextStyles.getTextStyles(context));
 
   Widget _buildPagedList(TextStyles textStyles) =>
       PagedSliverList<int, ReadableListItem>(
         pagingController: viewModel.pagingController,
-        // addAutomaticKeepAlives: false,
-        addSemanticIndexes: false,
-        addRepaintBoundaries: false,
-        prototypeItem: CachedListItem(item: ListItem.empty(), isRead: ValueNotifier(false), onTap: () {}, textStyles: textStyles,),
+        prototypeItem: CachedListItem(
+          item: ListItem.empty(),
+          isRead: ValueNotifier(false),
+          onTap: () {},
+          textStyles: textStyles,
+        ),
         shrinkWrapFirstPageIndicators: true,
         builderDelegate: PagedChildBuilderDelegate<ReadableListItem>(
           itemBuilder: (context, item, index) =>
@@ -34,24 +34,22 @@ class ListView extends StatelessWidget {
           newPageProgressIndicatorBuilder: (context) => const LoadingWidget(),
           firstPageProgressIndicatorBuilder: (context) => const LoadingWidget(),
         ),
-        // separatorBuilder: (context, index) => const DividerWidget(),
       );
 
   Widget _buildCachedItem(
     ReadableListItem item,
     TextStyles textStyles,
     BuildContext context,
-  ) {
-    return _CachedItemBuilder(
-      key: ValueKey(item.item.id),
-      builder: () => CachedListItem(
-        item: item.item,
-        isRead: item.isRead,
-        textStyles: textStyles,
-        onTap: () => viewModel.handleItemTap(context, item),
-      ),
-    );
-  }
+  ) =>
+      _CachedItemBuilder(
+        key: ValueKey(item.item.id),
+        builder: () => CachedListItem(
+          item: item.item,
+          isRead: item.isRead,
+          textStyles: textStyles,
+          onTap: () => viewModel.handleItemTap(context, item),
+        ),
+      );
 }
 
 class _CachedItemBuilder extends StatefulWidget {
