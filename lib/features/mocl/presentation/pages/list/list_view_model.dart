@@ -30,6 +30,7 @@ class ListViewModel extends BaseViewModel {
   }
 
   String get smallTitle => _mainItem.siteType.title;
+
   String get title => _mainItem.text;
 
   void _init() {
