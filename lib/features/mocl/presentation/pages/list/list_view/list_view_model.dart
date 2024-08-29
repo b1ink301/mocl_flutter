@@ -70,7 +70,13 @@ class ListViewModel extends BaseViewModel {
                 ))
             .toList();
 
-        _items.addAll(newItems);
+        _items.maybeWhen(data: (previousList) {
+          final data = List<ReadableListItem>.from(previousList)
+            ..addAll(newItems);
+          _items = AsyncValue.data(data);
+        }, orElse: () {
+          _items = AsyncValue.data(newItems);
+        });
 
         if (newItems.isNotEmpty) {
           _lastId = newItems.last.item.id;

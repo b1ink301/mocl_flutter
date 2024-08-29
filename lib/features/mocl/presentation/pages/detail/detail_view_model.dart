@@ -28,6 +28,10 @@ class DetailViewModel extends BaseViewModel {
 
   AsyncValue<double> get appBarHeight => _appBarHeight;
 
+  String get smallTitle => '${_siteType.title} > ${_listItem.item.boardTitle}';
+
+  String get title => _listItem.item.title;
+
   DetailViewModel({
     required ReadableListItem listItem,
     required GetDetail getDetail,
@@ -55,9 +59,7 @@ class DetailViewModel extends BaseViewModel {
     });
   }
 
-  void refresh() {
-    _getData();
-  }
+  void refresh() => _getData();
 
   Future<bool> openBrowser(String url) async {
     final Uri uri = Uri.parse(url);
@@ -85,12 +87,12 @@ class DetailViewModel extends BaseViewModel {
       ),
       maxLines: 3,
       textDirection: TextDirection.ltr,
-    )..layout(minWidth: 0, maxWidth: width - (48 + 16 * 2 + 16 + 4));
+    )..layout(minWidth: 0, maxWidth: width - (48 + 16 * 2));
 
     final titleHeight = textPainter.height;
     debugPrint('titleHeight = $titleHeight');
 
-    return max(30, titleHeight) + 34; // 텍스트 높이 반환
+    return max(30, titleHeight) + 36; // 텍스트 높이 반환
   }
 
   void updateAppbarHeight(

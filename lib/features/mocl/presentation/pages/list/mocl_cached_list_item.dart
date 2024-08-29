@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_text_styles.dart';
@@ -74,17 +72,14 @@ class _CachedListItemState extends State<CachedListItem> {
         ),
       );
 
-  Widget _buildTitleView() {
-    log('_buildTitleView = ${widget.item.title}');
-    return Text(
-      widget.item.title,
-      maxLines: 3,
-      overflow: TextOverflow.ellipsis,
-      style: _isReadValue
-          ? widget.textStyles.readTitleTextStyle
-          : widget.textStyles.titleTextStyle,
-    );
-  }
+  Widget _buildTitleView() => Text(
+        widget.item.title,
+        maxLines: 3,
+        overflow: TextOverflow.ellipsis,
+        style: _isReadValue
+            ? widget.textStyles.readTitleTextStyle
+            : widget.textStyles.titleTextStyle,
+      );
 
   Widget _buildBottomView() => SizedBox(
         height: 20,

@@ -34,9 +34,7 @@ class PagedListViewModel extends BaseViewModel {
   String get title => _mainItem.text;
 
   void _init() {
-    pagingController.addPageRequestListener((pageKey) {
-      _fetchPage(pageKey);
-    });
+    pagingController.addPageRequestListener((pageKey) => _fetchPage(pageKey));
   }
 
   void refresh() {
@@ -50,52 +48,43 @@ class PagedListViewModel extends BaseViewModel {
     super.dispose();
   }
 
-  void _fetchPage(int page) async {
+  void _fetchPage(int page) {
     log('Fetching page: item=$_mainItem, page=$page, lastId=$_lastId');
 
     final params =
         GetListParams(mainItem: _mainItem, page: page, lastId: _lastId);
 
-    try {
-      final result = await _getList(params);
-
+    _getList(params).then((result) {
       if (result is ResultSuccess<List<ListItem>>) {
         log('Fetched items: ${result.data.length}');
-
-        final list = result.data
-            .map((item) => ReadableListItem(
-                  item: item,
-                  isRead: ValueNotifier(item.isRead),
-                ))
-            .toList();
-
+        final list = result.data.map(_toReadableListItem).toList();
         _updatePagingController(list, page);
       } else if (result is ResultFailure) {
         debugPrint('Error fetching page: ${result.failure}');
         pagingController.error = result.failure;
       }
-    } catch (e) {
-      debugPrint('Unexpected error: $e');
-      pagingController.error = e;
-    }
+    }).catchError((e) => pagingController.error = e);
   }
+
+  ReadableListItem _toReadableListItem(ListItem item) => ReadableListItem(
+        item: item,
+        isRead: ValueNotifier(item.isRead),
+      );
 
   void _updatePagingController(List<ReadableListItem> list, int page) {
     if (list.isNotEmpty) {
       _lastId = list.last.item.id;
     }
 
-    final isLastPage = list.isEmpty;
-    if (isLastPage) {
+    if (_mainItem.siteType == SiteType.clien &&
+        _mainItem.board == 'recommend') {
       pagingController.appendLastPage(list);
     } else {
-      final nextPageKey = page + 1;
-      pagingController.appendPage(list, nextPageKey);
+      pagingController.appendPage(list, page + 1);
     }
   }
 
-  Future<void> handleItemTap(
-      BuildContext context, ReadableListItem item) async {
-    await context.push(Routes.DETAIL, extra: item);
+  void handleItemTap(BuildContext context, ReadableListItem item) {
+    context.push(Routes.DETAIL, extra: item);
   }
 }

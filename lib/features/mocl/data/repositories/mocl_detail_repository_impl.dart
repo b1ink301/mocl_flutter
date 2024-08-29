@@ -1,12 +1,10 @@
 import 'dart:core';
-import 'dart:developer';
 
+import 'package:mocl_flutter/features/mocl/data/datasources/detail_data_source.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/parser/parser_factory.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
-
-import '../../domain/entities/mocl_result.dart';
-import '../../domain/repositories/detail_repository.dart';
-import '../datasources/detail_data_source.dart';
-import '../datasources/parser/parser_factory.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
+import 'package:mocl_flutter/features/mocl/domain/repositories/detail_repository.dart';
 
 class DetailRepositoryImpl extends DetailRepository {
   final DetailDataSource dataSource;

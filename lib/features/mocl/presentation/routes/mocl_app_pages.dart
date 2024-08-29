@@ -1,6 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/list/list_view/list_page.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/list/paged_list_view/paged_list_page.dart';
 import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 import '../pages/detail/mocl_detail_page.dart';
@@ -35,7 +35,7 @@ class AppPages {
       GoRoute(
         path: Routes.LIST,
         pageBuilder: (BuildContext context, GoRouterState state) =>
-            SwipeablePage(builder: (context) => const ListPage()),
+            SwipeablePage(builder: (context) => const PagedListPage()),
       ),
       GoRoute(
         path: Routes.DETAIL,
