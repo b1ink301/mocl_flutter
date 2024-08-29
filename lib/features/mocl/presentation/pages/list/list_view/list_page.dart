@@ -6,8 +6,7 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/view_model_provider.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_list_view.dart'
-    as view;
+import 'package:mocl_flutter/features/mocl/presentation/pages/list/list_view/list_view.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/appbar_dual_text_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
 
@@ -43,7 +42,7 @@ class ListPage extends ConsumerWidget {
 
     return Scaffold(
       body: CustomScrollView(
-        cacheExtent: 100,
+        cacheExtent: 0,
         slivers: <Widget>[
           _buildAppbar(
             context,
@@ -51,7 +50,7 @@ class ListPage extends ConsumerWidget {
             viewModel.title,
             viewModel.refresh,
           ),
-          view.ListView(viewModel: viewModel),
+          OptimizedListView(mainItem: mainItem),
         ],
       ),
     );

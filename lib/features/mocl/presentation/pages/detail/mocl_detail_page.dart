@@ -14,17 +14,17 @@ class DetailPage extends ConsumerWidget {
   Widget _buildAppbar(
     BuildContext context,
     ReadableListItem item,
-  ) {
-    return Consumer(
-      builder: (context, ref, _) {
-        final appBarHeight = ref.watch(
-            detailViewModelProvider(item).select((vm) => vm.appBarHeight));
+  ) =>
+      Consumer(
+        builder: (context, ref, _) {
+          final viewModel = ref.watch(detailViewModelProvider(item).notifier);
+          final appBarHeight = ref.watch(
+              detailViewModelProvider(item).select((vm) => vm.appBarHeight));
 
-        return appBarHeight.when(
-          data: (height) {
-            return AppbarDualTextWidget(
-              title: item.item.title,
-              smallTitle: item.item.boardTitle,
+          return appBarHeight.when(
+            data: (height) => AppbarDualTextWidget(
+              title: viewModel.title,
+              smallTitle: viewModel.smallTitle,
               automaticallyImplyLeading: Platform.isMacOS,
               toolbarHeight: height,
               actions: [
@@ -32,14 +32,10 @@ class DetailPage extends ConsumerWidget {
                   onSelected: (int value) {
                     switch (value) {
                       case 0:
-                        ref
-                            .watch(detailViewModelProvider(item).notifier)
-                            .refresh();
+                        viewModel.refresh();
                         break;
                       case 1:
-                        ref
-                            .watch(detailViewModelProvider(item).notifier)
-                            .openBrowser(item.item.url);
+                        viewModel.openBrowser(item.item.url);
                         break;
                     }
                   },
@@ -55,14 +51,12 @@ class DetailPage extends ConsumerWidget {
                   ],
                 ),
               ],
-            );
-          },
-          loading: () => const SizedBox(height: 64),
-          error: (err, stack) => const SizedBox(height: 64),
-        );
-      },
-    );
-  }
+            ),
+            loading: () => const SizedBox(height: 64),
+            error: (err, stack) => const SizedBox(height: 64),
+          );
+        },
+      );
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -28,7 +28,7 @@ class AppbarDualTextWidget extends StatelessWidget {
             textStyle:
                 Theme.of(context).textTheme.labelMedium?.copyWith(fontSize: 11),
           ),
-          const SizedBox(height: 2),
+          const SizedBox(height: 4),
           MessageWidget(
             textStyle: Theme.of(context).textTheme.labelMedium,
             message: _title,

@@ -49,7 +49,7 @@ void main() {
       // act
       final result =
           await moclRepository.getMainList(siteType: siteType) as ResultFailure;
-      var expected = ResultFailure<Failure>(failure: GetMainFailure());
+      var expected = ResultFailure<Failure>(failure: const GetMainFailure(message: ''));
       log('result=$result, expected=$expected');
 
       // assert

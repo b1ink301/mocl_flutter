@@ -8,7 +8,6 @@ import 'package:mocl_flutter/features/mocl/domain/repositories/detail_repository
 import 'package:mocl_flutter/features/mocl/domain/repositories/list_repository.dart';
 import 'package:mocl_flutter/features/mocl/domain/repositories/main_repository.dart';
 import 'package:mocl_flutter/features/mocl/domain/repositories/settings_repository.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
