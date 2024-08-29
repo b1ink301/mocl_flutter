@@ -18,7 +18,7 @@ class NickImageWidget extends StatefulWidget {
   });
 
   @override
-  _NickImageWidgetState createState() => _NickImageWidgetState();
+  State createState() => _NickImageWidgetState();
 }
 
 class _NickImageWidgetState extends State<NickImageWidget> {

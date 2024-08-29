@@ -79,9 +79,7 @@ class DetailView extends ConsumerWidget {
                   },
                   textStyle: bodyMedium,
                   renderMode: RenderMode.column,
-                  onTapUrl: ref
-                      .watch(detailViewModelProvider(item).notifier)
-                      .openBrowser,
+                  onTapUrl: viewModel.openBrowser,
                 ),
                 const SizedBox(height: 10),
                 _buildComments(

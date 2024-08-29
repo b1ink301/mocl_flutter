@@ -22,8 +22,9 @@ class MainRepositoryImpl extends MainRepository {
     try {
       final result = await dataSource.get(siteType);
       yield ResultSuccess<List<MainItem>>(data: result);
-    } on Exception {
-      yield ResultFailure<Failure>(failure: GetMainFailure());
+    } on Exception catch (e) {
+      yield ResultFailure<Failure>(
+          failure: GetMainFailure(message: e.toString()));
     }
   }
 
@@ -35,8 +36,9 @@ class MainRepositoryImpl extends MainRepository {
     try {
       final result = await dataSource.set(siteType, list);
       return ResultSuccess<List<int>>(data: result);
-    } on Exception {
-      return ResultFailure<Failure>(failure: SetMainFailure());
+    } on Exception catch (e) {
+      return ResultFailure<Failure>(
+          failure: SetMainFailure(message: e.toString()));
     }
   }
 
@@ -54,8 +56,9 @@ class MainRepositoryImpl extends MainRepository {
 
       var list = await Future.wait(futures);
       return ResultSuccess<List<MainItem>>(data: list);
-    } on Exception {
-      return ResultFailure<Failure>(failure: GetMainFailure());
+    } on Exception catch (e) {
+      return ResultFailure<Failure>(
+          failure: GetMainFailure(message: e.toString()));
     }
   }
 
@@ -64,8 +67,9 @@ class MainRepositoryImpl extends MainRepository {
     try {
       var result = await dataSource.get(siteType);
       return ResultSuccess(data: result);
-    } on Exception {
-      return ResultFailure<Failure>(failure: GetMainFailure());
+    } on Exception catch (e) {
+      return ResultFailure<Failure>(
+          failure: GetMainFailure(message: e.toString()));
     }
   }
 }
