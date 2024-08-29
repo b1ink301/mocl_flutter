@@ -1,12 +1,13 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_text_styles.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/round_text_widget.dart';
 
 @immutable
-class CachedListItem extends StatelessWidget {
+class CachedListItem extends StatefulWidget {
   final ListItem item;
   final ValueNotifier<bool> isRead;
   final TextStyles textStyles;
@@ -21,66 +22,100 @@ class CachedListItem extends StatelessWidget {
   });
 
   @override
+  State<CachedListItem> createState() => _CachedListItemState();
+}
+
+class _CachedListItemState extends State<CachedListItem> {
+  late bool _isReadValue;
+
+  @override
+  void initState() {
+    super.initState();
+    _isReadValue = widget.isRead.value;
+    widget.isRead.addListener(_updateIsRead);
+  }
+
+  @override
+  void didUpdateWidget(CachedListItem oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.isRead != widget.isRead) {
+      oldWidget.isRead.removeListener(_updateIsRead);
+      _isReadValue = widget.isRead.value;
+      widget.isRead.addListener(_updateIsRead);
+    }
+  }
+
+  void _updateIsRead() {
+    setState(() {
+      _isReadValue = widget.isRead.value;
+    });
+  }
+
+  @override
+  void dispose() {
+    widget.isRead.removeListener(_updateIsRead);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) => InkWell(
-        onTap: onTap,
+        onTap: widget.onTap,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 10, 12, 0),
-          child: ValueListenableBuilder<bool>(
-            valueListenable: isRead,
-            builder: (context, isReadValue, _) => Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                SizedBox(
-                  height: 34,
-                  child: Text(
-                    item.title,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: isReadValue
-                        ? textStyles.readTitleTextStyle
-                        : textStyles.titleTextStyle,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                _buildBottomView(isReadValue),
-                const SizedBox(height: 10),
-                const DividerWidget(indent: 0, endIndent: 0),
-              ],
-            ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              _buildTitleView(),
+              const SizedBox(height: 4),
+              _buildBottomView(),
+              const SizedBox(height: 10),
+            ],
           ),
         ),
       );
 
-  Widget _buildBottomView(bool isReadValue) => SizedBox(
+  Widget _buildTitleView() {
+    log('_buildTitleView = ${widget.item.title}');
+    return Text(
+      widget.item.title,
+      maxLines: 3,
+      overflow: TextOverflow.ellipsis,
+      style: _isReadValue
+          ? widget.textStyles.readTitleTextStyle
+          : widget.textStyles.titleTextStyle,
+    );
+  }
+
+  Widget _buildBottomView() => SizedBox(
         height: 20,
         child: Row(
           children: [
-            if (item.userInfo.nickImage.isNotEmpty)
-              NickImageWidget(url: item.userInfo.nickImage),
-            if (item.userInfo.nickName.isNotEmpty)
+            if (widget.item.userInfo.nickImage.isNotEmpty)
+              NickImageWidget(url: widget.item.userInfo.nickImage),
+            if (widget.item.userInfo.nickName.isNotEmpty)
               Padding(
                 padding: const EdgeInsets.only(right: 8.0),
                 child: Text(
-                  item.userInfo.nickName,
+                  widget.item.userInfo.nickName,
                   maxLines: 1,
-                  style: isReadValue
-                      ? textStyles.readSmallTextStyle
-                      : textStyles.smallTextStyle,
+                  style: _isReadValue
+                      ? widget.textStyles.readSmallTextStyle
+                      : widget.textStyles.smallTextStyle,
                 ),
               ),
             Text(
-              item.time,
+              widget.item.time,
               maxLines: 1,
-              style: isReadValue
-                  ? textStyles.readSmallTextStyle
-                  : textStyles.smallTextStyle,
+              style: _isReadValue
+                  ? widget.textStyles.readSmallTextStyle
+                  : widget.textStyles.smallTextStyle,
             ),
             const Spacer(),
             RoundTextWidget(
-              text: item.reply,
-              textStyle: isReadValue
-                  ? textStyles.readBadgeTextStyle
-                  : textStyles.badgeTextStyle,
+              text: widget.item.reply,
+              textStyle: _isReadValue
+                  ? widget.textStyles.readBadgeTextStyle
+                  : widget.textStyles.badgeTextStyle,
             ),
           ],
         ),
