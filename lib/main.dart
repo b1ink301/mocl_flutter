@@ -1,56 +1,58 @@
+import 'dart:io';
+
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_crashlytics/firebase_crashlytics.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
-import 'package:get_storage/get_storage.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mocl_flutter/features/mocl/data/db/app_database.dart';
+import 'package:mocl_flutter/features/mocl/data/di/datasource_provider.dart';
+import 'package:mocl_flutter/features/mocl/presentation/common/mocl_custom_scroll_behavior.dart';
 import 'package:mocl_flutter/features/mocl/presentation/mocl_theme.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/detail/mocl_detail_bindings.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/detail/mocl_detail_page.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/main/mocl_main_bindings.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/mocl_routes.dart';
+import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
+import 'package:mocl_flutter/firebase_options.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-import 'features/mocl/presentation/pages/home/mocl_home_bindings.dart';
-import 'features/mocl/presentation/pages/home/mocl_home_page.dart';
-import 'features/mocl/presentation/pages/list/mocl_list_bindings.dart';
-import 'features/mocl/presentation/pages/list/mocl_list_page.dart';
-import 'features/mocl/presentation/pages/main/mocl_main_page.dart';
-import 'features/mocl/presentation/pages/mocl_global_bindings.dart';
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
-void main() async {
-  await GetStorage.init();
-  runApp(const MoclApp());
+  if (Platform.isAndroid) {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    const fatalError = true;
+    PlatformDispatcher.instance.onError = (error, stack) {
+      if (fatalError) {
+        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
+      } else {
+        FirebaseCrashlytics.instance.recordError(error, stack);
+      }
+      return true;
+    };
+  }
+  final sharedPreferences = await SharedPreferences.getInstance();
+  final appDatabase =
+      await $FloorAppDatabase.databaseBuilder('mocl.db').build();
+
+  runApp(
+    ProviderScope(
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(sharedPreferences),
+        appDatabaseProvider.overrideWithValue(appDatabase),
+      ],
+      child: const MoclApp(),
+    ),
+  );
 }
 
 class MoclApp extends StatelessWidget {
   const MoclApp({super.key});
 
   @override
-  Widget build(BuildContext context) => GetMaterialApp(
+  Widget build(BuildContext context) => MaterialApp.router(
+        scrollBehavior: CustomScrollBehavior(),
         theme: MoclTheme.lightTheme,
         darkTheme: MoclTheme.darkTheme,
-        initialRoute: '/main',
-        initialBinding: GlobalBindings(),
-        getPages: [
-          GetPage(
-            name: Routes.HOME,
-            page: () => const HomePage(),
-            binding: HomeBindings(),
-          ),
-          GetPage(
-            name: Routes.MAIN,
-            page: () => const MainPage(),
-            binding: MainBindings(),
-          ),
-          GetPage(
-            name: Routes.LIST,
-            page: () => ListPage(mainItem: Get.arguments as MainItem),
-            binding: ListBindings(),
-          ),
-          GetPage(
-            name: Routes.DETAIL,
-            page: () => DetailPage(listItem: Get.arguments as ListItem),
-            binding: DetailBindings(),
-          )
-        ],
+        routerConfig: AppPages.router,
       );
 }

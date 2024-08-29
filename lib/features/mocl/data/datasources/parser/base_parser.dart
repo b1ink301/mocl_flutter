@@ -1,10 +1,19 @@
-import 'package:html/dom.dart';
+import 'package:dio/dio.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
-import '../../../domain/entities/mocl_list_item.dart';
 import '../../../domain/entities/mocl_result.dart';
 
 abstract class BaseParser {
-  Future<Result> list(Document document, int lastIndex);
-  Future<Result> detail(Document document);
-  Future<Result> comment(Document document);
+  late final SiteType siteType;
+
+  Future<Result> list(
+    Response response,
+    int lastId,
+    String boardTitle,
+    Future<bool> Function(SiteType, int) isRead,
+  );
+
+  Future<Result> detail(Response response);
+
+  Future<Result> comment(Response response);
 }

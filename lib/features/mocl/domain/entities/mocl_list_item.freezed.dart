@@ -20,7 +20,6 @@ mixin _$ListItem {
   String get title => throw _privateConstructorUsedError;
   String get reply => throw _privateConstructorUsedError;
   String get category => throw _privateConstructorUsedError;
-  String get image => throw _privateConstructorUsedError;
   String get time => throw _privateConstructorUsedError;
   String get url => throw _privateConstructorUsedError;
   String get board => throw _privateConstructorUsedError;
@@ -31,7 +30,9 @@ mixin _$ListItem {
   bool get hasImage => throw _privateConstructorUsedError;
   bool get isRead => throw _privateConstructorUsedError;
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ListItem
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   $ListItemCopyWith<ListItem> get copyWith =>
       throw _privateConstructorUsedError;
 }
@@ -46,7 +47,6 @@ abstract class $ListItemCopyWith<$Res> {
       String title,
       String reply,
       String category,
-      String image,
       String time,
       String url,
       String board,
@@ -68,6 +68,8 @@ class _$ListItemCopyWithImpl<$Res, $Val extends ListItem>
   // ignore: unused_field
   final $Res Function($Val) _then;
 
+  /// Create a copy of ListItem
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -75,7 +77,6 @@ class _$ListItemCopyWithImpl<$Res, $Val extends ListItem>
     Object? title = null,
     Object? reply = null,
     Object? category = null,
-    Object? image = null,
     Object? time = null,
     Object? url = null,
     Object? board = null,
@@ -102,10 +103,6 @@ class _$ListItemCopyWithImpl<$Res, $Val extends ListItem>
       category: null == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
-              as String,
-      image: null == image
-          ? _value.image
-          : image // ignore: cast_nullable_to_non_nullable
               as String,
       time: null == time
           ? _value.time
@@ -160,7 +157,6 @@ abstract class _$$ListItemImplCopyWith<$Res>
       String title,
       String reply,
       String category,
-      String image,
       String time,
       String url,
       String board,
@@ -180,6 +176,8 @@ class __$$ListItemImplCopyWithImpl<$Res>
       _$ListItemImpl _value, $Res Function(_$ListItemImpl) _then)
       : super(_value, _then);
 
+  /// Create a copy of ListItem
+  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
@@ -187,7 +185,6 @@ class __$$ListItemImplCopyWithImpl<$Res>
     Object? title = null,
     Object? reply = null,
     Object? category = null,
-    Object? image = null,
     Object? time = null,
     Object? url = null,
     Object? board = null,
@@ -214,10 +211,6 @@ class __$$ListItemImplCopyWithImpl<$Res>
       category: null == category
           ? _value.category
           : category // ignore: cast_nullable_to_non_nullable
-              as String,
-      image: null == image
-          ? _value.image
-          : image // ignore: cast_nullable_to_non_nullable
               as String,
       time: null == time
           ? _value.time
@@ -267,7 +260,6 @@ class _$ListItemImpl implements _ListItem {
       required this.title,
       required this.reply,
       required this.category,
-      required this.image,
       required this.time,
       required this.url,
       required this.board,
@@ -286,8 +278,6 @@ class _$ListItemImpl implements _ListItem {
   final String reply;
   @override
   final String category;
-  @override
-  final String image;
   @override
   final String time;
   @override
@@ -309,7 +299,7 @@ class _$ListItemImpl implements _ListItem {
 
   @override
   String toString() {
-    return 'ListItem(id: $id, title: $title, reply: $reply, category: $category, image: $image, time: $time, url: $url, board: $board, boardTitle: $boardTitle, like: $like, hit: $hit, userInfo: $userInfo, hasImage: $hasImage, isRead: $isRead)';
+    return 'ListItem(id: $id, title: $title, reply: $reply, category: $category, time: $time, url: $url, board: $board, boardTitle: $boardTitle, like: $like, hit: $hit, userInfo: $userInfo, hasImage: $hasImage, isRead: $isRead)';
   }
 
   @override
@@ -322,7 +312,6 @@ class _$ListItemImpl implements _ListItem {
             (identical(other.reply, reply) || other.reply == reply) &&
             (identical(other.category, category) ||
                 other.category == category) &&
-            (identical(other.image, image) || other.image == image) &&
             (identical(other.time, time) || other.time == time) &&
             (identical(other.url, url) || other.url == url) &&
             (identical(other.board, board) || other.board == board) &&
@@ -338,24 +327,12 @@ class _$ListItemImpl implements _ListItem {
   }
 
   @override
-  int get hashCode => Object.hash(
-      runtimeType,
-      id,
-      title,
-      reply,
-      category,
-      image,
-      time,
-      url,
-      board,
-      boardTitle,
-      like,
-      hit,
-      userInfo,
-      hasImage,
-      isRead);
+  int get hashCode => Object.hash(runtimeType, id, title, reply, category, time,
+      url, board, boardTitle, like, hit, userInfo, hasImage, isRead);
 
-  @JsonKey(ignore: true)
+  /// Create a copy of ListItem
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
   _$$ListItemImplCopyWith<_$ListItemImpl> get copyWith =>
@@ -368,7 +345,6 @@ abstract class _ListItem implements ListItem {
       required final String title,
       required final String reply,
       required final String category,
-      required final String image,
       required final String time,
       required final String url,
       required final String board,
@@ -388,8 +364,6 @@ abstract class _ListItem implements ListItem {
   @override
   String get category;
   @override
-  String get image;
-  @override
   String get time;
   @override
   String get url;
@@ -407,8 +381,11 @@ abstract class _ListItem implements ListItem {
   bool get hasImage;
   @override
   bool get isRead;
+
+  /// Create a copy of ListItem
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(ignore: true)
+  @JsonKey(includeFromJson: false, includeToJson: false)
   _$$ListItemImplCopyWith<_$ListItemImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

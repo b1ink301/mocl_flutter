@@ -13,7 +13,6 @@ class ListItem with _$ListItem {
     required String title,
     required String reply,
     required String category,
-    required String image,
     required String time,
     required String url,
     required String board,
@@ -24,4 +23,20 @@ class ListItem with _$ListItem {
     required bool hasImage,
     required bool isRead,
   }) = _ListItem;
+
+  factory ListItem.empty() => ListItem(
+        id: -1,
+        title: '',
+        reply: '',
+        category: '',
+        time: '',
+        url: '',
+        board: '',
+        boardTitle: '',
+        like: '',
+        hit: '',
+        userInfo: UserInfo(id: '', nickName: '', nickImage: ''),
+        hasImage: false,
+        isRead: false,
+      );
 }

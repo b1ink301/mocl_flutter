@@ -1,10 +1,12 @@
+import 'dart:developer';
+
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:isar/isar.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/mocl_local_database.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/mocl_main_data_source.dart';
-import 'package:mocl_flutter/features/mocl/data/models/mocl_main_item_data.dart';
-import 'package:mocl_flutter/features/mocl/data/models/mocl_main_item_entity.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/local_database.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart';
+import 'package:mocl_flutter/features/mocl/data/db/app_database.dart';
+import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
+import 'package:mocl_flutter/features/mocl/data/db/entities/main_item_data.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
@@ -12,9 +14,10 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
 // @GenerateMocks([MainDataSource])
 void main() async {
-  const SiteType siteType = SiteType.Damoang;
+  const SiteType siteType = SiteType.damoang;
   late MainDataSource mainDataSource;
   late LocalDatabase localDatabase;
+  late final AppDatabase appDatabase;
 
   setUpAll(() async {
     // TestWidgetsFlutterBinding.ensureInitialized();
@@ -26,13 +29,12 @@ void main() async {
             (MethodCall methodCall) async {
           return './';
         });
-
-    localDatabase = LocalDatabase();
+    appDatabase = await $FloorAppDatabase.databaseBuilder('mocl.db').build();
+    localDatabase = LocalDatabase(database: appDatabase);
     mainDataSource = MainDataSourceImpl(localDatabase: localDatabase);
-    await localDatabase.init();
   });
 
-  tearDownAll(() async => await localDatabase.close());
+  // tearDownAll(() async => await localDatabase.close());
 
   test('MainDataSource Test', () async {
     // when(mainDataSource.get(siteType)).thenAnswer((_) async => <MainItem>[]);
@@ -44,34 +46,34 @@ void main() async {
 
   test('DB에 메인 목록이 없다.', () async {
     final result = await localDatabase.getMainItems(siteType);
-    expect(result, equals(List<MainItemData>.empty()));
+    expect(result, equals(List<MainItemModel>.empty()));
   });
 
   test('Json 파일로 부터 MainItemData 목록을 얻어온다.', () async {
     final result = await mainDataSource.getAllFromJson(siteType);
-    print("result.length=${result.length}");
+    log("result.length=${result.length}");
     // expect(result, equals(List<MainItemData>.empty()));
     expect(result.length, 23);
   });
 
   test('Json 파일로 부터 MainItemData 목록을 얻어 mainItem 목록로 변환한다.', () async {
     final result = await mainDataSource.getAllFromJson(siteType);
-    var mainItemList = result.map((item) => item.toMainItem(siteType)).toList();
-    print("mainItemList=$mainItemList");
+    var mainItemList = result.map((item) => item.toEntity(siteType)).toList();
+    log("mainItemList=$mainItemList");
     expect(mainItemList, isA<List<MainItem>>());
   });
 
   test('Json 파일의 모든 데이터를 DB로 저장한다.', () async {
     final dataList = await mainDataSource.getAllFromJson(siteType);
-    var mainItemList = dataList.map((item) => item.toMainItem(siteType)).toList();
+    var mainItemList = dataList.map((item) => item.toEntity(siteType)).toList();
     var result = await mainDataSource.set(siteType, mainItemList);
-    print("result=$result");
-    expect(result, isA<List<Id>>());
+    log("result=$result");
+    expect(result, isA<List<int>>());
   });
 
   test('DB에서 메인 목록을 조회 한다.', () async {
     final result = await localDatabase.getMainItems(siteType);
-    print("result=$result");
-    expect(result, isA<List<MainItemEntity>>());
+    log("result=$result");
+    expect(result, isA<List<MainItemData>>());
   });
 }
