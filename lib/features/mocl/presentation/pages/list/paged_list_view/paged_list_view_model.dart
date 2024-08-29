@@ -12,7 +12,7 @@ import 'package:mocl_flutter/features/mocl/presentation/base/base_view_model.dar
 import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
 
-class ListViewModel extends BaseViewModel {
+class PagedListViewModel extends BaseViewModel {
   final MainItem _mainItem;
   final GetList _getList;
 
@@ -21,7 +21,7 @@ class ListViewModel extends BaseViewModel {
 
   int _lastId = -1;
 
-  ListViewModel({
+  PagedListViewModel({
     required MainItem mainItem,
     required GetList getList,
   })  : _mainItem = mainItem,
