@@ -50,7 +50,7 @@ class ListPage extends ConsumerWidget {
             viewModel.title,
             viewModel.refresh,
           ),
-          OptimizedListView(viewModel: viewModel),
+          OptimizedListView(mainItem: mainItem),
         ],
       ),
     );

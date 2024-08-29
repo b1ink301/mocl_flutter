@@ -54,29 +54,47 @@ class ApiClient {
         : 'page=$page';
     final url = '${item.url}?$params';
     final headers = {'User-Agent': ApiClient.USER_AGETNT};
-    final response = await get(url, headers: headers);
 
-    log('getList getList = $url response = ${response.statusCode}');
-
-    return response.statusCode == 200
-        ? parser.list(
-            response,
-            lastId,
-            item.text,
-            isRead,
-          )
-        : ResultFailure(failure: GetListFailure());
+    try {
+      final response = await get(url, headers: headers);
+      log('getList getList = $url response = ${response.statusCode}');
+      return response.statusCode == 200
+          ? parser.list(
+              response,
+              lastId,
+              item.text,
+              isRead,
+            )
+          : ResultFailure(
+              failure: GetListFailure(
+                  message: 'response.statusCode = ${response.statusCode}'),
+            );
+    } on DioException catch (e) {
+      final message = e.message ?? 'Unknown Error';
+      log('getList = $url message = $message');
+      return ResultFailure(failure: GetListFailure(message: message));
+    }
   }
 
   Future<Result> getDetail(
     ListItem item,
     BaseParser parser,
   ) async {
+    final url = item.url;
     final headers = {'User-Agent': ApiClient.USER_AGETNT};
-    final response = await get(item.url, headers: headers);
-    log('getDetail url=${item.url}, response = ${response.statusCode}');
-    return response.statusCode == 200
-        ? parser.detail(response)
-        : ResultFailure(failure: GetDetailFailure());
+    try {
+      final response = await get(url, headers: headers);
+      log('getDetail url=$url, response = ${response.statusCode}');
+      return response.statusCode == 200
+          ? parser.detail(response)
+          : ResultFailure(
+              failure: GetDetailFailure(
+                  message: 'response.statusCode = ${response.statusCode}'),
+            );
+    } on DioException catch (e) {
+      final message = e.message ?? 'Unknown Error';
+      log('getDetail = $url message = $message');
+      return ResultFailure(failure: GetDetailFailure(message: message));
+    }
   }
 }

@@ -49,10 +49,10 @@ class DamoangParser extends BaseParser {
         .querySelectorAll('i, span.visually-hidden')
         .forEach((e) => e.remove()));
     final viewCount = headerElements?.first.text ?? '';
-    final authorIp = container
-            ?.querySelector('section[id=bo_v_info] > div > div.me-auto')
-            ?.attributes['data-bs-title'] ??
-        '';
+    // final authorIp = container
+    //         ?.querySelector('section[id=bo_v_info] > div > div.me-auto')
+    //         ?.attributes['data-bs-title'] ??
+    //     '';
     final user = container
             ?.querySelector(
                 'section[id=bo_v_info] > div > div.me-auto > span.sv_wrap > a.sv_member')
@@ -80,11 +80,11 @@ class DamoangParser extends BaseParser {
               final isReply = element.querySelector(
                       'div.comment-list-wrap > header > div > div.me-2 > i.bi') !=
                   null;
-              final ip = element
-                      .querySelector(
-                          'div.comment_info > div.comment_info_area > div.comment_ip > span.ip_address')
-                      ?.text ??
-                  '';
+              // final ip = element
+              //         .querySelector(
+              //             'div.comment_info > div.comment_info_area > div.comment_ip > span.ip_address')
+              //         ?.text ??
+              //     '';
               final time =
                   element.querySelector('div.ms-auto > span.orangered')?.text ??
                       '';

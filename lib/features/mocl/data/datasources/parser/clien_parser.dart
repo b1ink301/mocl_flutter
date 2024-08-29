@@ -56,7 +56,7 @@ class ClienParser extends BaseParser {
     authorIpElement
         ?.querySelectorAll('.fa')
         .forEach((element) => element.remove());
-    var authorIp = authorIpElement?.text.trim() ?? '';
+    // var authorIp = authorIpElement?.text.trim() ?? '';
     var user = container
             ?.querySelector(
                 "div.post_view > div.post_contact > span.contact_note > div.post_memo > div.memo_box > button.button_input")
@@ -88,9 +88,9 @@ class ClienParser extends BaseParser {
                 return null;
               }
               var id = element.attributes['data-author-id'] ?? '';
-              var sn =
-                  int.tryParse(element.attributes['data-comment-sn'] ?? '-1') ??
-                      -1;
+              // var sn =
+              //     int.tryParse(element.attributes['data-comment-sn'] ?? '-1') ??
+              //         -1;
               var isReply = element.classes.contains('re');
               var nickName = element
                       .querySelector(
@@ -98,12 +98,12 @@ class ClienParser extends BaseParser {
                       ?.text
                       .trim() ??
                   '';
-              var ip = element
-                      .querySelector(
-                          "div.comment_info > div.comment_info_area > div.comment_ip > span.ip_address")
-                      ?.text
-                      .trim() ??
-                  '';
+              // var ip = element
+              //         .querySelector(
+              //             "div.comment_info > div.comment_info_area > div.comment_ip > span.ip_address")
+              //         ?.text
+              //         .trim() ??
+              //     '';
               var timeElement = element.querySelector(
                   "div.comment_info > div.comment_info_area > div.comment_time");
               timeElement?.querySelector("span.timestamp")?.remove();
@@ -137,7 +137,7 @@ class ClienParser extends BaseParser {
               return CommentItem(
                 id: index++,
                 isReply: isReply,
-                bodyHtml: body ?? '',
+                bodyHtml: body,
                 likeCount: likeCount,
                 mediaHtml: img.isEmpty ? video : img,
                 isVideo: video.isNotEmpty,
