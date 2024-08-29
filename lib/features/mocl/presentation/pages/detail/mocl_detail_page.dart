@@ -1,118 +1,83 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
-import 'package:flutter/src/widgets/framework.dart';
-import 'package:get/get.dart';
-import 'package:get/get_state_manager/src/simple/get_view.dart';
-import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mocl_flutter/features/mocl/presentation/di/view_model_provider.dart';
+import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/detail/mocl_detail_view.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/appbar_dual_text_widget.dart';
 
-import '../../../domain/entities/mocl_list_item.dart';
-import '../../../domain/entities/mocl_result.dart';
-import '../../widgets/message_widget.dart';
-import 'mocl_detail_controller.dart';
+class DetailPage extends ConsumerWidget {
+  const DetailPage({super.key});
 
-class DetailPage extends GetView<DetailController> {
-  DetailPage({super.key, required ListItem listItem}) {
-    controller.setListItem(listItem);
-  }
+  Widget _buildAppbar(
+    BuildContext context,
+    ReadableListItem item,
+  ) =>
+      Consumer(
+        builder: (context, ref, _) {
+          final viewModel = ref.watch(detailViewModelProvider(item).notifier);
+          final appBarHeight = ref.watch(
+              detailViewModelProvider(item).select((vm) => vm.appBarHeight));
 
-  Widget buildTitle() => Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const MessageWidget(
-            message: '다모앙',
-            fontSize: 13,
-          ),
-          MessageWidget(
-            message: controller.getAppbarTitle(),
+          return appBarHeight.when(
+            data: (height) => AppbarDualTextWidget(
+              title: viewModel.title,
+              smallTitle: viewModel.smallTitle,
+              automaticallyImplyLeading: Platform.isMacOS,
+              toolbarHeight: height,
+              actions: [
+                PopupMenuButton<int>(
+                  onSelected: (int value) {
+                    switch (value) {
+                      case 0:
+                        viewModel.refresh();
+                        break;
+                      case 1:
+                        viewModel.openBrowser(item.item.url);
+                        break;
+                    }
+                  },
+                  itemBuilder: (BuildContext context) => [
+                    const PopupMenuItem(
+                      value: 0,
+                      child: Text('새로고침'),
+                    ),
+                    const PopupMenuItem(
+                      value: 1,
+                      child: Text('브라우저로 열기'),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            loading: () => const SizedBox(height: 64),
+            error: (err, stack) => const SizedBox(height: 64),
+          );
+        },
+      );
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final item = GoRouterState.of(context).extra as ReadableListItem;
+
+    ref.watch(detailViewModelProvider(item).notifier).updateAppbarHeight(
+          Theme.of(context).textTheme.labelMedium!,
+          MediaQuery.of(context).size.width,
+        );
+
+    return Scaffold(
+      body: CustomScrollView(
+        slivers: <Widget>[
+          _buildAppbar(context, item),
+          SliverToBoxAdapter(
+            child: DetailView(
+              item: item,
+            ),
           ),
         ],
-      );
-
-  SliverAppBar buildAppbar(BuildContext context) => SliverAppBar(
-        title: buildTitle(),
-        expandedHeight: 50.0,
-        automaticallyImplyLeading: false,
-        elevation: 8,
-        floating: true,
-        pinned: false,
-        actions: [
-          IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.refresh),
-          )
-        ],
-      );
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        body: CustomScrollView(
-          // physics: const BouncingScrollPhysics(),
-          controller: controller.scrollController,
-          slivers: <Widget>[
-            buildAppbar(context),
-            SliverToBoxAdapter(
-                child: Padding(
-              padding: const EdgeInsets.fromLTRB(18, 10, 4, 10),
-              child: _DetailView(),
-            )),
-          ],
-        ),
-      );
-}
-
-class _DetailView extends StatefulWidget {
-  @override
-  State<StatefulWidget> createState() => _DetailViewState();
-}
-
-class _DetailViewState extends State<_DetailView> {
-  final DetailController detailController = Get.find();
-
-  @override
-  Widget build(BuildContext context) {
-    return StreamBuilder<Result>(
-      stream: detailController.deailStream.asBroadcastStream(),
-      builder: (BuildContext context, AsyncSnapshot<Result> snapshot) {
-        if (snapshot.connectionState == ConnectionState.waiting) {
-          return const Center(child: CircularProgressIndicator()); // 로딩 중 표시
-        }
-        if (snapshot.hasData) {
-          if (snapshot.data is ResultSuccess) {
-            var result = snapshot.data as ResultSuccess<Details>;
-            return SingleChildScrollView(
-              child: Column(
-                children: [
-                  HtmlWidget(result.data.bodyHtml,
-                      textStyle: const TextStyle(fontSize: 16)),
-                  ListView.builder(
-                    shrinkWrap: true,
-                    physics: const ClampingScrollPhysics(),
-                    itemCount: result.data.comments.length, // 아이템 개수
-                    itemBuilder: (BuildContext context, int index) {
-                      var comment = result.data.comments[index];
-                      return ListTile(
-                        title: Column(
-                          children: [
-                            Text(
-                              comment.userInfo.nickName,
-                              textAlign: TextAlign.start,
-                              style: const TextStyle(fontSize: 13),
-                            ),
-                            HtmlWidget(comment.bodyHtml),
-                          ],
-                        ),
-                      );
-                    },
-                  )
-                ],
-              ),
-            );
-          }
-        } else {
-          return const MessageWidget(message: 'message');
-        }
-        return const MessageWidget(message: 'message');
-      },
+      ),
     );
   }
 }

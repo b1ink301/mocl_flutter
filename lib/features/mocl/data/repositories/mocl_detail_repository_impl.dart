@@ -1,19 +1,21 @@
 import 'dart:core';
 
+import 'package:mocl_flutter/features/mocl/data/datasources/detail_data_source.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/parser/parser_factory.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
-
-import '../../domain/entities/mocl_result.dart';
-import '../../domain/repositories/detail_repository.dart';
-import '../datasources/mocl_detail_data_source.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
+import 'package:mocl_flutter/features/mocl/domain/repositories/detail_repository.dart';
 
 class DetailRepositoryImpl extends DetailRepository {
-  final DetailDataSource detailDataSource;
+  final DetailDataSource dataSource;
+  final ParserFactory parserFactory;
 
   DetailRepositoryImpl({
-    required this.detailDataSource,
+    required this.dataSource,
+    required this.parserFactory,
   });
 
   @override
   Future<Result> getDetail({required ListItem item}) =>
-      detailDataSource.getDetail(item);
+      dataSource.getDetail(item, parserFactory.createParser());
 }

@@ -1,16 +1,16 @@
 import 'dart:convert';
 
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocl_flutter/features/mocl/data/models/mocl_main_item_data.dart';
+import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
 import '../../../../fixtures/fixture_reader.dart';
 
 void main() async {
-  const currentSiteType = SiteType.Damoang;
+  const currentSiteType = SiteType.damoang;
 
-  const mainItemModel = MainItemData(
+  const mainItemModel = MainItemModel(
     orderBy: 1,
     board: "notice",
     type: 0,
@@ -22,14 +22,14 @@ void main() async {
   final List<dynamic> mainListJson =
       json.decode(fixture('damoang_board_link.json'));
 
-  final List<MainItemData> mainModelList = mainListJson.map((item) {
+  final List<MainItemModel> mainModelList = mainListJson.map((item) {
     item['siteType'] = currentSiteType.name;
-    return MainItemData.fromJson(item as Map<String, dynamic>);
+    return MainItemModel.fromJson(item as Map<String, dynamic>);
   }).toList();
 
   group('MainItemModel 테스트', () {
     test('json은 List<MainItemModel>로 변환되어야 한다.', () async {
-      expect(mainModelList, isA<List<MainItemData>>());
+      expect(mainModelList, isA<List<MainItemModel>>());
     });
 
     test('첫 번째 항목이 일치 해야 한다.', () async {
@@ -39,7 +39,7 @@ void main() async {
 
   group('MainItem 테스트', () {
     final List<MainItem> mainList =
-        mainModelList.map((item) => item.toMainItem(currentSiteType)).toList();
+        mainModelList.map((item) => item.toEntity(currentSiteType)).toList();
 
     test('json은 List<MainItem>로 변환되어야 한다.', () async {
       expect(mainList, isA<List<MainItem>>());
@@ -47,7 +47,7 @@ void main() async {
 
     test('두 항목이 일치 해야 한다.', () async {
       // act
-      final mainItemDto = mainItemModel.toMainItem(currentSiteType);
+      final mainItemDto = mainItemModel.toEntity(currentSiteType);
       // assert
       expect(mainItemDto, mainList.first);
     });

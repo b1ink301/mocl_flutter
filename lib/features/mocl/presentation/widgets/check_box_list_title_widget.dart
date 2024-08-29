@@ -1,44 +1,50 @@
 import 'package:flutter/material.dart';
 
-class CheckBoxListTitleWidget extends StatefulWidget {
+class CheckBoxListTitleWidget<T> extends StatefulWidget {
   final String text;
-  final ValueChanged<bool?>? onChanged;
-  final bool checked;
+  final void Function<T>(bool, T?)? onChanged;
+  final T? object;
+  final bool isChecked;
+  final TextStyle? textStyle;
 
   const CheckBoxListTitleWidget({
     super.key,
     required this.text,
-    required this.checked,
+    required this.isChecked,
     this.onChanged,
+    this.textStyle,
+    this.object,
   });
 
   @override
-  State<StatefulWidget> createState() =>
-      _CheckBoxListTitleState()..onChanged = onChanged;
+  State<StatefulWidget> createState() => _CheckBoxListTitleState();
 }
 
 class _CheckBoxListTitleState extends State<CheckBoxListTitleWidget> {
   bool _isChecked = false;
-  late final ValueChanged<bool?>? onChanged;
-
 
   @override
   void initState() {
     super.initState();
-    _isChecked = widget.checked;
+    setState(() {
+      _isChecked = widget.isChecked;
+    });
   }
 
   @override
   Widget build(BuildContext context) => CheckboxListTile(
         value: _isChecked,
-        title: Text(widget.text),
+        title: Text(
+          widget.text,
+          style: widget.textStyle,
+        ),
         onChanged: (value) {
           setState(() {
             _isChecked = value!;
-            onChanged?.call(_isChecked);
+            widget.onChanged?.call(_isChecked, widget.object);
           });
         },
-        activeColor: Colors.blueAccent,
+        activeColor: Theme.of(context).indicatorColor,
         checkColor: Colors.white,
         isThreeLine: false,
         selected: _isChecked,

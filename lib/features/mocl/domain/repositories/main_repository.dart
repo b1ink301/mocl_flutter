@@ -12,7 +12,7 @@ abstract class MainRepository {
     required SiteType siteType,
   });
 
-  Stream<Result> getMainListFromJson({
+  Future<Result> getMainListFromJson({
     required SiteType siteType,
   });
 

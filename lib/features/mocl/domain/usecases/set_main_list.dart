@@ -6,14 +6,13 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import '../entities/mocl_result.dart';
 import '../repositories/main_repository.dart';
 
-class SetMainList extends UseCase<void, SetMainParams> {
+class SetMainList extends UseCase<Future<void>, SetMainParams> {
   final MainRepository mainRepository;
 
   SetMainList({required this.mainRepository});
 
   @override
-  Future<Result> call(SetMainParams params) async =>
-      await mainRepository.setMainList(
+  Future<Result> call(SetMainParams params) => mainRepository.setMainList(
         siteType: params.siteType,
         list: params.list,
       );
