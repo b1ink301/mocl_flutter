@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_text_styles.dart';
@@ -56,7 +58,8 @@ class _CachedListItemState extends State<CachedListItem> {
   }
 
   @override
-  Widget build(BuildContext context) => InkWell(
+  Widget build(BuildContext context) {
+    return InkWell(
         onTap: widget.onTap,
         child: Padding(
           padding: const EdgeInsets.fromLTRB(16, 10, 12, 0),
@@ -64,13 +67,14 @@ class _CachedListItemState extends State<CachedListItem> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               _buildTitleView(),
-              const SizedBox(height: 4),
+              const SizedBox(height: 8),
               _buildBottomView(),
               const SizedBox(height: 10),
             ],
           ),
         ),
       );
+  }
 
   Widget _buildTitleView() => Text(
         widget.item.title,
@@ -85,27 +89,37 @@ class _CachedListItemState extends State<CachedListItem> {
         height: 20,
         child: Row(
           children: [
-            if (widget.item.userInfo.nickImage.isNotEmpty)
-              NickImageWidget(url: widget.item.userInfo.nickImage),
-            if (widget.item.userInfo.nickName.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(right: 8.0),
-                child: Text(
-                  widget.item.userInfo.nickName,
-                  maxLines: 1,
-                  style: _isReadValue
-                      ? widget.textStyles.readSmallTextStyle
-                      : widget.textStyles.smallTextStyle,
-                ),
+            Expanded(
+              child: Row(
+                children: [
+                  if (widget.item.userInfo.nickImage.isNotEmpty)
+                    NickImageWidget(url: widget.item.userInfo.nickImage),
+                  if (widget.item.userInfo.nickName.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8.0),
+                      child: Text(
+                        widget.item.userInfo.nickName,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: _isReadValue
+                            ? widget.textStyles.readSmallTextStyle
+                            : widget.textStyles.smallTextStyle,
+                      ),
+                    ),
+                  if (widget.item.time.isNotEmpty)
+                    Flexible(
+                      child: Text(
+                        widget.item.time,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: _isReadValue
+                            ? widget.textStyles.readSmallTextStyle
+                            : widget.textStyles.smallTextStyle,
+                      ),
+                    ),
+                ],
               ),
-            Text(
-              widget.item.time,
-              maxLines: 1,
-              style: _isReadValue
-                  ? widget.textStyles.readSmallTextStyle
-                  : widget.textStyles.smallTextStyle,
             ),
-            const Spacer(),
             RoundTextWidget(
               text: widget.item.reply,
               textStyle: _isReadValue

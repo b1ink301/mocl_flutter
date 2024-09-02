@@ -50,7 +50,11 @@ class PagedListPage extends ConsumerWidget {
             viewModel.title,
             viewModel.refresh,
           ),
-          PagedListView(viewModel: viewModel),
+          PagedListView(
+            pagingController: viewModel.pagingController,
+            textStyles: viewModel.getTextStyles(context),
+            onTap: viewModel.handleItemTap,
+          )
         ],
       ),
     );

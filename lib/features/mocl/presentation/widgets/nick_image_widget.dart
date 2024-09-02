@@ -1,128 +1,131 @@
 import 'dart:async';
-import 'dart:math';
+import 'dart:ui' as ui;
 
+import 'package:async/async.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
-import 'package:http/http.dart' as http;
-import 'package:image/image.dart' as img;
 
 class NickImageWidget extends StatefulWidget {
   final String url;
   final double height;
 
   const NickImageWidget({
-    super.key,
+    Key? key,
     required this.url,
     this.height = 17,
-  });
+  }) : super(key: key);
 
   @override
-  State createState() => _NickImageWidgetState();
+  State<NickImageWidget> createState() => _NickImageWidgetState();
 }
 
 class _NickImageWidgetState extends State<NickImageWidget> {
-  Uint8List? _firstFrameBytes;
-  final BaseCacheManager _cacheManager = DefaultCacheManager();
-  static final _loadingSemaphore = Semaphore(3);
-  bool _isMounted = false;
+  ui.Image? _image;
+  static final _memoryCache = <String, ui.Image>{};
+  static final _cacheManager = DefaultCacheManager();
+  static final _loadingTasks = <String, CancelableOperation<void>>{};
+  static const _maxConcurrentLoads = 3;
+  static const _maxCacheSize = 100; // Max cache size for LRU strategy
 
   @override
   void initState() {
     super.initState();
-    _isMounted = true;
-    _loadFirstFrame();
+    _loadImage();
   }
 
   @override
   void dispose() {
-    _isMounted = false;
+    // Cancel the image loading task if the widget is disposed
+    if (_loadingTasks.containsKey(widget.url)) {
+      _loadingTasks[widget.url]?.cancel();
+    }
     super.dispose();
   }
 
-  Future<void> _loadFirstFrame() async {
+  Future<void> _loadImage() async {
     if (widget.url.isEmpty) return;
 
-    await _loadingSemaphore.acquire();
-    try {
-      if (!_isMounted) return;
+    if (_memoryCache.containsKey(widget.url)) {
+      setState(() => _image = _memoryCache[widget.url]);
+      return;
+    }
 
-      final fileInfo = await _cacheManager.getFileFromCache(widget.url);
-      if (fileInfo != null) {
-        _firstFrameBytes = await fileInfo.file.readAsBytes();
-      } else {
-        final response = await http.get(Uri.parse(widget.url));
-        if (response.statusCode == 200) {
-          _firstFrameBytes =
-              await compute(_extractFirstFrame, response.bodyBytes);
-          await _cacheManager.putFile(widget.url, _firstFrameBytes!);
-        }
-      }
-      if (_isMounted) {
-        setState(() {});
-      }
+    if (_loadingTasks.containsKey(widget.url)) {
+      await _loadingTasks[widget.url]?.value;
+      if (mounted) setState(() => _image = _memoryCache[widget.url]);
+      return;
+    }
+
+    if (_loadingTasks.length >= _maxConcurrentLoads) {
+      await Future.any(_loadingTasks.values.map((task) => task.value));
+    }
+
+    _loadingTasks[widget.url] = CancelableOperation.fromFuture(_processImage());
+    await _loadingTasks[widget.url]?.value;
+    _loadingTasks.remove(widget.url);
+  }
+
+  Future<void> _processImage() async {
+    try {
+      final file = await _cacheManager.getSingleFile(widget.url);
+      final bytes = await file.readAsBytes();
+      final resizedBytes = await _resizeAndCompressImage(bytes);
+      final codec = await ui.instantiateImageCodec(resizedBytes);
+      final frameInfo = await codec.getNextFrame();
+      _image = frameInfo.image;
+      _addToCache(widget.url, _image!);
+      if (mounted) setState(() {});
     } catch (e) {
-      if (_isMounted) {
-        print('Error loading GIF: $e, ${widget.url}');
-      }
-    } finally {
-      _loadingSemaphore.release();
+      print('Error loading image: $e');
     }
   }
 
-  static Future<Uint8List> _extractFirstFrame(Uint8List data) async {
-    final decoder = img.findDecoderForData(data);
-    if (decoder != null) {
-      final info = decoder.startDecode(data);
-      if (info != null) {
-        final firstFrame = decoder.decodeFrame(0);
-        if (firstFrame != null) {
-          return Uint8List.fromList(img.encodePng(firstFrame));
-        }
-      }
+  @pragma('vm:entry-point')
+  Future<Uint8List> _resizeAndCompressImage(Uint8List inputImage) async {
+    final image = await decodeImageFromList(inputImage);
+    final resizedImage = await _resizeImage(image);
+    final data =
+        await resizedImage.toByteData(format: ui.ImageByteFormat.png) ??
+            ByteData.view(inputImage.buffer);
+
+    return data.buffer.asUint8List();
+  }
+
+  Future<ui.Image> _resizeImage(ui.Image image) async {
+    final aspectRatio = image.width / image.height;
+    final newWidth = (17 * aspectRatio).round();
+
+    final recorder = ui.PictureRecorder();
+    final canvas = Canvas(recorder);
+    canvas.drawImageRect(
+      image,
+      Rect.fromLTRB(0, 0, image.width.toDouble(), image.height.toDouble()),
+      Rect.fromLTRB(0, 0, newWidth.toDouble(), 17),
+      Paint()..filterQuality = FilterQuality.low,
+    );
+    final picture = recorder.endRecording();
+    return picture.toImage(newWidth, 17);
+  }
+
+  void _addToCache(String url, ui.Image image) {
+    if (_memoryCache.length >= _maxCacheSize) {
+      // Remove the first added item to simulate LRU cache
+      _memoryCache.remove(_memoryCache.keys.first);
     }
-    throw Exception('Failed to extract GIF first frame');
+    _memoryCache[url] = image;
   }
 
   @override
-  Widget build(BuildContext context) => _firstFrameBytes == null
-      ? const SizedBox.shrink()
-      : Padding(
-          padding: const EdgeInsets.only(right: 8),
-          child: Image.memory(
-            _firstFrameBytes!,
-            height: widget.height,
-            fit: BoxFit.cover,
-            errorBuilder: (context, error, stackTrace) {
-              return const SizedBox.shrink();
-            },
-          ),
-        );
-}
-
-class Semaphore {
-  final int _maxCount;
-  int _currentCount;
-  final List<Completer<void>> _waitQueue = [];
-
-  Semaphore(this._maxCount) : _currentCount = _maxCount;
-
-  Future<void> acquire() async {
-    if (_currentCount > 0) {
-      _currentCount--;
-      return;
-    }
-    final completer = Completer<void>();
-    _waitQueue.add(completer);
-    return completer.future;
-  }
-
-  void release() {
-    if (_waitQueue.isNotEmpty) {
-      final completer = _waitQueue.removeAt(0);
-      completer.complete();
-    } else {
-      _currentCount = min(_currentCount + 1, _maxCount);
-    }
+  Widget build(BuildContext context) {
+    if (_image == null) return const SizedBox.shrink();
+    return Padding(
+      padding: const EdgeInsets.only(right: 8),
+      child: RawImage(
+        image: _image,
+        height: 17,
+        fit: BoxFit.fitHeight,
+      ),
+    );
   }
 }
