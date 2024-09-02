@@ -7,6 +7,7 @@ import 'package:mocl_flutter/features/mocl/presentation/di/view_model_provider.d
 import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/mocl_detail_view.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/appbar_dual_text_widget.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
 
 class DetailPage extends ConsumerWidget {
   const DetailPage({super.key});
@@ -53,7 +54,7 @@ class DetailPage extends ConsumerWidget {
               ],
             ),
             loading: () => const SizedBox(height: 64),
-            error: (err, stack) => const SizedBox(height: 64),
+            error: (err, stack) => MessageWidget(message: err.toString()),
           );
         },
       );

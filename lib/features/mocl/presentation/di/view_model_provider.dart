@@ -60,6 +60,7 @@ final detailViewModelProvider = ChangeNotifierProvider.autoDispose
   final getDetail = ref.watch(getDetailProvider);
   final setReadFlag = ref.watch(setReadProvider);
   final getSiteType = ref.watch(getSiteTypeProvider);
+
   return DetailViewModel(
     listItem: item,
     getDetail: getDetail,
