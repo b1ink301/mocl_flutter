@@ -10,32 +10,34 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_list.dart';
 import 'package:mocl_flutter/features/mocl/presentation/base/base_view_model.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_text_styles.dart';
 import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
 
 class PagedListViewModel extends BaseViewModel {
   final MainItem _mainItem;
   final GetList _getList;
-
-  final PagingController<int, ReadableListItem> pagingController =
-      PagingController(firstPageKey: 1);
+  late final PagingController<int, ReadableListItem> pagingController;
 
   int _lastId = -1;
+  bool _isClienRecommend = false;
 
   PagedListViewModel({
     required MainItem mainItem,
     required GetList getList,
   })  : _mainItem = mainItem,
         _getList = getList {
-    _init();
+    _isClienRecommend =
+        _mainItem.siteType == SiteType.clien && _mainItem.board == 'recommend';
+    pagingController = PagingController(firstPageKey: 1)
+      ..addPageRequestListener(_fetchPage);
   }
 
   String get smallTitle => _mainItem.siteType.title;
 
   String get title => _mainItem.text;
 
-  void _init() {
-    pagingController.addPageRequestListener((pageKey) => _fetchPage(pageKey));
-  }
+  TextStyles getTextStyles(BuildContext context) =>
+      TextStyles.getTextStyles(context);
 
   void refresh() {
     _lastId = -1;
@@ -76,8 +78,7 @@ class PagedListViewModel extends BaseViewModel {
       _lastId = list.last.item.id;
     }
 
-    if (_mainItem.siteType == SiteType.clien &&
-        _mainItem.board == 'recommend') {
+    if (_isClienRecommend) {
       pagingController.appendLastPage(list);
     } else {
       pagingController.appendPage(list, page + 1);
