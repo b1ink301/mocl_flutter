@@ -17,6 +17,8 @@ class TextStyles {
     this.readBadgeTextStyle,
   });
 
+  factory TextStyles.empty() => TextStyles();
+
   factory TextStyles.getTextStyles(BuildContext context) {
     final theme = Theme.of(context);
     final color = theme.highlightColor;

@@ -16,20 +16,20 @@ import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.da
 class PagedListViewModel extends BaseViewModel {
   final MainItem _mainItem;
   final GetList _getList;
-  late final PagingController<int, ReadableListItem> pagingController;
+  final PagingController<int, ReadableListItem> pagingController =
+      PagingController(firstPageKey: 1);
 
   int _lastId = -1;
-  bool _isClienRecommend = false;
+  bool _isNoMore = false;
 
   PagedListViewModel({
     required MainItem mainItem,
     required GetList getList,
   })  : _mainItem = mainItem,
         _getList = getList {
-    _isClienRecommend =
+    _isNoMore =
         _mainItem.siteType == SiteType.clien && _mainItem.board == 'recommend';
-    pagingController = PagingController(firstPageKey: 1)
-      ..addPageRequestListener(_fetchPage);
+    pagingController.addPageRequestListener(_fetchPage);
   }
 
   String get smallTitle => _mainItem.siteType.title;
@@ -51,14 +51,15 @@ class PagedListViewModel extends BaseViewModel {
   }
 
   void _fetchPage(int page) {
-    log('Fetching page: item=$_mainItem, page=$page, lastId=$_lastId');
+    log('[_fetchPage] url=${_mainItem.url}, page=$page, lastId=$_lastId');
 
     final params =
         GetListParams(mainItem: _mainItem, page: page, lastId: _lastId);
 
     _getList(params).then((result) {
+      log('[_fetchPage] result: ${result.runtimeType}');
+
       if (result is ResultSuccess<List<ListItem>>) {
-        log('Fetched items: ${result.data.length}');
         final list = result.data.map(_toReadableListItem).toList();
         _updatePagingController(list, page);
       } else if (result is ResultFailure) {
@@ -78,7 +79,7 @@ class PagedListViewModel extends BaseViewModel {
       _lastId = list.last.item.id;
     }
 
-    if (_isClienRecommend) {
+    if (_isNoMore) {
       pagingController.appendLastPage(list);
     } else {
       pagingController.appendPage(list, page + 1);

@@ -1,6 +1,9 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
@@ -10,13 +13,9 @@ import 'package:mocl_flutter/features/mocl/presentation/base/base_view_model.dar
 import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
 
-class ListViewModel extends BaseViewModel {
+class ListViewModel extends BaseStateViewModel<Result> {
   final MainItem _mainItem;
   final GetList _getList;
-
-  AsyncValue<List<ReadableListItem>> _items = const AsyncLoading();
-
-  AsyncValue<List<ReadableListItem>> get items => _items;
 
   bool _isLoading = false;
 
@@ -29,7 +28,8 @@ class ListViewModel extends BaseViewModel {
     required MainItem mainItem,
     required GetList getList,
   })  : _mainItem = mainItem,
-        _getList = getList {
+        _getList = getList,
+        super(ResultLoading()) {
     _fetchPage();
   }
 
@@ -40,8 +40,6 @@ class ListViewModel extends BaseViewModel {
   Future<void> refresh() async {
     _currentPage = 1;
     _lastId = -1;
-    _items = const AsyncLoading();
-    notifyListeners();
     await _fetchPage();
   }
 
@@ -53,8 +51,9 @@ class ListViewModel extends BaseViewModel {
   }
 
   Future<void> _fetchPage() async {
+    log('_fetchPage _currentPage=$_currentPage');
+
     _isLoading = true;
-    notifyListeners();
 
     final params =
         GetListParams(mainItem: _mainItem, page: _currentPage, lastId: _lastId);
@@ -70,25 +69,26 @@ class ListViewModel extends BaseViewModel {
                 ))
             .toList();
 
-        _items.maybeWhen(data: (previousList) {
-          final data = List<ReadableListItem>.from(previousList)
-            ..addAll(newItems);
-          _items = AsyncValue.data(data);
-        }, orElse: () {
-          _items = AsyncValue.data(newItems);
-        });
+        state = ResultSuccess(data: newItems);
+
+        // state.maybeWhen(data: (previousList) {
+        //   final data = List<ReadableListItem>.from(previousList)
+        //     ..addAll(newItems);
+        //   state = AsyncValue.data(data);
+        // }, orElse: () {
+        //   state = AsyncValue.data(newItems);
+        // });
 
         if (newItems.isNotEmpty) {
           _lastId = newItems.last.item.id;
         }
-      } else if (result is ResultFailure) {
-        // Handle error
+      } else {
+        state = result;
       }
     } catch (e) {
-      // Handle unexpected error
+      state = ResultFailure(failure: GetListFailure(message: e.toString()));
     } finally {
       _isLoading = false;
-      notifyListeners();
     }
   }
 
