@@ -157,7 +157,6 @@ class DamoangParser extends BaseParser {
     String boardTitle,
     Future<bool> Function(SiteType, int) isRead,
   ) async {
-    log('DamoangParser list');
     var document = parse(response.data);
     var elementList = document.querySelectorAll(
         'form[id=fboardlist] > section[id=bo_list] > ul.list-group > li.list-group-item > div.d-flex');

@@ -1,13 +1,14 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/use_case_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/list_view/list_view_model.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/paged_list_view/paged_list_view_model.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/main_dlg_view_model.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/main_view_model.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/detail/detail_view_model.dart';
 
-import '../pages/detail/detail_view_model.dart';
 
 final mainViewModelProvider =
     ChangeNotifierProvider.autoDispose<MainViewModel>((ref) {
@@ -45,8 +46,8 @@ final listPagedViewModelProvider = ChangeNotifierProvider.autoDispose
   );
 });
 
-final listViewModelProvider = ChangeNotifierProvider.autoDispose
-    .family<ListViewModel, MainItem>((ref, item) {
+final listViewModelProvider = StateNotifierProvider.autoDispose
+    .family<ListViewModel, Result, MainItem>((ref, item) {
   final getList = ref.watch(getListProvider);
 
   return ListViewModel(

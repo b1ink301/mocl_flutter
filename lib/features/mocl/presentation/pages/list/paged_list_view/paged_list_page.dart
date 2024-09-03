@@ -42,7 +42,7 @@ class PagedListPage extends ConsumerWidget {
 
     return Scaffold(
       body: CustomScrollView(
-        cacheExtent: 0,
+        // cacheExtent: 0,
         slivers: <Widget>[
           _buildAppbar(
             context,

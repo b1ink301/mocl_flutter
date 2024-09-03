@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/material.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_text_styles.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/round_text_widget.dart';
 
@@ -59,74 +60,94 @@ class _CachedListItemState extends State<CachedListItem> {
 
   @override
   Widget build(BuildContext context) {
+    log('CachedListItem item=${widget.item.title}');
     return InkWell(
-        onTap: widget.onTap,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(16, 10, 12, 0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              _buildTitleView(),
-              const SizedBox(height: 8),
-              _buildBottomView(),
-              const SizedBox(height: 10),
-            ],
-          ),
+      onTap: widget.onTap,
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 10, 12, 0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            _buildTitleView(),
+            const SizedBox(height: 6),
+            _buildBottomView(),
+            const SizedBox(height: 11),
+            const DividerWidget(indent: 0, endIndent: 0),
+          ],
         ),
-      );
+      ),
+    );
   }
 
-  Widget _buildTitleView() => Text(
+  Widget _buildTitleView() {
+    return SizedBox(
+      height: 28,
+      width: double.infinity,
+      child: Text(
         widget.item.title,
-        maxLines: 3,
+        maxLines: 1,
         overflow: TextOverflow.ellipsis,
         style: _isReadValue
             ? widget.textStyles.readTitleTextStyle
             : widget.textStyles.titleTextStyle,
-      );
+      ),
+    );
+  }
 
-  Widget _buildBottomView() => SizedBox(
-        height: 20,
-        child: Row(
-          children: [
-            Expanded(
-              child: Row(
-                children: [
-                  if (widget.item.userInfo.nickImage.isNotEmpty)
-                    NickImageWidget(url: widget.item.userInfo.nickImage),
-                  if (widget.item.userInfo.nickName.isNotEmpty)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8.0),
-                      child: Text(
-                        widget.item.userInfo.nickName,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: _isReadValue
-                            ? widget.textStyles.readSmallTextStyle
-                            : widget.textStyles.smallTextStyle,
-                      ),
-                    ),
-                  if (widget.item.time.isNotEmpty)
-                    Flexible(
-                      child: Text(
-                        widget.item.time,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
-                        style: _isReadValue
-                            ? widget.textStyles.readSmallTextStyle
-                            : widget.textStyles.smallTextStyle,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            RoundTextWidget(
-              text: widget.item.reply,
-              textStyle: _isReadValue
-                  ? widget.textStyles.readBadgeTextStyle
-                  : widget.textStyles.badgeTextStyle,
-            ),
-          ],
+  Widget _buildBottomView() {
+    return SizedBox(
+      height: 20,
+      child: Row(
+        children: [
+          Expanded(
+            child: _buildUserInfoAndTime(),
+          ),
+          RoundTextWidget(
+            text: widget.item.reply,
+            textStyle: _isReadValue
+                ? widget.textStyles.readBadgeTextStyle
+                : widget.textStyles.badgeTextStyle,
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildUserInfoAndTime() {
+    return Row(
+      children: [
+        Visibility(
+          visible: widget.item.userInfo.nickImage.isNotEmpty,
+          child: NickImageWidget(url: widget.item.userInfo.nickImage),
         ),
-      );
+        Visibility(
+          visible: widget.item.userInfo.nickName.isNotEmpty,
+          child: Padding(
+            padding: const EdgeInsets.only(right: 8.0),
+            child: Text(
+              widget.item.userInfo.nickName,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: _isReadValue
+                  ? widget.textStyles.readSmallTextStyle
+                  : widget.textStyles.smallTextStyle,
+            ),
+          ),
+        ),
+        Visibility(
+          visible: widget.item.time.isNotEmpty,
+          child: Flexible(
+            child: Text(
+              widget.item.time,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: _isReadValue
+                  ? widget.textStyles.readSmallTextStyle
+                  : widget.textStyles.smallTextStyle,
+            ),
+          ),
+        ),
+      ],
+    );
+  }
 }

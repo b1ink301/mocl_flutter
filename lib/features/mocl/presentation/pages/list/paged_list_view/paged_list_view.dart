@@ -1,7 +1,6 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_cached_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_text_styles.dart';
@@ -24,18 +23,31 @@ class PagedListView extends StatelessWidget {
         _textStyles = textStyles,
         _onTap = onTap;
 
+  Widget _buildLoadingWithDivider() {
+    return const Column(
+      children: [
+        LoadingWidget(),
+        DividerWidget(),
+      ],
+    );
+  }
+
   @override
-  Widget build(BuildContext context) =>
-      PagedSliverList<int, ReadableListItem>.separated(
+  Widget build(BuildContext context) => PagedSliverList<int, ReadableListItem>(
         pagingController: _pagingController,
         shrinkWrapFirstPageIndicators: true,
         builderDelegate: PagedChildBuilderDelegate<ReadableListItem>(
           itemBuilder: (context, item, index) =>
               _buildCachedItem(context, item),
-          newPageProgressIndicatorBuilder: (_) => const LoadingWidget(),
-          firstPageProgressIndicatorBuilder: (_) => const LoadingWidget(),
+          newPageProgressIndicatorBuilder: (_) => _buildLoadingWithDivider(),
+          firstPageProgressIndicatorBuilder: (_) => _buildLoadingWithDivider(),
         ),
-        separatorBuilder: (_, idx) => const DividerWidget(),
+        prototypeItem: CachedListItem(
+          item: ListItem.empty(),
+          isRead: ValueNotifier(false),
+          onTap: () {},
+          textStyles: TextStyles.empty(),
+        ),
       );
 
   Widget _buildCachedItem(
@@ -44,13 +56,21 @@ class PagedListView extends StatelessWidget {
   ) =>
       _CachedItemBuilder(
         key: ValueKey(item.item.id),
-        builder: () => CachedListItem(
-          item: item.item,
-          isRead: item.isRead,
-          textStyles: _textStyles,
-          onTap: () => _onTap(context, item),
-        ),
+        builder: () => _buildCachedListItem(context, item),
       );
+
+  Widget _buildCachedListItem(
+    BuildContext context,
+    ReadableListItem item,
+  ) {
+    return CachedListItem(
+      key: ValueKey(item.item.id),
+      item: item.item,
+      isRead: item.isRead,
+      textStyles: _textStyles,
+      onTap: () => _onTap(context, item),
+    );
+  }
 }
 
 class _CachedItemBuilder extends StatefulWidget {
