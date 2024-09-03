@@ -41,17 +41,27 @@ class ListPage extends ConsumerWidget {
     final viewModel = ref.watch(listViewModelProvider(mainItem).notifier);
 
     return Scaffold(
-      body: CustomScrollView(
-        cacheExtent: 0,
-        slivers: <Widget>[
-          _buildAppbar(
-            context,
-            viewModel.smallTitle,
-            viewModel.title,
-            viewModel.refresh,
-          ),
-          OptimizedListView(mainItem: mainItem),
-        ],
+      body: NotificationListener<ScrollNotification>(
+        onNotification: (ScrollNotification scrollInfo) {
+          if (scrollInfo is ScrollEndNotification) {
+            if (scrollInfo.metrics.extentAfter < 800) {
+              viewModel.fetchNextPage();
+            }
+          }
+          return true;
+        },
+        child: CustomScrollView(
+          cacheExtent: 0,
+          slivers: <Widget>[
+            _buildAppbar(
+              context,
+              viewModel.smallTitle,
+              viewModel.title,
+              viewModel.refresh,
+            ),
+            OptimizedListView(mainItem: mainItem),
+          ],
+        ),
       ),
     );
   }
