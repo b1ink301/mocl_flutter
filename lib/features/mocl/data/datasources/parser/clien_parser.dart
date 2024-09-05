@@ -175,10 +175,11 @@ class ClienParser extends BaseParser {
 
   @override
   Future<Result> list(
-      Response response,
+    Response response,
     int lastId,
     String boardTitle,
     Future<bool> Function(SiteType, int) isRead,
+    Future<Map<int, bool>> Function(SiteType, List<int>) isReads,
   ) async {
     var document = parse(response.data);
     var elementList = document.querySelectorAll("a.list_item.symph-row");

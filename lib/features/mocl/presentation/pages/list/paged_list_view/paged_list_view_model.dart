@@ -29,6 +29,7 @@ class PagedListViewModel extends BaseViewModel {
         _getList = getList {
     _isNoMore =
         _mainItem.siteType == SiteType.clien && _mainItem.board == 'recommend';
+
     pagingController.addPageRequestListener(_fetchPage);
   }
 
@@ -46,19 +47,20 @@ class PagedListViewModel extends BaseViewModel {
 
   @override
   void dispose() {
+    pagingController.removePageRequestListener(_fetchPage);
     pagingController.dispose();
     super.dispose();
   }
 
-  void _fetchPage(int page) {
+  void _fetchPage(int page) async {
     log('[_fetchPage] url=${_mainItem.url}, page=$page, lastId=$_lastId');
 
     final params =
         GetListParams(mainItem: _mainItem, page: page, lastId: _lastId);
 
-    _getList(params).then((result) {
+    try {
+      final result = await _getList(params);
       log('[_fetchPage] result: ${result.runtimeType}');
-
       if (result is ResultSuccess<List<ListItem>>) {
         final list = result.data.map(_toReadableListItem).toList();
         _updatePagingController(list, page);
@@ -66,7 +68,9 @@ class PagedListViewModel extends BaseViewModel {
         debugPrint('Error fetching page: ${result.failure}');
         pagingController.error = result.failure;
       }
-    }).catchError((e) => pagingController.error = e);
+    } on Exception catch (e) {
+      pagingController.error = e;
+    }
   }
 
   ReadableListItem _toReadableListItem(ListItem item) => ReadableListItem(

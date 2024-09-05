@@ -1,15 +1,16 @@
-import 'dart:developer';
+import 'dart:async';
+import 'dart:isolate';
 
 import 'package:dio/dio.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
+import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
-
-import '../../../domain/entities/mocl_details.dart';
-import '../../../domain/entities/mocl_site_type.dart';
-import 'base_parser.dart';
 
 class DamoangParser extends BaseParser {
   @override
@@ -150,18 +151,18 @@ class DamoangParser extends BaseParser {
     return ResultSuccess(data: detail);
   }
 
-  @override
-  Future<Result> list(
-    Response response,
-    int lastId,
-    String boardTitle,
-    Future<bool> Function(SiteType, int) isRead,
-  ) async {
-    var document = parse(response.data);
+  static void _parseListInIsolate(IsolateMessage message) async {
+    final replyPort = message.replyPort;
+    final responseData = message.responseData;
+    final lastId = message.lastId;
+    final boardTitle = message.boardTitle;
+
+    var parsedItems = <Map<String, dynamic>>[];
+    var ids = <int>[];
+
+    var document = parse(responseData);
     var elementList = document.querySelectorAll(
         'form[id=fboardlist] > section[id=bo_list] > ul.list-group > li.list-group-item > div.d-flex');
-
-    var resultList = <ListItem>[];
 
     for (var element in elementList) {
       var category = element
@@ -235,31 +236,85 @@ class DamoangParser extends BaseParser {
               ?.hasContent() ??
           false;
 
-      var isReadStatus = await isRead(siteType, id);
-
-      var item = ListItem(
-        id: id,
-        title: title,
-        reply: reply,
-        category: category,
-        time: time,
-        url: url,
-        board: board,
-        boardTitle: boardTitle,
-        like: like,
-        hit: hit,
-        userInfo: UserInfo(
+      var parsedItem = {
+        'id': id,
+        'title': title,
+        'reply': reply,
+        'category': category,
+        'time': time,
+        'url': url,
+        'board': board,
+        'boardTitle': boardTitle,
+        'like': like,
+        'hit': hit,
+        'userInfo': UserInfo(
           id: userId,
           nickName: nickName,
           nickImage: nickImage,
         ),
-        hasImage: hasImage,
-        isRead: isReadStatus,
-      );
+        'hasImage': hasImage,
+      };
 
-      resultList.add(item);
+      parsedItems.add(parsedItem);
+      ids.add(id);
     }
 
-    return ResultSuccess<List<ListItem>>(data: resultList);
+    final readStatusPort = ReceivePort();
+    replyPort.send(ReadStatusRequest(ids, readStatusPort.sendPort));
+    var readStatusResponse = await readStatusPort.first as ReadStatusResponse;
+
+    var resultList = parsedItems
+        .map((item) => ListItem(
+              id: item['id'],
+              title: item['title'],
+              reply: item['reply'],
+              category: item['category'],
+              time: item['time'],
+              url: item['url'],
+              board: item['board'],
+              boardTitle: item['boardTitle'],
+              like: item['like'],
+              hit: item['hit'],
+              userInfo: item['userInfo'],
+              hasImage: item['hasImage'],
+              isRead: readStatusResponse.statuses[item['id']] ?? false,
+            ))
+        .toList();
+
+    replyPort.send(resultList);
+  }
+
+  @override
+  Future<Result> list(
+    Response response,
+    int lastId,
+    String boardTitle,
+    Future<bool> Function(SiteType, int) isRead,
+    Future<Map<int, bool>> Function(SiteType, List<int>) isReads,
+  ) async {
+    final receivePort = ReceivePort();
+    final completer = Completer<Result>();
+
+    receivePort.listen((message) async {
+      if (message is ReadStatusRequest) {
+        final statuses = await isReads(siteType, message.ids);
+        message.responsePort.send(ReadStatusResponse(statuses));
+      } else if (message is List<ListItem>) {
+        completer.complete(ResultSuccess<List<ListItem>>(data: message));
+        receivePort.close();
+      }
+    });
+
+    try {
+      await Isolate.spawn(
+          _parseListInIsolate,
+          IsolateMessage(
+              receivePort.sendPort, response.data, lastId, boardTitle));
+
+      return await completer.future;
+    } catch (e) {
+      receivePort.close();
+      return ResultFailure(failure: GetListFailure(message: e.toString()));
+    }
   }
 }
