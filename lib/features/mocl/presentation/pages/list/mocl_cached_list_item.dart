@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_text_styles.dart';
@@ -60,7 +58,7 @@ class _CachedListItemState extends State<CachedListItem> {
 
   @override
   Widget build(BuildContext context) {
-    log('CachedListItem item=${widget.item.title}');
+    // log('CachedListItem item=${widget.item.title}');
     return InkWell(
       onTap: widget.onTap,
       child: Padding(
@@ -95,6 +93,7 @@ class _CachedListItemState extends State<CachedListItem> {
   }
 
   Widget _buildBottomView() {
+    final reply = widget.item.reply;
     return SizedBox(
       height: 20,
       child: Row(
@@ -102,11 +101,14 @@ class _CachedListItemState extends State<CachedListItem> {
           Expanded(
             child: _buildUserInfoAndTime(),
           ),
-          RoundTextWidget(
-            text: widget.item.reply,
-            textStyle: _isReadValue
-                ? widget.textStyles.readBadgeTextStyle
-                : widget.textStyles.badgeTextStyle,
+          Visibility(
+            visible: reply.isNotEmpty && reply != '0',
+            child: RoundTextWidget(
+              text: reply,
+              textStyle: _isReadValue
+                  ? widget.textStyles.readBadgeTextStyle
+                  : widget.textStyles.badgeTextStyle,
+            ),
           ),
         ],
       ),
@@ -114,36 +116,39 @@ class _CachedListItemState extends State<CachedListItem> {
   }
 
   Widget _buildUserInfoAndTime() {
+    final nickImage = widget.item.userInfo.nickImage;
+    final nickName = widget.item.userInfo.nickName;
+    final time = widget.item.time;
+    final textStyle = _isReadValue
+        ? widget.textStyles.readSmallTextStyle
+        : widget.textStyles.smallTextStyle;
+
     return Row(
       children: [
         Visibility(
-          visible: widget.item.userInfo.nickImage.isNotEmpty,
-          child: NickImageWidget(url: widget.item.userInfo.nickImage),
+          visible: nickImage.isNotEmpty,
+          child: NickImageWidget(url: nickImage),
         ),
         Visibility(
-          visible: widget.item.userInfo.nickName.isNotEmpty,
+          visible: nickName.isNotEmpty,
           child: Padding(
             padding: const EdgeInsets.only(right: 8.0),
             child: Text(
-              widget.item.userInfo.nickName,
+              nickName,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: _isReadValue
-                  ? widget.textStyles.readSmallTextStyle
-                  : widget.textStyles.smallTextStyle,
+              style: textStyle,
             ),
           ),
         ),
         Visibility(
-          visible: widget.item.time.isNotEmpty,
+          visible: time.isNotEmpty,
           child: Flexible(
             child: Text(
-              widget.item.time,
+              time,
               maxLines: 1,
               overflow: TextOverflow.ellipsis,
-              style: _isReadValue
-                  ? widget.textStyles.readSmallTextStyle
-                  : widget.textStyles.smallTextStyle,
+              style: textStyle,
             ),
           ),
         ),

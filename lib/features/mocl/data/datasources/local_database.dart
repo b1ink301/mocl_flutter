@@ -39,6 +39,19 @@ class LocalDatabase {
   ) =>
       _database.isReadDao.findById(id).then((data) => data != null);
 
+  FutureOr<Map<int, bool>> isReads(
+    SiteType siteType,
+    List<int> ids,
+  ) {
+    return _database.isReadDao.findByIds(ids).then((data) {
+      Map<int, bool> result = {};
+      for (var item in data) {
+        result[item.id] = true;
+      }
+      return result;
+    });
+  }
+
   Future<int> setRead(
     SiteType siteType,
     int id,

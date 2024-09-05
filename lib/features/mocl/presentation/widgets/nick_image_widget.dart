@@ -8,7 +8,7 @@ class NickImageWidget extends StatefulWidget {
   const NickImageWidget({
     super.key,
     required this.url,
-    this.height = 17,
+    this.height = 16,
   });
 
   @override
@@ -22,7 +22,7 @@ class _NickImageWidgetState extends State<NickImageWidget> {
       padding: const EdgeInsets.only(right: 8),
       child: Image(
         key: ValueKey(widget.url),
-        image: CachedNetworkImageProvider(widget.url),
+        image: CachedNetworkImageProvider(widget.url, maxHeight: widget.height.toInt()),
         height: widget.height,
         fit: BoxFit.contain,
       ),

@@ -246,6 +246,20 @@ class _$IsReadDao extends IsReadDao {
   }
 
   @override
+  Future<List<ReadItemData>> findByIds(List<int> ids) async {
+    const offset = 1;
+    final _sqliteVariablesForIds =
+        Iterable<String>.generate(ids.length, (i) => '?${i + offset}')
+            .join(',');
+    return _queryAdapter.queryList(
+        'SELECT * FROM is_read WHERE id IN (' + _sqliteVariablesForIds + ')',
+        mapper: (Map<String, Object?> row) => ReadItemData(
+            id: row['id'] as int,
+            siteType: SiteType.values[row['siteType'] as int]),
+        arguments: [...ids]);
+  }
+
+  @override
   Future<int> insert(ReadItemData entity) {
     return _readItemDataInsertionAdapter.insertAndReturnId(
         entity, OnConflictStrategy.ignore);
