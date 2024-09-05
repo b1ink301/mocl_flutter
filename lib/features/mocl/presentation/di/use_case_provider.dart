@@ -10,47 +10,47 @@ import 'package:mocl_flutter/features/mocl/domain/usecases/set_main_list.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_read_flag.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_site_type.dart';
 
-final getMainListProvider = Provider((ref) {
+final getMainListProvider = Provider.autoDispose((ref) {
   final mainRepository = ref.watch(mainRepositoryProvider);
   return GetMainList(mainRepository: mainRepository);
 });
 
-final getMainListFromJsonProvider = Provider((ref) {
+final getMainListFromJsonProvider = Provider.autoDispose((ref) {
   final mainRepository = ref.watch(mainRepositoryProvider);
   return GetMainListFromJson(mainRepository: mainRepository);
 });
 
-final getSiteTypeProvider = Provider((ref) {
+final getSiteTypeProvider = Provider.autoDispose((ref) {
   final settingsRepository = ref.watch(settingsRepositoryProvider);
   return GetSiteType(settingsRepository: settingsRepository);
 });
 
-final setSiteTypeProvider = Provider((ref) {
+final setSiteTypeProvider = Provider.autoDispose((ref) {
   final settingsRepository = ref.watch(settingsRepositoryProvider);
   return SetSiteType(settingsRepository: settingsRepository);
 });
 
-final setMainListProvider = Provider((ref) {
+final setMainListProvider = Provider.autoDispose((ref) {
   final mainRepository = ref.watch(mainRepositoryProvider);
   return SetMainList(mainRepository: mainRepository);
 });
 
-final getListProvider = Provider((ref) {
+final getListProvider = Provider.autoDispose((ref) {
   final listRepository = ref.watch(listRepositoryProvider);
   return GetList(listRepository: listRepository);
 });
 
-final getDetailProvider = Provider((ref) {
+final getDetailProvider = Provider.autoDispose((ref) {
   final detailRepository = ref.watch(detailRepositoryProvider);
   return GetDetail(detailRepository: detailRepository);
 });
 
-final setReadProvider = Provider((ref) {
+final setReadProvider = Provider.autoDispose((ref) {
   final listRepository = ref.watch(listRepositoryProvider);
   return SetReadFlag(listRepository: listRepository);
 });
 
-final getReadProvider = Provider((ref) {
+final getReadProvider = Provider.autoDispose((ref) {
   final listRepository = ref.watch(listRepositoryProvider);
   return GetReadFlag(listRepository: listRepository);
 });

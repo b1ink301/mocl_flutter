@@ -9,24 +9,24 @@ import 'package:mocl_flutter/features/mocl/domain/repositories/list_repository.d
 import 'package:mocl_flutter/features/mocl/domain/repositories/main_repository.dart';
 import 'package:mocl_flutter/features/mocl/domain/repositories/settings_repository.dart';
 
-final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {
+final settingsRepositoryProvider = Provider.autoDispose<SettingsRepository>((ref) {
   final prefs = ref.watch(sharedPreferencesProvider);
   return SettingsRepositoryImpl(prefs: prefs);
 });
 
-final mainRepositoryProvider = Provider<MainRepository>((ref) {
+final mainRepositoryProvider = Provider.autoDispose<MainRepository>((ref) {
   final datasource = ref.watch(mainDatasourceProvider);
   return MainRepositoryImpl(dataSource: datasource);
 });
 
-final listRepositoryProvider = Provider<ListRepository>((ref) {
+final listRepositoryProvider = Provider.autoDispose<ListRepository>((ref) {
   final datasource = ref.watch(listDatasourceProvider);
   final parserFactory = ref.watch(parserFactoryProvider);
   return ListRepositoryImpl(
       dataSource: datasource, parserFactory: parserFactory);
 });
 
-final detailRepositoryProvider = Provider<DetailRepository>((ref) {
+final detailRepositoryProvider = Provider.autoDispose<DetailRepository>((ref) {
   final datasource = ref.watch(detailDatasourceProvider);
   final parserFactory = ref.watch(parserFactoryProvider);
   return DetailRepositoryImpl(

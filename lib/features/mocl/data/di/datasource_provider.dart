@@ -18,28 +18,28 @@ final appDatabaseProvider =
 final sharedPreferencesProvider =
     Provider<SharedPreferences>((ref) => throw UnimplementedError());
 
-final localDatabaseProvider = Provider<LocalDatabase>((ref) {
+final localDatabaseProvider = Provider.autoDispose<LocalDatabase>((ref) {
   final database = ref.watch(appDatabaseProvider);
   return LocalDatabase(database: database);
 });
 
-final mainDatasourceProvider = Provider<MainDataSource>((ref) {
+final mainDatasourceProvider = Provider.autoDispose<MainDataSource>((ref) {
   final localDatabase = ref.watch(localDatabaseProvider);
   return MainDataSourceImpl(localDatabase: localDatabase);
 });
 
-final listDatasourceProvider = Provider<ListDataSource>((ref) {
+final listDatasourceProvider = Provider.autoDispose<ListDataSource>((ref) {
   final apiClient = ref.watch(apiClientProvider);
   final localDatabase = ref.watch(localDatabaseProvider);
   return ListDataSourceImpl(localDatabase: localDatabase, apiClient: apiClient);
 });
 
-final detailDatasourceProvider = Provider<DetailDataSource>((ref) {
+final detailDatasourceProvider = Provider.autoDispose<DetailDataSource>((ref) {
   final apiClient = ref.watch(apiClientProvider);
   return DetailDataSourceImpl(apiClient: apiClient);
 });
 
-final parserFactoryProvider = Provider<ParserFactory>((ref) {
+final parserFactoryProvider = Provider.autoDispose<ParserFactory>((ref) {
   final settingsRepository = ref.watch(settingsRepositoryProvider);
   return ParserFactory(
     clienParser: ClienParser(),
