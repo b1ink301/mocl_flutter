@@ -170,4 +170,20 @@ class MockListDataSource extends _i1.Mock implements _i7.ListDataSource {
         ),
         returnValue: _i3.Future<bool>.value(false),
       ) as _i3.Future<bool>);
+
+  @override
+  _i3.Future<Map<int, bool>> isReadFlags(
+    _i5.SiteType? siteType,
+    List<int>? boardIds,
+  ) =>
+      (super.noSuchMethod(
+        Invocation.method(
+          #isReadFlags,
+          [
+            siteType,
+            boardIds,
+          ],
+        ),
+        returnValue: _i3.Future<Map<int, bool>>.value(<int, bool>{}),
+      ) as _i3.Future<Map<int, bool>>);
 }

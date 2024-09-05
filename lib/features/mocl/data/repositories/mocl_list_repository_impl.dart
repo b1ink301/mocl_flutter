@@ -22,8 +22,8 @@ class ListRepositoryImpl extends ListRepository {
     required MainItem item,
     required int page,
     required int lastId,
-  }) => dataSource.getList(
-          item, page, lastId, parserFactory.createParser());
+  }) =>
+      dataSource.getList(item, page, lastId, parserFactory.createParser());
 
   @override
   Future<int> setReadFlag({
@@ -31,4 +31,18 @@ class ListRepositoryImpl extends ListRepository {
     required int boardId,
   }) =>
       dataSource.setReadFlag(siteType, boardId);
+
+  @override
+  Future<bool> getReadFlag({
+    required SiteType siteType,
+    required int boardId,
+  }) =>
+      dataSource.isReadFlag(siteType, boardId);
+
+  @override
+  Future<Map<int, bool>> getReadFlags({
+    required SiteType siteType,
+    required List<int> boardIds,
+  }) =>
+      dataSource.isReadFlags(siteType, boardIds);
 }
