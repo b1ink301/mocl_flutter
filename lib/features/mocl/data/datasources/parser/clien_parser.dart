@@ -1,12 +1,15 @@
+import 'dart:async';
+import 'dart:isolate';
+
 import 'package:dio/dio.dart';
 import 'package:html/parser.dart';
+import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
-
-import '../../../domain/entities/mocl_details.dart';
-import '../../../domain/entities/mocl_list_item.dart';
-import '../../../domain/entities/mocl_site_type.dart';
-import '../../../domain/entities/mocl_user_info.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 
 class ClienParser extends BaseParser {
   @override
@@ -181,31 +184,62 @@ class ClienParser extends BaseParser {
     Future<bool> Function(SiteType, int) isRead,
     Future<Map<int, bool>> Function(SiteType, List<int>) isReads,
   ) async {
-    var document = parse(response.data);
-    var elementList = document.querySelectorAll("a.list_item.symph-row");
-    var resultList = await Future.wait(elementList.map((element) async {
-      var id = int.tryParse(element.attributes['data-board-sn'] ?? '') ?? 0;
-      if (id <= 0 || lastId > 0 && id >= lastId) {
-        return null;
+    final receivePort = ReceivePort();
+    final completer = Completer<Result>();
+
+    receivePort.listen((message) async {
+      if (message is ReadStatusRequest) {
+        final statuses = await isReads(siteType, message.ids);
+        message.responsePort.send(ReadStatusResponse(statuses));
+      } else if (message is List<ListItem>) {
+        completer.complete(ResultSuccess<List<ListItem>>(data: message));
+        receivePort.close();
       }
+    });
+
+    try {
+      await Isolate.spawn(
+          _parseListInIsolate,
+          IsolateMessage(
+              receivePort.sendPort, response.data, lastId, boardTitle));
+
+      return await completer.future;
+    } catch (e) {
+      receivePort.close();
+      return ResultFailure(failure: GetListFailure(message: e.toString()));
+    }
+  }
+
+  static void _parseListInIsolate(IsolateMessage message) async {
+    final replyPort = message.replyPort;
+    final responseData = message.responseData;
+    final lastId = message.lastId;
+    final boardTitle = message.boardTitle;
+
+    var parsedItems = <Map<String, dynamic>>[];
+    var ids = <int>[];
+
+    var document = parse(responseData);
+    var elementList = document.querySelectorAll("a.list_item.symph-row");
+
+    for (var element in elementList) {
+      var id = int.tryParse(element.attributes['data-board-sn'] ?? '') ?? 0;
+      if (id <= 0 || lastId > 0 && id >= lastId) continue;
 
       var url = '';
       var userId = element.attributes['data-author-id']?.trim() ?? '';
       var tmpUrl = element.attributes['href']?.trim() ?? '';
-      if (!tmpUrl.startsWith("http")) {
-        url = 'https://m.clien.net$tmpUrl';
-      } else {
-        url = tmpUrl;
-      }
+      url = !tmpUrl.startsWith("http") ? 'https://m.clien.net$tmpUrl' : tmpUrl;
+
       var reply = element.attributes['data-comment-count']?.trim() ?? '';
 
+      var board = '';
       var end = url.lastIndexOf('/');
       var start = url.lastIndexOf('/', end - 1);
-      var board = '';
       try {
         board = url.substring(start + 1, end);
       } catch (e) {
-        return null;
+        continue;
       }
 
       var category = element
@@ -214,9 +248,7 @@ class ClienParser extends BaseParser {
               ?.text
               .trim() ??
           '';
-      if (category == '공지') {
-        return null;
-      }
+      if (category == '공지') continue;
 
       var title = element
               .querySelector(
@@ -255,33 +287,51 @@ class ClienParser extends BaseParser {
       var hasImage =
           element.querySelector('div.list_title > span.fa-picture-o') != null;
 
-      UserInfo userInfo = UserInfo(
-        id: userId,
-        nickName: nickName,
-        nickImage: nickImage,
-      );
-      ListItem item = ListItem(
-        id: id,
-        title: title,
-        reply: reply,
-        category: category,
-        time: time,
-        url: url,
-        board: board,
-        boardTitle: boardTitle,
-        like: like,
-        hit: hit,
-        userInfo: userInfo,
-        hasImage: hasImage,
-        isRead: await isRead(siteType, id),
-      );
+      var parsedItem = {
+        'id': id,
+        'title': title,
+        'reply': reply,
+        'category': category,
+        'time': time,
+        'url': url,
+        'board': board,
+        'boardTitle': boardTitle,
+        'like': like,
+        'hit': hit,
+        'userInfo': UserInfo(
+          id: userId,
+          nickName: nickName,
+          nickImage: nickImage,
+        ),
+        'hasImage': hasImage,
+      };
 
-      return item;
-    }));
+      parsedItems.add(parsedItem);
+      ids.add(id);
+    }
 
-    var data =
-        resultList.where((item) => item != null).cast<ListItem>().toList();
+    final readStatusPort = ReceivePort();
+    replyPort.send(ReadStatusRequest(ids, readStatusPort.sendPort));
+    var readStatusResponse = await readStatusPort.first as ReadStatusResponse;
 
-    return ResultSuccess<List<ListItem>>(data: data);
+    var resultList = parsedItems
+        .map((item) => ListItem(
+              id: item['id'],
+              title: item['title'],
+              reply: item['reply'],
+              category: item['category'],
+              time: item['time'],
+              url: item['url'],
+              board: item['board'],
+              boardTitle: item['boardTitle'],
+              like: item['like'],
+              hit: item['hit'],
+              userInfo: item['userInfo'],
+              hasImage: item['hasImage'],
+              isRead: readStatusResponse.statuses[item['id']] ?? false,
+            ))
+        .toList();
+
+    replyPort.send(resultList);
   }
 }
