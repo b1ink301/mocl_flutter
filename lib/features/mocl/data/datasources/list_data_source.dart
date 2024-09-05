@@ -51,7 +51,6 @@ class ListDataSourceImpl extends ListDataSource {
         page,
         lastId,
         parser,
-        isReadFlag,
         isReadFlags
       );
 
