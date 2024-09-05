@@ -28,11 +28,6 @@ class MainViewModel extends BaseViewModel {
     siteType = getSiteType(NoParams());
   }
 
-  @override
-  void dispose() {
-    super.dispose();
-  }
-
   AsyncValue<List<MainItem>> _data = const AsyncValue.loading();
 
   AsyncValue<List<MainItem>> get data => _data;

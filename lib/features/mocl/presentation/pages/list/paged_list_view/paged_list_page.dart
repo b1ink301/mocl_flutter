@@ -37,12 +37,11 @@ class PagedListPage extends ConsumerWidget {
     if (mainItem == null) {
       return _buildErrorView(context);
     }
-
     final viewModel = ref.watch(listPagedViewModelProvider(mainItem).notifier);
 
     return Scaffold(
       body: CustomScrollView(
-        // cacheExtent: 0,
+        // cacheExtent: 200,
         slivers: <Widget>[
           _buildAppbar(
             context,

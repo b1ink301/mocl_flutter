@@ -48,6 +48,7 @@ class ApiClient {
     int lastId,
     BaseParser parser,
     Future<bool> Function(SiteType, int) isRead,
+    Future<Map<int, bool>> Function(SiteType, List<int>) isReads,
   ) async {
     final params = item.siteType == SiteType.clien
         ? '&od=T31&category=0&po=$page'
@@ -64,6 +65,7 @@ class ApiClient {
               lastId,
               item.text,
               isRead,
+              isReads,
             )
           : ResultFailure(
               failure: GetListFailure(

@@ -24,7 +24,6 @@ class RoundTextWidget extends StatelessWidget {
   Widget _buildRoundText(
     BuildContext context,
   ) {
-    if (text.isEmpty || text == '0') return const SizedBox.shrink();
     final effectiveTextStyle = textStyle ?? DefaultTextStyle.of(context).style;
     final effectiveBorderColor = borderColor ?? effectiveTextStyle.color ?? const Color(0xFF000000);
 
