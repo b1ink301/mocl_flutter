@@ -4,6 +4,7 @@ import 'dart:isolate';
 import 'package:dio/dio.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
+import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
@@ -12,6 +13,7 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 
+@lazySingleton
 class DamoangParser extends BaseParser {
   @override
   SiteType get siteType => SiteType.damoang;
@@ -24,7 +26,20 @@ class DamoangParser extends BaseParser {
 
   @override
   Future<Result> detail(Response response) async {
-    var document = parse(response.data);
+    final responseData = response.data;
+    final resultPort = ReceivePort();
+
+    await Isolate.spawn(_detailIsolate, [responseData, resultPort.sendPort]);
+
+    final result = await resultPort.first as Result;
+    return result;
+  }
+
+  static void _detailIsolate(List<dynamic> args) {
+    final responseData = args[0] as String;
+    final sendPort = args[1] as SendPort;
+
+    var document = parse(responseData);
     final container = document.querySelector('article[id=bo_v]');
     final title =
         container?.querySelector('header > h1[id=bo_v_title]')?.text.trim() ??
@@ -148,140 +163,7 @@ class DamoangParser extends BaseParser {
       bodyHtml: bodyHtml?.outerHtml ?? '',
     );
 
-    return ResultSuccess(data: detail);
-  }
-
-  static void _parseListInIsolate(IsolateMessage message) async {
-    final replyPort = message.replyPort;
-    final responseData = message.responseData;
-    final lastId = message.lastId;
-    final boardTitle = message.boardTitle;
-
-    var parsedItems = <Map<String, dynamic>>[];
-    var ids = <int>[];
-
-    var document = parse(responseData);
-    var elementList = document.querySelectorAll(
-        'form[id=fboardlist] > section[id=bo_list] > ul.list-group > li.list-group-item > div.d-flex');
-
-    for (var element in elementList) {
-      var category = element
-              .querySelector('div.wr-num > div > span')
-              ?.text
-              .trim()
-              .split(' ')
-              .firstOrNull ??
-          '';
-
-      if (category == "공지" || category == "홍보") continue;
-
-      var infoElement = element.querySelector('div.flex-grow-1');
-      var link = infoElement?.querySelector("div.d-flex > div > a");
-      if (link == null) continue;
-
-      var url = link.attributes["href"]?.trim() ?? '';
-      var uri = Uri.tryParse(url);
-      if (uri == null) continue;
-      var idString = uri.pathSegments.lastOrNull ?? '-1';
-      var id = int.tryParse(idString) ?? -1;
-      if (id <= 0 || lastId > 0 && id >= lastId) continue;
-
-      var metaElement = infoElement?.querySelector(
-          'div.da-list-meta > div.d-flex > div.wr-name > span.sv_wrap > a.sv_member');
-      var profile = metaElement?.attributes['href'] ?? '';
-      var nickName = metaElement?.text.trim() ?? '';
-      var userId = Uri.parse(profile).queryParameters['mb_id'] ?? '';
-
-      var reply = infoElement
-              ?.querySelectorAll("div.d-flex > div.d-inline-flex > a")
-              .map((a) => a.querySelector('span.count-plus')?.text.trim())
-              .firstWhere((text) => text != null && text.isNotEmpty,
-                  orElse: () => '') ??
-          '';
-
-      var board = '';
-      var end = url.lastIndexOf("/");
-      if (end > 0) {
-        var start = url.lastIndexOf("/", end - 1);
-        if (start >= 0) {
-          board = url.substring(start + 1, end);
-        }
-      }
-
-      var title = link.text.trim();
-
-      var timeElement = infoElement
-          ?.querySelector("div > div.d-flex > div.wr-date > span.da-list-date");
-      timeElement?.querySelector("span.visually-hidden")?.remove();
-      var time = timeElement?.text.trim() ?? '';
-
-      var nickImage = metaElement
-              ?.querySelector("span.profile_img > img.mb-photo")
-              ?.attributes["src"]
-              ?.trim() ??
-          '';
-
-      var hitElement =
-          infoElement?.querySelector("div > div.d-flex > div.wr-num.order-4");
-      hitElement?.querySelector("span.visually-hidden")?.remove();
-      var hit = hitElement?.text.trim() ?? '';
-
-      var likeElement =
-          infoElement?.querySelector("div > div.d-flex > div.wr-num.order-3");
-      likeElement?.querySelector("span.visually-hidden")?.remove();
-      var like = likeElement?.text.trim() ?? '';
-
-      var hasImage = infoElement
-              ?.querySelector("div.d-flex > div > span.na-icon")
-              ?.hasContent() ??
-          false;
-
-      var parsedItem = {
-        'id': id,
-        'title': title,
-        'reply': reply,
-        'category': category,
-        'time': time,
-        'url': url,
-        'board': board,
-        'boardTitle': boardTitle,
-        'like': like,
-        'hit': hit,
-        'userInfo': UserInfo(
-          id: userId,
-          nickName: nickName,
-          nickImage: nickImage,
-        ),
-        'hasImage': hasImage,
-      };
-
-      parsedItems.add(parsedItem);
-      ids.add(id);
-    }
-
-    final readStatusPort = ReceivePort();
-    replyPort.send(ReadStatusRequest(ids, readStatusPort.sendPort));
-    var readStatusResponse = await readStatusPort.first as ReadStatusResponse;
-
-    var resultList = parsedItems
-        .map((item) => ListItem(
-              id: item['id'],
-              title: item['title'],
-              reply: item['reply'],
-              category: item['category'],
-              time: item['time'],
-              url: item['url'],
-              board: item['board'],
-              boardTitle: item['boardTitle'],
-              like: item['like'],
-              hit: item['hit'],
-              userInfo: item['userInfo'],
-              hasImage: item['hasImage'],
-              isRead: readStatusResponse.statuses[item['id']] ?? false,
-            ))
-        .toList();
-
-    replyPort.send(resultList);
+    sendPort.send(ResultSuccess(data: detail));
   }
 
   @override
@@ -315,5 +197,138 @@ class DamoangParser extends BaseParser {
       receivePort.close();
       return ResultFailure(failure: GetListFailure(message: e.toString()));
     }
+  }
+
+  static void _parseListInIsolate(IsolateMessage message) async {
+    final replyPort = message.replyPort;
+    final responseData = message.responseData;
+    final lastId = message.lastId;
+    final boardTitle = message.boardTitle;
+
+    var parsedItems = <Map<String, dynamic>>[];
+    var ids = <int>[];
+
+    var document = parse(responseData);
+    var elementList = document.querySelectorAll(
+        'form[id=fboardlist] > section[id=bo_list] > ul.list-group > li.list-group-item > div.d-flex');
+
+    for (var element in elementList) {
+      var category = element
+          .querySelector('div.wr-num > div > span')
+          ?.text
+          .trim()
+          .split(' ')
+          .firstOrNull ??
+          '';
+
+      if (category == "공지" || category == "홍보") continue;
+
+      var infoElement = element.querySelector('div.flex-grow-1');
+      var link = infoElement?.querySelector("div.d-flex > div > a");
+      if (link == null) continue;
+
+      var url = link.attributes["href"]?.trim() ?? '';
+      var uri = Uri.tryParse(url);
+      if (uri == null) continue;
+      var idString = uri.pathSegments.lastOrNull ?? '-1';
+      var id = int.tryParse(idString) ?? -1;
+      if (id <= 0 || lastId > 0 && id >= lastId) continue;
+
+      var metaElement = infoElement?.querySelector(
+          'div.da-list-meta > div.d-flex > div.wr-name > span.sv_wrap > a.sv_member');
+      var profile = metaElement?.attributes['href'] ?? '';
+      var nickName = metaElement?.text.trim() ?? '';
+      var userId = Uri.parse(profile).queryParameters['mb_id'] ?? '';
+
+      var reply = infoElement
+          ?.querySelectorAll("div.d-flex > div.d-inline-flex > a")
+          .map((a) => a.querySelector('span.count-plus')?.text.trim())
+          .firstWhere((text) => text != null && text.isNotEmpty,
+          orElse: () => '') ??
+          '';
+
+      var board = '';
+      var end = url.lastIndexOf("/");
+      if (end > 0) {
+        var start = url.lastIndexOf("/", end - 1);
+        if (start >= 0) {
+          board = url.substring(start + 1, end);
+        }
+      }
+
+      var title = link.text.trim();
+
+      var timeElement = infoElement
+          ?.querySelector("div > div.d-flex > div.wr-date > span.da-list-date");
+      timeElement?.querySelector("span.visually-hidden")?.remove();
+      var time = timeElement?.text.trim() ?? '';
+
+      var nickImage = metaElement
+          ?.querySelector("span.profile_img > img.mb-photo")
+          ?.attributes["src"]
+          ?.trim() ??
+          '';
+
+      var hitElement =
+      infoElement?.querySelector("div > div.d-flex > div.wr-num.order-4");
+      hitElement?.querySelector("span.visually-hidden")?.remove();
+      var hit = hitElement?.text.trim() ?? '';
+
+      var likeElement =
+      infoElement?.querySelector("div > div.d-flex > div.wr-num.order-3");
+      likeElement?.querySelector("span.visually-hidden")?.remove();
+      var like = likeElement?.text.trim() ?? '';
+
+      var hasImage = infoElement
+          ?.querySelector("div.d-flex > div > span.na-icon")
+          ?.hasContent() ??
+          false;
+
+      var parsedItem = {
+        'id': id,
+        'title': title,
+        'reply': reply,
+        'category': category,
+        'time': time,
+        'url': url,
+        'board': board,
+        'boardTitle': boardTitle,
+        'like': like,
+        'hit': hit,
+        'userInfo': UserInfo(
+          id: userId,
+          nickName: nickName,
+          nickImage: nickImage,
+        ),
+        'hasImage': hasImage,
+      };
+
+      parsedItems.add(parsedItem);
+      ids.add(id);
+    }
+
+    final readStatusPort = ReceivePort();
+    replyPort.send(ReadStatusRequest(ids, readStatusPort.sendPort));
+    var readStatusResponse = await readStatusPort.first as ReadStatusResponse;
+
+    var resultList = parsedItems
+        .map((item) => ListItem(
+      id: item['id'],
+      title: item['title'],
+      reply: item['reply'],
+      category: item['category'],
+      time: item['time'],
+      url: item['url'],
+      board: item['board'],
+      boardTitle: item['boardTitle'],
+      like: item['like'],
+      hit: item['hit'],
+      userInfo: item['userInfo'],
+      hasImage: item['hasImage'],
+      isRead: readStatusResponse.statuses[item['id']] ?? false,
+    ))
+        .toList();
+
+    replyPort.send(resultList);
   }
 }

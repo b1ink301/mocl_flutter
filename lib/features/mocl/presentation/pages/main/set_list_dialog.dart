@@ -1,71 +1,91 @@
+import 'dart:developer';
+
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/presentation/base/base_stateless_view.dart';
-import 'package:mocl_flutter/features/mocl/presentation/di/view_model_provider.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/main/main_dlg_view_model.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/mocl/presentation/injection.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/main/bloc/main_data_json_bloc.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/check_box_list_title_widget.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
 
-class SetListDialog extends BaseStatelessView<MainDlgViewModel> {
+class SetListDialog extends StatelessWidget {
   const SetListDialog({super.key});
 
   @override
-  Widget build(BuildContext context) => AlertDialog(
+  Widget build(BuildContext context) {
+    final siteType = GoRouterState.of(context).extra as SiteType;
+
+    return BlocProvider(
+      child: _buildAlertDialog(context),
+      create: (BuildContext context) =>
+          getIt<MainDataJsonBloc>()..add(GetListEvent(siteType: siteType)),
+    );
+  }
+
+  AlertDialog _buildAlertDialog(BuildContext context) => AlertDialog(
         title: Text(
           '게시판 선택',
           style: Theme.of(context).textTheme.headlineSmall,
         ),
-        content: Consumer(
-          builder: (context, ref, child) {
-            final viewModel = ref.watch(viewModelProvider.notifier);
-            final data = ref.watch(viewModelProvider.select((vm) => vm.data));
-
-            return SizedBox(
-              width: MediaQuery.of(context).size.width * 0.65,
-              height: MediaQuery.of(context).size.height * 0.6,
-              child: data.when(
-                data: (result) => ListView.separated(
-                  padding: EdgeInsets.zero,
-                  itemCount: result.length,
-                  itemBuilder: (context, index) {
-                    final item = result[index];
-                    return CheckBoxListTitleWidget<MainItem>(
-                      text: item.text,
-                      object: item,
-                      isChecked: item.hasItem,
-                      textStyle: Theme.of(context).textTheme.bodyMedium,
-                      onChanged: viewModel.onChanged,
-                    );
-                  },
-                  separatorBuilder: (BuildContext context, int index) =>
-                      const Divider(),
-                ),
-                error: (Object error, StackTrace stackTrace) =>
-                    MessageWidget(message: 'message ${stackTrace.toString()}'),
-                loading: () => const LoadingWidget(),
-              ),
-            );
-          },
-        ),
-        actions: [
-          Consumer(
-            builder: (context, ref, child) {
-              return TextButton(
-                onPressed: () =>
-                    ref.watch(viewModelProvider.notifier).pop(context),
-                child: Text(
-                  '닫기',
-                  style: Theme.of(context).textTheme.headlineSmall,
-                ),
+        content: SizedBox(
+          width: MediaQuery.of(context).size.width * 0.65,
+          height: MediaQuery.of(context).size.height * 0.6,
+          child: BlocBuilder<MainDataJsonBloc, MainDataJsonState>(
+            builder: (context, state) {
+              final bloc = context.read<MainDataJsonBloc>();
+              return state.map(
+                initial: (_) => const LoadingWidget(),
+                loading: (_) => const LoadingWidget(),
+                success: (state) =>
+                    _buildListView(context, state.data, bloc.onChanged),
+                failure: (state) => MessageWidget(message: state.message),
               );
             },
+          ),
+        ),
+        actions: [
+          Builder(
+            builder: (context) => TextButton(
+              onPressed: () {
+                log('[onPressed] mounted = ${context.mounted}');
+                if (context.mounted) {
+                  final bloc = BlocProvider.of<MainDataJsonBloc>(context);
+                  log('[onPressed] =${bloc.selectedItems.length}');
+                  context.pop(bloc.selectedItems);
+                }
+              },
+              child: Text(
+                '닫기',
+                style: Theme.of(context).textTheme.headlineSmall,
+              ),
+            ),
           ),
         ],
       );
 
-  @override
-  AutoDisposeChangeNotifierProvider<MainDlgViewModel> get viewModelProvider =>
-      mainDlgViewModelProvider;
+  Widget _buildListView(
+    BuildContext context,
+    List<MainItem> data,
+    void Function<T>(bool, T?)? onChanged,
+  ) =>
+      ListView.separated(
+        padding: EdgeInsets.zero,
+        itemCount: data.length,
+        itemBuilder: (context, index) {
+          final item = data[index];
+          return CheckBoxListTitleWidget<MainItem>(
+            text: item.text,
+            object: item,
+            isChecked: item.hasItem,
+            textStyle: Theme.of(context).textTheme.bodyMedium,
+            onChanged: onChanged,
+          );
+        },
+        separatorBuilder: (BuildContext context, int index) =>
+            const DividerWidget(indent: 0, endIndent: 0),
+      );
 }

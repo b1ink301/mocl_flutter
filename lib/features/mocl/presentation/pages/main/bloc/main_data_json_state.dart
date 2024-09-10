@@ -1,24 +1,12 @@
 part of 'main_data_json_bloc.dart';
 
-class MainDataJsonState extends MainDataState {
-  const MainDataJsonState.success(super.data) : super.success();
-  const MainDataJsonState.failure(super.message) : super.failure();
-  const MainDataJsonState.loading() : super.loading();
-  const MainDataJsonState.initial() : super.initial();
-  // const MainDataJsonState({
-  //   super.status,
-  //   super.data,
-  //   super.message,
-  // });
+@freezed
+class MainDataJsonState with _$MainDataJsonState {
+  const factory MainDataJsonState.initial() = StateInitial;
 
-  // @override
-  // MainDataJsonState copyWith({
-  //   MainDataStatus? status,
-  //   List<MainItem>? data,
-  //   String? message,
-  // }) => MainDataJsonState(
-  //   status: status ?? this.status,
-  //   data: data ?? this.data,
-  //   message: message ?? this.message,
-  // );
+  const factory MainDataJsonState.loading() = StateLoading;
+
+  const factory MainDataJsonState.success(List<MainItem> data) = StateSuccess;
+
+  const factory MainDataJsonState.failure(String message) = StateFailure;
 }

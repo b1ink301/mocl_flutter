@@ -1,16 +1,13 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/presentation/di/view_model_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/list_view/list_view.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/appbar_dual_text_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
 
-class ListPage extends ConsumerWidget {
+class ListPage extends StatelessWidget {
   const ListPage({super.key});
 
   Widget _buildAppbar(
@@ -32,20 +29,20 @@ class ListPage extends ConsumerWidget {
       );
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final mainItem = GoRouterState.of(context).extra as MainItem?;
     if (mainItem == null) {
       return _buildErrorView(context);
     }
 
-    final viewModel = ref.watch(listViewModelProvider(mainItem).notifier);
+    // final viewModel = ref.watch(listViewModelProvider(mainItem).notifier);
 
     return Scaffold(
       body: NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification scrollInfo) {
           if (scrollInfo is ScrollEndNotification) {
             if (scrollInfo.metrics.extentAfter < 800) {
-              viewModel.fetchNextPage();
+              // viewModel.fetchNextPage();
             }
           }
           return true;
@@ -55,9 +52,9 @@ class ListPage extends ConsumerWidget {
           slivers: <Widget>[
             _buildAppbar(
               context,
-              viewModel.smallTitle,
-              viewModel.title,
-              viewModel.refresh,
+              'viewModel.smallTitle',
+              'viewModel.title',
+              () {},
             ),
             OptimizedListView(mainItem: mainItem),
           ],

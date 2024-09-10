@@ -1,83 +1,87 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mocl_flutter/features/mocl/presentation/di/view_model_provider.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/mocl/presentation/injection.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/detail/bloc/detail_view_bloc.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/mocl_detail_view.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/appbar_dual_text_widget.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
 
-class DetailPage extends ConsumerWidget {
+class DetailPage extends StatelessWidget {
   const DetailPage({super.key});
 
-  Widget _buildAppbar(
-    BuildContext context,
-    ReadableListItem item,
-  ) =>
-      Consumer(
-        builder: (context, ref, _) {
-          final viewModel = ref.watch(detailViewModelProvider(item).notifier);
-          final appBarHeight = ref.watch(
-              detailViewModelProvider(item).select((vm) => vm.appBarHeight));
-
-          return appBarHeight.when(
-            data: (height) => AppbarDualTextWidget(
-              title: viewModel.title,
-              smallTitle: viewModel.smallTitle,
-              automaticallyImplyLeading: Platform.isMacOS,
-              toolbarHeight: height,
-              actions: [
-                PopupMenuButton<int>(
-                  onSelected: (int value) {
-                    switch (value) {
-                      case 0:
-                        viewModel.refresh();
-                        break;
-                      case 1:
-                        viewModel.openBrowser(item.item.url);
-                        break;
-                    }
-                  },
-                  itemBuilder: (BuildContext context) => [
-                    const PopupMenuItem(
-                      value: 0,
-                      child: Text('새로고침'),
-                    ),
-                    const PopupMenuItem(
-                      value: 1,
-                      child: Text('브라우저로 열기'),
-                    ),
+  Widget _buildAppbar() => BlocBuilder<DetailViewBloc, DetailViewState>(
+        buildWhen: (previous, current) => current is DetailHeight,
+        builder: (context, state) {
+          return state.maybeWhen(
+              orElse: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
+              height: (state) {
+                final bloc = context.read<DetailViewBloc>();
+                return AppbarDualTextWidget(
+                  title: bloc.title,
+                  smallTitle: bloc.smallTitle,
+                  automaticallyImplyLeading: Platform.isMacOS,
+                  toolbarHeight: state,
+                  actions: [
+                    Builder(builder: (context) {
+                      final bloc = context.read<DetailViewBloc>();
+                      return PopupMenuButton<int>(
+                        onSelected: (int value) {
+                          switch (value) {
+                            case 0:
+                              bloc.refresh();
+                              break;
+                            case 1:
+                              bloc.openBrowserByItem();
+                              break;
+                          }
+                        },
+                        itemBuilder: (BuildContext context) => [
+                          const PopupMenuItem(
+                            value: 0,
+                            child: Text('새로고침'),
+                          ),
+                          const PopupMenuItem(
+                            value: 1,
+                            child: Text('브라우저로 열기'),
+                          ),
+                        ],
+                      );
+                    }),
                   ],
-                ),
-              ],
-            ),
-            loading: () => const SizedBox(height: 64),
-            error: (err, stack) => MessageWidget(message: err.toString()),
-          );
+                );
+              });
         },
       );
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final item = GoRouterState.of(context).extra as ReadableListItem;
+  Widget build(BuildContext context) {
+    final extra = GoRouterState.of(context).extra as List<dynamic>;
 
-    ref.watch(detailViewModelProvider(item).notifier).updateAppbarHeight(
-          Theme.of(context).textTheme.labelMedium!,
-          MediaQuery.of(context).size.width,
-        );
+    final siteType = extra[0] as SiteType;
+    final item = extra[1] as ReadableListItem;
+    final textStyle = Theme.of(context).textTheme.labelMedium!;
+    final width = MediaQuery.of(context).size.width;
 
-    return Scaffold(
-      body: CustomScrollView(
-        slivers: <Widget>[
-          _buildAppbar(context, item),
-          SliverToBoxAdapter(
-            child: DetailView(
-              item: item,
+    return BlocProvider(
+      create: (context) => getIt<DetailViewBloc>()
+        ..init(item, siteType)
+        ..add(DetailViewEvent.height(item.item.title, textStyle, width))
+        ..add(const DetailViewEvent.details()),
+      child: Scaffold(
+        body: CustomScrollView(
+          slivers: <Widget>[
+            _buildAppbar(),
+            SliverToBoxAdapter(
+              child: DetailView(
+                item: item,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

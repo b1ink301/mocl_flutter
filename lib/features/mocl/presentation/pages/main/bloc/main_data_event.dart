@@ -1,20 +1,15 @@
 part of 'main_data_bloc.dart';
 
-@immutable
-sealed class MainDataEvent {}
+@freezed
+abstract class MainDataEvent with _$MainDataEvent {
+  const factory MainDataEvent.getList({required SiteType siteType}) =
+      GetListEvent;
 
-class GetMainDataEvent extends MainDataEvent {
-  final SiteType siteType;
+  const factory MainDataEvent.setSiteType({required SiteType siteType}) =
+      SetSiteTypeEvent;
 
-  GetMainDataEvent({required this.siteType});
-}
+  const factory MainDataEvent.getSiteType() = GetSiteTypeEvent;
 
-class SetMainDataEvent extends MainDataEvent {
-  final SiteType siteType;
-  final List<MainItem> list;
-
-  SetMainDataEvent({
-    required this.siteType,
-    required this.list,
-  });
+  const factory MainDataEvent.setList(SiteType siteType, List<MainItem> list) =
+      SetListEvent;
 }

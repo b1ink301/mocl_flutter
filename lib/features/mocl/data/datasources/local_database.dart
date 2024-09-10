@@ -1,11 +1,13 @@
 import 'dart:async';
 
+import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/features/mocl/data/db/entities/main_item_data.dart';
 import 'package:mocl_flutter/features/mocl/data/db/entities/read_item_data.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
 import '../db/app_database.dart';
 
+@Singleton(dispose: disposeDataSource)
 class LocalDatabase {
   final AppDatabase _database;
 
@@ -59,4 +61,12 @@ class LocalDatabase {
     final entity = ReadItemData(siteType: siteType, id: id);
     return _database.isReadDao.insert(entity);
   }
+
+  void dispose() async {
+    await _database.close();
+  }
+}
+
+FutureOr disposeDataSource(LocalDatabase instance) {
+  instance.dispose();
 }

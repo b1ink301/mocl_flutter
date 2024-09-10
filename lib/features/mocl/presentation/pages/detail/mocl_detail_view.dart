@@ -3,17 +3,18 @@ import 'dart:io';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
-import 'package:mocl_flutter/features/mocl/presentation/di/view_model_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/detail/bloc/detail_view_bloc.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 
-class DetailView extends ConsumerWidget {
+class DetailView extends StatelessWidget {
   final ReadableListItem item;
 
   const DetailView({
@@ -22,7 +23,8 @@ class DetailView extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
+    final child = _buildView();
     if (Platform.isMacOS) {
       return Listener(
         onPointerDown: (PointerDownEvent event) {
@@ -30,81 +32,104 @@ class DetailView extends ConsumerWidget {
             context.pop();
           }
         },
-        child: _buildView(context, ref),
+        child: child,
       );
     }
-    return _buildView(context, ref);
+    return child;
   }
 
   String getHexColor(Color color) =>
       '#${color.value.toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}';
 
-  Widget _buildView(BuildContext context, WidgetRef ref) {
-    final resultAsync =
-        ref.watch(detailViewModelProvider(item).select((vm) => vm.data));
-    final viewModel = ref.watch(detailViewModelProvider(item).notifier);
+  Widget _buildView() => Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 8, 0),
+        child: BlocBuilder<DetailViewBloc, DetailViewState>(
+          buildWhen: (previous, current) => current is! DetailHeight,
+          builder: (context, state) => state.maybeMap(
+            success: (state) {
+              final theme = Theme.of(context);
+              final hexColor = getHexColor(theme.indicatorColor);
+              final bodySmall = theme.textTheme.bodySmall;
+              final bodyMedium = theme.textTheme.bodyMedium;
 
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 0, 8, 0),
-      child: resultAsync.when(
-        data: (data) {
-          final theme = Theme.of(context);
-          final hexColor = getHexColor(theme.indicatorColor);
-          final bodySmall = theme.textTheme.bodySmall;
-          final bodyMedium = theme.textTheme.bodyMedium;
+              return _buildDetailView(
+                bodySmall,
+                state,
+                hexColor,
+                bodyMedium,
+                context,
+              );
+            },
+            failed: (state) => MessageWidget(message: state.message),
+            orElse: () => const LoadingWidget(),
+          ),
+        ),
+      );
 
-          return SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _buildHeader(
-                  item.item.userInfo,
-                  item.item.time,
-                  bodySmall,
-                ),
-                const Divider(),
-                const SizedBox(height: 10),
-                HtmlWidget(
-                  data.bodyHtml,
-                  customStylesBuilder: (element) {
-                    if (element.localName == 'a') {
-                      return {
-                        'color': hexColor,
-                        'text-decoration': 'underline',
-                      };
-                    }
-                    return null;
-                  },
-                  textStyle: bodyMedium,
-                  renderMode: RenderMode.column,
-                  onTapUrl: viewModel.openBrowser,
-                ),
-                const SizedBox(height: 10),
-                _buildComments(
-                  context,
-                  hexColor,
-                  data.comments,
-                  bodySmall,
-                  bodyMedium,
-                  viewModel.refresh,
-                  viewModel.openBrowser,
-                ),
-                const Divider(),
-              ],
-            ),
-          );
-        },
-        error: (err, stack) {
-          return const SizedBox.shrink();
-        },
-        loading: () {
-          return const LoadingWidget();
-        },
+  Widget _buildDetailView(
+    TextStyle? bodySmall,
+    DetailSuccess state,
+    String hexColor,
+    TextStyle? bodyMedium,
+    BuildContext context,
+  ) {
+    final bloc = context.read<DetailViewBloc>();
+    return SingleChildScrollView(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildHeader(
+            item.item.userInfo,
+            item.item.time,
+            bodySmall,
+          ),
+          const Divider(),
+          const SizedBox(height: 10),
+          _buildBody(
+            state,
+            hexColor,
+            bodyMedium,
+            bloc.openBrowser,
+          ),
+          const SizedBox(height: 10),
+          _buildComments(
+            context,
+            hexColor,
+            state.detail.comments,
+            bodySmall,
+            bodyMedium,
+            bloc.refresh,
+            bloc.openBrowser,
+          ),
+          const Divider(),
+        ],
       ),
     );
   }
+
+  Widget _buildBody(
+    DetailSuccess state,
+    String hexColor,
+    TextStyle? bodyMedium,
+    FutureOr<bool> Function(String url)? onTapUrl,
+  ) =>
+      HtmlWidget(
+        state.detail.bodyHtml,
+        customStylesBuilder: (element) {
+          if (element.localName == 'a') {
+            return {
+              'color': hexColor,
+              'text-decoration': 'underline',
+            };
+          }
+          return null;
+        },
+        textStyle: bodyMedium,
+        renderMode: RenderMode.column,
+        onTapUrl: onTapUrl,
+      );
 
   Widget _buildHeader(
     UserInfo userInfo,

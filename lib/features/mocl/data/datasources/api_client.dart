@@ -9,7 +9,9 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
+import 'package:injectable/injectable.dart';
 
+@lazySingleton
 class ApiClient {
   final dio = Dio();
   final cookieJar = CookieJar();
@@ -17,11 +19,10 @@ class ApiClient {
   static const USER_AGETNT =
       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:126.0) Gecko/20100101 Firefox/126.0';
 
-  ApiClient._() {
+  @PostConstruct()
+  void init() {
     dio.interceptors.add(CookieManager(cookieJar));
   }
-
-  static ApiClient getInstance() => ApiClient._();
 
   Future<Response> getUri(
     Uri uri, {
