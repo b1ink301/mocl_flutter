@@ -1,27 +1,11 @@
 part of 'main_data_json_bloc.dart';
 
-sealed class MainDataJsonEvent extends Equatable {
-  const MainDataJsonEvent();
-}
+@freezed
+abstract class MainDataJsonEvent with _$MainDataJsonEvent {
+  const factory MainDataJsonEvent.getList({required SiteType siteType}) =
+      GetListEvent;
 
-class GetMainDataFromJsonEvent extends MainDataJsonEvent {
-  final SiteType siteType;
-
-  const GetMainDataFromJsonEvent({required this.siteType});
-
-  @override
-  List<Object?> get props => [siteType];
-}
-
-class AddMainDataEvent extends MainDataJsonEvent {
-  final SiteType siteType;
-  final List<MainItem> list;
-
-  const AddMainDataEvent({
-    required this.siteType,
-    required this.list,
-  });
-
-  @override
-  List<Object?> get props => [siteType, list];
+  const factory MainDataJsonEvent.addList(
+      {required SiteType siteType,
+      required final List<MainItem> list}) = AddListEvent;
 }

@@ -1,21 +1,23 @@
 import 'dart:core';
 
+import 'package:injectable/injectable.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/list_data_source.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/parser/parser_factory.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/mocl/domain/repositories/list_repository.dart';
 
-import '../../domain/entities/mocl_result.dart';
-import '../../domain/repositories/list_repository.dart';
-import '../datasources/list_data_source.dart';
-import '../datasources/parser/parser_factory.dart';
-
+@Injectable(as: ListRepository)
 class ListRepositoryImpl extends ListRepository {
   final ListDataSource dataSource;
-  final ParserFactory parserFactory;
+  final BaseParser parser;
 
   ListRepositoryImpl({
     required this.dataSource,
-    required this.parserFactory,
-  });
+    required ParserFactory parserFactory,
+  }) : parser = parserFactory.createParser();
 
   @override
   Future<Result> getList({
@@ -23,7 +25,7 @@ class ListRepositoryImpl extends ListRepository {
     required int page,
     required int lastId,
   }) =>
-      dataSource.getList(item, page, lastId, parserFactory.createParser());
+      dataSource.getList(item, page, lastId, parser);
 
   @override
   Future<int> setReadFlag({

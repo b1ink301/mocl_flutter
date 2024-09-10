@@ -20,6 +20,13 @@ class CachedListItem extends StatefulWidget {
     required this.textStyles,
   });
 
+  factory CachedListItem.empty() => CachedListItem(
+        item: ListItem.empty(),
+        isRead: ValueNotifier(false),
+        onTap: () {},
+        textStyles: TextStyles.empty(),
+      );
+
   @override
   State<CachedListItem> createState() => _CachedListItemState();
 }
