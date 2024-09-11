@@ -24,18 +24,17 @@ class PagedListView extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return PagedSliverList<int, ReadableListItem>(
-      pagingController: context.read<PagedListCubit>().pagingController,
-      shrinkWrapFirstPageIndicators: true,
-      builderDelegate: PagedChildBuilderDelegate<ReadableListItem>(
-        itemBuilder: (context, item, index) => _buildCachedItem(context, item),
-        newPageProgressIndicatorBuilder: (_) => _buildLoadingWithDivider(),
-        firstPageProgressIndicatorBuilder: (_) => _buildLoadingWithDivider(),
-      ),
-      prototypeItem: CachedListItem.empty(),
-    );
-  }
+  Widget build(BuildContext context) => PagedSliverList<int, ReadableListItem>(
+        pagingController: context.read<PagedListCubit>().pagingController,
+        shrinkWrapFirstPageIndicators: true,
+        builderDelegate: PagedChildBuilderDelegate<ReadableListItem>(
+          itemBuilder: (context, item, index) =>
+              _buildCachedItem(context, item),
+          newPageProgressIndicatorBuilder: (_) => _buildLoadingWithDivider(),
+          firstPageProgressIndicatorBuilder: (_) => _buildLoadingWithDivider(),
+        ),
+        prototypeItem: CachedListItem.empty(),
+      );
 
   Widget _buildCachedItem(
     BuildContext context,

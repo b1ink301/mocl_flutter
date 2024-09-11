@@ -24,40 +24,21 @@ part 'paged_list_state.dart';
 @injectable
 class PagedListCubit extends Cubit<PagedListState> {
   final GetList _getList;
-  late final MainItem _mainItem;
-  late final TextStyles _textStyles;
+  final MainItem _mainItem;
+  final TextStyles _textStyles;
   int _lastId = -1;
   bool _isNoMore = false;
 
   final PagingController<int, ReadableListItem> pagingController =
-      PagingController(firstPageKey: 1, invisibleItemsThreshold: 5);
+      PagingController(firstPageKey: 1, invisibleItemsThreshold: 5,);
 
-  // late StreamSubscription _blocListingStateSubscription;
-
-  PagedListCubit(this._getList) : super(const LoadingPage());
-
-  void init(MainItem mainItem, TextStyles textStyles) {
-    debugPrint('PagedListCubit init = $mainItem');
-
-    _mainItem = mainItem;
-    _textStyles = textStyles;
+  PagedListCubit(
+    this._getList,
+    @factoryParam this._mainItem,
+    @factoryParam this._textStyles,
+  ) : super(const LoadingPage()) {
     _isNoMore =
         _mainItem.siteType == SiteType.clien && _mainItem.board == 'recommend';
-
-    // _blocListingStateSubscription = stream.listen((state) {
-    //   state.map(
-    //       initialPage: (state) {},
-    //       nextPage: (state) {
-    //         pagingController.appendPage(state.list, state.page);
-    //       },
-    //       lastPage: (state) {
-    //         pagingController.appendLastPage(state.list);
-    //       },
-    //       errorPage: (state) {
-    //         pagingController.error = state.message;
-    //       });
-    // });
-
     pagingController.addPageRequestListener(_fetchPage);
   }
 
