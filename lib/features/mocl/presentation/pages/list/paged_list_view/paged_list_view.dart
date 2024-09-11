@@ -4,6 +4,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_cached_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/paged_list_view/bloc/paged_list_cubit.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/cached_item_builder.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 
@@ -40,7 +41,7 @@ class PagedListView extends StatelessWidget {
     BuildContext context,
     ReadableListItem item,
   ) =>
-      _CachedItemBuilder(
+      CachedItemBuilder(
         key: ValueKey(item.item.id),
         builder: () => _buildCachedListItem(context, item),
       );
@@ -58,26 +59,4 @@ class PagedListView extends StatelessWidget {
       onTap: () => bloc.onTap(context, item),
     );
   }
-}
-
-class _CachedItemBuilder extends StatefulWidget {
-  final Widget Function() builder;
-
-  const _CachedItemBuilder({super.key, required this.builder});
-
-  @override
-  _CachedItemBuilderState createState() => _CachedItemBuilderState();
-}
-
-class _CachedItemBuilderState extends State<_CachedItemBuilder> {
-  late Widget _cachedWidget;
-
-  @override
-  void initState() {
-    super.initState();
-    _cachedWidget = widget.builder();
-  }
-
-  @override
-  Widget build(BuildContext context) => _cachedWidget;
 }

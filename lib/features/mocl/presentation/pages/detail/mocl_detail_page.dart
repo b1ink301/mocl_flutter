@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
@@ -30,14 +31,27 @@ class DetailPage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) => const Scaffold(
-        body: CustomScrollView(
-          slivers: <Widget>[
-            _DetailAppBar(),
-            SliverToBoxAdapter(child: DetailView()),
-          ],
-        ),
-      );
+  Widget build(BuildContext context) {
+    const child = Scaffold(
+      body: CustomScrollView(
+        slivers: <Widget>[
+          _DetailAppBar(),
+          SliverToBoxAdapter(child: DetailView()),
+        ],
+      ),
+    );
+
+    return Platform.isMacOS
+        ? Listener(
+            onPointerDown: (event) {
+              if (event.buttons == kSecondaryMouseButton) {
+                Navigator.of(context).pop();
+              }
+            },
+            child: child,
+          )
+        : child;
+  }
 }
 
 class _DetailAppBar extends StatelessWidget {

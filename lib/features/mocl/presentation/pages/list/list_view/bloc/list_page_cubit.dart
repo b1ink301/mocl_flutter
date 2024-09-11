@@ -1,10 +1,7 @@
-import 'dart:async';
-
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:go_router/go_router.dart';
-import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
@@ -15,29 +12,36 @@ import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_ite
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_text_styles.dart';
 import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
 
-part 'paged_list_cubit.freezed.dart';
+part 'list_page_state.dart';
 
-part 'paged_list_state.dart';
+part 'list_page_cubit.freezed.dart';
 
 @injectable
-class PagedListCubit extends Cubit<PagedListState> {
+class ListPageCubit extends Cubit<ListPageState> {
   final GetList _getList;
   final MainItem _mainItem;
   final TextStyles _textStyles;
   int _lastId = -1;
-  bool _isNoMore = false;
+  int _page = 1;
 
-  final PagingController<int, ReadableListItem> pagingController =
-      PagingController(firstPageKey: 1, invisibleItemsThreshold: 5);
+  bool get hasReachedMax => _hasReachedMax;
+  bool _hasReachedMax = false;
 
-  PagedListCubit(
+  final List<ReadableListItem> _list = [];
+
+  List<ReadableListItem> get list => List.unmodifiable(_list);
+
+  int get listCount => _list.length;
+
+  ReadableListItem getItem(int index) => _list.elementAt(index);
+
+  ListPageCubit(
     this._getList,
     @factoryParam this._mainItem,
     @factoryParam this._textStyles,
-  ) : super(const LoadingPage()) {
-    _isNoMore =
+  ) : super(const ListPageState.loading()) {
+    _hasReachedMax =
         _mainItem.siteType == SiteType.clien && _mainItem.board == 'recommend';
-    pagingController.addPageRequestListener(_fetchPage);
   }
 
   String get smallTitle => _mainItem.siteType.title;
@@ -46,9 +50,12 @@ class PagedListCubit extends Cubit<PagedListState> {
 
   TextStyles get textStyles => _textStyles;
 
-  void refresh() {
+  Future<void> refresh() async {
     _lastId = -1;
-    pagingController.refresh();
+    _list.clear();
+    _page = 1;
+    _hasReachedMax = false;
+    await fetchPage();
   }
 
   void onTap(BuildContext context, ReadableListItem item) {
@@ -56,32 +63,31 @@ class PagedListCubit extends Cubit<PagedListState> {
     GoRouter.of(context).push(Routes.DETAIL, extra: extra);
   }
 
-  void _fetchPage(int page) {
-    final params = GetListParams(
-      mainItem: _mainItem,
-      page: page,
-      lastId: _lastId,
-    );
+  Future<void> fetchPage() async {
+    emit(const LoadingList());
 
-    _getList(params).then((result) {
-      debugPrint('fetchPage result=${result.runtimeType}, page=$page');
+    try {
+      final params = GetListParams(
+        mainItem: _mainItem,
+        page: _page,
+        lastId: _lastId,
+      );
+      final result = await _getList(params);
+      // debugPrint('fetchPage result=${result.runtimeType}, page=$_page');
       if (result is ResultSuccess<List<ListItem>>) {
         final list = result.data.map(_toReadableListItem).toList();
         if (list.isNotEmpty) {
           _lastId = list.last.item.id;
+          _list.addAll(list);
         }
-        if (_isNoMore) {
-          pagingController.appendLastPage(list);
-        } else {
-          pagingController.appendPage(list, page + 1);
-        }
+        _page++;
+        emit(const LoadedList());
       } else if (result is ResultFailure) {
-        pagingController.error =
-            ErrorPage(message: result.failure.toString(), page: page);
+        emit(FailedList(result.toString()));
       }
-    }).catchError((e) {
-      pagingController.error = ErrorPage(message: e.toString(), page: page);
-    });
+    } catch (e) {
+      emit(FailedList(e.toString()));
+    }
   }
 
   ReadableListItem _toReadableListItem(ListItem item) => ReadableListItem(
@@ -91,7 +97,7 @@ class PagedListCubit extends Cubit<PagedListState> {
 
   @override
   Future<void> close() async {
-    pagingController.dispose();
+    _list.clear();
     super.close();
   }
 }

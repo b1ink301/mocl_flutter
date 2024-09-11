@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_text_styles.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/round_text_widget.dart';
 
@@ -65,7 +64,7 @@ class _CachedListItemState extends State<CachedListItem> {
 
   @override
   Widget build(BuildContext context) {
-    // log('CachedListItem item=${widget.item.title}');
+    // debugPrint('CachedListItem item=${widget.item.title}');
     return InkWell(
       onTap: widget.onTap,
       child: Padding(
@@ -77,7 +76,7 @@ class _CachedListItemState extends State<CachedListItem> {
             const SizedBox(height: 6),
             _buildBottomView(),
             const SizedBox(height: 11),
-            const DividerWidget(indent: 0, endIndent: 0),
+            // const DividerWidget(indent: 0, endIndent: 0),
           ],
         ),
       ),
@@ -85,17 +84,13 @@ class _CachedListItemState extends State<CachedListItem> {
   }
 
   Widget _buildTitleView() {
-    return SizedBox(
-      height: 28,
-      width: double.infinity,
-      child: Text(
-        widget.item.title,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: _isReadValue
-            ? widget.textStyles.readTitleTextStyle
-            : widget.textStyles.titleTextStyle,
-      ),
+    return Text(
+      widget.item.title,
+      maxLines: 3,
+      overflow: TextOverflow.ellipsis,
+      style: _isReadValue
+          ? widget.textStyles.readTitleTextStyle
+          : widget.textStyles.titleTextStyle,
     );
   }
 
