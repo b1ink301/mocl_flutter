@@ -4,7 +4,7 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/mocl_detail_page.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/list/paged_list_view/paged_list_page.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/list/list_view/list_page.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/mocl_main_page.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/set_list_dialog.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/dialog_page.dart';
@@ -41,7 +41,7 @@ class AppPages {
         pageBuilder: (BuildContext context, GoRouterState state) =>
             SwipeablePage(builder: (context) {
           final item = GoRouterState.of(context).extra as MainItem;
-          return PagedListPage.withBloc(context, item);
+          return ListPage.withBloc(context, item);
         }),
       ),
       GoRoute(

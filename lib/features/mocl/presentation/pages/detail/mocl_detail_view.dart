@@ -1,7 +1,5 @@
 import 'dart:async';
-import 'dart:io';
 
-import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
@@ -13,26 +11,10 @@ import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.d
 import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 
 class DetailView extends StatelessWidget {
-  const DetailView({
-    super.key,
-  });
+  const DetailView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final child = _buildView();
-    return Platform.isMacOS
-        ? Listener(
-            onPointerDown: (event) {
-              if (event.buttons == kSecondaryMouseButton) {
-                Navigator.of(context).pop();
-              }
-            },
-            child: child,
-          )
-        : child;
-  }
-
-  Widget _buildView() => Padding(
+  Widget build(BuildContext context) => Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 8, 0),
         child: BlocBuilder<DetailViewBloc, DetailViewState>(
           buildWhen: (previous, current) => current is! DetailHeight,
@@ -140,6 +122,12 @@ class _Body extends StatelessWidget {
   Widget build(BuildContext context) {
     return HtmlWidget(
       detail.bodyHtml,
+      onLoadingBuilder: (
+        context,
+        element,
+        progress,
+      ) =>
+          const LoadingWidget(),
       customStylesBuilder: (element) {
         if (element.localName == 'a') {
           return {'color': hexColor, 'text-decoration': 'underline'};
@@ -284,6 +272,12 @@ class _CommentItem extends StatelessWidget {
         padding: const EdgeInsets.only(top: 8.0),
         child: HtmlWidget(
           comment.bodyHtml,
+          onLoadingBuilder: (
+            context,
+            element,
+            progress,
+          ) =>
+              const LoadingWidget(),
           textStyle: bodyMedium,
           customStylesBuilder: (element) {
             if (element.localName == 'a') {

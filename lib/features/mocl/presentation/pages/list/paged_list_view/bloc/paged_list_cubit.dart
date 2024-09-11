@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +6,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:injectable/injectable.dart';
-import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
@@ -30,7 +28,7 @@ class PagedListCubit extends Cubit<PagedListState> {
   bool _isNoMore = false;
 
   final PagingController<int, ReadableListItem> pagingController =
-      PagingController(firstPageKey: 1, invisibleItemsThreshold: 5,);
+      PagingController(firstPageKey: 1, invisibleItemsThreshold: 5);
 
   PagedListCubit(
     this._getList,
@@ -95,11 +93,5 @@ class PagedListCubit extends Cubit<PagedListState> {
   Future<void> close() async {
     pagingController.dispose();
     super.close();
-  }
-
-  @override
-  void emit(PagedListState state) {
-    if (isClosed) return;
-    super.emit(state);
   }
 }

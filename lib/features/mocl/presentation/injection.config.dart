@@ -41,6 +41,7 @@ import '../domain/usecases/set_read_flag.dart' as _i902;
 import '../domain/usecases/set_site_type.dart' as _i913;
 import 'injection.dart' as _i464;
 import 'pages/detail/bloc/detail_view_bloc.dart' as _i83;
+import 'pages/list/list_view/bloc/list_page_cubit.dart' as _i747;
 import 'pages/list/mocl_text_styles.dart' as _i161;
 import 'pages/list/paged_list_view/bloc/paged_list_cubit.dart' as _i1021;
 import 'pages/main/bloc/main_data_bloc.dart' as _i413;
@@ -132,6 +133,15 @@ extension GetItInjectableX on _i174.GetIt {
       _textStyles,
     ) =>
         _i1021.PagedListCubit(
+          gh<_i716.GetList>(),
+          _mainItem,
+          _textStyles,
+        ));
+    gh.factoryParam<_i747.ListPageCubit, _i975.MainItem, _i161.TextStyles>((
+      _mainItem,
+      _textStyles,
+    ) =>
+        _i747.ListPageCubit(
           gh<_i716.GetList>(),
           _mainItem,
           _textStyles,
