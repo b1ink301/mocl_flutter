@@ -22,7 +22,8 @@ class _NickImageWidgetState extends State<NickImageWidget> {
       padding: const EdgeInsets.only(right: 8),
       child: Image(
         key: ValueKey(widget.url),
-        image: CachedNetworkImageProvider(widget.url, maxHeight: widget.height.toInt()),
+        image: CachedNetworkImageProvider(widget.url,
+            maxHeight: widget.height.toInt()),
         height: widget.height,
         fit: BoxFit.contain,
       ),

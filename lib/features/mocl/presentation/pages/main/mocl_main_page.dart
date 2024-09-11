@@ -21,7 +21,6 @@ class MainPage extends StatelessWidget {
   ) =>
       MultiBlocProvider(
         providers: [
-          BlocProvider(create: (_) => getIt<SiteTypeBloc>()),
           BlocProvider(create: (_) => getIt<MainDataJsonBloc>()),
           BlocProvider(
             create: (_) {
