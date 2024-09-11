@@ -66,7 +66,7 @@ class PagedListCubit extends Cubit<PagedListState> {
     );
 
     _getList(params).then((result) {
-      debugPrint('fetchPage result=${result.runtimeType}');
+      debugPrint('fetchPage result=${result.runtimeType}, page=$page');
       if (result is ResultSuccess<List<ListItem>>) {
         final list = result.data.map(_toReadableListItem).toList();
         if (list.isNotEmpty) {
@@ -93,9 +93,7 @@ class PagedListCubit extends Cubit<PagedListState> {
 
   @override
   Future<void> close() async {
-    log('[PagedListCubit] close');
     pagingController.dispose();
-    // _blocListingStateSubscription.cancel();
     super.close();
   }
 
