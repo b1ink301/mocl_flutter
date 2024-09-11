@@ -25,6 +25,7 @@ import '../data/repositories/mocl_detail_repository_impl.dart' as _i205;
 import '../data/repositories/mocl_list_repository_impl.dart' as _i1014;
 import '../data/repositories/mocl_main_repository_impl.dart' as _i555;
 import '../data/repositories/mocl_settings_repository_impl.dart' as _i1051;
+import '../domain/entities/mocl_main_item.dart' as _i975;
 import '../domain/repositories/detail_repository.dart' as _i564;
 import '../domain/repositories/list_repository.dart' as _i480;
 import '../domain/repositories/main_repository.dart' as _i534;
@@ -40,6 +41,7 @@ import '../domain/usecases/set_read_flag.dart' as _i902;
 import '../domain/usecases/set_site_type.dart' as _i913;
 import 'injection.dart' as _i464;
 import 'pages/detail/bloc/detail_view_bloc.dart' as _i83;
+import 'pages/list/mocl_text_styles.dart' as _i161;
 import 'pages/list/paged_list_view/bloc/paged_list_cubit.dart' as _i1021;
 import 'pages/main/bloc/main_data_bloc.dart' as _i413;
 import 'pages/main/bloc/main_data_json_bloc.dart' as _i51;
@@ -125,8 +127,15 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i902.SetReadFlag(listRepository: gh<_i480.ListRepository>()));
     gh.factory<_i145.GetReadFlag>(
         () => _i145.GetReadFlag(listRepository: gh<_i480.ListRepository>()));
-    gh.factory<_i1021.PagedListCubit>(
-        () => _i1021.PagedListCubit(gh<_i716.GetList>()));
+    gh.factoryParam<_i1021.PagedListCubit, _i975.MainItem, _i161.TextStyles>((
+      _mainItem,
+      _textStyles,
+    ) =>
+        _i1021.PagedListCubit(
+          gh<_i716.GetList>(),
+          _mainItem,
+          _textStyles,
+        ));
     gh.factory<_i51.MainDataJsonBloc>(() => _i51.MainDataJsonBloc(
           getMainListFromJson: gh<_i307.GetMainListFromJson>(),
           setMainList: gh<_i688.SetMainList>(),

@@ -19,7 +19,7 @@ class PagedListPage extends StatelessWidget {
     final textStyles = TextStyles.getTextStyles(context);
 
     return BlocProvider(
-      create: (context) => getIt<PagedListCubit>()..init(item, textStyles),
+      create: (context) => getIt<PagedListCubit>(param1: item, param2: textStyles),
       child: const PagedListPage(),
     );
   }
