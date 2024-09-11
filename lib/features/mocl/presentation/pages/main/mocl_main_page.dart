@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -18,6 +16,30 @@ import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.d
 class MainPage extends StatelessWidget {
   const MainPage({super.key});
 
+  static Widget withBloc(
+    BuildContext context,
+  ) =>
+      MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_) => getIt<SiteTypeBloc>()),
+          BlocProvider(create: (_) => getIt<MainDataJsonBloc>()),
+          BlocProvider(
+            create: (_) {
+              final siteTypeBloc = context.read<SiteTypeBloc>();
+              final dataBloc = getIt<MainDataBloc>();
+
+              siteTypeBloc.stream.listen((siteType) {
+                dataBloc.add(MainDataEvent.getList(siteType: siteType));
+              });
+
+              dataBloc.add(MainDataEvent.getList(siteType: siteTypeBloc.state));
+              return dataBloc;
+            },
+          ),
+        ],
+        child: const MainPage(),
+      );
+
   AppBar _buildAppBar(
     BuildContext context,
   ) {
@@ -30,14 +52,14 @@ class MainPage extends StatelessWidget {
       actions: [
         Builder(
             builder: (context) => IconButton(
-                  onPressed: () => handleAddButton(context, siteType.state),
+                  onPressed: () => _handleAddButton(context, siteType.state),
                   icon: const Icon(Icons.add),
                 ))
       ],
     );
   }
 
-  void handleAddButton(BuildContext context, SiteType siteType) async {
+  void _handleAddButton(BuildContext context, SiteType siteType) async {
     final result = await context.push<List<MainItem>>(
         '${Routes.MAIN}/${Routes.SET_MAIN_DLG}',
         extra: siteType);
@@ -54,39 +76,13 @@ class MainPage extends StatelessWidget {
       );
 
   @override
-  Widget build(BuildContext context) {
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => getIt<SiteTypeBloc>()),
-        BlocProvider(create: (_) => getIt<MainDataJsonBloc>()),
-        BlocProvider(
-          create: (_) {
-            final siteTypeBloc = context.read<SiteTypeBloc>();
-            final dataBloc = getIt<MainDataBloc>();
-            // final dataJsonBloc = getIt<MainDataJsonBloc>();
-            log('[BlocProvider] siteType=$siteTypeBloc');
-
-            siteTypeBloc.stream.listen((siteType) {
-              dataBloc.add(MainDataEvent.getList(siteType: siteType));
-            });
-
-            dataBloc.add(MainDataEvent.getList(siteType: siteTypeBloc.state));
-            return dataBloc;
-          },
-        ),
-      ],
-      child: Scaffold(
+  Widget build(BuildContext context) => Scaffold(
         drawer: _buildDrawer(context),
         appBar: _buildAppBar(context),
         body: const MainView(),
-      ),
-    );
-  }
+      );
 
-  Widget _buildDrawer(BuildContext context) {
-    return DrawerWidget(onChangeSite: (siteType) {
-      log('[onChangeSite] siteType=$siteType');
-      context.read<SiteTypeBloc>().setSiteType(siteType);
-    });
-  }
+  Widget _buildDrawer(BuildContext context) => DrawerWidget(
+      onChangeSite: (siteType) =>
+          context.read<SiteTypeBloc>().setSiteType(siteType));
 }

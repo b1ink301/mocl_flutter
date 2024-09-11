@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_cached_list_item.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_text_styles.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/paged_list_view/bloc/paged_list_cubit.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
