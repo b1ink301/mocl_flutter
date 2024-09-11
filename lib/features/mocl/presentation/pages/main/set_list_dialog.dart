@@ -15,16 +15,18 @@ import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.d
 class SetListDialog extends StatelessWidget {
   const SetListDialog({super.key});
 
-  @override
-  Widget build(BuildContext context) {
-    final siteType = GoRouterState.of(context).extra as SiteType;
+  static Widget withBloc(
+    BuildContext context,
+    SiteType siteType,
+  ) =>
+      BlocProvider(
+        child: const SetListDialog(),
+        create: (BuildContext context) =>
+            getIt<MainDataJsonBloc>()..add(GetListEvent(siteType: siteType)),
+      );
 
-    return BlocProvider(
-      child: _buildAlertDialog(context),
-      create: (BuildContext context) =>
-          getIt<MainDataJsonBloc>()..add(GetListEvent(siteType: siteType)),
-    );
-  }
+  @override
+  Widget build(BuildContext context) => _buildAlertDialog(context);
 
   AlertDialog _buildAlertDialog(BuildContext context) => AlertDialog(
         title: Text(
