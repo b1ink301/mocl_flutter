@@ -73,7 +73,6 @@ class ListPageCubit extends Cubit<ListPageState> {
         lastId: _lastId,
       );
       final result = await _getList(params);
-      // debugPrint('fetchPage result=${result.runtimeType}, page=$_page');
       if (result is ResultSuccess<List<ListItem>>) {
         final list = result.data.map(_toReadableListItem).toList();
         if (list.isNotEmpty) {

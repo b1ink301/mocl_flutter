@@ -50,11 +50,9 @@ class _CachedListItemState extends State<CachedListItem> {
     }
   }
 
-  void _updateIsRead() {
-    setState(() {
-      _isReadValue = widget.isRead.value;
-    });
-  }
+  void _updateIsRead() => setState(() {
+        _isReadValue = widget.isRead.value;
+      });
 
   @override
   void dispose() {
@@ -66,9 +64,9 @@ class _CachedListItemState extends State<CachedListItem> {
   Widget build(BuildContext context) {
     // debugPrint('CachedListItem item=${widget.item.title}');
     return ListTile(
-      minVerticalPadding: 0,
+      minVerticalPadding: 10,
       minTileHeight: 24,
-      contentPadding: const EdgeInsets.fromLTRB(16, 10, 12, 10),
+      contentPadding: const EdgeInsets.only(left: 16, right: 12),
       onTap: widget.onTap,
       title: _buildTitleView(),
       subtitle: _buildBottomView(),
