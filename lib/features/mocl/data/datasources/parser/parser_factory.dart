@@ -1,3 +1,4 @@
+import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/clien_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/damoang_parser.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
@@ -5,6 +6,7 @@ import 'package:mocl_flutter/features/mocl/domain/repositories/settings_reposito
 
 import 'base_parser.dart';
 
+@injectable
 class ParserFactory {
   final ClienParser _clienParser;
   final DamoangParser _damoangParser;
@@ -17,6 +19,7 @@ class ParserFactory {
   })  : _clienParser = clienParser,
         _damoangParser = damoangParser;
 
+  @factoryMethod
   BaseParser createParser() =>
       settingsRepository.getSiteType() == SiteType.damoang
           ? _damoangParser

@@ -1,9 +1,10 @@
+import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/core/usecases/usecase.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/repositories/detail_repository.dart';
 
-import '../entities/mocl_result.dart';
-
+@injectable
 class GetDetail extends UseCase<Future<Result>, ListItem> {
   final DetailRepository detailRepository;
 

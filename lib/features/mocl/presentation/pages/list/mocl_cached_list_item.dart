@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_text_styles.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/round_text_widget.dart';
 
@@ -19,6 +18,13 @@ class CachedListItem extends StatefulWidget {
     required this.onTap,
     required this.textStyles,
   });
+
+  factory CachedListItem.empty() => CachedListItem(
+        item: ListItem.empty(),
+        isRead: ValueNotifier(false),
+        onTap: () {},
+        textStyles: TextStyles.empty(),
+      );
 
   @override
   State<CachedListItem> createState() => _CachedListItemState();
@@ -44,11 +50,9 @@ class _CachedListItemState extends State<CachedListItem> {
     }
   }
 
-  void _updateIsRead() {
-    setState(() {
-      _isReadValue = widget.isRead.value;
-    });
-  }
+  void _updateIsRead() => setState(() {
+        _isReadValue = widget.isRead.value;
+      });
 
   @override
   void dispose() {
@@ -58,60 +62,57 @@ class _CachedListItemState extends State<CachedListItem> {
 
   @override
   Widget build(BuildContext context) {
-    // log('CachedListItem item=${widget.item.title}');
-    return InkWell(
+    // debugPrint('CachedListItem item=${widget.item.title}');
+    return ListTile(
+      minVerticalPadding: 10,
+      minTileHeight: 24,
+      contentPadding: const EdgeInsets.only(left: 16, right: 12),
       onTap: widget.onTap,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 10, 12, 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildTitleView(),
-            const SizedBox(height: 6),
-            _buildBottomView(),
-            const SizedBox(height: 11),
-            const DividerWidget(indent: 0, endIndent: 0),
-          ],
-        ),
-      ),
+      title: _buildTitleView(),
+      subtitle: _buildBottomView(),
     );
   }
 
   Widget _buildTitleView() {
-    return SizedBox(
-      height: 28,
-      width: double.infinity,
-      child: Text(
-        widget.item.title,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: _isReadValue
-            ? widget.textStyles.readTitleTextStyle
-            : widget.textStyles.titleTextStyle,
-      ),
+    return Text(
+      widget.item.title,
+      maxLines: 3,
+      overflow: TextOverflow.ellipsis,
+      style: _isReadValue
+          ? widget.textStyles.readTitleTextStyle
+          : widget.textStyles.titleTextStyle,
     );
   }
 
-  Widget _buildBottomView() {
+  Widget? _buildBottomView() {
+    if (widget.item.userInfo.id.isEmpty) {
+      return null;
+    }
+
     final reply = widget.item.reply;
-    return SizedBox(
-      height: 20,
-      child: Row(
-        children: [
-          Expanded(
-            child: _buildUserInfoAndTime(),
+    return Column(
+      children: [
+        const SizedBox(height: 8),
+        SizedBox(
+          height: 20,
+          child: Row(
+            children: [
+              Expanded(
+                child: _buildUserInfoAndTime(),
+              ),
+              Visibility(
+                visible: reply.isNotEmpty && reply != '0',
+                child: RoundTextWidget(
+                  text: reply,
+                  textStyle: _isReadValue
+                      ? widget.textStyles.readBadgeTextStyle
+                      : widget.textStyles.badgeTextStyle,
+                ),
+              ),
+            ],
           ),
-          Visibility(
-            visible: reply.isNotEmpty && reply != '0',
-            child: RoundTextWidget(
-              text: reply,
-              textStyle: _isReadValue
-                  ? widget.textStyles.readBadgeTextStyle
-                  : widget.textStyles.badgeTextStyle,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -126,7 +127,7 @@ class _CachedListItemState extends State<CachedListItem> {
     return Row(
       children: [
         Visibility(
-          visible: nickImage.isNotEmpty,
+          visible: nickImage.isNotEmpty && nickImage.startsWith('http'),
           child: NickImageWidget(url: nickImage),
         ),
         Visibility(

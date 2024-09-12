@@ -1,24 +1,29 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/presentation/di/view_model_provider.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/main/bloc/main_data_bloc.dart';
 import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
 
-class MainView extends ConsumerWidget {
+class MainView extends StatelessWidget {
   const MainView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final textStyle = Theme.of(context).textTheme.bodyMedium;
-    final resultAsync = ref.watch(mainViewModelProvider.select((vm) => vm.data));
 
-    return resultAsync.when(
-      data: (result) => _buildListView(context, result, textStyle),
-      error: (e, s) => _buildErrorView(context),
-      loading: () => const LoadingWidget(),
+    return BlocBuilder<MainDataBloc, MainDataState>(
+      builder: (context, state) {
+        return state.map(
+          initial: (_) => const LoadingWidget(),
+          loading: (_) => const LoadingWidget(),
+          success: (state) => _buildListView(context, state.data, textStyle),
+          failure: (state) => MessageWidget(message: state.message),
+        );
+      },
     );
   }
 
