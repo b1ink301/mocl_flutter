@@ -1,5 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 
 class NickImageWidget extends StatelessWidget {
   final String url;
@@ -12,14 +13,17 @@ class NickImageWidget extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => Padding(
+  Widget build(BuildContext context) {
+    return Padding(
     padding: const EdgeInsets.only(right: 8),
     child: CachedNetworkImage(
       memCacheHeight: height.toInt(),
       height: height,
+      cacheManager: DefaultCacheManager(),
       fit: BoxFit.contain,
       imageUrl: url,
       cacheKey: url,
     ),
   );
+  }
 }
