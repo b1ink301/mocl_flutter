@@ -7,7 +7,6 @@ import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_detail.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_read_flag.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
@@ -42,12 +41,6 @@ class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
   String get smallTitle => '${_siteType.title} > ${_listItem.item.boardTitle}';
 
   String get title => _listItem.item.title;
-
-  UserInfo get userInfo => _listItem.item.userInfo;
-
-  String get time => _listItem.item.time;
-
-  String get like => _listItem.item.like;
 
   void refresh() => add(const DetailsEvent());
 
