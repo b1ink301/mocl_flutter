@@ -2,8 +2,8 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
-import 'package:html/dom.dart';
 import 'package:html/parser.dart';
+import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
@@ -12,6 +12,7 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 
+@lazySingleton
 class DamoangParser extends BaseParser {
   @override
   SiteType get siteType => SiteType.damoang;
@@ -24,21 +25,28 @@ class DamoangParser extends BaseParser {
 
   @override
   Future<Result> detail(Response response) async {
-    var document = parse(response.data);
+    final responseData = response.data;
+    final resultPort = ReceivePort();
+
+    await Isolate.spawn(_detailIsolate, [responseData, resultPort.sendPort]);
+
+    final result = await resultPort.first as Result;
+    return result;
+  }
+
+  static void _detailIsolate(List<dynamic> args) {
+    final responseData = args[0] as String;
+    final sendPort = args[1] as SendPort;
+
+    var document = parse(responseData);
     final container = document.querySelector('article[id=bo_v]');
     final title =
         container?.querySelector('header > h1[id=bo_v_title]')?.text.trim() ??
             '';
-    final timeElement = container?.querySelector(
-        'section[id=bo_v_info] > div.d-flex > div > span.orangered');
-    final time = timeElement?.text.trim() ??
-        container
-            ?.querySelectorAll('section[id=bo_v_info] > div.d-flex > div')
-            .elementAt(1)
-            .text
-            .trim() ??
-        '';
-    final Element? bodyHtml =
+    final timeElement = container?.querySelector('section[id=bo_v_info] > div.d-flex > div:last-child'); //:first-child, div:nth-child(2)
+    timeElement?.querySelector("span.visually-hidden")?.remove();
+    final time = timeElement?.text.trim() ?? '';
+    final bodyHtml =
         container?.querySelector('section[id=bo_v_atc] > div[id=bo_v_con]');
     bodyHtml
         ?.querySelectorAll('input, button')
@@ -49,21 +57,18 @@ class DamoangParser extends BaseParser {
     headerElements?.forEach((element) => element
         .querySelectorAll('i, span.visually-hidden')
         .forEach((e) => e.remove()));
-    final viewCount = headerElements?.first.text ?? '';
+    // final category = headerElements?.first.text.trim() ?? '';
+    final viewCount = headerElements?.elementAtOrNull(1)?.text.trim() ?? '';
     // final authorIp = container
     //         ?.querySelector('section[id=bo_v_info] > div > div.me-auto')
     //         ?.attributes['data-bs-title'] ??
     //     '';
-    final user = container
-            ?.querySelector(
-                'section[id=bo_v_info] > div > div.me-auto > span.sv_wrap > a.sv_member')
-            ?.text
-            .trim() ??
-        '';
-    final nickName = user;
-    final nickImage = container
-            ?.querySelector(
-                'div.post_view > div.post_contact > span.contact_name > span.nickimg > img')
+    final memberElement = container?.querySelector(
+        'section[id=bo_v_info] > div.d-flex > div.me-auto > span.d-inline-block > span.sv_wrap > a.sv_member');
+
+    final nickName = memberElement?.text.trim() ?? '';
+    final nickImage = memberElement
+            ?.querySelector('span.profile_img > img')
             ?.attributes['src'] ??
         '';
     final likeCount = headerElements?.elementAtOrNull(2)?.text.trim() ?? '';
@@ -74,6 +79,7 @@ class DamoangParser extends BaseParser {
             .map((element) {
               final nickElement = element.querySelector(
                   'div.comment-list-wrap > header > div.d-flex > div.me-2 > span.d-inline-block > span.sv_wrap > a.sv_member');
+
               final url = nickElement?.attributes['href'] ?? '';
               final uri = Uri.parse(url);
               final id = uri.queryParameters['mb_id'] ?? '-1';
@@ -93,11 +99,13 @@ class DamoangParser extends BaseParser {
                       ?.querySelector('span.profile_img > img.mb-photo')
                       ?.attributes['src'] ??
                   '';
+
               final likeCount = element
                       .querySelector(
-                          'div.comment-content > div > button > span')
+                          'div.comment-content > div.d-flex > div:last-child > button:last-child > span:first-child')
                       ?.text ??
                   '';
+
               final body =
                   element.querySelector('div.comment-content > div.na-convert');
               body
@@ -139,7 +147,7 @@ class DamoangParser extends BaseParser {
       csrf: '',
       time: time,
       userInfo: UserInfo(
-        id: user,
+        id: nickName,
         nickName: nickName,
         nickImage: nickImage,
       ),
@@ -148,7 +156,40 @@ class DamoangParser extends BaseParser {
       bodyHtml: bodyHtml?.outerHtml ?? '',
     );
 
-    return ResultSuccess(data: detail);
+    sendPort.send(ResultSuccess(data: detail));
+  }
+
+  @override
+  Future<Result> list(
+    Response response,
+    int lastId,
+    String boardTitle,
+    Future<Map<int, bool>> Function(SiteType, List<int>) isReads,
+  ) async {
+    final receivePort = ReceivePort();
+    final completer = Completer<Result>();
+
+    receivePort.listen((message) async {
+      if (message is ReadStatusRequest) {
+        final statuses = await isReads(siteType, message.ids);
+        message.responsePort.send(ReadStatusResponse(statuses));
+      } else if (message is List<ListItem>) {
+        completer.complete(ResultSuccess<List<ListItem>>(data: message));
+        receivePort.close();
+      }
+    });
+
+    try {
+      await Isolate.spawn(
+          _parseListInIsolate,
+          IsolateMessage(
+              receivePort.sendPort, response.data, lastId, boardTitle));
+
+      return await completer.future;
+    } catch (e) {
+      receivePort.close();
+      return ResultFailure(failure: GetListFailure(message: e.toString()));
+    }
   }
 
   static void _parseListInIsolate(IsolateMessage message) async {
@@ -210,9 +251,13 @@ class DamoangParser extends BaseParser {
 
       var title = link.text.trim();
 
-      var timeElement = infoElement
-          ?.querySelector("div > div.d-flex > div.wr-date > span.da-list-date");
-      timeElement?.querySelector("span.visually-hidden")?.remove();
+      var timeElement =
+          infoElement?.querySelector("div > div.d-flex > div.wr-date");
+
+      timeElement
+          ?.querySelectorAll("span.visually-hidden, i.bi")
+          .forEach((ele) => ele.remove());
+
       var time = timeElement?.text.trim() ?? '';
 
       var nickImage = metaElement
@@ -226,9 +271,10 @@ class DamoangParser extends BaseParser {
       hitElement?.querySelector("span.visually-hidden")?.remove();
       var hit = hitElement?.text.trim() ?? '';
 
-      var likeElement =
-          infoElement?.querySelector("div > div.d-flex > div.wr-num.order-3");
-      likeElement?.querySelector("span.visually-hidden")?.remove();
+      var likeElement = infoElement?.querySelector("div.wr-num > div.rcmd-box");
+      likeElement
+          ?.querySelectorAll("span.visually-hidden, i.bi")
+          .forEach((ele) => ele.remove());
       var like = likeElement?.text.trim() ?? '';
 
       var hasImage = infoElement
@@ -282,39 +328,5 @@ class DamoangParser extends BaseParser {
         .toList();
 
     replyPort.send(resultList);
-  }
-
-  @override
-  Future<Result> list(
-    Response response,
-    int lastId,
-    String boardTitle,
-    Future<bool> Function(SiteType, int) isRead,
-    Future<Map<int, bool>> Function(SiteType, List<int>) isReads,
-  ) async {
-    final receivePort = ReceivePort();
-    final completer = Completer<Result>();
-
-    receivePort.listen((message) async {
-      if (message is ReadStatusRequest) {
-        final statuses = await isReads(siteType, message.ids);
-        message.responsePort.send(ReadStatusResponse(statuses));
-      } else if (message is List<ListItem>) {
-        completer.complete(ResultSuccess<List<ListItem>>(data: message));
-        receivePort.close();
-      }
-    });
-
-    try {
-      await Isolate.spawn(
-          _parseListInIsolate,
-          IsolateMessage(
-              receivePort.sendPort, response.data, lastId, boardTitle));
-
-      return await completer.future;
-    } catch (e) {
-      receivePort.close();
-      return ResultFailure(failure: GetListFailure(message: e.toString()));
-    }
   }
 }

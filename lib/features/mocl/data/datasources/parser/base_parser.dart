@@ -11,7 +11,6 @@ abstract class BaseParser {
     Response response,
     int lastId,
     String boardTitle,
-    Future<bool> Function(SiteType, int) isRead,
     Future<Map<int, bool>> Function(SiteType, List<int>) isReads,
   );
 

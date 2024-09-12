@@ -3,14 +3,15 @@ import 'dart:developer';
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart';
+import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
+import 'package:injectable/injectable.dart';
 
-import '../../../../core/error/failures.dart';
-import '../../domain/entities/mocl_list_item.dart';
-import '../../domain/entities/mocl_main_item.dart';
-import '../../domain/entities/mocl_result.dart';
-import '../../domain/entities/mocl_site_type.dart';
-import 'parser/base_parser.dart';
-
+@lazySingleton
 class ApiClient {
   final dio = Dio();
   final cookieJar = CookieJar();
@@ -18,11 +19,10 @@ class ApiClient {
   static const USER_AGETNT =
       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:126.0) Gecko/20100101 Firefox/126.0';
 
-  ApiClient._() {
+  @PostConstruct()
+  void init() {
     dio.interceptors.add(CookieManager(cookieJar));
   }
-
-  static ApiClient getInstance() => ApiClient._();
 
   Future<Response> getUri(
     Uri uri, {
@@ -47,7 +47,6 @@ class ApiClient {
     int page,
     int lastId,
     BaseParser parser,
-    Future<bool> Function(SiteType, int) isRead,
     Future<Map<int, bool>> Function(SiteType, List<int>) isReads,
   ) async {
     final params = item.siteType == SiteType.clien
@@ -64,7 +63,6 @@ class ApiClient {
               response,
               lastId,
               item.text,
-              isRead,
               isReads,
             )
           : ResultFailure(

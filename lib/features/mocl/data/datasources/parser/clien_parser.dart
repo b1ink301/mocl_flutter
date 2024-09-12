@@ -3,6 +3,7 @@ import 'dart:isolate';
 
 import 'package:dio/dio.dart';
 import 'package:html/parser.dart';
+import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
@@ -11,6 +12,7 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 
+@lazySingleton
 class ClienParser extends BaseParser {
   @override
   SiteType get siteType => SiteType.clien;
@@ -23,10 +25,23 @@ class ClienParser extends BaseParser {
 
   @override
   Future<Result> detail(Response response) async {
-    var document = parse(response.data);
+    final responseData = response.data;
+    final resultPort = ReceivePort();
+
+    await Isolate.spawn(_detailIsolate, [responseData, resultPort.sendPort]);
+
+    final result = await resultPort.first as Result;
+    return result;
+  }
+
+  static void _detailIsolate(List<dynamic> args) {
+    final responseData = args[0] as String;
+    final sendPort = args[1] as SendPort;
+
+    var document = parse(responseData);
     var index = 0;
     final container =
-        document.querySelector('body > div.nav_container > div.content_view');
+    document.querySelector('body > div.nav_container > div.content_view');
 
     var csrf = document
             .querySelector(
@@ -173,7 +188,7 @@ class ClienParser extends BaseParser {
       bodyHtml: bodyHtml,
     );
 
-    return ResultSuccess(data: detail);
+    sendPort.send(ResultSuccess(data: detail));
   }
 
   @override
@@ -181,7 +196,6 @@ class ClienParser extends BaseParser {
     Response response,
     int lastId,
     String boardTitle,
-    Future<bool> Function(SiteType, int) isRead,
     Future<Map<int, bool>> Function(SiteType, List<int>) isReads,
   ) async {
     final receivePort = ReceivePort();

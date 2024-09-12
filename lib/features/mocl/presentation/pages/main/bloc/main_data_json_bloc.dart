@@ -2,59 +2,83 @@ import 'dart:async';
 import 'dart:developer';
 
 import 'package:bloc/bloc.dart';
-import 'package:equatable/equatable.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_main_list_from_json.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_main_list.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/main/bloc/main_data_bloc.dart';
 
 part 'main_data_json_event.dart';
-
 part 'main_data_json_state.dart';
+part 'main_data_json_bloc.freezed.dart';
 
+@injectable
 class MainDataJsonBloc extends Bloc<MainDataJsonEvent, MainDataJsonState> {
   late final GetMainListFromJson getMainListFromJson;
   late final SetMainList setMainList;
 
-  final _mainStreamController = StreamController<MainDataState>.broadcast();
+  final List<MainItem> _selectedItems = [];
+  List<MainItem> get selectedItems => _selectedItems;
 
-  Stream<MainDataState> get stateStream => _mainStreamController.stream;
+  // final _mainStreamController = StreamController<MainDataState>.broadcast();
+  // Stream<MainDataState> get stateStream => _mainStreamController.stream;
 
   MainDataJsonBloc({
     required this.getMainListFromJson,
     required this.setMainList,
   }) : super(const MainDataJsonState.initial()) {
-    on<MainDataJsonEvent>(_getMainDataJsonEvent);
+    on<GetListEvent>(_onGetListEvent);
   }
 
-  Future<void> _getMainDataJsonEvent(
-    MainDataJsonEvent event,
+  Future<void> _onGetListEvent(
+    GetListEvent event,
     Emitter<MainDataJsonState> emit,
   ) async {
-    log('MainDataJsonBloc event=$event');
-    switch (event) {
-      case GetMainDataFromJsonEvent():
-        emit(const MainDataJsonState.loading());
-        _mainStreamController.add(const MainDataState.initial());
-        var result = getMainListFromJson.call(event.siteType);
-        // result.fold((failure) {
-        //   print('GetMainDataFromJsonEvent failure=$failure');
-        //   emit(MainDataJsonState.failure(failure.toString()));
-        //   _mainStreamController.add(const MainDataState.failure("failure"));
-        // }, (data) {
-        //   emit(MainDataJsonState.success(data));
-        //   _mainStreamController.add(MainDataState.success(data));
-        // });
-      case AddMainDataEvent():
-        var params = SetMainParams(siteType: event.siteType, list: event.list);
-        await setMainList(params);
-        emit(const MainDataJsonState.initial());
-        _mainStreamController.add(MainDataState.success(event.list));
+    log('[MainDataJsonBloc] event=$event');
+    emit(const MainDataJsonState.loading());
+    var result = await getMainListFromJson.call(event.siteType);
+    if (result is ResultSuccess) {
+      _init(result.data);
+      emit(MainDataJsonState.success(result.data));
+    } else if (result is ResultFailure) {
+      emit(const MainDataJsonState.failure("failure"));
     }
   }
 
-  void dispose() {
-    _mainStreamController.close();
+  void onChanged<T>(bool isChecked, T? item) {
+    if (item != null && item is MainItem) {
+      if (isChecked) {
+        _addItem(item);
+      } else {
+        _removeItem(item);
+      }
+    }
+  }
+
+  void _clear() => _selectedItems.clear();
+
+  void _addAll(List<MainItem> list) {
+    final items = list.where((item) => item.hasItem);
+    _selectedItems.addAll(items);
+  }
+
+  void _addItem(MainItem item) {
+    if (!_selectedItems.contains(item)) {
+      _selectedItems.add(item);
+    }
+  }
+
+  void _removeItem(MainItem item) {
+    if (_selectedItems.contains(item)) {
+      _selectedItems.remove(item);
+    }
+  }
+
+  void _init(List<MainItem> data) {
+    _clear();
+    _addAll(data);
+    log('MainDlgViewModel List=$_selectedItems');
   }
 }
