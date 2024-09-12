@@ -12,6 +12,8 @@ class ReadableListItem {
 
   void markAsRead() => isRead.value = true;
   void markAsUnread() => isRead.value = false;
+
+  String get key => item.id.toString();
 }
 
 

@@ -21,7 +21,7 @@ class DetailView extends StatelessWidget {
           builder: (context, state) => state.maybeMap(
             success: (state) => _DetailView(detail: state.detail),
             failed: (state) => MessageWidget(message: state.message),
-            orElse: () => const LoadingWidget(),
+            orElse: () => const Column(children: [LoadingWidget(), Divider()]),
           ),
         ),
       );
@@ -38,7 +38,6 @@ class _DetailView extends StatelessWidget {
     final hexColor = _getHexColor(theme.indicatorColor);
     final bodySmall = theme.textTheme.bodySmall;
     final bodyMedium = theme.textTheme.bodyMedium;
-
     final bloc = context.read<DetailViewBloc>();
 
     return SingleChildScrollView(
@@ -47,7 +46,13 @@ class _DetailView extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _Header(userInfo: bloc.userInfo, time: bloc.time),
+          _Header(
+            userInfo: detail.userInfo,
+            time: detail.time,
+            viewCount: detail.viewCount,
+            likeCount: detail.likeCount,
+            bodySmall: bodySmall,
+          ),
           const Divider(),
           const SizedBox(height: 10),
           _Body(
@@ -80,12 +85,30 @@ class _DetailView extends StatelessWidget {
 class _Header extends StatelessWidget {
   final UserInfo userInfo;
   final String time;
+  final String likeCount;
+  final String viewCount;
+  final TextStyle? bodySmall;
 
-  const _Header({super.key, required this.userInfo, required this.time});
+  const _Header({
+    super.key,
+    required this.userInfo,
+    required this.time,
+    required this.likeCount,
+    required this.viewCount,
+    required this.bodySmall,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final bodySmall = Theme.of(context).textTheme.bodySmall;
+    final likeView = likeCount.isNotEmpty
+        ? [
+            Icon(Icons.favorite_outline, color: bodySmall!.color, size: 17),
+            const SizedBox(width: 4),
+            Text(likeCount, style: bodySmall),
+            const SizedBox(width: 10),
+          ]
+        : [];
+
     return SizedBox(
       height: 42,
       child: Center(
@@ -93,10 +116,21 @@ class _Header extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           mainAxisSize: MainAxisSize.max,
           children: [
-            NickImageWidget(url: userInfo.nickImage),
+            Visibility(
+                visible: userInfo.nickImage.isNotEmpty &&
+                    !userInfo.nickImage.endsWith('/no_profile.gif'),
+                child: NickImageWidget(url: userInfo.nickImage)),
             Text(userInfo.nickName, style: bodySmall),
-            const SizedBox(width: 8),
+            const SizedBox(width: 10),
             Text(time, style: bodySmall),
+            const SizedBox(width: 10),
+            const Spacer(),
+            ...likeView,
+            Icon(Icons.text_snippet_outlined,
+                color: bodySmall!.color, size: 17),
+            const SizedBox(width: 4),
+            Text(viewCount, style: bodySmall),
+            const SizedBox(width: 4),
           ],
         ),
       ),
@@ -137,6 +171,7 @@ class _Body extends StatelessWidget {
       textStyle: bodyMedium,
       renderMode: RenderMode.column,
       onTapUrl: onTapUrl,
+      onTapImage: (data) => onTapUrl?.call(data.sources.first.url),
     );
   }
 }
@@ -163,7 +198,10 @@ class _Comments extends StatelessWidget {
       children: [
         const SizedBox(height: 10),
         const Divider(),
-        _CommentHeader(commentCount: comments.length),
+        _CommentHeader(
+          commentCount: comments.length,
+          bodyMedium: bodyMedium,
+        ),
         const Divider(),
         _CommentList(
           comments: comments,
@@ -179,12 +217,16 @@ class _Comments extends StatelessWidget {
 
 class _CommentHeader extends StatelessWidget {
   final int commentCount;
+  final TextStyle? bodyMedium;
 
-  const _CommentHeader({super.key, required this.commentCount});
+  const _CommentHeader({
+    super.key,
+    required this.commentCount,
+    required this.bodyMedium,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final bodyMedium = Theme.of(context).textTheme.bodyMedium;
     return SizedBox(
       height: 42,
       child: Align(
@@ -257,15 +299,30 @@ class _CommentItem extends StatelessWidget {
     final userInfo = comment.userInfo;
     final left = comment.isReply ? 16.0 : 0.0;
 
+    final likeView = comment.likeCount.isNotEmpty && comment.likeCount != '0'
+        ? [
+            const Spacer(),
+            Icon(Icons.favorite_outline, color: bodySmall!.color, size: 17),
+            const SizedBox(width: 4),
+            Text(comment.likeCount, style: bodySmall),
+            const SizedBox(width: 4),
+          ]
+        : [];
+
     return ListTile(
       key: Key(comment.id.toString()),
       contentPadding: EdgeInsets.only(left: left, top: 4, bottom: 4),
       title: Row(
         children: [
-          NickImageWidget(url: userInfo.nickImage),
-          Text(userInfo.nickName, style: bodySmall),
+          Visibility(
+              visible: userInfo.nickImage.isNotEmpty,
+              child: NickImageWidget(url: userInfo.nickImage)),
+          Visibility(
+              visible: userInfo.nickName.isNotEmpty,
+              child: Text(userInfo.nickName, style: bodySmall)),
           const SizedBox(width: 8),
           Text(comment.time, style: bodySmall),
+          ...likeView,
         ],
       ),
       subtitle: Padding(
@@ -286,6 +343,7 @@ class _CommentItem extends StatelessWidget {
             return null;
           },
           onTapUrl: openUrl,
+          onTapImage: (data) => openUrl(data.sources.first.url),
         ),
       ),
     );

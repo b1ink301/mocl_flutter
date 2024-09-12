@@ -5,6 +5,7 @@ import 'package:mocl_flutter/features/mocl/presentation/pages/list/list_view/blo
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_cached_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/cached_item_builder.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 
 class ListView extends StatelessWidget {
   const ListView({super.key});
@@ -13,21 +14,26 @@ class ListView extends StatelessWidget {
   Widget build(BuildContext context) =>
       BlocBuilder<ListPageCubit, ListPageState>(
         builder: (context, state) {
-          final bloc = context.watch<ListPageCubit>();
-          
+          final ListPageCubit bloc = context.read<ListPageCubit>();
+
           return SliverInfiniteListView.separated(
+            enableShrinkWrapForFirstPageIndicators: true,
             delegate: PaginationDelegate(
               isLoading: state is LoadingList,
               hasError: state is FailedList,
               hasReachedMax: bloc.hasReachedMax,
               invisibleItemsThreshold: 1,
               itemCount: bloc.listCount,
+              loadMoreLoadingBuilder: (_) => const LoadingWidget(),
+              firstPageLoadingBuilder: (_) =>
+                  const Column(children: [LoadingWidget(), DividerWidget()]),
               itemBuilder: (context, index) {
                 final item = bloc.getItem(index);
+                final key = ValueKey(item.key);
                 return CachedItemBuilder(
-                  key: ValueKey(item.item.id),
+                  key: key,
                   builder: () => CachedListItem(
-                    key: ValueKey(item.item.id),
+                    key: key,
                     item: item.item,
                     isRead: item.isRead,
                     textStyles: bloc.textStyles,

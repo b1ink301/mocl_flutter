@@ -11,6 +11,7 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_detail.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_read_flag.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 part 'detail_view_bloc.freezed.dart';
@@ -41,8 +42,12 @@ class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
   String get smallTitle => '${_siteType.title} > ${_listItem.item.boardTitle}';
 
   String get title => _listItem.item.title;
+
   UserInfo get userInfo => _listItem.item.userInfo;
+
   String get time => _listItem.item.time;
+
+  String get like => _listItem.item.like;
 
   void refresh() => add(const DetailsEvent());
 
@@ -113,5 +118,11 @@ class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
   Future<bool> openBrowser(String url) async {
     final Uri uri = Uri.parse(url);
     return await launchUrl(uri);
+  }
+
+  void shareUri() {
+    final url = _listItem.item.url;
+    final Uri uri = Uri.parse(url);
+    Share.shareUri(uri);
   }
 }

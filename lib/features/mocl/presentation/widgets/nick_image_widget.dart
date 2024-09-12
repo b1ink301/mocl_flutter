@@ -1,7 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
-class NickImageWidget extends StatefulWidget {
+class NickImageWidget extends StatelessWidget {
   final String url;
   final double height;
 
@@ -12,25 +12,14 @@ class NickImageWidget extends StatefulWidget {
   });
 
   @override
-  State<NickImageWidget> createState() => _NickImageWidgetState();
-}
-
-class _NickImageWidgetState extends State<NickImageWidget> {
-  @override
-  Widget build(BuildContext context) => Visibility(
-        visible: widget.url.isNotEmpty,
-        child: Padding(
-          padding: const EdgeInsets.only(right: 8),
-          child: Image(
-            key: ValueKey(widget.url),
-            image: CachedNetworkImageProvider(
-              widget.url,
-              maxHeight: widget.height.toInt(),
-              maxWidth: 100,
-            ),
-            height: widget.height,
-            fit: BoxFit.contain,
-          ),
-        ),
-      );
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(right: 8),
+    child: CachedNetworkImage(
+      memCacheHeight: height.toInt(),
+      height: height,
+      fit: BoxFit.contain,
+      imageUrl: url,
+      cacheKey: url,
+    ),
+  );
 }
