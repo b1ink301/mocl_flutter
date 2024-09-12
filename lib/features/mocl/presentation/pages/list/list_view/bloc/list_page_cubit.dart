@@ -1,5 +1,6 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
@@ -74,12 +75,17 @@ class ListPageCubit extends Cubit<ListPageState> {
       );
       final result = await _getList(params);
       if (result is ResultSuccess<List<ListItem>>) {
+        for (var item in result.data) {
+          DefaultCacheManager().downloadFile(item.url);
+        }
+        Future.delayed(const Duration(microseconds: 300));
         final list = result.data.map(_toReadableListItem).toList();
         if (list.isNotEmpty) {
           _lastId = list.last.item.id;
           _list.addAll(list);
         }
         _page++;
+
         emit(const LoadedList());
       } else if (result is ResultFailure) {
         emit(FailedList(result.toString()));
@@ -89,10 +95,12 @@ class ListPageCubit extends Cubit<ListPageState> {
     }
   }
 
-  ReadableListItem _toReadableListItem(ListItem item) => ReadableListItem(
-        item: item,
-        isRead: ValueNotifier(item.isRead),
-      );
+  ReadableListItem _toReadableListItem(ListItem item) {
+    return ReadableListItem(
+      item: item,
+      isRead: ValueNotifier(item.isRead),
+    );
+  }
 
   @override
   Future<void> close() async {
