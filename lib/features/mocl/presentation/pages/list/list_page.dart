@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/injection.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/list/list_view/bloc/list_page_cubit.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/list/list_view/list_view.dart'
+import 'package:mocl_flutter/features/mocl/presentation/pages/list/bloc/list_page_cubit.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/list/list_view.dart'
     as listview;
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_text_styles.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/appbar_dual_text_widget.dart';
