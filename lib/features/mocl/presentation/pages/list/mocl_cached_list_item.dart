@@ -65,21 +65,13 @@ class _CachedListItemState extends State<CachedListItem> {
   @override
   Widget build(BuildContext context) {
     // debugPrint('CachedListItem item=${widget.item.title}');
-    return InkWell(
+    return ListTile(
+      minVerticalPadding: 0,
+      minTileHeight: 24,
+      contentPadding: const EdgeInsets.fromLTRB(16, 10, 12, 10),
       onTap: widget.onTap,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 10, 12, 0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            _buildTitleView(),
-            const SizedBox(height: 6),
-            _buildBottomView(),
-            const SizedBox(height: 11),
-            // const DividerWidget(indent: 0, endIndent: 0),
-          ],
-        ),
-      ),
+      title: _buildTitleView(),
+      subtitle: _buildBottomView(),
     );
   }
 
@@ -94,26 +86,35 @@ class _CachedListItemState extends State<CachedListItem> {
     );
   }
 
-  Widget _buildBottomView() {
+  Widget? _buildBottomView() {
+    if (widget.item.userInfo.id.isEmpty) {
+      return null;
+    }
+
     final reply = widget.item.reply;
-    return SizedBox(
-      height: 20,
-      child: Row(
-        children: [
-          Expanded(
-            child: _buildUserInfoAndTime(),
+    return Column(
+      children: [
+        const SizedBox(height: 8),
+        SizedBox(
+          height: 20,
+          child: Row(
+            children: [
+              Expanded(
+                child: _buildUserInfoAndTime(),
+              ),
+              Visibility(
+                visible: reply.isNotEmpty && reply != '0',
+                child: RoundTextWidget(
+                  text: reply,
+                  textStyle: _isReadValue
+                      ? widget.textStyles.readBadgeTextStyle
+                      : widget.textStyles.badgeTextStyle,
+                ),
+              ),
+            ],
           ),
-          Visibility(
-            visible: reply.isNotEmpty && reply != '0',
-            child: RoundTextWidget(
-              text: reply,
-              textStyle: _isReadValue
-                  ? widget.textStyles.readBadgeTextStyle
-                  : widget.textStyles.badgeTextStyle,
-            ),
-          ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 
@@ -128,7 +129,7 @@ class _CachedListItemState extends State<CachedListItem> {
     return Row(
       children: [
         Visibility(
-          visible: nickImage.isNotEmpty,
+          visible: nickImage.isNotEmpty && nickImage.startsWith('http'),
           child: NickImageWidget(url: nickImage),
         ),
         Visibility(

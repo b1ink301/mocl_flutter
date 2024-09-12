@@ -70,37 +70,45 @@ class _DetailAppBar extends StatelessWidget {
               smallTitle: bloc.smallTitle,
               automaticallyImplyLeading: Platform.isMacOS,
               toolbarHeight: height,
-              actions: [
-                _buildPopupMenuButton(context),
-              ],
+              actions: _buildPopupMenuButton(context),
             );
           },
         ),
       );
 
-  Widget _buildPopupMenuButton(BuildContext context) {
+  List<Widget> _buildPopupMenuButton(BuildContext context) {
     final bloc = context.read<DetailViewBloc>();
-    return PopupMenuButton<int>(
-      onSelected: (int value) {
-        switch (value) {
-          case 0:
-            bloc.refresh();
-            break;
-          case 1:
-            bloc.openBrowserByItem();
-            break;
-        }
-      },
-      itemBuilder: (BuildContext context) => const [
-        PopupMenuItem(
-          value: 0,
-          child: Text('새로고침'),
-        ),
-        PopupMenuItem(
-          value: 1,
-          child: Text('브라우저로 열기'),
-        ),
-      ],
-    );
+    return [
+      PopupMenuButton<int>(
+        onSelected: (int value) {
+          switch (value) {
+            case 0:
+              bloc.refresh();
+              break;
+            case 1:
+              bloc.openBrowserByItem();
+              break;
+            case 2:
+              bloc.shareUri();
+              break;
+          }
+        },
+        itemBuilder: (BuildContext context) => [
+          const PopupMenuItem(
+            value: 0,
+            child: Text('새로고침'),
+          ),
+          const PopupMenuItem(
+            value: 1,
+            child: Text('브라우저로 열기'),
+          ),
+          PopupMenuItem(
+            value: 2,
+            enabled: Platform.isAndroid || Platform.isIOS,
+            child: const Text('공유하기'),
+          ),
+        ],
+      )
+    ];
   }
 }
