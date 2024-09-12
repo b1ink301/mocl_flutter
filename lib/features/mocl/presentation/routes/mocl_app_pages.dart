@@ -4,7 +4,7 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/mocl_detail_page.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/list/list_view/list_page.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/list/list_page.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/mocl_main_page.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/set_list_dialog.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/dialog_page.dart';

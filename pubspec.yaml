@@ -52,9 +52,6 @@ dependencies:
   # class 자동화
   freezed_annotation: ^2.4.4
 
-  # 무한 스크롤 리스트
-  infinite_scroll_pagination: ^4.0.0
-
   # 이미지 캐시
   cached_network_image: ^3.4.1
   #  image: ^4.2.0
