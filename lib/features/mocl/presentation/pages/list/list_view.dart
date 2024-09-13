@@ -29,11 +29,9 @@ class ListView extends StatelessWidget {
                   const Column(children: [LoadingWidget(), DividerWidget()]),
               itemBuilder: (context, index) {
                 final item = bloc.getItem(index);
-                final key = ValueKey(item.key);
                 return CachedItemBuilder(
-                  key: key,
+                  key: ValueKey(item.key),
                   builder: () => CachedListItem(
-                    key: key,
                     item: item.item,
                     isRead: item.isRead,
                     textStyles: bloc.textStyles,
