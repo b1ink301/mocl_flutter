@@ -62,7 +62,6 @@ class _CachedListItemState extends State<CachedListItem> {
 
   @override
   Widget build(BuildContext context) {
-    // debugPrint('CachedListItem item=${widget.item.title}');
     return ListTile(
       minVerticalPadding: 10,
       minTileHeight: 24,
@@ -74,6 +73,7 @@ class _CachedListItemState extends State<CachedListItem> {
   }
 
   Widget _buildTitleView() {
+    // debugPrint('_buildTitleView item=${widget.item.title}');
     return Text(
       widget.item.title,
       maxLines: 3,
@@ -100,15 +100,13 @@ class _CachedListItemState extends State<CachedListItem> {
               Expanded(
                 child: _buildUserInfoAndTime(),
               ),
-              Visibility(
-                visible: reply.isNotEmpty && reply != '0',
-                child: RoundTextWidget(
+              if (reply.isNotEmpty && reply != '0')
+                RoundTextWidget(
                   text: reply,
                   textStyle: _isReadValue
                       ? widget.textStyles.readBadgeTextStyle
                       : widget.textStyles.badgeTextStyle,
                 ),
-              ),
             ],
           ),
         ),
@@ -126,13 +124,10 @@ class _CachedListItemState extends State<CachedListItem> {
 
     return Row(
       children: [
-        Visibility(
-          visible: nickImage.isNotEmpty && nickImage.startsWith('http'),
-          child: NickImageWidget(url: nickImage),
-        ),
-        Visibility(
-          visible: nickName.isNotEmpty,
-          child: Padding(
+        if (nickImage.isNotEmpty && nickImage.startsWith('http'))
+          NickImageWidget(url: nickImage),
+        if (nickName.isNotEmpty)
+          Padding(
             padding: const EdgeInsets.only(right: 8.0),
             child: Text(
               nickName,
@@ -141,10 +136,8 @@ class _CachedListItemState extends State<CachedListItem> {
               style: textStyle,
             ),
           ),
-        ),
-        Visibility(
-          visible: time.isNotEmpty,
-          child: Flexible(
+        if (time.isNotEmpty)
+          Flexible(
             child: Text(
               time,
               maxLines: 1,
@@ -152,7 +145,6 @@ class _CachedListItemState extends State<CachedListItem> {
               style: textStyle,
             ),
           ),
-        ),
       ],
     );
   }

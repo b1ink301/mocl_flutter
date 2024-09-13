@@ -22,8 +22,7 @@ class DetailPage extends StatelessWidget {
     final textWidth = MediaQuery.of(context).size.width;
 
     return BlocProvider(
-      create: (context) => getIt<DetailViewBloc>()
-        ..init(item, siteType)
+      create: (context) => getIt<DetailViewBloc>(param1: item, param2: siteType)
         ..add(DetailViewEvent.height(item.item.title, textStyle, textWidth))
         ..add(const DetailViewEvent.details()),
       child: const DetailPage(),
