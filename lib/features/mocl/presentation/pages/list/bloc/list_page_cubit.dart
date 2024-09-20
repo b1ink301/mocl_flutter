@@ -75,10 +75,10 @@ class ListPageCubit extends Cubit<ListPageState> {
       );
       final result = await _getList(params);
       if (result is ResultSuccess<List<ListItem>>) {
-        for (var item in result.data) {
-          DefaultCacheManager().downloadFile(item.url);
-        }
-        Future.delayed(const Duration(microseconds: 300));
+        // for (var item in result.data) {
+        //   DefaultCacheManager().downloadFile(item.url);
+        // }
+        // Future.delayed(const Duration(microseconds: 300));
         final list = result.data.map(_toReadableListItem).toList();
         if (list.isNotEmpty) {
           _lastId = list.last.item.id;

@@ -22,6 +22,7 @@ mixin _$ListItem {
   String get category => throw _privateConstructorUsedError;
   String get time => throw _privateConstructorUsedError;
   String get url => throw _privateConstructorUsedError;
+  String get info => throw _privateConstructorUsedError;
   String get board => throw _privateConstructorUsedError;
   String get boardTitle => throw _privateConstructorUsedError;
   String get like => throw _privateConstructorUsedError;
@@ -49,6 +50,7 @@ abstract class $ListItemCopyWith<$Res> {
       String category,
       String time,
       String url,
+      String info,
       String board,
       String boardTitle,
       String like,
@@ -56,6 +58,8 @@ abstract class $ListItemCopyWith<$Res> {
       UserInfo userInfo,
       bool hasImage,
       bool isRead});
+
+  $UserInfoCopyWith<$Res> get userInfo;
 }
 
 /// @nodoc
@@ -79,6 +83,7 @@ class _$ListItemCopyWithImpl<$Res, $Val extends ListItem>
     Object? category = null,
     Object? time = null,
     Object? url = null,
+    Object? info = null,
     Object? board = null,
     Object? boardTitle = null,
     Object? like = null,
@@ -112,6 +117,10 @@ class _$ListItemCopyWithImpl<$Res, $Val extends ListItem>
           ? _value.url
           : url // ignore: cast_nullable_to_non_nullable
               as String,
+      info: null == info
+          ? _value.info
+          : info // ignore: cast_nullable_to_non_nullable
+              as String,
       board: null == board
           ? _value.board
           : board // ignore: cast_nullable_to_non_nullable
@@ -142,6 +151,16 @@ class _$ListItemCopyWithImpl<$Res, $Val extends ListItem>
               as bool,
     ) as $Val);
   }
+
+  /// Create a copy of ListItem
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $UserInfoCopyWith<$Res> get userInfo {
+    return $UserInfoCopyWith<$Res>(_value.userInfo, (value) {
+      return _then(_value.copyWith(userInfo: value) as $Val);
+    });
+  }
 }
 
 /// @nodoc
@@ -159,6 +178,7 @@ abstract class _$$ListItemImplCopyWith<$Res>
       String category,
       String time,
       String url,
+      String info,
       String board,
       String boardTitle,
       String like,
@@ -166,6 +186,9 @@ abstract class _$$ListItemImplCopyWith<$Res>
       UserInfo userInfo,
       bool hasImage,
       bool isRead});
+
+  @override
+  $UserInfoCopyWith<$Res> get userInfo;
 }
 
 /// @nodoc
@@ -187,6 +210,7 @@ class __$$ListItemImplCopyWithImpl<$Res>
     Object? category = null,
     Object? time = null,
     Object? url = null,
+    Object? info = null,
     Object? board = null,
     Object? boardTitle = null,
     Object? like = null,
@@ -219,6 +243,10 @@ class __$$ListItemImplCopyWithImpl<$Res>
       url: null == url
           ? _value.url
           : url // ignore: cast_nullable_to_non_nullable
+              as String,
+      info: null == info
+          ? _value.info
+          : info // ignore: cast_nullable_to_non_nullable
               as String,
       board: null == board
           ? _value.board
@@ -262,6 +290,7 @@ class _$ListItemImpl implements _ListItem {
       required this.category,
       required this.time,
       required this.url,
+      required this.info,
       required this.board,
       required this.boardTitle,
       required this.like,
@@ -283,6 +312,8 @@ class _$ListItemImpl implements _ListItem {
   @override
   final String url;
   @override
+  final String info;
+  @override
   final String board;
   @override
   final String boardTitle;
@@ -299,7 +330,7 @@ class _$ListItemImpl implements _ListItem {
 
   @override
   String toString() {
-    return 'ListItem(id: $id, title: $title, reply: $reply, category: $category, time: $time, url: $url, board: $board, boardTitle: $boardTitle, like: $like, hit: $hit, userInfo: $userInfo, hasImage: $hasImage, isRead: $isRead)';
+    return 'ListItem(id: $id, title: $title, reply: $reply, category: $category, time: $time, url: $url, info: $info, board: $board, boardTitle: $boardTitle, like: $like, hit: $hit, userInfo: $userInfo, hasImage: $hasImage, isRead: $isRead)';
   }
 
   @override
@@ -314,6 +345,7 @@ class _$ListItemImpl implements _ListItem {
                 other.category == category) &&
             (identical(other.time, time) || other.time == time) &&
             (identical(other.url, url) || other.url == url) &&
+            (identical(other.info, info) || other.info == info) &&
             (identical(other.board, board) || other.board == board) &&
             (identical(other.boardTitle, boardTitle) ||
                 other.boardTitle == boardTitle) &&
@@ -328,7 +360,7 @@ class _$ListItemImpl implements _ListItem {
 
   @override
   int get hashCode => Object.hash(runtimeType, id, title, reply, category, time,
-      url, board, boardTitle, like, hit, userInfo, hasImage, isRead);
+      url, info, board, boardTitle, like, hit, userInfo, hasImage, isRead);
 
   /// Create a copy of ListItem
   /// with the given fields replaced by the non-null parameter values.
@@ -347,6 +379,7 @@ abstract class _ListItem implements ListItem {
       required final String category,
       required final String time,
       required final String url,
+      required final String info,
       required final String board,
       required final String boardTitle,
       required final String like,
@@ -367,6 +400,8 @@ abstract class _ListItem implements ListItem {
   String get time;
   @override
   String get url;
+  @override
+  String get info;
   @override
   String get board;
   @override

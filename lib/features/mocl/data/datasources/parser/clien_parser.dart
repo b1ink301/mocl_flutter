@@ -11,6 +11,7 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 @lazySingleton
 class ClienParser extends BaseParser {
@@ -21,6 +22,60 @@ class ClienParser extends BaseParser {
   Future<Result> comment(Response response) {
     // TODO: implement comment
     throw UnimplementedError();
+  }
+
+  static DateTime parseDateTime(String dateTimeString) {
+    var times = dateTimeString.split(' ');
+
+    final now = DateTime.now();
+    if (times.length == 2) {
+      var date = times[0].split('-');
+
+      var year = now.year;
+      var month = now.month;
+      var day = now.day;
+      var hour = now.hour;
+      var minute = now.minute;
+      var second = now.second;
+
+      if (date.length == 3) {
+        year = int.parse(date[0]);
+        month = int.parse(date[1]);
+        day = int.parse(date[2]);
+      } else {
+        throw Exception('Error parsing $dateTimeString');
+      }
+
+      var time = times[1].split(':');
+      if (time.length == 3) {
+        hour = int.parse(time[0]);
+        minute = int.parse(time[1]);
+        second = int.parse(time[2]);
+      } else {
+        throw Exception('Error parsing $dateTimeString');
+      }
+
+      return DateTime(year, month, day, hour, minute, second);
+    } else {
+      var times = dateTimeString.split(':');
+
+      if (times.length == 2) {
+        final hour = int.parse(times[0]);
+        final minute = int.parse(times[1]);
+        return DateTime(now.year, now.month, now.day, hour, minute);
+      } else {
+        times = dateTimeString.split('-');
+        if (times.length == 3) {
+          final year = int.parse(times[0]);
+          final tmp = now.year - year;
+          final month = int.parse(times[1]);
+          final day = int.parse(times[2]);
+          return DateTime(year + tmp, month, day, now.hour, now.minute);
+        } else {
+          throw Exception('Error parsing $dateTimeString');
+        }
+      }
+    }
   }
 
   @override
@@ -38,10 +93,12 @@ class ClienParser extends BaseParser {
     final responseData = args[0] as String;
     final sendPort = args[1] as SendPort;
 
+    timeago.setLocaleMessages('ko', timeago.KoMessages());
+
     var document = parse(responseData);
     var index = 0;
     final container =
-    document.querySelector('body > div.nav_container > div.content_view');
+        document.querySelector('body > div.nav_container > div.content_view');
 
     var csrf = document
             .querySelector(
@@ -57,6 +114,10 @@ class ClienParser extends BaseParser {
         "div.post_view > div.post_information > div.post_time > div.post_date");
     timeElement?.querySelectorAll('.fa').forEach((element) => element.remove());
     var time = timeElement?.text.trim() ?? '';
+    var tmp = time.split('수정일 :');
+    var times = tmp.map((item) => item.trim()).toList();
+    time = times.join('|');
+
     var bodyHtmlElement = container?.querySelector(
         "div.post_view > div.post_content > article > div.post_article");
     bodyHtmlElement
@@ -98,6 +159,21 @@ class ClienParser extends BaseParser {
             .trim() ??
         '';
 
+    var parsedTime = '';
+    try {
+      var dateTime = parseDateTime(times.first);
+      parsedTime = timeago.format(dateTime, locale: 'ko');
+    } catch (e) {
+      parsedTime = time;
+    }
+    var info = '';
+    if (nickName.isNotEmpty) {
+      info = '$nickName ・ $parsedTime ・ $viewCount 읽음';
+    } else {
+      info = '$parsedTime ・ $viewCount 읽음';
+      ;
+    }
+
     var comments = container
             ?.querySelectorAll(
                 "div.post_comment > div.comment > div.comment_row")
@@ -125,7 +201,7 @@ class ClienParser extends BaseParser {
               var timeElement = element.querySelector(
                   "div.comment_info > div.comment_info_area > div.comment_time");
               timeElement?.querySelector("span.timestamp")?.remove();
-              var time = timeElement?.innerHtml.trim() ?? '';
+              var time = timeElement?.text.trim() ?? '';
               var nickImage = element
                       .querySelector(
                           "div.comment_info > div.post_contact > span.contact_name > span.nickimg > img")
@@ -137,28 +213,50 @@ class ClienParser extends BaseParser {
                       ?.text
                       .trim() ??
                   '';
-              var bodyElement = element
-                  .querySelector("div.comment_content > div.comment_view");
-              bodyElement
-                  ?.querySelectorAll('input, span.name, button')
-                  .forEach((element) => element.remove());
-              var body = bodyElement?.outerHtml ?? '';
-              var video = element
-                      .querySelector("div.comment-video > video > source")
-                      ?.attributes['src'] ??
-                  '';
-              var img = element
-                      .querySelector("div.comment-img > img")
-                      ?.attributes['src'] ??
-                  '';
+              // var bodyElement = element
+              //     .querySelector("div.comment_content > div.comment_view");
+
+              var bodyElements = element.querySelectorAll(
+                  "div.comment_content, div.comment-img, div.comment-video");
+              for (var tmp in bodyElements) {
+                tmp
+                    .querySelectorAll('input, span.name, button')
+                    .forEach((element) => element.remove());
+              }
+
+              // bodyElement
+              //     ?.querySelectorAll('input, span.name, button')
+              //     .forEach((element) => element.remove());
+
+              var body = bodyElements.map((item) => item.innerHtml).join();
+              // var body = bodyElement?.outerHtml ?? '';
+              // var video = element
+              //         .querySelector("div.comment-video > video > source")
+              //         ?.attributes['src'] ??
+              //     '';
+              // var img = element
+              //         .querySelector("div.comment-img > img")
+              //         ?.attributes['src'] ??
+              //     '';
+
+              var parsedTime = '';
+              try {
+                var dateTime = parseDateTime(time);
+                parsedTime = timeago.format(dateTime, locale: 'ko');
+              } catch (e) {
+                parsedTime = time;
+              }
+              var info =
+                  nickName.isNotEmpty ? '$nickName ・ $parsedTime' : parsedTime;
 
               return CommentItem(
                 id: index++,
                 isReply: isReply,
                 bodyHtml: body,
                 likeCount: likeCount,
-                mediaHtml: img.isEmpty ? video : img,
-                isVideo: video.isNotEmpty,
+                mediaHtml: '',
+                isVideo: false,
+                info: info,
                 time: time,
                 userInfo: UserInfo(
                   id: id,
@@ -178,6 +276,7 @@ class ClienParser extends BaseParser {
       likeCount: likeCount,
       csrf: csrf,
       time: time,
+      info: info,
       userInfo: UserInfo(
         id: user,
         nickName: nickName,
@@ -229,6 +328,8 @@ class ClienParser extends BaseParser {
     final responseData = message.responseData;
     final lastId = message.lastId;
     final boardTitle = message.boardTitle;
+
+    timeago.setLocaleMessages('ko', timeago.KoMessages());
 
     var parsedItems = <Map<String, dynamic>>[];
     var ids = <int>[];
@@ -301,12 +402,27 @@ class ClienParser extends BaseParser {
       var hasImage =
           element.querySelector('div.list_title > span.fa-picture-o') != null;
 
+      var parsedTime = '';
+      try {
+        var dateTime = parseDateTime(time);
+        parsedTime = timeago.format(dateTime, locale: 'ko');
+      } catch (e) {
+        parsedTime = time;
+      }
+      var info = '';
+      if (nickName.isNotEmpty) {
+        info = '$nickName ・ $parsedTime ・ $hit 읽음';
+      } else {
+        info = '$parsedTime ・ $hit 읽음';
+      }
+
       var parsedItem = {
         'id': id,
         'title': title,
         'reply': reply,
         'category': category,
         'time': time,
+        'info': info,
         'url': url,
         'board': board,
         'boardTitle': boardTitle,
@@ -335,6 +451,7 @@ class ClienParser extends BaseParser {
               reply: item['reply'],
               category: item['category'],
               time: item['time'],
+              info: item['info'],
               url: item['url'],
               board: item['board'],
               boardTitle: item['boardTitle'],

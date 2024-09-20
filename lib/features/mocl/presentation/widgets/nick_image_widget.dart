@@ -15,15 +15,15 @@ class NickImageWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-    padding: const EdgeInsets.only(right: 8),
-    child: CachedNetworkImage(
-      memCacheHeight: height.toInt(),
-      height: height,
-      cacheManager: DefaultCacheManager(),
-      fit: BoxFit.contain,
-      imageUrl: url,
-      cacheKey: url,
-    ),
-  );
+      padding: const EdgeInsets.only(right: 8),
+      child: CachedNetworkImage(
+        memCacheHeight: height.toInt(),
+        height: height,
+        cacheManager: DefaultCacheManager(),
+        fit: BoxFit.contain,
+        imageUrl: url,
+        cacheKey: url.hashCode.toString(),
+      ),
+    );
   }
 }

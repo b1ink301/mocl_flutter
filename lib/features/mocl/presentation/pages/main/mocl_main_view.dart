@@ -31,6 +31,8 @@ class MainView extends StatelessWidget {
       BuildContext context, List<MainItem> items, TextStyle? textStyle) {
     return ListView.separated(
       itemCount: items.length,
+      shrinkWrap: true,
+      physics: const ClampingScrollPhysics(),
       itemBuilder: (context, index) =>
           _buildListItem(context, items[index], textStyle),
       separatorBuilder: (_, __) => const DividerWidget(),
