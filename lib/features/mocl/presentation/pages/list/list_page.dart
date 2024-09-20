@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/injection.dart';
@@ -19,6 +20,10 @@ class ListPage extends StatelessWidget {
     MainItem item,
   ) {
     final textStyles = TextStyles.getTextStyles(context);
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor:
+          Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor,
+    ));
 
     return BlocProvider(
       create: (context) =>
@@ -29,13 +34,23 @@ class ListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const child = Scaffold(
-      body: CustomScrollView(
-        cacheExtent: 0,
-        slivers: <Widget>[
-          _ListAppbar(),
-          listview.ListView(),
-        ],
+    var statusBarColor =
+        Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor;
+    var child = Scaffold(
+      appBar: Platform.isIOS
+          ? AppBar(
+              toolbarHeight: 0,
+              flexibleSpace: Container(color: statusBarColor),
+            )
+          : null,
+      body: const SafeArea(
+        child: CustomScrollView(
+          cacheExtent: 0,
+          slivers: <Widget>[
+            _ListAppbar(),
+            listview.ListView(),
+          ],
+        ),
       ),
     );
     return Platform.isMacOS

@@ -31,6 +31,7 @@ class DetailAppBar extends StatelessWidget {
     final bloc = context.read<DetailViewBloc>();
     return [
       PopupMenuButton<int>(
+        icon: const Icon(Icons.more_vert),
         onSelected: (int value) {
           switch (value) {
             case 0:

@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/bloc/detail_view_bloc.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
@@ -21,7 +20,8 @@ class DetailView extends StatelessWidget {
           builder: (context, state) => state.maybeMap(
             success: (state) => _DetailView(detail: state.detail),
             failed: (state) => MessageWidget(message: state.message),
-            orElse: () => const Column(children: [LoadingWidget(), Divider()]),
+            orElse: () =>
+                const FittedBox(fit: BoxFit.none, child: LoadingWidget()),
           ),
         ),
       );
@@ -46,14 +46,6 @@ class _DetailView extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _Header(
-            userInfo: detail.userInfo,
-            time: detail.time,
-            viewCount: detail.viewCount,
-            likeCount: detail.likeCount,
-            bodySmall: bodySmall,
-          ),
-          const Divider(),
           const SizedBox(height: 10),
           _Body(
               detail: detail,
@@ -61,16 +53,14 @@ class _DetailView extends StatelessWidget {
               bodyMedium: bodyMedium,
               onTapUrl: bloc.openBrowser),
           const SizedBox(height: 10),
-          Visibility(
-            visible: detail.comments.isNotEmpty,
-            child: _Comments(
+          if (detail.comments.isNotEmpty)
+            _Comments(
               hexColor: hexColor,
               comments: detail.comments,
               bodySmall: bodySmall,
               bodyMedium: bodyMedium,
               openUrl: bloc.openBrowser,
             ),
-          ),
           const Divider(),
           _RefreshButton(onRefresh: bloc.refresh, bodyMedium: bodyMedium),
         ],
@@ -80,62 +70,6 @@ class _DetailView extends StatelessWidget {
 
   String _getHexColor(Color color) =>
       '#${color.value.toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}';
-}
-
-class _Header extends StatelessWidget {
-  final UserInfo userInfo;
-  final String time;
-  final String likeCount;
-  final String viewCount;
-  final TextStyle? bodySmall;
-
-  const _Header({
-    super.key,
-    required this.userInfo,
-    required this.time,
-    required this.likeCount,
-    required this.viewCount,
-    required this.bodySmall,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final likeView = likeCount.isNotEmpty
-        ? [
-            Icon(Icons.favorite_outline, color: bodySmall!.color, size: 17),
-            const SizedBox(width: 4),
-            Text(likeCount, style: bodySmall),
-            const SizedBox(width: 10),
-          ]
-        : [];
-
-    return SizedBox(
-      height: 42,
-      child: Center(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisSize: MainAxisSize.max,
-          children: [
-            Visibility(
-                visible: userInfo.nickImage.isNotEmpty &&
-                    !userInfo.nickImage.endsWith('/no_profile.gif'),
-                child: NickImageWidget(url: userInfo.nickImage)),
-            Text(userInfo.nickName, style: bodySmall),
-            const SizedBox(width: 10),
-            Text(time, style: bodySmall),
-            const SizedBox(width: 10),
-            const Spacer(),
-            ...likeView,
-            Icon(Icons.text_snippet_outlined,
-                color: bodySmall!.color, size: 17),
-            const SizedBox(width: 4),
-            Text(viewCount, style: bodySmall),
-            const SizedBox(width: 4),
-          ],
-        ),
-      ),
-    );
-  }
 }
 
 class _Body extends StatelessWidget {
@@ -267,7 +201,7 @@ class _CommentList extends StatelessWidget {
       shrinkWrap: true,
       physics: const ClampingScrollPhysics(),
       itemCount: comments.length,
-      itemBuilder: (context, index) => _CommentItem(
+      itemBuilder: (_, index) => _CommentItem(
         comment: comments[index],
         bodySmall: bodySmall,
         bodyMedium: bodyMedium,
@@ -313,15 +247,11 @@ class _CommentItem extends StatelessWidget {
       key: Key(comment.id.toString()),
       contentPadding: EdgeInsets.only(left: left, top: 4, bottom: 4),
       title: Row(
+        mainAxisSize: MainAxisSize.min,
         children: [
-          Visibility(
-              visible: userInfo.nickImage.isNotEmpty,
-              child: NickImageWidget(url: userInfo.nickImage)),
-          Visibility(
-              visible: userInfo.nickName.isNotEmpty,
-              child: Text(userInfo.nickName, style: bodySmall)),
-          const SizedBox(width: 8),
-          Text(comment.time, style: bodySmall),
+          if (userInfo.nickImage.isNotEmpty)
+            NickImageWidget(url: userInfo.nickImage),
+          Text(comment.info, style: bodySmall),
           ...likeView,
         ],
       ),

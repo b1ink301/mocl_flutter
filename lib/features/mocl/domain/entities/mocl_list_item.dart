@@ -15,6 +15,7 @@ class ListItem with _$ListItem {
     required String category,
     required String time,
     required String url,
+    required String info,
     required String board,
     required String boardTitle,
     required String like,
@@ -24,13 +25,14 @@ class ListItem with _$ListItem {
     required bool isRead,
   }) = _ListItem;
 
-  factory ListItem.empty() => ListItem(
+  factory ListItem.empty() => const ListItem(
         id: -1,
         title: '',
         reply: '',
         category: '',
         time: '',
         url: '',
+        info: '',
         board: '',
         boardTitle: '',
         like: '',

@@ -90,6 +90,9 @@ class _CachedListItemState extends State<CachedListItem> {
     }
 
     final reply = widget.item.reply;
+    final nickImage = widget.item.userInfo.nickImage;
+    final hasReply = reply.isNotEmpty && reply != '0';
+
     return Column(
       children: [
         const SizedBox(height: 8),
@@ -97,10 +100,18 @@ class _CachedListItemState extends State<CachedListItem> {
           height: 20,
           child: Row(
             children: [
-              Expanded(
-                child: _buildUserInfoAndTime(),
+              if (nickImage.isNotEmpty && nickImage.startsWith('http'))
+                NickImageWidget(url: nickImage),
+              Text(
+                widget.item.info,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: _isReadValue
+                    ? widget.textStyles.readSmallTextStyle
+                    : widget.textStyles.smallTextStyle,
               ),
-              if (reply.isNotEmpty && reply != '0')
+              if (hasReply) const Spacer(),
+              if (hasReply)
                 RoundTextWidget(
                   text: reply,
                   textStyle: _isReadValue
@@ -110,41 +121,6 @@ class _CachedListItemState extends State<CachedListItem> {
             ],
           ),
         ),
-      ],
-    );
-  }
-
-  Widget _buildUserInfoAndTime() {
-    final nickImage = widget.item.userInfo.nickImage;
-    final nickName = widget.item.userInfo.nickName;
-    final time = widget.item.time;
-    final textStyle = _isReadValue
-        ? widget.textStyles.readSmallTextStyle
-        : widget.textStyles.smallTextStyle;
-
-    return Row(
-      children: [
-        if (nickImage.isNotEmpty && nickImage.startsWith('http'))
-          NickImageWidget(url: nickImage),
-        if (nickName.isNotEmpty)
-          Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: Text(
-              nickName,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: textStyle,
-            ),
-          ),
-        if (time.isNotEmpty)
-          Flexible(
-            child: Text(
-              time,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: textStyle,
-            ),
-          ),
       ],
     );
   }

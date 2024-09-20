@@ -25,6 +25,7 @@ void main() async {
     reply: '',
     category: '',
     time: '',
+    info: '',
     url: 'https://damoang.net/free/1310241',
     board: 'free',
     boardTitle: '',
