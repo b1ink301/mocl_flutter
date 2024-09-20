@@ -24,18 +24,17 @@ class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
   final GetDetail _getDetail;
   final SetReadFlag _setReadFlag;
 
-  late final ReadableListItem _listItem;
-  late final SiteType _siteType;
+  final ReadableListItem _listItem;
+  final SiteType _siteType;
 
-  DetailViewBloc(this._getDetail, this._setReadFlag)
-      : super(const DetailLoading()) {
+  DetailViewBloc(
+    this._getDetail,
+    this._setReadFlag,
+    @factoryParam this._listItem,
+    @factoryParam this._siteType,
+  ) : super(const DetailLoading()) {
     on<DetailsEvent>(_onDetailsEvent);
     on<HeightEvent>(_onHeightEvent);
-  }
-
-  init(ReadableListItem item, SiteType siteType) {
-    _listItem = item;
-    _siteType = siteType;
   }
 
   String get smallTitle => '${_siteType.title} > ${_listItem.item.boardTitle}';

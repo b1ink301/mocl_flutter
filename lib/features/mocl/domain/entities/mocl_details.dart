@@ -15,6 +15,7 @@ class Details with _$Details {
     required String likeCount,
     required String bodyHtml,
     required String csrf,
+    required String info,
     required UserInfo userInfo,
     required List<DetailItem> bodies,
     required List<CommentItem> comments,
@@ -23,26 +24,18 @@ class Details with _$Details {
 
 class DetailItem {}
 
-class CommentItem {
-  final int id;
-  final String bodyHtml;
-  final String mediaHtml;
-  final bool isVideo;
-  final String time;
-  final String likeCount;
-  final UserInfo userInfo;
-  final String authorId;
-  final bool isReply;
-
-  CommentItem({
-    required this.id,
-    required this.bodyHtml,
-    required this.mediaHtml,
-    required this.isVideo,
-    required this.time,
-    required this.likeCount,
-    required this.userInfo,
-    required this.authorId,
-    required this.isReply,
-  });
+@freezed
+class CommentItem with _$CommentItem {
+  const factory CommentItem({
+    required int id,
+    required String bodyHtml,
+    required String mediaHtml,
+    required bool isVideo,
+    required String time,
+    required String info,
+    required String likeCount,
+    required UserInfo userInfo,
+    required String authorId,
+    required bool isReply,
+  }) = _CommentItem;
 }

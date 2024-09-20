@@ -62,7 +62,6 @@ class _CachedListItemState extends State<CachedListItem> {
 
   @override
   Widget build(BuildContext context) {
-    // debugPrint('CachedListItem item=${widget.item.title}');
     return ListTile(
       minVerticalPadding: 10,
       minTileHeight: 24,
@@ -74,6 +73,7 @@ class _CachedListItemState extends State<CachedListItem> {
   }
 
   Widget _buildTitleView() {
+    // debugPrint('_buildTitleView item=${widget.item.title}');
     return Text(
       widget.item.title,
       maxLines: 3,
@@ -90,6 +90,9 @@ class _CachedListItemState extends State<CachedListItem> {
     }
 
     final reply = widget.item.reply;
+    final nickImage = widget.item.userInfo.nickImage;
+    final hasReply = reply.isNotEmpty && reply != '0';
+
     return Column(
       children: [
         const SizedBox(height: 8),
@@ -97,60 +100,25 @@ class _CachedListItemState extends State<CachedListItem> {
           height: 20,
           child: Row(
             children: [
-              Expanded(
-                child: _buildUserInfoAndTime(),
+              if (nickImage.isNotEmpty && nickImage.startsWith('http'))
+                NickImageWidget(url: nickImage),
+              Text(
+                widget.item.info,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: _isReadValue
+                    ? widget.textStyles.readSmallTextStyle
+                    : widget.textStyles.smallTextStyle,
               ),
-              Visibility(
-                visible: reply.isNotEmpty && reply != '0',
-                child: RoundTextWidget(
+              if (hasReply) const Spacer(),
+              if (hasReply)
+                RoundTextWidget(
                   text: reply,
                   textStyle: _isReadValue
                       ? widget.textStyles.readBadgeTextStyle
                       : widget.textStyles.badgeTextStyle,
                 ),
-              ),
             ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildUserInfoAndTime() {
-    final nickImage = widget.item.userInfo.nickImage;
-    final nickName = widget.item.userInfo.nickName;
-    final time = widget.item.time;
-    final textStyle = _isReadValue
-        ? widget.textStyles.readSmallTextStyle
-        : widget.textStyles.smallTextStyle;
-
-    return Row(
-      children: [
-        Visibility(
-          visible: nickImage.isNotEmpty && nickImage.startsWith('http'),
-          child: NickImageWidget(url: nickImage),
-        ),
-        Visibility(
-          visible: nickName.isNotEmpty,
-          child: Padding(
-            padding: const EdgeInsets.only(right: 8.0),
-            child: Text(
-              nickName,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: textStyle,
-            ),
-          ),
-        ),
-        Visibility(
-          visible: time.isNotEmpty,
-          child: Flexible(
-            child: Text(
-              time,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-              style: textStyle,
-            ),
           ),
         ),
       ],

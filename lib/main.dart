@@ -14,7 +14,6 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await configureDependencies();
   await _firebase();
-
   runApp(
     BlocProvider(
       create: (_) => getIt<SiteTypeBloc>(),

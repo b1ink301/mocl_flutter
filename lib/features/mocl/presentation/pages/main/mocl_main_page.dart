@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
@@ -18,33 +21,41 @@ class MainPage extends StatelessWidget {
 
   static Widget withBloc(
     BuildContext context,
-  ) =>
-      MultiBlocProvider(
-        providers: [
-          BlocProvider(create: (_) => getIt<MainDataJsonBloc>()),
-          BlocProvider(
-            create: (_) {
-              final siteTypeBloc = context.read<SiteTypeBloc>();
-              final dataBloc = getIt<MainDataBloc>();
+  ) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor:
+          Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor,
+    ));
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(create: (_) => getIt<MainDataJsonBloc>()),
+        BlocProvider(
+          create: (_) {
+            final siteTypeBloc = context.read<SiteTypeBloc>();
+            final dataBloc = getIt<MainDataBloc>();
 
-              siteTypeBloc.stream.listen((siteType) {
-                dataBloc.add(MainDataEvent.getList(siteType: siteType));
-              });
+            siteTypeBloc.stream.listen((siteType) {
+              dataBloc.add(MainDataEvent.getList(siteType: siteType));
+            });
 
-              dataBloc.add(MainDataEvent.getList(siteType: siteTypeBloc.state));
-              return dataBloc;
-            },
-          ),
-        ],
-        child: const MainPage(),
-      );
+            dataBloc.add(MainDataEvent.getList(siteType: siteTypeBloc.state));
+            return dataBloc;
+          },
+        ),
+      ],
+      child: const MainPage(),
+    );
+  }
 
-  AppBar _buildAppBar(
+  Widget _buildAppBar(
     BuildContext context,
   ) {
     final siteType = context.watch<SiteTypeBloc>();
-    return AppBar(
+    var backgroundColor = Theme.of(context).appBarTheme.backgroundColor;
+    return SliverAppBar(
       title: _buildTitle(context, siteType.title),
+      flexibleSpace: Container(color: backgroundColor),
+      backgroundColor: backgroundColor,
       titleSpacing: 0,
       centerTitle: false,
       toolbarHeight: 64,
@@ -75,11 +86,29 @@ class MainPage extends StatelessWidget {
       );
 
   @override
-  Widget build(BuildContext context) => Scaffold(
-        drawer: _buildDrawer(context),
-        appBar: _buildAppBar(context),
-        body: const MainView(),
-      );
+  Widget build(BuildContext context) {
+    var statusBarColor =
+        Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor;
+
+    return Scaffold(
+      drawer: _buildDrawer(context),
+      appBar: Platform.isIOS
+          ? AppBar(
+              toolbarHeight: 0,
+              flexibleSpace: Container(color: statusBarColor),
+            )
+          : null,
+      body: SafeArea(
+        child: CustomScrollView(
+          // cacheExtent: 0,
+          slivers: <Widget>[
+            _buildAppBar(context),
+            const SliverToBoxAdapter(child: MainView()),
+          ],
+        ),
+      ),
+    );
+  }
 
   Widget _buildDrawer(BuildContext context) => DrawerWidget(
       onChangeSite: (siteType) =>
