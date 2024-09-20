@@ -12,12 +12,12 @@ class DrawerWidget extends StatefulWidget {
 }
 
 class _DrawerWidgetState extends State<DrawerWidget> {
-  late PackageInfo _packageInfo;
+  PackageInfo? _packageInfo;
 
   @override
   void initState() {
-    super.initState();
     _initPackageInfo();
+    super.initState();
   }
 
   Future<void> _initPackageInfo() async {
@@ -89,8 +89,9 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             },
           ),
           const Spacer(),
+
           ListTile(
-            title: Text('v${_packageInfo.version}+${_packageInfo.buildNumber}'),
+            title: Text('v${_packageInfo?.version} + ${_packageInfo?.buildNumber}'),
             titleTextStyle: Theme.of(context).textTheme.bodySmall,
           ),
         ],

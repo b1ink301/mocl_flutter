@@ -89,7 +89,8 @@ class _HeaderSection extends SliverPersistentHeaderDelegate {
                 final backgroundColor =
                     Theme.of(context).scaffoldBackgroundColor;
 
-                final likeView = state.detail.likeCount.isNotEmpty
+                final likeView = state.detail.likeCount.isNotEmpty &&
+                        state.detail.likeCount != '0'
                     ? [
                         const SizedBox(width: 10),
                         const Spacer(),

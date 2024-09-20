@@ -1,7 +1,9 @@
 import 'dart:async';
+import 'dart:ffi';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
@@ -64,15 +66,21 @@ class DamoangParser extends BaseParser {
         .forEach((e) => e.remove()));
 
     var viewCount = '';
-    var category = '';
     var likeCount = '';
-    if (headerElements?.length == 4) {
-      category = headerElements?.first.text.trim() ?? '';
-      viewCount = headerElements?.elementAtOrNull(1)?.text.trim() ?? '';
-      likeCount = headerElements?.elementAtOrNull(3)?.text.trim() ?? '';
-    } else if (headerElements?.length == 3) {
+    if (headerElements?.length == 2) {
       viewCount = headerElements?.elementAtOrNull(0)?.text.trim() ?? '';
       likeCount = headerElements?.elementAtOrNull(1)?.text.trim() ?? '';
+    } else if (headerElements?.length == 3) {
+      try {
+        viewCount = headerElements?.elementAtOrNull(0)?.text.trim() ?? '';
+        int.parse(viewCount);
+      } catch(e) {
+        viewCount = headerElements?.elementAtOrNull(1)?.text.trim() ?? '';
+      }
+      likeCount = headerElements?.elementAtOrNull(2)?.text.trim() ?? '';
+    } else if (headerElements?.length == 4) {
+      viewCount = headerElements?.elementAtOrNull(1)?.text.trim() ?? '';
+      likeCount = headerElements?.elementAtOrNull(3)?.text.trim() ?? '';
     }
 
     // final authorIp = container
