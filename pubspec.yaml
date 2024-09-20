@@ -89,6 +89,7 @@ dependencies:
   package_info_plus: ^8.0.2
 
   timeago: ^3.7.0
+  sentry_flutter: ^8.9.0
 
 dev_dependencies:
   flutter_test:
