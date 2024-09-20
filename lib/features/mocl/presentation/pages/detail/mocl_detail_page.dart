@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/presentation/injection.dart';
@@ -9,6 +10,8 @@ import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_ite
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/bloc/detail_view_bloc.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/detail_appbar.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/mocl_detail_view.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 
 class DetailPage extends StatelessWidget {
   const DetailPage({super.key});
@@ -21,6 +24,11 @@ class DetailPage extends StatelessWidget {
     final textStyle = Theme.of(context).textTheme.labelMedium!;
     final textWidth = MediaQuery.of(context).size.width;
 
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+        statusBarColor:
+            Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor,
+        statusBarBrightness: Brightness.dark));
+
     return BlocProvider(
       create: (context) => getIt<DetailViewBloc>(param1: item, param2: siteType)
         ..add(DetailViewEvent.height(item.item.title, textStyle, textWidth))
@@ -31,12 +39,26 @@ class DetailPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    const child = Scaffold(
-      body: CustomScrollView(
-        slivers: <Widget>[
-          DetailAppBar(),
-          SliverToBoxAdapter(child: DetailView()),
-        ],
+    var statusBarColor =
+        Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor;
+    var child = Scaffold(
+      appBar: Platform.isIOS
+          ? AppBar(
+              toolbarHeight: 0,
+              flexibleSpace: Container(color: statusBarColor),
+            )
+          : null,
+      body: SafeArea(
+        child: CustomScrollView(
+          slivers: [
+            const DetailAppBar(),
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: _HeaderSection(),
+            ),
+            const SliverToBoxAdapter(child: DetailView()),
+          ],
+        ),
       ),
     );
 
@@ -50,5 +72,74 @@ class DetailPage extends StatelessWidget {
             child: child,
           )
         : child;
+  }
+}
+
+class _HeaderSection extends SliverPersistentHeaderDelegate {
+  @override
+  Widget build(
+      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    return BlocBuilder<DetailViewBloc, DetailViewState>(
+        buildWhen: (previous, current) => current is DetailSuccess,
+        builder: (context, state) {
+          return state.maybeMap(
+              orElse: () => SizedBox(height: Platform.isIOS ? 44 : 45),
+              success: (state) {
+                final bodySmall = Theme.of(context).textTheme.bodySmall!;
+                final backgroundColor =
+                    Theme.of(context).scaffoldBackgroundColor;
+
+                final likeView = state.detail.likeCount.isNotEmpty
+                    ? [
+                        const SizedBox(width: 10),
+                        const Spacer(),
+                        Icon(Icons.favorite_outline,
+                            color: bodySmall.color, size: 17),
+                        const SizedBox(width: 4),
+                        Text(state.detail.likeCount, style: bodySmall),
+                        const SizedBox(width: 10),
+                      ]
+                    : [];
+                return Align(
+                  child: Container(
+                    color: backgroundColor,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            mainAxisSize: MainAxisSize.max,
+                            // mainAxisSize: MainAxisSize.min,
+                            children: [
+                              if (state.detail.userInfo.nickImage.isNotEmpty &&
+                                  !state.detail.userInfo.nickImage
+                                      .endsWith('/no_profile.gif'))
+                                NickImageWidget(
+                                    url: state.detail.userInfo.nickImage),
+                              Text(state.detail.info, style: bodySmall),
+                              ...likeView,
+                            ],
+                          ),
+                        ),
+                        const DividerWidget(),
+                      ],
+                    ),
+                  ),
+                );
+              });
+        });
+  }
+
+  @override
+  double get maxExtent => Platform.isIOS ? 44 : 45;
+
+  @override
+  double get minExtent => Platform.isIOS ? 44 : 45;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
+    return false;
   }
 }

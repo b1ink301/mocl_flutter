@@ -11,6 +11,7 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
+import 'package:timeago/timeago.dart' as timeago;
 
 @lazySingleton
 class DamoangParser extends BaseParser {
@@ -38,12 +39,15 @@ class DamoangParser extends BaseParser {
     final responseData = args[0] as String;
     final sendPort = args[1] as SendPort;
 
+    timeago.setLocaleMessages('ko', timeago.KoMessages());
+
     var document = parse(responseData);
     final container = document.querySelector('article[id=bo_v]');
     final title =
         container?.querySelector('header > h1[id=bo_v_title]')?.text.trim() ??
             '';
-    final timeElement = container?.querySelector('section[id=bo_v_info] > div.d-flex > div:last-child'); //:first-child, div:nth-child(2)
+    final timeElement = container?.querySelector(
+        'section[id=bo_v_info] > div.d-flex > div:last-child'); //:first-child, div:nth-child(2)
     timeElement?.querySelector("span.visually-hidden")?.remove();
     final time = timeElement?.text.trim() ?? '';
     final bodyHtml =
@@ -54,11 +58,23 @@ class DamoangParser extends BaseParser {
 
     final headerElements = container
         ?.querySelectorAll('section[id=bo_v_info] > div.gap-1 > div.pe-2');
+
     headerElements?.forEach((element) => element
         .querySelectorAll('i, span.visually-hidden')
         .forEach((e) => e.remove()));
-    // final category = headerElements?.first.text.trim() ?? '';
-    final viewCount = headerElements?.elementAtOrNull(1)?.text.trim() ?? '';
+
+    var viewCount = '';
+    var category = '';
+    var likeCount = '';
+    if (headerElements?.length == 4) {
+      category = headerElements?.first.text.trim() ?? '';
+      viewCount = headerElements?.elementAtOrNull(1)?.text.trim() ?? '';
+      likeCount = headerElements?.elementAtOrNull(3)?.text.trim() ?? '';
+    } else if (headerElements?.length == 3) {
+      viewCount = headerElements?.elementAtOrNull(0)?.text.trim() ?? '';
+      likeCount = headerElements?.elementAtOrNull(1)?.text.trim() ?? '';
+    }
+
     // final authorIp = container
     //         ?.querySelector('section[id=bo_v_info] > div > div.me-auto')
     //         ?.attributes['data-bs-title'] ??
@@ -71,7 +87,6 @@ class DamoangParser extends BaseParser {
             ?.querySelector('span.profile_img > img')
             ?.attributes['src'] ??
         '';
-    final likeCount = headerElements?.elementAtOrNull(2)?.text.trim() ?? '';
 
     var index = 0;
     final comments = container
@@ -92,18 +107,22 @@ class DamoangParser extends BaseParser {
               //             'div.comment_info > div.comment_info_area > div.comment_ip > span.ip_address')
               //         ?.text ??
               //     '';
-              final time =
-                  element.querySelector('div.ms-auto > span.orangered')?.text ??
-                      '';
+              final timeElement = element.querySelector(
+                  'div.comment-list-wrap > header > div > div.ms-auto');
+              timeElement?.querySelector("span.visually-hidden")?.remove();
+              final time = timeElement?.text.trim() ?? '';
+
               final nickImage = nickElement
                       ?.querySelector('span.profile_img > img.mb-photo')
-                      ?.attributes['src'] ??
+                      ?.attributes['src']
+                      ?.trim() ??
                   '';
 
               final likeCount = element
                       .querySelector(
                           'div.comment-content > div.d-flex > div:last-child > button:last-child > span:first-child')
-                      ?.text ??
+                      ?.text
+                      .trim() ??
                   '';
 
               final body =
@@ -111,23 +130,25 @@ class DamoangParser extends BaseParser {
               body
                   ?.querySelectorAll('input, span.name, button')
                   .forEach((e) => e.remove());
-              final video = element
-                      .querySelector('div.comment-video > video > source')
-                      ?.attributes['src'] ??
-                  '';
-              final img = element
-                      .querySelector('div.comment-img > img')
-                      ?.attributes['src'] ??
-                  '';
+
+              var parsedTime = '';
+              try {
+                var dateTime = parseDateTime(time);
+                parsedTime = timeago.format(dateTime, locale: 'ko');
+              } catch (e) {
+                parsedTime = time;
+              }
+              var info = '$nickName ・ $parsedTime';
 
               return CommentItem(
                 id: index++,
                 isReply: isReply,
                 bodyHtml: body?.outerHtml ?? '',
                 likeCount: likeCount,
-                mediaHtml: img.isEmpty ? video : img,
-                isVideo: video.isNotEmpty,
+                mediaHtml: '',
+                isVideo: false,
                 time: time,
+                info: info,
                 userInfo: UserInfo(
                   id: id,
                   nickName: nickName,
@@ -140,12 +161,22 @@ class DamoangParser extends BaseParser {
             .toList() ??
         [];
 
+    var parsedTime = '';
+    try {
+      var dateTime = parseDateTime(time);
+      parsedTime = timeago.format(dateTime, locale: 'ko');
+    } catch (e) {
+      parsedTime = time;
+    }
+    var info = '$nickName ・ $parsedTime ・ $viewCount 읽음';
+
     var detail = Details(
       title: title,
       viewCount: viewCount,
       likeCount: likeCount,
       csrf: '',
       time: time,
+      info: info,
       userInfo: UserInfo(
         id: nickName,
         nickName: nickName,
@@ -200,6 +231,8 @@ class DamoangParser extends BaseParser {
 
     var parsedItems = <Map<String, dynamic>>[];
     var ids = <int>[];
+
+    timeago.setLocaleMessages('ko', timeago.KoMessages());
 
     var document = parse(responseData);
     var elementList = document.querySelectorAll(
@@ -259,6 +292,13 @@ class DamoangParser extends BaseParser {
           .forEach((ele) => ele.remove());
 
       var time = timeElement?.text.trim() ?? '';
+      var parsedTime = '';
+      try {
+        var dateTime = parseDateTime(time);
+        parsedTime = timeago.format(dateTime, locale: 'ko');
+      } catch (e) {
+        parsedTime = time;
+      }
 
       var nickImage = metaElement
               ?.querySelector("span.profile_img > img.mb-photo")
@@ -282,12 +322,15 @@ class DamoangParser extends BaseParser {
               ?.hasContent() ??
           false;
 
+      final info = '$nickName ・ $parsedTime ・ $hit 읽음';
+
       var parsedItem = {
         'id': id,
         'title': title,
         'reply': reply,
         'category': category,
         'time': time,
+        'info': info,
         'url': url,
         'board': board,
         'boardTitle': boardTitle,
@@ -317,6 +360,7 @@ class DamoangParser extends BaseParser {
               category: item['category'],
               time: item['time'],
               url: item['url'],
+              info: item['info'],
               board: item['board'],
               boardTitle: item['boardTitle'],
               like: item['like'],
@@ -328,5 +372,55 @@ class DamoangParser extends BaseParser {
         .toList();
 
     replyPort.send(resultList);
+  }
+
+  static DateTime parseDateTime(String dateTimeString) {
+    var parts = dateTimeString.split(' ');
+
+    final now = DateTime.now();
+
+    if (parts.length == 2) {
+      parts = dateTimeString.split(' ');
+      final dateParts = parts[0].split('.');
+
+      late int month;
+      late int day;
+      late int year;
+      late int hour;
+      late int minute;
+
+      if (dateParts.length == 3) {
+        year = int.parse(dateParts[0]);
+        month = int.parse(dateParts[1]);
+        day = int.parse(dateParts[2]);
+      } else if (dateParts.length == 2) {
+        month = int.parse(dateParts[0]);
+        day = int.parse(dateParts[1]);
+        year = now.year;
+      } else {
+        year = now.year;
+        if (dateParts[0] == '어제') {
+          final yesterday = now.add(const Duration(days: -1));
+          month = yesterday.month;
+          day = yesterday.day;
+        } else {
+          throw Exception('Error parsing $dateTimeString');
+        }
+      }
+
+      final timeParts = parts[1].split(':');
+      if (timeParts.length == 2) {
+        hour = int.parse(timeParts[0]);
+        minute = int.parse(timeParts[1]);
+      }
+      return DateTime(year, month, day, hour, minute);
+    } else if (parts.length == 1) {
+      final timeParts = parts[0].split(':');
+      final hour = int.parse(timeParts[0]);
+      final minute = int.parse(timeParts[1]);
+      return DateTime(now.year, now.month, now.day, hour, minute);
+    } else {
+      throw Exception('Error parsing $dateTimeString');
+    }
   }
 }

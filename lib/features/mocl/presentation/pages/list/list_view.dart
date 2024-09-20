@@ -17,7 +17,7 @@ class ListView extends StatelessWidget {
           final ListPageCubit bloc = context.read<ListPageCubit>();
 
           return SliverInfiniteListView.separated(
-            enableShrinkWrapForFirstPageIndicators: true,
+            // enableShrinkWrapForFirstPageIndicators: true,
             delegate: PaginationDelegate(
               isLoading: state is LoadingList,
               hasError: state is FailedList,
@@ -25,8 +25,7 @@ class ListView extends StatelessWidget {
               invisibleItemsThreshold: 1,
               itemCount: bloc.listCount,
               loadMoreLoadingBuilder: (_) => const LoadingWidget(),
-              firstPageLoadingBuilder: (_) =>
-                  const Column(children: [LoadingWidget(), DividerWidget()]),
+              firstPageLoadingBuilder: (_) => const LoadingWidget(),
               itemBuilder: (context, index) {
                 final item = bloc.getItem(index);
                 return CachedItemBuilder(
