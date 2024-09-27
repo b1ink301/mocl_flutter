@@ -29,13 +29,24 @@ class SetListDialog extends StatelessWidget {
   Widget build(BuildContext context) => _buildAlertDialog(context);
 
   AlertDialog _buildAlertDialog(BuildContext context) => AlertDialog(
-        title: Text(
-          '게시판 선택',
-          style: Theme.of(context).textTheme.headlineSmall,
+        title: Column(
+          children: [
+            const SizedBox(height: 20),
+            Text(
+              '게시판 선택',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+            const SizedBox(height: 20),
+            const DividerWidget(thickness: 2, indent: 8, endIndent: 8),
+          ],
         ),
+        elevation: 8,
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+        titlePadding: EdgeInsets.zero,
         content: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.65,
-          height: MediaQuery.of(context).size.height * 0.6,
+          width: MediaQuery.of(context).size.width * 0.7,
+          height: MediaQuery.of(context).size.height * 0.7,
           child: BlocBuilder<MainDataJsonBloc, MainDataJsonState>(
             builder: (context, state) {
               final bloc = context.read<MainDataJsonBloc>();
@@ -61,7 +72,7 @@ class SetListDialog extends StatelessWidget {
                 }
               },
               child: Text(
-                '닫기',
+                '적용',
                 style: Theme.of(context).textTheme.headlineSmall,
               ),
             ),
@@ -79,10 +90,11 @@ class SetListDialog extends StatelessWidget {
         itemCount: data.length,
         itemBuilder: (context, index) {
           final item = data[index];
+          final bloc = context.read<MainDataJsonBloc>();
           return CheckBoxListTitleWidget<MainItem>(
             text: item.text,
             object: item,
-            isChecked: item.hasItem,
+            isChecked: bloc.hasItem(item),
             textStyle: Theme.of(context).textTheme.bodyMedium,
             onChanged: onChanged,
           );

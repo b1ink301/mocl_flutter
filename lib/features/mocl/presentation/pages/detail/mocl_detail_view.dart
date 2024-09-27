@@ -90,12 +90,7 @@ class _Body extends StatelessWidget {
   Widget build(BuildContext context) {
     return HtmlWidget(
       detail.bodyHtml,
-      onLoadingBuilder: (
-        context,
-        element,
-        progress,
-      ) =>
-          const LoadingWidget(),
+      onLoadingBuilder: (_, __, ___) => const LoadingWidget(),
       customStylesBuilder: (element) {
         if (element.localName == 'a') {
           return {'color': hexColor, 'text-decoration': 'underline'};

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui';
 
 import 'package:firebase_core/firebase_core.dart';
@@ -14,7 +15,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await configureDependencies();
-  await _firebase();
+  unawaited(_firebase());
 
   await SentryFlutter.init(
     (options) {

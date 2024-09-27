@@ -443,6 +443,7 @@ class ClienParser extends BaseParser {
     final readStatusPort = ReceivePort();
     replyPort.send(ReadStatusRequest(ids, readStatusPort.sendPort));
     var readStatusResponse = await readStatusPort.first as ReadStatusResponse;
+    readStatusPort.close();
 
     var resultList = parsedItems
         .map((item) => ListItem(

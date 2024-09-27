@@ -1,6 +1,5 @@
 import 'package:bloc/bloc.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
@@ -43,6 +42,7 @@ class ListPageCubit extends Cubit<ListPageState> {
   ) : super(const ListPageState.loading()) {
     _hasReachedMax =
         _mainItem.siteType == SiteType.clien && _mainItem.board == 'recommend';
+    _page = _mainItem.siteType == SiteType.clien ? 0 : 1;
   }
 
   String get smallTitle => _mainItem.siteType.title;
