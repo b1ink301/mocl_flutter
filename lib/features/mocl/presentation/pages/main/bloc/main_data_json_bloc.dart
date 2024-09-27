@@ -22,9 +22,6 @@ class MainDataJsonBloc extends Bloc<MainDataJsonEvent, MainDataJsonState> {
   final List<MainItem> _selectedItems = [];
   List<MainItem> get selectedItems => _selectedItems;
 
-  // final _mainStreamController = StreamController<MainDataState>.broadcast();
-  // Stream<MainDataState> get stateStream => _mainStreamController.stream;
-
   MainDataJsonBloc({
     required this.getMainListFromJson,
     required this.setMainList,
@@ -81,4 +78,6 @@ class MainDataJsonBloc extends Bloc<MainDataJsonEvent, MainDataJsonState> {
     _addAll(data);
     log('MainDlgViewModel List=$_selectedItems');
   }
+
+  bool hasItem(MainItem item) => _selectedItems.contains(item);
 }

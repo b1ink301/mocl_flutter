@@ -45,7 +45,7 @@ class ListPage extends StatelessWidget {
           : null,
       body: const SafeArea(
         child: CustomScrollView(
-          cacheExtent: 0,
+          cacheExtent: 200,
           slivers: <Widget>[
             _ListAppbar(),
             listview.ListView(),
