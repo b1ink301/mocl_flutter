@@ -171,8 +171,12 @@ class _$MainDao extends MainDao {
   }
 
   @override
-  Future<MainItemData?> findByBoard(String board) async {
-    return _queryAdapter.query('SELECT * FROM main WHERE board = ?1',
+  Future<MainItemData?> findByBoard(
+    SiteType siteType,
+    String board,
+  ) async {
+    return _queryAdapter.query(
+        'SELECT * FROM main WHERE siteType = ?1 AND board = ?2',
         mapper: (Map<String, Object?> row) => MainItemData(
             board: row['board'] as String,
             orderBy: row['orderBy'] as int,
@@ -180,7 +184,7 @@ class _$MainDao extends MainDao {
             text: row['text'] as String,
             url: row['url'] as String,
             siteType: SiteType.values[row['siteType'] as int]),
-        arguments: [board]);
+        arguments: [siteType.index, board]);
   }
 
   @override

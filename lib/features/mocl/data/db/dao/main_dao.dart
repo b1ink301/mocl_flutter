@@ -10,8 +10,8 @@ abstract class MainDao {
   @Query('SELECT * FROM main WHERE siteType = :siteType ORDER BY orderBy ASC')
   Future<List<MainItemData>> findBySiteType(SiteType siteType);
 
-  @Query('SELECT * FROM main WHERE board = :board')
-  Future<MainItemData?> findByBoard(String board);
+  @Query('SELECT * FROM main WHERE siteType = :siteType AND board = :board')
+  Future<MainItemData?> findByBoard(SiteType siteType, String board);
 
   @Insert(onConflict: OnConflictStrategy.replace)
   Future<int> insertItem(MainItemData entity);

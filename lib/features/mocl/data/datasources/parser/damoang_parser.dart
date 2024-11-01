@@ -174,7 +174,7 @@ class DamoangParser extends BaseParser {
     } catch (e) {
       parsedTime = time;
     }
-    var info = '$nickName ・ $parsedTime ・ $viewCount 읽음';
+    final info = BaseParser.parserInfo(nickName, parsedTime, viewCount);
 
     var detail = Details(
       title: title,
@@ -328,9 +328,9 @@ class DamoangParser extends BaseParser {
               ?.hasContent() ??
           false;
 
-      final info = '$nickName ・ $parsedTime ・ $hit 읽음';
+      final info = BaseParser.parserInfo(nickName, parsedTime, hit);
 
-      var parsedItem = {
+      final parsedItem = {
         'id': id,
         'title': title,
         'reply': reply,
@@ -384,7 +384,7 @@ class DamoangParser extends BaseParser {
   static DateTime parseDateTime(String dateTimeString) {
     final now = DateTime.now();
 
-    if (dateTimeString.contains('.')) {
+    if (dateTimeString.contains(' ')) {
       // 년.월.일 형식
       var parts = dateTimeString.split(' ');
       var dateParts = parts[0].split('.');

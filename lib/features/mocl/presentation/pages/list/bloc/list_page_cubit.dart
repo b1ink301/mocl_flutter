@@ -9,7 +9,6 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_list.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_text_styles.dart';
 import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
 
 part 'list_page_state.dart';
@@ -20,7 +19,7 @@ part 'list_page_cubit.freezed.dart';
 class ListPageCubit extends Cubit<ListPageState> {
   final GetList _getList;
   final MainItem _mainItem;
-  final TextStyles _textStyles;
+  // final TextStyles _textStyles;
   int _lastId = -1;
   int _page = 1;
 
@@ -38,23 +37,27 @@ class ListPageCubit extends Cubit<ListPageState> {
   ListPageCubit(
     this._getList,
     @factoryParam this._mainItem,
-    @factoryParam this._textStyles,
-  ) : super(const ListPageState.loading()) {
+    // @factoryParam this._textStyles,
+  ) : super(const LoadingList()) {
     _hasReachedMax =
         _mainItem.siteType == SiteType.clien && _mainItem.board == 'recommend';
-    _page = _mainItem.siteType == SiteType.clien ? 0 : 1;
+    _initPage();
   }
 
   String get smallTitle => _mainItem.siteType.title;
 
   String get title => _mainItem.text;
 
-  TextStyles get textStyles => _textStyles;
+  // TextStyles get textStyles => _textStyles;
+
+  _initPage() {
+    _page = _mainItem.siteType == SiteType.clien ? 0 : 1;
+  }
 
   Future<void> refresh() async {
     _lastId = -1;
     _list.clear();
-    _page = 1;
+    _initPage();
     _hasReachedMax = false;
     await fetchPage();
   }

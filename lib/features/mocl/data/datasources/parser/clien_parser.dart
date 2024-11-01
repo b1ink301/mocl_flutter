@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:html/parser.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
@@ -111,7 +112,9 @@ class ClienParser extends BaseParser {
             .trim() ??
         '';
     var timeElement = container?.querySelector(
-        "div.post_view > div.post_information > div.post_time > div.post_date");
+        "div.post_information > div.post_time > div.post_date");
+
+    debugPrint('timeElement = ${timeElement?.outerHtml}');
     timeElement?.querySelectorAll('.fa').forEach((element) => element.remove());
     var time = timeElement?.text.trim() ?? '';
     var tmp = time.split('수정일 :');
@@ -125,11 +128,12 @@ class ClienParser extends BaseParser {
         .forEach((element) => element.remove());
     var bodyHtml = bodyHtmlElement?.outerHtml ?? '';
     var viewCountElement = container?.querySelector(
-        "div.post_view > div.post_information > div.post_time > div.view_count");
+        "div.post_information > div.post_time > div.view_count");
     viewCountElement
         ?.querySelectorAll('.fa')
         .forEach((element) => element.remove());
     var viewCount = viewCountElement?.text.trim() ?? '';
+
     var authorIpElement = container
         ?.querySelector("div.post_view > div.post_information > div.author_ip");
     authorIpElement
@@ -166,13 +170,7 @@ class ClienParser extends BaseParser {
     } catch (e) {
       parsedTime = time;
     }
-    var info = '';
-    if (nickName.isNotEmpty) {
-      info = '$nickName ・ $parsedTime ・ $viewCount 읽음';
-    } else {
-      info = '$parsedTime ・ $viewCount 읽음';
-      ;
-    }
+    final info = BaseParser.parserInfo(nickName, parsedTime, viewCount);
 
     var comments = container
             ?.querySelectorAll(
@@ -409,12 +407,8 @@ class ClienParser extends BaseParser {
       } catch (e) {
         parsedTime = time;
       }
-      var info = '';
-      if (nickName.isNotEmpty) {
-        info = '$nickName ・ $parsedTime ・ $hit 읽음';
-      } else {
-        info = '$parsedTime ・ $hit 읽음';
-      }
+
+      final info = BaseParser.parserInfo(nickName, parsedTime, hit);
 
       var parsedItem = {
         'id': id,
