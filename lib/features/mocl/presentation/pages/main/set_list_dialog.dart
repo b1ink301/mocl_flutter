@@ -37,7 +37,7 @@ class SetListDialog extends StatelessWidget {
               style: Theme.of(context).textTheme.headlineSmall,
             ),
             const SizedBox(height: 20),
-            const DividerWidget(thickness: 2, indent: 8, endIndent: 8),
+            const DividerWidget(thickness: 1, indent: 16, endIndent: 16),
           ],
         ),
         elevation: 8,

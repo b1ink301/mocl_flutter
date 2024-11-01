@@ -1,5 +1,6 @@
 import 'dart:core';
 
+import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
@@ -50,9 +51,10 @@ class MainRepositoryImpl extends MainRepository {
   }) async {
     try {
       final mainData = await dataSource.getAllFromJson(siteType);
+      debugPrint('');
       final result = mainData.map((data) => data.toEntity(siteType));
       var futures = result.map((item) async {
-        var hasItem = await dataSource.hasItem(item);
+        var hasItem = await dataSource.hasItem(siteType, item);
         return item.copyWith(hasItem: hasItem);
       }).toList();
 

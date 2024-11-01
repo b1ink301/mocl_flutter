@@ -20,8 +20,10 @@ class DetailView extends StatelessWidget {
           builder: (context, state) => state.maybeMap(
             success: (state) => _DetailView(detail: state.detail),
             failed: (state) => MessageWidget(message: state.message),
-            orElse: () =>
-                const FittedBox(fit: BoxFit.none, child: LoadingWidget()),
+            orElse: () {
+              final height = MediaQuery.of(context).size.height - 200;
+              return SizedBox(height: height, child: LoadingWidget());
+            },
           ),
         ),
       );
@@ -279,8 +281,11 @@ class _RefreshButton extends StatelessWidget {
   final VoidCallback onRefresh;
   final TextStyle? bodyMedium;
 
-  const _RefreshButton(
-      {super.key, required this.onRefresh, required this.bodyMedium});
+  const _RefreshButton({
+    super.key,
+    required this.onRefresh,
+    required this.bodyMedium,
+  });
 
   @override
   Widget build(BuildContext context) {

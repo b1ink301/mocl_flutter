@@ -67,30 +67,64 @@ class _CachedListItemState extends State<CachedListItem> {
       minTileHeight: 24,
       contentPadding: const EdgeInsets.only(left: 16, right: 12),
       onTap: widget.onTap,
-      title: _buildTitleView(),
-      subtitle: _buildBottomView(),
+      title: TitleView(
+        title: widget.item.title,
+        isRead: _isReadValue,
+        textStyles: widget.textStyles,
+      ),
+      subtitle: BottomView(
+        item: widget.item,
+        isRead: _isReadValue,
+        textStyles: widget.textStyles,
+      ),
     );
   }
+}
 
-  Widget _buildTitleView() {
-    // debugPrint('_buildTitleView item=${widget.item.title}');
+class TitleView extends StatelessWidget {
+  final String title;
+  final bool isRead;
+  final TextStyles textStyles;
+
+  const TitleView({
+    super.key,
+    required this.title,
+    required this.isRead,
+    required this.textStyles,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    debugPrint('TitleView build: title=$title');
     return Text(
-      widget.item.title,
+      title,
       maxLines: 3,
       overflow: TextOverflow.ellipsis,
-      style: _isReadValue
-          ? widget.textStyles.readTitleTextStyle
-          : widget.textStyles.titleTextStyle,
+      style: isRead ? textStyles.readTitleTextStyle : textStyles.titleTextStyle,
     );
   }
+}
 
-  Widget? _buildBottomView() {
-    if (widget.item.userInfo.id.isEmpty) {
-      return null;
+class BottomView extends StatelessWidget {
+  final ListItem item;
+  final bool isRead;
+  final TextStyles textStyles;
+
+  const BottomView({
+    super.key,
+    required this.item,
+    required this.isRead,
+    required this.textStyles,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    if (item.userInfo.id.isEmpty) {
+      return const SizedBox.shrink();
     }
 
-    final reply = widget.item.reply;
-    final nickImage = widget.item.userInfo.nickImage;
+    final reply = item.reply;
+    final nickImage = item.userInfo.nickImage;
     final hasReply = reply.isNotEmpty && reply != '0';
 
     return Column(
@@ -102,26 +136,68 @@ class _CachedListItemState extends State<CachedListItem> {
             children: [
               if (nickImage.isNotEmpty && nickImage.startsWith('http'))
                 NickImageWidget(url: nickImage),
-              Text(
-                widget.item.info,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: _isReadValue
-                    ? widget.textStyles.readSmallTextStyle
-                    : widget.textStyles.smallTextStyle,
+              InfoText(
+                info: item.info,
+                isRead: isRead,
+                textStyles: textStyles,
               ),
               if (hasReply) const Spacer(),
               if (hasReply)
                 RoundTextWidget(
                   text: reply,
-                  textStyle: _isReadValue
-                      ? widget.textStyles.readBadgeTextStyle
-                      : widget.textStyles.badgeTextStyle,
+                  textStyle: isRead
+                      ? textStyles.readBadgeTextStyle
+                      : textStyles.badgeTextStyle,
                 ),
             ],
           ),
         ),
       ],
+    );
+  }
+}
+
+class InfoText extends StatelessWidget {
+  final String info;
+  final bool isRead;
+  final TextStyles textStyles;
+
+  const InfoText({
+    super.key,
+    required this.info,
+    required this.isRead,
+    required this.textStyles,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Text(
+      info,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: isRead ? textStyles.readSmallTextStyle : textStyles.smallTextStyle,
+    );
+  }
+}
+
+class ReplyBadge extends StatelessWidget {
+  final String reply;
+  final bool isRead;
+  final TextStyles textStyles;
+
+  const ReplyBadge({
+    super.key,
+    required this.reply,
+    required this.isRead,
+    required this.textStyles,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return RoundTextWidget(
+      text: reply,
+      textStyle:
+          isRead ? textStyles.readBadgeTextStyle : textStyles.badgeTextStyle,
     );
   }
 }
