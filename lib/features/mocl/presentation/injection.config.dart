@@ -44,7 +44,6 @@ import 'injection.dart' as _i464;
 import 'models/readable_list_item.dart' as _i923;
 import 'pages/detail/bloc/detail_view_bloc.dart' as _i83;
 import 'pages/list/bloc/list_page_cubit.dart' as _i588;
-import 'pages/list/mocl_text_styles.dart' as _i161;
 import 'pages/main/bloc/main_data_bloc.dart' as _i413;
 import 'pages/main/bloc/main_data_json_bloc.dart' as _i51;
 import 'pages/main/bloc/site_type_bloc.dart' as _i1067;
@@ -129,14 +128,13 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i902.SetReadFlag(listRepository: gh<_i480.ListRepository>()));
     gh.factory<_i145.GetReadFlag>(
         () => _i145.GetReadFlag(listRepository: gh<_i480.ListRepository>()));
-    gh.factoryParam<_i588.ListPageCubit, _i975.MainItem, _i161.TextStyles>((
+    gh.factoryParam<_i588.ListPageCubit, _i975.MainItem, dynamic>((
       _mainItem,
-      _textStyles,
+      _,
     ) =>
         _i588.ListPageCubit(
           gh<_i716.GetList>(),
           _mainItem,
-          _textStyles,
         ));
     gh.factoryParam<_i83.DetailViewBloc, _i923.ReadableListItem,
         _i891.SiteType>((

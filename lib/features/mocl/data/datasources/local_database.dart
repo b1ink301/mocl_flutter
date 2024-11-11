@@ -33,7 +33,9 @@ class LocalDatabase {
     SiteType siteType,
     MainItemData entity,
   ) =>
-      _database.mainDao.findByBoard(entity.board).then((data) => data != null);
+      _database.mainDao
+          .findByBoard(siteType, entity.board)
+          .then((data) => data != null);
 
   Future<bool> isRead(
     SiteType siteType,

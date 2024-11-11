@@ -1,9 +1,7 @@
 import 'dart:async';
-import 'dart:ffi';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/material.dart';
 import 'package:html/parser.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
@@ -74,7 +72,7 @@ class DamoangParser extends BaseParser {
       try {
         viewCount = headerElements?.elementAtOrNull(0)?.text.trim() ?? '';
         int.parse(viewCount);
-      } catch(e) {
+      } catch (e) {
         viewCount = headerElements?.elementAtOrNull(1)?.text.trim() ?? '';
       }
       likeCount = headerElements?.elementAtOrNull(2)?.text.trim() ?? '';
@@ -176,7 +174,7 @@ class DamoangParser extends BaseParser {
     } catch (e) {
       parsedTime = time;
     }
-    var info = '$nickName ・ $parsedTime ・ $viewCount 읽음';
+    final info = BaseParser.parserInfo(nickName, parsedTime, viewCount);
 
     var detail = Details(
       title: title,
@@ -330,9 +328,9 @@ class DamoangParser extends BaseParser {
               ?.hasContent() ??
           false;
 
-      final info = '$nickName ・ $parsedTime ・ $hit 읽음';
+      final info = BaseParser.parserInfo(nickName, parsedTime, hit);
 
-      var parsedItem = {
+      final parsedItem = {
         'id': id,
         'title': title,
         'reply': reply,
@@ -358,9 +356,10 @@ class DamoangParser extends BaseParser {
 
     final readStatusPort = ReceivePort();
     replyPort.send(ReadStatusRequest(ids, readStatusPort.sendPort));
-    var readStatusResponse = await readStatusPort.first as ReadStatusResponse;
+    final readStatusResponse = await readStatusPort.first as ReadStatusResponse;
+    readStatusPort.close();
 
-    var resultList = parsedItems
+    final resultList = parsedItems
         .map((item) => ListItem(
               id: item['id'],
               title: item['title'],
@@ -383,50 +382,33 @@ class DamoangParser extends BaseParser {
   }
 
   static DateTime parseDateTime(String dateTimeString) {
-    var parts = dateTimeString.split(' ');
-
     final now = DateTime.now();
 
-    if (parts.length == 2) {
-      parts = dateTimeString.split(' ');
-      final dateParts = parts[0].split('.');
+    if (dateTimeString.contains(' ')) {
+      // 년.월.일 형식
+      var parts = dateTimeString.split(' ');
+      var dateParts = parts[0].split('.');
+      var timeParts = parts[1].split(':');
 
-      late int month;
-      late int day;
-      late int year;
-      late int hour;
-      late int minute;
-
-      if (dateParts.length == 3) {
-        year = int.parse(dateParts[0]);
-        month = int.parse(dateParts[1]);
-        day = int.parse(dateParts[2]);
-      } else if (dateParts.length == 2) {
-        month = int.parse(dateParts[0]);
-        day = int.parse(dateParts[1]);
-        year = now.year;
-      } else {
-        year = now.year;
-        if (dateParts[0] == '어제') {
-          final yesterday = now.add(const Duration(days: -1));
-          month = yesterday.month;
-          day = yesterday.day;
-        } else {
-          throw Exception('Error parsing $dateTimeString');
-        }
-      }
-
-      final timeParts = parts[1].split(':');
-      if (timeParts.length == 2) {
-        hour = int.parse(timeParts[0]);
-        minute = int.parse(timeParts[1]);
-      }
-      return DateTime(year, month, day, hour, minute);
-    } else if (parts.length == 1) {
-      final timeParts = parts[0].split(':');
-      final hour = int.parse(timeParts[0]);
-      final minute = int.parse(timeParts[1]);
-      return DateTime(now.year, now.month, now.day, hour, minute);
+      return DateTime(
+        int.parse(dateParts[0]),
+        int.parse(dateParts[1]),
+        int.parse(dateParts[2]),
+        int.parse(timeParts[0]),
+        int.parse(timeParts[1]),
+      );
+    } else if (dateTimeString.contains(':')) {
+      // 시:분 형식
+      var timeParts = dateTimeString.split(':');
+      return DateTime(
+        now.year,
+        now.month,
+        now.day,
+        int.parse(timeParts[0]),
+        int.parse(timeParts[1]),
+      );
+    } else if (dateTimeString == '어제') {
+      return now.subtract(const Duration(days: 1));
     } else {
       throw Exception('Error parsing $dateTimeString');
     }

@@ -27,40 +27,37 @@ class DetailAppBar extends StatelessWidget {
         ),
       );
 
-  List<Widget> _buildPopupMenuButton(BuildContext context) {
-    final bloc = context.read<DetailViewBloc>();
-    return [
-      PopupMenuButton<int>(
-        icon: const Icon(Icons.more_vert),
-        onSelected: (int value) {
-          switch (value) {
-            case 0:
-              bloc.refresh();
-              break;
-            case 1:
-              bloc.openBrowserByItem();
-              break;
-            case 2:
-              bloc.shareUri();
-              break;
-          }
-        },
-        itemBuilder: (BuildContext context) => [
-          const PopupMenuItem(
-            value: 0,
-            child: Text('새로고침'),
-          ),
-          const PopupMenuItem(
-            value: 1,
-            child: Text('브라우저로 열기'),
-          ),
-          PopupMenuItem(
-            value: 2,
-            enabled: Platform.isAndroid || Platform.isIOS,
-            child: const Text('공유하기'),
-          ),
-        ],
-      )
-    ];
-  }
+  List<Widget> _buildPopupMenuButton(BuildContext context) => [
+        PopupMenuButton<int>(
+          icon: const Icon(Icons.more_vert),
+          onSelected: (int value) {
+            switch (value) {
+              case 0:
+                context.read<DetailViewBloc>().refresh();
+                break;
+              case 1:
+                context.read<DetailViewBloc>().openBrowserByItem();
+                break;
+              case 2:
+                context.read<DetailViewBloc>().shareUri();
+                break;
+            }
+          },
+          itemBuilder: (BuildContext context) => [
+            const PopupMenuItem(
+              value: 0,
+              child: Text('새로고침'),
+            ),
+            const PopupMenuItem(
+              value: 1,
+              child: Text('브라우저로 열기'),
+            ),
+            PopupMenuItem(
+              value: 2,
+              enabled: Platform.isAndroid || Platform.isIOS,
+              child: const Text('공유하기'),
+            ),
+          ],
+        )
+      ];
 }

@@ -53,8 +53,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             onTap: () async {
               if (context.mounted) {
                 Navigator.of(context).pop();
+                widget.onChangeSite(SiteType.damoang);
               }
-              widget.onChangeSite(SiteType.damoang);
             },
           ),
           const Divider(
@@ -69,8 +69,8 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             onTap: () async {
               if (context.mounted) {
                 Navigator.of(context).pop();
+                widget.onChangeSite(SiteType.clien);
               }
-              widget.onChangeSite(SiteType.clien);
             },
           ),
           const Divider(
@@ -83,15 +83,16 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             title: const Text('설정'),
             titleTextStyle: Theme.of(context).textTheme.bodyMedium,
             onTap: () {
+              if (context.mounted) {
+                Navigator.of(context).pop();
+              }
               // Get.toNamed(Routes.SETTING);
-
-              Navigator.of(context).pop();
             },
           ),
           const Spacer(),
-
           ListTile(
-            title: Text('v${_packageInfo?.version} + ${_packageInfo?.buildNumber}'),
+            title: Text(
+                'v${_packageInfo?.version}+${_packageInfo?.buildNumber}'),
             titleTextStyle: Theme.of(context).textTheme.bodySmall,
           ),
         ],

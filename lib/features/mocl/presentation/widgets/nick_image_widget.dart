@@ -18,6 +18,8 @@ class NickImageWidget extends StatelessWidget {
       padding: const EdgeInsets.only(right: 8),
       child: CachedNetworkImage(
         memCacheHeight: height.toInt(),
+        fadeOutDuration: Duration.zero,
+        fadeInDuration: Duration.zero,
         height: height,
         cacheManager: DefaultCacheManager(),
         fit: BoxFit.contain,

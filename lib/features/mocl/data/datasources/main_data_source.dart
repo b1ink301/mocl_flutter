@@ -17,7 +17,7 @@ abstract class MainDataSource {
 
   Future<void> deleteAll(SiteType siteType);
 
-  Future<bool> hasItem(MainItem item);
+  Future<bool> hasItem(SiteType siteType, MainItem item);
 }
 
 @LazySingleton(as: MainDataSource)
@@ -31,9 +31,9 @@ class MainDataSourceImpl extends MainDataSource {
     SiteType siteType,
   ) async {
     var result = await localDatabase.getMainItems(siteType);
-    return result
-        .map((item) => item.toMainItemModel().toEntity(siteType))
-        .toList();
+    return result.map((item) {
+      return item.toMainItemModel().toEntity(siteType);
+    }).toList();
   }
 
   @override
@@ -70,9 +70,9 @@ class MainDataSourceImpl extends MainDataSource {
       localDatabase.deleteAll(siteType);
 
   @override
-  Future<bool> hasItem(MainItem item) {
+  Future<bool> hasItem(SiteType siteType, MainItem item) {
     var data = MainItemMapper.fromEntityToModel(item);
     var entity = MainItemMapper.fromModelToEntity(data);
-    return localDatabase.hasItem(item.siteType, entity);
+    return localDatabase.hasItem(siteType, entity);
   }
 }

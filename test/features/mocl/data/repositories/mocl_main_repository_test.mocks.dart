@@ -91,10 +91,17 @@ class MockMainDataSource extends _i1.Mock implements _i2.MainDataSource {
       ) as _i3.Future<void>);
 
   @override
-  _i3.Future<bool> hasItem(_i4.MainItem? item) => (super.noSuchMethod(
+  _i3.Future<bool> hasItem(
+    _i5.SiteType? siteType,
+    _i4.MainItem? item,
+  ) =>
+      (super.noSuchMethod(
         Invocation.method(
           #hasItem,
-          [item],
+          [
+            siteType,
+            item,
+          ],
         ),
         returnValue: _i3.Future<bool>.value(false),
       ) as _i3.Future<bool>);

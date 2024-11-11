@@ -35,12 +35,8 @@ if (keystorePropertiesFile.exists()) {
 android {
   namespace = "net.b1ink.mocl_flutter"
   compileSdk = flutter.compileSdkVersion
-  ndkVersion = flutter.ndkVersion
-
-  compileOptions {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-  }
+  ndkVersion = "25.1.8937393"
+//  ndkVersion = flutter.ndkVersion
 
   defaultConfig {
     applicationId = "kr.b1ink.mocl"
@@ -76,8 +72,12 @@ android {
       signingConfig = signingConfigs.release
     }
   }
+  compileOptions {
+    sourceCompatibility = JavaVersion.VERSION_17
+    targetCompatibility = JavaVersion.VERSION_17
+  }
   kotlinOptions {
-    jvmTarget = '1.8'
+    jvmTarget = JavaVersion.VERSION_17
   }
 }
 
