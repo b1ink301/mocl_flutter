@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/bloc/list_page_cubit.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_cached_list_item.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/cached_item_builder.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/list/text_styles_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 
@@ -22,21 +22,23 @@ class ListView extends StatelessWidget {
               isLoading: state is LoadingList,
               hasError: state is FailedList,
               hasReachedMax: bloc.hasReachedMax,
-              invisibleItemsThreshold: 1,
               itemCount: bloc.listCount,
               loadMoreLoadingBuilder: (_) => const LoadingWidget(),
               firstPageLoadingBuilder: (_) => const LoadingWidget(),
               itemBuilder: (context, index) {
                 final item = bloc.getItem(index);
-                return CachedItemBuilder(
-                  key: ValueKey(item.key),
-                  builder: () => CachedListItem(
+                // return CachedItemBuilder(
+                //   key: ValueKey(item.key),
+                //   builder: () => CachedListItem(
+                  return CachedListItem(
+                    key: ValueKey(item.key),
                     item: item.item,
                     isRead: item.isRead,
-                    textStyles: bloc.textStyles,
+                    textStyles: TextStylesProvider.of(context).textStyles,
                     onTap: () => bloc.onTap(context, item),
-                  ),
-                );
+                  // ),
+                  );
+                // );
               },
               // here we add a custom error screen if the state is an error state.
               // and this screen will be shown if an error occurs while fetching data for the first page.

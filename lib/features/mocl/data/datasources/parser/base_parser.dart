@@ -17,6 +17,32 @@ abstract class BaseParser {
   Future<Result> detail(Response response);
 
   Future<Result> comment(Response response);
+
+  static String parserInfo(
+    String nickName,
+    String parsedTime,
+    String viewCount,
+  ) {
+    var info = '';
+    if (nickName.isNotEmpty) {
+      info = nickName;
+    }
+    if (parsedTime.isNotEmpty) {
+      if (info.isNotEmpty) {
+        info += " ・ $parsedTime";
+      } else {
+        info = parsedTime;
+      }
+    }
+    if (viewCount.isNotEmpty) {
+      if (info.isNotEmpty) {
+        info += " ・ $viewCount 읽음";
+      } else {
+        info = "$viewCount 읽음";
+      }
+    }
+    return info;
+  }
 }
 
 class IsolateMessage {

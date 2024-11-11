@@ -84,11 +84,9 @@ class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
       ),
       maxLines: 3,
       textDirection: TextDirection.ltr,
-    )..layout(minWidth: 0, maxWidth: width - (48 + 16 * 2));
+    )..layout(minWidth: 0, maxWidth: width - (48 + 16 * 3));
 
     final titleHeight = textPainter.height;
-    debugPrint('titleHeight = ${titleHeight + 36}');
-
     return max(30, titleHeight) + 36; // 텍스트 높이 반환
   }
 

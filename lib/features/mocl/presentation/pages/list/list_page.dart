@@ -10,6 +10,7 @@ import 'package:mocl_flutter/features/mocl/presentation/pages/list/bloc/list_pag
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/list_view.dart'
     as listview;
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_text_styles.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/list/text_styles_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/appbar_dual_text_widget.dart';
 
 class ListPage extends StatelessWidget {
@@ -19,16 +20,23 @@ class ListPage extends StatelessWidget {
     BuildContext context,
     MainItem item,
   ) {
-    final textStyles = TextStyles.getTextStyles(context);
+    // final textStyles = TextStyles.getTextStyles(context);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor:
           Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor,
     ));
 
     return BlocProvider(
-      create: (context) =>
-          getIt<ListPageCubit>(param1: item, param2: textStyles),
-      child: const ListPage(),
+      create: (context) => getIt<ListPageCubit>(param1: item),
+      child: Builder(
+        builder: (context) {
+          final textStyles = TextStyles.getTextStyles(context);
+          return TextStylesProvider(
+            textStyles: textStyles,
+            child: const ListPage(),
+          );
+        },
+      ),
     );
   }
 
@@ -43,13 +51,16 @@ class ListPage extends StatelessWidget {
               flexibleSpace: Container(color: statusBarColor),
             )
           : null,
-      body: const SafeArea(
-        child: CustomScrollView(
-          cacheExtent: 0,
-          slivers: <Widget>[
-            _ListAppbar(),
-            listview.ListView(),
-          ],
+      body: SafeArea(
+        child: RefreshIndicator(
+          onRefresh: context.read<ListPageCubit>().refresh,
+          child: const CustomScrollView(
+            cacheExtent: 200,
+            slivers: <Widget>[
+              _ListAppbar(),
+              listview.ListView(),
+            ],
+          ),
         ),
       ),
     );

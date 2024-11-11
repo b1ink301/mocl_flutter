@@ -49,15 +49,20 @@ class DetailPage extends StatelessWidget {
             )
           : null,
       body: SafeArea(
-        child: CustomScrollView(
-          slivers: [
-            const DetailAppBar(),
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: _HeaderSection(),
-            ),
-            const SliverToBoxAdapter(child: DetailView()),
-          ],
+        child: RefreshIndicator(
+          onRefresh: () async {
+            context.read<DetailViewBloc>().refresh();
+          },
+          child: CustomScrollView(
+            slivers: [
+              const DetailAppBar(),
+              SliverPersistentHeader(
+                pinned: true,
+                delegate: _HeaderSection(),
+              ),
+              const SliverToBoxAdapter(child: DetailView()),
+            ],
+          ),
         ),
       ),
     );
@@ -78,59 +83,67 @@ class DetailPage extends StatelessWidget {
 class _HeaderSection extends SliverPersistentHeaderDelegate {
   @override
   Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
     return BlocBuilder<DetailViewBloc, DetailViewState>(
         buildWhen: (previous, current) => current is DetailSuccess,
         builder: (context, state) {
           return state.maybeMap(
-              orElse: () => SizedBox(height: Platform.isIOS ? 44 : 45),
-              success: (state) {
-                final bodySmall = Theme.of(context).textTheme.bodySmall!;
-                final backgroundColor =
-                    Theme.of(context).scaffoldBackgroundColor;
-
-                final likeView = state.detail.likeCount.isNotEmpty &&
-                        state.detail.likeCount != '0'
-                    ? [
-                        const SizedBox(width: 10),
-                        const Spacer(),
-                        Icon(Icons.favorite_outline,
-                            color: bodySmall.color, size: 17),
-                        const SizedBox(width: 4),
-                        Text(state.detail.likeCount, style: bodySmall),
-                        const SizedBox(width: 10),
-                      ]
-                    : [];
-                return Align(
-                  child: Container(
-                    color: backgroundColor,
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            mainAxisSize: MainAxisSize.max,
-                            // mainAxisSize: MainAxisSize.min,
-                            children: [
-                              if (state.detail.userInfo.nickImage.isNotEmpty &&
-                                  !state.detail.userInfo.nickImage
-                                      .endsWith('/no_profile.gif'))
-                                NickImageWidget(
-                                    url: state.detail.userInfo.nickImage),
-                              Text(state.detail.info, style: bodySmall),
-                              ...likeView,
-                            ],
-                          ),
-                        ),
-                        const DividerWidget(),
-                      ],
-                    ),
-                  ),
-                );
-              });
+            orElse: () => SizedBox(height: Platform.isIOS ? 44 : 45),
+            success: (state) => _buildBody(context, state),
+          );
         });
+  }
+
+  Widget _buildBody(
+    BuildContext context,
+    DetailSuccess state,
+  ) {
+    final bodySmall = Theme.of(context).textTheme.bodySmall!;
+    final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    final likeView =
+        state.detail.likeCount.isNotEmpty && state.detail.likeCount != '0'
+            ? [
+                const SizedBox(width: 10),
+                Icon(Icons.favorite_outline, color: bodySmall.color, size: 17),
+                const SizedBox(width: 4),
+                Text(state.detail.likeCount, style: bodySmall),
+                const SizedBox(width: 10),
+              ]
+            : [];
+
+    return Container(
+      color: backgroundColor,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      if (state.detail.userInfo.nickImage.isNotEmpty &&
+                          state.detail.userInfo.nickImage.startsWith('http'))
+                        NickImageWidget(url: state.detail.userInfo.nickImage),
+                      Flexible(
+                        child: Text(state.detail.info, style: bodySmall),
+                      ),
+                    ],
+                  ),
+                ),
+                ...likeView,
+              ],
+            ),
+          ),
+          const DividerWidget(),
+        ],
+      ),
+    );
   }
 
   @override

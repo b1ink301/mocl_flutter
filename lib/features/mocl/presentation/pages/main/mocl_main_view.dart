@@ -20,7 +20,22 @@ class MainView extends StatelessWidget {
         return state.map(
           initial: (_) => const LoadingWidget(),
           loading: (_) => const LoadingWidget(),
-          success: (state) => _buildListView(context, state.data, textStyle),
+          success: (state) {
+            if (state.data.isEmpty) {
+              // 데이터가 없을 때 표시할 위젯
+              final height = MediaQuery.of(context).size.height - 120;
+              return SizedBox(
+                  height: height,
+                  child: Center(
+                    child: Text(
+                      '항목이 없습니다',
+                      style: textStyle,
+                    ),
+                  ));
+            } else {
+              return _buildListView(context, state.data, textStyle);
+            }
+          },
           failure: (state) => MessageWidget(message: state.message),
         );
       },
@@ -43,7 +58,7 @@ class MainView extends StatelessWidget {
       BuildContext context, MainItem item, TextStyle? textStyle) {
     return ListTile(
       key: ValueKey(item.board),
-      minTileHeight: 64,
+      minTileHeight: 68,
       title: Text(item.text, style: textStyle),
       onTap: () => context.push(Routes.LIST, extra: item),
     );
