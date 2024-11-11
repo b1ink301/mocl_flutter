@@ -4,12 +4,12 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   firebase_core
+  sentry_flutter
   share_plus
   url_launcher_windows
 )
 
 list(APPEND FLUTTER_FFI_PLUGIN_LIST
-  sentry_flutter
 )
 
 set(PLUGIN_BUNDLED_LIBRARIES)
