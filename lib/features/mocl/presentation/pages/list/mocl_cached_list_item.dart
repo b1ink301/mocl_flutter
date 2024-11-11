@@ -95,7 +95,7 @@ class TitleView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    debugPrint('TitleView build: title=$title');
+    // debugPrint('TitleView build: title=$title');
     return Text(
       title,
       maxLines: 3,
@@ -133,15 +133,23 @@ class BottomView extends StatelessWidget {
         SizedBox(
           height: 20,
           child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              if (nickImage.isNotEmpty && nickImage.startsWith('http'))
-                NickImageWidget(url: nickImage),
-              InfoText(
-                info: item.info,
-                isRead: isRead,
-                textStyles: textStyles,
+              Expanded(
+                child: Row(
+                  children: [
+                    if (nickImage.isNotEmpty && nickImage.startsWith('http'))
+                      NickImageWidget(url: nickImage),
+                    Flexible(
+                      child: InfoText(
+                        info: item.info,
+                        isRead: isRead,
+                        textStyles: textStyles,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              if (hasReply) const Spacer(),
               if (hasReply)
                 RoundTextWidget(
                   text: reply,

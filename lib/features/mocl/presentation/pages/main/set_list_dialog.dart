@@ -64,7 +64,6 @@ class SetListDialog extends StatelessWidget {
           Builder(
             builder: (context) => TextButton(
               onPressed: () {
-                log('[onPressed] mounted = ${context.mounted}');
                 if (context.mounted) {
                   final bloc = BlocProvider.of<MainDataJsonBloc>(context);
                   log('[onPressed] =${bloc.selectedItems.length}');

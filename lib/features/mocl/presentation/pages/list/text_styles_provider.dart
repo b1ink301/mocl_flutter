@@ -11,12 +11,10 @@ class TextStylesProvider extends InheritedWidget {
     required super.child,
   });
 
-  static TextStylesProvider of(BuildContext context) {
-    return context.dependOnInheritedWidgetOfExactType<TextStylesProvider>()!;
-  }
+  static TextStylesProvider of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<TextStylesProvider>()!;
 
   @override
-  bool updateShouldNotify(TextStylesProvider oldWidget) {
-    return textStyles != oldWidget.textStyles;
-  }
+  bool updateShouldNotify(TextStylesProvider oldWidget) =>
+      textStyles != oldWidget.textStyles;
 }

@@ -19,6 +19,7 @@ part 'list_page_cubit.freezed.dart';
 class ListPageCubit extends Cubit<ListPageState> {
   final GetList _getList;
   final MainItem _mainItem;
+
   // final TextStyles _textStyles;
   int _lastId = -1;
   int _page = 1;

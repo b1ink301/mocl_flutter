@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:html/parser.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
@@ -114,7 +113,7 @@ class ClienParser extends BaseParser {
     var timeElement = container?.querySelector(
         "div.post_information > div.post_time > div.post_date");
 
-    debugPrint('timeElement = ${timeElement?.outerHtml}');
+    // debugPrint('timeElement = ${timeElement?.outerHtml}');
     timeElement?.querySelectorAll('.fa').forEach((element) => element.remove());
     var time = timeElement?.text.trim() ?? '';
     var tmp = time.split('수정일 :');

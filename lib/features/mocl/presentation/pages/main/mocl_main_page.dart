@@ -99,12 +99,18 @@ class MainPage extends StatelessWidget {
             )
           : null,
       body: SafeArea(
-        child: CustomScrollView(
-          // cacheExtent: 0,
-          slivers: <Widget>[
-            _buildAppBar(context),
-            const SliverToBoxAdapter(child: MainView()),
-          ],
+        child: RefreshIndicator(
+          onRefresh: () async {
+            final siteTypeBloc = context.read<SiteTypeBloc>();
+            context.read<MainDataBloc>().refresh(siteTypeBloc.state);
+          },
+          child: CustomScrollView(
+            // cacheExtent: 0,
+            slivers: <Widget>[
+              _buildAppBar(context),
+              const SliverToBoxAdapter(child: MainView()),
+            ],
+          ),
         ),
       ),
     );

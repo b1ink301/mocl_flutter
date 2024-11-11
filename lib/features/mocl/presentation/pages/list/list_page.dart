@@ -51,13 +51,16 @@ class ListPage extends StatelessWidget {
               flexibleSpace: Container(color: statusBarColor),
             )
           : null,
-      body: const SafeArea(
-        child: CustomScrollView(
-          cacheExtent: 200,
-          slivers: <Widget>[
-            _ListAppbar(),
-            listview.ListView(),
-          ],
+      body: SafeArea(
+        child: RefreshIndicator(
+          onRefresh: context.read<ListPageCubit>().refresh,
+          child: const CustomScrollView(
+            cacheExtent: 200,
+            slivers: <Widget>[
+              _ListAppbar(),
+              listview.ListView(),
+            ],
+          ),
         ),
       ),
     );
