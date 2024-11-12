@@ -1,30 +1,37 @@
 import 'dart:async';
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/bloc/detail_view_bloc.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
+import 'package:sliver_tools/sliver_tools.dart';
 
 class DetailView extends StatelessWidget {
   const DetailView({super.key});
 
   @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 8, 0),
-        child: BlocBuilder<DetailViewBloc, DetailViewState>(
-          buildWhen: (previous, current) => current is! DetailHeight,
-          builder: (context, state) => state.maybeMap(
-            success: (state) => _DetailView(detail: state.detail),
-            failed: (state) => MessageWidget(message: state.message),
-            orElse: () {
-              final height = MediaQuery.of(context).size.height - 200;
-              return SizedBox(height: height, child: LoadingWidget());
-            },
+  Widget build(BuildContext context) =>
+      BlocBuilder<DetailViewBloc, DetailViewState>(
+        buildWhen: (previous, current) => current is! DetailHeight,
+        builder: (context, state) => state.maybeMap(
+          success: (state) => _DetailView(detail: state.detail),
+          failed: (state) => SliverFillRemaining(
+            hasScrollBody: false,
+            child: Center(
+              child: MessageWidget(message: state.message),
+            ),
           ),
+          orElse: () => SliverFillRemaining(
+              hasScrollBody: false,
+              child: Center(
+                child: LoadingWidget(),
+              )),
         ),
       );
 }
@@ -32,7 +39,96 @@ class DetailView extends StatelessWidget {
 class _DetailView extends StatelessWidget {
   final Details detail;
 
-  const _DetailView({super.key, required this.detail});
+  const _DetailView({required this.detail});
+
+  @override
+  Widget build(BuildContext context) => MultiSliver(
+        children: [
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: _HeaderSectionDelegate(detail: detail),
+          ),
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 8, 0),
+            sliver: SliverToBoxAdapter(
+              child: _DetailContent(detail: detail),
+            ),
+          ),
+        ],
+      );
+}
+
+class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
+  final Details detail;
+
+  _HeaderSectionDelegate({required this.detail});
+
+  @override
+  Widget build(
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) {
+    final bodySmall = Theme.of(context).textTheme.bodySmall!;
+    final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    final likeView = detail.likeCount.isNotEmpty && detail.likeCount != '0'
+        ? [
+            const SizedBox(width: 10),
+            Icon(Icons.favorite_outline, color: bodySmall.color, size: 17),
+            const SizedBox(width: 4),
+            Text(detail.likeCount, style: bodySmall),
+            const SizedBox(width: 10),
+          ]
+        : [];
+
+    return Container(
+      color: backgroundColor,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      if (detail.userInfo.nickImage.isNotEmpty &&
+                          detail.userInfo.nickImage.startsWith('http'))
+                        NickImageWidget(url: detail.userInfo.nickImage),
+                      Flexible(
+                        child: Text(detail.info, style: bodySmall),
+                      ),
+                    ],
+                  ),
+                ),
+                ...likeView,
+              ],
+            ),
+          ),
+          const DividerWidget(),
+        ],
+      ),
+    );
+  }
+
+  @override
+  double get maxExtent => Platform.isIOS ? 44 : 45;
+
+  @override
+  double get minExtent => Platform.isIOS ? 44 : 45;
+
+  @override
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
+    return false;
+  }
+}
+
+class _DetailContent extends StatelessWidget {
+  final Details detail;
+
+  const _DetailContent({required this.detail});
 
   @override
   Widget build(BuildContext context) {
@@ -42,31 +138,29 @@ class _DetailView extends StatelessWidget {
     final bodyMedium = theme.textTheme.bodyMedium;
     final bloc = context.read<DetailViewBloc>();
 
-    return SingleChildScrollView(
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const SizedBox(height: 10),
-          _Body(
-              detail: detail,
-              hexColor: hexColor,
-              bodyMedium: bodyMedium,
-              onTapUrl: bloc.openBrowser),
-          const SizedBox(height: 10),
-          if (detail.comments.isNotEmpty)
-            _Comments(
-              hexColor: hexColor,
-              comments: detail.comments,
-              bodySmall: bodySmall,
-              bodyMedium: bodyMedium,
-              openUrl: bloc.openBrowser,
-            ),
-          const Divider(),
-          _RefreshButton(onRefresh: bloc.refresh, bodyMedium: bodyMedium),
-        ],
-      ),
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SizedBox(height: 10),
+        _Body(
+            detail: detail,
+            hexColor: hexColor,
+            bodyMedium: bodyMedium,
+            onTapUrl: bloc.openBrowser),
+        const SizedBox(height: 10),
+        if (detail.comments.isNotEmpty)
+          _Comments(
+            hexColor: hexColor,
+            comments: detail.comments,
+            bodySmall: bodySmall,
+            bodyMedium: bodyMedium,
+            openUrl: bloc.openBrowser,
+          ),
+        const Divider(),
+        _RefreshButton(onRefresh: bloc.refresh, bodyMedium: bodyMedium),
+      ],
     );
   }
 
@@ -81,7 +175,6 @@ class _Body extends StatelessWidget {
   final FutureOr<bool> Function(String url)? onTapUrl;
 
   const _Body({
-    super.key,
     required this.detail,
     required this.hexColor,
     required this.bodyMedium,
@@ -115,7 +208,6 @@ class _Comments extends StatelessWidget {
   final FutureOr<bool> Function(String) openUrl;
 
   const _Comments({
-    super.key,
     required this.hexColor,
     required this.comments,
     required this.bodySmall,
@@ -151,7 +243,6 @@ class _CommentHeader extends StatelessWidget {
   final TextStyle? bodyMedium;
 
   const _CommentHeader({
-    super.key,
     required this.commentCount,
     required this.bodyMedium,
   });
@@ -182,7 +273,6 @@ class _CommentList extends StatelessWidget {
   final FutureOr<bool> Function(String) openUrl;
 
   const _CommentList({
-    super.key,
     required this.comments,
     required this.bodySmall,
     required this.bodyMedium,
@@ -217,7 +307,6 @@ class _CommentItem extends StatelessWidget {
   final FutureOr<bool> Function(String) openUrl;
 
   const _CommentItem({
-    super.key,
     required this.comment,
     required this.bodySmall,
     required this.bodyMedium,
@@ -282,7 +371,6 @@ class _RefreshButton extends StatelessWidget {
   final TextStyle? bodyMedium;
 
   const _RefreshButton({
-    super.key,
     required this.onRefresh,
     required this.bodyMedium,
   });

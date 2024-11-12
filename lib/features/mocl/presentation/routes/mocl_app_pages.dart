@@ -15,18 +15,18 @@ part 'mocl_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const initial = Routes.MAIN;
+  static const initial = Routes.main;
 
   static final router = GoRouter(
     initialLocation: initial,
     routes: <RouteBase>[
       GoRoute(
-          path: Routes.MAIN,
+          path: Routes.main,
           pageBuilder: (BuildContext context, GoRouterState state) =>
               SwipeablePage(builder: (context) => MainPage.withBloc(context)),
           routes: [
             GoRoute(
-              path: Routes.SET_MAIN_DLG,
+              path: Routes.setMainDlg,
               pageBuilder: (BuildContext context, GoRouterState state) =>
                   CupertinoModalPopupPage(
                 builder: (BuildContext context) {
@@ -37,7 +37,7 @@ class AppPages {
             ),
           ]),
       GoRoute(
-        path: Routes.LIST,
+        path: Routes.list,
         pageBuilder: (BuildContext context, GoRouterState state) =>
             SwipeablePage(builder: (context) {
           final item = GoRouterState.of(context).extra as MainItem;
@@ -45,7 +45,7 @@ class AppPages {
         }),
       ),
       GoRoute(
-        path: Routes.DETAIL,
+        path: Routes.detail,
         pageBuilder: (BuildContext context, GoRouterState state) =>
             SwipeablePage(
           builder: (context) {

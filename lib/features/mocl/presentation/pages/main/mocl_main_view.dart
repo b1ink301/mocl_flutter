@@ -6,7 +6,6 @@ import 'package:mocl_flutter/features/mocl/presentation/pages/main/bloc/main_dat
 import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
 
 class MainView extends StatelessWidget {
   const MainView({super.key});
@@ -22,7 +21,6 @@ class MainView extends StatelessWidget {
           loading: (_) => const LoadingWidget(),
           success: (state) {
             if (state.data.isEmpty) {
-              // 데이터가 없을 때 표시할 위젯
               final height = MediaQuery.of(context).size.height - 120;
               return SizedBox(
                   height: height,
@@ -36,7 +34,7 @@ class MainView extends StatelessWidget {
               return _buildListView(context, state.data, textStyle);
             }
           },
-          failure: (state) => MessageWidget(message: state.message),
+          failure: (state) => _buildErrorView(context, state.message),
         );
       },
     );
@@ -60,15 +58,15 @@ class MainView extends StatelessWidget {
       key: ValueKey(item.board),
       minTileHeight: 68,
       title: Text(item.text, style: textStyle),
-      onTap: () => context.push(Routes.LIST, extra: item),
+      onTap: () => context.push(Routes.list, extra: item),
     );
   }
 
-  Widget _buildErrorView(BuildContext context) {
+  Widget _buildErrorView(BuildContext context, String message) {
     return Padding(
       padding: const EdgeInsets.all(12.0),
       child: Text(
-        '에러가 발생했습니다',
+        message,
         style: TextStyle(
           fontSize: 16,
           color: Theme.of(context).indicatorColor,

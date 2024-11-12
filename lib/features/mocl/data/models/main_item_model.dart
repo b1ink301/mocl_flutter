@@ -9,10 +9,12 @@ part 'main_item_model.g.dart';
 @freezed
 class MainItemModel with _$MainItemModel {
   const factory MainItemModel({
+    // ignore: invalid_annotation_target
     @JsonKey(name: 'no')
     required int orderBy,
     required String board,
     required int type,
+    // ignore: invalid_annotation_target
     @JsonKey(name: 'title')
     required String text,
     required String url,

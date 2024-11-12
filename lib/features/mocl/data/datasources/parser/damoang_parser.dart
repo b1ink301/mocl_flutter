@@ -382,22 +382,33 @@ class DamoangParser extends BaseParser {
   }
 
   static DateTime parseDateTime(String dateTimeString) {
-    final now = DateTime.now();
-
     if (dateTimeString.contains(' ')) {
       // 년.월.일 형식
       var parts = dateTimeString.split(' ');
       var dateParts = parts[0].split('.');
       var timeParts = parts[1].split(':');
-
-      return DateTime(
-        int.parse(dateParts[0]),
-        int.parse(dateParts[1]),
-        int.parse(dateParts[2]),
-        int.parse(timeParts[0]),
-        int.parse(timeParts[1]),
-      );
+      if (dateParts.length == 3) {
+        return DateTime(
+          int.parse(dateParts[0]),
+          int.parse(dateParts[1]),
+          int.parse(dateParts[2]),
+          int.parse(timeParts[0]),
+          int.parse(timeParts[1]),
+        );
+      } else if (dateParts.length == 2) {
+        final now = DateTime.now();
+        return DateTime(
+          now.year,
+          int.parse(dateParts[0]),
+          int.parse(dateParts[1]),
+          int.parse(timeParts[0]),
+          int.parse(timeParts[1]),
+        );
+      } else {
+        throw Exception('Error parsing $dateTimeString');
+      }
     } else if (dateTimeString.contains(':')) {
+      final now = DateTime.now();
       // 시:분 형식
       var timeParts = dateTimeString.split(':');
       return DateTime(
@@ -408,6 +419,7 @@ class DamoangParser extends BaseParser {
         int.parse(timeParts[1]),
       );
     } else if (dateTimeString == '어제') {
+      final now = DateTime.now();
       return now.subtract(const Duration(days: 1));
     } else {
       throw Exception('Error parsing $dateTimeString');
