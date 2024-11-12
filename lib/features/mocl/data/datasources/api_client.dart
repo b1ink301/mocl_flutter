@@ -18,7 +18,7 @@ class ApiClient {
   final dio = Dio();
   final cookieJar = CookieJar();
 
-  static const USER_AGETNT =
+  static const userAgetnt =
       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:126.0) Gecko/20100101 Firefox/126.0';
 
   @PostConstruct()
@@ -58,7 +58,7 @@ class ApiClient {
         ? '&od=T31&category=0&po=$page'
         : 'page=$page';
     final url = '${item.url}?$params';
-    final headers = {'User-Agent': ApiClient.USER_AGETNT};
+    final headers = {'User-Agent': ApiClient.userAgetnt};
 
     try {
       final response = await get(url, headers: headers);
@@ -86,7 +86,7 @@ class ApiClient {
     BaseParser parser,
   ) async {
     final url = item.url;
-    final headers = {'User-Agent': ApiClient.USER_AGETNT};
+    final headers = {'User-Agent': ApiClient.userAgetnt};
     try {
       final response = await get(url, headers: headers);
       log('getDetail url=$url, response = ${response.statusCode}');

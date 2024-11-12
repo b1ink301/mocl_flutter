@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:ui';
 
+// ignore: depend_on_referenced_packages
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
@@ -9,8 +10,9 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mocl_flutter/features/mocl/presentation/app_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/injection.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/bloc/site_type_bloc.dart';
-import 'package:mocl_flutter/firebase_options.dart';
 import 'package:sentry_flutter/sentry_flutter.dart';
+
+import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();

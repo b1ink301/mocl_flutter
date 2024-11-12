@@ -4,11 +4,11 @@ import 'package:floor/floor.dart';
 import 'package:mocl_flutter/features/mocl/data/db/dao/is_read_dao.dart';
 import 'package:mocl_flutter/features/mocl/data/db/dao/main_dao.dart';
 import 'package:mocl_flutter/features/mocl/data/db/entities/main_item_data.dart';
+import 'package:mocl_flutter/features/mocl/data/db/entities/read_item_data.dart';
 import 'package:mocl_flutter/features/mocl/data/db/type_converter.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
+// ignore: depend_on_referenced_packages
 import 'package:sqflite/sqflite.dart' as sqflite;
-
-import '../../domain/entities/mocl_site_type.dart';
-import 'entities/read_item_data.dart';
 
 part 'app_database.g.dart';
 

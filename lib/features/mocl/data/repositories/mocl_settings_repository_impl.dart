@@ -12,11 +12,13 @@ class SettingsRepositoryImpl extends SettingsRepository {
   @override
   SiteType getSiteType() {
     final siteTypeName =
-        _prefs.getString(EXTRA_SITE_TYPE) ?? SiteType.damoang.name;
+        _prefs.getString(extraSiteType) ?? SiteType.damoang.name;
     return SiteType.values.firstWhere((e) => e.name == siteTypeName);
   }
 
   @override
   void setSiteType(SiteType siteType) =>
-      _prefs.setString(EXTRA_SITE_TYPE, siteType.name);
+      _prefs.setString(extraSiteType, siteType.name);
+
+  static String extraSiteType = 'site_type';
 }

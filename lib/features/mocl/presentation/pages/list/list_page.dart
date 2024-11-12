@@ -78,7 +78,7 @@ class ListPage extends StatelessWidget {
 }
 
 class _ListAppbar extends StatelessWidget {
-  const _ListAppbar({super.key});
+  const _ListAppbar();
 
   @override
   Widget build(BuildContext context) {

@@ -18,8 +18,6 @@ class HeaderSection extends StatelessWidget {
                   ),
               success: (state) {
                 final bodySmall = Theme.of(context).textTheme.bodySmall!;
-                final backgroundColor =
-                    Theme.of(context).appBarTheme.backgroundColor;
 
                 final likeView = state.detail.likeCount.isNotEmpty
                     ? [

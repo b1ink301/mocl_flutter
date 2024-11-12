@@ -71,7 +71,7 @@ class MainPage extends StatelessWidget {
 
   void _handleAddButton(BuildContext context, SiteType siteType) async {
     final result = await context.push<List<MainItem>>(
-        '${Routes.MAIN}/${Routes.SET_MAIN_DLG}',
+        '${Routes.main}/${Routes.setMainDlg}',
         extra: siteType);
     if (context.mounted && result != null) {
       final bloc = context.read<MainDataBloc>();

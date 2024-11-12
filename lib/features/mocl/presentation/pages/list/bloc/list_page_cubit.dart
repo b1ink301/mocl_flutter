@@ -1,4 +1,4 @@
-import 'package:bloc/bloc.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:go_router/go_router.dart';
@@ -65,7 +65,7 @@ class ListPageCubit extends Cubit<ListPageState> {
 
   void onTap(BuildContext context, ReadableListItem item) {
     final extra = [_mainItem.siteType, item];
-    GoRouter.of(context).push(Routes.DETAIL, extra: extra);
+    GoRouter.of(context).push(Routes.detail, extra: extra);
   }
 
   Future<void> fetchPage() async {

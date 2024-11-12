@@ -68,6 +68,7 @@ void main() async {
       getMainListFromJson: getMainListFromJson,
       setMainList: setMainList,
     );
+    // ignore: avoid_print
     subscription = mainDataBloc.stream.listen(print);
   });
 
