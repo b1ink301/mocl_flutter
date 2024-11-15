@@ -116,7 +116,11 @@ class MainPage extends StatelessWidget {
     );
   }
 
-  Widget _buildDrawer(BuildContext context) => DrawerWidget(
-      onChangeSite: (siteType) =>
-          context.read<SiteTypeBloc>().setSiteType(siteType));
+  Widget _buildDrawer(BuildContext context) =>
+      DrawerWidget(onChangeSite: (siteType) {
+        if (siteType == SiteType.settings) {
+          return;
+        }
+        context.read<SiteTypeBloc>().setSiteType(siteType);
+      });
 }

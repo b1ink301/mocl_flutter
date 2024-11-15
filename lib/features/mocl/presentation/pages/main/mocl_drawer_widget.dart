@@ -47,52 +47,30 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               ),
             ),
           ),
-          ListTile(
-            title: Text(SiteType.damoang.title),
-            titleTextStyle: Theme.of(context).textTheme.bodyMedium,
-            onTap: () async {
-              if (context.mounted) {
-                Navigator.of(context).pop();
-                widget.onChangeSite(SiteType.damoang);
-              }
-            },
-          ),
-          const Divider(
-            height: 1,
-            thickness: 1,
-            indent: 12,
-            endIndent: 8,
-          ),
-          ListTile(
-            title: Text(SiteType.clien.title),
-            titleTextStyle: Theme.of(context).textTheme.bodyMedium,
-            onTap: () async {
-              if (context.mounted) {
-                Navigator.of(context).pop();
-                widget.onChangeSite(SiteType.clien);
-              }
-            },
-          ),
-          const Divider(
-            height: 1,
-            thickness: 1,
-            indent: 12,
-            endIndent: 8,
-          ),
-          ListTile(
-            title: const Text('설정'),
-            titleTextStyle: Theme.of(context).textTheme.bodyMedium,
-            onTap: () {
-              if (context.mounted) {
-                Navigator.of(context).pop();
-              }
-              // Get.toNamed(Routes.SETTING);
-            },
-          ),
+          ...SiteType.values.map((siteType) => Column(
+                children: [
+                  ListTile(
+                    title: Text(siteType.title),
+                    titleTextStyle: Theme.of(context).textTheme.bodyMedium,
+                    onTap: () async {
+                      if (context.mounted) {
+                        Navigator.of(context).pop();
+                        widget.onChangeSite(siteType);
+                      }
+                    },
+                  ),
+                  const Divider(
+                    height: 1,
+                    thickness: 1,
+                    indent: 12,
+                    endIndent: 8,
+                  ),
+                ],
+              )),
           const Spacer(),
           ListTile(
-            title: Text(
-                'v${_packageInfo?.version}+${_packageInfo?.buildNumber}'),
+            title:
+                Text('v${_packageInfo?.version}-${_packageInfo?.buildNumber}'),
             titleTextStyle: Theme.of(context).textTheme.bodySmall,
           ),
         ],

@@ -1,7 +1,9 @@
 enum SiteType {
   clien,
   damoang,
-  none,
+  meeco,
+  naverCafe,
+  settings,
 }
 
 extension SiteTypeExtension on SiteType {
@@ -11,8 +13,12 @@ extension SiteTypeExtension on SiteType {
         return '클리앙';
       case SiteType.damoang:
         return '다모앙';
-      case SiteType.none:
-        return '';
+      case SiteType.settings:
+        return '설정';
+      case SiteType.meeco:
+        return '미코';
+      case SiteType.naverCafe:
+        return '네이버카페';
     }
   }
 }
