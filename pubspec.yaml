@@ -36,6 +36,7 @@ dependencies:
   # Http Client
   #  http: ^1.2.2
   dio: ^5.7.0
+
   # cookie
   cookie_jar: ^4.0.8
   dio_cookie_manager: ^3.1.1
@@ -68,6 +69,7 @@ dependencies:
   #  gif: ^2.3.0
   # like room database
   floor: ^1.5.0
+  #  hive_flutter: ^1.1.0
 
   # router
   go_router: ^14.4.1
@@ -86,15 +88,19 @@ dependencies:
   share_plus: ^10.1.2
   share_plus_platform_interface: ^5.0.1
 
+  # package info
   package_info_plus: ^8.1.1
 
+  # time format
   timeago: ^3.7.0
+
+  # like crashlytics..
   sentry_flutter: ^8.10.1
 
-  hive_flutter: ^1.1.0
-
+  # change app name
   launcher_name: ^1.0.2
 
+  # sliver tools
   sliver_tools: ^0.2.12
 
 dev_dependencies:
@@ -118,6 +124,8 @@ flutter:
     - assets/
     - assets/damoang/
     - assets/clien/
+    - assets/meeco/
+    - assets/navercafe/
     - assets/icon.png
 
 launcher_name:

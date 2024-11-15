@@ -40,7 +40,7 @@ class MainItemMapper {
     MainItemModel model,
   ) =>
       MainItemData(
-        siteType: model.siteType ?? SiteType.none,
+        siteType: model.siteType ?? SiteType.damoang,
         board: model.board,
         type: model.type,
         text: model.text,

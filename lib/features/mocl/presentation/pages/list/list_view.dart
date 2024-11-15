@@ -17,27 +17,29 @@ class ListView extends StatelessWidget {
           final ListPageCubit bloc = context.read<ListPageCubit>();
 
           return SliverInfiniteListView.separated(
-            // enableShrinkWrapForFirstPageIndicators: true,
+            enableShrinkWrapForFirstPageIndicators: true,
             delegate: PaginationDelegate(
               isLoading: state is LoadingList,
               hasError: state is FailedList,
               hasReachedMax: bloc.hasReachedMax,
               itemCount: bloc.listCount,
               loadMoreLoadingBuilder: (_) => const LoadingWidget(),
-              firstPageLoadingBuilder: (_) => const LoadingWidget(),
+              firstPageLoadingBuilder: (_) => const Column(
+                children: [LoadingWidget(), DividerWidget()],
+              ),
               itemBuilder: (context, index) {
                 final item = bloc.getItem(index);
                 // return CachedItemBuilder(
                 //   key: ValueKey(item.key),
                 //   builder: () => CachedListItem(
-                  return CachedListItem(
-                    key: ValueKey(item.key),
-                    item: item.item,
-                    isRead: item.isRead,
-                    textStyles: TextStylesProvider.of(context).textStyles,
-                    onTap: () => bloc.onTap(context, item),
+                return CachedListItem(
+                  key: ValueKey(item.key),
+                  item: item.item,
+                  isRead: item.isRead,
+                  textStyles: TextStylesProvider.of(context).textStyles,
+                  onTap: () => bloc.onTap(context, item),
                   // ),
-                  );
+                );
                 // );
               },
               // here we add a custom error screen if the state is an error state.

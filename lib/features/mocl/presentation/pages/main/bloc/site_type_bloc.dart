@@ -15,7 +15,7 @@ class SiteTypeBloc extends Cubit<SiteType> {
     required SetSiteType setSiteType,
   })  : _getSiteType = getSiteType,
         _setSiteType = setSiteType,
-        super(SiteType.none) {
+        super(SiteType.damoang) {
     _init();
   }
 
