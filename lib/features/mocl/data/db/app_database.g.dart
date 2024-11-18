@@ -98,7 +98,7 @@ class _$AppDatabase extends AppDatabase {
       },
       onCreate: (database, version) async {
         await database.execute(
-            'CREATE TABLE IF NOT EXISTS `main` (`board` TEXT NOT NULL, `orderBy` INTEGER NOT NULL, `type` INTEGER NOT NULL, `text` TEXT NOT NULL, `url` TEXT NOT NULL, `siteType` INTEGER NOT NULL, PRIMARY KEY (`board`))');
+            'CREATE TABLE IF NOT EXISTS `main` (`board` TEXT NOT NULL, `orderBy` INTEGER NOT NULL, `type` INTEGER NOT NULL, `text` TEXT NOT NULL, `url` TEXT NOT NULL, `siteType` INTEGER NOT NULL, PRIMARY KEY (`board`, `siteType`))');
         await database.execute(
             'CREATE TABLE IF NOT EXISTS `is_read` (`id` INTEGER NOT NULL, `siteType` INTEGER NOT NULL, PRIMARY KEY (`id`, `siteType`))');
 

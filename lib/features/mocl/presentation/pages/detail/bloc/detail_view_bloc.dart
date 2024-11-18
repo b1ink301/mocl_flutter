@@ -54,7 +54,7 @@ class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
         emit(DetailSuccess(result.data));
         await _markAsRead();
       } else if (result is ResultFailure) {
-        emit(DetailFailed(result.toString()));
+        emit(DetailFailed(result.failure.toString()));
       } else if (result is ResultLoading) {
       } else {
         emit(const DetailFailed('Unknown Error!'));

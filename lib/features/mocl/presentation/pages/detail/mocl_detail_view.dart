@@ -23,8 +23,11 @@ class DetailView extends StatelessWidget {
           success: (state) => _DetailView(detail: state.detail),
           failed: (state) => SliverFillRemaining(
             hasScrollBody: false,
-            child: Center(
-              child: MessageWidget(message: state.message),
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Center(
+                child: MessageWidget(message: state.message),
+              ),
             ),
           ),
           orElse: () => const SliverToBoxAdapter(
@@ -32,11 +35,6 @@ class DetailView extends StatelessWidget {
               children: [LoadingWidget(), DividerWidget()],
             ),
           ),
-          // orElse: () => SliverFillRemaining(
-          //     hasScrollBody: false,
-          //     child: Center(
-          //       child: LoadingWidget(),
-          //     )),
         ),
       );
 }
