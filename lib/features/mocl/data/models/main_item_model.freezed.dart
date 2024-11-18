@@ -20,12 +20,10 @@ MainItemModel _$MainItemModelFromJson(Map<String, dynamic> json) {
 
 /// @nodoc
 mixin _$MainItemModel {
-// ignore: invalid_annotation_target
   @JsonKey(name: 'no')
   int get orderBy => throw _privateConstructorUsedError;
   String get board => throw _privateConstructorUsedError;
-  int get type =>
-      throw _privateConstructorUsedError; // ignore: invalid_annotation_target
+  int get type => throw _privateConstructorUsedError;
   @JsonKey(name: 'title')
   String get text => throw _privateConstructorUsedError;
   String get url => throw _privateConstructorUsedError;
@@ -187,7 +185,6 @@ class _$MainItemDataImpl implements _MainItemData {
   factory _$MainItemDataImpl.fromJson(Map<String, dynamic> json) =>
       _$$MainItemDataImplFromJson(json);
 
-// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'no')
   final int orderBy;
@@ -195,7 +192,6 @@ class _$MainItemDataImpl implements _MainItemData {
   final String board;
   @override
   final int type;
-// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'title')
   final String text;
@@ -256,14 +252,13 @@ abstract class _MainItemData implements MainItemModel {
   factory _MainItemData.fromJson(Map<String, dynamic> json) =
       _$MainItemDataImpl.fromJson;
 
-// ignore: invalid_annotation_target
   @override
   @JsonKey(name: 'no')
   int get orderBy;
   @override
   String get board;
   @override
-  int get type; // ignore: invalid_annotation_target
+  int get type;
   @override
   @JsonKey(name: 'title')
   String get text;

@@ -4,9 +4,11 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
 import '../../models/model_mapper.dart';
 
-@Entity(tableName: 'main')
+@Entity(
+  tableName: 'main',
+  primaryKeys: ['board', 'siteType'],
+)
 class MainItemData {
-  @primaryKey
   final String board;
   final int orderBy;
   final int type;

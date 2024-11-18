@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
@@ -119,6 +120,15 @@ class MainPage extends StatelessWidget {
   Widget _buildDrawer(BuildContext context) =>
       DrawerWidget(onChangeSite: (siteType) {
         if (siteType == SiteType.settings) {
+          Fluttertoast.showToast(
+              msg: "준비 중입니다.",
+              toastLength: Toast.LENGTH_LONG,
+              gravity: ToastGravity.BOTTOM,
+              timeInSecForIosWeb: 1,
+              backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+              textColor: Colors.white,
+              fontSize: 16.0
+          );
           return;
         }
         context.read<SiteTypeBloc>().setSiteType(siteType);

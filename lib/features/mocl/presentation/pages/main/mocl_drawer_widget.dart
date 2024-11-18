@@ -47,26 +47,28 @@ class _DrawerWidgetState extends State<DrawerWidget> {
               ),
             ),
           ),
-          ...SiteType.values.map((siteType) => Column(
-                children: [
-                  ListTile(
-                    title: Text(siteType.title),
-                    titleTextStyle: Theme.of(context).textTheme.bodyMedium,
-                    onTap: () async {
-                      if (context.mounted) {
-                        Navigator.of(context).pop();
-                        widget.onChangeSite(siteType);
-                      }
-                    },
-                  ),
-                  const Divider(
-                    height: 1,
-                    thickness: 1,
-                    indent: 12,
-                    endIndent: 8,
-                  ),
-                ],
-              )),
+          ...SiteType.values
+              .where((siteType) => siteType != SiteType.naverCafe)
+              .map((siteType) => Column(
+                    children: [
+                      ListTile(
+                        title: Text(siteType.title),
+                        titleTextStyle: Theme.of(context).textTheme.bodyMedium,
+                        onTap: () async {
+                          if (context.mounted) {
+                            Navigator.of(context).pop();
+                            widget.onChangeSite(siteType);
+                          }
+                        },
+                      ),
+                      const Divider(
+                        height: 1,
+                        thickness: 1,
+                        indent: 12,
+                        endIndent: 8,
+                      ),
+                    ],
+                  )),
           const Spacer(),
           ListTile(
             title:
