@@ -106,6 +106,9 @@ dependencies:
   # toast
   fluttertoast: ^8.2.8
 
+  flutter_inappwebview: ^6.1.5
+  webview_flutter: ^4.10.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

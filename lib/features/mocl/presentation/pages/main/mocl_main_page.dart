@@ -3,17 +3,17 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_main_list.dart';
 import 'package:mocl_flutter/features/mocl/presentation/injection.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/main/add_dialog/bloc/main_data_json_bloc.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/bloc/main_data_bloc.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/main/bloc/main_data_json_bloc.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/bloc/site_type_bloc.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/mocl_drawer_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/mocl_main_view.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/settings/bloc/get_version_cubit.dart';
 import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
 
@@ -33,16 +33,12 @@ class MainPage extends StatelessWidget {
         BlocProvider(
           create: (_) {
             final siteTypeBloc = context.read<SiteTypeBloc>();
-            final dataBloc = getIt<MainDataBloc>();
-
-            siteTypeBloc.stream.listen((siteType) {
-              dataBloc.add(MainDataEvent.getList(siteType: siteType));
-            });
-
-            dataBloc.add(MainDataEvent.getList(siteType: siteTypeBloc.state));
-            return dataBloc;
+            return getIt<MainDataBloc>()..initialize(siteTypeBloc);
           },
         ),
+        BlocProvider(create: (_) {
+          return getIt<GetVersionCubit>()..getVersion();
+        }),
       ],
       child: const MainPage(),
     );
@@ -100,6 +96,8 @@ class MainPage extends StatelessWidget {
             )
           : null,
       body: SafeArea(
+        left: false,
+        right: false,
         child: RefreshIndicator(
           onRefresh: () async {
             final siteTypeBloc = context.read<SiteTypeBloc>();
@@ -109,7 +107,7 @@ class MainPage extends StatelessWidget {
             // cacheExtent: 0,
             slivers: <Widget>[
               _buildAppBar(context),
-              const SliverToBoxAdapter(child: MainView()),
+              const MainView(),
             ],
           ),
         ),
@@ -120,17 +118,20 @@ class MainPage extends StatelessWidget {
   Widget _buildDrawer(BuildContext context) =>
       DrawerWidget(onChangeSite: (siteType) {
         if (siteType == SiteType.settings) {
-          Fluttertoast.showToast(
-              msg: "준비 중입니다.",
-              toastLength: Toast.LENGTH_LONG,
-              gravity: ToastGravity.BOTTOM,
-              timeInSecForIosWeb: 1,
-              backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-              textColor: Colors.white,
-              fontSize: 16.0
-          );
-          return;
+          // Fluttertoast.showToast(
+          //     msg: "준비 중입니다.",
+          //     toastLength: Toast.LENGTH_LONG,
+          //     gravity: ToastGravity.BOTTOM,
+          //     timeInSecForIosWeb: 2,
+          //     backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+          //     textColor: Colors.white,
+          //     fontSize: 16.0
+          // );
+
+          GoRouter.of(context).push(Routes.login);
+          // GoRouter.of(context).push(Routes.settings);
+        } else {
+          context.read<SiteTypeBloc>().setSiteType(siteType);
         }
-        context.read<SiteTypeBloc>().setSiteType(siteType);
       });
 }

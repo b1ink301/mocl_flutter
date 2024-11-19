@@ -18,7 +18,6 @@ class DetailView extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       BlocBuilder<DetailViewBloc, DetailViewState>(
-        buildWhen: (previous, current) => current is! DetailHeight,
         builder: (context, state) => state.maybeMap(
           success: (state) => _DetailView(detail: state.detail),
           failed: (state) => SliverFillRemaining(
@@ -163,6 +162,7 @@ class _DetailContent extends StatelessWidget {
           ),
         const Divider(),
         _RefreshButton(onRefresh: bloc.refresh, bodyMedium: bodyMedium),
+        const Divider(),
       ],
     );
   }

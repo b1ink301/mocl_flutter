@@ -8,6 +8,7 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/presentation/injection.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/bloc/detail_view_bloc.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/detail/bloc/get_height_cubit.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/detail_appbar.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/mocl_detail_view.dart';
 
@@ -27,10 +28,17 @@ class DetailPage extends StatelessWidget {
             Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor,
         statusBarBrightness: Brightness.dark));
 
-    return BlocProvider(
-      create: (context) => getIt<DetailViewBloc>(param1: item, param2: siteType)
-        ..add(DetailViewEvent.height(item.item.title, textStyle, textWidth))
-        ..add(const DetailViewEvent.details()),
+    return MultiBlocProvider(
+      providers: [
+        BlocProvider(
+          create: (context) =>
+              getIt<DetailViewBloc>(param1: item, param2: siteType)
+                ..add(const DetailViewEvent.details()),
+        ),
+        BlocProvider(
+            create: (context) => getIt<GetHeightCubit>()
+              ..getHeight(item.item.title, textStyle, textWidth)),
+      ],
       child: const DetailPage(),
     );
   }
@@ -47,6 +55,8 @@ class DetailPage extends StatelessWidget {
             )
           : null,
       body: SafeArea(
+        left: false,
+        right: false,
         child: RefreshIndicator(
           onRefresh: () async {
             context.read<DetailViewBloc>().refresh();

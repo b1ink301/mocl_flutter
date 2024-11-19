@@ -19,6 +19,9 @@ class DamoangParser extends BaseParser {
   SiteType get siteType => SiteType.damoang;
 
   @override
+  String get baseUrl => 'https://damoang.net';
+
+  @override
   Future<Result> comment(Response response) {
     // TODO: implement comment
     throw UnimplementedError();
@@ -218,9 +221,15 @@ class DamoangParser extends BaseParser {
 
     try {
       await Isolate.spawn(
-          _parseListInIsolate,
-          IsolateMessage(
-              receivePort.sendPort, response.data, lastId, boardTitle));
+        _parseListInIsolate,
+        IsolateMessage<String>(
+          receivePort.sendPort,
+          response.data,
+          lastId,
+          boardTitle,
+          baseUrl,
+        ),
+      );
 
       return await completer.future;
     } catch (e) {
@@ -229,11 +238,12 @@ class DamoangParser extends BaseParser {
     }
   }
 
-  static void _parseListInIsolate(IsolateMessage message) async {
+  static void _parseListInIsolate(IsolateMessage<String> message) async {
     final replyPort = message.replyPort;
     final responseData = message.responseData;
     final lastId = message.lastId;
     final boardTitle = message.boardTitle;
+    // final baseUrl = message.baseUrl;
 
     var parsedItems = <Map<String, dynamic>>[];
     var ids = <int>[];

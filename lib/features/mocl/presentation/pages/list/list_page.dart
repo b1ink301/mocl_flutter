@@ -52,6 +52,8 @@ class ListPage extends StatelessWidget {
             )
           : null,
       body: SafeArea(
+        left: false,
+        right: false,
         child: RefreshIndicator(
           onRefresh: context.read<ListPageCubit>().refresh,
           child: const CustomScrollView(

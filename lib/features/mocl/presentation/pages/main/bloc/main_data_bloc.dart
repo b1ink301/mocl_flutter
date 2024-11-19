@@ -11,9 +11,12 @@ import 'package:mocl_flutter/features/mocl/domain/usecases/get_main_list.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_main_list.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_site_type.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/main/bloc/site_type_bloc.dart';
 
 part 'main_data_bloc.freezed.dart';
+
 part 'main_data_event.dart';
+
 part 'main_data_state.dart';
 
 @lazySingleton
@@ -23,14 +26,25 @@ class MainDataBloc extends Bloc<MainDataEvent, MainDataState> {
   final GetSiteType getSiteType;
   final SetSiteType setSiteType;
 
+  late final StreamSubscription<SiteType> _siteTypeSubscription;
+
   MainDataBloc({
     required this.getMainList,
     required this.setMainList,
     required this.getSiteType,
     required this.setSiteType,
-  }) : super(const MainDataState.initial()) {
+  }) : super(const StateInitial()) {
     on<GetListEvent>(_onGetListEvent);
     on<SetSiteTypeEvent>(_onSetSiteTypeEvent);
+  }
+
+  void initialize(SiteTypeBloc siteTypeBloc) {
+    _siteTypeSubscription = siteTypeBloc.stream.listen((siteType) {
+      add(MainDataEvent.getList(siteType: siteType));
+    });
+
+    // 초기 데이터 로드
+    add(MainDataEvent.getList(siteType: siteTypeBloc.state));
   }
 
   Future<void> _onSetSiteTypeEvent(
@@ -42,13 +56,23 @@ class MainDataBloc extends Bloc<MainDataEvent, MainDataState> {
     GetListEvent event,
     Emitter<MainDataState> emit,
   ) async {
-    log('MainDataBloc event=$event');
+
     emit(const MainDataState.loading());
-    var result = await getMainList.call(event.siteType);
-    if (result is ResultSuccess) {
-      emit(MainDataState.success(result.data));
-    } else if (result is ResultFailure) {
-      emit(const MainDataState.failure("failure"));
+    final result = await getMainList.call(event.siteType);
+    log('MainDataBloc event=$event, result=$result');
+    switch (result) {
+      case ResultFailure():
+        log('MainDataBloc result=$result');
+        emit(MainDataState.failure(result.failure.toString()));
+        break;
+      case ResultInitial():
+        break;
+      case ResultLoading():
+        break;
+      case ResultSuccess():
+        log('MainDataBloc result=$result');
+        emit(MainDataState.success(result.data));
+        break;
     }
   }
 
@@ -59,5 +83,11 @@ class MainDataBloc extends Bloc<MainDataEvent, MainDataState> {
   Future<void> setMainListWithParams(SetMainParams params) async {
     await setMainList(params);
     refresh(params.siteType);
+  }
+
+  @override
+  Future<void> close() {
+    _siteTypeSubscription.cancel();
+    return super.close();
   }
 }

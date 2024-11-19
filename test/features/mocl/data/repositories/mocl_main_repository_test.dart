@@ -4,14 +4,22 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/api_client.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/list_data_source.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/parser/clien_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/parser/damoang_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/parser/meeco_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/parser/naver_cafe_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/parser/parser_factory.dart';
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/mocl/data/repositories/mocl_main_repository_impl.dart';
+import 'package:mocl_flutter/features/mocl/data/repositories/mocl_settings_repository_impl.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/repositories/main_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import './mocl_main_repository_test.mocks.dart';
 
@@ -20,12 +28,21 @@ void main() {
   const SiteType siteType = SiteType.damoang;
   late MockMainDataSource mockMainDataSource;
   late MainRepository moclRepository;
+  late ApiClient apiClient;
 
-  setUpAll(() {
+  setUpAll(() async {
     mockMainDataSource = MockMainDataSource();
+    apiClient = ApiClient();
     moclRepository = MainRepositoryImpl(
-      dataSource: mockMainDataSource,
-    );
+        dataSource: mockMainDataSource,
+        apiClient: apiClient,
+        parserFactory: ParserFactory(
+          clienParser: ClienParser(),
+          damoangParser: DamoangParser(),
+          meecoParser: MeecoParser(),
+          naverCafeParser: NaverCafeParser(),
+          settingsRepository: SettingsRepositoryImpl(prefs: await SharedPreferences.getInstance()),
+        ));
   });
 
   const mainItemModel = MainItemModel(
@@ -49,7 +66,8 @@ void main() {
       // act
       final result =
           await moclRepository.getMainList(siteType: siteType) as ResultFailure;
-      var expected = ResultFailure<Failure>(failure: const GetMainFailure(message: ''));
+      var expected =
+          ResultFailure<Failure>(failure: const GetMainFailure(message: ''));
       log('result=$result, expected=$expected');
 
       // assert

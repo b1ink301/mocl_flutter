@@ -12,7 +12,22 @@ class MainItem with _$MainItem {
     required String text,
     required String url,
     required int orderBy,
-    @Default(false)
-    bool hasItem,
+    @Default(false) bool hasItem,
+    @Default('') String icon,
   }) = _MainItem;
+
+  factory MainItem.fromJson(
+    Map<String, dynamic> json,
+    SiteType siteType,
+    int orderBy,
+  ) =>
+      MainItem(
+        siteType: siteType,
+        board: json["cafeUrl"],
+        type: 0,
+        text: json["mobileCafeName"],
+        url: json["cafeId"].toString(),
+        icon: json["cafeIconImageUrl"],
+        orderBy: orderBy,
+      );
 }

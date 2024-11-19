@@ -1,31 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
-import 'package:package_info_plus/package_info_plus.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/settings/bloc/get_version_cubit.dart';
 
-class DrawerWidget extends StatefulWidget {
+class DrawerWidget extends StatelessWidget {
   const DrawerWidget({super.key, required this.onChangeSite});
 
   final void Function(SiteType) onChangeSite;
-
-  @override
-  State<DrawerWidget> createState() => _DrawerWidgetState();
-}
-
-class _DrawerWidgetState extends State<DrawerWidget> {
-  PackageInfo? _packageInfo;
-
-  @override
-  void initState() {
-    _initPackageInfo();
-    super.initState();
-  }
-
-  Future<void> _initPackageInfo() async {
-    final info = await PackageInfo.fromPlatform();
-    setState(() {
-      _packageInfo = info;
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -48,7 +29,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
             ),
           ),
           ...SiteType.values
-              .where((siteType) => siteType != SiteType.naverCafe)
+              // .where((siteType) => siteType != SiteType.naverCafe)
               .map((siteType) => Column(
                     children: [
                       ListTile(
@@ -57,7 +38,7 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                         onTap: () async {
                           if (context.mounted) {
                             Navigator.of(context).pop();
-                            widget.onChangeSite(siteType);
+                            onChangeSite(siteType);
                           }
                         },
                       ),
@@ -70,10 +51,16 @@ class _DrawerWidgetState extends State<DrawerWidget> {
                     ],
                   )),
           const Spacer(),
-          ListTile(
-            title:
-                Text('v${_packageInfo?.version}-${_packageInfo?.buildNumber}'),
-            titleTextStyle: Theme.of(context).textTheme.bodySmall,
+          BlocBuilder<GetVersionCubit, GetVersionState>(
+            builder: (context, state) {
+              return state.maybeMap(
+                success: (state) => ListTile(
+                  title: Text(state.version),
+                  titleTextStyle: Theme.of(context).textTheme.bodySmall,
+                ),
+                orElse: () => const SizedBox.shrink(),
+              );
+            },
           ),
         ],
       ),

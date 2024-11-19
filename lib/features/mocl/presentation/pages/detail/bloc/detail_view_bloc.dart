@@ -1,7 +1,4 @@
-import 'dart:math';
-
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter/material.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
@@ -14,9 +11,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 part 'detail_view_bloc.freezed.dart';
-
 part 'detail_view_event.dart';
-
 part 'detail_view_state.dart';
 
 @injectable
@@ -34,7 +29,6 @@ class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
     @factoryParam this._siteType,
   ) : super(const DetailLoading()) {
     on<DetailsEvent>(_onDetailsEvent);
-    on<HeightEvent>(_onHeightEvent);
   }
 
   String get smallTitle => '${_siteType.title} > ${_listItem.item.boardTitle}';
@@ -64,32 +58,6 @@ class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
     }
   }
 
-  Future<void> _onHeightEvent(
-    HeightEvent event,
-    Emitter<DetailViewState> emit,
-  ) async {
-    final height = _calculateTitleHeight(event.text, event.style, event.width);
-    emit(DetailHeight(height));
-  }
-
-  double _calculateTitleHeight(
-    String text,
-    TextStyle style,
-    double width,
-  ) {
-    final textPainter = TextPainter(
-      text: TextSpan(
-        text: text,
-        style: style,
-      ),
-      maxLines: 3,
-      textDirection: TextDirection.ltr,
-    )..layout(minWidth: 0, maxWidth: width - (48 + 16 * 3));
-
-    final titleHeight = textPainter.height;
-    return max(30, titleHeight) + 36; // 텍스트 높이 반환
-  }
-
   Future<void> _markAsRead() async {
     if (!_listItem.isRead.value) {
       _listItem.markAsRead();
@@ -110,9 +78,9 @@ class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
     return await launchUrl(uri);
   }
 
-  void shareUri() {
+  Future<void> shareUri() async {
     final url = _listItem.item.url;
     final Uri uri = Uri.parse(url);
-    Share.shareUri(uri);
+    await Share.shareUri(uri);
   }
 }
