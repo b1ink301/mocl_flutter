@@ -19,6 +19,9 @@ class ClienParser extends BaseParser {
   SiteType get siteType => SiteType.clien;
 
   @override
+  String get baseUrl => 'https://m.clien.net';
+
+  @override
   Future<Result> comment(Response response) {
     // TODO: implement comment
     throw UnimplementedError();
@@ -110,8 +113,8 @@ class ClienParser extends BaseParser {
             ?.text
             .trim() ??
         '';
-    var timeElement = container?.querySelector(
-        "div.post_information > div.post_time > div.post_date");
+    var timeElement = container
+        ?.querySelector("div.post_information > div.post_time > div.post_date");
 
     // debugPrint('timeElement = ${timeElement?.outerHtml}');
     timeElement?.querySelectorAll('.fa').forEach((element) => element.remove());
@@ -310,8 +313,13 @@ class ClienParser extends BaseParser {
     try {
       await Isolate.spawn(
           _parseListInIsolate,
-          IsolateMessage(
-              receivePort.sendPort, response.data, lastId, boardTitle));
+          IsolateMessage<String>(
+            receivePort.sendPort,
+            response.data,
+            lastId,
+            boardTitle,
+            baseUrl,
+          ));
 
       return await completer.future;
     } catch (e) {
@@ -320,11 +328,12 @@ class ClienParser extends BaseParser {
     }
   }
 
-  static void _parseListInIsolate(IsolateMessage message) async {
+  static void _parseListInIsolate(IsolateMessage<String> message) async {
     final replyPort = message.replyPort;
     final responseData = message.responseData;
     final lastId = message.lastId;
     final boardTitle = message.boardTitle;
+    final baseUrl = message.baseUrl;
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
@@ -338,10 +347,9 @@ class ClienParser extends BaseParser {
       var id = int.tryParse(element.attributes['data-board-sn'] ?? '') ?? 0;
       if (id <= 0 || lastId > 0 && id >= lastId) continue;
 
-      var url = '';
       var userId = element.attributes['data-author-id']?.trim() ?? '';
       var tmpUrl = element.attributes['href']?.trim() ?? '';
-      url = !tmpUrl.startsWith("http") ? 'https://m.clien.net$tmpUrl' : tmpUrl;
+      final url = BaseParser.covertUrl(baseUrl, tmpUrl);
 
       var reply = element.attributes['data-comment-count']?.trim() ?? '';
 

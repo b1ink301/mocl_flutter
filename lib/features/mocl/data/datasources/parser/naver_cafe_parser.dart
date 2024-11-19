@@ -2,12 +2,12 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
-import 'package:html/parser.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
@@ -19,6 +19,31 @@ class NaverCafeParser extends BaseParser {
   SiteType get siteType => SiteType.naverCafe;
 
   @override
+  String get baseUrl => 'https://m.cafe.naver.com';
+
+  @override
+  FutureOr<Result> main(Response response) {
+    final Map<String, dynamic> json = response.data['message'];
+    final String status = json['status'];
+    if (status != '200') {
+      final Map<String, dynamic> error = json['error'];
+      throw Exception(error['msg']);
+    } else {
+      final List<dynamic> cafes = json['result']['cafes'];
+      var orderBy = 0;
+      final data = cafes
+          .map((cafe) => MainItem.fromJson(
+                cafe,
+                siteType,
+                orderBy++,
+              ))
+          .toList();
+
+      return ResultSuccess<List<MainItem>>(data: data);
+    }
+  }
+
+  @override
   Future<Result> comment(Response response) {
     // TODO: implement comment
     throw UnimplementedError();
@@ -28,135 +53,70 @@ class NaverCafeParser extends BaseParser {
   Future<Result> detail(Response response) async {
     final responseData = response.data;
     final resultPort = ReceivePort();
-
-    await Isolate.spawn(_detailIsolate, [responseData, resultPort.sendPort]);
-
-    final result = await resultPort.first as Result;
-    return result;
+    await Isolate.spawn(
+      _detailIsolate,
+      [responseData, resultPort.sendPort],
+    );
+    return await resultPort.first as Result;
   }
 
   static void _detailIsolate(List<dynamic> args) {
-    final responseData = args[0] as String;
+    final responseData = args[0] as List<dynamic>;
     final sendPort = args[1] as SendPort;
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
-    var document = parse(responseData);
-    final container = document.querySelector('article[id=bo_v]');
-    final title =
-        container?.querySelector('header > h1[id=bo_v_title]')?.text.trim() ??
-            '';
-    final timeElement = container?.querySelector(
-        'section[id=bo_v_info] > div.d-flex > div:last-child'); //:first-child, div:nth-child(2)
-    timeElement?.querySelector("span.visually-hidden")?.remove();
-    final time = timeElement?.text.trim() ?? '';
-    final bodyHtml =
-        container?.querySelector('section[id=bo_v_atc] > div[id=bo_v_con]');
-    bodyHtml
-        ?.querySelectorAll('input, button')
-        .forEach((element) => element.remove());
+    final detail = responseData.first['result'];
+    final article = detail['article'];
 
-    final headerElements = container
-        ?.querySelectorAll('section[id=bo_v_info] > div.gap-1 > div.pe-2');
+    final bodyHtml = article['contentHtml'] ?? '';
+    final writer = article['writer'];
+    final title = article['subject'] ?? '';
+    final id = writer['id'] ?? '';
+    final nickName = writer['nick'] ?? '';
+    final nickImage = writer['image']['url'] ?? '';
+    final time = article['writeDate'] ?? 0;
+    final viewCount = (article['readCount'] ?? 0).toString();
+    // final commentCount = writer['commentCount'];
+    final likeCount = '';
 
-    headerElements?.forEach((element) => element
-        .querySelectorAll('i, span.visually-hidden')
-        .forEach((e) => e.remove()));
+    final comment = responseData.last['result'];
+    // log('[detail] comment=$comment');
 
-    var viewCount = '';
-    var likeCount = '';
-    if (headerElements?.length == 2) {
-      viewCount = headerElements?.elementAtOrNull(0)?.text.trim() ?? '';
-      likeCount = headerElements?.elementAtOrNull(1)?.text.trim() ?? '';
-    } else if (headerElements?.length == 3) {
-      try {
-        viewCount = headerElements?.elementAtOrNull(0)?.text.trim() ?? '';
-        int.parse(viewCount);
-      } catch (e) {
-        viewCount = headerElements?.elementAtOrNull(1)?.text.trim() ?? '';
-      }
-      likeCount = headerElements?.elementAtOrNull(2)?.text.trim() ?? '';
-    } else if (headerElements?.length == 4) {
-      viewCount = headerElements?.elementAtOrNull(1)?.text.trim() ?? '';
-      likeCount = headerElements?.elementAtOrNull(3)?.text.trim() ?? '';
-    }
+    final List<dynamic> comments = comment['comments']['items'];
 
-    // final authorIp = container
-    //         ?.querySelector('section[id=bo_v_info] > div > div.me-auto')
-    //         ?.attributes['data-bs-title'] ??
-    //     '';
-    final memberElement = container?.querySelector(
-        'section[id=bo_v_info] > div.d-flex > div.me-auto > span.d-inline-block > span.sv_wrap > a.sv_member');
-
-    final nickName = memberElement?.text.trim() ?? '';
-    final nickImage = memberElement
-            ?.querySelector('span.profile_img > img')
-            ?.attributes['src'] ??
-        '';
-
-    var index = 0;
-    final comments = container
-            ?.querySelectorAll('div[id=viewcomment] > section > article')
-            .map((element) {
-              final nickElement = element.querySelector(
-                  'div.comment-list-wrap > header > div.d-flex > div.me-2 > span.d-inline-block > span.sv_wrap > a.sv_member');
-
-              final url = nickElement?.attributes['href'] ?? '';
-              final uri = Uri.parse(url);
-              final id = uri.queryParameters['mb_id'] ?? '-1';
-              final nickName = nickElement?.text.trim() ?? '';
-              final isReply = element.querySelector(
-                      'div.comment-list-wrap > header > div > div.me-2 > i.bi') !=
-                  null;
-              // final ip = element
-              //         .querySelector(
-              //             'div.comment_info > div.comment_info_area > div.comment_ip > span.ip_address')
-              //         ?.text ??
-              //     '';
-              final timeElement = element.querySelector(
-                  'div.comment-list-wrap > header > div > div.ms-auto');
-              timeElement?.querySelector("span.visually-hidden")?.remove();
-              final time = timeElement?.text.trim() ?? '';
-
-              final nickImage = nickElement
-                      ?.querySelector('span.profile_img > img.mb-photo')
-                      ?.attributes['src']
-                      ?.trim() ??
-                  '';
-
-              final likeCount = element
-                      .querySelector(
-                          'div.comment-content > div.d-flex > div:last-child > button:last-child > span:first-child')
-                      ?.text
-                      .trim() ??
-                  '';
-
-              final body =
-                  element.querySelector('div.comment-content > div.na-convert');
-              body
-                  ?.querySelectorAll('input, span.name, button')
-                  .forEach((e) => e.remove());
+    final commentItems = comments
+            .map((comment) {
+              final id = comment['id'] ?? 'id';
+              final writer = comment['writer'];
+              final body = comment['content'] ?? '';
+              final userId = writer['id'];
+              final nickImage = ''; //writer['image']['url'] ?? '';
+              final nickName = writer['nick'] ?? '';
+              final isReply = false;
+              final time = comment['updateDate'] ?? 0;
+              final likeCount = '0';
 
               var parsedTime = '';
               try {
-                var dateTime = parseDateTime(time);
+                var dateTime = DateTime.fromMillisecondsSinceEpoch(time);
                 parsedTime = timeago.format(dateTime, locale: 'ko');
               } catch (e) {
-                parsedTime = time;
+                parsedTime = time.toString();
               }
               var info = '$nickName ・ $parsedTime';
 
               return CommentItem(
-                id: index++,
+                id: id,
                 isReply: isReply,
-                bodyHtml: body?.outerHtml ?? '',
+                bodyHtml: body,
                 likeCount: likeCount,
                 mediaHtml: '',
                 isVideo: false,
-                time: time,
+                time: time.toString(),
                 info: info,
                 userInfo: UserInfo(
-                  id: id,
+                  id: userId,
                   nickName: nickName,
                   nickImage: nickImage,
                 ),
@@ -167,21 +127,22 @@ class NaverCafeParser extends BaseParser {
             .toList() ??
         [];
 
-    var parsedTime = '';
+    String parsedTime = '';
+
     try {
-      var dateTime = parseDateTime(time);
+      final dateTime = DateTime.fromMillisecondsSinceEpoch(time);
       parsedTime = timeago.format(dateTime, locale: 'ko');
     } catch (e) {
-      parsedTime = time;
+      parsedTime = time.toString();
     }
     final info = BaseParser.parserInfo(nickName, parsedTime, viewCount);
 
-    var detail = Details(
+    var details = Details(
       title: title,
       viewCount: viewCount,
       likeCount: likeCount,
       csrf: '',
-      time: time,
+      time: time.toString(),
       info: info,
       userInfo: UserInfo(
         id: nickName,
@@ -189,11 +150,11 @@ class NaverCafeParser extends BaseParser {
         nickImage: nickImage,
       ),
       bodies: [],
-      comments: comments,
-      bodyHtml: bodyHtml?.outerHtml ?? '',
+      comments: commentItems,
+      bodyHtml: bodyHtml,
     );
 
-    sendPort.send(ResultSuccess(data: detail));
+    sendPort.send(ResultSuccess(data: details));
   }
 
   @override
@@ -217,10 +178,22 @@ class NaverCafeParser extends BaseParser {
     });
 
     try {
+      final message = response.data['message'];
+      final status = message['status'].toString();
+      if (status != "200") {
+        throw Exception("status is not 200!");
+      }
+
       await Isolate.spawn(
-          _parseListInIsolate,
-          IsolateMessage(
-              receivePort.sendPort, response.data, lastId, boardTitle));
+        _parseListInIsolate,
+        IsolateMessage<Map<String, dynamic>>(
+          receivePort.sendPort,
+          message['result'],
+          lastId,
+          boardTitle,
+          baseUrl,
+        ),
+      );
 
       return await completer.future;
     } catch (e) {
@@ -229,7 +202,9 @@ class NaverCafeParser extends BaseParser {
     }
   }
 
-  static void _parseListInIsolate(IsolateMessage message) async {
+  static void _parseListInIsolate(
+    IsolateMessage<Map<String, dynamic>> message,
+  ) async {
     final replyPort = message.replyPort;
     final responseData = message.responseData;
     final lastId = message.lastId;
@@ -240,108 +215,43 @@ class NaverCafeParser extends BaseParser {
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
-    var document = parse(responseData);
-    var elementList = document.querySelectorAll(
-        'form[id=fboardlist] > section[id=bo_list] > ul.list-group > li.list-group-item > div.d-flex');
+    final List<dynamic> articleList = responseData['articleList'];
 
-    for (var element in elementList) {
-      var category = element
-              .querySelector('div.wr-num > div > span')
-              ?.text
-              .trim()
-              .split(' ')
-              .firstOrNull ??
-          '';
-
-      if (category == "공지" || category == "홍보") continue;
-
-      var infoElement = element.querySelector('div.flex-grow-1');
-      var link = infoElement?.querySelector("div.d-flex > div > a");
-      if (link == null) continue;
-
-      var url = link.attributes["href"]?.trim() ?? '';
-      var uri = Uri.tryParse(url);
-      if (uri == null) continue;
-      var idString = uri.pathSegments.lastOrNull ?? '-1';
-      var id = int.tryParse(idString) ?? -1;
-      if (id <= 0 || lastId > 0 && id >= lastId) continue;
-
-      var metaElement = infoElement?.querySelector(
-          'div.da-list-meta > div.d-flex > div.wr-name > span.sv_wrap > a.sv_member');
-      var profile = metaElement?.attributes['href'] ?? '';
-      var nickName = metaElement?.text.trim() ?? '';
-      var userId = Uri.parse(profile).queryParameters['mb_id'] ?? '';
-
-      var reply = infoElement
-              ?.querySelectorAll("div.d-flex > div.d-inline-flex > a")
-              .map((a) => a.querySelector('span.count-plus')?.text.trim())
-              .firstWhere((text) => text != null && text.isNotEmpty,
-                  orElse: () => '') ??
-          '';
-
-      var board = '';
-      var end = url.lastIndexOf("/");
-      if (end > 0) {
-        var start = url.lastIndexOf("/", end - 1);
-        if (start >= 0) {
-          board = url.substring(start + 1, end);
-        }
+    for (var article in articleList) {
+      final String type = article['type'];
+      if (type == 'AD') {
+        continue;
       }
+      final Map<String, dynamic> item = article['item'];
 
-      var title = link.text.trim();
-
-      var timeElement =
-          infoElement?.querySelector("div > div.d-flex > div.wr-date");
-
-      timeElement
-          ?.querySelectorAll("span.visually-hidden, i.bi")
-          .forEach((ele) => ele.remove());
-
-      var time = timeElement?.text.trim() ?? '';
-      var parsedTime = '';
-      try {
-        var dateTime = parseDateTime(time);
-        parsedTime = timeago.format(dateTime, locale: 'ko');
-      } catch (e) {
-        parsedTime = time;
-      }
-
-      var nickImage = metaElement
-              ?.querySelector("span.profile_img > img.mb-photo")
-              ?.attributes["src"]
-              ?.trim() ??
-          '';
-
-      var hitElement =
-          infoElement?.querySelector("div > div.d-flex > div.wr-num.order-4");
-      hitElement?.querySelector("span.visually-hidden")?.remove();
-      var hit = hitElement?.text.trim() ?? '';
-
-      var likeElement = infoElement?.querySelector("div.wr-num > div.rcmd-box");
-      likeElement
-          ?.querySelectorAll("span.visually-hidden, i.bi")
-          .forEach((ele) => ele.remove());
-      var like = likeElement?.text.trim() ?? '';
-
-      var hasImage = infoElement
-              ?.querySelector("div.d-flex > div > span.na-icon")
-              ?.hasContent() ??
-          false;
-
-      final info = BaseParser.parserInfo(nickName, parsedTime, hit);
+      final int id = item['articleId'] ?? -1;
+      final int board = item['cafeId'] ?? -2;
+      final String nickName = item['writerNickname'] ?? '-';
+      final String category = item['menuName'] ?? '-';
+      final String title = item['subject'] ?? '-';
+      final String nickImage = item['profileImage'] ?? '-';
+      final int hit = item['readCount'] ?? 0;
+      final int like = item['likeItCount'] ?? 0;
+      final int commentCount = item['commentCount'] ?? 0;
+      final int time = item['writeDateTimestamp'] ?? 0;
+      final String userId = item['memberKey'] ?? '-';
+      final bool hasImage = item['attachImage'] as bool? ?? false;
+      final dateTime = DateTime.fromMillisecondsSinceEpoch(time);
+      final parsedTime = timeago.format(dateTime, locale: 'ko');
+      final info = BaseParser.parserInfo(nickName, parsedTime, hit.toString());
 
       final parsedItem = {
         'id': id,
         'title': title,
-        'reply': reply,
+        'reply': commentCount.toString(),
         'category': category,
-        'time': time,
+        'time': time.toString(),
         'info': info,
-        'url': url,
-        'board': board,
+        'url': '',
+        'board': board.toString(),
         'boardTitle': boardTitle,
-        'like': like,
-        'hit': hit,
+        'like': like.toString(),
+        'hit': hit.toString(),
         'userInfo': UserInfo(
           id: userId,
           nickName: nickName,
@@ -383,7 +293,7 @@ class NaverCafeParser extends BaseParser {
 
   static DateTime parseDateTime(String dateTimeString) {
     if (dateTimeString.contains(' ')) {
-      // 년.월.일 형식
+// 년.월.일 형식
       var parts = dateTimeString.split(' ');
       var dateParts = parts[0].split('.');
       var timeParts = parts[1].split(':');
@@ -409,7 +319,7 @@ class NaverCafeParser extends BaseParser {
       }
     } else if (dateTimeString.contains(':')) {
       final now = DateTime.now();
-      // 시:분 형식
+// 시:분 형식
       var timeParts = dateTimeString.split(':');
       return DateTime(
         now.year,

@@ -6,21 +6,21 @@ import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/presentation/injection.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/main/bloc/main_data_json_bloc.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/main/add_dialog/bloc/main_data_json_bloc.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/check_box_list_title_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
 
-class SetListDialog extends StatelessWidget {
-  const SetListDialog({super.key});
+class AddListDialog extends StatelessWidget {
+  const AddListDialog({super.key});
 
   static Widget withBloc(
     BuildContext context,
     SiteType siteType,
   ) =>
       BlocProvider(
-        child: const SetListDialog(),
+        child: const AddListDialog(),
         create: (BuildContext context) =>
             getIt<MainDataJsonBloc>()..add(GetListEvent(siteType: siteType)),
       );

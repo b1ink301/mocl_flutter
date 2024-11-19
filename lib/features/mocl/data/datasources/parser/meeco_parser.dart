@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:html/parser.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
@@ -20,6 +19,9 @@ class MeecoParser extends BaseParser {
   SiteType get siteType => SiteType.meeco;
 
   @override
+  String get baseUrl => 'https://meeco.kr';
+
+  @override
   Future<Result> comment(Response response) {
     // TODO: implement comment
     throw UnimplementedError();
@@ -30,15 +32,17 @@ class MeecoParser extends BaseParser {
     final responseData = response.data;
     final resultPort = ReceivePort();
 
-    await Isolate.spawn(_detailIsolate, [responseData, resultPort.sendPort]);
+    await Isolate.spawn(
+        _detailIsolate, [baseUrl, responseData, resultPort.sendPort]);
 
     final result = await resultPort.first as Result;
     return result;
   }
 
   static void _detailIsolate(List<dynamic> args) {
-    final responseData = args[0] as String;
-    final sendPort = args[1] as SendPort;
+    final baseUrl = args[0] as String;
+    final responseData = args[1] as String;
+    final sendPort = args[2] as SendPort;
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
@@ -54,10 +58,7 @@ class MeecoParser extends BaseParser {
     final tmpUrl =
         infoElement?.querySelector('span.pf > img.pf_img')?.attributes['src'] ??
             '';
-    final nickImage = tmpUrl.isNotEmpty && !tmpUrl.startsWith("http")
-        ? 'https://meeco.kr$tmpUrl'
-        : tmpUrl;
-
+    final nickImage = BaseParser.covertUrl(baseUrl, tmpUrl);
     final nickName =
         infoElement?.querySelector('span.nickname')?.text.trim() ?? '';
 
@@ -79,14 +80,10 @@ class MeecoParser extends BaseParser {
             .map((element) {
               final headerElement = element.querySelector('header.cmt_hd');
 
-              debugPrint('element=${element.innerHtml}');
-
               final profileElement = headerElement
                   ?.querySelector('div.pf_wrap > span.pf > img.pf_img');
               final tmpUrl = profileElement?.attributes['src']?.trim() ?? '';
-              final nickImage = tmpUrl.isNotEmpty && !tmpUrl.startsWith("http")
-                  ? 'https://meeco.kr$tmpUrl'
-                  : tmpUrl;
+              final nickImage = BaseParser.covertUrl(baseUrl, tmpUrl);
               final nickName = profileElement?.attributes['alt'] ?? '';
               final isReply = element.querySelector(
                       'div.comment-list-wrap > header > div > div.me-2 > i.bi') !=
@@ -103,9 +100,6 @@ class MeecoParser extends BaseParser {
                       ?.text
                       .trim() ??
                   '';
-
-              debugPrint(
-                  'time=$time, nickImage=$nickImage, nickName=$nickName, likeCount=$likeCount');
 
               final body = element.querySelector('div.xe_content');
               body
@@ -151,7 +145,6 @@ class MeecoParser extends BaseParser {
     }
 
     final info = BaseParser.parserInfo(nickName, parsedTime, viewCount);
-    debugPrint('comments=${comments.length}, info=$info');
 
     var detail = Details(
       title: title,
@@ -196,8 +189,13 @@ class MeecoParser extends BaseParser {
     try {
       await Isolate.spawn(
           _parseListInIsolate,
-          IsolateMessage(
-              receivePort.sendPort, response.data, lastId, boardTitle));
+          IsolateMessage<String>(
+            receivePort.sendPort,
+            response.data,
+            lastId,
+            boardTitle,
+            baseUrl,
+          ));
 
       return await completer.future;
     } catch (e) {
@@ -206,11 +204,12 @@ class MeecoParser extends BaseParser {
     }
   }
 
-  static void _parseListInIsolate(IsolateMessage message) async {
+  static void _parseListInIsolate(IsolateMessage<String> message) async {
     final replyPort = message.replyPort;
     final responseData = message.responseData;
     final lastId = message.lastId;
     final boardTitle = message.boardTitle;
+    final baseUrl = message.baseUrl;
 
     var parsedItems = <Map<String, dynamic>>[];
     var ids = <int>[];
@@ -225,8 +224,6 @@ class MeecoParser extends BaseParser {
     var elementList = document.querySelectorAll(
         'div.wrap > section[id=container] > div > section.ctt > section.neon_board > div[id=list_swipe_area] > div.list_ctt > div.list_document > div.list_d > ul > li');
 
-    debugPrint('count = ${elementList.length}');
-
     for (var element in elementList) {
       var category = element
               .querySelector('span.hot_text, span.notice_text')
@@ -239,9 +236,7 @@ class MeecoParser extends BaseParser {
       var infoElement = element.querySelector('a.list_link');
       var title = infoElement?.attributes['title']?.trim() ?? '';
       final tmpUrl = infoElement?.attributes['href']?.trim() ?? '';
-      final url = tmpUrl.isNotEmpty && !tmpUrl.startsWith("http")
-          ? 'https://meeco.kr$tmpUrl'
-          : tmpUrl;
+      final url = BaseParser.covertUrl(baseUrl, tmpUrl);
 
       var uri = Uri.tryParse(url);
       if (uri == null) continue;
@@ -266,16 +261,15 @@ class MeecoParser extends BaseParser {
         }
       }
 
-      // var title = element.querySelector('div.list_title')?.text.trim() ?? '';
       var time = element
-              .querySelector('div.list_info > div:nth-child(2)')
+              .querySelector('div.list_info > div:nth-child(1)')
               ?.text
               .trim() ??
           '';
       var parsedTime = time;
       var nickImage = '';
       var hit = element
-              .querySelector('div.list_info > div:nth-child(3)')
+              .querySelector('div.list_info > div:nth-child(2)')
               ?.text
               .trim() ??
           '';
@@ -283,14 +277,8 @@ class MeecoParser extends BaseParser {
           element.querySelector('div.list_info > div.list_vote')?.text.trim() ??
               '';
 
-      debugPrint(
-          'title=$title, category=$category, nickName = $nickName, reply=$reply, hit=$hit, time=$time, like=$like');
-
       var hasImage = false;
-
       final info = BaseParser.parserInfo(nickName, parsedTime, hit);
-
-      debugPrint('info=$info, url=$url, board=$board, tmpUrl=$tmpUrl');
 
       final parsedItem = {
         'id': id,

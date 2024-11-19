@@ -7,6 +7,7 @@ abstract class Routes {
   static const main = '/main';
   static const list = '/list';
   static const detail = '/detail';
-  static const setting = '/setting';
+  static const settings = '/settings';
+  static const login = '/login';
   static const setMainDlg = 'setMainDlg';
 }

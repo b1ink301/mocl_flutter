@@ -15,63 +15,68 @@ class MainView extends StatelessWidget {
     final textStyle = Theme.of(context).textTheme.bodyMedium;
 
     return BlocBuilder<MainDataBloc, MainDataState>(
-      builder: (context, state) {
-        return state.map(
-          initial: (_) => const LoadingWidget(),
-          loading: (_) => const LoadingWidget(),
-          success: (state) {
-            if (state.data.isEmpty) {
-              final height = MediaQuery.of(context).size.height - 120;
-              return SizedBox(
-                  height: height,
-                  child: Center(
-                    child: Text(
-                      '항목이 없습니다',
-                      style: textStyle,
-                    ),
-                  ));
-            } else {
-              return _buildListView(context, state.data, textStyle);
-            }
-          },
-          failure: (state) => _buildErrorView(context, state.message),
-        );
-      },
-    );
-  }
-
-  Widget _buildListView(
-      BuildContext context, List<MainItem> items, TextStyle? textStyle) {
-    return ListView.separated(
-      itemCount: items.length,
-      shrinkWrap: true,
-      physics: const ClampingScrollPhysics(),
-      itemBuilder: (context, index) =>
-          _buildListItem(context, items[index], textStyle),
-      separatorBuilder: (_, __) => const DividerWidget(),
-    );
-  }
-
-  Widget _buildListItem(
-      BuildContext context, MainItem item, TextStyle? textStyle) {
-    return ListTile(
-      key: ValueKey(item.board),
-      minTileHeight: 68,
-      title: Text(item.text, style: textStyle),
-      onTap: () => context.push(Routes.list, extra: item),
-    );
-  }
-
-  Widget _buildErrorView(BuildContext context, String message) {
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: Text(
-        message,
-        style: TextStyle(
-          fontSize: 16,
-          color: Theme.of(context).indicatorColor,
-        ),
+      builder: (context, state) => state.map(
+        initial: (_) => _buildLoadingView(),
+        loading: (_) => _buildLoadingView(),
+        success: (state) => state.data.isEmpty
+            ? _buildEmptyView(textStyle)
+            : _buildListView(context, state.data, textStyle),
+        failure: (state) => _buildErrorView(context, state.message),
       ),
     );
   }
+
+  Widget _buildLoadingView() =>
+      const SliverToBoxAdapter(child: LoadingWidget());
+
+  Widget _buildEmptyView(TextStyle? textStyle) => SliverFillRemaining(
+        hasScrollBody: false,
+        child: Center(
+          child: Text(
+            '항목이 없습니다',
+            style: textStyle,
+          ),
+        ),
+      );
+
+  Widget _buildListView(
+    BuildContext context,
+    List<MainItem> items,
+    TextStyle? textStyle,
+  ) =>
+      SliverList.separated(
+        itemCount: items.length,
+        itemBuilder: (context, index) =>
+            _buildListItem(context, items[index], textStyle),
+        separatorBuilder: (_, __) => const DividerWidget(),
+      );
+
+  Widget _buildListItem(
+    BuildContext context,
+    MainItem item,
+    TextStyle? textStyle,
+  ) =>
+      ListTile(
+        key: ValueKey(item.board),
+        minTileHeight: 68,
+        title: Text(item.text, style: textStyle),
+        onTap: () => context.push(Routes.list, extra: item),
+      );
+
+  Widget _buildErrorView(
+    BuildContext context,
+    String message,
+  ) =>
+      SliverPadding(
+        padding: const EdgeInsets.all(12.0),
+        sliver: SliverToBoxAdapter(
+          child: Text(
+            message,
+            style: TextStyle(
+              fontSize: 16,
+              color: Theme.of(context).indicatorColor,
+            ),
+          ),
+        ),
+      );
 }

@@ -19,39 +19,32 @@ mixin _$DetailViewEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() details,
-    required TResult Function(String text, TextStyle style, double width)
-        height,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? details,
-    TResult? Function(String text, TextStyle style, double width)? height,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? details,
-    TResult Function(String text, TextStyle style, double width)? height,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(DetailsEvent value) details,
-    required TResult Function(HeightEvent value) height,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(DetailsEvent value)? details,
-    TResult? Function(HeightEvent value)? height,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(DetailsEvent value)? details,
-    TResult Function(HeightEvent value)? height,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -120,8 +113,6 @@ class _$DetailsEventImpl implements DetailsEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() details,
-    required TResult Function(String text, TextStyle style, double width)
-        height,
   }) {
     return details();
   }
@@ -130,7 +121,6 @@ class _$DetailsEventImpl implements DetailsEvent {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? details,
-    TResult? Function(String text, TextStyle style, double width)? height,
   }) {
     return details?.call();
   }
@@ -139,7 +129,6 @@ class _$DetailsEventImpl implements DetailsEvent {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? details,
-    TResult Function(String text, TextStyle style, double width)? height,
     required TResult orElse(),
   }) {
     if (details != null) {
@@ -152,7 +141,6 @@ class _$DetailsEventImpl implements DetailsEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(DetailsEvent value) details,
-    required TResult Function(HeightEvent value) height,
   }) {
     return details(this);
   }
@@ -161,7 +149,6 @@ class _$DetailsEventImpl implements DetailsEvent {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(DetailsEvent value)? details,
-    TResult? Function(HeightEvent value)? height,
   }) {
     return details?.call(this);
   }
@@ -170,7 +157,6 @@ class _$DetailsEventImpl implements DetailsEvent {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(DetailsEvent value)? details,
-    TResult Function(HeightEvent value)? height,
     required TResult orElse(),
   }) {
     if (details != null) {
@@ -185,174 +171,12 @@ abstract class DetailsEvent implements DetailViewEvent {
 }
 
 /// @nodoc
-abstract class _$$HeightEventImplCopyWith<$Res> {
-  factory _$$HeightEventImplCopyWith(
-          _$HeightEventImpl value, $Res Function(_$HeightEventImpl) then) =
-      __$$HeightEventImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({String text, TextStyle style, double width});
-}
-
-/// @nodoc
-class __$$HeightEventImplCopyWithImpl<$Res>
-    extends _$DetailViewEventCopyWithImpl<$Res, _$HeightEventImpl>
-    implements _$$HeightEventImplCopyWith<$Res> {
-  __$$HeightEventImplCopyWithImpl(
-      _$HeightEventImpl _value, $Res Function(_$HeightEventImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of DetailViewEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? text = null,
-    Object? style = null,
-    Object? width = null,
-  }) {
-    return _then(_$HeightEventImpl(
-      null == text
-          ? _value.text
-          : text // ignore: cast_nullable_to_non_nullable
-              as String,
-      null == style
-          ? _value.style
-          : style // ignore: cast_nullable_to_non_nullable
-              as TextStyle,
-      null == width
-          ? _value.width
-          : width // ignore: cast_nullable_to_non_nullable
-              as double,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _$HeightEventImpl implements HeightEvent {
-  const _$HeightEventImpl(this.text, this.style, this.width);
-
-  @override
-  final String text;
-  @override
-  final TextStyle style;
-  @override
-  final double width;
-
-  @override
-  String toString() {
-    return 'DetailViewEvent.height(text: $text, style: $style, width: $width)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$HeightEventImpl &&
-            (identical(other.text, text) || other.text == text) &&
-            (identical(other.style, style) || other.style == style) &&
-            (identical(other.width, width) || other.width == width));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, text, style, width);
-
-  /// Create a copy of DetailViewEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$HeightEventImplCopyWith<_$HeightEventImpl> get copyWith =>
-      __$$HeightEventImplCopyWithImpl<_$HeightEventImpl>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() details,
-    required TResult Function(String text, TextStyle style, double width)
-        height,
-  }) {
-    return height(text, style, width);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? details,
-    TResult? Function(String text, TextStyle style, double width)? height,
-  }) {
-    return height?.call(text, style, width);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? details,
-    TResult Function(String text, TextStyle style, double width)? height,
-    required TResult orElse(),
-  }) {
-    if (height != null) {
-      return height(text, style, width);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(DetailsEvent value) details,
-    required TResult Function(HeightEvent value) height,
-  }) {
-    return height(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(DetailsEvent value)? details,
-    TResult? Function(HeightEvent value)? height,
-  }) {
-    return height?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(DetailsEvent value)? details,
-    TResult Function(HeightEvent value)? height,
-    required TResult orElse(),
-  }) {
-    if (height != null) {
-      return height(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class HeightEvent implements DetailViewEvent {
-  const factory HeightEvent(
-          final String text, final TextStyle style, final double width) =
-      _$HeightEventImpl;
-
-  String get text;
-  TextStyle get style;
-  double get width;
-
-  /// Create a copy of DetailViewEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$HeightEventImplCopyWith<_$HeightEventImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
 mixin _$DetailViewState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() loading,
     required TResult Function(Details detail) success,
     required TResult Function(String message) failed,
-    required TResult Function(double height) height,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -360,7 +184,6 @@ mixin _$DetailViewState {
     TResult? Function()? loading,
     TResult? Function(Details detail)? success,
     TResult? Function(String message)? failed,
-    TResult? Function(double height)? height,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -368,7 +191,6 @@ mixin _$DetailViewState {
     TResult Function()? loading,
     TResult Function(Details detail)? success,
     TResult Function(String message)? failed,
-    TResult Function(double height)? height,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -377,7 +199,6 @@ mixin _$DetailViewState {
     required TResult Function(DetailLoading value) loading,
     required TResult Function(DetailSuccess value) success,
     required TResult Function(DetailFailed value) failed,
-    required TResult Function(DetailHeight value) height,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -385,7 +206,6 @@ mixin _$DetailViewState {
     TResult? Function(DetailLoading value)? loading,
     TResult? Function(DetailSuccess value)? success,
     TResult? Function(DetailFailed value)? failed,
-    TResult? Function(DetailHeight value)? height,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -393,7 +213,6 @@ mixin _$DetailViewState {
     TResult Function(DetailLoading value)? loading,
     TResult Function(DetailSuccess value)? success,
     TResult Function(DetailFailed value)? failed,
-    TResult Function(DetailHeight value)? height,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -464,7 +283,6 @@ class _$DetailLoadingImpl implements DetailLoading {
     required TResult Function() loading,
     required TResult Function(Details detail) success,
     required TResult Function(String message) failed,
-    required TResult Function(double height) height,
   }) {
     return loading();
   }
@@ -475,7 +293,6 @@ class _$DetailLoadingImpl implements DetailLoading {
     TResult? Function()? loading,
     TResult? Function(Details detail)? success,
     TResult? Function(String message)? failed,
-    TResult? Function(double height)? height,
   }) {
     return loading?.call();
   }
@@ -486,7 +303,6 @@ class _$DetailLoadingImpl implements DetailLoading {
     TResult Function()? loading,
     TResult Function(Details detail)? success,
     TResult Function(String message)? failed,
-    TResult Function(double height)? height,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -501,7 +317,6 @@ class _$DetailLoadingImpl implements DetailLoading {
     required TResult Function(DetailLoading value) loading,
     required TResult Function(DetailSuccess value) success,
     required TResult Function(DetailFailed value) failed,
-    required TResult Function(DetailHeight value) height,
   }) {
     return loading(this);
   }
@@ -512,7 +327,6 @@ class _$DetailLoadingImpl implements DetailLoading {
     TResult? Function(DetailLoading value)? loading,
     TResult? Function(DetailSuccess value)? success,
     TResult? Function(DetailFailed value)? failed,
-    TResult? Function(DetailHeight value)? height,
   }) {
     return loading?.call(this);
   }
@@ -523,7 +337,6 @@ class _$DetailLoadingImpl implements DetailLoading {
     TResult Function(DetailLoading value)? loading,
     TResult Function(DetailSuccess value)? success,
     TResult Function(DetailFailed value)? failed,
-    TResult Function(DetailHeight value)? height,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -620,7 +433,6 @@ class _$DetailSuccessImpl implements DetailSuccess {
     required TResult Function() loading,
     required TResult Function(Details detail) success,
     required TResult Function(String message) failed,
-    required TResult Function(double height) height,
   }) {
     return success(detail);
   }
@@ -631,7 +443,6 @@ class _$DetailSuccessImpl implements DetailSuccess {
     TResult? Function()? loading,
     TResult? Function(Details detail)? success,
     TResult? Function(String message)? failed,
-    TResult? Function(double height)? height,
   }) {
     return success?.call(detail);
   }
@@ -642,7 +453,6 @@ class _$DetailSuccessImpl implements DetailSuccess {
     TResult Function()? loading,
     TResult Function(Details detail)? success,
     TResult Function(String message)? failed,
-    TResult Function(double height)? height,
     required TResult orElse(),
   }) {
     if (success != null) {
@@ -657,7 +467,6 @@ class _$DetailSuccessImpl implements DetailSuccess {
     required TResult Function(DetailLoading value) loading,
     required TResult Function(DetailSuccess value) success,
     required TResult Function(DetailFailed value) failed,
-    required TResult Function(DetailHeight value) height,
   }) {
     return success(this);
   }
@@ -668,7 +477,6 @@ class _$DetailSuccessImpl implements DetailSuccess {
     TResult? Function(DetailLoading value)? loading,
     TResult? Function(DetailSuccess value)? success,
     TResult? Function(DetailFailed value)? failed,
-    TResult? Function(DetailHeight value)? height,
   }) {
     return success?.call(this);
   }
@@ -679,7 +487,6 @@ class _$DetailSuccessImpl implements DetailSuccess {
     TResult Function(DetailLoading value)? loading,
     TResult Function(DetailSuccess value)? success,
     TResult Function(DetailFailed value)? failed,
-    TResult Function(DetailHeight value)? height,
     required TResult orElse(),
   }) {
     if (success != null) {
@@ -772,7 +579,6 @@ class _$DetailFailedImpl implements DetailFailed {
     required TResult Function() loading,
     required TResult Function(Details detail) success,
     required TResult Function(String message) failed,
-    required TResult Function(double height) height,
   }) {
     return failed(message);
   }
@@ -783,7 +589,6 @@ class _$DetailFailedImpl implements DetailFailed {
     TResult? Function()? loading,
     TResult? Function(Details detail)? success,
     TResult? Function(String message)? failed,
-    TResult? Function(double height)? height,
   }) {
     return failed?.call(message);
   }
@@ -794,7 +599,6 @@ class _$DetailFailedImpl implements DetailFailed {
     TResult Function()? loading,
     TResult Function(Details detail)? success,
     TResult Function(String message)? failed,
-    TResult Function(double height)? height,
     required TResult orElse(),
   }) {
     if (failed != null) {
@@ -809,7 +613,6 @@ class _$DetailFailedImpl implements DetailFailed {
     required TResult Function(DetailLoading value) loading,
     required TResult Function(DetailSuccess value) success,
     required TResult Function(DetailFailed value) failed,
-    required TResult Function(DetailHeight value) height,
   }) {
     return failed(this);
   }
@@ -820,7 +623,6 @@ class _$DetailFailedImpl implements DetailFailed {
     TResult? Function(DetailLoading value)? loading,
     TResult? Function(DetailSuccess value)? success,
     TResult? Function(DetailFailed value)? failed,
-    TResult? Function(DetailHeight value)? height,
   }) {
     return failed?.call(this);
   }
@@ -831,7 +633,6 @@ class _$DetailFailedImpl implements DetailFailed {
     TResult Function(DetailLoading value)? loading,
     TResult Function(DetailSuccess value)? success,
     TResult Function(DetailFailed value)? failed,
-    TResult Function(DetailHeight value)? height,
     required TResult orElse(),
   }) {
     if (failed != null) {
@@ -850,157 +651,5 @@ abstract class DetailFailed implements DetailViewState {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$DetailFailedImplCopyWith<_$DetailFailedImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class _$$DetailHeightImplCopyWith<$Res> {
-  factory _$$DetailHeightImplCopyWith(
-          _$DetailHeightImpl value, $Res Function(_$DetailHeightImpl) then) =
-      __$$DetailHeightImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({double height});
-}
-
-/// @nodoc
-class __$$DetailHeightImplCopyWithImpl<$Res>
-    extends _$DetailViewStateCopyWithImpl<$Res, _$DetailHeightImpl>
-    implements _$$DetailHeightImplCopyWith<$Res> {
-  __$$DetailHeightImplCopyWithImpl(
-      _$DetailHeightImpl _value, $Res Function(_$DetailHeightImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of DetailViewState
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? height = null,
-  }) {
-    return _then(_$DetailHeightImpl(
-      null == height
-          ? _value.height
-          : height // ignore: cast_nullable_to_non_nullable
-              as double,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _$DetailHeightImpl implements DetailHeight {
-  const _$DetailHeightImpl(this.height);
-
-  @override
-  final double height;
-
-  @override
-  String toString() {
-    return 'DetailViewState.height(height: $height)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$DetailHeightImpl &&
-            (identical(other.height, height) || other.height == height));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, height);
-
-  /// Create a copy of DetailViewState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$DetailHeightImplCopyWith<_$DetailHeightImpl> get copyWith =>
-      __$$DetailHeightImplCopyWithImpl<_$DetailHeightImpl>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() loading,
-    required TResult Function(Details detail) success,
-    required TResult Function(String message) failed,
-    required TResult Function(double height) height,
-  }) {
-    return height(this.height);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? loading,
-    TResult? Function(Details detail)? success,
-    TResult? Function(String message)? failed,
-    TResult? Function(double height)? height,
-  }) {
-    return height?.call(this.height);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? loading,
-    TResult Function(Details detail)? success,
-    TResult Function(String message)? failed,
-    TResult Function(double height)? height,
-    required TResult orElse(),
-  }) {
-    if (height != null) {
-      return height(this.height);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(DetailLoading value) loading,
-    required TResult Function(DetailSuccess value) success,
-    required TResult Function(DetailFailed value) failed,
-    required TResult Function(DetailHeight value) height,
-  }) {
-    return height(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(DetailLoading value)? loading,
-    TResult? Function(DetailSuccess value)? success,
-    TResult? Function(DetailFailed value)? failed,
-    TResult? Function(DetailHeight value)? height,
-  }) {
-    return height?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(DetailLoading value)? loading,
-    TResult Function(DetailSuccess value)? success,
-    TResult Function(DetailFailed value)? failed,
-    TResult Function(DetailHeight value)? height,
-    required TResult orElse(),
-  }) {
-    if (height != null) {
-      return height(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class DetailHeight implements DetailViewState {
-  const factory DetailHeight(final double height) = _$DetailHeightImpl;
-
-  double get height;
-
-  /// Create a copy of DetailViewState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$DetailHeightImplCopyWith<_$DetailHeightImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

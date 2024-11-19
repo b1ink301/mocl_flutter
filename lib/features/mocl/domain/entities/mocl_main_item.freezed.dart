@@ -23,6 +23,7 @@ mixin _$MainItem {
   String get url => throw _privateConstructorUsedError;
   int get orderBy => throw _privateConstructorUsedError;
   bool get hasItem => throw _privateConstructorUsedError;
+  String get icon => throw _privateConstructorUsedError;
 
   /// Create a copy of MainItem
   /// with the given fields replaced by the non-null parameter values.
@@ -43,7 +44,8 @@ abstract class $MainItemCopyWith<$Res> {
       String text,
       String url,
       int orderBy,
-      bool hasItem});
+      bool hasItem,
+      String icon});
 }
 
 /// @nodoc
@@ -68,6 +70,7 @@ class _$MainItemCopyWithImpl<$Res, $Val extends MainItem>
     Object? url = null,
     Object? orderBy = null,
     Object? hasItem = null,
+    Object? icon = null,
   }) {
     return _then(_value.copyWith(
       siteType: null == siteType
@@ -98,6 +101,10 @@ class _$MainItemCopyWithImpl<$Res, $Val extends MainItem>
           ? _value.hasItem
           : hasItem // ignore: cast_nullable_to_non_nullable
               as bool,
+      icon: null == icon
+          ? _value.icon
+          : icon // ignore: cast_nullable_to_non_nullable
+              as String,
     ) as $Val);
   }
 }
@@ -117,7 +124,8 @@ abstract class _$$MainItemImplCopyWith<$Res>
       String text,
       String url,
       int orderBy,
-      bool hasItem});
+      bool hasItem,
+      String icon});
 }
 
 /// @nodoc
@@ -140,6 +148,7 @@ class __$$MainItemImplCopyWithImpl<$Res>
     Object? url = null,
     Object? orderBy = null,
     Object? hasItem = null,
+    Object? icon = null,
   }) {
     return _then(_$MainItemImpl(
       siteType: null == siteType
@@ -170,6 +179,10 @@ class __$$MainItemImplCopyWithImpl<$Res>
           ? _value.hasItem
           : hasItem // ignore: cast_nullable_to_non_nullable
               as bool,
+      icon: null == icon
+          ? _value.icon
+          : icon // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
@@ -184,7 +197,8 @@ class _$MainItemImpl implements _MainItem {
       required this.text,
       required this.url,
       required this.orderBy,
-      this.hasItem = false});
+      this.hasItem = false,
+      this.icon = ''});
 
   @override
   final SiteType siteType;
@@ -201,10 +215,13 @@ class _$MainItemImpl implements _MainItem {
   @override
   @JsonKey()
   final bool hasItem;
+  @override
+  @JsonKey()
+  final String icon;
 
   @override
   String toString() {
-    return 'MainItem(siteType: $siteType, board: $board, type: $type, text: $text, url: $url, orderBy: $orderBy, hasItem: $hasItem)';
+    return 'MainItem(siteType: $siteType, board: $board, type: $type, text: $text, url: $url, orderBy: $orderBy, hasItem: $hasItem, icon: $icon)';
   }
 
   @override
@@ -219,12 +236,13 @@ class _$MainItemImpl implements _MainItem {
             (identical(other.text, text) || other.text == text) &&
             (identical(other.url, url) || other.url == url) &&
             (identical(other.orderBy, orderBy) || other.orderBy == orderBy) &&
-            (identical(other.hasItem, hasItem) || other.hasItem == hasItem));
+            (identical(other.hasItem, hasItem) || other.hasItem == hasItem) &&
+            (identical(other.icon, icon) || other.icon == icon));
   }
 
   @override
   int get hashCode => Object.hash(
-      runtimeType, siteType, board, type, text, url, orderBy, hasItem);
+      runtimeType, siteType, board, type, text, url, orderBy, hasItem, icon);
 
   /// Create a copy of MainItem
   /// with the given fields replaced by the non-null parameter values.
@@ -243,7 +261,8 @@ abstract class _MainItem implements MainItem {
       required final String text,
       required final String url,
       required final int orderBy,
-      final bool hasItem}) = _$MainItemImpl;
+      final bool hasItem,
+      final String icon}) = _$MainItemImpl;
 
   @override
   SiteType get siteType;
@@ -259,6 +278,8 @@ abstract class _MainItem implements MainItem {
   int get orderBy;
   @override
   bool get hasItem;
+  @override
+  String get icon;
 
   /// Create a copy of MainItem
   /// with the given fields replaced by the non-null parameter values.

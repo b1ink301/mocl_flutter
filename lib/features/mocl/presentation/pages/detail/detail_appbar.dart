@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/bloc/detail_view_bloc.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/detail/bloc/get_height_cubit.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/appbar_dual_text_widget.dart';
 
 class DetailAppBar extends StatelessWidget {
@@ -10,11 +11,10 @@ class DetailAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      BlocBuilder<DetailViewBloc, DetailViewState>(
-        buildWhen: (previous, current) => current is DetailHeight,
+      BlocBuilder<GetHeightCubit, GetHeightState>(
         builder: (context, state) => state.maybeWhen(
           orElse: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
-          height: (height) {
+          success: (height) {
             final bloc = context.read<DetailViewBloc>();
             return AppbarDualTextWidget(
               title: bloc.title,

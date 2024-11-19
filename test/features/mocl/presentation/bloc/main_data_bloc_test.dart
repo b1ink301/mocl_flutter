@@ -4,8 +4,14 @@ import 'dart:developer';
 import 'package:bloc_test/bloc_test.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/api_client.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/local_database.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/parser/clien_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/parser/damoang_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/parser/meeco_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/parser/naver_cafe_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/parser/parser_factory.dart';
 import 'package:mocl_flutter/features/mocl/data/db/app_database.dart';
 import 'package:mocl_flutter/features/mocl/data/repositories/mocl_main_repository_impl.dart';
 import 'package:mocl_flutter/features/mocl/data/repositories/mocl_settings_repository_impl.dart';
@@ -18,7 +24,7 @@ import 'package:mocl_flutter/features/mocl/domain/usecases/get_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_main_list.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_site_type.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/bloc/main_data_bloc.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/main/bloc/main_data_json_bloc.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/main/add_dialog/bloc/main_data_json_bloc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 void main() async {
@@ -50,11 +56,20 @@ void main() async {
     final prefs = await SharedPreferences.getInstance();
     localDatabase = LocalDatabase(database: appDatabase);
     mainDataSource = MainDataSourceImpl(localDatabase: localDatabase);
-    mainRepository = MainRepositoryImpl(dataSource: mainDataSource);
+    settingsRepository = SettingsRepositoryImpl(prefs: prefs);
+    mainRepository = MainRepositoryImpl(
+        dataSource: mainDataSource,
+        apiClient: ApiClient(),
+        parserFactory: ParserFactory(
+          clienParser: ClienParser(),
+          meecoParser: MeecoParser(),
+          naverCafeParser: NaverCafeParser(),
+          damoangParser: DamoangParser(),
+          settingsRepository: settingsRepository,
+        ));
     getMainList = GetMainList(mainRepository: mainRepository);
     getMainListFromJson = GetMainListFromJson(mainRepository: mainRepository);
     setMainList = SetMainList(mainRepository: mainRepository);
-    settingsRepository = SettingsRepositoryImpl(prefs: prefs);
     getSiteType = GetSiteType(settingsRepository: settingsRepository);
     setSiteType = SetSiteType(settingsRepository: settingsRepository);
     mainDataBloc = MainDataBloc(

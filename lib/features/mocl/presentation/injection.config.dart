@@ -45,10 +45,14 @@ import '../domain/usecases/set_site_type.dart' as _i913;
 import 'injection.dart' as _i464;
 import 'models/readable_list_item.dart' as _i923;
 import 'pages/detail/bloc/detail_view_bloc.dart' as _i83;
+import 'pages/detail/bloc/get_height_cubit.dart' as _i63;
 import 'pages/list/bloc/list_page_cubit.dart' as _i588;
+import 'pages/main/add_dialog/bloc/main_data_json_bloc.dart' as _i61;
 import 'pages/main/bloc/main_data_bloc.dart' as _i413;
-import 'pages/main/bloc/main_data_json_bloc.dart' as _i51;
 import 'pages/main/bloc/site_type_bloc.dart' as _i1067;
+import 'pages/settings/bloc/clear_data_cubit.dart' as _i237;
+import 'pages/settings/bloc/get_version_cubit.dart' as _i830;
+import 'pages/settings/bloc/settings_bloc.dart' as _i29;
 
 extension GetItInjectableX on _i174.GetIt {
 // initializes the registration of main-scope dependencies inside of GetIt
@@ -62,6 +66,10 @@ extension GetItInjectableX on _i174.GetIt {
       environmentFilter,
     );
     final registerModule = _$RegisterModule();
+    gh.factory<_i237.ClearDataCubit>(() => _i237.ClearDataCubit());
+    gh.factory<_i29.SettingsBloc>(() => _i29.SettingsBloc());
+    gh.factory<_i830.GetVersionCubit>(() => _i830.GetVersionCubit());
+    gh.factory<_i63.GetHeightCubit>(() => _i63.GetHeightCubit());
     await gh.singletonAsync<_i724.AppDatabase>(
       () => registerModule.appDatabase,
       preResolve: true,
@@ -104,8 +112,6 @@ extension GetItInjectableX on _i174.GetIt {
           localDatabase: gh<_i231.LocalDatabase>(),
           apiClient: gh<_i875.ApiClient>(),
         ));
-    gh.lazySingleton<_i534.MainRepository>(
-        () => _i555.MainRepositoryImpl(dataSource: gh<_i958.MainDataSource>()));
     gh.factory<_i480.ListRepository>(() => _i1014.ListRepositoryImpl(
           dataSource: gh<_i715.ListDataSource>(),
           parserFactory: gh<_i63.ParserFactory>(),
@@ -113,6 +119,11 @@ extension GetItInjectableX on _i174.GetIt {
     gh.singleton<_i1067.SiteTypeBloc>(() => _i1067.SiteTypeBloc(
           getSiteType: gh<_i17.GetSiteType>(),
           setSiteType: gh<_i913.SetSiteType>(),
+        ));
+    gh.lazySingleton<_i534.MainRepository>(() => _i555.MainRepositoryImpl(
+          dataSource: gh<_i958.MainDataSource>(),
+          apiClient: gh<_i875.ApiClient>(),
+          parserFactory: gh<_i63.ParserFactory>(),
         ));
     gh.factory<_i673.GetMainList>(
         () => _i673.GetMainList(mainRepository: gh<_i534.MainRepository>()));
@@ -153,7 +164,7 @@ extension GetItInjectableX on _i174.GetIt {
           _listItem,
           _siteType,
         ));
-    gh.factory<_i51.MainDataJsonBloc>(() => _i51.MainDataJsonBloc(
+    gh.factory<_i61.MainDataJsonBloc>(() => _i61.MainDataJsonBloc(
           getMainListFromJson: gh<_i307.GetMainListFromJson>(),
           setMainList: gh<_i688.SetMainList>(),
         ));
