@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -57,15 +56,15 @@ class MainDataBloc extends Bloc<MainDataEvent, MainDataState> {
     GetListEvent event,
     Emitter<MainDataState> emit,
   ) async {
-    emit(const MainDataState.loading());
+    emit(const StateLoading());
 
     final result = await getMainList.call(event.siteType);
     switch (result) {
       case ResultFailure():
         if (result.failure is NotLoginFailure) {
-          emit(MainDataState.requireLogin(result.failure.message));
+          emit(StateRequireLogin(result.failure.message));
         } else {
-          emit(MainDataState.failure(result.failure.message));
+          emit(StateFailure(result.failure.message));
         }
         break;
       case ResultInitial():
@@ -73,8 +72,7 @@ class MainDataBloc extends Bloc<MainDataEvent, MainDataState> {
       case ResultLoading():
         break;
       case ResultSuccess():
-        log('MainDataBloc result=$result');
-        emit(MainDataState.success(result.data));
+        emit(StateSuccess(result.data));
         break;
     }
   }

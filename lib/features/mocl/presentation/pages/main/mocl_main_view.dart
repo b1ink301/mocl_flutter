@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -60,6 +61,7 @@ class MainView extends StatelessWidget {
       ListTile(
         key: ValueKey(item.board),
         minTileHeight: 68,
+        leading: item.icon.isEmpty ? null : _buildIconView(item.icon),
         title: Text(item.text, style: textStyle),
         onTap: () => context.push(Routes.list, extra: item),
       );
@@ -80,4 +82,7 @@ class MainView extends StatelessWidget {
           ),
         ),
       );
+
+  Widget _buildIconView(String url) => CircleAvatar(
+      radius: 24, backgroundImage: CachedNetworkImageProvider(url));
 }
