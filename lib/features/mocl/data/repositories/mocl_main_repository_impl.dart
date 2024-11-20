@@ -1,18 +1,16 @@
 import 'dart:core';
-import 'dart:developer';
 
 import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/api_client.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/parser_factory.dart';
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-
-import '../../domain/entities/mocl_result.dart';
-import '../../domain/entities/mocl_site_type.dart';
-import '../../domain/repositories/main_repository.dart';
-import '../datasources/main_data_source.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/mocl/domain/repositories/main_repository.dart';
 
 @LazySingleton(as: MainRepository)
 class MainRepositoryImpl extends MainRepository {
@@ -34,7 +32,6 @@ class MainRepositoryImpl extends MainRepository {
     try {
       if (siteType == SiteType.naverCafe) {
         final result = await apiClient.getMain(parser);
-        log('[getMainListStream] result=$result');
         yield ResultSuccess(data: result);
       } else {
         final result = await dataSource.get(siteType);

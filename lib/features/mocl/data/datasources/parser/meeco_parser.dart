@@ -158,7 +158,6 @@ class MeecoParser extends BaseParser {
         nickName: nickName,
         nickImage: nickImage,
       ),
-      bodies: [],
       comments: comments,
       bodyHtml: bodyHtml?.innerHtml ?? '',
     );

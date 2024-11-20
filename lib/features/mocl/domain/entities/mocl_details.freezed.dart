@@ -24,7 +24,6 @@ mixin _$Details {
   String get csrf => throw _privateConstructorUsedError;
   String get info => throw _privateConstructorUsedError;
   UserInfo get userInfo => throw _privateConstructorUsedError;
-  List<DetailItem> get bodies => throw _privateConstructorUsedError;
   List<CommentItem> get comments => throw _privateConstructorUsedError;
 
   /// Create a copy of Details
@@ -47,7 +46,6 @@ abstract class $DetailsCopyWith<$Res> {
       String csrf,
       String info,
       UserInfo userInfo,
-      List<DetailItem> bodies,
       List<CommentItem> comments});
 
   $UserInfoCopyWith<$Res> get userInfo;
@@ -76,7 +74,6 @@ class _$DetailsCopyWithImpl<$Res, $Val extends Details>
     Object? csrf = null,
     Object? info = null,
     Object? userInfo = null,
-    Object? bodies = null,
     Object? comments = null,
   }) {
     return _then(_value.copyWith(
@@ -112,10 +109,6 @@ class _$DetailsCopyWithImpl<$Res, $Val extends Details>
           ? _value.userInfo
           : userInfo // ignore: cast_nullable_to_non_nullable
               as UserInfo,
-      bodies: null == bodies
-          ? _value.bodies
-          : bodies // ignore: cast_nullable_to_non_nullable
-              as List<DetailItem>,
       comments: null == comments
           ? _value.comments
           : comments // ignore: cast_nullable_to_non_nullable
@@ -150,7 +143,6 @@ abstract class _$$DetailsImplCopyWith<$Res> implements $DetailsCopyWith<$Res> {
       String csrf,
       String info,
       UserInfo userInfo,
-      List<DetailItem> bodies,
       List<CommentItem> comments});
 
   @override
@@ -178,7 +170,6 @@ class __$$DetailsImplCopyWithImpl<$Res>
     Object? csrf = null,
     Object? info = null,
     Object? userInfo = null,
-    Object? bodies = null,
     Object? comments = null,
   }) {
     return _then(_$DetailsImpl(
@@ -214,10 +205,6 @@ class __$$DetailsImplCopyWithImpl<$Res>
           ? _value.userInfo
           : userInfo // ignore: cast_nullable_to_non_nullable
               as UserInfo,
-      bodies: null == bodies
-          ? _value._bodies
-          : bodies // ignore: cast_nullable_to_non_nullable
-              as List<DetailItem>,
       comments: null == comments
           ? _value._comments
           : comments // ignore: cast_nullable_to_non_nullable
@@ -238,10 +225,8 @@ class _$DetailsImpl implements _Details {
       required this.csrf,
       required this.info,
       required this.userInfo,
-      required final List<DetailItem> bodies,
       required final List<CommentItem> comments})
-      : _bodies = bodies,
-        _comments = comments;
+      : _comments = comments;
 
   @override
   final String title;
@@ -259,14 +244,6 @@ class _$DetailsImpl implements _Details {
   final String info;
   @override
   final UserInfo userInfo;
-  final List<DetailItem> _bodies;
-  @override
-  List<DetailItem> get bodies {
-    if (_bodies is EqualUnmodifiableListView) return _bodies;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_bodies);
-  }
-
   final List<CommentItem> _comments;
   @override
   List<CommentItem> get comments {
@@ -277,7 +254,7 @@ class _$DetailsImpl implements _Details {
 
   @override
   String toString() {
-    return 'Details(title: $title, time: $time, viewCount: $viewCount, likeCount: $likeCount, bodyHtml: $bodyHtml, csrf: $csrf, info: $info, userInfo: $userInfo, bodies: $bodies, comments: $comments)';
+    return 'Details(title: $title, time: $time, viewCount: $viewCount, likeCount: $likeCount, bodyHtml: $bodyHtml, csrf: $csrf, info: $info, userInfo: $userInfo, comments: $comments)';
   }
 
   @override
@@ -297,7 +274,6 @@ class _$DetailsImpl implements _Details {
             (identical(other.info, info) || other.info == info) &&
             (identical(other.userInfo, userInfo) ||
                 other.userInfo == userInfo) &&
-            const DeepCollectionEquality().equals(other._bodies, _bodies) &&
             const DeepCollectionEquality().equals(other._comments, _comments));
   }
 
@@ -312,7 +288,6 @@ class _$DetailsImpl implements _Details {
       csrf,
       info,
       userInfo,
-      const DeepCollectionEquality().hash(_bodies),
       const DeepCollectionEquality().hash(_comments));
 
   /// Create a copy of Details
@@ -334,7 +309,6 @@ abstract class _Details implements Details {
       required final String csrf,
       required final String info,
       required final UserInfo userInfo,
-      required final List<DetailItem> bodies,
       required final List<CommentItem> comments}) = _$DetailsImpl;
 
   @override
@@ -353,8 +327,6 @@ abstract class _Details implements Details {
   String get info;
   @override
   UserInfo get userInfo;
-  @override
-  List<DetailItem> get bodies;
   @override
   List<CommentItem> get comments;
 

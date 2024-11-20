@@ -105,7 +105,7 @@ class NaverCafeParser extends BaseParser {
           final userId = writer['id'];
           final nickImage = ''; //writer['image']['url'] ?? '';
           final nickName = writer['nick'] ?? '';
-          final isReply = false;
+          final isReply = comment['isRef'];
           final time = comment['updateDate'] ?? 0;
           final likeCount = '0';
 
@@ -160,7 +160,6 @@ class NaverCafeParser extends BaseParser {
         nickName: nickName,
         nickImage: nickImage,
       ),
-      bodies: [],
       comments: commentItems,
       bodyHtml: bodyHtml,
     );

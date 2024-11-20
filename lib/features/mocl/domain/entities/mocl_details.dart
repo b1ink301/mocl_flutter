@@ -17,12 +17,9 @@ class Details with _$Details {
     required String csrf,
     required String info,
     required UserInfo userInfo,
-    required List<DetailItem> bodies,
     required List<CommentItem> comments,
   }) = _Details;
 }
-
-class DetailItem {}
 
 @freezed
 class CommentItem with _$CommentItem {
