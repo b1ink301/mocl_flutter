@@ -4,6 +4,7 @@ import 'dart:developer';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
@@ -56,14 +57,16 @@ class MainDataBloc extends Bloc<MainDataEvent, MainDataState> {
     GetListEvent event,
     Emitter<MainDataState> emit,
   ) async {
-
     emit(const MainDataState.loading());
+
     final result = await getMainList.call(event.siteType);
-    log('MainDataBloc event=$event, result=$result');
     switch (result) {
       case ResultFailure():
-        log('MainDataBloc result=$result');
-        emit(MainDataState.failure(result.failure.toString()));
+        if (result.failure is NotLoginFailure) {
+          emit(MainDataState.requireLogin(result.failure.message));
+        } else {
+          emit(MainDataState.failure(result.failure.message));
+        }
         break;
       case ResultInitial():
         break;

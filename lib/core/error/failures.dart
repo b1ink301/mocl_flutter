@@ -17,6 +17,10 @@ class GetMainFailure extends Failure {
   const GetMainFailure({required super.message});
 }
 
+class NotLoginFailure extends Failure {
+  const NotLoginFailure({required super.message});
+}
+
 class GetListFailure extends Failure {
   const GetListFailure({required super.message});
 }

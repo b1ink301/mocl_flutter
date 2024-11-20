@@ -9,57 +9,55 @@ class SettingsView extends StatelessWidget {
   const SettingsView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final textStyle = Theme.of(context).textTheme.bodyMedium;
-    return SliverToBoxAdapter(
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          BlocBuilder<GetVersionCubit, GetVersionState>(
-            builder: (context, state) {
-              return state.maybeMap(
-                success: (state) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: Text(
-                    state.version,
-                    style: TextStyle(
-                      fontSize: 17,
-                      color: Theme.of(context).indicatorColor,
-                    ),
-                  ),
-                ),
-                orElse: () => _buildLoadingView(),
-              );
-            },
-          ),
-          const DividerWidget(),
-          BlocBuilder<ClearDataCubit, ClearDataState>(
-            builder: (context, state) {
-              return state.maybeMap(
-                success: (state) => _buildErrorView(context, "ClearDataCubit"),
-                loading: (state) => _buildLoadingView(),
-                orElse: () => InkWell(
-                  onTap: () => {},
-                  child: Container(
-                    width: double.infinity,
-                    height: 58,
-                    alignment: Alignment.center,
+  Widget build(BuildContext context) => SliverToBoxAdapter(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            BlocBuilder<GetVersionCubit, GetVersionState>(
+              builder: (context, state) {
+                return state.maybeMap(
+                  success: (state) => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
                     child: Text(
-                      '모든 데이터 삭제',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).indicatorColor,
-                          ),
+                      state.version,
+                      style: TextStyle(
+                        fontSize: 17,
+                        color: Theme.of(context).indicatorColor,
+                      ),
                     ),
                   ),
-                ),
-              );
-            },
-          ),
-          const DividerWidget(),
-        ],
-      ),
-    );
-  }
+                  orElse: () => _buildLoadingView(),
+                );
+              },
+            ),
+            const DividerWidget(),
+            BlocBuilder<ClearDataCubit, ClearDataState>(
+              builder: (context, state) {
+                return state.maybeMap(
+                  success: (state) =>
+                      _buildErrorView(context, "ClearDataCubit"),
+                  loading: (state) => _buildLoadingView(),
+                  orElse: () => InkWell(
+                    onTap: () => {},
+                    child: Container(
+                      width: double.infinity,
+                      height: 58,
+                      alignment: Alignment.center,
+                      child: Text(
+                        '모든 데이터 삭제',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Theme.of(context).indicatorColor,
+                            ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+            const DividerWidget(),
+          ],
+        ),
+      );
 
   Widget _buildLoadingView() => const LoadingWidget();
 

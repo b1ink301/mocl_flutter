@@ -14,16 +14,23 @@ T _$identity<T>(T value) => value;
 final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
+MainItem _$MainItemFromJson(Map<String, dynamic> json) {
+  return _MainItem.fromJson(json);
+}
+
 /// @nodoc
 mixin _$MainItem {
   SiteType get siteType => throw _privateConstructorUsedError;
   String get board => throw _privateConstructorUsedError;
-  int get type => throw _privateConstructorUsedError;
   String get text => throw _privateConstructorUsedError;
   String get url => throw _privateConstructorUsedError;
   int get orderBy => throw _privateConstructorUsedError;
+  int get type => throw _privateConstructorUsedError;
   bool get hasItem => throw _privateConstructorUsedError;
   String get icon => throw _privateConstructorUsedError;
+
+  /// Serializes this MainItem to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
   /// Create a copy of MainItem
   /// with the given fields replaced by the non-null parameter values.
@@ -40,10 +47,10 @@ abstract class $MainItemCopyWith<$Res> {
   $Res call(
       {SiteType siteType,
       String board,
-      int type,
       String text,
       String url,
       int orderBy,
+      int type,
       bool hasItem,
       String icon});
 }
@@ -65,10 +72,10 @@ class _$MainItemCopyWithImpl<$Res, $Val extends MainItem>
   $Res call({
     Object? siteType = null,
     Object? board = null,
-    Object? type = null,
     Object? text = null,
     Object? url = null,
     Object? orderBy = null,
+    Object? type = null,
     Object? hasItem = null,
     Object? icon = null,
   }) {
@@ -81,10 +88,6 @@ class _$MainItemCopyWithImpl<$Res, $Val extends MainItem>
           ? _value.board
           : board // ignore: cast_nullable_to_non_nullable
               as String,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as int,
       text: null == text
           ? _value.text
           : text // ignore: cast_nullable_to_non_nullable
@@ -96,6 +99,10 @@ class _$MainItemCopyWithImpl<$Res, $Val extends MainItem>
       orderBy: null == orderBy
           ? _value.orderBy
           : orderBy // ignore: cast_nullable_to_non_nullable
+              as int,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
               as int,
       hasItem: null == hasItem
           ? _value.hasItem
@@ -120,10 +127,10 @@ abstract class _$$MainItemImplCopyWith<$Res>
   $Res call(
       {SiteType siteType,
       String board,
-      int type,
       String text,
       String url,
       int orderBy,
+      int type,
       bool hasItem,
       String icon});
 }
@@ -143,10 +150,10 @@ class __$$MainItemImplCopyWithImpl<$Res>
   $Res call({
     Object? siteType = null,
     Object? board = null,
-    Object? type = null,
     Object? text = null,
     Object? url = null,
     Object? orderBy = null,
+    Object? type = null,
     Object? hasItem = null,
     Object? icon = null,
   }) {
@@ -159,10 +166,6 @@ class __$$MainItemImplCopyWithImpl<$Res>
           ? _value.board
           : board // ignore: cast_nullable_to_non_nullable
               as String,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as int,
       text: null == text
           ? _value.text
           : text // ignore: cast_nullable_to_non_nullable
@@ -174,6 +177,10 @@ class __$$MainItemImplCopyWithImpl<$Res>
       orderBy: null == orderBy
           ? _value.orderBy
           : orderBy // ignore: cast_nullable_to_non_nullable
+              as int,
+      type: null == type
+          ? _value.type
+          : type // ignore: cast_nullable_to_non_nullable
               as int,
       hasItem: null == hasItem
           ? _value.hasItem
@@ -188,30 +195,34 @@ class __$$MainItemImplCopyWithImpl<$Res>
 }
 
 /// @nodoc
-
+@JsonSerializable()
 class _$MainItemImpl implements _MainItem {
   const _$MainItemImpl(
       {required this.siteType,
       required this.board,
-      required this.type,
       required this.text,
       required this.url,
       required this.orderBy,
+      this.type = 0,
       this.hasItem = false,
       this.icon = ''});
+
+  factory _$MainItemImpl.fromJson(Map<String, dynamic> json) =>
+      _$$MainItemImplFromJson(json);
 
   @override
   final SiteType siteType;
   @override
   final String board;
   @override
-  final int type;
-  @override
   final String text;
   @override
   final String url;
   @override
   final int orderBy;
+  @override
+  @JsonKey()
+  final int type;
   @override
   @JsonKey()
   final bool hasItem;
@@ -221,7 +232,7 @@ class _$MainItemImpl implements _MainItem {
 
   @override
   String toString() {
-    return 'MainItem(siteType: $siteType, board: $board, type: $type, text: $text, url: $url, orderBy: $orderBy, hasItem: $hasItem, icon: $icon)';
+    return 'MainItem(siteType: $siteType, board: $board, text: $text, url: $url, orderBy: $orderBy, type: $type, hasItem: $hasItem, icon: $icon)';
   }
 
   @override
@@ -232,17 +243,18 @@ class _$MainItemImpl implements _MainItem {
             (identical(other.siteType, siteType) ||
                 other.siteType == siteType) &&
             (identical(other.board, board) || other.board == board) &&
-            (identical(other.type, type) || other.type == type) &&
             (identical(other.text, text) || other.text == text) &&
             (identical(other.url, url) || other.url == url) &&
             (identical(other.orderBy, orderBy) || other.orderBy == orderBy) &&
+            (identical(other.type, type) || other.type == type) &&
             (identical(other.hasItem, hasItem) || other.hasItem == hasItem) &&
             (identical(other.icon, icon) || other.icon == icon));
   }
 
+  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   int get hashCode => Object.hash(
-      runtimeType, siteType, board, type, text, url, orderBy, hasItem, icon);
+      runtimeType, siteType, board, text, url, orderBy, type, hasItem, icon);
 
   /// Create a copy of MainItem
   /// with the given fields replaced by the non-null parameter values.
@@ -251,31 +263,41 @@ class _$MainItemImpl implements _MainItem {
   @pragma('vm:prefer-inline')
   _$$MainItemImplCopyWith<_$MainItemImpl> get copyWith =>
       __$$MainItemImplCopyWithImpl<_$MainItemImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$MainItemImplToJson(
+      this,
+    );
+  }
 }
 
 abstract class _MainItem implements MainItem {
   const factory _MainItem(
       {required final SiteType siteType,
       required final String board,
-      required final int type,
       required final String text,
       required final String url,
       required final int orderBy,
+      final int type,
       final bool hasItem,
       final String icon}) = _$MainItemImpl;
+
+  factory _MainItem.fromJson(Map<String, dynamic> json) =
+      _$MainItemImpl.fromJson;
 
   @override
   SiteType get siteType;
   @override
   String get board;
   @override
-  int get type;
-  @override
   String get text;
   @override
   String get url;
   @override
   int get orderBy;
+  @override
+  int get type;
   @override
   bool get hasItem;
   @override

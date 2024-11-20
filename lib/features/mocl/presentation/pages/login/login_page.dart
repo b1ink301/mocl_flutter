@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/login/login_view.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
@@ -8,18 +6,14 @@ class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    var statusBarColor =
-        Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor;
-    return Scaffold(
-      appBar: _buildAppBar(context),
-      body: SafeArea(
-        left: false,
-        right: false,
-        child: const LoginView(),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => Scaffold(
+        appBar: _buildAppBar(context),
+        body: SafeArea(
+          left: false,
+          right: false,
+          child: const LoginView(),
+        ),
+      );
 
   PreferredSizeWidget _buildAppBar(
     BuildContext context,

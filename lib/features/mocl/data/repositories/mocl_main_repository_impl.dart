@@ -1,7 +1,6 @@
 import 'dart:core';
 import 'dart:developer';
 
-import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/api_client.dart';
@@ -25,7 +24,7 @@ class MainRepositoryImpl extends MainRepository {
     required this.dataSource,
     required this.apiClient,
     required ParserFactory parserFactory,
-  }): parser = parserFactory.createParser();
+  }) : parser = parserFactory.createParser();
 
   @override
   Stream<Result> getMainListStream({
@@ -53,7 +52,6 @@ class MainRepositoryImpl extends MainRepository {
     required List<MainItem> list,
   }) async {
     try {
-
       final result = await dataSource.set(siteType, list);
       return ResultSuccess<List<int>>(data: result);
     } on Exception catch (e) {
@@ -86,9 +84,7 @@ class MainRepositoryImpl extends MainRepository {
   Future<Result> getMainList({required SiteType siteType}) async {
     try {
       if (siteType == SiteType.naverCafe) {
-        final result = await apiClient.getMain(parser);
-        log('[getMainList] result=$result');
-        return result;
+        return await apiClient.getMain(parser);
       } else {
         final result = await dataSource.get(siteType);
         return ResultSuccess(data: result);

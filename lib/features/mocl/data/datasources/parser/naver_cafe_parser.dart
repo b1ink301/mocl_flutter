@@ -27,17 +27,29 @@ class NaverCafeParser extends BaseParser {
     final String status = json['status'];
     if (status != '200') {
       final Map<String, dynamic> error = json['error'];
-      throw Exception(error['msg']);
+      final String code = error['code'];
+      final String msg = error['msg'];
+      if (code == '0004') {
+        return ResultFailure(failure: NotLoginFailure(message: msg));
+      } else {
+        return ResultFailure(failure: GetMainFailure(message: msg));
+      }
     } else {
       final List<dynamic> cafes = json['result']['cafes'];
       var orderBy = 0;
-      final data = cafes
-          .map((cafe) => MainItem.fromJson(
-                cafe,
-                siteType,
-                orderBy++,
-              ))
-          .toList();
+      final data = cafes.map((cafe) {
+        Map<String, dynamic> json = {
+          'siteType': siteType.name,
+          'orderBy': orderBy,
+          'url': cafe['cafeId'].toString(),
+          'board': cafe['cafeUrl'],
+          'text': cafe['mobileCafeName'],
+          'icon': cafe['cafeIconImageUrl'],
+          'hasItem': false,
+          'type': 0,
+        };
+        return MainItem.fromJson(json);
+      }).toList();
 
       return ResultSuccess<List<MainItem>>(data: data);
     }
@@ -72,7 +84,7 @@ class NaverCafeParser extends BaseParser {
     final bodyHtml = article['contentHtml'] ?? '';
     final writer = article['writer'];
     final title = article['subject'] ?? '';
-    final id = writer['id'] ?? '';
+    // final id = writer['id'] ?? '';
     final nickName = writer['nick'] ?? '';
     final nickImage = writer['image']['url'] ?? '';
     final time = article['writeDate'] ?? 0;
@@ -86,46 +98,45 @@ class NaverCafeParser extends BaseParser {
     final List<dynamic> comments = comment['comments']['items'];
 
     final commentItems = comments
-            .map((comment) {
-              final id = comment['id'] ?? 'id';
-              final writer = comment['writer'];
-              final body = comment['content'] ?? '';
-              final userId = writer['id'];
-              final nickImage = ''; //writer['image']['url'] ?? '';
-              final nickName = writer['nick'] ?? '';
-              final isReply = false;
-              final time = comment['updateDate'] ?? 0;
-              final likeCount = '0';
+        .map((comment) {
+          final id = comment['id'] ?? 'id';
+          final writer = comment['writer'];
+          final body = comment['content'] ?? '';
+          final userId = writer['id'];
+          final nickImage = ''; //writer['image']['url'] ?? '';
+          final nickName = writer['nick'] ?? '';
+          final isReply = false;
+          final time = comment['updateDate'] ?? 0;
+          final likeCount = '0';
 
-              var parsedTime = '';
-              try {
-                var dateTime = DateTime.fromMillisecondsSinceEpoch(time);
-                parsedTime = timeago.format(dateTime, locale: 'ko');
-              } catch (e) {
-                parsedTime = time.toString();
-              }
-              var info = '$nickName ・ $parsedTime';
+          var parsedTime = '';
+          try {
+            var dateTime = DateTime.fromMillisecondsSinceEpoch(time);
+            parsedTime = timeago.format(dateTime, locale: 'ko');
+          } catch (e) {
+            parsedTime = time.toString();
+          }
+          var info = '$nickName ・ $parsedTime';
 
-              return CommentItem(
-                id: id,
-                isReply: isReply,
-                bodyHtml: body,
-                likeCount: likeCount,
-                mediaHtml: '',
-                isVideo: false,
-                time: time.toString(),
-                info: info,
-                userInfo: UserInfo(
-                  id: userId,
-                  nickName: nickName,
-                  nickImage: nickImage,
-                ),
-                authorId: '',
-              );
-            })
-            .whereType<CommentItem>()
-            .toList() ??
-        [];
+          return CommentItem(
+            id: id,
+            isReply: isReply,
+            bodyHtml: body,
+            likeCount: likeCount,
+            mediaHtml: '',
+            isVideo: false,
+            time: time.toString(),
+            info: info,
+            userInfo: UserInfo(
+              id: userId,
+              nickName: nickName,
+              nickImage: nickImage,
+            ),
+            authorId: '',
+          );
+        })
+        .whereType<CommentItem>()
+        .toList();
 
     String parsedTime = '';
 
@@ -222,9 +233,12 @@ class NaverCafeParser extends BaseParser {
       if (type == 'AD') {
         continue;
       }
-      final Map<String, dynamic> item = article['item'];
 
+      final Map<String, dynamic> item = article['item'];
       final int id = item['articleId'] ?? -1;
+
+      if (id <= 0 || lastId > 0 && id >= lastId) continue;
+
       final int board = item['cafeId'] ?? -2;
       final String nickName = item['writerNickname'] ?? '-';
       final String category = item['menuName'] ?? '-';

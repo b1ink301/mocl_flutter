@@ -22,6 +22,7 @@ class MainView extends StatelessWidget {
             ? _buildEmptyView(textStyle)
             : _buildListView(context, state.data, textStyle),
         failure: (state) => _buildErrorView(context, state.message),
+        requireLogin: (state) => _buildErrorView(context, state.message),
       ),
     );
   }
