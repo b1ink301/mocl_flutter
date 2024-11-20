@@ -693,6 +693,7 @@ mixin _$MainDataState {
     required TResult Function() loading,
     required TResult Function(List<MainItem> data) success,
     required TResult Function(String message) failure,
+    required TResult Function(String message) requireLogin,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -701,6 +702,7 @@ mixin _$MainDataState {
     TResult? Function()? loading,
     TResult? Function(List<MainItem> data)? success,
     TResult? Function(String message)? failure,
+    TResult? Function(String message)? requireLogin,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -709,6 +711,7 @@ mixin _$MainDataState {
     TResult Function()? loading,
     TResult Function(List<MainItem> data)? success,
     TResult Function(String message)? failure,
+    TResult Function(String message)? requireLogin,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -718,6 +721,7 @@ mixin _$MainDataState {
     required TResult Function(StateLoading value) loading,
     required TResult Function(StateSuccess value) success,
     required TResult Function(StateFailure value) failure,
+    required TResult Function(StateRequireLogin value) requireLogin,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -726,6 +730,7 @@ mixin _$MainDataState {
     TResult? Function(StateLoading value)? loading,
     TResult? Function(StateSuccess value)? success,
     TResult? Function(StateFailure value)? failure,
+    TResult? Function(StateRequireLogin value)? requireLogin,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -734,6 +739,7 @@ mixin _$MainDataState {
     TResult Function(StateLoading value)? loading,
     TResult Function(StateSuccess value)? success,
     TResult Function(StateFailure value)? failure,
+    TResult Function(StateRequireLogin value)? requireLogin,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -805,6 +811,7 @@ class _$StateInitialImpl implements StateInitial {
     required TResult Function() loading,
     required TResult Function(List<MainItem> data) success,
     required TResult Function(String message) failure,
+    required TResult Function(String message) requireLogin,
   }) {
     return initial();
   }
@@ -816,6 +823,7 @@ class _$StateInitialImpl implements StateInitial {
     TResult? Function()? loading,
     TResult? Function(List<MainItem> data)? success,
     TResult? Function(String message)? failure,
+    TResult? Function(String message)? requireLogin,
   }) {
     return initial?.call();
   }
@@ -827,6 +835,7 @@ class _$StateInitialImpl implements StateInitial {
     TResult Function()? loading,
     TResult Function(List<MainItem> data)? success,
     TResult Function(String message)? failure,
+    TResult Function(String message)? requireLogin,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -842,6 +851,7 @@ class _$StateInitialImpl implements StateInitial {
     required TResult Function(StateLoading value) loading,
     required TResult Function(StateSuccess value) success,
     required TResult Function(StateFailure value) failure,
+    required TResult Function(StateRequireLogin value) requireLogin,
   }) {
     return initial(this);
   }
@@ -853,6 +863,7 @@ class _$StateInitialImpl implements StateInitial {
     TResult? Function(StateLoading value)? loading,
     TResult? Function(StateSuccess value)? success,
     TResult? Function(StateFailure value)? failure,
+    TResult? Function(StateRequireLogin value)? requireLogin,
   }) {
     return initial?.call(this);
   }
@@ -864,6 +875,7 @@ class _$StateInitialImpl implements StateInitial {
     TResult Function(StateLoading value)? loading,
     TResult Function(StateSuccess value)? success,
     TResult Function(StateFailure value)? failure,
+    TResult Function(StateRequireLogin value)? requireLogin,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -922,6 +934,7 @@ class _$StateLoadingImpl implements StateLoading {
     required TResult Function() loading,
     required TResult Function(List<MainItem> data) success,
     required TResult Function(String message) failure,
+    required TResult Function(String message) requireLogin,
   }) {
     return loading();
   }
@@ -933,6 +946,7 @@ class _$StateLoadingImpl implements StateLoading {
     TResult? Function()? loading,
     TResult? Function(List<MainItem> data)? success,
     TResult? Function(String message)? failure,
+    TResult? Function(String message)? requireLogin,
   }) {
     return loading?.call();
   }
@@ -944,6 +958,7 @@ class _$StateLoadingImpl implements StateLoading {
     TResult Function()? loading,
     TResult Function(List<MainItem> data)? success,
     TResult Function(String message)? failure,
+    TResult Function(String message)? requireLogin,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -959,6 +974,7 @@ class _$StateLoadingImpl implements StateLoading {
     required TResult Function(StateLoading value) loading,
     required TResult Function(StateSuccess value) success,
     required TResult Function(StateFailure value) failure,
+    required TResult Function(StateRequireLogin value) requireLogin,
   }) {
     return loading(this);
   }
@@ -970,6 +986,7 @@ class _$StateLoadingImpl implements StateLoading {
     TResult? Function(StateLoading value)? loading,
     TResult? Function(StateSuccess value)? success,
     TResult? Function(StateFailure value)? failure,
+    TResult? Function(StateRequireLogin value)? requireLogin,
   }) {
     return loading?.call(this);
   }
@@ -981,6 +998,7 @@ class _$StateLoadingImpl implements StateLoading {
     TResult Function(StateLoading value)? loading,
     TResult Function(StateSuccess value)? success,
     TResult Function(StateFailure value)? failure,
+    TResult Function(StateRequireLogin value)? requireLogin,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -1072,6 +1090,7 @@ class _$StateSuccessImpl implements StateSuccess {
     required TResult Function() loading,
     required TResult Function(List<MainItem> data) success,
     required TResult Function(String message) failure,
+    required TResult Function(String message) requireLogin,
   }) {
     return success(data);
   }
@@ -1083,6 +1102,7 @@ class _$StateSuccessImpl implements StateSuccess {
     TResult? Function()? loading,
     TResult? Function(List<MainItem> data)? success,
     TResult? Function(String message)? failure,
+    TResult? Function(String message)? requireLogin,
   }) {
     return success?.call(data);
   }
@@ -1094,6 +1114,7 @@ class _$StateSuccessImpl implements StateSuccess {
     TResult Function()? loading,
     TResult Function(List<MainItem> data)? success,
     TResult Function(String message)? failure,
+    TResult Function(String message)? requireLogin,
     required TResult orElse(),
   }) {
     if (success != null) {
@@ -1109,6 +1130,7 @@ class _$StateSuccessImpl implements StateSuccess {
     required TResult Function(StateLoading value) loading,
     required TResult Function(StateSuccess value) success,
     required TResult Function(StateFailure value) failure,
+    required TResult Function(StateRequireLogin value) requireLogin,
   }) {
     return success(this);
   }
@@ -1120,6 +1142,7 @@ class _$StateSuccessImpl implements StateSuccess {
     TResult? Function(StateLoading value)? loading,
     TResult? Function(StateSuccess value)? success,
     TResult? Function(StateFailure value)? failure,
+    TResult? Function(StateRequireLogin value)? requireLogin,
   }) {
     return success?.call(this);
   }
@@ -1131,6 +1154,7 @@ class _$StateSuccessImpl implements StateSuccess {
     TResult Function(StateLoading value)? loading,
     TResult Function(StateSuccess value)? success,
     TResult Function(StateFailure value)? failure,
+    TResult Function(StateRequireLogin value)? requireLogin,
     required TResult orElse(),
   }) {
     if (success != null) {
@@ -1224,6 +1248,7 @@ class _$StateFailureImpl implements StateFailure {
     required TResult Function() loading,
     required TResult Function(List<MainItem> data) success,
     required TResult Function(String message) failure,
+    required TResult Function(String message) requireLogin,
   }) {
     return failure(message);
   }
@@ -1235,6 +1260,7 @@ class _$StateFailureImpl implements StateFailure {
     TResult? Function()? loading,
     TResult? Function(List<MainItem> data)? success,
     TResult? Function(String message)? failure,
+    TResult? Function(String message)? requireLogin,
   }) {
     return failure?.call(message);
   }
@@ -1246,6 +1272,7 @@ class _$StateFailureImpl implements StateFailure {
     TResult Function()? loading,
     TResult Function(List<MainItem> data)? success,
     TResult Function(String message)? failure,
+    TResult Function(String message)? requireLogin,
     required TResult orElse(),
   }) {
     if (failure != null) {
@@ -1261,6 +1288,7 @@ class _$StateFailureImpl implements StateFailure {
     required TResult Function(StateLoading value) loading,
     required TResult Function(StateSuccess value) success,
     required TResult Function(StateFailure value) failure,
+    required TResult Function(StateRequireLogin value) requireLogin,
   }) {
     return failure(this);
   }
@@ -1272,6 +1300,7 @@ class _$StateFailureImpl implements StateFailure {
     TResult? Function(StateLoading value)? loading,
     TResult? Function(StateSuccess value)? success,
     TResult? Function(StateFailure value)? failure,
+    TResult? Function(StateRequireLogin value)? requireLogin,
   }) {
     return failure?.call(this);
   }
@@ -1283,6 +1312,7 @@ class _$StateFailureImpl implements StateFailure {
     TResult Function(StateLoading value)? loading,
     TResult Function(StateSuccess value)? success,
     TResult Function(StateFailure value)? failure,
+    TResult Function(StateRequireLogin value)? requireLogin,
     required TResult orElse(),
   }) {
     if (failure != null) {
@@ -1301,5 +1331,165 @@ abstract class StateFailure implements MainDataState {
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$StateFailureImplCopyWith<_$StateFailureImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$StateRequireLoginImplCopyWith<$Res> {
+  factory _$$StateRequireLoginImplCopyWith(_$StateRequireLoginImpl value,
+          $Res Function(_$StateRequireLoginImpl) then) =
+      __$$StateRequireLoginImplCopyWithImpl<$Res>;
+  @useResult
+  $Res call({String message});
+}
+
+/// @nodoc
+class __$$StateRequireLoginImplCopyWithImpl<$Res>
+    extends _$MainDataStateCopyWithImpl<$Res, _$StateRequireLoginImpl>
+    implements _$$StateRequireLoginImplCopyWith<$Res> {
+  __$$StateRequireLoginImplCopyWithImpl(_$StateRequireLoginImpl _value,
+      $Res Function(_$StateRequireLoginImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of MainDataState
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? message = null,
+  }) {
+    return _then(_$StateRequireLoginImpl(
+      null == message
+          ? _value.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _$StateRequireLoginImpl implements StateRequireLogin {
+  const _$StateRequireLoginImpl(this.message);
+
+  @override
+  final String message;
+
+  @override
+  String toString() {
+    return 'MainDataState.requireLogin(message: $message)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$StateRequireLoginImpl &&
+            (identical(other.message, message) || other.message == message));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, message);
+
+  /// Create a copy of MainDataState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$StateRequireLoginImplCopyWith<_$StateRequireLoginImpl> get copyWith =>
+      __$$StateRequireLoginImplCopyWithImpl<_$StateRequireLoginImpl>(
+          this, _$identity);
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() initial,
+    required TResult Function() loading,
+    required TResult Function(List<MainItem> data) success,
+    required TResult Function(String message) failure,
+    required TResult Function(String message) requireLogin,
+  }) {
+    return requireLogin(message);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? initial,
+    TResult? Function()? loading,
+    TResult? Function(List<MainItem> data)? success,
+    TResult? Function(String message)? failure,
+    TResult? Function(String message)? requireLogin,
+  }) {
+    return requireLogin?.call(message);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? initial,
+    TResult Function()? loading,
+    TResult Function(List<MainItem> data)? success,
+    TResult Function(String message)? failure,
+    TResult Function(String message)? requireLogin,
+    required TResult orElse(),
+  }) {
+    if (requireLogin != null) {
+      return requireLogin(message);
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(StateInitial value) initial,
+    required TResult Function(StateLoading value) loading,
+    required TResult Function(StateSuccess value) success,
+    required TResult Function(StateFailure value) failure,
+    required TResult Function(StateRequireLogin value) requireLogin,
+  }) {
+    return requireLogin(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(StateInitial value)? initial,
+    TResult? Function(StateLoading value)? loading,
+    TResult? Function(StateSuccess value)? success,
+    TResult? Function(StateFailure value)? failure,
+    TResult? Function(StateRequireLogin value)? requireLogin,
+  }) {
+    return requireLogin?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(StateInitial value)? initial,
+    TResult Function(StateLoading value)? loading,
+    TResult Function(StateSuccess value)? success,
+    TResult Function(StateFailure value)? failure,
+    TResult Function(StateRequireLogin value)? requireLogin,
+    required TResult orElse(),
+  }) {
+    if (requireLogin != null) {
+      return requireLogin(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class StateRequireLogin implements MainDataState {
+  const factory StateRequireLogin(final String message) =
+      _$StateRequireLoginImpl;
+
+  String get message;
+
+  /// Create a copy of MainDataState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$StateRequireLoginImplCopyWith<_$StateRequireLoginImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

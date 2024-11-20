@@ -67,7 +67,8 @@ class AppPages {
       ),
       GoRoute(
         path: Routes.login,
-        builder: (BuildContext context, GoRouterState state) => const LoginPage(),
+        builder: (BuildContext context, GoRouterState state) =>
+            const LoginPage(),
       )
     ],
   );

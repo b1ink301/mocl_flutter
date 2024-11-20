@@ -56,13 +56,16 @@ class MainPage extends StatelessWidget {
       titleSpacing: 0,
       centerTitle: false,
       toolbarHeight: 64,
-      actions: [
-        Builder(
-            builder: (context) => IconButton(
-                  onPressed: () => _handleAddButton(context, siteType.state),
-                  icon: const Icon(Icons.add),
-                ))
-      ],
+      actions: SiteType.naverCafe == siteType.state
+          ? null
+          : [
+              Builder(
+                  builder: (context) => IconButton(
+                        onPressed: () =>
+                            _handleAddButton(context, siteType.state),
+                        icon: const Icon(Icons.add),
+                      ))
+            ],
     );
   }
 
@@ -95,20 +98,27 @@ class MainPage extends StatelessWidget {
               flexibleSpace: Container(color: statusBarColor),
             )
           : null,
-      body: SafeArea(
-        left: false,
-        right: false,
-        child: RefreshIndicator(
-          onRefresh: () async {
-            final siteTypeBloc = context.read<SiteTypeBloc>();
-            context.read<MainDataBloc>().refresh(siteTypeBloc.state);
-          },
-          child: CustomScrollView(
-            // cacheExtent: 0,
-            slivers: <Widget>[
-              _buildAppBar(context),
-              const MainView(),
-            ],
+      body: BlocListener<MainDataBloc, MainDataState>(
+        listener: (BuildContext context, MainDataState state) {
+          if (state is StateRequireLogin) {
+            context.push(Routes.login);
+          }
+        },
+        child: SafeArea(
+          left: false,
+          right: false,
+          child: RefreshIndicator(
+            onRefresh: () async {
+              final siteTypeBloc = context.read<SiteTypeBloc>();
+              context.read<MainDataBloc>().refresh(siteTypeBloc.state);
+            },
+            child: CustomScrollView(
+              // cacheExtent: 0,
+              slivers: <Widget>[
+                _buildAppBar(context),
+                const MainView(),
+              ],
+            ),
           ),
         ),
       ),
@@ -127,9 +137,7 @@ class MainPage extends StatelessWidget {
           //     textColor: Colors.white,
           //     fontSize: 16.0
           // );
-
-          GoRouter.of(context).push(Routes.login);
-          // GoRouter.of(context).push(Routes.settings);
+          context.push(Routes.settings);
         } else {
           context.read<SiteTypeBloc>().setSiteType(siteType);
         }

@@ -9,4 +9,6 @@ class MainDataState with _$MainDataState {
   const factory MainDataState.success(List<MainItem> data) = StateSuccess;
 
   const factory MainDataState.failure(String message) = StateFailure;
+
+  const factory MainDataState.requireLogin(String message) = StateRequireLogin; //
 }
