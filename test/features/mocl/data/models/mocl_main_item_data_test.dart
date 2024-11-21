@@ -53,17 +53,18 @@ void main() async {
     });
   });
 
-  // group('MainItemModel', () {
-  //   test('JsonSerializable', () async {
-  //     // arrange
-  //     final Map<String, dynamic> jsonMap =
-  //         json.decode(fixture('damoang_board_link.json'));
-  //
-  //     // act
-  //     final result = MainItemModel.fromJson(jsonMap);
-  //
-  //     // assert
-  //     expect(result, mainList);
-  //   });
-  // });
+  group('MainItemModel', () {
+    test('JsonSerializable', () async {
+      // arrange
+      final List<dynamic> jsonList =
+          json.decode(fixture('damoang_board_link.json'));
+
+      // act
+      final result =
+          jsonList.map((json) => MainItemModel.fromJson(json)).toList();
+
+      // assert
+      expect(result.runtimeType, mainModelList.runtimeType);
+    });
+  });
 }

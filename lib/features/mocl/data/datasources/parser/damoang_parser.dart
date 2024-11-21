@@ -28,14 +28,13 @@ class DamoangParser extends BaseParser {
   }
 
   @override
-  Future<Result> detail(Response response) async {
+  Future<Result<Details>> detail(Response response) async {
     final responseData = response.data;
     final resultPort = ReceivePort();
 
     await Isolate.spawn(_detailIsolate, [responseData, resultPort.sendPort]);
 
-    final result = await resultPort.first as Result;
-    return result;
+    return await resultPort.first as Result<Details>;
   }
 
   static void _detailIsolate(List<dynamic> args) {
@@ -195,25 +194,25 @@ class DamoangParser extends BaseParser {
       bodyHtml: bodyHtml?.outerHtml ?? '',
     );
 
-    sendPort.send(ResultSuccess(data: detail));
+    sendPort.send(Result.success(detail));
   }
 
   @override
-  Future<Result> list(
+  Future<Result<List<ListItem>>> list(
     Response response,
     int lastId,
     String boardTitle,
     Future<Map<int, bool>> Function(SiteType, List<int>) isReads,
   ) async {
     final receivePort = ReceivePort();
-    final completer = Completer<Result>();
+    final completer = Completer<Result<List<ListItem>>>();
 
     receivePort.listen((message) async {
       if (message is ReadStatusRequest) {
         final statuses = await isReads(siteType, message.ids);
         message.responsePort.send(ReadStatusResponse(statuses));
       } else if (message is List<ListItem>) {
-        completer.complete(ResultSuccess<List<ListItem>>(data: message));
+        completer.complete(Result.success(message));
         receivePort.close();
       }
     });
@@ -233,7 +232,7 @@ class DamoangParser extends BaseParser {
       return await completer.future;
     } catch (e) {
       receivePort.close();
-      return ResultFailure(failure: GetListFailure(message: e.toString()));
+      return Result.failure(GetListFailure(message: e.toString()));
     }
   }
 

@@ -2,6 +2,9 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
@@ -9,20 +12,19 @@ abstract class BaseParser {
   late final SiteType siteType;
   late final String baseUrl;
 
-  FutureOr<Result> main(
+  Result<List<MainItem>> main(
     Response response,
-  ) async {
-    return ResultSuccess(data: "");
-  }
+  ) =>
+      Result.success(const []);
 
-  Future<Result> list(
+  Future<Result<List<ListItem>>> list(
     Response response,
     int lastId,
     String boardTitle,
     Future<Map<int, bool>> Function(SiteType, List<int>) isReads,
   );
 
-  Future<Result> detail(Response response);
+  Future<Result<Details>> detail(Response response);
 
   Future<Result> comment(Response response);
 

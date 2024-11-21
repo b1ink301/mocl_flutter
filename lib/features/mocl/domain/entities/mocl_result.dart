@@ -1,30 +1,15 @@
-import 'package:equatable/equatable.dart';
-import 'package:flutter/foundation.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:mocl_flutter/core/error/failures.dart';
 
-@immutable
-sealed class Result extends Equatable {
-  @override
-  List<Object?> get props => [];
-}
+part 'mocl_result.freezed.dart';
 
-class ResultFailure<T> extends Result {
-  final T failure;
+@freezed
+sealed class Result<T> with _$Result {
+  const factory Result.initial() = ResultInitial;
 
-  ResultFailure({required this.failure});
+  const factory Result.loading() = ResultLoading;
 
-  @override
-  List<Object?> get props => [failure];
-}
+  const factory Result.success(T data) = ResultSuccess;
 
-class ResultInitial extends Result {}
-
-class ResultLoading extends Result {}
-
-class ResultSuccess<T> extends Result {
-  final T data;
-
-  ResultSuccess({required this.data});
-
-  @override
-  List<Object?> get props => [data];
+  const factory Result.failure(Failure failure) = ResultFailure;
 }

@@ -5,7 +5,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_main_list.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_site_type.dart';
@@ -26,7 +25,7 @@ class MainDataBloc extends Bloc<MainDataEvent, MainDataState> {
   final GetSiteType getSiteType;
   final SetSiteType setSiteType;
 
-  late final StreamSubscription<SiteType> _siteTypeSubscription;
+  late final StreamSubscription<SiteType>? _siteTypeSubscription;
 
   MainDataBloc({
     required this.getMainList,
@@ -36,6 +35,10 @@ class MainDataBloc extends Bloc<MainDataEvent, MainDataState> {
   }) : super(const StateInitial()) {
     on<GetListEvent>(_onGetListEvent);
     on<SetSiteTypeEvent>(_onSetSiteTypeEvent);
+  }
+
+  void testInitialize() {
+    _siteTypeSubscription = null;
   }
 
   void initialize(SiteTypeBloc siteTypeBloc) {
@@ -59,22 +62,23 @@ class MainDataBloc extends Bloc<MainDataEvent, MainDataState> {
     emit(const StateLoading());
 
     final result = await getMainList.call(event.siteType);
-    switch (result) {
-      case ResultFailure():
-        if (result.failure is NotLoginFailure) {
-          emit(StateRequireLogin(result.failure.message));
+    result.whenOrNull(
+      success: (data) {
+          // emit(StateSuccess(data.whereType<MainItem>().toList()));
+        if (data is List<MainItem>) {
+          emit(StateSuccess(data));
         } else {
-          emit(StateFailure(result.failure.message));
+          emit(StateFailure('Unexpected data type: ${data.runtimeType}'));
         }
-        break;
-      case ResultInitial():
-        break;
-      case ResultLoading():
-        break;
-      case ResultSuccess():
-        emit(StateSuccess(result.data));
-        break;
-    }
+      },
+      failure: (failure) {
+        if (failure is NotLoginFailure) {
+          emit(StateRequireLogin(failure.message));
+        } else {
+          emit(StateFailure(failure.message));
+        }
+      },
+    );
   }
 
   void refresh(SiteType siteType) {
@@ -88,7 +92,7 @@ class MainDataBloc extends Bloc<MainDataEvent, MainDataState> {
 
   @override
   Future<void> close() {
-    _siteTypeSubscription.cancel();
+    _siteTypeSubscription?.cancel();
     return super.close();
   }
 }

@@ -1,6 +1,7 @@
 import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/api_client.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
@@ -8,7 +9,7 @@ import '../../domain/entities/mocl_result.dart';
 import 'local_database.dart';
 
 abstract class ListDataSource {
-  Future<Result> getList(
+  Future<Result<List<ListItem>>> getList(
     MainItem item,
     int page,
     int lastId,
@@ -42,7 +43,7 @@ class ListDataSourceImpl extends ListDataSource {
   });
 
   @override
-  Future<Result> getList(
+  Future<Result<List<ListItem>>> getList(
     MainItem item,
     int page,
     int lastId,

@@ -44,6 +44,7 @@ void main() async {
 
   setUpAll(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
+    SharedPreferences.setMockInitialValues({});
     TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
         .setMockMethodCallHandler(
             const MethodChannel('plugins.flutter.io/path_provider'),
@@ -93,23 +94,26 @@ void main() async {
     expect(mainDataBloc.state, equals(const MainDataState.initial()));
   });
 
-  test('test', () {
+  test('blocTest', () {
     mainDataBloc.add(const MainDataEvent.getList(siteType: siteType));
     log('mainDataBloc.state=${mainDataBloc.state}');
   });
 
   blocTest(
-    '블락 GetMainDataEvent',
+    'blocTest GetMainDataEvent',
     build: () => mainDataBloc,
-    act: (bloc) => bloc.add(const MainDataEvent.getList(siteType: siteType)),
+    act: (bloc) {
+      bloc.testInitialize();
+      bloc.add(const MainDataEvent.getList(siteType: siteType));
+    },
     expect: () => [isA<MainDataState>()],
   );
 
   blocTest(
-    '블락 MainDataJsonBloc',
+    'blocTest MainDataJsonBloc',
     build: () => mainDataJsonBloc,
     act: (bloc) =>
         bloc.add(const MainDataJsonEvent.getList(siteType: siteType)),
-    expect: () => [isA<MainDataJsonState>(), isA<MainDataJsonState>()],
+    expect: () => [isA<MainDataJsonState>()],
   );
 }

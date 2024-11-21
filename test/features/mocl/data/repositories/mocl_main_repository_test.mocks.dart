@@ -3,24 +3,23 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i3;
+import 'dart:async' as _i5;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i10;
-import 'package:mocl_flutter/features/mocl/data/datasources/list_data_source.dart'
-    as _i7;
 import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart'
-    as _i2;
+    as _i4;
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart'
+    as _i3;
+import 'package:mocl_flutter/features/mocl/data/datasources/parser/parser_factory.dart'
     as _i9;
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart'
-    as _i6;
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart'
-    as _i4;
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart'
     as _i8;
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart'
+    as _i6;
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart'
-    as _i5;
+    as _i7;
+import 'package:mocl_flutter/features/mocl/domain/repositories/settings_repository.dart'
+    as _i2;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -35,28 +34,49 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart'
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
+class _FakeSettingsRepository_0 extends _i1.SmartFake
+    implements _i2.SettingsRepository {
+  _FakeSettingsRepository_0(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
+class _FakeBaseParser_1 extends _i1.SmartFake implements _i3.BaseParser {
+  _FakeBaseParser_1(
+    Object parent,
+    Invocation parentInvocation,
+  ) : super(
+          parent,
+          parentInvocation,
+        );
+}
+
 /// A class which mocks [MainDataSource].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockMainDataSource extends _i1.Mock implements _i2.MainDataSource {
+class MockMainDataSource extends _i1.Mock implements _i4.MainDataSource {
   MockMainDataSource() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i3.Future<List<_i4.MainItem>> get(_i5.SiteType? siteType) =>
+  _i5.Future<List<_i6.MainItem>> get(_i7.SiteType? siteType) =>
       (super.noSuchMethod(
         Invocation.method(
           #get,
           [siteType],
         ),
-        returnValue: _i3.Future<List<_i4.MainItem>>.value(<_i4.MainItem>[]),
-      ) as _i3.Future<List<_i4.MainItem>>);
+        returnValue: _i5.Future<List<_i6.MainItem>>.value(<_i6.MainItem>[]),
+      ) as _i5.Future<List<_i6.MainItem>>);
 
   @override
-  _i3.Future<List<int>> set(
-    _i5.SiteType? siteType,
-    List<_i4.MainItem>? list,
+  _i5.Future<List<int>> set(
+    _i7.SiteType? siteType,
+    List<_i6.MainItem>? list,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -66,34 +86,34 @@ class MockMainDataSource extends _i1.Mock implements _i2.MainDataSource {
             list,
           ],
         ),
-        returnValue: _i3.Future<List<int>>.value(<int>[]),
-      ) as _i3.Future<List<int>>);
+        returnValue: _i5.Future<List<int>>.value(<int>[]),
+      ) as _i5.Future<List<int>>);
 
   @override
-  _i3.Future<List<_i6.MainItemModel>> getAllFromJson(_i5.SiteType? siteType) =>
+  _i5.Future<List<_i8.MainItemModel>> getAllFromJson(_i7.SiteType? siteType) =>
       (super.noSuchMethod(
         Invocation.method(
           #getAllFromJson,
           [siteType],
         ),
         returnValue:
-            _i3.Future<List<_i6.MainItemModel>>.value(<_i6.MainItemModel>[]),
-      ) as _i3.Future<List<_i6.MainItemModel>>);
+            _i5.Future<List<_i8.MainItemModel>>.value(<_i8.MainItemModel>[]),
+      ) as _i5.Future<List<_i8.MainItemModel>>);
 
   @override
-  _i3.Future<void> deleteAll(_i5.SiteType? siteType) => (super.noSuchMethod(
+  _i5.Future<void> deleteAll(_i7.SiteType? siteType) => (super.noSuchMethod(
         Invocation.method(
           #deleteAll,
           [siteType],
         ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i3.Future<bool> hasItem(
-    _i5.SiteType? siteType,
-    _i4.MainItem? item,
+  _i5.Future<bool> hasItem(
+    _i7.SiteType? siteType,
+    _i6.MainItem? item,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -103,94 +123,67 @@ class MockMainDataSource extends _i1.Mock implements _i2.MainDataSource {
             item,
           ],
         ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
 }
 
-/// A class which mocks [ListDataSource].
+/// A class which mocks [SettingsRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockListDataSource extends _i1.Mock implements _i7.ListDataSource {
-  MockListDataSource() {
+class MockSettingsRepository extends _i1.Mock
+    implements _i2.SettingsRepository {
+  MockSettingsRepository() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i3.Future<_i8.Result> getList(
-    _i4.MainItem? item,
-    int? page,
-    int? lastId,
-    _i9.BaseParser? parser,
-  ) =>
-      (super.noSuchMethod(
+  _i7.SiteType getSiteType() => (super.noSuchMethod(
         Invocation.method(
-          #getList,
-          [
-            item,
-            page,
-            lastId,
-            parser,
-          ],
+          #getSiteType,
+          [],
         ),
-        returnValue: _i3.Future<_i8.Result>.value(_i10.dummyValue<_i8.Result>(
+        returnValue: _i7.SiteType.clien,
+      ) as _i7.SiteType);
+
+  @override
+  void setSiteType(_i7.SiteType? siteType) => super.noSuchMethod(
+        Invocation.method(
+          #setSiteType,
+          [siteType],
+        ),
+        returnValueForMissingStub: null,
+      );
+}
+
+/// A class which mocks [ParserFactory].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockParserFactory extends _i1.Mock implements _i9.ParserFactory {
+  MockParserFactory() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  _i2.SettingsRepository get settingsRepository => (super.noSuchMethod(
+        Invocation.getter(#settingsRepository),
+        returnValue: _FakeSettingsRepository_0(
+          this,
+          Invocation.getter(#settingsRepository),
+        ),
+      ) as _i2.SettingsRepository);
+
+  @override
+  _i3.BaseParser createParser() => (super.noSuchMethod(
+        Invocation.method(
+          #createParser,
+          [],
+        ),
+        returnValue: _FakeBaseParser_1(
           this,
           Invocation.method(
-            #getList,
-            [
-              item,
-              page,
-              lastId,
-              parser,
-            ],
+            #createParser,
+            [],
           ),
-        )),
-      ) as _i3.Future<_i8.Result>);
-
-  @override
-  _i3.Future<int> setReadFlag(
-    _i5.SiteType? siteType,
-    int? id,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #setReadFlag,
-          [
-            siteType,
-            id,
-          ],
         ),
-        returnValue: _i3.Future<int>.value(0),
-      ) as _i3.Future<int>);
-
-  @override
-  _i3.Future<bool> isReadFlag(
-    _i5.SiteType? siteType,
-    int? boardId,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #isReadFlag,
-          [
-            siteType,
-            boardId,
-          ],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
-
-  @override
-  _i3.Future<Map<int, bool>> isReadFlags(
-    _i5.SiteType? siteType,
-    List<int>? boardIds,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #isReadFlags,
-          [
-            siteType,
-            boardIds,
-          ],
-        ),
-        returnValue: _i3.Future<Map<int, bool>>.value(<int, bool>{}),
-      ) as _i3.Future<Map<int, bool>>);
+      ) as _i3.BaseParser);
 }

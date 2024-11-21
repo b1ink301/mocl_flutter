@@ -11,14 +11,15 @@ import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 part 'detail_view_bloc.freezed.dart';
+
 part 'detail_view_event.dart';
+
 part 'detail_view_state.dart';
 
 @injectable
 class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
   final GetDetail _getDetail;
   final SetReadFlag _setReadFlag;
-
   final ReadableListItem _listItem;
   final SiteType _siteType;
 
@@ -43,16 +44,16 @@ class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
   ) async {
     emit(const DetailLoading());
     try {
-      final result = await _getDetail(_listItem.item);
-      if (result is ResultSuccess<Details>) {
-        emit(DetailSuccess(result.data));
-        await _markAsRead();
-      } else if (result is ResultFailure) {
-        emit(DetailFailed(result.failure.toString()));
-      } else if (result is ResultLoading) {
-      } else {
-        emit(const DetailFailed('Unknown Error!'));
-      }
+      final Result result = await _getDetail(_listItem.item);
+      result.whenOrNull(
+        success: (data) {
+          _markAsRead();
+          emit(DetailSuccess(data));
+        },
+        failure: (failure) {
+          emit(DetailFailed(failure.message));
+        },
+      );
     } catch (e) {
       emit(DetailFailed(e.toString()));
     }
