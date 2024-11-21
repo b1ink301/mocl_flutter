@@ -164,6 +164,12 @@ class MockParserFactory extends _i1.Mock implements _i9.ParserFactory {
   }
 
   @override
+  Map<_i7.SiteType, _i3.BaseParser> get parsers => (super.noSuchMethod(
+        Invocation.getter(#parsers),
+        returnValue: <_i7.SiteType, _i3.BaseParser>{},
+      ) as Map<_i7.SiteType, _i3.BaseParser>);
+
+  @override
   _i2.SettingsRepository get settingsRepository => (super.noSuchMethod(
         Invocation.getter(#settingsRepository),
         returnValue: _FakeSettingsRepository_0(

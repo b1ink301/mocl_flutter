@@ -17,10 +17,7 @@ import '../data/datasources/detail_data_source.dart' as _i694;
 import '../data/datasources/list_data_source.dart' as _i715;
 import '../data/datasources/local_database.dart' as _i231;
 import '../data/datasources/main_data_source.dart' as _i958;
-import '../data/datasources/parser/clien_parser.dart' as _i968;
-import '../data/datasources/parser/damoang_parser.dart' as _i391;
-import '../data/datasources/parser/meeco_parser.dart' as _i886;
-import '../data/datasources/parser/naver_cafe_parser.dart' as _i754;
+import '../data/datasources/parser/base_parser.dart' as _i394;
 import '../data/datasources/parser/parser_factory.dart' as _i63;
 import '../data/db/app_database.dart' as _i724;
 import '../data/repositories/mocl_detail_repository_impl.dart' as _i205;
@@ -65,7 +62,10 @@ extension GetItInjectableX on _i174.GetIt {
       environment,
       environmentFilter,
     );
+    final parserModule = _$ParserModule();
     final registerModule = _$RegisterModule();
+    gh.factory<Map<_i891.SiteType, _i394.BaseParser>>(
+        () => parserModule.parsers);
     gh.factory<_i237.ClearDataCubit>(() => _i237.ClearDataCubit());
     gh.factory<_i29.SettingsBloc>(() => _i29.SettingsBloc());
     gh.factory<_i830.GetVersionCubit>(() => _i830.GetVersionCubit());
@@ -78,22 +78,11 @@ extension GetItInjectableX on _i174.GetIt {
       () => registerModule.prefs,
       preResolve: true,
     );
-    gh.lazySingleton<_i968.ClienParser>(() => _i968.ClienParser());
-    gh.lazySingleton<_i886.MeecoParser>(() => _i886.MeecoParser());
-    gh.lazySingleton<_i391.DamoangParser>(() => _i391.DamoangParser());
-    gh.lazySingleton<_i754.NaverCafeParser>(() => _i754.NaverCafeParser());
     gh.lazySingleton<_i875.ApiClient>(() => _i875.ApiClient()..init());
     gh.lazySingleton<_i694.DetailDataSource>(
         () => _i694.DetailDataSourceImpl(apiClient: gh<_i875.ApiClient>()));
     gh.lazySingleton<_i977.SettingsRepository>(() =>
         _i1051.SettingsRepositoryImpl(prefs: gh<_i460.SharedPreferences>()));
-    gh.factory<_i63.ParserFactory>(() => _i63.ParserFactory(
-          clienParser: gh<_i968.ClienParser>(),
-          damoangParser: gh<_i391.DamoangParser>(),
-          meecoParser: gh<_i886.MeecoParser>(),
-          naverCafeParser: gh<_i754.NaverCafeParser>(),
-          settingsRepository: gh<_i977.SettingsRepository>(),
-        ));
     gh.singleton<_i231.LocalDatabase>(
       () => _i231.LocalDatabase(database: gh<_i724.AppDatabase>()),
       dispose: _i231.disposeDataSource,
@@ -102,6 +91,10 @@ extension GetItInjectableX on _i174.GetIt {
         _i17.GetSiteType(settingsRepository: gh<_i977.SettingsRepository>()));
     gh.factory<_i913.SetSiteType>(() =>
         _i913.SetSiteType(settingsRepository: gh<_i977.SettingsRepository>()));
+    gh.factory<_i63.ParserFactory>(() => _i63.ParserFactory(
+          parsers: gh<Map<_i891.SiteType, _i394.BaseParser>>(),
+          settingsRepository: gh<_i977.SettingsRepository>(),
+        ));
     gh.lazySingleton<_i958.MainDataSource>(() =>
         _i958.MainDataSourceImpl(localDatabase: gh<_i231.LocalDatabase>()));
     gh.factory<_i564.DetailRepository>(() => _i205.DetailRepositoryImpl(
@@ -171,5 +164,7 @@ extension GetItInjectableX on _i174.GetIt {
     return this;
   }
 }
+
+class _$ParserModule extends _i464.ParserModule {}
 
 class _$RegisterModule extends _i464.RegisterModule {}
