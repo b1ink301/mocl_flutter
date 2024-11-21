@@ -30,16 +30,16 @@ class MainRepositoryImpl extends MainRepository {
   Stream<Result<List<MainItem>>> getMainListStream({
     required SiteType siteType,
   }) async* {
-    yield Result.loading();
+    yield ResultLoading();
     try {
       if (siteType == SiteType.naverCafe) {
         yield await apiClient.getMain(_currentParser());
       } else {
         final result = await dataSource.get(siteType);
-        yield Result.success(result);
+        yield ResultSuccess(result);
       }
     } on Exception catch (e) {
-      yield Result.failure(GetMainFailure(message: e.toString()));
+      yield ResultFailure(GetMainFailure(message: e.toString()));
     }
   }
 
@@ -50,9 +50,9 @@ class MainRepositoryImpl extends MainRepository {
   }) async {
     try {
       final result = await dataSource.set(siteType, list);
-      return Result<List<int>>.success(result);
+      return ResultSuccess(result);
     } on Exception catch (e) {
-      return Result.failure(SetMainFailure(message: e.toString()));
+      return ResultFailure(SetMainFailure(message: e.toString()));
     }
   }
 
@@ -69,9 +69,9 @@ class MainRepositoryImpl extends MainRepository {
       }).toList();
 
       var list = await Future.wait(futures);
-      return Result.success(list);
+      return ResultSuccess(list);
     } on Exception catch (e) {
-      return Result.failure(GetMainFailure(message: e.toString()));
+      return ResultFailure(GetMainFailure(message: e.toString()));
     }
   }
 
@@ -83,10 +83,10 @@ class MainRepositoryImpl extends MainRepository {
         return await apiClient.getMain(_currentParser());
       } else {
         final result = await dataSource.get(siteType);
-        return Result<List<MainItem>>.success(result);
+        return ResultSuccess(result);
       }
     } on Exception catch (e) {
-      return Result.failure(GetMainFailure(message: e.toString()));
+      return ResultFailure(GetMainFailure(message: e.toString()));
     }
   }
 }
