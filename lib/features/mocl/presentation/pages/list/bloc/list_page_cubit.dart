@@ -77,23 +77,29 @@ class ListPageCubit extends Cubit<ListPageState> {
         page: _page,
         lastId: _lastId,
       );
-      final result = await _getList(params);
-      if (result is ResultSuccess<List<ListItem>>) {
-        // for (var item in result.data) {
-        //   DefaultCacheManager().downloadFile(item.url);
-        // }
-        // Future.delayed(const Duration(microseconds: 300));
-        final list = result.data.map(_toReadableListItem).toList();
-        if (list.isNotEmpty) {
-          _lastId = list.last.item.id;
-          _list.addAll(list);
-        }
-        _page++;
+      final Result<List<ListItem>> result = await _getList(params);
 
-        emit(const LoadedList());
-      } else if (result is ResultFailure) {
-        emit(FailedList(result.toString()));
-      }
+      result.whenOrNull(
+        success: (data) {
+          if (data is List<ListItem>) {
+            final list =
+            data.whereType<ListItem>().map(_toReadableListItem).toList();
+
+            if (list.isNotEmpty) {
+              _lastId = list.last.item.id;
+              _list.addAll(list);
+            }
+            _page++;
+
+            emit(const LoadedList());
+          } else {
+            emit(FailedList('Unexpected data type: ${data.runtimeType}'));
+          }
+        },
+        failure: (failure) {
+          emit(FailedList(failure.message));
+        },
+      );
     } catch (e) {
       emit(FailedList(e.toString()));
     }

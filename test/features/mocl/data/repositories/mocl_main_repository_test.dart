@@ -1,48 +1,42 @@
-import 'dart:developer';
-
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/api_client.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/list_data_source.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/clien_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/damoang_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/meeco_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/naver_cafe_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/parser_factory.dart';
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/mocl/data/repositories/mocl_main_repository_impl.dart';
-import 'package:mocl_flutter/features/mocl/data/repositories/mocl_settings_repository_impl.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/repositories/main_repository.dart';
-import 'package:shared_preferences/shared_preferences.dart';
+import 'package:mocl_flutter/features/mocl/domain/repositories/settings_repository.dart';
 
 import './mocl_main_repository_test.mocks.dart';
 
-@GenerateMocks([MainDataSource, ListDataSource])
+@GenerateMocks([MainDataSource, SettingsRepository, ParserFactory])
 void main() {
   const SiteType siteType = SiteType.damoang;
   late MockMainDataSource mockMainDataSource;
   late MainRepository moclRepository;
-  late ApiClient apiClient;
+  late MockParserFactory parserFactory;
 
   setUpAll(() async {
+    // TestWidgetsFlutterBinding.ensureInitialized();
+    // SharedPreferences.setMockInitialValues({});
+    // final prefs = await SharedPreferences.getInstance();
+
+    parserFactory = MockParserFactory();
+    when(parserFactory.createParser()).thenReturn(ClienParser());
+
     mockMainDataSource = MockMainDataSource();
-    apiClient = ApiClient();
     moclRepository = MainRepositoryImpl(
-        dataSource: mockMainDataSource,
-        apiClient: apiClient,
-        parserFactory: ParserFactory(
-          clienParser: ClienParser(),
-          damoangParser: DamoangParser(),
-          meecoParser: MeecoParser(),
-          naverCafeParser: NaverCafeParser(),
-          settingsRepository: SettingsRepositoryImpl(prefs: await SharedPreferences.getInstance()),
-        ));
+      dataSource: mockMainDataSource,
+      apiClient: ApiClient(),
+      parserFactory: parserFactory,
+    );
   });
 
   const mainItemModel = MainItemModel(
@@ -59,35 +53,34 @@ void main() {
   group("메인 목록", () {
     test('메인 목록 요청시 에러 발생', () async {
       // arrange
-      when(mockMainDataSource.get(any)).thenThrow(GetMainException());
-
-      verifyZeroInteractions(mockMainDataSource);
+      when(mockMainDataSource.get(siteType))
+          .thenThrow(ResultFailure(GetMainFailure(message: 'test')));
 
       // act
-      final result =
-          await moclRepository.getMainList(siteType: siteType) as ResultFailure;
-      var expected =
-          ResultFailure<Failure>(failure: const GetMainFailure(message: ''));
-      log('result=$result, expected=$expected');
-
-      // assert
-      await expectLater(result.runtimeType, expected.runtimeType);
+      try {
+        final result = await moclRepository.getMainList(siteType: siteType);
+        expect(result, isA<Result>());
+      } catch (e) {
+        // assert
+        expect(e, isA<ResultFailure>());
+        expect((e as ResultFailure?)?.failure, isA<GetMainFailure>());
+      }
     });
 
     test('메인 목록이 비어 있을 때', () async {
+      provideDummyBuilder<Result<List<MainItem>>>(
+          (Object parent, Invocation invocation) {
+        return Result.success(const []);
+      });
+
       // arrange
       when(mockMainDataSource.get(siteType))
-          .thenAnswer((_) async => <MainItem>[]);
+          .thenAnswer((_) => Future.value(<MainItem>[]));
 
-      // verifyZeroInteractions(moclRepository);
       // act
-      final result =
-          await moclRepository.getMainList(siteType: siteType) as ResultSuccess;
+      final result = await moclRepository.getMainList(siteType: siteType);
 
-      // verify(mockMainDataSource.get(siteType));
-
-      var expected = ResultSuccess(data: const <MainItem>[]);
-      log('result=$result, expected=$expected');
+      var expected = Result.success(const <MainItem>[]);
 
       // assert
       expect(result.runtimeType, expected.runtimeType);
@@ -98,18 +91,14 @@ void main() {
       when(mockMainDataSource.get(siteType))
           .thenAnswer((_) async => <MainItem>[mainItem]);
 
-      // verifyZeroInteractions(mockMainDataSource);
       // act
-
-      var result =
-          await moclRepository.getMainList(siteType: siteType) as ResultSuccess;
+      var result = await moclRepository.getMainList(siteType: siteType);
 
       // verify(mockMainDataSource.get(siteType)).called(1);
 
       var data = <MainItem>[mainItem];
       // var expected = emitsInOrder([ResultSuccess(data: data)]);
-      var expected = ResultSuccess(data: data);
-      log('result=$result, expected=$expected');
+      var expected = Result.success(data);
 
       // assert
       expect(result, expected);

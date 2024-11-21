@@ -19,6 +19,19 @@ class Details with _$Details {
     required UserInfo userInfo,
     required List<CommentItem> comments,
   }) = _Details;
+
+  factory Details.empty() => const Details(
+        title: 'title',
+        time: 'time',
+        viewCount: 'viewCount',
+        likeCount: 'likeCount',
+        bodyHtml: 'bodyHtml',
+        csrf: 'csrf',
+        info: 'info',
+        userInfo:
+            UserInfo(id: 'id', nickName: 'nickName', nickImage: 'nickImage'),
+        comments: [],
+      );
 }
 
 @freezed

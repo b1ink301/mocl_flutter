@@ -28,15 +28,14 @@ class MeecoParser extends BaseParser {
   }
 
   @override
-  Future<Result> detail(Response response) async {
+  Future<Result<Details>> detail(Response response) async {
     final responseData = response.data;
     final resultPort = ReceivePort();
 
     await Isolate.spawn(
         _detailIsolate, [baseUrl, responseData, resultPort.sendPort]);
 
-    final result = await resultPort.first as Result;
-    return result;
+    return await resultPort.first as Result<Details>;
   }
 
   static void _detailIsolate(List<dynamic> args) {
@@ -79,20 +78,13 @@ class MeecoParser extends BaseParser {
                 'div.cmt > div.cmt_list_parent > div.cmt_list > article')
             .map((element) {
               final headerElement = element.querySelector('header.cmt_hd');
-
+              final isReply =
+                  element.attributes['class']?.contains('reply') ?? false;
               final profileElement = headerElement
                   ?.querySelector('div.pf_wrap > span.pf > img.pf_img');
               final tmpUrl = profileElement?.attributes['src']?.trim() ?? '';
               final nickImage = BaseParser.covertUrl(baseUrl, tmpUrl);
               final nickName = profileElement?.attributes['alt'] ?? '';
-              final isReply = element.querySelector(
-                      'div.comment-list-wrap > header > div > div.me-2 > i.bi') !=
-                  null;
-              // final ip = element
-              //         .querySelector(
-              //             'div.comment_info > div.comment_info_area > div.comment_ip > span.ip_address')
-              //         ?.text ??
-              //     '';
               final time =
                   element.querySelector('span.date')?.text.trim() ?? '';
               final likeCount = element
@@ -162,25 +154,25 @@ class MeecoParser extends BaseParser {
       bodyHtml: bodyHtml?.innerHtml ?? '',
     );
 
-    sendPort.send(ResultSuccess(data: detail));
+    sendPort.send(Result.success(detail));
   }
 
   @override
-  Future<Result> list(
+  Future<Result<List<ListItem>>> list(
     Response response,
     int lastId,
     String boardTitle,
     Future<Map<int, bool>> Function(SiteType, List<int>) isReads,
   ) async {
     final receivePort = ReceivePort();
-    final completer = Completer<Result>();
+    final completer = Completer<Result<List<ListItem>>>();
 
     receivePort.listen((message) async {
       if (message is ReadStatusRequest) {
         final statuses = await isReads(siteType, message.ids);
         message.responsePort.send(ReadStatusResponse(statuses));
       } else if (message is List<ListItem>) {
-        completer.complete(ResultSuccess<List<ListItem>>(data: message));
+        completer.complete(Result.success(message));
         receivePort.close();
       }
     });
@@ -199,7 +191,7 @@ class MeecoParser extends BaseParser {
       return await completer.future;
     } catch (e) {
       receivePort.close();
-      return ResultFailure(failure: GetListFailure(message: e.toString()));
+      return Result.failure(GetListFailure(message: e.toString()));
     }
   }
 

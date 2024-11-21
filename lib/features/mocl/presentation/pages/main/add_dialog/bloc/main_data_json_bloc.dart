@@ -5,14 +5,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_main_list_from_json.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_main_list.dart';
 
+part 'main_data_json_bloc.freezed.dart';
 part 'main_data_json_event.dart';
 part 'main_data_json_state.dart';
-part 'main_data_json_bloc.freezed.dart';
 
 @injectable
 class MainDataJsonBloc extends Bloc<MainDataJsonEvent, MainDataJsonState> {
@@ -20,12 +19,13 @@ class MainDataJsonBloc extends Bloc<MainDataJsonEvent, MainDataJsonState> {
   late final SetMainList setMainList;
 
   final List<MainItem> _selectedItems = [];
+
   List<MainItem> get selectedItems => _selectedItems;
 
   MainDataJsonBloc({
     required this.getMainListFromJson,
     required this.setMainList,
-  }) : super(const MainDataJsonState.initial()) {
+  }) : super(const StateInitial()) {
     on<GetListEvent>(_onGetListEvent);
   }
 
@@ -34,14 +34,17 @@ class MainDataJsonBloc extends Bloc<MainDataJsonEvent, MainDataJsonState> {
     Emitter<MainDataJsonState> emit,
   ) async {
     log('[MainDataJsonBloc] event=$event');
-    emit(const MainDataJsonState.loading());
+    emit(const StateLoading());
     var result = await getMainListFromJson.call(event.siteType);
-    if (result is ResultSuccess) {
-      _init(result.data);
-      emit(MainDataJsonState.success(result.data));
-    } else if (result is ResultFailure) {
-      emit(const MainDataJsonState.failure("failure"));
-    }
+    result.whenOrNull(
+      success: (data) {
+        _init(data);
+        emit(StateSuccess(data));
+      },
+      failure: (failure) {
+        emit(StateFailure(failure.message));
+      },
+    );
   }
 
   void onChanged<T>(bool isChecked, T? item) {

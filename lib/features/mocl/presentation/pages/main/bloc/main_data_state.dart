@@ -1,7 +1,7 @@
 part of 'main_data_bloc.dart';
 
 @freezed
-class MainDataState with _$MainDataState {
+sealed class MainDataState with _$MainDataState {
   const factory MainDataState.initial() = StateInitial;
 
   const factory MainDataState.loading() = StateLoading;

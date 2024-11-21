@@ -22,13 +22,16 @@ void main() {
   });
 
   test('main 유즈케이스는 빈값을 리턴한다.', () async {
-    provideDummy<Result>(ResultSuccess<List<MainItem>>(data: const []));
+    provideDummyBuilder<Result<List<MainItem>>>(
+        (Object parent, Invocation invocation) {
+      return Result.success(const []);
+    });
 
     when(mockMainRepository.getMainList(siteType: anyNamed('siteType')))
-        .thenAnswer((_) async => ResultSuccess<List<MainItem>>(data: const []));
+        .thenAnswer((_) async => Result.success(const []));
 
     var result = await getMainList(SiteType.damoang);
-    var expected = ResultSuccess<List<MainItem>>(data: const []);
+    var expected = Result<List<MainItem>>.success(const []);
     log('result=$result, expected=$expected');
     expect(result, expected);
   });

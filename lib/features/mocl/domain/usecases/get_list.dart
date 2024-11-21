@@ -1,18 +1,19 @@
 import 'package:equatable/equatable.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/core/usecases/usecase.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/repositories/list_repository.dart';
 
 @injectable
-class GetList extends UseCase<Future<Result>, GetListParams> {
+class GetList extends UseCase<Future<Result<List<ListItem>>>, GetListParams> {
   final ListRepository listRepository;
 
   GetList({required this.listRepository});
 
   @override
-  Future<Result> call(
+  Future<Result<List<ListItem>>> call(
     GetListParams params,
   ) =>
       listRepository.getList(

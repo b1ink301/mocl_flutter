@@ -10,6 +10,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
@@ -62,7 +63,7 @@ class ApiClient {
             : null,
       );
 
-  Future<Result> getList(
+  Future<Result<List<ListItem>>> getList(
     MainItem item,
     int page,
     int lastId,
@@ -101,14 +102,14 @@ class ApiClient {
               item.text,
               isReads,
             )
-          : ResultFailure(
-              failure: GetListFailure(
+          : Result.failure(
+              GetListFailure(
                   message: 'response.statusCode = ${response.statusCode}'),
             );
     } on DioException catch (e) {
       final message = e.message ?? 'Unknown Error';
       log('getList = $url message = $message');
-      return ResultFailure(failure: GetListFailure(message: message));
+      return Result.failure(GetListFailure(message: message));
     }
   }
 
@@ -134,7 +135,7 @@ class ApiClient {
     return interceptor;
   }
 
-  Future<Result> getDetail(
+  Future<Result<Details>> getDetail(
     ListItem item,
     BaseParser parser,
   ) async {
@@ -172,19 +173,17 @@ class ApiClient {
               data: data, requestOptions: RequestOptions());
           return parser.detail(result);
         } else {
-          return ResultFailure(
-            failure: GetDetailFailure(message: 'response.statusCode = not 200'),
+          return Result.failure(
+            GetDetailFailure(message: 'response.statusCode = not 200'),
           );
         }
       } on DioException catch (e) {
         final message = e.message ?? 'Unknown Error';
         log('getDetail = $detailUrl message = $message');
-        ResultFailure(failure: GetDetailFailure(message: message));
+        return Result.failure(GetDetailFailure(message: message));
       } finally {
         dio.interceptors.remove(interceptor);
       }
-
-      return ResultFailure(failure: GetDetailFailure(message: 'message'));
     } else {
       final url = item.url;
 
@@ -198,19 +197,19 @@ class ApiClient {
         log('getDetail $url, $headers response = ${response.statusCode}');
         return response.statusCode == 200
             ? parser.detail(response)
-            : ResultFailure(
-                failure: GetDetailFailure(
+            : Result.failure(
+                GetDetailFailure(
                     message: 'response.statusCode = ${response.statusCode}'),
               );
       } on DioException catch (e) {
         final message = e.message ?? 'Unknown Error';
         log('getDetail = $url message = $message');
-        return ResultFailure(failure: GetDetailFailure(message: message));
+        return Result.failure(GetDetailFailure(message: message));
       }
     }
   }
 
-  Future<Result> getMain(
+  Future<Result<List<MainItem>>> getMain(
     BaseParser parser,
   ) async {
     if (parser.siteType != SiteType.naverCafe) {
@@ -227,20 +226,22 @@ class ApiClient {
     try {
       final response = await get(url, headers: headers);
       log('getMain $url, $headers response = ${response.statusCode}');
-      return response.statusCode == 200
-          ? parser.main(response)
-          : ResultFailure(
-              failure: GetMainFailure(
-                  message: 'response.statusCode = ${response.statusCode}'),
-            );
+      if (response.statusCode == 200) {
+        return parser.main(response);
+      } else {
+        return Result.failure(
+          GetMainFailure(
+              message: 'response.statusCode = ${response.statusCode}'),
+        );
+      }
     } on DioException catch (e) {
       final message = e.message ?? 'Unknown Error';
       log('getMain = $url message = $message');
-      return ResultFailure(failure: GetMainFailure(message: message));
+      return Result.failure(GetMainFailure(message: message));
     } on FormatException catch (e) {
       final message = e.message;
       log('getMain = $url message = $message');
-      return ResultFailure(failure: GetMainFailure(message: message));
+      return Result.failure(GetMainFailure(message: message));
     } finally {
       dio.interceptors.remove(interceptor);
     }

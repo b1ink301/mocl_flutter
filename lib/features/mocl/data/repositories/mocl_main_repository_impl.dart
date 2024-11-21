@@ -16,49 +16,48 @@ import 'package:mocl_flutter/features/mocl/domain/repositories/main_repository.d
 class MainRepositoryImpl extends MainRepository {
   final MainDataSource dataSource;
   final ApiClient apiClient;
-  final BaseParser parser;
+  final ParserFactory parserFactory;
 
   MainRepositoryImpl({
     required this.dataSource,
     required this.apiClient,
-    required ParserFactory parserFactory,
-  }) : parser = parserFactory.createParser();
+    required this.parserFactory,
+  });
+
+  BaseParser _currentParser() => parserFactory.createParser();
 
   @override
-  Stream<Result> getMainListStream({
+  Stream<Result<List<MainItem>>> getMainListStream({
     required SiteType siteType,
   }) async* {
-    yield ResultLoading();
+    yield Result.loading();
     try {
       if (siteType == SiteType.naverCafe) {
-        final result = await apiClient.getMain(parser);
-        yield ResultSuccess(data: result);
+        yield await apiClient.getMain(_currentParser());
       } else {
         final result = await dataSource.get(siteType);
-        yield ResultSuccess<List<MainItem>>(data: result);
+        yield Result.success(result);
       }
     } on Exception catch (e) {
-      yield ResultFailure<Failure>(
-          failure: GetMainFailure(message: e.toString()));
+      yield Result.failure(GetMainFailure(message: e.toString()));
     }
   }
 
   @override
-  Future<Result> setMainList({
+  Future<Result<List<int>>> setMainList({
     required SiteType siteType,
     required List<MainItem> list,
   }) async {
     try {
       final result = await dataSource.set(siteType, list);
-      return ResultSuccess<List<int>>(data: result);
+      return Result<List<int>>.success(result);
     } on Exception catch (e) {
-      return ResultFailure<Failure>(
-          failure: SetMainFailure(message: e.toString()));
+      return Result.failure(SetMainFailure(message: e.toString()));
     }
   }
 
   @override
-  Future<Result> getMainListFromJson({
+  Future<Result<List<MainItem>>> getMainListFromJson({
     required SiteType siteType,
   }) async {
     try {
@@ -70,25 +69,24 @@ class MainRepositoryImpl extends MainRepository {
       }).toList();
 
       var list = await Future.wait(futures);
-      return ResultSuccess<List<MainItem>>(data: list);
+      return Result.success(list);
     } on Exception catch (e) {
-      return ResultFailure<Failure>(
-          failure: GetMainFailure(message: e.toString()));
+      return Result.failure(GetMainFailure(message: e.toString()));
     }
   }
 
   @override
-  Future<Result> getMainList({required SiteType siteType}) async {
+  Future<Result<List<MainItem>>> getMainList(
+      {required SiteType siteType}) async {
     try {
       if (siteType == SiteType.naverCafe) {
-        return await apiClient.getMain(parser);
+        return await apiClient.getMain(_currentParser());
       } else {
         final result = await dataSource.get(siteType);
-        return ResultSuccess(data: result);
+        return Result<List<MainItem>>.success(result);
       }
     } on Exception catch (e) {
-      return ResultFailure<Failure>(
-          failure: GetMainFailure(message: e.toString()));
+      return Result.failure(GetMainFailure(message: e.toString()));
     }
   }
 }
