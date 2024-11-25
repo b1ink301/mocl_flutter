@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:developer';
 
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -10,7 +11,9 @@ import 'package:mocl_flutter/features/mocl/domain/usecases/get_main_list_from_js
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_main_list.dart';
 
 part 'main_data_json_bloc.freezed.dart';
+
 part 'main_data_json_event.dart';
+
 part 'main_data_json_state.dart';
 
 @injectable
@@ -20,7 +23,7 @@ class MainDataJsonBloc extends Bloc<MainDataJsonEvent, MainDataJsonState> {
 
   final List<MainItem> _selectedItems = [];
 
-  List<MainItem> get selectedItems => _selectedItems;
+  List<MainItem> get selectedItems => UnmodifiableListView(_selectedItems);
 
   MainDataJsonBloc({
     required this.getMainListFromJson,
@@ -79,7 +82,6 @@ class MainDataJsonBloc extends Bloc<MainDataJsonEvent, MainDataJsonState> {
   void _init(List<MainItem> data) {
     _clear();
     _addAll(data);
-    log('MainDlgViewModel List=$_selectedItems');
   }
 
   bool hasItem(MainItem item) => _selectedItems.contains(item);

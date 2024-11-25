@@ -34,7 +34,6 @@ class MainDataBloc extends Bloc<MainDataEvent, MainDataState> {
     required this.setSiteType,
   }) : super(const StateInitial()) {
     on<GetListEvent>(_onGetListEvent);
-    on<SetSiteTypeEvent>(_onSetSiteTypeEvent);
   }
 
   void testInitialize() {
@@ -50,11 +49,6 @@ class MainDataBloc extends Bloc<MainDataEvent, MainDataState> {
     add(MainDataEvent.getList(siteType: siteTypeBloc.state));
   }
 
-  Future<void> _onSetSiteTypeEvent(
-    SetSiteTypeEvent event,
-    Emitter<MainDataState> emit,
-  ) async {}
-
   Future<void> _onGetListEvent(
     GetListEvent event,
     Emitter<MainDataState> emit,
@@ -64,7 +58,7 @@ class MainDataBloc extends Bloc<MainDataEvent, MainDataState> {
     final result = await getMainList.call(event.siteType);
     result.whenOrNull(
       success: (data) {
-          // emit(StateSuccess(data.whereType<MainItem>().toList()));
+        // emit(StateSuccess(data.whereType<MainItem>().toList()));
         if (data is List<MainItem>) {
           emit(StateSuccess(data));
         } else {
@@ -85,9 +79,13 @@ class MainDataBloc extends Bloc<MainDataEvent, MainDataState> {
     add(GetListEvent(siteType: siteType));
   }
 
-  Future<void> setMainListWithParams(SetMainParams params) async {
+  Future<void> addMainList({
+    required SiteType siteType,
+    required List<MainItem> list,
+  }) async {
+    final params = SetMainParams(siteType: siteType, list: list);
     await setMainList(params);
-    refresh(params.siteType);
+    refresh(siteType);
   }
 
   @override
