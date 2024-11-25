@@ -43,6 +43,7 @@ import 'injection.dart' as _i464;
 import 'models/readable_list_item.dart' as _i923;
 import 'pages/detail/bloc/detail_view_bloc.dart' as _i83;
 import 'pages/detail/bloc/get_height_cubit.dart' as _i63;
+import 'pages/detail/detail_view_util.dart' as _i149;
 import 'pages/list/bloc/list_page_cubit.dart' as _i588;
 import 'pages/main/add_dialog/bloc/main_data_json_bloc.dart' as _i61;
 import 'pages/main/bloc/main_data_bloc.dart' as _i413;
@@ -70,6 +71,7 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i29.SettingsBloc>(() => _i29.SettingsBloc());
     gh.factory<_i830.GetVersionCubit>(() => _i830.GetVersionCubit());
     gh.factory<_i63.GetHeightCubit>(() => _i63.GetHeightCubit());
+    gh.factory<_i149.DetailViewUtil>(() => _i149.DetailViewUtil());
     await gh.singletonAsync<_i724.AppDatabase>(
       () => registerModule.appDatabase,
       preResolve: true,
