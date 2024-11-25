@@ -16,55 +16,44 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$MainDataEvent {
+  SiteType get siteType => throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(SiteType siteType) getList,
-    required TResult Function(SiteType siteType) setSiteType,
-    required TResult Function() getSiteType,
-    required TResult Function(SiteType siteType, List<MainItem> list) setList,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(SiteType siteType)? getList,
-    TResult? Function(SiteType siteType)? setSiteType,
-    TResult? Function()? getSiteType,
-    TResult? Function(SiteType siteType, List<MainItem> list)? setList,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(SiteType siteType)? getList,
-    TResult Function(SiteType siteType)? setSiteType,
-    TResult Function()? getSiteType,
-    TResult Function(SiteType siteType, List<MainItem> list)? setList,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(GetListEvent value) getList,
-    required TResult Function(SetSiteTypeEvent value) setSiteType,
-    required TResult Function(GetSiteTypeEvent value) getSiteType,
-    required TResult Function(SetListEvent value) setList,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(GetListEvent value)? getList,
-    TResult? Function(SetSiteTypeEvent value)? setSiteType,
-    TResult? Function(GetSiteTypeEvent value)? getSiteType,
-    TResult? Function(SetListEvent value)? setList,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(GetListEvent value)? getList,
-    TResult Function(SetSiteTypeEvent value)? setSiteType,
-    TResult Function(GetSiteTypeEvent value)? getSiteType,
-    TResult Function(SetListEvent value)? setList,
     required TResult orElse(),
   }) =>
+      throw _privateConstructorUsedError;
+
+  /// Create a copy of MainDataEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $MainDataEventCopyWith<MainDataEvent> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -73,6 +62,8 @@ abstract class $MainDataEventCopyWith<$Res> {
   factory $MainDataEventCopyWith(
           MainDataEvent value, $Res Function(MainDataEvent) then) =
       _$MainDataEventCopyWithImpl<$Res, MainDataEvent>;
+  @useResult
+  $Res call({SiteType siteType});
 }
 
 /// @nodoc
@@ -87,13 +78,27 @@ class _$MainDataEventCopyWithImpl<$Res, $Val extends MainDataEvent>
 
   /// Create a copy of MainDataEvent
   /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? siteType = null,
+  }) {
+    return _then(_value.copyWith(
+      siteType: null == siteType
+          ? _value.siteType
+          : siteType // ignore: cast_nullable_to_non_nullable
+              as SiteType,
+    ) as $Val);
+  }
 }
 
 /// @nodoc
-abstract class _$$GetListEventImplCopyWith<$Res> {
+abstract class _$$GetListEventImplCopyWith<$Res>
+    implements $MainDataEventCopyWith<$Res> {
   factory _$$GetListEventImplCopyWith(
           _$GetListEventImpl value, $Res Function(_$GetListEventImpl) then) =
       __$$GetListEventImplCopyWithImpl<$Res>;
+  @override
   @useResult
   $Res call({SiteType siteType});
 }
@@ -159,9 +164,6 @@ class _$GetListEventImpl implements GetListEvent {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function(SiteType siteType) getList,
-    required TResult Function(SiteType siteType) setSiteType,
-    required TResult Function() getSiteType,
-    required TResult Function(SiteType siteType, List<MainItem> list) setList,
   }) {
     return getList(siteType);
   }
@@ -170,9 +172,6 @@ class _$GetListEventImpl implements GetListEvent {
   @optionalTypeArgs
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function(SiteType siteType)? getList,
-    TResult? Function(SiteType siteType)? setSiteType,
-    TResult? Function()? getSiteType,
-    TResult? Function(SiteType siteType, List<MainItem> list)? setList,
   }) {
     return getList?.call(siteType);
   }
@@ -181,9 +180,6 @@ class _$GetListEventImpl implements GetListEvent {
   @optionalTypeArgs
   TResult maybeWhen<TResult extends Object?>({
     TResult Function(SiteType siteType)? getList,
-    TResult Function(SiteType siteType)? setSiteType,
-    TResult Function()? getSiteType,
-    TResult Function(SiteType siteType, List<MainItem> list)? setList,
     required TResult orElse(),
   }) {
     if (getList != null) {
@@ -196,9 +192,6 @@ class _$GetListEventImpl implements GetListEvent {
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
     required TResult Function(GetListEvent value) getList,
-    required TResult Function(SetSiteTypeEvent value) setSiteType,
-    required TResult Function(GetSiteTypeEvent value) getSiteType,
-    required TResult Function(SetListEvent value) setList,
   }) {
     return getList(this);
   }
@@ -207,9 +200,6 @@ class _$GetListEventImpl implements GetListEvent {
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
     TResult? Function(GetListEvent value)? getList,
-    TResult? Function(SetSiteTypeEvent value)? setSiteType,
-    TResult? Function(GetSiteTypeEvent value)? getSiteType,
-    TResult? Function(SetListEvent value)? setList,
   }) {
     return getList?.call(this);
   }
@@ -218,9 +208,6 @@ class _$GetListEventImpl implements GetListEvent {
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
     TResult Function(GetListEvent value)? getList,
-    TResult Function(SetSiteTypeEvent value)? setSiteType,
-    TResult Function(GetSiteTypeEvent value)? getSiteType,
-    TResult Function(SetListEvent value)? setList,
     required TResult orElse(),
   }) {
     if (getList != null) {
@@ -234,454 +221,14 @@ abstract class GetListEvent implements MainDataEvent {
   const factory GetListEvent({required final SiteType siteType}) =
       _$GetListEventImpl;
 
+  @override
   SiteType get siteType;
 
   /// Create a copy of MainDataEvent
   /// with the given fields replaced by the non-null parameter values.
+  @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$GetListEventImplCopyWith<_$GetListEventImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class _$$SetSiteTypeEventImplCopyWith<$Res> {
-  factory _$$SetSiteTypeEventImplCopyWith(_$SetSiteTypeEventImpl value,
-          $Res Function(_$SetSiteTypeEventImpl) then) =
-      __$$SetSiteTypeEventImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({SiteType siteType});
-}
-
-/// @nodoc
-class __$$SetSiteTypeEventImplCopyWithImpl<$Res>
-    extends _$MainDataEventCopyWithImpl<$Res, _$SetSiteTypeEventImpl>
-    implements _$$SetSiteTypeEventImplCopyWith<$Res> {
-  __$$SetSiteTypeEventImplCopyWithImpl(_$SetSiteTypeEventImpl _value,
-      $Res Function(_$SetSiteTypeEventImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of MainDataEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? siteType = null,
-  }) {
-    return _then(_$SetSiteTypeEventImpl(
-      siteType: null == siteType
-          ? _value.siteType
-          : siteType // ignore: cast_nullable_to_non_nullable
-              as SiteType,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _$SetSiteTypeEventImpl implements SetSiteTypeEvent {
-  const _$SetSiteTypeEventImpl({required this.siteType});
-
-  @override
-  final SiteType siteType;
-
-  @override
-  String toString() {
-    return 'MainDataEvent.setSiteType(siteType: $siteType)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$SetSiteTypeEventImpl &&
-            (identical(other.siteType, siteType) ||
-                other.siteType == siteType));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, siteType);
-
-  /// Create a copy of MainDataEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$SetSiteTypeEventImplCopyWith<_$SetSiteTypeEventImpl> get copyWith =>
-      __$$SetSiteTypeEventImplCopyWithImpl<_$SetSiteTypeEventImpl>(
-          this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(SiteType siteType) getList,
-    required TResult Function(SiteType siteType) setSiteType,
-    required TResult Function() getSiteType,
-    required TResult Function(SiteType siteType, List<MainItem> list) setList,
-  }) {
-    return setSiteType(siteType);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(SiteType siteType)? getList,
-    TResult? Function(SiteType siteType)? setSiteType,
-    TResult? Function()? getSiteType,
-    TResult? Function(SiteType siteType, List<MainItem> list)? setList,
-  }) {
-    return setSiteType?.call(siteType);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(SiteType siteType)? getList,
-    TResult Function(SiteType siteType)? setSiteType,
-    TResult Function()? getSiteType,
-    TResult Function(SiteType siteType, List<MainItem> list)? setList,
-    required TResult orElse(),
-  }) {
-    if (setSiteType != null) {
-      return setSiteType(siteType);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(GetListEvent value) getList,
-    required TResult Function(SetSiteTypeEvent value) setSiteType,
-    required TResult Function(GetSiteTypeEvent value) getSiteType,
-    required TResult Function(SetListEvent value) setList,
-  }) {
-    return setSiteType(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(GetListEvent value)? getList,
-    TResult? Function(SetSiteTypeEvent value)? setSiteType,
-    TResult? Function(GetSiteTypeEvent value)? getSiteType,
-    TResult? Function(SetListEvent value)? setList,
-  }) {
-    return setSiteType?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(GetListEvent value)? getList,
-    TResult Function(SetSiteTypeEvent value)? setSiteType,
-    TResult Function(GetSiteTypeEvent value)? getSiteType,
-    TResult Function(SetListEvent value)? setList,
-    required TResult orElse(),
-  }) {
-    if (setSiteType != null) {
-      return setSiteType(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class SetSiteTypeEvent implements MainDataEvent {
-  const factory SetSiteTypeEvent({required final SiteType siteType}) =
-      _$SetSiteTypeEventImpl;
-
-  SiteType get siteType;
-
-  /// Create a copy of MainDataEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$SetSiteTypeEventImplCopyWith<_$SetSiteTypeEventImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class _$$GetSiteTypeEventImplCopyWith<$Res> {
-  factory _$$GetSiteTypeEventImplCopyWith(_$GetSiteTypeEventImpl value,
-          $Res Function(_$GetSiteTypeEventImpl) then) =
-      __$$GetSiteTypeEventImplCopyWithImpl<$Res>;
-}
-
-/// @nodoc
-class __$$GetSiteTypeEventImplCopyWithImpl<$Res>
-    extends _$MainDataEventCopyWithImpl<$Res, _$GetSiteTypeEventImpl>
-    implements _$$GetSiteTypeEventImplCopyWith<$Res> {
-  __$$GetSiteTypeEventImplCopyWithImpl(_$GetSiteTypeEventImpl _value,
-      $Res Function(_$GetSiteTypeEventImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of MainDataEvent
-  /// with the given fields replaced by the non-null parameter values.
-}
-
-/// @nodoc
-
-class _$GetSiteTypeEventImpl implements GetSiteTypeEvent {
-  const _$GetSiteTypeEventImpl();
-
-  @override
-  String toString() {
-    return 'MainDataEvent.getSiteType()';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$GetSiteTypeEventImpl);
-  }
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(SiteType siteType) getList,
-    required TResult Function(SiteType siteType) setSiteType,
-    required TResult Function() getSiteType,
-    required TResult Function(SiteType siteType, List<MainItem> list) setList,
-  }) {
-    return getSiteType();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(SiteType siteType)? getList,
-    TResult? Function(SiteType siteType)? setSiteType,
-    TResult? Function()? getSiteType,
-    TResult? Function(SiteType siteType, List<MainItem> list)? setList,
-  }) {
-    return getSiteType?.call();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(SiteType siteType)? getList,
-    TResult Function(SiteType siteType)? setSiteType,
-    TResult Function()? getSiteType,
-    TResult Function(SiteType siteType, List<MainItem> list)? setList,
-    required TResult orElse(),
-  }) {
-    if (getSiteType != null) {
-      return getSiteType();
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(GetListEvent value) getList,
-    required TResult Function(SetSiteTypeEvent value) setSiteType,
-    required TResult Function(GetSiteTypeEvent value) getSiteType,
-    required TResult Function(SetListEvent value) setList,
-  }) {
-    return getSiteType(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(GetListEvent value)? getList,
-    TResult? Function(SetSiteTypeEvent value)? setSiteType,
-    TResult? Function(GetSiteTypeEvent value)? getSiteType,
-    TResult? Function(SetListEvent value)? setList,
-  }) {
-    return getSiteType?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(GetListEvent value)? getList,
-    TResult Function(SetSiteTypeEvent value)? setSiteType,
-    TResult Function(GetSiteTypeEvent value)? getSiteType,
-    TResult Function(SetListEvent value)? setList,
-    required TResult orElse(),
-  }) {
-    if (getSiteType != null) {
-      return getSiteType(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class GetSiteTypeEvent implements MainDataEvent {
-  const factory GetSiteTypeEvent() = _$GetSiteTypeEventImpl;
-}
-
-/// @nodoc
-abstract class _$$SetListEventImplCopyWith<$Res> {
-  factory _$$SetListEventImplCopyWith(
-          _$SetListEventImpl value, $Res Function(_$SetListEventImpl) then) =
-      __$$SetListEventImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({SiteType siteType, List<MainItem> list});
-}
-
-/// @nodoc
-class __$$SetListEventImplCopyWithImpl<$Res>
-    extends _$MainDataEventCopyWithImpl<$Res, _$SetListEventImpl>
-    implements _$$SetListEventImplCopyWith<$Res> {
-  __$$SetListEventImplCopyWithImpl(
-      _$SetListEventImpl _value, $Res Function(_$SetListEventImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of MainDataEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? siteType = null,
-    Object? list = null,
-  }) {
-    return _then(_$SetListEventImpl(
-      null == siteType
-          ? _value.siteType
-          : siteType // ignore: cast_nullable_to_non_nullable
-              as SiteType,
-      null == list
-          ? _value._list
-          : list // ignore: cast_nullable_to_non_nullable
-              as List<MainItem>,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _$SetListEventImpl implements SetListEvent {
-  const _$SetListEventImpl(this.siteType, final List<MainItem> list)
-      : _list = list;
-
-  @override
-  final SiteType siteType;
-  final List<MainItem> _list;
-  @override
-  List<MainItem> get list {
-    if (_list is EqualUnmodifiableListView) return _list;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_list);
-  }
-
-  @override
-  String toString() {
-    return 'MainDataEvent.setList(siteType: $siteType, list: $list)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$SetListEventImpl &&
-            (identical(other.siteType, siteType) ||
-                other.siteType == siteType) &&
-            const DeepCollectionEquality().equals(other._list, _list));
-  }
-
-  @override
-  int get hashCode => Object.hash(
-      runtimeType, siteType, const DeepCollectionEquality().hash(_list));
-
-  /// Create a copy of MainDataEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$SetListEventImplCopyWith<_$SetListEventImpl> get copyWith =>
-      __$$SetListEventImplCopyWithImpl<_$SetListEventImpl>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(SiteType siteType) getList,
-    required TResult Function(SiteType siteType) setSiteType,
-    required TResult Function() getSiteType,
-    required TResult Function(SiteType siteType, List<MainItem> list) setList,
-  }) {
-    return setList(siteType, list);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(SiteType siteType)? getList,
-    TResult? Function(SiteType siteType)? setSiteType,
-    TResult? Function()? getSiteType,
-    TResult? Function(SiteType siteType, List<MainItem> list)? setList,
-  }) {
-    return setList?.call(siteType, list);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(SiteType siteType)? getList,
-    TResult Function(SiteType siteType)? setSiteType,
-    TResult Function()? getSiteType,
-    TResult Function(SiteType siteType, List<MainItem> list)? setList,
-    required TResult orElse(),
-  }) {
-    if (setList != null) {
-      return setList(siteType, list);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(GetListEvent value) getList,
-    required TResult Function(SetSiteTypeEvent value) setSiteType,
-    required TResult Function(GetSiteTypeEvent value) getSiteType,
-    required TResult Function(SetListEvent value) setList,
-  }) {
-    return setList(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(GetListEvent value)? getList,
-    TResult? Function(SetSiteTypeEvent value)? setSiteType,
-    TResult? Function(GetSiteTypeEvent value)? getSiteType,
-    TResult? Function(SetListEvent value)? setList,
-  }) {
-    return setList?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(GetListEvent value)? getList,
-    TResult Function(SetSiteTypeEvent value)? setSiteType,
-    TResult Function(GetSiteTypeEvent value)? getSiteType,
-    TResult Function(SetListEvent value)? setList,
-    required TResult orElse(),
-  }) {
-    if (setList != null) {
-      return setList(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class SetListEvent implements MainDataEvent {
-  const factory SetListEvent(
-      final SiteType siteType, final List<MainItem> list) = _$SetListEventImpl;
-
-  SiteType get siteType;
-  List<MainItem> get list;
-
-  /// Create a copy of MainDataEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$SetListEventImplCopyWith<_$SetListEventImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 

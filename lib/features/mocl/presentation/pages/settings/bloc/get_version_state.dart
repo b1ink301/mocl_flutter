@@ -5,4 +5,5 @@ sealed class GetVersionState with _$GetVersionState {
   const factory GetVersionState.initial() = _Initial;
   const factory GetVersionState.loading() = _Loading;
   const factory GetVersionState.success(String version) = _Success;
+  const factory GetVersionState.failure(String errorMessage) = _Failure;
 }

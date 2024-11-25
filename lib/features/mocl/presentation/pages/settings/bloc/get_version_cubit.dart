@@ -17,8 +17,7 @@ class GetVersionCubit extends Cubit<GetVersionState> {
       final version = 'v${info.version}-${info.buildNumber}';
       emit(GetVersionState.success(version));
     } catch (e) {
-      final version = 'v1.0.0-error';
-      emit(GetVersionState.success(version));
+      emit(GetVersionState.failure(e.toString()));
     }
   }
 }

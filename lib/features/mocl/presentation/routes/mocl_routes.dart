@@ -10,4 +10,5 @@ abstract class Routes {
   static const settings = '/settings';
   static const login = '/login';
   static const setMainDlg = 'setMainDlg';
+  static const setMainDlgFull = '$main/$setMainDlg';
 }
