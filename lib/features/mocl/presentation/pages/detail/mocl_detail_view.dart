@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
+import 'package:mocl_flutter/features/mocl/presentation/injection.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/bloc/detail_view_bloc.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/detail/detail_view_util.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
@@ -139,6 +141,7 @@ class _DetailContent extends StatelessWidget {
     final bodySmall = theme.textTheme.bodySmall;
     final bodyMedium = theme.textTheme.bodyMedium;
     final bloc = context.read<DetailViewBloc>();
+    final util = getIt<DetailViewUtil>();
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -150,7 +153,7 @@ class _DetailContent extends StatelessWidget {
             detail: detail,
             hexColor: hexColor,
             bodyMedium: bodyMedium,
-            onTapUrl: bloc.openBrowser),
+            onTapUrl: (url) => util.openBrowserByUrl(url)),
         const SizedBox(height: 10),
         if (detail.comments.isNotEmpty)
           _Comments(
@@ -158,7 +161,7 @@ class _DetailContent extends StatelessWidget {
             comments: detail.comments,
             bodySmall: bodySmall,
             bodyMedium: bodyMedium,
-            openUrl: bloc.openBrowser,
+            openUrl: (url) => util.openBrowserByUrl(url),
           ),
         const Divider(),
         _RefreshButton(onRefresh: bloc.refresh, bodyMedium: bodyMedium),

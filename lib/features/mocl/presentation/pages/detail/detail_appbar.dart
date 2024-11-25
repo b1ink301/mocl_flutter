@@ -2,8 +2,10 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mocl_flutter/features/mocl/presentation/injection.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/bloc/detail_view_bloc.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/bloc/get_height_cubit.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/detail/detail_view_util.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/appbar_dual_text_widget.dart';
 
 class DetailAppBar extends StatelessWidget {
@@ -36,10 +38,12 @@ class DetailAppBar extends StatelessWidget {
                 context.read<DetailViewBloc>().refresh();
                 break;
               case 1:
-                context.read<DetailViewBloc>().openBrowserByItem();
+                final url = context.read<DetailViewBloc>().itemUrl;
+                getIt<DetailViewUtil>().openBrowserByUrl(url);
                 break;
               case 2:
-                context.read<DetailViewBloc>().shareUri();
+                final url = context.read<DetailViewBloc>().itemUrl;
+                getIt<DetailViewUtil>().shareUrl(url);
                 break;
             }
           },

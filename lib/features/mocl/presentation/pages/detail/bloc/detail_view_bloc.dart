@@ -36,6 +36,8 @@ class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
 
   String get title => _listItem.item.title;
 
+  String get itemUrl => _listItem.item.url;
+
   void refresh() => add(const DetailsEvent());
 
   Future<void> _onDetailsEvent(
@@ -66,22 +68,5 @@ class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
           SetReadFlagParams(siteType: _siteType, boardId: _listItem.item.id);
       await _setReadFlag(params);
     }
-  }
-
-  Future<bool> openBrowserByItem() async {
-    final url = _listItem.item.url;
-    final Uri uri = Uri.parse(url);
-    return await launchUrl(uri);
-  }
-
-  Future<bool> openBrowser(String url) async {
-    final Uri uri = Uri.parse(url);
-    return await launchUrl(uri);
-  }
-
-  Future<void> shareUri() async {
-    final url = _listItem.item.url;
-    final Uri uri = Uri.parse(url);
-    await Share.shareUri(uri);
   }
 }
