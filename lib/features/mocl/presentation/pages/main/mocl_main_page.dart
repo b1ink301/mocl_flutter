@@ -54,6 +54,8 @@ class MainPage extends StatelessWidget {
       flexibleSpace: Container(color: backgroundColor),
       backgroundColor: backgroundColor,
       titleSpacing: 0,
+      floating: true,
+      pinned: false,
       centerTitle: false,
       toolbarHeight: 64,
       actions: SiteType.naverCafe == siteType.state
@@ -91,7 +93,11 @@ class MainPage extends StatelessWidget {
     var statusBarColor =
         Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor;
 
+    final halfWidth = MediaQuery.of(context).size.width / 2;
+
     return Scaffold(
+      drawerEdgeDragWidth: halfWidth,
+      drawerEnableOpenDragGesture: true,
       drawer: _buildDrawer(context),
       appBar: Platform.isIOS
           ? AppBar(

@@ -43,15 +43,15 @@ abstract class BaseParser {
     if (nickName.isNotEmpty) {
       info = nickName;
     }
-    if (parsedTime.isNotEmpty) {
-      if (info.isNotEmpty) {
+    if (info.isNotEmpty) {
+      if (parsedTime.isNotEmpty) {
         info += " ・ $parsedTime";
       } else {
         info = parsedTime;
       }
     }
     if (viewCount.isNotEmpty) {
-      if (info.isNotEmpty) {
+      if (parsedTime.isNotEmpty) {
         info += " ・ $viewCount 읽음";
       } else {
         info = "$viewCount 읽음";
