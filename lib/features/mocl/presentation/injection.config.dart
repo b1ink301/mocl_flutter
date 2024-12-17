@@ -70,8 +70,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i237.ClearDataCubit>(() => _i237.ClearDataCubit());
     gh.factory<_i29.SettingsBloc>(() => _i29.SettingsBloc());
     gh.factory<_i830.GetVersionCubit>(() => _i830.GetVersionCubit());
-    gh.factory<_i63.GetHeightCubit>(() => _i63.GetHeightCubit());
     gh.factory<_i149.DetailViewUtil>(() => _i149.DetailViewUtil());
+    gh.factory<_i63.GetHeightCubit>(() => _i63.GetHeightCubit());
     await gh.singletonAsync<_i724.AppDatabase>(
       () => registerModule.appDatabase,
       preResolve: true,
