@@ -4,6 +4,7 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/mocl_detail_page.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/detail/photo_view_dialog.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/list_page.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/login/login_page.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/add_dialog/add_list_dialog.dart';
@@ -47,17 +48,32 @@ class AppPages {
         }),
       ),
       GoRoute(
-        path: Routes.detail,
-        pageBuilder: (BuildContext context, GoRouterState state) =>
-            SwipeablePage(
-          builder: (context) {
-            final extra = GoRouterState.of(context).extra as List<dynamic>;
-            final siteType = extra[0] as SiteType;
-            final item = extra[1] as ReadableListItem;
-            return DetailPage.withBloc(context, siteType, item);
-          },
-        ),
-      ),
+          path: Routes.detail,
+          pageBuilder: (BuildContext context, GoRouterState state) =>
+              SwipeablePage(
+                builder: (context) {
+                  final extra =
+                      GoRouterState.of(context).extra as List<dynamic>;
+                  final siteType = extra[0] as SiteType;
+                  final item = extra[1] as ReadableListItem;
+                  return DetailPage.withBloc(context, siteType, item);
+                },
+              ),
+          routes: [
+            GoRoute(
+              path: Routes.viewPhotoDlg,
+              pageBuilder: (BuildContext context, GoRouterState state) =>
+                  CupertinoModalPopupPage(
+                builder: (BuildContext context) {
+                  final url = GoRouterState.of(context).extra as String;
+                  return PhotoViewDialog(
+                    imageProvider: NetworkImage(url),
+                    filterQuality: FilterQuality.high,
+                  );
+                },
+              ),
+            ),
+          ]),
       GoRoute(
         path: Routes.settings,
         pageBuilder: (BuildContext context, GoRouterState state) =>

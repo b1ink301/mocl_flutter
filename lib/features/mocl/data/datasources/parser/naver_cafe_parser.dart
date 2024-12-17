@@ -91,21 +91,26 @@ class NaverCafeParser extends BaseParser {
     final likeCount = '';
 
     final comment = responseData.last['result'];
-    // log('[detail] comment=$comment');
 
     final List<dynamic> comments = comment['comments']['items'];
 
     final commentItems = comments
         .map((comment) {
+
           final id = comment['id'] ?? 'id';
           final writer = comment['writer'];
-          final body = comment['content'] ?? '';
+          var body = comment['content'] ?? '';
           final userId = writer['id'];
           final nickImage = ''; //writer['image']['url'] ?? '';
           final nickName = writer['nick'] ?? '';
           final isReply = comment['isRef'];
           final time = comment['updateDate'] ?? 0;
           final likeCount = '0';
+          final image = comment['image'];
+
+          if (image!=null) {
+            body += '<br><img src=\'${image["url"]}\' width="240" >';
+          }
 
           var parsedTime = '';
           try {

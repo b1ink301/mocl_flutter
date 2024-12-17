@@ -150,10 +150,11 @@ class _DetailContent extends StatelessWidget {
       children: [
         const SizedBox(height: 10),
         _Body(
-            detail: detail,
-            hexColor: hexColor,
-            bodyMedium: bodyMedium,
-            onTapUrl: (url) => util.openBrowserByUrl(url)),
+          detail: detail,
+          hexColor: hexColor,
+          bodyMedium: bodyMedium,
+          onTapUrl: (url) => util.openUrl(context, url),
+        ),
         const SizedBox(height: 10),
         if (detail.comments.isNotEmpty)
           _Comments(
@@ -161,7 +162,7 @@ class _DetailContent extends StatelessWidget {
             comments: detail.comments,
             bodySmall: bodySmall,
             bodyMedium: bodyMedium,
-            openUrl: (url) => util.openBrowserByUrl(url),
+            openUrl: (url) => util.openUrl(context, url),
           ),
         const Divider(),
         _RefreshButton(onRefresh: bloc.refresh, bodyMedium: bodyMedium),

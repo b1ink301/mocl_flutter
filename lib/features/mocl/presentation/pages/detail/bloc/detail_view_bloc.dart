@@ -34,7 +34,9 @@ class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
 
   String get title => _listItem.item.title;
 
-  String get itemUrl => _listItem.item.url;
+  String get itemUrl => _siteType == SiteType.naverCafe
+      ? 'https://m.cafe.naver.com/ca-fe/web/cafes/${_listItem.item.board}/articles/${_listItem.item.id}'
+      : _listItem.item.url;
 
   void refresh() => add(const DetailsEvent());
 
