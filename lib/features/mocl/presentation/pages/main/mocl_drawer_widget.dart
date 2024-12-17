@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/main/bloc/site_type_bloc.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/settings/bloc/get_version_cubit.dart';
 
 class DrawerWidget extends StatelessWidget {
@@ -9,8 +10,7 @@ class DrawerWidget extends StatelessWidget {
   final void Function(SiteType) onChangeSite;
 
   @override
-  Widget build(BuildContext context) {
-    return Drawer(
+  Widget build(BuildContext context) => Drawer(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       child: Column(
         children: [
@@ -28,34 +28,38 @@ class DrawerWidget extends StatelessWidget {
               ),
             ),
           ),
-          ...SiteType.values
-              // .where((siteType) => siteType != SiteType.naverCafe)
-              .map((siteType) => Column(
-                    children: [
-                      ListTile(
-                        title: Text(siteType.title),
-                        titleTextStyle: Theme.of(context).textTheme.bodyMedium,
-                        onTap: () async {
-                          if (context.mounted) {
-                            Navigator.of(context).pop();
-                            onChangeSite(siteType);
-                          }
-                        },
-                      ),
-                      const Divider(
-                        height: 1,
-                        thickness: 1,
-                        indent: 12,
-                        endIndent: 8,
-                      ),
-                    ],
-                  )),
+          ...SiteType.values.map((siteType) => Column(
+                children: [
+                  ListTile(
+                    title: Text(siteType.title),
+                    titleTextStyle: Theme.of(context).textTheme.bodyMedium,
+                    onTap: () async {
+                      if (context.mounted) {
+                        Navigator.of(context).pop();
+                        onChangeSite(siteType);
+                      }
+                    },
+                    trailing: context.read<SiteTypeBloc>().state == siteType
+                        ? Icon(
+                            Icons.check_outlined,
+                            color: Theme.of(context).indicatorColor,
+                          )
+                        : null,
+                  ),
+                  const Divider(
+                    height: 1,
+                    thickness: 1,
+                    indent: 12,
+                    endIndent: 8,
+                  ),
+                ],
+              )),
           const Spacer(),
           BlocBuilder<GetVersionCubit, GetVersionState>(
             builder: (context, state) {
               return state.maybeMap(
                 success: (state) => ListTile(
-                  title: Text(state.version),
+                  title: Text(state.version, textAlign: TextAlign.center),
                   titleTextStyle: Theme.of(context).textTheme.bodySmall,
                 ),
                 orElse: () => const SizedBox.shrink(),
@@ -65,5 +69,4 @@ class DrawerWidget extends StatelessWidget {
         ],
       ),
     );
-  }
 }

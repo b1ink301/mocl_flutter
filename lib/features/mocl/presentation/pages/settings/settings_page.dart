@@ -25,9 +25,7 @@ class SettingsPage extends StatelessWidget {
         BlocProvider(create: (_) {
           return getIt<GetVersionCubit>()..getVersion();
         }),
-        BlocProvider(create: (_) {
-          return getIt<ClearDataCubit>();
-        }),
+        BlocProvider(create: (_) => getIt<ClearDataCubit>()),
       ],
       child: const SettingsPage(),
     );

@@ -9,6 +9,7 @@ class MoclTheme {
           surfaceTintColor: Colors.white,
           systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: Color(0xFF4d5057),
+            systemNavigationBarColor: Colors.transparent,
             systemNavigationBarIconBrightness: Brightness.light,
             statusBarIconBrightness: Brightness.light,
             statusBarBrightness: Brightness.dark,
@@ -58,6 +59,7 @@ class MoclTheme {
           surfaceTintColor: Colors.white,
           systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: Color(0xFF1f1f1f),
+            systemNavigationBarColor: Colors.transparent,
             systemNavigationBarIconBrightness: Brightness.light,
             statusBarIconBrightness: Brightness.light,
             statusBarBrightness: Brightness.dark,

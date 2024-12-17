@@ -61,19 +61,31 @@ class AddListDialog extends StatelessWidget {
           ),
         ),
         actions: [
-          Builder(
-            builder: (context) => TextButton(
-              onPressed: () {
-                if (context.mounted) {
-                  final bloc = BlocProvider.of<MainDataJsonBloc>(context);
-                  log('[onPressed] =${bloc.selectedItems.length}');
-                  context.pop(bloc.selectedItems);
-                }
-              },
-              child: Text(
-                '적용',
-                style: Theme.of(context).textTheme.headlineSmall,
-              ),
+          TextButton(
+            onPressed: () {
+              if (context.mounted) {
+                context.pop();
+              }
+            },
+            child: Text(
+              '취소',
+              style: Theme.of(context).textTheme.headlineSmall,
+            ),
+          ),
+          TextButton(
+            onPressed: () {
+              if (context.mounted) {
+                final bloc = BlocProvider.of<MainDataJsonBloc>(context);
+                log('[onPressed] =${bloc.selectedItems.length}');
+                context.pop(bloc.selectedItems);
+              }
+            },
+            child: Text(
+              '적용',
+              style: Theme.of(context)
+                  .textTheme
+                  .headlineSmall
+                  ?.copyWith(color: Theme.of(context).indicatorColor),
             ),
           ),
         ],

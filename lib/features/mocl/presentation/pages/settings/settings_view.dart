@@ -14,45 +14,39 @@ class SettingsView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             BlocBuilder<GetVersionCubit, GetVersionState>(
-              builder: (context, state) {
-                return state.maybeMap(
-                  success: (state) => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: Text(
-                      state.version,
-                      style: TextStyle(
-                        fontSize: 17,
-                        color: Theme.of(context).indicatorColor,
-                      ),
+              builder: (context, state) => state.maybeMap(
+                success: (state) => Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 16.0),
+                  child: Text(
+                    state.version,
+                    style: TextStyle(
+                      fontSize: 17,
+                      color: Theme.of(context).indicatorColor,
                     ),
                   ),
-                  orElse: () => _buildLoadingView(),
-                );
-              },
+                ),
+                orElse: () => _buildLoadingView(),
+              ),
             ),
             const DividerWidget(),
             BlocBuilder<ClearDataCubit, ClearDataState>(
-              builder: (context, state) {
-                return state.maybeMap(
-                  success: (state) =>
-                      _buildErrorView(context, "ClearDataCubit"),
-                  loading: (state) => _buildLoadingView(),
-                  orElse: () => InkWell(
-                    onTap: () => {},
-                    child: Container(
-                      width: double.infinity,
-                      height: 58,
-                      alignment: Alignment.center,
-                      child: Text(
-                        '모든 데이터 삭제',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).indicatorColor,
-                            ),
-                      ),
+              builder: (context, state) => state.maybeMap(
+                loading: (state) => _buildLoadingView(),
+                orElse: () => InkWell(
+                  onTap: () => {context.read<ClearDataCubit>().clearData()},
+                  child: Container(
+                    width: double.infinity,
+                    height: 58,
+                    alignment: Alignment.center,
+                    child: Text(
+                      '캐시 데이터 삭제',
+                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                            color: Theme.of(context).indicatorColor,
+                          ),
                     ),
                   ),
-                );
-              },
+                ),
+              ),
             ),
             const DividerWidget(),
           ],
@@ -61,16 +55,14 @@ class SettingsView extends StatelessWidget {
 
   Widget _buildLoadingView() => const LoadingWidget();
 
-  Widget _buildErrorView(BuildContext context, String message) {
-    return Padding(
-      padding: const EdgeInsets.all(12.0),
-      child: Text(
-        message,
-        style: TextStyle(
-          fontSize: 16,
-          color: Theme.of(context).indicatorColor,
+  Widget _buildErrorView(BuildContext context, String message) => Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Text(
+          message,
+          style: TextStyle(
+            fontSize: 16,
+            color: Theme.of(context).indicatorColor,
+          ),
         ),
-      ),
-    );
-  }
+      );
 }
