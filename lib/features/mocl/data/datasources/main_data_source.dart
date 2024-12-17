@@ -45,8 +45,6 @@ class MainDataSourceImpl extends MainDataSource {
       var data = MainItemMapper.fromEntityToModel(item);
       return MainItemMapper.fromModelToEntity(data);
     }).toList();
-
-    debugPrint("MainDataSource=${entities.length}, siteType=$siteType");
     await localDatabase.deleteAll(siteType);
     return localDatabase.setMainItems(siteType, entities);
   }

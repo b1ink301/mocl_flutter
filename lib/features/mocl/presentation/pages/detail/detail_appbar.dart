@@ -33,16 +33,17 @@ class DetailAppBar extends StatelessWidget {
         PopupMenuButton<int>(
           icon: const Icon(Icons.more_vert),
           onSelected: (int value) {
+            var detailViewBloc = context.read<DetailViewBloc>();
             switch (value) {
               case 0:
-                context.read<DetailViewBloc>().refresh();
+                detailViewBloc.refresh();
                 break;
               case 1:
-                final url = context.read<DetailViewBloc>().itemUrl;
+                final url = detailViewBloc.itemUrl;
                 getIt<DetailViewUtil>().openBrowserByUrl(url);
                 break;
               case 2:
-                final url = context.read<DetailViewBloc>().itemUrl;
+                final url = detailViewBloc.itemUrl;
                 getIt<DetailViewUtil>().shareUrl(url);
                 break;
             }

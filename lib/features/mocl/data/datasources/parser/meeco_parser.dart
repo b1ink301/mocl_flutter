@@ -104,11 +104,31 @@ class MeecoParser extends BaseParser {
                 parsedTime = time;
               }
               var info = '$nickName ・ $parsedTime';
+              var bodyHtml = body?.innerHtml;
+
+              if (bodyHtml?.startsWith(
+                      '<a href="https://meeco.kr/index.php?mid=sticker&') ==
+                  true) {
+                var atag = HtmlParser(bodyHtml)
+                    .parse()
+                    .getElementsByTagName('a')
+                    .firstOrNull;
+                var style = atag?.attributes['style'];
+                if (style != null) {
+                  final RegExp urlRegex = RegExp(r'url\((https?:\/\/[^)]+)\)');
+                  final Match? match = urlRegex.firstMatch(style);
+
+                  if (match != null) {
+                    String url = match.group(1)!;
+                    bodyHtml = '<img src=$url height="140" width="140">';
+                  }
+                }
+              }
 
               return CommentItem(
                 id: index++,
                 isReply: isReply,
-                bodyHtml: body?.outerHtml ?? '',
+                bodyHtml: bodyHtml ?? '',
                 likeCount: likeCount,
                 mediaHtml: '',
                 isVideo: false,

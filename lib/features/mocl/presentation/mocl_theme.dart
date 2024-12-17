@@ -9,10 +9,12 @@ class MoclTheme {
           surfaceTintColor: Colors.white,
           systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: Color(0xFF4d5057),
-            systemNavigationBarColor: Colors.transparent,
+            systemNavigationBarColor: Color(0xFFEAEBE6),
             systemNavigationBarIconBrightness: Brightness.light,
             statusBarIconBrightness: Brightness.light,
             statusBarBrightness: Brightness.dark,
+            systemStatusBarContrastEnforced: false,
+            systemNavigationBarContrastEnforced: false,
           ),
         ),
         // colorScheme: const ColorScheme(
@@ -59,10 +61,12 @@ class MoclTheme {
           surfaceTintColor: Colors.white,
           systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: Color(0xFF1f1f1f),
-            systemNavigationBarColor: Colors.transparent,
+            systemNavigationBarColor: Color(0xFF333333),
             systemNavigationBarIconBrightness: Brightness.light,
             statusBarIconBrightness: Brightness.light,
             statusBarBrightness: Brightness.dark,
+            systemStatusBarContrastEnforced: false,
+            systemNavigationBarContrastEnforced: false,
           ),
         ),
         dividerTheme: const DividerThemeData(
