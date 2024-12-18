@@ -55,7 +55,7 @@ dependencies:
 
   # 이미지 캐시
   cached_network_image: ^3.4.1
-  #  image: ^4.2.0
+  # image: ^4.2.0
   flutter_cache_manager: ^3.4.1
 
   # URL 런처
