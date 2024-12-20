@@ -171,10 +171,13 @@ class _DetailContent extends StatelessWidget {
     );
   }
 
-  String _getHexColor(Color color) =>
-      '#${((color.a * 255).round() << 24 | (color.r * 255).round() << 16 | (color.g * 255).round() << 8 | (color.b * 255).round()).toRadixString(16).padLeft(8, '0').toUpperCase()}';
-  // String _getHexColor(Color color) =>
-  //     '#${color.value.toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}';
+  String _getHexColor(Color color) {
+    final red = (color.r * 255).toInt().toRadixString(16).padLeft(2, '0');
+    final green = (color.g * 255).toInt().toRadixString(16).padLeft(2, '0');
+    final blue = (color.b * 255).toInt().toRadixString(16).padLeft(2, '0');
+    // final alpha = (color.a * 255).toInt().toRadixString(16).padLeft(2, '0');
+    return '#$red$green$blue'.toUpperCase();
+  }
 }
 
 class _Body extends StatelessWidget {
@@ -191,22 +194,51 @@ class _Body extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return HtmlWidget(
-      detail.bodyHtml,
-      onLoadingBuilder: (_, __, ___) => const LoadingWidget(),
-      customStylesBuilder: (element) {
-        if (element.localName == 'a') {
-          return {'color': hexColor, 'text-decoration': 'underline'};
-        }
-        return null;
-      },
-      textStyle: bodyMedium,
-      renderMode: RenderMode.column,
-      onTapUrl: onTapUrl,
-      onTapImage: (data) => onTapUrl?.call(data.sources.first.url),
-    );
-  }
+  Widget build(BuildContext context) => HtmlWidget(
+        detail.bodyHtml,
+        onLoadingBuilder: (_, __, ___) => const LoadingWidget(),
+        customStylesBuilder: (element) {
+          if (element.localName == 'a') {
+            return {'color': hexColor, 'text-decoration': 'underline'};
+          }
+          // else if (element.localName == 'div') {
+          //   if (element.innerHtml.startsWith("https://")) {
+          //     return {'color': hexColor, 'text-decoration': 'underline'};
+          //   }
+          // }
+          return null;
+        },
+        // customWidgetBuilder: (element) {
+        //     debugPrint('element.innerHtml=${element.innerHtml}');
+        //
+        //   if (element.localName == 'a' ||
+        //       element.localName == 'div' &&
+        //           element.innerHtml.startsWith("https://")) {
+        //
+        //     return GestureDetector(
+        //       onTap: () => onTapUrl?.call(element.innerHtml),
+        //       child: Text(
+        //         element.innerHtml,
+        //         style: bodyMedium?.copyWith(
+        //           color: Theme.of(context).indicatorColor,
+        //           decoration: TextDecoration.underline,
+        //         ),
+        //       ),
+        //     );
+        //   }
+        //
+        //   return HtmlWidget(
+        //     element.innerHtml,
+        //     textStyle: bodyMedium,
+        //     onTapUrl: onTapUrl,
+        //     onTapImage: (data) => onTapUrl?.call(data.sources.first.url),
+        //   );
+        // },
+        textStyle: bodyMedium,
+        renderMode: RenderMode.column,
+        onTapUrl: onTapUrl,
+        onTapImage: (data) => onTapUrl?.call(data.sources.first.url),
+      );
 }
 
 class _Comments extends StatelessWidget {

@@ -96,7 +96,6 @@ class NaverCafeParser extends BaseParser {
 
     final commentItems = comments
         .map((comment) {
-
           final id = comment['id'] ?? 'id';
           final writer = comment['writer'];
           var body = comment['content'] ?? '';
@@ -107,19 +106,24 @@ class NaverCafeParser extends BaseParser {
           final time = comment['updateDate'] ?? 0;
           final likeCount = '0';
           final image = comment['image'];
+          final sticker = comment['sticker'];
 
-          if (image!=null) {
+          if (image != null) {
             body += '<br><img src=\'${image["url"]}\' width="240" >';
+          }
+
+          if (sticker != null) {
+            body += '<br><img src=\'${sticker["url"]}?type=${sticker["type"]}\' width="129" >';
           }
 
           var parsedTime = '';
           try {
-            var dateTime = DateTime.fromMillisecondsSinceEpoch(time);
+            final dateTime = DateTime.fromMillisecondsSinceEpoch(time);
             parsedTime = timeago.format(dateTime, locale: 'ko');
           } catch (e) {
             parsedTime = time.toString();
           }
-          var info = '$nickName ・ $parsedTime';
+          final info = '$nickName ・ $parsedTime';
 
           return CommentItem(
             id: id,
@@ -151,7 +155,7 @@ class NaverCafeParser extends BaseParser {
     }
     final info = BaseParser.parserInfo(nickName, parsedTime, viewCount);
 
-    var details = Details(
+    final details = Details(
       title: title,
       viewCount: viewCount,
       likeCount: likeCount,
@@ -223,14 +227,14 @@ class NaverCafeParser extends BaseParser {
     final lastId = message.lastId;
     final boardTitle = message.boardTitle;
 
-    var parsedItems = <Map<String, dynamic>>[];
-    var ids = <int>[];
+    final parsedItems = <Map<String, dynamic>>[];
+    final ids = <int>[];
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
     final List<dynamic> articleList = responseData['articleList'];
 
-    for (var article in articleList) {
+    for (final article in articleList) {
       final String type = article['type'];
       if (type == 'AD') {
         continue;

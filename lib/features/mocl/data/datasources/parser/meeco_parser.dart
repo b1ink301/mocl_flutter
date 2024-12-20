@@ -43,7 +43,7 @@ class MeecoParser extends BaseParser {
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
-    var document = parse(responseData);
+    final document = parse(responseData);
     final container = document.querySelector('article.atc');
 
     final title =
@@ -64,11 +64,11 @@ class MeecoParser extends BaseParser {
         ?.querySelectorAll('input, button')
         .forEach((element) => element.remove());
 
-    var time = infoElement?.querySelectorAll('ul > li')[0].text.trim() ?? '';
+    final time = infoElement?.querySelectorAll('ul > li')[0].text.trim() ?? '';
 
-    var viewCount =
+    final viewCount =
         infoElement?.querySelectorAll('ul > li')[1].text.trim() ?? '0';
-    var likeCount = '';
+    final likeCount = '';
 
     var index = 0;
     final comments = container
@@ -103,23 +103,23 @@ class MeecoParser extends BaseParser {
               } catch (e) {
                 parsedTime = time;
               }
-              var info = '$nickName ・ $parsedTime';
+              final info = '$nickName ・ $parsedTime';
               var bodyHtml = body?.innerHtml;
 
               if (bodyHtml?.startsWith(
                       '<a href="https://meeco.kr/index.php?mid=sticker&') ==
                   true) {
-                var atag = HtmlParser(bodyHtml)
+                final atag = HtmlParser(bodyHtml)
                     .parse()
                     .getElementsByTagName('a')
                     .firstOrNull;
-                var style = atag?.attributes['style'];
+                final style = atag?.attributes['style'];
                 if (style != null) {
                   final RegExp urlRegex = RegExp(r'url\((https?:\/\/[^)]+)\)');
                   final Match? match = urlRegex.firstMatch(style);
 
                   if (match != null) {
-                    String url = match.group(1)!;
+                    final url = match.group(1)!;
                     bodyHtml = '<img src=$url height="140" width="140">';
                   }
                 }
@@ -156,7 +156,7 @@ class MeecoParser extends BaseParser {
 
     final info = BaseParser.parserInfo(nickName, parsedTime, viewCount);
 
-    var detail = Details(
+    final detail = Details(
       title: title,
       viewCount: viewCount,
       likeCount: likeCount,
@@ -220,21 +220,21 @@ class MeecoParser extends BaseParser {
     final boardTitle = message.boardTitle;
     final baseUrl = message.baseUrl;
 
-    var parsedItems = <Map<String, dynamic>>[];
-    var ids = <int>[];
+    final parsedItems = <Map<String, dynamic>>[];
+    final ids = <int>[];
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
-    var document = parse(responseData).body;
+    final document = parse(responseData).body;
     if (document == null) {
       return;
     }
 
-    var elementList = document.querySelectorAll(
+    final elementList = document.querySelectorAll(
         'div.wrap > section[id=container] > div > section.ctt > section.neon_board > div[id=list_swipe_area] > div.list_ctt > div.list_document > div.list_d > ul > li');
 
-    for (var element in elementList) {
-      var category = element
+    for (final element in elementList) {
+      final category = element
               .querySelector('span.hot_text, span.notice_text')
               ?.text
               .trim() ??
@@ -242,51 +242,51 @@ class MeecoParser extends BaseParser {
 
       if (category == "공지" || category == "핫글") continue;
 
-      var infoElement = element.querySelector('a.list_link');
-      var title = infoElement?.attributes['title']?.trim() ?? '';
+      final infoElement = element.querySelector('a.list_link');
+      final title = infoElement?.attributes['title']?.trim() ?? '';
       final tmpUrl = infoElement?.attributes['href']?.trim() ?? '';
       final url = BaseParser.covertUrl(baseUrl, tmpUrl);
 
-      var uri = Uri.tryParse(url);
+      final uri = Uri.tryParse(url);
       if (uri == null) continue;
-      var idString = uri.pathSegments.lastOrNull ?? '-1';
-      var id = int.tryParse(idString) ?? -1;
+      final idString = uri.pathSegments.lastOrNull ?? '-1';
+      final id = int.tryParse(idString) ?? -1;
       if (id <= 0 || lastId > 0 && id >= lastId) continue;
 
-      var nickName = element
+      final nickName = element
               .querySelector('div.list_info > div:first-child')
               ?.text
               .trim() ??
           ''; //:first-child, div:nth-child(2)
-      var userId = nickName;
-      var reply = element.querySelector("a.list_cmt")?.text.trim() ?? '';
+      final userId = nickName;
+      final reply = element.querySelector("a.list_cmt")?.text.trim() ?? '';
 
       var board = '';
-      var end = url.lastIndexOf("/");
+      final end = url.lastIndexOf("/");
       if (end > 0) {
-        var start = url.lastIndexOf("/", end - 1);
+        final start = url.lastIndexOf("/", end - 1);
         if (start >= 0) {
           board = url.substring(start + 1, end);
         }
       }
 
-      var time = element
+      final time = element
               .querySelector('div.list_info > div:nth-child(1)')
               ?.text
               .trim() ??
           '';
-      var parsedTime = time;
-      var nickImage = '';
-      var hit = element
+      final parsedTime = time;
+      final nickImage = '';
+      final hit = element
               .querySelector('div.list_info > div:nth-child(2)')
               ?.text
               .trim() ??
           '';
-      var like =
+      final like =
           element.querySelector('div.list_info > div.list_vote')?.text.trim() ??
               '';
 
-      var hasImage = false;
+      final hasImage = false;
       final info = BaseParser.parserInfo(nickName, parsedTime, hit);
 
       final parsedItem = {
@@ -343,9 +343,9 @@ class MeecoParser extends BaseParser {
   static DateTime parseDateTime(String dateTimeString) {
     if (dateTimeString.contains(' ')) {
       // 년.월.일 형식
-      var parts = dateTimeString.split(' ');
-      var dateParts = parts[0].split('.');
-      var timeParts = parts[1].split(':');
+      final parts = dateTimeString.split(' ');
+      final dateParts = parts[0].split('.');
+      final timeParts = parts[1].split(':');
       if (dateParts.length == 4) {
         return DateTime(
           int.parse(dateParts[0]),

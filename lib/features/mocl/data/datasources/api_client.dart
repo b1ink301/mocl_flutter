@@ -5,6 +5,7 @@ import 'package:cookie_jar/cookie_jar.dart' as cookiejar;
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart' as diocookie;
+import 'package:flutter/foundation.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart' as webview;
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:injectable/injectable.dart';
@@ -146,6 +147,8 @@ class ApiClient {
       final headers = {
         'User-Agent': ApiClient.userAgentMobile,
       };
+
+      debugPrint('commentUrl=$commentUrl');
 
       final interceptor = await _buildInterceptorCookie(parser);
       dio.interceptors.add(interceptor);

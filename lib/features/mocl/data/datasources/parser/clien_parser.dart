@@ -26,7 +26,7 @@ class ClienParser extends BaseParser {
   }
 
   static DateTime parseDateTime(String dateTimeString) {
-    var times = dateTimeString.split(' ');
+    final times = dateTimeString.split(' ');
 
     final now = DateTime.now();
     if (times.length == 2) {
@@ -93,71 +93,71 @@ class ClienParser extends BaseParser {
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
-    var document = parse(responseData);
+    final document = parse(responseData);
     var index = 0;
     final container =
-    document.querySelector('body > div.nav_container > div.content_view');
+        document.querySelector('body > div.nav_container > div.content_view');
 
-    var csrf = document
-        .querySelector(
-        "body > nav.navigation > div.dropdown-menu > form > input[name=_csrf]")
-        ?.attributes['value'] ??
+    final csrf = document
+            .querySelector(
+                "body > nav.navigation > div.dropdown-menu > form > input[name=_csrf]")
+            ?.attributes['value'] ??
         '';
-    var title = container
-        ?.querySelector("div.post_title > div.post_subject > span")
-        ?.text
-        .trim() ??
+    final title = container
+            ?.querySelector("div.post_title > div.post_subject > span")
+            ?.text
+            .trim() ??
         '';
-    var timeElement = container
+    final timeElement = container
         ?.querySelector("div.post_information > div.post_time > div.post_date");
 
     // debugPrint('timeElement = ${timeElement?.outerHtml}');
     timeElement?.querySelectorAll('.fa').forEach((element) => element.remove());
     var time = timeElement?.text.trim() ?? '';
-    var tmp = time.split('수정일 :');
-    var times = tmp.map((item) => item.trim()).toList();
+    final tmp = time.split('수정일 :');
+    final times = tmp.map((item) => item.trim()).toList();
     time = times.join('|');
 
-    var bodyHtmlElement = container?.querySelector(
+    final bodyHtmlElement = container?.querySelector(
         "div.post_view > div.post_content > article > div.post_article");
     bodyHtmlElement
         ?.querySelectorAll('input, button')
         .forEach((element) => element.remove());
-    var bodyHtml = bodyHtmlElement?.outerHtml ?? '';
-    var viewCountElement = container?.querySelector(
+    final bodyHtml = bodyHtmlElement?.innerHtml ?? '';
+    final viewCountElement = container?.querySelector(
         "div.post_information > div.post_time > div.view_count");
     viewCountElement
         ?.querySelectorAll('.fa')
         .forEach((element) => element.remove());
-    var viewCount = viewCountElement?.text.trim() ?? '';
+    final viewCount = viewCountElement?.text.trim() ?? '';
 
-    var authorIpElement = container
+    final authorIpElement = container
         ?.querySelector("div.post_view > div.post_information > div.author_ip");
     authorIpElement
         ?.querySelectorAll('.fa')
         .forEach((element) => element.remove());
     // var authorIp = authorIpElement?.text.trim() ?? '';
-    var user = container
-        ?.querySelector(
-        "div.post_view > div.post_contact > span.contact_note > div.post_memo > div.memo_box > button.button_input")
-        ?.attributes['onclick'] ??
+    final user = container
+            ?.querySelector(
+                "div.post_view > div.post_contact > span.contact_note > div.post_memo > div.memo_box > button.button_input")
+            ?.attributes['onclick'] ??
         '';
-    var nickName = container
-        ?.querySelector(
-        "div.post_view > div.post_contact > span.contact_name > span.nickname")
-        ?.text
-        .trim() ??
+    final nickName = container
+            ?.querySelector(
+                "div.post_view > div.post_contact > span.contact_name > span.nickname")
+            ?.text
+            .trim() ??
         '';
-    var nickImage = container
-        ?.querySelector(
-        "div.post_view > div.post_contact > span.contact_name > span.nickimg > img")
-        ?.attributes['src'] ??
+    final nickImage = container
+            ?.querySelector(
+                "div.post_view > div.post_contact > span.contact_name > span.nickimg > img")
+            ?.attributes['src'] ??
         '';
-    var likeCount = container
-        ?.querySelector(
-        "div.post_button > div.symph_area > button.symph_count > strong")
-        ?.text
-        .trim() ??
+    final likeCount = container
+            ?.querySelector(
+                "div.post_button > div.symph_area > button.symph_count > strong")
+            ?.text
+            .trim() ??
         '';
 
     var parsedTime = '';
@@ -169,103 +169,103 @@ class ClienParser extends BaseParser {
     }
     final info = BaseParser.parserInfo(nickName, parsedTime, viewCount);
 
-    var comments = container
-        ?.querySelectorAll(
-        "div.post_comment > div.comment > div.comment_row")
-        .map((element) {
-      if (element.innerHtml == "<span>삭제 되었습니다.</span>") {
-        return null;
-      }
-      var id = element.attributes['data-author-id'] ?? '';
-      // var sn =
-      //     int.tryParse(element.attributes['data-comment-sn'] ?? '-1') ??
-      //         -1;
-      var isReply = element.classes.contains('re');
-      var nickName = element
-          .querySelector(
-          "div.comment_info > div.post_contact > span.contact_name > span.nickname")
-          ?.text
-          .trim() ??
-          '';
-      // var ip = element
-      //         .querySelector(
-      //             "div.comment_info > div.comment_info_area > div.comment_ip > span.ip_address")
-      //         ?.text
-      //         .trim() ??
-      //     '';
-      var timeElement = element.querySelector(
-          "div.comment_info > div.comment_info_area > div.comment_time");
-      timeElement?.querySelector("span.timestamp")?.remove();
-      var time = timeElement?.text.trim() ?? '';
-      var nickImage = element
-          .querySelector(
-          "div.comment_info > div.post_contact > span.contact_name > span.nickimg > img")
-          ?.attributes['src'] ??
-          '';
-      var likeCount = element
-          .querySelector(
-          "div.comment_content_symph > button > strong")
-          ?.text
-          .trim() ??
-          '';
-      // var bodyElement = element
-      //     .querySelector("div.comment_content > div.comment_view");
+    final comments = container
+            ?.querySelectorAll(
+                "div.post_comment > div.comment > div.comment_row")
+            .map((element) {
+              if (element.innerHtml == "<span>삭제 되었습니다.</span>") {
+                return null;
+              }
+              final id = element.attributes['data-author-id'] ?? '';
+              // var sn =
+              //     int.tryParse(element.attributes['data-comment-sn'] ?? '-1') ??
+              //         -1;
+              final isReply = element.classes.contains('re');
+              final nickName = element
+                      .querySelector(
+                          "div.comment_info > div.post_contact > span.contact_name > span.nickname")
+                      ?.text
+                      .trim() ??
+                  '';
+              // var ip = element
+              //         .querySelector(
+              //             "div.comment_info > div.comment_info_area > div.comment_ip > span.ip_address")
+              //         ?.text
+              //         .trim() ??
+              //     '';
+              final timeElement = element.querySelector(
+                  "div.comment_info > div.comment_info_area > div.comment_time");
+              timeElement?.querySelector("span.timestamp")?.remove();
+              final time = timeElement?.text.trim() ?? '';
+              final nickImage = element
+                      .querySelector(
+                          "div.comment_info > div.post_contact > span.contact_name > span.nickimg > img")
+                      ?.attributes['src'] ??
+                  '';
+              final likeCount = element
+                      .querySelector(
+                          "div.comment_content_symph > button > strong")
+                      ?.text
+                      .trim() ??
+                  '';
+              // var bodyElement = element
+              //     .querySelector("div.comment_content > div.comment_view");
 
-      var bodyElements = element.querySelectorAll(
-          "div.comment_content, div.comment-img, div.comment-video");
-      for (var tmp in bodyElements) {
-        tmp
-            .querySelectorAll('input, span.name, button')
-            .forEach((element) => element.remove());
-      }
+              final bodyElements = element.querySelectorAll(
+                  "div.comment_content, div.comment-img, div.comment-video");
+              for (final tmp in bodyElements) {
+                tmp
+                    .querySelectorAll('input, span.name, button')
+                    .forEach((element) => element.remove());
+              }
 
-      // bodyElement
-      //     ?.querySelectorAll('input, span.name, button')
-      //     .forEach((element) => element.remove());
+              // bodyElement
+              //     ?.querySelectorAll('input, span.name, button')
+              //     .forEach((element) => element.remove());
 
-      var body = bodyElements.map((item) => item.innerHtml).join();
-      // var body = bodyElement?.outerHtml ?? '';
-      // var video = element
-      //         .querySelector("div.comment-video > video > source")
-      //         ?.attributes['src'] ??
-      //     '';
-      // var img = element
-      //         .querySelector("div.comment-img > img")
-      //         ?.attributes['src'] ??
-      //     '';
+              var body = bodyElements.map((item) => item.innerHtml).join();
+              // var body = bodyElement?.outerHtml ?? '';
+              // var video = element
+              //         .querySelector("div.comment-video > video > source")
+              //         ?.attributes['src'] ??
+              //     '';
+              // var img = element
+              //         .querySelector("div.comment-img > img")
+              //         ?.attributes['src'] ??
+              //     '';
 
-      var parsedTime = '';
-      try {
-        var dateTime = parseDateTime(time);
-        parsedTime = timeago.format(dateTime, locale: 'ko');
-      } catch (e) {
-        parsedTime = time;
-      }
-      var info =
-      nickName.isNotEmpty ? '$nickName ・ $parsedTime' : parsedTime;
+              var parsedTime = '';
+              try {
+                var dateTime = parseDateTime(time);
+                parsedTime = timeago.format(dateTime, locale: 'ko');
+              } catch (e) {
+                parsedTime = time;
+              }
+              final info =
+                  nickName.isNotEmpty ? '$nickName ・ $parsedTime' : parsedTime;
 
-      return CommentItem(
-        id: index++,
-        isReply: isReply,
-        bodyHtml: body,
-        likeCount: likeCount,
-        mediaHtml: '',
-        isVideo: false,
-        info: info,
-        time: time,
-        userInfo: UserInfo(
-          id: id,
-          nickName: nickName,
-          nickImage: nickImage,
-        ),
-        authorId: '',
-      );
-    })
-        .whereType<CommentItem>()
-        .toList() ??
+              return CommentItem(
+                id: index++,
+                isReply: isReply,
+                bodyHtml: body,
+                likeCount: likeCount,
+                mediaHtml: '',
+                isVideo: false,
+                info: info,
+                time: time,
+                userInfo: UserInfo(
+                  id: id,
+                  nickName: nickName,
+                  nickImage: nickImage,
+                ),
+                authorId: '',
+              );
+            })
+            .whereType<CommentItem>()
+            .toList() ??
         [];
 
-    var detail = Details(
+    final detail = Details(
       title: title,
       viewCount: viewCount,
       likeCount: likeCount,
@@ -285,10 +285,12 @@ class ClienParser extends BaseParser {
   }
 
   @override
-  Future<Result<List<ListItem>>> list(Response response,
-      int lastId,
-      String boardTitle,
-      Future<Map<int, bool>> Function(SiteType, List<int>) isReads,) async {
+  Future<Result<List<ListItem>>> list(
+    Response response,
+    int lastId,
+    String boardTitle,
+    Future<Map<int, bool>> Function(SiteType, List<int>) isReads,
+  ) async {
     final receivePort = ReceivePort();
     final completer = Completer<Result<List<ListItem>>>();
 
@@ -329,74 +331,74 @@ class ClienParser extends BaseParser {
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
-    var parsedItems = <Map<String, dynamic>>[];
-    var ids = <int>[];
+    final parsedItems = <Map<String, dynamic>>[];
+    final ids = <int>[];
 
-    var document = parse(responseData);
-    var elementList = document.querySelectorAll("a.list_item.symph-row");
+    final document = parse(responseData);
+    final elementList = document.querySelectorAll("a.list_item.symph-row");
 
-    for (var element in elementList) {
-      var id = int.tryParse(element.attributes['data-board-sn'] ?? '') ?? 0;
+    for (final element in elementList) {
+      final id = int.tryParse(element.attributes['data-board-sn'] ?? '') ?? 0;
       if (id <= 0 || lastId > 0 && id >= lastId) continue;
 
-      var userId = element.attributes['data-author-id']?.trim() ?? '';
-      var tmpUrl = element.attributes['href']?.trim() ?? '';
+      final userId = element.attributes['data-author-id']?.trim() ?? '';
+      final tmpUrl = element.attributes['href']?.trim() ?? '';
       final url = BaseParser.covertUrl(baseUrl, tmpUrl);
 
-      var reply = element.attributes['data-comment-count']?.trim() ?? '';
+      final reply = element.attributes['data-comment-count']?.trim() ?? '';
 
       var board = '';
-      var end = url.lastIndexOf('/');
-      var start = url.lastIndexOf('/', end - 1);
+      final end = url.lastIndexOf('/');
+      final start = url.lastIndexOf('/', end - 1);
       try {
         board = url.substring(start + 1, end);
       } catch (e) {
         continue;
       }
 
-      var category = element
-          .querySelector(
-          'div.list_infomation > div.list_number > span.category')
-          ?.text
-          .trim() ??
+      final category = element
+              .querySelector(
+                  'div.list_infomation > div.list_number > span.category')
+              ?.text
+              .trim() ??
           '';
       if (category == '공지') continue;
 
-      var title = element
-          .querySelector(
-          'div.list_title > div.list_subject > span[data-role=list-title-text]')
-          ?.text
-          .trim() ??
+      final title = element
+              .querySelector(
+                  'div.list_title > div.list_subject > span[data-role=list-title-text]')
+              ?.text
+              .trim() ??
           '';
-      var time = element
-          .querySelector(
-          'div.list_infomation > div.list_number > div.list_time > span')
-          ?.text
-          .trim() ??
+      final time = element
+              .querySelector(
+                  'div.list_infomation > div.list_number > div.list_time > span')
+              ?.text
+              .trim() ??
           '';
-      var nickImage = element
-          .querySelector(
-          'div.list_infomation > div.list_author > span.nickimg > img')
-          ?.attributes['src'] ??
+      final nickImage = element
+              .querySelector(
+                  'div.list_infomation > div.list_author > span.nickimg > img')
+              ?.attributes['src'] ??
           '';
-      var hit = element
-          .querySelector(
-          'div.list_infomation > div.list_number > div.list_hit > span')
-          ?.text
-          .trim() ??
+      final hit = element
+              .querySelector(
+                  'div.list_infomation > div.list_number > div.list_hit > span')
+              ?.text
+              .trim() ??
           '';
-      var like = element
-          .querySelector('div.list_title > div.list_symph > span')
-          ?.text
-          .trim() ??
+      final like = element
+              .querySelector('div.list_title > div.list_symph > span')
+              ?.text
+              .trim() ??
           '';
-      var nickName = element
-          .querySelector(
-          'div.list_infomation > div.list_author > span.nickname')
-          ?.text
-          .trim() ??
+      final nickName = element
+              .querySelector(
+                  'div.list_infomation > div.list_author > span.nickname')
+              ?.text
+              .trim() ??
           '';
-      var hasImage =
+      final hasImage =
           element.querySelector('div.list_title > span.fa-picture-o') != null;
 
       var parsedTime = '';
@@ -409,7 +411,7 @@ class ClienParser extends BaseParser {
 
       final info = BaseParser.parserInfo(nickName, parsedTime, hit);
 
-      var parsedItem = {
+      final parsedItem = {
         'id': id,
         'title': title,
         'reply': reply,
@@ -435,27 +437,26 @@ class ClienParser extends BaseParser {
 
     final readStatusPort = ReceivePort();
     replyPort.send(ReadStatusRequest(ids, readStatusPort.sendPort));
-    var readStatusResponse = await readStatusPort.first as ReadStatusResponse;
+    final readStatusResponse = await readStatusPort.first as ReadStatusResponse;
     readStatusPort.close();
 
-    var resultList = parsedItems
-        .map((item) =>
-        ListItem(
-          id: item['id'],
-          title: item['title'],
-          reply: item['reply'],
-          category: item['category'],
-          time: item['time'],
-          info: item['info'],
-          url: item['url'],
-          board: item['board'],
-          boardTitle: item['boardTitle'],
-          like: item['like'],
-          hit: item['hit'],
-          userInfo: item['userInfo'],
-          hasImage: item['hasImage'],
-          isRead: readStatusResponse.statuses[item['id']] ?? false,
-        ))
+    final resultList = parsedItems
+        .map((item) => ListItem(
+              id: item['id'],
+              title: item['title'],
+              reply: item['reply'],
+              category: item['category'],
+              time: item['time'],
+              info: item['info'],
+              url: item['url'],
+              board: item['board'],
+              boardTitle: item['boardTitle'],
+              like: item['like'],
+              hit: item['hit'],
+              userInfo: item['userInfo'],
+              hasImage: item['hasImage'],
+              isRead: readStatusResponse.statuses[item['id']] ?? false,
+            ))
         .toList();
 
     replyPort.send(resultList);
