@@ -10,63 +10,67 @@ class DrawerWidget extends StatelessWidget {
   final void Function(SiteType) onChangeSite;
 
   @override
-  Widget build(BuildContext context) => Drawer(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      child: Column(
-        children: [
-          Container(
-            padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
-            height: 220,
-            color: Theme.of(context).primaryColor,
-            child: Center(
-              child: ClipOval(
-                child: Image.asset(
-                  'assets/icon.png',
-                  width: 80,
-                  height: 80,
+  Widget build(BuildContext context) => SafeArea(
+        left: false,
+        right: false,
+        bottom: false,
+        child: Drawer(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          child: Column(
+            children: [
+              Container(
+                // padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+                height: 220,
+                color: Theme.of(context).primaryColor,
+                child: Center(
+                  child: ClipOval(
+                    child: Image.asset(
+                      'assets/icon.png',
+                      width: 80,
+                      height: 80,
+                    ),
+                  ),
                 ),
               ),
-            ),
-          ),
-          ...SiteType.values.map((siteType) => Column(
-                children: [
-                  ListTile(
-                    title: Text(siteType.title),
-                    titleTextStyle: Theme.of(context).textTheme.bodyMedium,
-                    onTap: () async {
-                      if (context.mounted) {
-                        Navigator.of(context).pop();
-                        onChangeSite(siteType);
-                      }
-                    },
-                    trailing: context.read<SiteTypeBloc>().state == siteType
-                        ? Icon(
-                            Icons.check_outlined,
-                            color: Theme.of(context).indicatorColor,
-                          )
-                        : null,
+              ...SiteType.values.map((siteType) => Column(
+                    children: [
+                      ListTile(
+                        title: Text(siteType.title),
+                        titleTextStyle: Theme.of(context).textTheme.bodyMedium,
+                        onTap: () async {
+                          if (context.mounted) {
+                            Navigator.of(context).pop();
+                            onChangeSite(siteType);
+                          }
+                        },
+                        trailing: context.read<SiteTypeBloc>().state == siteType
+                            ? Icon(
+                                Icons.check_outlined,
+                                color: Theme.of(context).indicatorColor,
+                              )
+                            : null,
+                      ),
+                      const Divider(
+                        height: 1,
+                        thickness: 1,
+                        indent: 12,
+                        endIndent: 8,
+                      ),
+                    ],
+                  )),
+              const Spacer(),
+              BlocBuilder<GetVersionCubit, GetVersionState>(
+                builder: (context, state) => state.maybeMap(
+                  success: (state) => ListTile(
+                    title: Text(state.version, textAlign: TextAlign.center),
+                    titleTextStyle: Theme.of(context).textTheme.bodySmall,
                   ),
-                  const Divider(
-                    height: 1,
-                    thickness: 1,
-                    indent: 12,
-                    endIndent: 8,
-                  ),
-                ],
-              )),
-          const Spacer(),
-          BlocBuilder<GetVersionCubit, GetVersionState>(
-            builder: (context, state) {
-              return state.maybeMap(
-                success: (state) => ListTile(
-                  title: Text(state.version, textAlign: TextAlign.center),
-                  titleTextStyle: Theme.of(context).textTheme.bodySmall,
+                  orElse: () => const SizedBox.shrink(),
                 ),
-                orElse: () => const SizedBox.shrink(),
-              );
-            },
+              ),
+              SizedBox(height: kBottomNavigationBarHeight)
+            ],
           ),
-        ],
-      ),
-    );
+        ),
+      );
 }

@@ -20,13 +20,12 @@ class DetailPage extends StatelessWidget {
     SiteType siteType,
     ReadableListItem item,
   ) {
+    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+      statusBarColor:
+          Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor,
+    ));
     final textStyle = Theme.of(context).textTheme.labelMedium!;
     final textWidth = MediaQuery.of(context).size.width;
-
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-        statusBarColor:
-            Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor,
-        statusBarBrightness: Brightness.dark));
 
     return MultiBlocProvider(
       providers: [

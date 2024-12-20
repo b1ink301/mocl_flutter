@@ -171,10 +171,10 @@ class _DetailContent extends StatelessWidget {
     );
   }
 
-  // String _getHexColor(Color color) =>
-  //     '#${((color.a * 255).round() << 24 | (color.r * 255).round() << 16 | (color.g * 255).round() << 8 | (color.b * 255).round()).toRadixString(16).padLeft(8, '0').toUpperCase()}';
   String _getHexColor(Color color) =>
-      '#${color.value.toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}';
+      '#${((color.a * 255).round() << 24 | (color.r * 255).round() << 16 | (color.g * 255).round() << 8 | (color.b * 255).round()).toRadixString(16).padLeft(8, '0').toUpperCase()}';
+  // String _getHexColor(Color color) =>
+  //     '#${color.value.toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}';
 }
 
 class _Body extends StatelessWidget {
