@@ -3,6 +3,7 @@ import 'dart:developer';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:go_router/go_router.dart';
 
 class LoginView extends StatelessWidget {
   const LoginView({super.key});
@@ -11,7 +12,7 @@ class LoginView extends StatelessWidget {
   Widget build(BuildContext context) {
     var headers = {
       'Referer':
-      'https://nid.naver.com/mobile/user/help/naverProfile.nhn?lang=ko_KR',
+          'https://nid.naver.com/mobile/user/help/naverProfile.nhn?lang=ko_KR',
       'ContentType': 'application/x-www-form-urlencoded'
     };
 
@@ -48,10 +49,8 @@ class LoginView extends StatelessWidget {
           ServerTrustAuthResponse(
               action: ServerTrustAuthResponseAction.PROCEED),
       onLoadStop: (controller, url) async {
-        // await apiService.syncCookiesFromWebView();
-
         final cookies = await cookieManager.getCookies(url: uri);
-        for (var cookie in cookies) {
+        for (final cookie in cookies) {
           log('[onLoadStop] cookie=$cookie');
 
           await cookieManager.setCookie(
@@ -65,6 +64,14 @@ class LoginView extends StatelessWidget {
             isHttpOnly: cookie.isHttpOnly,
             sameSite: cookie.sameSite,
           );
+        }
+
+        debugPrint('url?.path=${url?.path}');
+
+        if (url?.path == '/user2/help/myInfoV2') {
+          if (context.mounted) {
+            GoRouter.of(context).pop(true);
+          }
         }
       },
     );

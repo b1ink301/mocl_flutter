@@ -88,9 +88,8 @@ class MainPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var statusBarColor =
+    final statusBarColor =
         Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor;
-
     final halfWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
@@ -104,9 +103,13 @@ class MainPage extends StatelessWidget {
             )
           : null,
       body: BlocListener<MainDataBloc, MainDataState>(
-        listener: (BuildContext context, MainDataState state) {
+        listener: (BuildContext context, MainDataState state) async {
           if (state is StateRequireLogin) {
-            context.push(Routes.login);
+            final result = await context.push<bool>(Routes.login) ?? false;
+            if (context.mounted && result) {
+              final siteType = context.read<SiteTypeBloc>().state;
+              context.read<MainDataBloc>().refresh(siteType);
+            }
           }
         },
         child: SafeArea(
