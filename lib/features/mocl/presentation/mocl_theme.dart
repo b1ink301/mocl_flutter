@@ -17,23 +17,16 @@ class MoclTheme {
             systemNavigationBarContrastEnforced: false,
           ),
         ),
-        // colorScheme: const ColorScheme(
-        //   brightness: Brightness.light,
-        //   primary: Color(0xFF595D66),
-        //   onPrimary: Color(0xFFEAEBE6),
-        //   secondary: Color(0xFF4d5057),
-        //   onSecondary: Color(0xFF888888),
-        //   error: Color(0xFF595D66),
-        //   onError: Color(0xFF595D66),
-        //   surface: Color(0xFF595D66),
-        //   onSurface: Color(0xFF595D66),
-        // ),
         // listTileTheme: ListTileThemeData(),
         indicatorColor: const Color(0xFF0E7EA3),
         highlightColor: const Color(0xFFAAAAAA),
         primaryColor: const Color(0xFF595D66),
         scaffoldBackgroundColor: const Color(0xFFEAEBE6),
         dialogBackgroundColor: const Color(0xFFEAEBE6),
+        popupMenuTheme: const PopupMenuThemeData(
+          color: Color(0xFFEAEBE6),
+          textStyle: TextStyle(color: Color(0xFF111111), fontSize: 17),
+        ),
         dividerTheme: const DividerThemeData(
           color: Color(0xFFC9CAC5),
           space: 1,
@@ -43,8 +36,10 @@ class MoclTheme {
           bodyMedium: TextStyle(color: Color(0xFF111111), fontSize: 17),
           bodySmall: TextStyle(color: Color(0xFF888888), fontSize: 14),
           labelSmall: TextStyle(color: Color(0xFF888888), fontSize: 11),
-          headlineSmall: TextStyle(color: Color(0xFF555555), fontSize: 16),
+          headlineSmall: TextStyle(color: Color(0xFF555555), fontSize: 15),
+          headlineMedium: TextStyle(color: Color(0xFF111111), fontSize: 16),
           labelMedium: TextStyle(color: Colors.white, fontSize: 16),
+          labelLarge: TextStyle(color: Colors.white, fontSize: 17),
         ),
         // pageTransitionsTheme: const PageTransitionsTheme(
         //   builders: {
@@ -81,11 +76,17 @@ class MoclTheme {
           bodySmall: TextStyle(color: Color(0xFFAAAAAA), fontSize: 14),
           labelSmall: TextStyle(color: Color(0xFFAAAAAA), fontSize: 11),
           headlineSmall: TextStyle(color: Color(0xFFAAAAAA), fontSize: 16),
+          headlineMedium: TextStyle(color: Colors.white, fontSize: 16),
           labelMedium: TextStyle(color: Colors.white, fontSize: 16),
+          labelLarge: TextStyle(color: Colors.white, fontSize: 17),
         ),
         primaryColor: const Color(0xFF292929),
         scaffoldBackgroundColor: const Color(0xFF333333),
         dialogBackgroundColor: const Color(0xFF333333),
+        popupMenuTheme: PopupMenuThemeData(
+          color: const Color(0xFF333333),
+          textStyle: const TextStyle(color: Color(0xFFEEEEEE), fontSize: 17),
+        ),
         // pageTransitionsTheme: const PageTransitionsTheme(
         //   builders: {
         //     TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
