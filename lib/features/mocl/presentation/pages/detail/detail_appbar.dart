@@ -48,21 +48,24 @@ class DetailAppBar extends StatelessWidget {
                 break;
             }
           },
-          itemBuilder: (BuildContext context) => [
-            const PopupMenuItem(
-              value: 0,
-              child: Text('새로고침'),
-            ),
-            const PopupMenuItem(
-              value: 1,
-              child: Text('브라우저로 열기'),
-            ),
-            PopupMenuItem(
-              value: 2,
-              enabled: Platform.isAndroid || Platform.isIOS,
-              child: const Text('공유하기'),
-            ),
-          ],
+          itemBuilder: (BuildContext context) {
+            final textStyle = Theme.of(context).textTheme.headlineSmall;
+            return [
+              PopupMenuItem(
+                value: 0,
+                child: Text('새로고침', style: textStyle),
+              ),
+              PopupMenuItem(
+                value: 1,
+                child: Text('브라우저로 열기', style: textStyle),
+              ),
+              PopupMenuItem(
+                value: 2,
+                enabled: Platform.isAndroid || Platform.isIOS,
+                child: Text('공유하기', style: textStyle),
+              ),
+            ];
+          },
         )
       ];
 }

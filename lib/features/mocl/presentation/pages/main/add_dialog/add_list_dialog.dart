@@ -29,12 +29,13 @@ class AddListDialog extends StatelessWidget {
   Widget build(BuildContext context) => _buildAlertDialog(context);
 
   AlertDialog _buildAlertDialog(BuildContext context) => AlertDialog(
+        backgroundColor: Theme.of(context).dialogBackgroundColor,
         title: Column(
           children: [
             const SizedBox(height: 20),
             Text(
               '게시판 선택',
-              style: Theme.of(context).textTheme.headlineSmall,
+              style: Theme.of(context).textTheme.headlineMedium,
             ),
             const SizedBox(height: 20),
             const DividerWidget(thickness: 1, indent: 16, endIndent: 16),
@@ -69,7 +70,7 @@ class AddListDialog extends StatelessWidget {
             },
             child: Text(
               '취소',
-              style: Theme.of(context).textTheme.headlineSmall,
+              style: Theme.of(context).textTheme.headlineMedium,
             ),
           ),
           TextButton(
@@ -84,7 +85,7 @@ class AddListDialog extends StatelessWidget {
               '적용',
               style: Theme.of(context)
                   .textTheme
-                  .headlineSmall
+                  .headlineMedium
                   ?.copyWith(color: Theme.of(context).indicatorColor),
             ),
           ),
