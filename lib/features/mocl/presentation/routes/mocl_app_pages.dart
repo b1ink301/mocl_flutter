@@ -29,15 +29,15 @@ class AppPages {
               SwipeablePage(builder: (context) => MainPage.withBloc(context)),
           routes: [
             GoRoute(
-              path: Routes.setMainDlg,
-              pageBuilder: (BuildContext context, GoRouterState state) =>
-                  CupertinoModalPopupPage(
-                builder: (BuildContext context) {
-                  final siteType = GoRouterState.of(context).extra as SiteType;
-                  return AddListDialog.withBloc(context, siteType);
-                },
-              ),
-            ),
+                path: Routes.setMainDlg,
+                pageBuilder: (BuildContext context, GoRouterState state) =>
+                    CupertinoModalPopupPage(
+                      builder: (BuildContext context) {
+                        final siteType =
+                            GoRouterState.of(context).extra as SiteType;
+                        return AddListDialog.withBloc(context, siteType);
+                      },
+                    )),
           ]),
       GoRoute(
         path: Routes.list,
@@ -61,25 +61,22 @@ class AppPages {
               ),
           routes: [
             GoRoute(
-              path: Routes.viewPhotoDlg,
-              pageBuilder: (BuildContext context, GoRouterState state) =>
-                  CupertinoModalPopupPage(
-                builder: (BuildContext context) {
-                  final url = GoRouterState.of(context).extra as String;
-                  return PhotoViewDialog(
-                    imageProvider: NetworkImage(url),
-                    filterQuality: FilterQuality.high,
-                  );
-                },
-              ),
-            ),
+                path: Routes.viewPhotoDlg,
+                pageBuilder: (BuildContext context, GoRouterState state) =>
+                    CupertinoModalPopupPage(
+                      builder: (BuildContext context) {
+                        final url = GoRouterState.of(context).extra as String;
+                        return PhotoViewDialog(
+                          imageProvider: NetworkImage(url),
+                          filterQuality: FilterQuality.high,
+                        );
+                      },
+                    )),
           ]),
       GoRoute(
         path: Routes.settings,
         pageBuilder: (BuildContext context, GoRouterState state) =>
-            SwipeablePage(
-          builder: (context) => SettingsPage.withBloc(context),
-        ),
+            SwipeablePage(builder: (context) => SettingsPage.withBloc(context)),
       ),
       GoRoute(
         path: Routes.login,
