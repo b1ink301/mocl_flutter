@@ -35,9 +35,7 @@ class MainPage extends StatelessWidget {
             return getIt<MainDataBloc>()..initialize(siteTypeBloc);
           },
         ),
-        BlocProvider(create: (_) {
-          return getIt<GetVersionCubit>()..getVersion();
-        }),
+        BlocProvider(create: (_) => getIt<GetVersionCubit>()..getVersion()),
       ],
       child: const MainPage(),
     );
@@ -47,7 +45,8 @@ class MainPage extends StatelessWidget {
     BuildContext context,
   ) {
     final siteType = context.watch<SiteTypeBloc>();
-    var backgroundColor = Theme.of(context).appBarTheme.backgroundColor;
+    final backgroundColor = Theme.of(context).appBarTheme.backgroundColor;
+
     return SliverAppBar(
       title: _buildTitle(context, siteType.title),
       flexibleSpace: Container(color: backgroundColor),
@@ -92,7 +91,7 @@ class MainPage extends StatelessWidget {
     var statusBarColor =
         Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor;
 
-    final halfWidth = MediaQuery.of(context).size.width / 2;
+    final halfWidth = MediaQuery.of(context).size.width;
 
     return Scaffold(
       drawerEdgeDragWidth: halfWidth,

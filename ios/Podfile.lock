@@ -1,95 +1,41 @@
 PODS:
   - audio_session (0.0.1):
     - Flutter
-  - Firebase/CoreOnly (11.0.0):
-    - FirebaseCore (= 11.0.0)
-  - Firebase/Crashlytics (11.0.0):
-    - Firebase/CoreOnly
-    - FirebaseCrashlytics (~> 11.0.0)
-  - firebase_core (3.5.0):
-    - Firebase/CoreOnly (= 11.0.0)
-    - Flutter
-  - firebase_crashlytics (4.1.2):
-    - Firebase/Crashlytics (= 11.0.0)
-    - firebase_core
-    - Flutter
-  - FirebaseCore (11.0.0):
-    - FirebaseCoreInternal (~> 11.0)
-    - GoogleUtilities/Environment (~> 8.0)
-    - GoogleUtilities/Logger (~> 8.0)
-  - FirebaseCoreExtension (11.2.0):
-    - FirebaseCore (~> 11.0)
-  - FirebaseCoreInternal (11.2.0):
-    - "GoogleUtilities/NSData+zlib (~> 8.0)"
-  - FirebaseCrashlytics (11.0.0):
-    - FirebaseCore (~> 11.0)
-    - FirebaseInstallations (~> 11.0)
-    - FirebaseRemoteConfigInterop (~> 11.0)
-    - FirebaseSessions (~> 11.0)
-    - GoogleDataTransport (~> 10.0)
-    - GoogleUtilities/Environment (~> 8.0)
-    - nanopb (~> 3.30910.0)
-    - PromisesObjC (~> 2.4)
-  - FirebaseInstallations (11.2.0):
-    - FirebaseCore (~> 11.0)
-    - GoogleUtilities/Environment (~> 8.0)
-    - GoogleUtilities/UserDefaults (~> 8.0)
-    - PromisesObjC (~> 2.4)
-  - FirebaseRemoteConfigInterop (11.2.0)
-  - FirebaseSessions (11.2.0):
-    - FirebaseCore (~> 11.0)
-    - FirebaseCoreExtension (~> 11.0)
-    - FirebaseInstallations (~> 11.0)
-    - GoogleDataTransport (~> 10.0)
-    - GoogleUtilities/Environment (~> 8.0)
-    - GoogleUtilities/UserDefaults (~> 8.0)
-    - nanopb (~> 3.30910.0)
-    - PromisesSwift (~> 2.1)
   - Flutter (1.0.0)
-  - flutter_native_splash (0.0.1):
+  - flutter_inappwebview_ios (0.0.1):
     - Flutter
-  - GoogleDataTransport (10.1.0):
-    - nanopb (~> 3.30910.0)
-    - PromisesObjC (~> 2.4)
-  - GoogleUtilities/Environment (8.0.2):
-    - GoogleUtilities/Privacy
-  - GoogleUtilities/Logger (8.0.2):
-    - GoogleUtilities/Environment
-    - GoogleUtilities/Privacy
-  - "GoogleUtilities/NSData+zlib (8.0.2)":
-    - GoogleUtilities/Privacy
-  - GoogleUtilities/Privacy (8.0.2)
-  - GoogleUtilities/UserDefaults (8.0.2):
-    - GoogleUtilities/Logger
-    - GoogleUtilities/Privacy
+    - flutter_inappwebview_ios/Core (= 0.0.1)
+    - OrderedSet (~> 6.0.3)
+  - flutter_inappwebview_ios/Core (0.0.1):
+    - Flutter
+    - OrderedSet (~> 6.0.3)
+  - flutter_native_splash (2.4.3):
+    - Flutter
+  - fluttertoast (0.0.2):
+    - Flutter
+    - Toast
   - just_audio (0.0.1):
     - Flutter
-  - nanopb (3.30910.0):
-    - nanopb/decode (= 3.30910.0)
-    - nanopb/encode (= 3.30910.0)
-  - nanopb/decode (3.30910.0)
-  - nanopb/encode (3.30910.0)
+  - OrderedSet (6.0.3)
   - package_info_plus (0.4.5):
     - Flutter
   - path_provider_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - PromisesObjC (2.4.0)
-  - PromisesSwift (2.4.0):
-    - PromisesObjC (= 2.4.0)
-  - Sentry/HybridSDK (8.36.0)
-  - sentry_flutter (8.9.0):
+  - Sentry/HybridSDK (8.41.0)
+  - sentry_flutter (8.11.2):
     - Flutter
     - FlutterMacOS
-    - Sentry/HybridSDK (= 8.36.0)
+    - Sentry/HybridSDK (= 8.41.0)
   - share_plus (0.0.1):
     - Flutter
   - shared_preferences_foundation (0.0.1):
     - Flutter
     - FlutterMacOS
-  - sqflite (0.0.3):
+  - sqflite_darwin (0.0.4):
     - Flutter
     - FlutterMacOS
+  - Toast (4.1.1)
   - url_launcher_ios (0.0.1):
     - Flutter
   - video_player_avfoundation (0.0.1):
@@ -103,17 +49,17 @@ PODS:
 
 DEPENDENCIES:
   - audio_session (from `.symlinks/plugins/audio_session/ios`)
-  - firebase_core (from `.symlinks/plugins/firebase_core/ios`)
-  - firebase_crashlytics (from `.symlinks/plugins/firebase_crashlytics/ios`)
   - Flutter (from `Flutter`)
+  - flutter_inappwebview_ios (from `.symlinks/plugins/flutter_inappwebview_ios/ios`)
   - flutter_native_splash (from `.symlinks/plugins/flutter_native_splash/ios`)
+  - fluttertoast (from `.symlinks/plugins/fluttertoast/ios`)
   - just_audio (from `.symlinks/plugins/just_audio/ios`)
   - package_info_plus (from `.symlinks/plugins/package_info_plus/ios`)
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - sentry_flutter (from `.symlinks/plugins/sentry_flutter/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
-  - sqflite (from `.symlinks/plugins/sqflite/darwin`)
+  - sqflite_darwin (from `.symlinks/plugins/sqflite_darwin/darwin`)
   - url_launcher_ios (from `.symlinks/plugins/url_launcher_ios/ios`)
   - video_player_avfoundation (from `.symlinks/plugins/video_player_avfoundation/darwin`)
   - wakelock_plus (from `.symlinks/plugins/wakelock_plus/ios`)
@@ -121,32 +67,21 @@ DEPENDENCIES:
 
 SPEC REPOS:
   trunk:
-    - Firebase
-    - FirebaseCore
-    - FirebaseCoreExtension
-    - FirebaseCoreInternal
-    - FirebaseCrashlytics
-    - FirebaseInstallations
-    - FirebaseRemoteConfigInterop
-    - FirebaseSessions
-    - GoogleDataTransport
-    - GoogleUtilities
-    - nanopb
-    - PromisesObjC
-    - PromisesSwift
+    - OrderedSet
     - Sentry
+    - Toast
 
 EXTERNAL SOURCES:
   audio_session:
     :path: ".symlinks/plugins/audio_session/ios"
-  firebase_core:
-    :path: ".symlinks/plugins/firebase_core/ios"
-  firebase_crashlytics:
-    :path: ".symlinks/plugins/firebase_crashlytics/ios"
   Flutter:
     :path: Flutter
+  flutter_inappwebview_ios:
+    :path: ".symlinks/plugins/flutter_inappwebview_ios/ios"
   flutter_native_splash:
     :path: ".symlinks/plugins/flutter_native_splash/ios"
+  fluttertoast:
+    :path: ".symlinks/plugins/fluttertoast/ios"
   just_audio:
     :path: ".symlinks/plugins/just_audio/ios"
   package_info_plus:
@@ -159,8 +94,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/share_plus/ios"
   shared_preferences_foundation:
     :path: ".symlinks/plugins/shared_preferences_foundation/darwin"
-  sqflite:
-    :path: ".symlinks/plugins/sqflite/darwin"
+  sqflite_darwin:
+    :path: ".symlinks/plugins/sqflite_darwin/darwin"
   url_launcher_ios:
     :path: ".symlinks/plugins/url_launcher_ios/ios"
   video_player_avfoundation:
@@ -172,31 +107,20 @@ EXTERNAL SOURCES:
 
 SPEC CHECKSUMS:
   audio_session: 088d2483ebd1dc43f51d253d4a1c517d9a2e7207
-  Firebase: 9f574c08c2396885b5e7e100ed4293d956218af9
-  firebase_core: 2ec6b789859c7c24766344ec71fdf78639402d56
-  firebase_crashlytics: 60630a0f91ee432275fa1660fd8593079761448a
-  FirebaseCore: 3cf438f431f18c12cdf2aaf64434648b63f7e383
-  FirebaseCoreExtension: cda74ddfb001224bd8fd1d6e74698b4ed07803de
-  FirebaseCoreInternal: 0c569513412da9f3b31bd0b340013bbee8f295c5
-  FirebaseCrashlytics: 745d8f0221fe49c62865391d1bf56f5a12eeec0b
-  FirebaseInstallations: 771177d89d6c451dc6e50085ec82e2fc77ed0a4a
-  FirebaseRemoteConfigInterop: 477b26fdeb8fb5fbaf22fa9db5343b42289dc7db
-  FirebaseSessions: adcec8b72d0066a385e3affcd1bcb1ebb3908ce6
   Flutter: e0871f40cf51350855a761d2e70bf5af5b9b5de7
-  flutter_native_splash: edf599c81f74d093a4daf8e17bd7a018854bc778
-  GoogleDataTransport: aae35b7ea0c09004c3797d53c8c41f66f219d6a7
-  GoogleUtilities: 26a3abef001b6533cf678d3eb38fd3f614b7872d
+  flutter_inappwebview_ios: 6f63631e2c62a7c350263b13fa5427aedefe81d4
+  flutter_native_splash: e8a1e01082d97a8099d973f919f57904c925008a
+  fluttertoast: e9a18c7be5413da53898f660530c56f35edfba9c
   just_audio: baa7252489dbcf47a4c7cc9ca663e9661c99aafa
-  nanopb: fad817b59e0457d11a5dfbde799381cd727c1275
-  package_info_plus: 58f0028419748fad15bf008b270aaa8e54380b1c
+  OrderedSet: e539b66b644ff081c73a262d24ad552a69be3a94
+  package_info_plus: c0502532a26c7662a62a356cebe2692ec5fe4ec4
   path_provider_foundation: 2b6b4c569c0fb62ec74538f866245ac84301af46
-  PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
-  PromisesSwift: 9d77319bbe72ebf6d872900551f7eeba9bce2851
-  Sentry: f8374b5415bc38dfb5645941b3ae31230fbeae57
-  sentry_flutter: 0eb93e5279eb41e2392212afe1ccd2fecb4f8cbe
-  share_plus: 8875f4f2500512ea181eef553c3e27dba5135aad
+  Sentry: 54d0fe6c0df448497c8ed4cce66ccf7027e1823e
+  sentry_flutter: f8796ae209d02920fa58f9cfd4eae00ec685bf37
+  share_plus: 8b6f8b3447e494cca5317c8c3073de39b3600d1f
   shared_preferences_foundation: fcdcbc04712aee1108ac7fda236f363274528f78
-  sqflite: 673a0e54cc04b7d6dba8d24fb8095b31c3a99eec
+  sqflite_darwin: 5a7236e3b501866c1c9befc6771dfd73ffb8702d
+  Toast: 1f5ea13423a1e6674c4abdac5be53587ae481c4e
   url_launcher_ios: 5334b05cef931de560670eeae103fd3e431ac3fe
   video_player_avfoundation: 7c6c11d8470e1675df7397027218274b6d2360b3
   wakelock_plus: 78ec7c5b202cab7761af8e2b2b3d0671be6c4ae1
@@ -204,4 +128,4 @@ SPEC CHECKSUMS:
 
 PODFILE CHECKSUM: a57f30d18f102dd3ce366b1d62a55ecbef2158e5
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2

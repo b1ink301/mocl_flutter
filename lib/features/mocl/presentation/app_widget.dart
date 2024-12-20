@@ -8,10 +8,10 @@ class AppWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => MaterialApp.router(
-    debugShowCheckedModeBanner: false,
-    scrollBehavior: CustomScrollBehavior(),
-    theme: MoclTheme.lightTheme,
-    darkTheme: MoclTheme.darkTheme,
-    routerConfig: AppPages.router,
-  );
+      debugShowCheckedModeBanner: false,
+      scrollBehavior: CustomScrollBehavior(),
+      theme: MoclTheme.lightTheme,
+      darkTheme: MoclTheme.darkTheme,
+      routerConfig: AppPages.router,
+    );
 }
