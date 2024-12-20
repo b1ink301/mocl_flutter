@@ -4,6 +4,7 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/injection.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/bloc/list_page_cubit.dart';
@@ -20,7 +21,6 @@ class ListPage extends StatelessWidget {
     BuildContext context,
     MainItem item,
   ) {
-    // final textStyles = TextStyles.getTextStyles(context);
     SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
       statusBarColor:
           Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor,
@@ -42,9 +42,9 @@ class ListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var statusBarColor =
+    final statusBarColor =
         Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor;
-    var child = Scaffold(
+    final child = Scaffold(
       appBar: Platform.isIOS
           ? AppBar(
               toolbarHeight: 0,
@@ -57,7 +57,7 @@ class ListPage extends StatelessWidget {
         child: RefreshIndicator(
           onRefresh: context.read<ListPageCubit>().refresh,
           child: const CustomScrollView(
-            cacheExtent: 200,
+            // cacheExtent: 200,
             slivers: <Widget>[
               _ListAppbar(),
               listview.ListView(),
@@ -70,7 +70,7 @@ class ListPage extends StatelessWidget {
         ? Listener(
             onPointerDown: (event) {
               if (event.buttons == kSecondaryMouseButton) {
-                Navigator.of(context).pop();
+                GoRouter.of(context).pop();
               }
             },
             child: child,
