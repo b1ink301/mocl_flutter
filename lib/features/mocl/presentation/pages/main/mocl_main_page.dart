@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -14,6 +12,7 @@ import 'package:mocl_flutter/features/mocl/presentation/pages/main/mocl_drawer_w
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/mocl_main_view.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/settings/bloc/get_version_cubit.dart';
 import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/dummy_appbar.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
 
 class MainPage extends StatelessWidget {
@@ -21,25 +20,22 @@ class MainPage extends StatelessWidget {
 
   static Widget withBloc(
     BuildContext context,
-  ) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor:
-          Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor,
-    ));
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) => getIt<MainDataJsonBloc>()),
-        BlocProvider(
-          create: (_) {
-            final siteTypeBloc = context.read<SiteTypeBloc>();
-            return getIt<MainDataBloc>()..initialize(siteTypeBloc);
-          },
-        ),
-        BlocProvider(create: (_) => getIt<GetVersionCubit>()..getVersion()),
-      ],
-      child: const MainPage(),
-    );
-  }
+  ) =>
+      MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_) => getIt<MainDataJsonBloc>()),
+          BlocProvider(
+            create: (_) {
+              final siteTypeBloc = context.read<SiteTypeBloc>();
+              return getIt<MainDataBloc>()..initialize(siteTypeBloc);
+            },
+          ),
+          BlocProvider(create: (_) => getIt<GetVersionCubit>()..getVersion()),
+        ],
+        child: AnnotatedRegion<SystemUiOverlayStyle>(
+            value: Theme.of(context).appBarTheme.systemOverlayStyle!,
+            child: const MainPage()),
+      );
 
   Widget _buildAppBar(
     BuildContext context,
@@ -87,51 +83,40 @@ class MainPage extends StatelessWidget {
       );
 
   @override
-  Widget build(BuildContext context) {
-    final statusBarColor =
-        Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor;
-    final halfWidth = MediaQuery.of(context).size.width;
-
-    return Scaffold(
-      drawerEdgeDragWidth: halfWidth,
-      drawerEnableOpenDragGesture: true,
-      drawer: _buildDrawer(context),
-      appBar: Platform.isIOS
-          ? AppBar(
-              toolbarHeight: 0,
-              flexibleSpace: Container(color: statusBarColor),
-            )
-          : null,
-      body: BlocListener<MainDataBloc, MainDataState>(
-        listener: (BuildContext context, MainDataState state) async {
-          if (state is StateRequireLogin) {
-            final result = await context.push<bool>(Routes.login) ?? false;
-            if (context.mounted && result) {
-              final siteType = context.read<SiteTypeBloc>().state;
-              context.read<MainDataBloc>().refresh(siteType);
+  Widget build(BuildContext context) => Scaffold(
+        drawerEdgeDragWidth: MediaQuery.of(context).size.width,
+        drawerEnableOpenDragGesture: true,
+        drawer: _buildDrawer(context),
+        appBar: buildDummyAppbar(context),
+        body: BlocListener<MainDataBloc, MainDataState>(
+          listener: (BuildContext context, MainDataState state) async {
+            if (state is StateRequireLogin) {
+              final result = await context.push<bool>(Routes.login) ?? false;
+              if (context.mounted && result) {
+                final siteType = context.read<SiteTypeBloc>().state;
+                context.read<MainDataBloc>().refresh(siteType);
+              }
             }
-          }
-        },
-        child: SafeArea(
-          left: false,
-          right: false,
-          child: RefreshIndicator(
-            onRefresh: () async {
-              final siteTypeBloc = context.read<SiteTypeBloc>();
-              context.read<MainDataBloc>().refresh(siteTypeBloc.state);
-            },
-            child: CustomScrollView(
-              // cacheExtent: 0,
-              slivers: <Widget>[
-                _buildAppBar(context),
-                const MainView(),
-              ],
+          },
+          child: SafeArea(
+            left: false,
+            right: false,
+            child: RefreshIndicator(
+              onRefresh: () async {
+                final siteTypeBloc = context.read<SiteTypeBloc>();
+                context.read<MainDataBloc>().refresh(siteTypeBloc.state);
+              },
+              child: CustomScrollView(
+                // cacheExtent: 0,
+                slivers: <Widget>[
+                  _buildAppBar(context),
+                  const MainView(),
+                ],
+              ),
             ),
           ),
         ),
-      ),
-    );
-  }
+      );
 
   Widget _buildDrawer(BuildContext context) =>
       DrawerWidget(onChangeSite: (siteType) {

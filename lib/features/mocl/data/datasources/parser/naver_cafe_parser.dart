@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
+import 'package:html/parser.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
@@ -113,7 +114,8 @@ class NaverCafeParser extends BaseParser {
           }
 
           if (sticker != null) {
-            body += '<br><img src=\'${sticker["url"]}?type=${sticker["type"]}\' width="129" >';
+            body +=
+                '<br><img src=\'${sticker["url"]}?type=${sticker["type"]}\' width="129" >';
           }
 
           var parsedTime = '';
@@ -262,7 +264,7 @@ class NaverCafeParser extends BaseParser {
 
       final parsedItem = {
         'id': id,
-        'title': title,
+        'title': parse(title).body?.text,
         'reply': commentCount.toString(),
         'category': category,
         'time': time.toString(),

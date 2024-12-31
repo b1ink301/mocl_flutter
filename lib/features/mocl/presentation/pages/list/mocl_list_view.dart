@@ -3,12 +3,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/bloc/list_page_cubit.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_cached_list_item.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/list/text_styles_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 
-class ListView extends StatelessWidget {
-  const ListView({super.key});
+class MoclListView extends StatelessWidget {
+  const MoclListView({super.key});
 
   @override
   Widget build(BuildContext context) =>
@@ -29,18 +28,13 @@ class ListView extends StatelessWidget {
               ),
               itemBuilder: (context, index) {
                 final item = bloc.getItem(index);
-                // return CachedItemBuilder(
-                //   key: ValueKey(item.key),
-                //   builder: () => CachedListItem(
                 return CachedListItem(
                   key: ValueKey(item.key),
                   item: item.item,
                   isRead: item.isRead,
-                  textStyles: TextStylesProvider.of(context).textStyles,
+                  // textStyles: TextStylesProvider.of(context).textStyles,
                   onTap: () => bloc.onTap(context, item),
-                  // ),
                 );
-                // );
               },
               // here we add a custom error screen if the state is an error state.
               // and this screen will be shown if an error occurs while fetching data for the first page.
@@ -51,11 +45,9 @@ class ListView extends StatelessWidget {
               //         )
               //     : null,
               // this method will be called when the user reaches the end of the list or for the first page.
-              onFetchData: () async {
-                await bloc.fetchPage();
-              },
+              onFetchData: bloc.fetchPage,
             ),
-            separatorBuilder: (context, index) => const DividerWidget(),
+            separatorBuilder: (_, __) => const DividerWidget(),
           );
         },
       );

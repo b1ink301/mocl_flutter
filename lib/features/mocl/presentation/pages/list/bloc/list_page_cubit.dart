@@ -20,7 +20,6 @@ class ListPageCubit extends Cubit<ListPageState> {
   final GetList _getList;
   final MainItem _mainItem;
 
-  // final TextStyles _textStyles;
   int _lastId = -1;
   int _page = 1;
 
@@ -40,8 +39,6 @@ class ListPageCubit extends Cubit<ListPageState> {
     @factoryParam this._mainItem,
     // @factoryParam this._textStyles,
   ) : super(const LoadingList()) {
-    _hasReachedMax =
-        _mainItem.siteType == SiteType.clien && _mainItem.board == 'recommend';
     _initPage();
   }
 
@@ -49,9 +46,9 @@ class ListPageCubit extends Cubit<ListPageState> {
 
   String get title => _mainItem.text;
 
-  // TextStyles get textStyles => _textStyles;
-
   _initPage() {
+    _hasReachedMax =
+        _mainItem.siteType == SiteType.clien && _mainItem.board == 'recommend';
     _page = _mainItem.siteType == SiteType.clien ? 0 : 1;
   }
 
@@ -105,12 +102,10 @@ class ListPageCubit extends Cubit<ListPageState> {
     }
   }
 
-  ReadableListItem _toReadableListItem(ListItem item) {
-    return ReadableListItem(
-      item: item,
-      isRead: ValueNotifier(item.isRead),
-    );
-  }
+  ReadableListItem _toReadableListItem(ListItem item) => ReadableListItem(
+        item: item,
+        isRead: ValueNotifier(item.isRead),
+      );
 
   @override
   Future<void> close() async {

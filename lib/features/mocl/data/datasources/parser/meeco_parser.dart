@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:html/parser.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
@@ -80,9 +81,11 @@ class MeecoParser extends BaseParser {
                   element.attributes['class']?.contains('reply') ?? false;
               final profileElement = headerElement
                   ?.querySelector('div.pf_wrap > span.pf > img.pf_img');
+
+              debugPrint('headerElement=${headerElement?.innerHtml}');
               final tmpUrl = profileElement?.attributes['src']?.trim() ?? '';
               final nickImage = BaseParser.covertUrl(baseUrl, tmpUrl);
-              final nickName = profileElement?.attributes['alt'] ?? '';
+              final nickName = profileElement?.attributes['alt'] ?? '익명';
               final time =
                   element.querySelector('span.date')?.text.trim() ?? '';
               final likeCount = element
