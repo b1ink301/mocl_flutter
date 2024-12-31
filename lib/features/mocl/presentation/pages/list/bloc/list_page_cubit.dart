@@ -10,6 +10,7 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_list.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 
 part 'list_page_state.dart';
 
@@ -37,7 +38,6 @@ class ListPageCubit extends Cubit<ListPageState> {
   ListPageCubit(
     this._getList,
     @factoryParam this._mainItem,
-    // @factoryParam this._textStyles,
   ) : super(const LoadingList()) {
     _initPage();
   }
@@ -80,11 +80,13 @@ class ListPageCubit extends Cubit<ListPageState> {
         success: (data) {
           if (data is List<ListItem>) {
             final list =
-            data.whereType<ListItem>().map(_toReadableListItem).toList();
+                data.whereType<ListItem>().map(_toReadableListItem).toList();
 
             if (list.isNotEmpty) {
               _lastId = list.last.item.id;
               _list.addAll(list);
+
+              _preloadNextPageImages(list);
             }
             _page++;
 
@@ -100,6 +102,15 @@ class ListPageCubit extends Cubit<ListPageState> {
     } catch (e) {
       emit(FailedList(e.toString()));
     }
+  }
+
+  void _preloadNextPageImages(List<ReadableListItem> items) {
+    final urls = items
+        .map((item) => item.item.userInfo.nickImage)
+        .where((url) => url.isNotEmpty && url.startsWith('http'))
+        .toList();
+
+    NickImageWidget.preloadImages(urls);
   }
 
   ReadableListItem _toReadableListItem(ListItem item) => ReadableListItem(

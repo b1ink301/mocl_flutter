@@ -1,11 +1,10 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 
 part 'clear_data_cubit.freezed.dart';
-
 part 'clear_data_state.dart';
 
 @injectable
@@ -14,8 +13,8 @@ class ClearDataCubit extends Cubit<ClearDataState> {
 
   Future<void> clearData() async {
     emit(const ClearDataState.loading());
-    DefaultCacheManager().emptyCache();
 
+    await NickImageWidget.clearCache();
     await InAppWebViewController.clearAllCache();
 
     // CookieManager.instance().deleteAllCookies();
