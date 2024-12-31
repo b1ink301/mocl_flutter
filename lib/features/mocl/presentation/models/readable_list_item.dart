@@ -1,7 +1,8 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 
-class ReadableListItem {
+class ReadableListItem extends Equatable {
   final ListItem item;
   final ValueNotifier<bool> isRead;
 
@@ -10,10 +11,16 @@ class ReadableListItem {
     required this.isRead,
   });
 
-  void markAsRead() => isRead.value = true;
-  void markAsUnread() => isRead.value = false;
+  void markAsRead() {
+    if (isUnread) {
+      isRead.value = true;
+    }
+  }
 
-  String get key => item.id.toString();
+  bool get isUnread => !isRead.value;
+
+  int get key => item.id;
+
+  @override
+  List<Object?> get props => [item.id, item.board];
 }
-
-

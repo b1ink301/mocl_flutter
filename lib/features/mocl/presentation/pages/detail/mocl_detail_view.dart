@@ -67,6 +67,17 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
 
   _HeaderSectionDelegate({required this.detail});
 
+  List<Widget>? _buildLikeView(BuildContext context, TextStyle bodySmall) =>
+      detail.likeCount.isNotEmpty && detail.likeCount != '0'
+          ? [
+              const SizedBox(width: 10),
+              Icon(Icons.favorite_outline, color: bodySmall.color, size: 17),
+              const SizedBox(width: 4),
+              Text(detail.likeCount, style: bodySmall),
+              const SizedBox(width: 10),
+            ]
+          : null;
+
   @override
   Widget build(
     BuildContext context,
@@ -75,15 +86,7 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
   ) {
     final bodySmall = Theme.of(context).textTheme.bodySmall!;
     final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
-    final likeView = detail.likeCount.isNotEmpty && detail.likeCount != '0'
-        ? [
-            const SizedBox(width: 10),
-            Icon(Icons.favorite_outline, color: bodySmall.color, size: 17),
-            const SizedBox(width: 4),
-            Text(detail.likeCount, style: bodySmall),
-            const SizedBox(width: 10),
-          ]
-        : [];
+    final likeView = _buildLikeView(context, bodySmall);
 
     return Container(
       color: backgroundColor,
@@ -107,7 +110,7 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
                     ],
                   ),
                 ),
-                ...likeView,
+                if (likeView != null) ...likeView,
               ],
             ),
           ),

@@ -44,8 +44,8 @@ class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
     DetailsEvent event,
     Emitter<DetailViewState> emit,
   ) async {
-    emit(const DetailLoading());
     try {
+      emit(const DetailLoading());
       final Result result = await _getDetail(_listItem.item);
       result.whenOrNull(
         success: (data) {
@@ -61,11 +61,11 @@ class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
     }
   }
 
-  Future<void> _markAsRead() async {
-    if (!_listItem.isRead.value) {
+  void _markAsRead() async {
+    if (_listItem.isUnread) {
       _listItem.markAsRead();
-      var params =
-          SetReadFlagParams(siteType: _siteType, boardId: _listItem.item.id);
+      final params =
+          SetReadFlagParams(siteType: _siteType, boardId: _listItem.key);
       await _setReadFlag(params);
     }
   }

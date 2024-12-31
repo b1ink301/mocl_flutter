@@ -35,7 +35,7 @@ class MainView extends StatelessWidget {
         hasScrollBody: false,
         child: Center(
           child: Text(
-            '항목이 없습니다, + 버튼을 눌려서 항목을 추가해 주세요!',
+            '항목이 없습니다.\n+ 버튼을 눌려서 항목을 추가해 주세요!',
             style: textStyle,
           ),
         ),

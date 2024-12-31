@@ -11,6 +11,7 @@ import 'package:mocl_flutter/features/mocl/presentation/pages/detail/bloc/detail
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/bloc/get_height_cubit.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/detail_appbar.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/mocl_detail_view.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/dummy_appbar.dart';
 
 class DetailPage extends StatelessWidget {
   const DetailPage({super.key});
@@ -20,10 +21,6 @@ class DetailPage extends StatelessWidget {
     SiteType siteType,
     ReadableListItem item,
   ) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor:
-          Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor,
-    ));
     final textStyle = Theme.of(context).textTheme.labelMedium!;
     final textWidth = MediaQuery.of(context).size.width;
 
@@ -38,21 +35,17 @@ class DetailPage extends StatelessWidget {
             create: (context) => getIt<GetHeightCubit>()
               ..getHeight(item.item.title, textStyle, textWidth)),
       ],
-      child: const DetailPage(),
+      child: AnnotatedRegion<SystemUiOverlayStyle>(
+        value: Theme.of(context).appBarTheme.systemOverlayStyle!,
+        child: const DetailPage(),
+      ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    var statusBarColor =
-        Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor;
-    var child = Scaffold(
-      appBar: Platform.isIOS
-          ? AppBar(
-              toolbarHeight: 0,
-              flexibleSpace: Container(color: statusBarColor),
-            )
-          : null,
+    final child = Scaffold(
+      appBar: buildDummyAppbar(context),
       body: SafeArea(
         left: false,
         right: false,
@@ -60,10 +53,10 @@ class DetailPage extends StatelessWidget {
           onRefresh: () async {
             context.read<DetailViewBloc>().refresh();
           },
-          child: CustomScrollView(
+          child: const CustomScrollView(
             slivers: [
-              const DetailAppBar(),
-              const DetailView(),
+              DetailAppBar(),
+              DetailView(),
             ],
           ),
         ),

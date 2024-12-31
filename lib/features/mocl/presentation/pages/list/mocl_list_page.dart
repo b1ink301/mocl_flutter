@@ -8,59 +8,41 @@ import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/injection.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/bloc/list_page_cubit.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/list/list_view.dart'
-    as listview;
+import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_list_view.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_text_styles.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/text_styles_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/appbar_dual_text_widget.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/dummy_appbar.dart';
 
-class ListPage extends StatelessWidget {
-  const ListPage({super.key});
+class MoclListPage extends StatelessWidget {
+  const MoclListPage({super.key});
 
   static Widget withBloc(
     BuildContext context,
     MainItem item,
-  ) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor:
-          Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor,
-    ));
-
-    return BlocProvider(
-      create: (context) => getIt<ListPageCubit>(param1: item),
-      child: Builder(
-        builder: (context) {
-          final textStyles = TextStyles.getTextStyles(context);
-          return TextStylesProvider(
-            textStyles: textStyles,
-            child: const ListPage(),
-          );
-        },
-      ),
-    );
-  }
+  ) =>
+      BlocProvider(
+        create: (context) => getIt<ListPageCubit>(param1: item),
+        child: Builder(
+          builder: (context) => AnnotatedRegion<SystemUiOverlayStyle>(
+              value: Theme.of(context).appBarTheme.systemOverlayStyle!,
+              child: const MoclListPage()),
+        ),
+      );
 
   @override
   Widget build(BuildContext context) {
-    final statusBarColor =
-        Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor;
     final child = Scaffold(
-      appBar: Platform.isIOS
-          ? AppBar(
-              toolbarHeight: 0,
-              flexibleSpace: Container(color: statusBarColor),
-            )
-          : null,
+      appBar: buildDummyAppbar(context),
       body: SafeArea(
         left: false,
         right: false,
         child: RefreshIndicator(
           onRefresh: context.read<ListPageCubit>().refresh,
           child: const CustomScrollView(
-            // cacheExtent: 200,
             slivers: <Widget>[
               _ListAppbar(),
-              listview.ListView(),
+              MoclListView(),
             ],
           ),
         ),
