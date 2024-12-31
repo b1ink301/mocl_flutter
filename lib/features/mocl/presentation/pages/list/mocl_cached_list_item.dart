@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/round_text_widget.dart';
 
@@ -10,10 +10,15 @@ import 'package:mocl_flutter/features/mocl/presentation/widgets/round_text_widge
 /// [isRead] 읽음 상태
 /// [textStyles] 텍스트 스타일
 /// [onTap] 탭 이벤트 핸들러
-class CachedListItem extends StatefulWidget {
+class CachedListItem extends StatelessWidget {
   final ListItem item;
   final ValueNotifier<bool> isRead;
   final VoidCallback onTap;
+
+  static const EdgeInsets _contentPadding =
+      EdgeInsets.only(left: 16, right: 12);
+  static const double _minVerticalPadding = 10;
+  static const double _minTileHeight = 24;
 
   const CachedListItem({
     required this.item,
@@ -29,65 +34,35 @@ class CachedListItem extends StatefulWidget {
       );
 
   @override
-  State<CachedListItem> createState() => _CachedListItemState();
-}
-
-class _CachedListItemState extends State<CachedListItem> {
-  static const EdgeInsets _contentPadding =
-      EdgeInsets.only(left: 16, right: 12);
-  static const double _minVerticalPadding = 10;
-  static const double _minTileHeight = 24;
-
-  late bool _isReadValue;
-
-  @override
-  void initState() {
-    super.initState();
-    _isReadValue = widget.isRead.value;
-    widget.isRead.addListener(_onIsReadChanged);
-  }
-
-  @override
-  void dispose() {
-    widget.isRead.removeListener(_onIsReadChanged);
-    super.dispose();
-  }
-
-  void _onIsReadChanged() {
-    if (mounted) {
-      setState(() {
-        _isReadValue = widget.isRead.value;
-      });
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    try {
-      return ListTile(
-        minVerticalPadding: _minVerticalPadding,
-        minTileHeight: _minTileHeight,
-        contentPadding: _contentPadding,
-        onTap: widget.onTap,
-        title: TitleView(
-          title: widget.item.title,
-          isRead: _isReadValue,
-        ),
-        subtitle: BottomView(
-          item: widget.item,
-          isRead: _isReadValue,
-        ),
+  Widget build(BuildContext context) => ValueListenableBuilder<bool>(
+        valueListenable: isRead,
+        builder: (context, isReadValue, _) {
+          try {
+            return ListTile(
+              minVerticalPadding: _minVerticalPadding,
+              minTileHeight: _minTileHeight,
+              contentPadding: _contentPadding,
+              onTap: onTap,
+              title: TitleView(
+                title: item.title,
+                isRead: isReadValue,
+              ),
+              subtitle: BottomView(
+                item: item,
+                isRead: isReadValue,
+              ),
+            );
+          } catch (e) {
+            debugPrint('Error building CachedListItem: $e');
+            return Text(
+              e.toString(),
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: MoclTextStyles.of(context).smallTitle(false),
+            );
+          }
+        },
       );
-    } catch (e) {
-      debugPrint('Error building CachedListItem: $e');
-      return Text(
-        e.toString(),
-        maxLines: 3,
-        overflow: TextOverflow.ellipsis,
-        style: MoclTextStyles.of(context).smallTitle(false),
-      );
-    }
-  }
 }
 
 class TitleView extends StatelessWidget {
@@ -101,12 +76,14 @@ class TitleView extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => Text(
-        title,
-        maxLines: 3,
-        overflow: TextOverflow.ellipsis,
-        style: MoclTextStyles.of(context).title(isRead),
-      );
+  Widget build(BuildContext context) {
+    return Text(
+      title,
+      maxLines: 3,
+      overflow: TextOverflow.ellipsis,
+      style: MoclTextStyles.of(context).title(isRead),
+    );
+  }
 }
 
 class BottomView extends StatelessWidget {
@@ -175,12 +152,14 @@ class InfoText extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => Text(
-        info,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: MoclTextStyles.of(context).smallTitle(isRead),
-      );
+  Widget build(BuildContext context) {
+    return Text(
+      info,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: MoclTextStyles.of(context).smallTitle(isRead),
+    );
+  }
 }
 
 class ReplyBadge extends StatelessWidget {
@@ -194,8 +173,10 @@ class ReplyBadge extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => RoundTextWidget(
-        text: reply,
-        textStyle: MoclTextStyles.of(context).badge(isRead),
-      );
+  Widget build(BuildContext context) {
+    return RoundTextWidget(
+      text: reply,
+      textStyle: MoclTextStyles.of(context).badge(isRead),
+    );
+  }
 }

@@ -9,8 +9,6 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/injection.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/bloc/list_page_cubit.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_list_view.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_text_styles.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/list/text_styles_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/appbar_dual_text_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/dummy_appbar.dart';
 
