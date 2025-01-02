@@ -24,6 +24,7 @@ import '../data/repositories/mocl_detail_repository_impl.dart' as _i205;
 import '../data/repositories/mocl_list_repository_impl.dart' as _i1014;
 import '../data/repositories/mocl_main_repository_impl.dart' as _i555;
 import '../data/repositories/mocl_settings_repository_impl.dart' as _i1051;
+import '../domain/entities/mocl_list_item.dart' as _i853;
 import '../domain/entities/mocl_main_item.dart' as _i975;
 import '../domain/entities/mocl_site_type.dart' as _i891;
 import '../domain/repositories/detail_repository.dart' as _i564;
@@ -40,7 +41,6 @@ import '../domain/usecases/set_main_list.dart' as _i688;
 import '../domain/usecases/set_read_flag.dart' as _i902;
 import '../domain/usecases/set_site_type.dart' as _i913;
 import 'injection.dart' as _i464;
-import 'models/readable_list_item.dart' as _i923;
 import 'pages/detail/bloc/detail_view_bloc.dart' as _i83;
 import 'pages/detail/bloc/get_height_cubit.dart' as _i63;
 import 'pages/detail/detail_view_util.dart' as _i149;
@@ -148,8 +148,11 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i716.GetList>(),
           _mainItem,
         ));
-    gh.factoryParam<_i83.DetailViewBloc, _i923.ReadableListItem,
-        _i891.SiteType>((
+    gh.factory<_i61.MainDataJsonBloc>(() => _i61.MainDataJsonBloc(
+          getMainListFromJson: gh<_i307.GetMainListFromJson>(),
+          setMainList: gh<_i688.SetMainList>(),
+        ));
+    gh.factoryParam<_i83.DetailViewBloc, _i853.ListItem, _i891.SiteType>((
       _listItem,
       _siteType,
     ) =>
@@ -158,10 +161,6 @@ extension GetItInjectableX on _i174.GetIt {
           gh<_i902.SetReadFlag>(),
           _listItem,
           _siteType,
-        ));
-    gh.factory<_i61.MainDataJsonBloc>(() => _i61.MainDataJsonBloc(
-          getMainListFromJson: gh<_i307.GetMainListFromJson>(),
-          setMainList: gh<_i688.SetMainList>(),
         ));
     return this;
   }

@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/mocl_detail_page.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/photo_view_dialog.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_list_page.dart';
@@ -55,7 +55,7 @@ class AppPages {
                   final extra =
                       GoRouterState.of(context).extra as List<dynamic>;
                   final siteType = extra[0] as SiteType;
-                  final item = extra[1] as ReadableListItem;
+                  final item = extra[1] as ListItem;
                   return DetailPage.withBloc(context, siteType, item);
                 },
               ),

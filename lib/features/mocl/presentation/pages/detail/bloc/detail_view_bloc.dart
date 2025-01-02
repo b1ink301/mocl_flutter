@@ -2,23 +2,21 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_detail.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_read_flag.dart';
-import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
 
 part 'detail_view_bloc.freezed.dart';
-
 part 'detail_view_event.dart';
-
 part 'detail_view_state.dart';
 
 @injectable
 class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
   final GetDetail _getDetail;
   final SetReadFlag _setReadFlag;
-  final ReadableListItem _listItem;
+  final ListItem _listItem;
   final SiteType _siteType;
 
   DetailViewBloc(
@@ -30,13 +28,13 @@ class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
     on<DetailsEvent>(_onDetailsEvent);
   }
 
-  String get smallTitle => '${_siteType.title} > ${_listItem.item.boardTitle}';
+  String get smallTitle => '${_siteType.title} > ${_listItem.boardTitle}';
 
-  String get title => _listItem.item.title;
+  String get title => _listItem.title;
 
   String get itemUrl => _siteType == SiteType.naverCafe
-      ? 'https://m.cafe.naver.com/ca-fe/web/cafes/${_listItem.item.board}/articles/${_listItem.item.id}'
-      : _listItem.item.url;
+      ? 'https://m.cafe.naver.com/ca-fe/web/cafes/${_listItem.board}/articles/${_listItem.id}'
+      : _listItem.url;
 
   void refresh() => add(const DetailsEvent());
 
@@ -46,7 +44,7 @@ class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
   ) async {
     try {
       emit(const DetailLoading());
-      final Result result = await _getDetail(_listItem.item);
+      final Result result = await _getDetail(_listItem);
       result.whenOrNull(
         success: (data) {
           _markAsRead();
@@ -62,10 +60,10 @@ class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
   }
 
   void _markAsRead() async {
-    if (_listItem.isUnread) {
-      _listItem.markAsRead();
+    if (!_listItem.isRead) {
+      // _listItem.markAsRead();
       final params =
-          SetReadFlagParams(siteType: _siteType, boardId: _listItem.key);
+          SetReadFlagParams(siteType: _siteType, boardId: _listItem.id);
       await _setReadFlag(params);
     }
   }
