@@ -50,7 +50,7 @@ class TitleView extends StatelessWidget {
       title,
       maxLines: 3,
       overflow: TextOverflow.ellipsis,
-      style: isRead ? textStyles.readTitleTextStyle : textStyles.titleTextStyle,
+      style: textStyles.title(isRead),
     );
   }
 }
@@ -101,9 +101,7 @@ class BottomView extends StatelessWidget {
               if (hasReply)
                 RoundTextWidget(
                   text: reply,
-                  textStyle: isRead
-                      ? textStyles.readBadgeTextStyle
-                      : textStyles.badgeTextStyle,
+                  textStyle: textStyles.badge(isRead)
                 ),
             ],
           ),
@@ -130,7 +128,7 @@ class InfoText extends StatelessWidget {
       info,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-      style: isRead ? textStyles.readSmallTextStyle : textStyles.smallTextStyle,
+      style: textStyles.smallTitle(isRead),
     );
   }
 }
@@ -150,8 +148,7 @@ class ReplyBadge extends StatelessWidget {
     final textStyles = MoclTextStyles.of(context);
     return RoundTextWidget(
       text: reply,
-      textStyle:
-          isRead ? textStyles.readBadgeTextStyle : textStyles.badgeTextStyle,
+      textStyle: textStyles.badge(isRead)
     );
   }
 }

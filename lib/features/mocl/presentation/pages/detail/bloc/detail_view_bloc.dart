@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
@@ -7,9 +9,12 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_detail.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_read_flag.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/list/readable_flag.dart';
 
 part 'detail_view_bloc.freezed.dart';
+
 part 'detail_view_event.dart';
+
 part 'detail_view_state.dart';
 
 @injectable
@@ -18,10 +23,12 @@ class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
   final SetReadFlag _setReadFlag;
   final ListItem _listItem;
   final SiteType _siteType;
+  final ReadableFlag _readableFlag;
 
   DetailViewBloc(
     this._getDetail,
     this._setReadFlag,
+    this._readableFlag,
     @factoryParam this._listItem,
     @factoryParam this._siteType,
   ) : super(const DetailLoading()) {
@@ -48,6 +55,7 @@ class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
       result.whenOrNull(
         success: (data) {
           _markAsRead();
+          _readableFlag.id = _listItem.id;
           emit(DetailSuccess(data));
         },
         failure: (failure) {
@@ -59,9 +67,8 @@ class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
     }
   }
 
-  void _markAsRead() async {
+  Future<void> _markAsRead() async {
     if (!_listItem.isRead) {
-      // _listItem.markAsRead();
       final params =
           SetReadFlagParams(siteType: _siteType, boardId: _listItem.id);
       await _setReadFlag(params);

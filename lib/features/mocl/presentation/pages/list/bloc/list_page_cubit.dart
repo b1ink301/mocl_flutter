@@ -1,5 +1,7 @@
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'dart:async';
+
 import 'package:flutter/material.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:injectable/injectable.dart';
@@ -8,18 +10,19 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_list.dart';
-import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/list/readable_flag.dart';
 import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 
-part 'list_page_state.dart';
-
 part 'list_page_cubit.freezed.dart';
+
+part 'list_page_state.dart';
 
 @injectable
 class ListPageCubit extends Cubit<ListPageState> {
   final GetList _getList;
   final MainItem _mainItem;
+  final ReadableFlag _readableFlag;
 
   final List<ListItem> _list = [];
 
@@ -37,6 +40,7 @@ class ListPageCubit extends Cubit<ListPageState> {
 
   ListPageCubit(
     this._getList,
+    this._readableFlag,
     @factoryParam this._mainItem,
   ) : super(const LoadingList()) {
     _initPage();
@@ -62,10 +66,9 @@ class ListPageCubit extends Cubit<ListPageState> {
 
   void onTap(BuildContext context, ListItem item) {
     final extra = [_mainItem.siteType, item];
-    GoRouter.of(context).push<bool>(Routes.detail, extra: extra).then((_) {
-
-      debugPrint('onTap item.isRead=${item.isRead}');
-      if (!item.isRead) {
+    _readableFlag.id = -1;
+    GoRouter.of(context).push(Routes.detail, extra: extra).then((_) {
+      if (_readableFlag.id == item.id && !item.isRead) {
         _updateItemReadStatus(item.id);
       }
     });
@@ -77,10 +80,7 @@ class ListPageCubit extends Cubit<ListPageState> {
       emit(const LoadingList());
       final updatedItem = _list[index].copyWith(isRead: true);
       _list[index] = updatedItem;
-      await Future.delayed(Duration(milliseconds: 200));
       emit(const LoadedList());
-
-      debugPrint('_updateItemReadStatus=$itemId');
     }
   }
 
@@ -122,11 +122,5 @@ class ListPageCubit extends Cubit<ListPageState> {
         .toList();
 
     await NickImageWidget.preloadImages(urls);
-  }
-
-  @override
-  Future<void> close() async {
-    _list.clear();
-    super.close();
   }
 }
