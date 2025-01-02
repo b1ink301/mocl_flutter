@@ -41,16 +41,4 @@ class ListItem with _$ListItem {
         hasImage: false,
         isRead: false,
       );
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$ListItemImpl &&
-            (identical(other.id, id) || other.id == id) &&
-            (identical(other.isRead, isRead) || other.isRead == isRead));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, id, isRead);
 }

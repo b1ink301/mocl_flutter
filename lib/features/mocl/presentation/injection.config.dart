@@ -45,6 +45,7 @@ import 'pages/detail/bloc/detail_view_bloc.dart' as _i83;
 import 'pages/detail/bloc/get_height_cubit.dart' as _i63;
 import 'pages/detail/detail_view_util.dart' as _i149;
 import 'pages/list/bloc/list_page_cubit.dart' as _i588;
+import 'pages/list/readable_flag.dart' as _i64;
 import 'pages/main/add_dialog/bloc/main_data_json_bloc.dart' as _i61;
 import 'pages/main/bloc/main_data_bloc.dart' as _i413;
 import 'pages/main/bloc/site_type_bloc.dart' as _i1067;
@@ -81,6 +82,7 @@ extension GetItInjectableX on _i174.GetIt {
       preResolve: true,
     );
     gh.lazySingleton<_i875.ApiClient>(() => _i875.ApiClient()..init());
+    gh.lazySingleton<_i64.ReadableFlag>(() => _i64.ReadableFlag());
     gh.lazySingleton<_i694.DetailDataSource>(
         () => _i694.DetailDataSourceImpl(apiClient: gh<_i875.ApiClient>()));
     gh.lazySingleton<_i977.SettingsRepository>(() =>
@@ -140,17 +142,18 @@ extension GetItInjectableX on _i174.GetIt {
         () => _i902.SetReadFlag(listRepository: gh<_i480.ListRepository>()));
     gh.factory<_i145.GetReadFlag>(
         () => _i145.GetReadFlag(listRepository: gh<_i480.ListRepository>()));
+    gh.factory<_i61.MainDataJsonBloc>(() => _i61.MainDataJsonBloc(
+          getMainListFromJson: gh<_i307.GetMainListFromJson>(),
+          setMainList: gh<_i688.SetMainList>(),
+        ));
     gh.factoryParam<_i588.ListPageCubit, _i975.MainItem, dynamic>((
       _mainItem,
       _,
     ) =>
         _i588.ListPageCubit(
           gh<_i716.GetList>(),
+          gh<_i64.ReadableFlag>(),
           _mainItem,
-        ));
-    gh.factory<_i61.MainDataJsonBloc>(() => _i61.MainDataJsonBloc(
-          getMainListFromJson: gh<_i307.GetMainListFromJson>(),
-          setMainList: gh<_i688.SetMainList>(),
         ));
     gh.factoryParam<_i83.DetailViewBloc, _i853.ListItem, _i891.SiteType>((
       _listItem,
@@ -159,6 +162,7 @@ extension GetItInjectableX on _i174.GetIt {
         _i83.DetailViewBloc(
           gh<_i132.GetDetail>(),
           gh<_i902.SetReadFlag>(),
+          gh<_i64.ReadableFlag>(),
           _listItem,
           _siteType,
         ));

@@ -49,7 +49,7 @@ class PhotoViewDialog extends StatelessWidget {
           ),
         ),
         Positioned(
-          top: 60.0,
+          top: 10.0,
           right: 10.0,
           child: IconButton(
             onPressed: () => {context.pop()},
