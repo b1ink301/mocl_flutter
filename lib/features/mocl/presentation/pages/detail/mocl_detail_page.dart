@@ -4,9 +4,9 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/presentation/injection.dart';
-import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/bloc/detail_view_bloc.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/bloc/get_height_cubit.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/detail_appbar.dart';
@@ -19,7 +19,7 @@ class DetailPage extends StatelessWidget {
   static Widget withBloc(
     BuildContext context,
     SiteType siteType,
-    ReadableListItem item,
+    ListItem item,
   ) {
     final textStyle = Theme.of(context).textTheme.labelMedium!;
     final textWidth = MediaQuery.of(context).size.width;
@@ -33,7 +33,7 @@ class DetailPage extends StatelessWidget {
         ),
         BlocProvider(
             create: (context) => getIt<GetHeightCubit>()
-              ..getHeight(item.item.title, textStyle, textWidth)),
+              ..getHeight(item.title, textStyle, textWidth)),
       ],
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: Theme.of(context).appBarTheme.systemOverlayStyle!,

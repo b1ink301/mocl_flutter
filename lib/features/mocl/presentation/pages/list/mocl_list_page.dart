@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
@@ -22,9 +21,7 @@ class MoclListPage extends StatelessWidget {
       BlocProvider(
         create: (context) => getIt<ListPageCubit>(param1: item),
         child: Builder(
-          builder: (context) => AnnotatedRegion<SystemUiOverlayStyle>(
-              value: Theme.of(context).appBarTheme.systemOverlayStyle!,
-              child: const MoclListPage()),
+          builder: (context) => const MoclListPage(),
         ),
       );
 

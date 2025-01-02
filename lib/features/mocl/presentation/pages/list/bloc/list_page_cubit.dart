@@ -21,19 +21,19 @@ class ListPageCubit extends Cubit<ListPageState> {
   final GetList _getList;
   final MainItem _mainItem;
 
+  final List<ListItem> _list = [];
+
+  List<ListItem> get list => List.unmodifiable(_list);
+
+  int get listCount => _list.length;
+
+  ListItem getItem(int index) => _list.elementAt(index);
+
   int _lastId = -1;
   int _page = 1;
 
   bool get hasReachedMax => _hasReachedMax;
   bool _hasReachedMax = false;
-
-  final List<ReadableListItem> _list = [];
-
-  List<ReadableListItem> get list => List.unmodifiable(_list);
-
-  int get listCount => _list.length;
-
-  ReadableListItem getItem(int index) => _list.elementAt(index);
 
   ListPageCubit(
     this._getList,
@@ -60,14 +60,32 @@ class ListPageCubit extends Cubit<ListPageState> {
     await fetchPage();
   }
 
-  void onTap(BuildContext context, ReadableListItem item) {
+  void onTap(BuildContext context, ListItem item) {
     final extra = [_mainItem.siteType, item];
-    GoRouter.of(context).push(Routes.detail, extra: extra);
+    GoRouter.of(context).push<bool>(Routes.detail, extra: extra).then((_) {
+
+      debugPrint('onTap item.isRead=${item.isRead}');
+      if (!item.isRead) {
+        _updateItemReadStatus(item.id);
+      }
+    });
+  }
+
+  void _updateItemReadStatus(int itemId) async {
+    final index = _list.indexWhere((item) => item.id == itemId);
+    if (index != -1) {
+      emit(const LoadingList());
+      final updatedItem = _list[index].copyWith(isRead: true);
+      _list[index] = updatedItem;
+      await Future.delayed(Duration(milliseconds: 200));
+      emit(const LoadedList());
+
+      debugPrint('_updateItemReadStatus=$itemId');
+    }
   }
 
   Future<void> fetchPage() async {
     emit(const LoadingList());
-
     try {
       final params = GetListParams(
         mainItem: _mainItem,
@@ -79,20 +97,13 @@ class ListPageCubit extends Cubit<ListPageState> {
       result.whenOrNull(
         success: (data) {
           if (data is List<ListItem>) {
-            final list =
-                data.whereType<ListItem>().map(_toReadableListItem).toList();
-
-            if (list.isNotEmpty) {
-              _lastId = list.last.item.id;
-              _list.addAll(list);
-
-              _preloadNextPageImages(list);
+            if (data.isNotEmpty) {
+              _lastId = data.last.id;
+              _list.addAll(data);
+              // _preloadNextPageImages(data);
             }
             _page++;
-
             emit(const LoadedList());
-          } else {
-            emit(FailedList('Unexpected data type: ${data.runtimeType}'));
           }
         },
         failure: (failure) {
@@ -104,19 +115,14 @@ class ListPageCubit extends Cubit<ListPageState> {
     }
   }
 
-  void _preloadNextPageImages(List<ReadableListItem> items) {
+  void _preloadNextPageImages(List<ListItem> items) async {
     final urls = items
-        .map((item) => item.item.userInfo.nickImage)
+        .map((item) => item.userInfo.nickImage)
         .where((url) => url.isNotEmpty && url.startsWith('http'))
         .toList();
 
-    NickImageWidget.preloadImages(urls);
+    await NickImageWidget.preloadImages(urls);
   }
-
-  ReadableListItem _toReadableListItem(ListItem item) => ReadableListItem(
-        item: item,
-        isRead: ValueNotifier(item.isRead),
-      );
 
   @override
   Future<void> close() async {

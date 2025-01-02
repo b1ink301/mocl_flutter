@@ -47,42 +47,40 @@ class NickImageWidget extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.only(right: 8),
-      child: CachedNetworkImage(
-        // 메모리 캐시 크기 최적화
-        memCacheHeight: _memCacheHeight,
-        // memCacheWidth: _memCacheHeight, // 정사각형 이미지 가정
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.only(right: 8),
+        child: CachedNetworkImage(
+          // 메모리 캐시 크기 최적화
+          memCacheHeight: _memCacheHeight,
+          // memCacheWidth: _memCacheHeight, // 정사각형 이미지 가정
 
-        // 페이드 애니메이션 상수화
-        fadeOutDuration: _fadeOutDuration,
-        fadeInDuration: _fadeInDuration,
+          // 페이드 애니메이션 상수화
+          fadeOutDuration: _fadeOutDuration,
+          fadeInDuration: _fadeInDuration,
 
-        height: height,
-
-        // 에러 처리 추가
-        errorWidget: (context, url, error) => const SizedBox.shrink(),
-
-        // 로딩 상태 처리
-        placeholder: (context, url) => SizedBox(
           height: height,
-          width: height,
+
+          // 에러 처리 추가
+          errorWidget: (context, url, error) => const SizedBox.shrink(),
+
+          // 로딩 상태 처리
+          placeholder: (context, url) => SizedBox(
+            height: height,
+            width: height,
+          ),
+
+          imageUrl: url,
+          cacheKey: url,
+
+          // 이미지 품질 최적화
+          fit: BoxFit.contain,
+          filterQuality: FilterQuality.low,
+
+          // 캐시 정책 설정
+          cacheManager: _cacheManager,
+          maxHeightDiskCache: _memCacheHeight,
         ),
-
-        imageUrl: url,
-        cacheKey: url,
-
-        // 이미지 품질 최적화
-        fit: BoxFit.contain,
-        filterQuality: FilterQuality.low,
-
-        // 캐시 정책 설정
-        cacheManager: _cacheManager,
-        maxHeightDiskCache: _memCacheHeight,
-      ),
-    );
-  }
+      );
 
   // 캐시 관리 메서드들
   static Future<void> clearCache() async {
