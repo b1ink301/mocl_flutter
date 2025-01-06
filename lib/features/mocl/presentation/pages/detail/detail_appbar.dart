@@ -1,50 +1,49 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mocl_flutter/features/mocl/presentation/injection.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/detail/bloc/detail_view_bloc.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/detail/bloc/get_height_cubit.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/detail/providers/detail_view_model.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/detail_view_util.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/appbar_dual_text_widget.dart';
 
-class DetailAppBar extends StatelessWidget {
+class DetailAppBar extends ConsumerWidget {
   const DetailAppBar({super.key});
 
   @override
-  Widget build(BuildContext context) =>
-      BlocBuilder<GetHeightCubit, GetHeightState>(
-        builder: (context, state) => state.maybeWhen(
-          orElse: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
-          success: (height) {
-            final bloc = context.read<DetailViewBloc>();
-            return AppbarDualTextWidget(
-              title: bloc.title,
-              smallTitle: bloc.smallTitle,
-              automaticallyImplyLeading: Platform.isMacOS,
-              toolbarHeight: height,
-              actions: _buildPopupMenuButton(context),
-            );
-          },
-        ),
-      );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final textStyle = Theme.of(context).textTheme.labelMedium!;
+    final textWidth = MediaQuery.of(context).size.width;
+    final viewModel = ref.read(detailViewModelProvider.notifier);
+    final height =
+        ref.read(appbarHeightProvider(viewModel.title, textStyle, textWidth));
 
-  List<Widget> _buildPopupMenuButton(BuildContext context) => [
+    return AppbarDualTextWidget(
+      title: viewModel.title,
+      smallTitle: viewModel.smallTitle,
+      automaticallyImplyLeading: Platform.isMacOS,
+      toolbarHeight: height,
+      actions: _buildPopupMenuButton(context, viewModel),
+    );
+  }
+
+  List<Widget> _buildPopupMenuButton(
+          BuildContext context, DetailViewModel viewModel) =>
+      [
         PopupMenuButton<int>(
           icon: const Icon(Icons.more_vert),
           onSelected: (int value) {
-            var detailViewBloc = context.read<DetailViewBloc>();
             switch (value) {
               case 0:
-                detailViewBloc.refresh();
+                viewModel.refresh();
                 break;
               case 1:
-                final url = detailViewBloc.itemUrl;
-                getIt<DetailViewUtil>().openBrowserByUrl(url);
+                final url = viewModel.itemUrl;
+                DetailViewUtil.openBrowserByUrl(url);
                 break;
               case 2:
-                final url = detailViewBloc.itemUrl;
-                getIt<DetailViewUtil>().shareUrl(url);
+                final url = viewModel.itemUrl;
+                DetailViewUtil.shareUrl(url);
                 break;
             }
           },

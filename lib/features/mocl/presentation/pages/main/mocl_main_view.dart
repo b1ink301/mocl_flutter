@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/main/view_model/main_view_model.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/main/providers/main_view_model.dart';
 import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
@@ -14,13 +14,12 @@ class MainView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textStyle = Theme.of(context).textTheme.bodyMedium;
-
     final resultAsync = ref.watch(mainViewModelProvider);
 
-    return resultAsync.maybeWhen(
-      success: (data) => _buildListView(context, data, textStyle),
-      failure: (message) => _buildErrorView(context, message),
-      orElse: () => _buildLoadingView(),
+    return resultAsync.when(
+      data: (data) => _buildListView(context, data, textStyle),
+      error: (error, stack) => _buildErrorView(context, error.toString()),
+      loading: () => _buildLoadingView(),
     );
   }
 

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
@@ -41,11 +42,11 @@ void main() {
 
   test('리스트 목록을 가져온다. (성공)', () async {
     // arrange
-    provideDummyBuilder<Result<List<ListItem>>>(
-        (_, __) => ResultSuccess(const <ListItem>[]));
+    provideDummyBuilder<Either<Failure, List<ListItem>>>(
+        (_, __) => Right(const <ListItem>[]));
 
     when(listDataSource.getList(any, any, any, any))
-        .thenAnswer((_) => Future.value(ResultSuccess(const <ListItem>[])));
+        .thenAnswer((_) => Future.value(Right(const <ListItem>[])));
 
     var item = mainItemModel.toEntity(siteType);
     log("result=$item");

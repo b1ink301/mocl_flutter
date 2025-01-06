@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:html/parser.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
@@ -26,13 +27,13 @@ class DamoangParser extends BaseParser {
   }
 
   @override
-  Future<Result<Details>> detail(Response response) async {
+  Future<Either<Failure, Details>> detail(Response response) async {
     final responseData = response.data;
     final resultPort = ReceivePort();
 
     await Isolate.spawn(_detailIsolate, [responseData, resultPort.sendPort]);
 
-    return await resultPort.first as Result<Details>;
+    return await resultPort.first as Either<Failure, Details>;
   }
 
   static void _detailIsolate(List<dynamic> args) {
@@ -194,25 +195,26 @@ class DamoangParser extends BaseParser {
       bodyHtml: bodyHtml?.innerHtml ?? '',
     );
 
-    sendPort.send(Result.success(detail));
+    final result = Right<Failure, Details>(detail);
+    sendPort.send(result);
   }
 
   @override
-  Future<Result<List<ListItem>>> list(
+  Future<Either<Failure, List<ListItem>>> list(
     Response response,
     int lastId,
     String boardTitle,
     Future<Map<int, bool>> Function(SiteType, List<int>) isReads,
   ) async {
     final receivePort = ReceivePort();
-    final completer = Completer<Result<List<ListItem>>>();
+    final completer = Completer<List<ListItem>>();
 
     receivePort.listen((message) async {
       if (message is ReadStatusRequest) {
         final statuses = await isReads(siteType, message.ids);
         message.responsePort.send(ReadStatusResponse(statuses));
       } else if (message is List<ListItem>) {
-        completer.complete(Result.success(message));
+        completer.complete(message);
         receivePort.close();
       }
     });
@@ -229,10 +231,10 @@ class DamoangParser extends BaseParser {
         ),
       );
 
-      return await completer.future;
+      return Right(await completer.future);
     } catch (e) {
       receivePort.close();
-      return Result.failure(GetListFailure(message: e.toString()));
+      return Left(GetListFailure(message: e.toString()));
     }
   }
 

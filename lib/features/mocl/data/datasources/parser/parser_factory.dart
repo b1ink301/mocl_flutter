@@ -4,7 +4,6 @@ import 'package:mocl_flutter/features/mocl/domain/repositories/settings_reposito
 
 import 'base_parser.dart';
 
-@injectable
 class ParserFactory {
   final Map<SiteType, BaseParser> parsers;
   final SettingsRepository settingsRepository;

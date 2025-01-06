@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/main/view_model/main_view_model.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 
 class DrawerWidget extends ConsumerWidget {
   const DrawerWidget({super.key, required this.onChangeSite});
@@ -11,7 +11,6 @@ class DrawerWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final viewModel = ref.read(mainViewModelProvider.notifier);
     return SafeArea(
       left: false,
       right: false,
@@ -45,7 +44,7 @@ class DrawerWidget extends ConsumerWidget {
                           onChangeSite(siteType);
                         }
                       },
-                      trailing: viewModel.siteType == siteType
+                      trailing: ref.watch(currentSiteTypeProvider) == siteType
                           ? Icon(
                               Icons.check_outlined,
                               color: Theme.of(context).indicatorColor,
@@ -62,11 +61,14 @@ class DrawerWidget extends ConsumerWidget {
                 )),
             const Spacer(),
             ref.watch(getAppVersionProvider).maybeWhen(
-                data: (version) => ListTile(
-                      title: Text(version, textAlign: TextAlign.center),
-                      titleTextStyle: Theme.of(context).textTheme.bodySmall,
+                data: (version) => version.fold(
+                      (failure) => SizedBox.shrink(),
+                      (version) => ListTile(
+                        title: Text(version, textAlign: TextAlign.center),
+                        titleTextStyle: Theme.of(context).textTheme.bodySmall,
+                      ),
                     ),
-                orElse: () => const SizedBox.shrink()),
+                orElse: () => const LoadingWidget()),
             SizedBox(height: MediaQuery.of(context).padding.bottom)
           ],
         ),

@@ -3,37 +3,27 @@ import 'dart:io';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/features/mocl/presentation/injection.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/detail/bloc/detail_view_bloc.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/detail/bloc/get_height_cubit.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/detail_appbar.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/detail/providers/detail_view_model.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/mocl_detail_view.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/dummy_appbar.dart';
 
-class DetailPage extends StatelessWidget {
+class DetailPage extends ConsumerWidget {
   const DetailPage({super.key});
 
-  static Widget withBloc(
+  static Widget withRiverpod(
     BuildContext context,
     SiteType siteType,
     ListItem item,
   ) {
-    final textStyle = Theme.of(context).textTheme.labelMedium!;
-    final textWidth = MediaQuery.of(context).size.width;
 
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(
-          create: (context) =>
-              getIt<DetailViewBloc>(param1: item, param2: siteType)
-                ..add(const DetailViewEvent.details()),
-        ),
-        BlocProvider(
-            create: (context) => getIt<GetHeightCubit>()
-              ..getHeight(item.title, textStyle, textWidth)),
+    return ProviderScope(
+      overrides: [
+        detailViewModelProvider
+            .overrideWith(() => DetailViewModel()..initialize(item))
       ],
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: Theme.of(context).appBarTheme.systemOverlayStyle!,
@@ -43,7 +33,7 @@ class DetailPage extends StatelessWidget {
   }
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final child = Scaffold(
       appBar: buildDummyAppbar(context),
       body: SafeArea(
@@ -51,7 +41,7 @@ class DetailPage extends StatelessWidget {
         right: false,
         child: RefreshIndicator(
           onRefresh: () async {
-            context.read<DetailViewBloc>().refresh();
+            ref.read(detailViewModelProvider.notifier).refresh();
           },
           child: const CustomScrollView(
             slivers: [

@@ -1,10 +1,11 @@
+import 'package:fpdart/fpdart.dart';
+import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
 abstract class ListRepository {
-  Future<Result<List<ListItem>>> getList({
+  Future<Either<Failure, List<ListItem>>> getList({
     required MainItem item,
     required int page,
     required int lastId,

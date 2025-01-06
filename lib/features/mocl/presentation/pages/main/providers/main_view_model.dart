@@ -1,8 +1,8 @@
 import 'package:flutter/cupertino.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_main_list.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
@@ -21,39 +21,25 @@ class MainViewModel extends _$MainViewModel {
   late SiteType _siteType;
 
   @override
-  MainState build() {
+  FutureOr<List<MainItem>> build() async {
     _siteType = ref.watch(currentSiteTypeProvider);
-    _loadData();
-    return MainStateInitial();
+    final getList = ref.read(getMainListProvider);
+    final result = await getList(_siteType);
+    return result.fold(
+      (failure) => throw failure,
+      (data) => data,
+    );
   }
-
-  SiteType get siteType => _siteType;
 
   void changeSiteType(SiteType newSiteType) {
-    if (siteType != newSiteType) {
+    if (_siteType != newSiteType) {
       ref.read(currentSiteTypeProvider.notifier).changeSiteType(newSiteType);
-      _loadData();
+      reload();
     }
   }
 
-  Future<void> reload() async {
-    await _loadData();
-  }
-
-  Future<void> _loadData() async {
-    state = MainState.loading();
-
-    try {
-      final getList = ref.read(getMainListProvider);
-      final result = await getList(_siteType);
-      if (result is ResultSuccess<List<MainItem>>) {
-        state = MainState.success(result.data);
-      } else if (result is ResultFailure) {
-        state = MainState.failure(result.toString());
-      }
-    } catch (error, _) {
-      state = MainState.failure(error.toString());
-    }
+  void reload() {
+    ref.invalidateSelf();
   }
 
   void handleAddButton(BuildContext context, SiteType newSiteType) async {
@@ -63,14 +49,13 @@ class MainViewModel extends _$MainViewModel {
     );
     if (context.mounted && result != null) {
       await _setList(result);
-      await reload();
+      reload();
     }
   }
 
-  Future<Result> _setList(List<MainItem> list) async {
+  Future<Either> _setList(List<MainItem> list) async {
     final params = SetMainParams(siteType: _siteType, list: list);
     final setList = ref.read(setMainListProvider);
-    final result = await setList.call(params);
-    return result;
+    return await setList.call(params);
   }
 }

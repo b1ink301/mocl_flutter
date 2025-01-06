@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
@@ -43,29 +44,29 @@ void main() async {
 
   test('상세 데이터를 가져온다. (성공)', () async {
     // arrange
-    provideDummyBuilder<Result<Details>>(
-        (_, __) => ResultSuccess(Details.empty()));
+    provideDummyBuilder<Either<Failure, Details>>(
+            (_, __) => Right(Details.empty()));
 
     when(detailDataSource.getDetail(any, any))
-        .thenAnswer((_) => Future.value(ResultSuccess(Details.empty())));
+        .thenAnswer((_) => Future.value(Right(Details.empty())));
 
     // act
-    Result result = await detailDataSource.getDetail(item, parser);
+    final result = await detailDataSource.getDetail(item, parser);
 
     // assert
-    expect(result, isA<ResultSuccess>());
+    expect(result, isA<Right>());
   });
 
   test('상세 데이터를 가져온다. (에러)', () async {
     // arrange
-    provideDummyBuilder<Result<Details>>(
-        (_, __) => ResultSuccess(Details.empty()));
+    provideDummyBuilder<Either<Failure, Details>>(
+        (_, __) => Right(Details.empty()));
 
     when(detailDataSource.getDetail(any, any)).thenAnswer(
-        (_) => Future.value(ResultFailure(GetDetailFailure(message: '---'))));
+        (_) => Future.value(Left(GetDetailFailure(message: '---'))));
 
     // act
-    Result result = await detailDataSource.getDetail(item, parser);
+    final result = await detailDataSource.getDetail(item, parser);
 
     // assert
     expect(result, isA<ResultFailure>());

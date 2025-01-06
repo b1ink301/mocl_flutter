@@ -1,9 +1,7 @@
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/repositories/settings_repository.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:injectable/injectable.dart';
 
-@LazySingleton(as: SettingsRepository)
 class SettingsRepositoryImpl extends SettingsRepository {
   final SharedPreferences _prefs;
 

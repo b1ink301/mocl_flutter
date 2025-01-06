@@ -2,9 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:mocl_flutter/core/usecases/usecase.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/repositories/list_repository.dart';
-import 'package:injectable/injectable.dart';
 
-@injectable
 class SetReadFlag extends UseCase<Future<int>, SetReadFlagParams> {
   final ListRepository listRepository;
 

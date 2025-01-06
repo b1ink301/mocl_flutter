@@ -13,9 +13,7 @@ import 'package:mocl_flutter/features/mocl/domain/usecases/set_site_type.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/bloc/site_type_bloc.dart';
 
 part 'main_data_bloc.freezed.dart';
-
 part 'main_data_event.dart';
-
 part 'main_data_state.dart';
 
 @lazySingleton
@@ -56,23 +54,15 @@ class MainDataBloc extends Bloc<MainDataEvent, MainDataState> {
     emit(const StateLoading());
 
     final result = await getMainList.call(event.siteType);
-    result.whenOrNull(
-      success: (data) {
-        // emit(StateSuccess(data.whereType<MainItem>().toList()));
-        if (data is List<MainItem>) {
-          emit(StateSuccess(data));
-        } else {
-          emit(StateFailure('Unexpected data type: ${data.runtimeType}'));
-        }
-      },
-      failure: (failure) {
-        if (failure is NotLoginFailure) {
-          emit(StateRequireLogin(failure.message));
-        } else {
-          emit(StateFailure(failure.message));
-        }
-      },
-    );
+    result.fold((failure) {
+      if (failure is NotLoginFailure) {
+        emit(StateRequireLogin(failure.message));
+      } else {
+        emit(StateFailure(failure.message));
+      }
+    }, (data) {
+      emit(StateSuccess(data));
+    });
   }
 
   void refresh(SiteType siteType) {

@@ -19,14 +19,14 @@ abstract class BaseParser {
   ) =>
       Left(GetMainFailure(message: 'UnimplementedError()!'));
 
-  Future<Result<List<ListItem>>> list(
+  Future<Either<Failure, List<ListItem>>> list(
     Response response,
     int lastId,
     String boardTitle,
     Future<Map<int, bool>> Function(SiteType, List<int>) isReads,
   );
 
-  Future<Result<Details>> detail(Response response);
+  Future<Either<Failure, Details>> detail(Response response);
 
   Future<Result> comment(Response response);
 

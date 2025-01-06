@@ -12,7 +12,7 @@ import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.d
 class AddListDialog extends StatelessWidget {
   const AddListDialog({super.key});
 
-  static Widget withBloc(
+  static Widget withRiverpod(
     BuildContext context,
     SiteType siteType,
   ) =>
@@ -41,19 +41,15 @@ class AddListDialog extends StatelessWidget {
         content: SizedBox(
           width: MediaQuery.of(context).size.width * 0.7,
           height: MediaQuery.of(context).size.height * 0.7,
-          child: Consumer(builder: (
-            BuildContext context,
-            WidgetRef ref,
-            Widget? child,
-          ) {
+          child: Consumer(
+              builder: (BuildContext context, WidgetRef ref, Widget? child) {
             final state = ref.watch(addListDlgViewModelProvider);
-
-            return state.map(
-              initial: (_) => const LoadingWidget(),
-              loading: (_) => const LoadingWidget(),
-              success: (state) => _buildListView(context, state.data,
+            return state.when(
+              data: (data) => _buildListView(context, data,
                   ref.read(addListDlgViewModelProvider.notifier).onChanged),
-              failure: (state) => MessageWidget(message: state.message),
+              error: (failure, stackTrace) =>
+                  MessageWidget(message: failure.toString()),
+              loading: () => const LoadingWidget(),
             );
           }),
         ),
