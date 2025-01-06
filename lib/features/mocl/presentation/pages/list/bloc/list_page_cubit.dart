@@ -34,6 +34,7 @@ class ListPageCubit extends Cubit<ListPageState> {
 
   int _lastId = -1;
   int _page = 1;
+  bool _isLoading = false;
 
   bool get hasReachedMax => _hasReachedMax;
   bool _hasReachedMax = false;
@@ -44,6 +45,7 @@ class ListPageCubit extends Cubit<ListPageState> {
     @factoryParam this._mainItem,
   ) : super(const LoadingList()) {
     _initPage();
+    fetchPage();
   }
 
   String get smallTitle => _mainItem.siteType.title;
@@ -85,6 +87,10 @@ class ListPageCubit extends Cubit<ListPageState> {
   }
 
   Future<void> fetchPage() async {
+    if (_isLoading) {
+      return;
+    }
+    _isLoading = true;
     emit(const LoadingList());
     try {
       final params = GetListParams(
@@ -112,6 +118,8 @@ class ListPageCubit extends Cubit<ListPageState> {
       );
     } catch (e) {
       emit(FailedList(e.toString()));
+    } finally {
+      _isLoading = false;
     }
   }
 
