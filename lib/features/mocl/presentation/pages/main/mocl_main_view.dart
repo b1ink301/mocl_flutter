@@ -1,30 +1,26 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/main/bloc/main_data_bloc.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/main/view_model/main_view_model.dart';
 import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 
-class MainView extends StatelessWidget {
+class MainView extends ConsumerWidget {
   const MainView({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final textStyle = Theme.of(context).textTheme.bodyMedium;
 
-    return BlocBuilder<MainDataBloc, MainDataState>(
-      builder: (context, state) => state.map(
-        initial: (_) => _buildLoadingView(),
-        loading: (_) => _buildLoadingView(),
-        success: (state) => state.data.isEmpty
-            ? _buildEmptyView(textStyle)
-            : _buildListView(context, state.data, textStyle),
-        failure: (state) => _buildErrorView(context, state.message),
-        requireLogin: (state) => _buildErrorView(context, state.message),
-      ),
+    final resultAsync = ref.watch(mainViewModelProvider);
+
+    return resultAsync.maybeWhen(
+      success: (data) => _buildListView(context, data, textStyle),
+      failure: (message) => _buildErrorView(context, message),
+      orElse: () => _buildLoadingView(),
     );
   }
 

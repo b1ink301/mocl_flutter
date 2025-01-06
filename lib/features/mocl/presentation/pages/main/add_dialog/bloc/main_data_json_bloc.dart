@@ -38,16 +38,13 @@ class MainDataJsonBloc extends Bloc<MainDataJsonEvent, MainDataJsonState> {
   ) async {
     log('[MainDataJsonBloc] event=$event');
     emit(const StateLoading());
-    var result = await getMainListFromJson.call(event.siteType);
-    result.whenOrNull(
-      success: (data) {
-        _init(data);
-        emit(StateSuccess(data));
-      },
-      failure: (failure) {
-        emit(StateFailure(failure.message));
-      },
-    );
+    final result = await getMainListFromJson.call(event.siteType);
+    result.fold((failure) {
+      emit(StateFailure(failure.message));
+    }, (data) {
+      _init(data);
+      emit(StateSuccess(data));
+    });
   }
 
   void onChanged<T>(bool isChecked, T? item) {

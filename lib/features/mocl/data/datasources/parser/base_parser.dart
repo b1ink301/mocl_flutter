@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
@@ -9,13 +11,13 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
 abstract class BaseParser {
-  late final SiteType siteType;
-  late final String baseUrl;
+  abstract final SiteType siteType;
+  abstract final String baseUrl;
 
-  Result<List<MainItem>> main(
+  Either<Failure, List<MainItem>> main(
     Response response,
   ) =>
-      Result.success(const []);
+      Left(GetMainFailure(message: 'UnimplementedError()!'));
 
   Future<Result<List<ListItem>>> list(
     Response response,

@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:html/parser.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
@@ -21,7 +22,7 @@ class NaverCafeParser extends BaseParser {
   String get baseUrl => 'https://m.cafe.naver.com';
 
   @override
-  Result<List<MainItem>> main(Response response) {
+  Either<Failure, List<MainItem>> main(Response response) {
     final Map<String, dynamic> json = response.data['message'];
     final String status = json['status'];
     if (status != '200') {
@@ -29,9 +30,9 @@ class NaverCafeParser extends BaseParser {
       final String code = error['code'];
       final String msg = error['msg'];
       if (code == '0004') {
-        return Result.failure(NotLoginFailure(message: msg));
+        return Left(NotLoginFailure(message: msg));
       } else {
-        return Result.failure(GetMainFailure(message: msg));
+        return Left(GetMainFailure(message: msg));
       }
     } else {
       final List<dynamic> cafes = json['result']['cafes'];
@@ -50,7 +51,7 @@ class NaverCafeParser extends BaseParser {
         return MainItem.fromJson(json);
       }).toList();
 
-      return Result.success(data);
+      return Right(data);
     }
   }
 

@@ -17,6 +17,7 @@ import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widge
 part 'list_page_cubit.freezed.dart';
 
 part 'list_page_state.dart';
+part 'list_page_side_effect.dart';
 
 @injectable
 class ListPageCubit extends Cubit<ListPageState> {

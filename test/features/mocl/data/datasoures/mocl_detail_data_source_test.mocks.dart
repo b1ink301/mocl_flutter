@@ -5,9 +5,11 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
 
-import 'package:dio/dio.dart' as _i11;
+import 'package:dio/dio.dart' as _i13;
+import 'package:fpdart/fpdart.dart' as _i10;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i8;
+import 'package:mocl_flutter/core/error/failures.dart' as _i11;
 import 'package:mocl_flutter/features/mocl/data/datasources/detail_data_source.dart'
     as _i2;
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart'
@@ -17,7 +19,7 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart'
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart'
     as _i6;
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart'
-    as _i10;
+    as _i12;
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart'
     as _i4;
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart'
@@ -87,15 +89,6 @@ class MockBaseParser extends _i1.Mock implements _i7.BaseParser {
       ) as _i9.SiteType);
 
   @override
-  set siteType(_i9.SiteType? _siteType) => super.noSuchMethod(
-        Invocation.setter(
-          #siteType,
-          _siteType,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
   String get baseUrl => (super.noSuchMethod(
         Invocation.getter(#baseUrl),
         returnValue: _i8.dummyValue<String>(
@@ -105,33 +98,26 @@ class MockBaseParser extends _i1.Mock implements _i7.BaseParser {
       ) as String);
 
   @override
-  set baseUrl(String? _baseUrl) => super.noSuchMethod(
-        Invocation.setter(
-          #baseUrl,
-          _baseUrl,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  _i4.Result<List<_i10.MainItem>> main(_i11.Response<dynamic>? response) =>
+  _i10.Either<_i11.Failure, List<_i12.MainItem>> main(
+          _i13.Response<dynamic>? response) =>
       (super.noSuchMethod(
         Invocation.method(
           #main,
           [response],
         ),
-        returnValue: _i8.dummyValue<_i4.Result<List<_i10.MainItem>>>(
+        returnValue:
+            _i8.dummyValue<_i10.Either<_i11.Failure, List<_i12.MainItem>>>(
           this,
           Invocation.method(
             #main,
             [response],
           ),
         ),
-      ) as _i4.Result<List<_i10.MainItem>>);
+      ) as _i10.Either<_i11.Failure, List<_i12.MainItem>>);
 
   @override
   _i3.Future<_i4.Result<List<_i6.ListItem>>> list(
-    _i11.Response<dynamic>? response,
+    _i13.Response<dynamic>? response,
     int? lastId,
     String? boardTitle,
     _i3.Future<Map<int, bool>> Function(
@@ -166,7 +152,7 @@ class MockBaseParser extends _i1.Mock implements _i7.BaseParser {
 
   @override
   _i3.Future<_i4.Result<_i5.Details>> detail(
-          _i11.Response<dynamic>? response) =>
+          _i13.Response<dynamic>? response) =>
       (super.noSuchMethod(
         Invocation.method(
           #detail,
@@ -183,7 +169,7 @@ class MockBaseParser extends _i1.Mock implements _i7.BaseParser {
       ) as _i3.Future<_i4.Result<_i5.Details>>);
 
   @override
-  _i3.Future<_i4.Result<dynamic>> comment(_i11.Response<dynamic>? response) =>
+  _i3.Future<_i4.Result<dynamic>> comment(_i13.Response<dynamic>? response) =>
       (super.noSuchMethod(
         Invocation.method(
           #comment,

@@ -30,7 +30,7 @@ class MainDataSourceImpl extends MainDataSource {
   Future<List<MainItem>> get(
     SiteType siteType,
   ) async {
-    var result = await localDatabase.getMainItems(siteType);
+    final result = await localDatabase.getMainItems(siteType);
     return result.map((item) {
       return item.toMainItemModel().toEntity(siteType);
     }).toList();
