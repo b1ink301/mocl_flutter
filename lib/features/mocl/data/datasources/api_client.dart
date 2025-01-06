@@ -8,6 +8,7 @@ import 'package:dio_cookie_manager/dio_cookie_manager.dart' as diocookie;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart' as webview;
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
@@ -212,9 +213,7 @@ class ApiClient {
     }
   }
 
-  Future<Result<List<MainItem>>> getMain(
-    BaseParser parser,
-  ) async {
+  Future<Either<Failure, List<MainItem>>> getMain(BaseParser parser) async {
     if (parser.siteType != SiteType.naverCafe) {
       throw FormatException('Not support site');
     }
@@ -232,7 +231,7 @@ class ApiClient {
       if (response.statusCode == 200) {
         return parser.main(response);
       } else {
-        return Result.failure(
+        return Left(
           GetMainFailure(
               message: 'response.statusCode = ${response.statusCode}'),
         );
@@ -240,11 +239,11 @@ class ApiClient {
     } on DioException catch (e) {
       final message = e.message ?? 'Unknown Error';
       log('getMain = $url message = $message');
-      return Result.failure(GetMainFailure(message: message));
+      return Left(GetMainFailure(message: message));
     } on FormatException catch (e) {
       final message = e.message;
       log('getMain = $url message = $message');
-      return Result.failure(GetMainFailure(message: message));
+      return Left(GetMainFailure(message: message));
     } finally {
       dio.interceptors.remove(interceptor);
     }

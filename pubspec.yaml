@@ -30,7 +30,8 @@ dependencies:
   equatable: ^2.0.7
 
   # Functional programming thingies
-  #  dartz: ^0.10.1
+  fpdart: ^1.1.1
+
   # Remote API
   #  internet_connection_checker_plus: ^2.4.2
   # Http Client
@@ -42,7 +43,7 @@ dependencies:
   dio_cookie_manager: ^3.1.1
 
   # Local cache
-  shared_preferences: ^2.3.4
+  shared_preferences: ^2.3.5
 
   # json
   json_annotation: ^4.9.0
@@ -113,6 +114,11 @@ dependencies:
 
   dartx: ^1.2.0
 
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+
+  super_sliver_list: ^0.4.1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
@@ -127,6 +133,8 @@ dev_dependencies:
   bloc_test: ^9.1.7
   floor_generator: ^1.5.0
   injectable_generator: ^2.6.2
+  riverpod_generator: ^2.6.3
+  riverpod_lint: ^2.6.3
 
 flutter:
   uses-material-design: true
