@@ -40,11 +40,21 @@ class MoclListPage extends StatelessWidget {
         right: false,
         child: RefreshIndicator(
           onRefresh: context.read<ListPageCubit>().refresh,
-          child: const CustomScrollView(
-            slivers: <Widget>[
-              _ListAppbar(),
-              MoclListView(),
-            ],
+          child: NotificationListener<ScrollNotification>(
+            onNotification: (ScrollNotification scrollInfo) {
+              if (scrollInfo is ScrollEndNotification) {
+                if (context.mounted && scrollInfo.metrics.extentAfter < 800) {
+                  context.read<ListPageCubit>().fetchPage();
+                }
+              }
+              return true;
+            },
+            child: const CustomScrollView(
+              slivers: <Widget>[
+                _ListAppbar(),
+                MoclListView(),
+              ],
+            ),
           ),
         ),
       ),
