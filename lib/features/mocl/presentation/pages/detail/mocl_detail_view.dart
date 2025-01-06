@@ -2,11 +2,10 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
-import 'package:mocl_flutter/features/mocl/presentation/injection.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/detail/bloc/detail_view_bloc.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/detail/providers/detail_view_model.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/detail_view_util.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
@@ -14,30 +13,30 @@ import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.d
 import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
-class DetailView extends StatelessWidget {
+class DetailView extends ConsumerWidget {
   const DetailView({super.key});
 
   @override
-  Widget build(BuildContext context) =>
-      BlocBuilder<DetailViewBloc, DetailViewState>(
-        builder: (context, state) => state.maybeMap(
-          success: (state) => _DetailView(detail: state.detail),
-          failed: (state) => SliverFillRemaining(
-            hasScrollBody: false,
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Center(
-                child: MessageWidget(message: state.message),
-              ),
-            ),
-          ),
-          orElse: () => const SliverToBoxAdapter(
-            child: Column(
-              children: [LoadingWidget(), DividerWidget()],
-            ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final state = ref.watch(detailViewModelProvider);
+    return state.maybeMap(
+      success: (state) => _DetailView(detail: state.detail),
+      failed: (state) => SliverFillRemaining(
+        hasScrollBody: false,
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Center(
+            child: MessageWidget(message: state.message),
           ),
         ),
-      );
+      ),
+      orElse: () => const SliverToBoxAdapter(
+        child: Column(
+          children: [LoadingWidget(), DividerWidget()],
+        ),
+      ),
+    );
+  }
 }
 
 class _DetailView extends StatelessWidget {
@@ -132,19 +131,19 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
   }
 }
 
-class _DetailContent extends StatelessWidget {
+class _DetailContent extends ConsumerWidget {
   final Details detail;
 
   const _DetailContent({required this.detail});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final hexColor = _getHexColor(theme.indicatorColor);
     final bodySmall = theme.textTheme.bodySmall;
     final bodyMedium = theme.textTheme.bodyMedium;
-    final bloc = context.read<DetailViewBloc>();
-    final util = getIt<DetailViewUtil>();
+
+    final viewModel = ref.read(detailViewModelProvider.notifier);
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -156,7 +155,7 @@ class _DetailContent extends StatelessWidget {
           detail: detail,
           hexColor: hexColor,
           bodyMedium: bodyMedium,
-          onTapUrl: (url) => util.openUrl(context, url),
+          onTapUrl: (url) => DetailViewUtil.openUrl(context, url),
         ),
         const SizedBox(height: 10),
         if (detail.comments.isNotEmpty)
@@ -165,10 +164,10 @@ class _DetailContent extends StatelessWidget {
             comments: detail.comments,
             bodySmall: bodySmall,
             bodyMedium: bodyMedium,
-            openUrl: (url) => util.openUrl(context, url),
+            openUrl: (url) => DetailViewUtil.openUrl(context, url),
           ),
         const Divider(),
-        _RefreshButton(onRefresh: bloc.refresh, bodyMedium: bodyMedium),
+        _RefreshButton(onRefresh: viewModel.refresh, bodyMedium: bodyMedium),
         const Divider(),
       ],
     );

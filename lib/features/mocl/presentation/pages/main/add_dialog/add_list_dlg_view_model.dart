@@ -4,7 +4,6 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/use_case_provider.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/main/add_dialog/bloc/main_data_json_bloc.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'add_list_dlg_view_model.g.dart';
@@ -17,24 +16,18 @@ class AddListDlgViewModel extends _$AddListDlgViewModel {
   List<MainItem> get selectedItems => UnmodifiableListView(_selectedItems);
 
   @override
-  FutureOr<List<MainItem>> build() {
+  FutureOr<List<MainItem>> build() async {
     _siteType = ref.watch(currentSiteTypeProvider);
-    _reqFetch();
-    return AsyncLoading();
-  }
-
-  Future<void> _reqFetch() async {
-    state = const AsyncLoading();
-
     final getMainListFromJson = ref.read(getMainListFromJsonProvider);
     final result = await getMainListFromJson(_siteType);
-    result.fold(
+
+    return result.fold(
       (failure) {
-        state = AsyncError(failure.message, StackTrace.current);
+        throw failure;
       },
       (data) {
         _init(data);
-        state = AsyncData(data);
+        return data;
       },
     );
   }

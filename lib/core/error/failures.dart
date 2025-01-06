@@ -40,3 +40,8 @@ class UnknownFailure extends Failure {
 class ServerException implements Exception {}
 
 class GetMainException implements Exception {}
+
+
+class GetVersionFailure extends Failure {
+  const GetVersionFailure({required super.message});
+}

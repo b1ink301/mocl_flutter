@@ -2,12 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/mocl_drawer_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/mocl_main_view.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/main/view_model/main_view_model.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/main/providers//main_view_model.dart';
 import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/dummy_appbar.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
@@ -15,7 +14,7 @@ import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.d
 class MainPage extends ConsumerWidget {
   const MainPage({super.key});
 
-  static Widget withBloc(
+  static Widget withRiverpod(
     BuildContext context,
   ) =>
       AnnotatedRegion<SystemUiOverlayStyle>(

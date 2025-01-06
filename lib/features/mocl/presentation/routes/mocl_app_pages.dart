@@ -26,7 +26,7 @@ class AppPages {
       GoRoute(
           path: Routes.main,
           pageBuilder: (BuildContext context, GoRouterState state) =>
-              SwipeablePage(builder: (context) => MainPage.withBloc(context)),
+              SwipeablePage(builder: (context) => MainPage.withRiverpod(context)),
           routes: [
             GoRoute(
                 path: Routes.setMainDlg,
@@ -35,7 +35,7 @@ class AppPages {
                       builder: (BuildContext context) {
                         final siteType =
                             GoRouterState.of(context).extra as SiteType;
-                        return AddListDialog.withBloc(context, siteType);
+                        return AddListDialog.withRiverpod(context, siteType);
                       },
                     )),
           ]),
@@ -44,7 +44,7 @@ class AppPages {
         pageBuilder: (BuildContext context, GoRouterState state) =>
             SwipeablePage(builder: (context) {
           final item = GoRouterState.of(context).extra as MainItem;
-          return MoclListPage.withBloc(context, item);
+          return MoclListPage.withRiverpod(context, item);
         }),
       ),
       GoRoute(
@@ -56,7 +56,7 @@ class AppPages {
                       GoRouterState.of(context).extra as List<dynamic>;
                   final siteType = extra[0] as SiteType;
                   final item = extra[1] as ListItem;
-                  return DetailPage.withBloc(context, siteType, item);
+                  return DetailPage.withRiverpod(context, siteType, item);
                 },
               ),
           routes: [

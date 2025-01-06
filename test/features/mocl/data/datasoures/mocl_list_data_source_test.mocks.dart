@@ -5,25 +5,25 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i3;
 
-import 'package:dio/dio.dart' as _i12;
-import 'package:fpdart/fpdart.dart' as _i10;
+import 'package:dio/dio.dart' as _i11;
+import 'package:fpdart/fpdart.dart' as _i4;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i8;
-import 'package:mocl_flutter/core/error/failures.dart' as _i11;
+import 'package:mockito/src/dummies.dart' as _i9;
+import 'package:mocl_flutter/core/error/failures.dart' as _i5;
 import 'package:mocl_flutter/features/mocl/data/datasources/list_data_source.dart'
     as _i2;
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart'
-    as _i7;
+    as _i8;
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart'
-    as _i13;
+    as _i12;
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart'
-    as _i5;
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart'
     as _i6;
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart'
+    as _i7;
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart'
-    as _i4;
+    as _i13;
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart'
-    as _i9;
+    as _i10;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -48,11 +48,11 @@ class MockListDataSource extends _i1.Mock implements _i2.ListDataSource {
   }
 
   @override
-  _i3.Future<_i4.Result<List<_i5.ListItem>>> getList(
-    _i6.MainItem? item,
+  _i3.Future<_i4.Either<_i5.Failure, List<_i6.ListItem>>> getList(
+    _i7.MainItem? item,
     int? page,
     int? lastId,
-    _i7.BaseParser? parser,
+    _i8.BaseParser? parser,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -64,8 +64,9 @@ class MockListDataSource extends _i1.Mock implements _i2.ListDataSource {
             parser,
           ],
         ),
-        returnValue: _i3.Future<_i4.Result<List<_i5.ListItem>>>.value(
-            _i8.dummyValue<_i4.Result<List<_i5.ListItem>>>(
+        returnValue:
+            _i3.Future<_i4.Either<_i5.Failure, List<_i6.ListItem>>>.value(
+                _i9.dummyValue<_i4.Either<_i5.Failure, List<_i6.ListItem>>>(
           this,
           Invocation.method(
             #getList,
@@ -77,11 +78,11 @@ class MockListDataSource extends _i1.Mock implements _i2.ListDataSource {
             ],
           ),
         )),
-      ) as _i3.Future<_i4.Result<List<_i5.ListItem>>>);
+      ) as _i3.Future<_i4.Either<_i5.Failure, List<_i6.ListItem>>>);
 
   @override
   _i3.Future<int> setReadFlag(
-    _i9.SiteType? siteType,
+    _i10.SiteType? siteType,
     int? id,
   ) =>
       (super.noSuchMethod(
@@ -97,7 +98,7 @@ class MockListDataSource extends _i1.Mock implements _i2.ListDataSource {
 
   @override
   _i3.Future<bool> isReadFlag(
-    _i9.SiteType? siteType,
+    _i10.SiteType? siteType,
     int? boardId,
   ) =>
       (super.noSuchMethod(
@@ -113,7 +114,7 @@ class MockListDataSource extends _i1.Mock implements _i2.ListDataSource {
 
   @override
   _i3.Future<Map<int, bool>> isReadFlags(
-    _i9.SiteType? siteType,
+    _i10.SiteType? siteType,
     List<int>? boardIds,
   ) =>
       (super.noSuchMethod(
@@ -131,51 +132,51 @@ class MockListDataSource extends _i1.Mock implements _i2.ListDataSource {
 /// A class which mocks [BaseParser].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockBaseParser extends _i1.Mock implements _i7.BaseParser {
+class MockBaseParser extends _i1.Mock implements _i8.BaseParser {
   MockBaseParser() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i9.SiteType get siteType => (super.noSuchMethod(
+  _i10.SiteType get siteType => (super.noSuchMethod(
         Invocation.getter(#siteType),
-        returnValue: _i9.SiteType.clien,
-      ) as _i9.SiteType);
+        returnValue: _i10.SiteType.clien,
+      ) as _i10.SiteType);
 
   @override
   String get baseUrl => (super.noSuchMethod(
         Invocation.getter(#baseUrl),
-        returnValue: _i8.dummyValue<String>(
+        returnValue: _i9.dummyValue<String>(
           this,
           Invocation.getter(#baseUrl),
         ),
       ) as String);
 
   @override
-  _i10.Either<_i11.Failure, List<_i6.MainItem>> main(
-          _i12.Response<dynamic>? response) =>
+  _i4.Either<_i5.Failure, List<_i7.MainItem>> main(
+          _i11.Response<dynamic>? response) =>
       (super.noSuchMethod(
         Invocation.method(
           #main,
           [response],
         ),
         returnValue:
-            _i8.dummyValue<_i10.Either<_i11.Failure, List<_i6.MainItem>>>(
+            _i9.dummyValue<_i4.Either<_i5.Failure, List<_i7.MainItem>>>(
           this,
           Invocation.method(
             #main,
             [response],
           ),
         ),
-      ) as _i10.Either<_i11.Failure, List<_i6.MainItem>>);
+      ) as _i4.Either<_i5.Failure, List<_i7.MainItem>>);
 
   @override
-  _i3.Future<_i4.Result<List<_i5.ListItem>>> list(
-    _i12.Response<dynamic>? response,
+  _i3.Future<_i4.Either<_i5.Failure, List<_i6.ListItem>>> list(
+    _i11.Response<dynamic>? response,
     int? lastId,
     String? boardTitle,
     _i3.Future<Map<int, bool>> Function(
-      _i9.SiteType,
+      _i10.SiteType,
       List<int>,
     )? isReads,
   ) =>
@@ -189,8 +190,9 @@ class MockBaseParser extends _i1.Mock implements _i7.BaseParser {
             isReads,
           ],
         ),
-        returnValue: _i3.Future<_i4.Result<List<_i5.ListItem>>>.value(
-            _i8.dummyValue<_i4.Result<List<_i5.ListItem>>>(
+        returnValue:
+            _i3.Future<_i4.Either<_i5.Failure, List<_i6.ListItem>>>.value(
+                _i9.dummyValue<_i4.Either<_i5.Failure, List<_i6.ListItem>>>(
           this,
           Invocation.method(
             #list,
@@ -202,40 +204,40 @@ class MockBaseParser extends _i1.Mock implements _i7.BaseParser {
             ],
           ),
         )),
-      ) as _i3.Future<_i4.Result<List<_i5.ListItem>>>);
+      ) as _i3.Future<_i4.Either<_i5.Failure, List<_i6.ListItem>>>);
 
   @override
-  _i3.Future<_i4.Result<_i13.Details>> detail(
-          _i12.Response<dynamic>? response) =>
+  _i3.Future<_i4.Either<_i5.Failure, _i12.Details>> detail(
+          _i11.Response<dynamic>? response) =>
       (super.noSuchMethod(
         Invocation.method(
           #detail,
           [response],
         ),
-        returnValue: _i3.Future<_i4.Result<_i13.Details>>.value(
-            _i8.dummyValue<_i4.Result<_i13.Details>>(
+        returnValue: _i3.Future<_i4.Either<_i5.Failure, _i12.Details>>.value(
+            _i9.dummyValue<_i4.Either<_i5.Failure, _i12.Details>>(
           this,
           Invocation.method(
             #detail,
             [response],
           ),
         )),
-      ) as _i3.Future<_i4.Result<_i13.Details>>);
+      ) as _i3.Future<_i4.Either<_i5.Failure, _i12.Details>>);
 
   @override
-  _i3.Future<_i4.Result<dynamic>> comment(_i12.Response<dynamic>? response) =>
+  _i3.Future<_i13.Result<dynamic>> comment(_i11.Response<dynamic>? response) =>
       (super.noSuchMethod(
         Invocation.method(
           #comment,
           [response],
         ),
-        returnValue: _i3.Future<_i4.Result<dynamic>>.value(
-            _i8.dummyValue<_i4.Result<dynamic>>(
+        returnValue: _i3.Future<_i13.Result<dynamic>>.value(
+            _i9.dummyValue<_i13.Result<dynamic>>(
           this,
           Invocation.method(
             #comment,
             [response],
           ),
         )),
-      ) as _i3.Future<_i4.Result<dynamic>>);
+      ) as _i3.Future<_i13.Result<dynamic>>);
 }

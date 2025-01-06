@@ -15,10 +15,8 @@ import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.d
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
-@lazySingleton
 class ApiClient {
   final dio = Dio();
   final cookieJar = cookiejar.CookieJar();
@@ -65,7 +63,7 @@ class ApiClient {
             : null,
       );
 
-  Future<Result<List<ListItem>>> getList(
+  Future<Either<Failure, List<ListItem>>> getList(
     MainItem item,
     int page,
     int lastId,
@@ -104,14 +102,14 @@ class ApiClient {
               item.text,
               isReads,
             )
-          : Result.failure(
+          : Left(
               GetListFailure(
                   message: 'response.statusCode = ${response.statusCode}'),
             );
     } on DioException catch (e) {
       final message = e.message ?? 'Unknown Error';
       log('getList = $url message = $message');
-      return Result.failure(GetListFailure(message: message));
+      return Left(GetListFailure(message: message));
     }
   }
 
@@ -137,7 +135,7 @@ class ApiClient {
     return interceptor;
   }
 
-  Future<Result<Details>> getDetail(
+  Future<Either<Failure, Details>> getDetail(
     ListItem item,
     BaseParser parser,
   ) async {
@@ -177,14 +175,14 @@ class ApiClient {
               data: data, requestOptions: RequestOptions());
           return parser.detail(result);
         } else {
-          return Result.failure(
+          return Left(
             GetDetailFailure(message: 'response.statusCode = not 200'),
           );
         }
       } on DioException catch (e) {
         final message = e.message ?? 'Unknown Error';
         log('getDetail = $detailUrl message = $message');
-        return Result.failure(GetDetailFailure(message: message));
+        return Left(GetDetailFailure(message: message));
       } finally {
         dio.interceptors.remove(interceptor);
       }
@@ -201,14 +199,14 @@ class ApiClient {
         log('getDetail $url, $headers response = ${response.statusCode}');
         return response.statusCode == 200
             ? parser.detail(response)
-            : Result.failure(
+            : Left(
                 GetDetailFailure(
                     message: 'response.statusCode = ${response.statusCode}'),
               );
       } on DioException catch (e) {
         final message = e.message ?? 'Unknown Error';
         log('getDetail = $url message = $message');
-        return Result.failure(GetDetailFailure(message: message));
+        return Left(GetDetailFailure(message: message));
       }
     }
   }

@@ -1,4 +1,4 @@
-part of 'list_page_cubit.dart';
+part of 'list_view_model.dart';
 
 @freezed
 sealed class ListPageState with _$ListPageState {

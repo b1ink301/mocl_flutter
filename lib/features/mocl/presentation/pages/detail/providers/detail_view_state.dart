@@ -1,4 +1,4 @@
-part of 'detail_view_bloc.dart';
+part of 'detail_view_model.dart';
 
 @freezed
 sealed class DetailViewState with _$DetailViewState {
