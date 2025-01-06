@@ -1,4 +1,3 @@
-import 'package:easy_infinite_pagination/easy_infinite_pagination.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
@@ -27,16 +26,17 @@ class MoclListView extends StatelessWidget {
                 }
                 final item = bloc.getItem(index);
                 return CachedItemBuilder(
-                    key: item.key,
-                    builder: () => Column(
-                          children: [
-                            MoclListItem(
-                              item: item,
-                              onTap: () => bloc.onTap(context, item),
-                            ),
-                            const DividerWidget(),
-                          ],
-                        ));
+                  key: item.key,
+                  builder: () => Column(
+                    children: [
+                      MoclListItem(
+                        item: item,
+                        onTap: () => bloc.onTap(context, item),
+                      ),
+                      const DividerWidget(),
+                    ],
+                  ),
+                );
               },
               childCount: bloc.listCount + 1,
             ),
