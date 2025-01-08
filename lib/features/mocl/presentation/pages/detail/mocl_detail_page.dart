@@ -9,7 +9,7 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/detail_appbar.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/providers/detail_view_model.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/mocl_detail_view.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/dummy_appbar.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/dummy_appbar_widget.dart';
 
 class DetailPage extends ConsumerWidget {
   const DetailPage({super.key});
@@ -35,7 +35,7 @@ class DetailPage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final child = Scaffold(
-      appBar: buildDummyAppbar(context),
+      appBar: DummyAppBarWidget.buildDummyAppbar(),
       body: SafeArea(
         left: false,
         right: false,

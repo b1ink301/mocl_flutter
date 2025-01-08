@@ -1,5 +1,3 @@
-part of 'mocl_app_pages.dart';
-
 abstract class Routes {
   Routes._();
 

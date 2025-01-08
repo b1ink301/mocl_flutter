@@ -1,25 +1,23 @@
 import 'dart:collection';
 
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/use_case_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'add_list_dlg_view_model.g.dart';
+part 'add_list_dlg_providers.g.dart';
 
 @riverpod
-class AddListDlgViewModel extends _$AddListDlgViewModel {
-  late final SiteType _siteType;
+class AddListDlgNotifier extends _$AddListDlgNotifier {
   final List<MainItem> _selectedItems = [];
 
   List<MainItem> get selectedItems => UnmodifiableListView(_selectedItems);
 
   @override
   FutureOr<List<MainItem>> build() async {
-    _siteType = ref.watch(currentSiteTypeProvider);
+    final siteType = ref.read(currentSiteTypeNotifierProvider);
     final getMainListFromJson = ref.read(getMainListFromJsonProvider);
-    final result = await getMainListFromJson(_siteType);
+    final result = await getMainListFromJson(siteType);
 
     return result.fold(
       (failure) {

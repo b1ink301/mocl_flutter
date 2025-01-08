@@ -66,7 +66,3 @@ class LocalDatabase {
     await _database.close();
   }
 }
-
-FutureOr disposeDataSource(LocalDatabase instance) {
-  instance.dispose();
-}

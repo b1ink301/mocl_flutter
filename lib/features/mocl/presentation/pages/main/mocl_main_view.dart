@@ -3,25 +3,38 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/main/providers/main_view_model.dart';
-import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/main/providers/main_providers.dart';
+import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_routes.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
 
 class MainView extends ConsumerWidget {
   const MainView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final textStyle = Theme.of(context).textTheme.bodyMedium;
-    final resultAsync = ref.watch(mainViewModelProvider);
+  Widget build(BuildContext context, WidgetRef ref) => RefreshIndicator(
+        onRefresh: () async =>
+            ref.read(mainItemsNotifierProvider.notifier).refresh(),
+        child: const CustomScrollView(
+          slivers: <Widget>[
+            _MainAppBar(),
+            _MainBody(),
+          ],
+        ),
+      );
+}
 
-    return resultAsync.when(
-      data: (data) => _buildListView(context, data, textStyle),
-      error: (error, stack) => _buildErrorView(context, error.toString()),
-      loading: () => _buildLoadingView(),
-    );
-  }
+class _MainBody extends ConsumerWidget {
+  const _MainBody();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) =>
+      ref.watch(mainItemsNotifierProvider).when(
+            data: (data) => _buildListView(context, data),
+            error: (error, stack) => _buildErrorView(context, error.toString()),
+            loading: () => _buildLoadingView(),
+          );
 
   Widget _buildLoadingView() => const SliverToBoxAdapter(
       child: Column(children: [LoadingWidget(), DividerWidget()]));
@@ -39,14 +52,17 @@ class MainView extends ConsumerWidget {
   Widget _buildListView(
     BuildContext context,
     List<MainItem> items,
-    TextStyle? textStyle,
-  ) =>
-      SliverList.separated(
-        itemCount: items.length,
-        itemBuilder: (context, index) =>
-            _buildListItem(context, items[index], textStyle),
-        separatorBuilder: (_, __) => const DividerWidget(),
-      );
+  ) {
+    final textStyle = Theme.of(context).textTheme.bodyMedium;
+    return items.isEmpty
+        ? _buildEmptyView(textStyle)
+        : SliverList.separated(
+            itemCount: items.length,
+            itemBuilder: (context, index) =>
+                _buildListItem(context, items[index], textStyle),
+            separatorBuilder: (_, __) => const DividerWidget(),
+          );
+  }
 
   Widget _buildListItem(
     BuildContext context,
@@ -80,4 +96,38 @@ class MainView extends ConsumerWidget {
 
   Widget _buildIconView(String url) => CircleAvatar(
       radius: 24, backgroundImage: CachedNetworkImageProvider(url));
+}
+
+class _MainAppBar extends ConsumerWidget {
+  const _MainAppBar();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final Color? backgroundColor =
+        Theme.of(context).appBarTheme.backgroundColor;
+    final String title = ref.watch(mainTitleProvider);
+    final bool hasIconButton = ref.read(showAddButtonProvider);
+
+    return SliverAppBar(
+      title: MessageWidget(
+        message: title,
+        textStyle: Theme.of(context).textTheme.labelMedium,
+      ),
+      flexibleSpace: Container(color: backgroundColor),
+      backgroundColor: backgroundColor,
+      titleSpacing: 0,
+      floating: true,
+      pinned: false,
+      centerTitle: false,
+      toolbarHeight: 64,
+      actions: !hasIconButton
+          ? null
+          : [
+              IconButton(
+                onPressed: () => ref.read(handleAddButtonProvider(context)),
+                icon: const Icon(Icons.add),
+              )
+            ],
+    );
+  }
 }

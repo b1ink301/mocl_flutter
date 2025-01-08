@@ -1,26 +1,27 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'main_view_model.dart';
+part of 'add_list_dlg_providers.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$mainViewModelHash() => r'f32129cbf5baa7da49ee6f9f1e6bd0c416f04c25';
+String _$addListDlgNotifierHash() =>
+    r'e792c47ddb38df1e9e843645743aebbf92dfe2dd';
 
-/// See also [MainViewModel].
-@ProviderFor(MainViewModel)
-final mainViewModelProvider =
-    AutoDisposeAsyncNotifierProvider<MainViewModel, List<MainItem>>.internal(
-  MainViewModel.new,
-  name: r'mainViewModelProvider',
+/// See also [AddListDlgNotifier].
+@ProviderFor(AddListDlgNotifier)
+final addListDlgNotifierProvider = AutoDisposeAsyncNotifierProvider<
+    AddListDlgNotifier, List<MainItem>>.internal(
+  AddListDlgNotifier.new,
+  name: r'addListDlgNotifierProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$mainViewModelHash,
+      : _$addListDlgNotifierHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$MainViewModel = AutoDisposeAsyncNotifier<List<MainItem>>;
+typedef _$AddListDlgNotifier = AutoDisposeAsyncNotifier<List<MainItem>>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

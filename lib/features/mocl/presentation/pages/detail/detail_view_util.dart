@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
+import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_routes.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 

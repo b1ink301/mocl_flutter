@@ -3,32 +3,44 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fpdart/fpdart.dart';
-import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/core/usecases/usecase.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/use_case_provider.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/detail/mocl_detail_page.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/detail/photo_view_dialog.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_list_page.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/login/login_page.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/main/add_dialog/add_list_dialog.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/main/mocl_main_page.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/settings/settings_page.dart';
+import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_routes.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/dialog_page.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 part 'app_provider.g.dart';
 
 final localeCodeProvider = StateProvider<String>((ref) => 'ko');
 
-@riverpod
-class CurrentSiteType extends _$CurrentSiteType {
+@Riverpod(keepAlive: true)
+class CurrentSiteTypeNotifier extends _$CurrentSiteTypeNotifier {
   @override
   SiteType build() {
-    final getSiteType = ref.watch(getSiteTypeProvider);
+    final getSiteType = ref.read(getSiteTypeProvider);
     return getSiteType(NoParams());
   }
 
-  void changeSiteType(SiteType newSiteType) {
-    if (state != newSiteType) {
+  void changeSiteType(SiteType siteType) {
+    if (state != siteType) {
       final setSiteType = ref.read(setSiteTypeProvider);
-      setSiteType(newSiteType);
-      state = newSiteType;
+      setSiteType(siteType);
+      state = siteType;
     }
   }
 }
@@ -66,37 +78,111 @@ double appbarHeight(
   return max(kMinTextHeight, textPainter.height) + kExtraVerticalSpace;
 }
 
-@riverpod
-class ReadableState extends _$ReadableState {
+@Riverpod(keepAlive: true)
+class ReadableStateNotifier extends _$ReadableStateNotifier {
   @override
-  int build() {
-    return -1;
-  }
+  int build() => -1;
 
   void update(int newId) {
     if (state != newId) {
       state = newId;
     }
   }
+
+  void clear() => state = -1;
+}
+
+@Riverpod(keepAlive: true)
+Future<String> getAppVersion(Ref ref) async {
+  final info = await PackageInfo.fromPlatform();
+  final version = 'v${info.version}-${info.buildNumber}';
+  return version;
 }
 
 @riverpod
-Future<Either<Failure, String>> getAppVersion(ref) async {
-  try {
-    final info = await PackageInfo.fromPlatform();
-    final version = 'v${info.version}-${info.buildNumber}';
-    return Right(version);
-  } catch (e) {
-    return Left(GetVersionFailure(message: e.toString()));
-  }
-}
-
-
-@riverpod
-Future<void> clearData(ref) async {
+Future<void> clearData(Ref ref) async {
   await NickImageWidget.clearCache();
   await InAppWebViewController.clearAllCache();
 
   // CookieManager.instance().deleteAllCookies();
   await Future.delayed(Duration(milliseconds: 300));
 }
+
+@riverpod
+void showToast(Ref ref, String message, BuildContext context) {
+  Fluttertoast.showToast(
+    msg: message,
+    toastLength: Toast.LENGTH_LONG,
+    gravity: ToastGravity.BOTTOM,
+    timeInSecForIosWeb: 2,
+    backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+    textColor: Colors.white,
+    fontSize: 16.0,
+  );
+}
+
+@riverpod
+GoRouter appRouter(Ref ref) => GoRouter(
+      initialLocation: Routes.main,
+      routes: <RouteBase>[
+        GoRoute(
+            path: Routes.main,
+            pageBuilder: (BuildContext context, GoRouterState state) =>
+                SwipeablePage(
+                    builder: (context) => MainPage.init(context)),
+            routes: [
+              GoRoute(
+                  path: Routes.setMainDlg,
+                  pageBuilder: (BuildContext context, GoRouterState state) =>
+                      CupertinoModalPopupPage(
+                        builder: (BuildContext context) =>
+                            AddListDialog.init(context),
+                      )),
+            ]),
+        GoRoute(
+          path: Routes.list,
+          pageBuilder: (BuildContext context, GoRouterState state) =>
+              SwipeablePage(builder: (context) {
+            final item = GoRouterState.of(context).extra as MainItem;
+            return MoclListPage.init(context, item);
+          }),
+        ),
+        GoRoute(
+            path: Routes.detail,
+            pageBuilder: (BuildContext context, GoRouterState state) =>
+                SwipeablePage(
+                  builder: (context) {
+                    final extra =
+                        GoRouterState.of(context).extra as List<dynamic>;
+                    final siteType = extra[0] as SiteType;
+                    final item = extra[1] as ListItem;
+                    return DetailPage.withRiverpod(context, siteType, item);
+                  },
+                ),
+            routes: [
+              GoRoute(
+                  path: Routes.viewPhotoDlg,
+                  pageBuilder: (BuildContext context, GoRouterState state) =>
+                      CupertinoModalPopupPage(
+                        builder: (BuildContext context) {
+                          final url = GoRouterState.of(context).extra as String;
+                          return PhotoViewDialog(
+                            imageProvider: NetworkImage(url),
+                            filterQuality: FilterQuality.high,
+                          );
+                        },
+                      )),
+            ]),
+        GoRoute(
+          path: Routes.settings,
+          pageBuilder: (BuildContext context, GoRouterState state) =>
+              SwipeablePage(
+                  builder: (context) => SettingsPage.withBloc(context)),
+        ),
+        GoRoute(
+          path: Routes.login,
+          builder: (BuildContext context, GoRouterState state) =>
+              const LoginPage(),
+        )
+      ],
+    );

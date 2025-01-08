@@ -3,7 +3,7 @@
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
-part of 'main_view_model.dart';
+part of 'main_providers.dart';
 
 // **************************************************************************
 // FreezedGenerator
@@ -15,12 +15,12 @@ final _privateConstructorUsedError = UnsupportedError(
     'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
-mixin _$MainState {
+mixin _$MainViewState {
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<MainItem> data) success,
+    required TResult Function(List<MainItem> data, String title) success,
     required TResult Function(String message) failure,
   }) =>
       throw _privateConstructorUsedError;
@@ -28,7 +28,7 @@ mixin _$MainState {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<MainItem> data)? success,
+    TResult? Function(List<MainItem> data, String title)? success,
     TResult? Function(String message)? failure,
   }) =>
       throw _privateConstructorUsedError;
@@ -36,91 +36,92 @@ mixin _$MainState {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<MainItem> data)? success,
+    TResult Function(List<MainItem> data, String title)? success,
     TResult Function(String message)? failure,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(MainStateInitial value) initial,
-    required TResult Function(MainStateLoading value) loading,
-    required TResult Function(MainStateSuccess value) success,
-    required TResult Function(MainStateFailure value) failure,
+    required TResult Function(_StateInitial value) initial,
+    required TResult Function(_StateLoading value) loading,
+    required TResult Function(_StateSuccess value) success,
+    required TResult Function(_StateFailure value) failure,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(MainStateInitial value)? initial,
-    TResult? Function(MainStateLoading value)? loading,
-    TResult? Function(MainStateSuccess value)? success,
-    TResult? Function(MainStateFailure value)? failure,
+    TResult? Function(_StateInitial value)? initial,
+    TResult? Function(_StateLoading value)? loading,
+    TResult? Function(_StateSuccess value)? success,
+    TResult? Function(_StateFailure value)? failure,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(MainStateInitial value)? initial,
-    TResult Function(MainStateLoading value)? loading,
-    TResult Function(MainStateSuccess value)? success,
-    TResult Function(MainStateFailure value)? failure,
+    TResult Function(_StateInitial value)? initial,
+    TResult Function(_StateLoading value)? loading,
+    TResult Function(_StateSuccess value)? success,
+    TResult Function(_StateFailure value)? failure,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class $MainStateCopyWith<$Res> {
-  factory $MainStateCopyWith(MainState value, $Res Function(MainState) then) =
-      _$MainStateCopyWithImpl<$Res, MainState>;
+abstract class $MainViewStateCopyWith<$Res> {
+  factory $MainViewStateCopyWith(
+          MainViewState value, $Res Function(MainViewState) then) =
+      _$MainViewStateCopyWithImpl<$Res, MainViewState>;
 }
 
 /// @nodoc
-class _$MainStateCopyWithImpl<$Res, $Val extends MainState>
-    implements $MainStateCopyWith<$Res> {
-  _$MainStateCopyWithImpl(this._value, this._then);
+class _$MainViewStateCopyWithImpl<$Res, $Val extends MainViewState>
+    implements $MainViewStateCopyWith<$Res> {
+  _$MainViewStateCopyWithImpl(this._value, this._then);
 
   // ignore: unused_field
   final $Val _value;
   // ignore: unused_field
   final $Res Function($Val) _then;
 
-  /// Create a copy of MainState
+  /// Create a copy of MainViewState
   /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
-abstract class _$$MainStateInitialImplCopyWith<$Res> {
-  factory _$$MainStateInitialImplCopyWith(_$MainStateInitialImpl value,
-          $Res Function(_$MainStateInitialImpl) then) =
-      __$$MainStateInitialImplCopyWithImpl<$Res>;
+abstract class _$$StateInitialImplCopyWith<$Res> {
+  factory _$$StateInitialImplCopyWith(
+          _$StateInitialImpl value, $Res Function(_$StateInitialImpl) then) =
+      __$$StateInitialImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$MainStateInitialImplCopyWithImpl<$Res>
-    extends _$MainStateCopyWithImpl<$Res, _$MainStateInitialImpl>
-    implements _$$MainStateInitialImplCopyWith<$Res> {
-  __$$MainStateInitialImplCopyWithImpl(_$MainStateInitialImpl _value,
-      $Res Function(_$MainStateInitialImpl) _then)
+class __$$StateInitialImplCopyWithImpl<$Res>
+    extends _$MainViewStateCopyWithImpl<$Res, _$StateInitialImpl>
+    implements _$$StateInitialImplCopyWith<$Res> {
+  __$$StateInitialImplCopyWithImpl(
+      _$StateInitialImpl _value, $Res Function(_$StateInitialImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of MainState
+  /// Create a copy of MainViewState
   /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
 
-class _$MainStateInitialImpl implements MainStateInitial {
-  const _$MainStateInitialImpl();
+class _$StateInitialImpl implements _StateInitial {
+  const _$StateInitialImpl();
 
   @override
   String toString() {
-    return 'MainState.initial()';
+    return 'MainViewState.initial()';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$MainStateInitialImpl);
+        (other.runtimeType == runtimeType && other is _$StateInitialImpl);
   }
 
   @override
@@ -131,7 +132,7 @@ class _$MainStateInitialImpl implements MainStateInitial {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<MainItem> data) success,
+    required TResult Function(List<MainItem> data, String title) success,
     required TResult Function(String message) failure,
   }) {
     return initial();
@@ -142,7 +143,7 @@ class _$MainStateInitialImpl implements MainStateInitial {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<MainItem> data)? success,
+    TResult? Function(List<MainItem> data, String title)? success,
     TResult? Function(String message)? failure,
   }) {
     return initial?.call();
@@ -153,7 +154,7 @@ class _$MainStateInitialImpl implements MainStateInitial {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<MainItem> data)? success,
+    TResult Function(List<MainItem> data, String title)? success,
     TResult Function(String message)? failure,
     required TResult orElse(),
   }) {
@@ -166,10 +167,10 @@ class _$MainStateInitialImpl implements MainStateInitial {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(MainStateInitial value) initial,
-    required TResult Function(MainStateLoading value) loading,
-    required TResult Function(MainStateSuccess value) success,
-    required TResult Function(MainStateFailure value) failure,
+    required TResult Function(_StateInitial value) initial,
+    required TResult Function(_StateLoading value) loading,
+    required TResult Function(_StateSuccess value) success,
+    required TResult Function(_StateFailure value) failure,
   }) {
     return initial(this);
   }
@@ -177,10 +178,10 @@ class _$MainStateInitialImpl implements MainStateInitial {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(MainStateInitial value)? initial,
-    TResult? Function(MainStateLoading value)? loading,
-    TResult? Function(MainStateSuccess value)? success,
-    TResult? Function(MainStateFailure value)? failure,
+    TResult? Function(_StateInitial value)? initial,
+    TResult? Function(_StateLoading value)? loading,
+    TResult? Function(_StateSuccess value)? success,
+    TResult? Function(_StateFailure value)? failure,
   }) {
     return initial?.call(this);
   }
@@ -188,10 +189,10 @@ class _$MainStateInitialImpl implements MainStateInitial {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(MainStateInitial value)? initial,
-    TResult Function(MainStateLoading value)? loading,
-    TResult Function(MainStateSuccess value)? success,
-    TResult Function(MainStateFailure value)? failure,
+    TResult Function(_StateInitial value)? initial,
+    TResult Function(_StateLoading value)? loading,
+    TResult Function(_StateSuccess value)? success,
+    TResult Function(_StateFailure value)? failure,
     required TResult orElse(),
   }) {
     if (initial != null) {
@@ -201,43 +202,43 @@ class _$MainStateInitialImpl implements MainStateInitial {
   }
 }
 
-abstract class MainStateInitial implements MainState {
-  const factory MainStateInitial() = _$MainStateInitialImpl;
+abstract class _StateInitial implements MainViewState {
+  const factory _StateInitial() = _$StateInitialImpl;
 }
 
 /// @nodoc
-abstract class _$$MainStateLoadingImplCopyWith<$Res> {
-  factory _$$MainStateLoadingImplCopyWith(_$MainStateLoadingImpl value,
-          $Res Function(_$MainStateLoadingImpl) then) =
-      __$$MainStateLoadingImplCopyWithImpl<$Res>;
+abstract class _$$StateLoadingImplCopyWith<$Res> {
+  factory _$$StateLoadingImplCopyWith(
+          _$StateLoadingImpl value, $Res Function(_$StateLoadingImpl) then) =
+      __$$StateLoadingImplCopyWithImpl<$Res>;
 }
 
 /// @nodoc
-class __$$MainStateLoadingImplCopyWithImpl<$Res>
-    extends _$MainStateCopyWithImpl<$Res, _$MainStateLoadingImpl>
-    implements _$$MainStateLoadingImplCopyWith<$Res> {
-  __$$MainStateLoadingImplCopyWithImpl(_$MainStateLoadingImpl _value,
-      $Res Function(_$MainStateLoadingImpl) _then)
+class __$$StateLoadingImplCopyWithImpl<$Res>
+    extends _$MainViewStateCopyWithImpl<$Res, _$StateLoadingImpl>
+    implements _$$StateLoadingImplCopyWith<$Res> {
+  __$$StateLoadingImplCopyWithImpl(
+      _$StateLoadingImpl _value, $Res Function(_$StateLoadingImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of MainState
+  /// Create a copy of MainViewState
   /// with the given fields replaced by the non-null parameter values.
 }
 
 /// @nodoc
 
-class _$MainStateLoadingImpl implements MainStateLoading {
-  const _$MainStateLoadingImpl();
+class _$StateLoadingImpl implements _StateLoading {
+  const _$StateLoadingImpl();
 
   @override
   String toString() {
-    return 'MainState.loading()';
+    return 'MainViewState.loading()';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$MainStateLoadingImpl);
+        (other.runtimeType == runtimeType && other is _$StateLoadingImpl);
   }
 
   @override
@@ -248,7 +249,7 @@ class _$MainStateLoadingImpl implements MainStateLoading {
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<MainItem> data) success,
+    required TResult Function(List<MainItem> data, String title) success,
     required TResult Function(String message) failure,
   }) {
     return loading();
@@ -259,7 +260,7 @@ class _$MainStateLoadingImpl implements MainStateLoading {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<MainItem> data)? success,
+    TResult? Function(List<MainItem> data, String title)? success,
     TResult? Function(String message)? failure,
   }) {
     return loading?.call();
@@ -270,7 +271,7 @@ class _$MainStateLoadingImpl implements MainStateLoading {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<MainItem> data)? success,
+    TResult Function(List<MainItem> data, String title)? success,
     TResult Function(String message)? failure,
     required TResult orElse(),
   }) {
@@ -283,10 +284,10 @@ class _$MainStateLoadingImpl implements MainStateLoading {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(MainStateInitial value) initial,
-    required TResult Function(MainStateLoading value) loading,
-    required TResult Function(MainStateSuccess value) success,
-    required TResult Function(MainStateFailure value) failure,
+    required TResult Function(_StateInitial value) initial,
+    required TResult Function(_StateLoading value) loading,
+    required TResult Function(_StateSuccess value) success,
+    required TResult Function(_StateFailure value) failure,
   }) {
     return loading(this);
   }
@@ -294,10 +295,10 @@ class _$MainStateLoadingImpl implements MainStateLoading {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(MainStateInitial value)? initial,
-    TResult? Function(MainStateLoading value)? loading,
-    TResult? Function(MainStateSuccess value)? success,
-    TResult? Function(MainStateFailure value)? failure,
+    TResult? Function(_StateInitial value)? initial,
+    TResult? Function(_StateLoading value)? loading,
+    TResult? Function(_StateSuccess value)? success,
+    TResult? Function(_StateFailure value)? failure,
   }) {
     return loading?.call(this);
   }
@@ -305,10 +306,10 @@ class _$MainStateLoadingImpl implements MainStateLoading {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(MainStateInitial value)? initial,
-    TResult Function(MainStateLoading value)? loading,
-    TResult Function(MainStateSuccess value)? success,
-    TResult Function(MainStateFailure value)? failure,
+    TResult Function(_StateInitial value)? initial,
+    TResult Function(_StateLoading value)? loading,
+    TResult Function(_StateSuccess value)? success,
+    TResult Function(_StateFailure value)? failure,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -318,47 +319,53 @@ class _$MainStateLoadingImpl implements MainStateLoading {
   }
 }
 
-abstract class MainStateLoading implements MainState {
-  const factory MainStateLoading() = _$MainStateLoadingImpl;
+abstract class _StateLoading implements MainViewState {
+  const factory _StateLoading() = _$StateLoadingImpl;
 }
 
 /// @nodoc
-abstract class _$$MainStateSuccessImplCopyWith<$Res> {
-  factory _$$MainStateSuccessImplCopyWith(_$MainStateSuccessImpl value,
-          $Res Function(_$MainStateSuccessImpl) then) =
-      __$$MainStateSuccessImplCopyWithImpl<$Res>;
+abstract class _$$StateSuccessImplCopyWith<$Res> {
+  factory _$$StateSuccessImplCopyWith(
+          _$StateSuccessImpl value, $Res Function(_$StateSuccessImpl) then) =
+      __$$StateSuccessImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({List<MainItem> data});
+  $Res call({List<MainItem> data, String title});
 }
 
 /// @nodoc
-class __$$MainStateSuccessImplCopyWithImpl<$Res>
-    extends _$MainStateCopyWithImpl<$Res, _$MainStateSuccessImpl>
-    implements _$$MainStateSuccessImplCopyWith<$Res> {
-  __$$MainStateSuccessImplCopyWithImpl(_$MainStateSuccessImpl _value,
-      $Res Function(_$MainStateSuccessImpl) _then)
+class __$$StateSuccessImplCopyWithImpl<$Res>
+    extends _$MainViewStateCopyWithImpl<$Res, _$StateSuccessImpl>
+    implements _$$StateSuccessImplCopyWith<$Res> {
+  __$$StateSuccessImplCopyWithImpl(
+      _$StateSuccessImpl _value, $Res Function(_$StateSuccessImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of MainState
+  /// Create a copy of MainViewState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? data = null,
+    Object? title = null,
   }) {
-    return _then(_$MainStateSuccessImpl(
+    return _then(_$StateSuccessImpl(
       null == data
           ? _value._data
           : data // ignore: cast_nullable_to_non_nullable
               as List<MainItem>,
+      null == title
+          ? _value.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
     ));
   }
 }
 
 /// @nodoc
 
-class _$MainStateSuccessImpl implements MainStateSuccess {
-  const _$MainStateSuccessImpl(final List<MainItem> data) : _data = data;
+class _$StateSuccessImpl implements _StateSuccess {
+  const _$StateSuccessImpl(final List<MainItem> data, this.title)
+      : _data = data;
 
   final List<MainItem> _data;
   @override
@@ -369,40 +376,43 @@ class _$MainStateSuccessImpl implements MainStateSuccess {
   }
 
   @override
+  final String title;
+
+  @override
   String toString() {
-    return 'MainState.success(data: $data)';
+    return 'MainViewState.success(data: $data, title: $title)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$MainStateSuccessImpl &&
-            const DeepCollectionEquality().equals(other._data, _data));
+            other is _$StateSuccessImpl &&
+            const DeepCollectionEquality().equals(other._data, _data) &&
+            (identical(other.title, title) || other.title == title));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(_data));
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(_data), title);
 
-  /// Create a copy of MainState
+  /// Create a copy of MainViewState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$MainStateSuccessImplCopyWith<_$MainStateSuccessImpl> get copyWith =>
-      __$$MainStateSuccessImplCopyWithImpl<_$MainStateSuccessImpl>(
-          this, _$identity);
+  _$$StateSuccessImplCopyWith<_$StateSuccessImpl> get copyWith =>
+      __$$StateSuccessImplCopyWithImpl<_$StateSuccessImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<MainItem> data) success,
+    required TResult Function(List<MainItem> data, String title) success,
     required TResult Function(String message) failure,
   }) {
-    return success(data);
+    return success(data, title);
   }
 
   @override
@@ -410,10 +420,10 @@ class _$MainStateSuccessImpl implements MainStateSuccess {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<MainItem> data)? success,
+    TResult? Function(List<MainItem> data, String title)? success,
     TResult? Function(String message)? failure,
   }) {
-    return success?.call(data);
+    return success?.call(data, title);
   }
 
   @override
@@ -421,12 +431,12 @@ class _$MainStateSuccessImpl implements MainStateSuccess {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<MainItem> data)? success,
+    TResult Function(List<MainItem> data, String title)? success,
     TResult Function(String message)? failure,
     required TResult orElse(),
   }) {
     if (success != null) {
-      return success(data);
+      return success(data, title);
     }
     return orElse();
   }
@@ -434,10 +444,10 @@ class _$MainStateSuccessImpl implements MainStateSuccess {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(MainStateInitial value) initial,
-    required TResult Function(MainStateLoading value) loading,
-    required TResult Function(MainStateSuccess value) success,
-    required TResult Function(MainStateFailure value) failure,
+    required TResult Function(_StateInitial value) initial,
+    required TResult Function(_StateLoading value) loading,
+    required TResult Function(_StateSuccess value) success,
+    required TResult Function(_StateFailure value) failure,
   }) {
     return success(this);
   }
@@ -445,10 +455,10 @@ class _$MainStateSuccessImpl implements MainStateSuccess {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(MainStateInitial value)? initial,
-    TResult? Function(MainStateLoading value)? loading,
-    TResult? Function(MainStateSuccess value)? success,
-    TResult? Function(MainStateFailure value)? failure,
+    TResult? Function(_StateInitial value)? initial,
+    TResult? Function(_StateLoading value)? loading,
+    TResult? Function(_StateSuccess value)? success,
+    TResult? Function(_StateFailure value)? failure,
   }) {
     return success?.call(this);
   }
@@ -456,10 +466,10 @@ class _$MainStateSuccessImpl implements MainStateSuccess {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(MainStateInitial value)? initial,
-    TResult Function(MainStateLoading value)? loading,
-    TResult Function(MainStateSuccess value)? success,
-    TResult Function(MainStateFailure value)? failure,
+    TResult Function(_StateInitial value)? initial,
+    TResult Function(_StateLoading value)? loading,
+    TResult Function(_StateSuccess value)? success,
+    TResult Function(_StateFailure value)? failure,
     required TResult orElse(),
   }) {
     if (success != null) {
@@ -469,44 +479,45 @@ class _$MainStateSuccessImpl implements MainStateSuccess {
   }
 }
 
-abstract class MainStateSuccess implements MainState {
-  const factory MainStateSuccess(final List<MainItem> data) =
-      _$MainStateSuccessImpl;
+abstract class _StateSuccess implements MainViewState {
+  const factory _StateSuccess(final List<MainItem> data, final String title) =
+      _$StateSuccessImpl;
 
   List<MainItem> get data;
+  String get title;
 
-  /// Create a copy of MainState
+  /// Create a copy of MainViewState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$MainStateSuccessImplCopyWith<_$MainStateSuccessImpl> get copyWith =>
+  _$$StateSuccessImplCopyWith<_$StateSuccessImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$MainStateFailureImplCopyWith<$Res> {
-  factory _$$MainStateFailureImplCopyWith(_$MainStateFailureImpl value,
-          $Res Function(_$MainStateFailureImpl) then) =
-      __$$MainStateFailureImplCopyWithImpl<$Res>;
+abstract class _$$StateFailureImplCopyWith<$Res> {
+  factory _$$StateFailureImplCopyWith(
+          _$StateFailureImpl value, $Res Function(_$StateFailureImpl) then) =
+      __$$StateFailureImplCopyWithImpl<$Res>;
   @useResult
   $Res call({String message});
 }
 
 /// @nodoc
-class __$$MainStateFailureImplCopyWithImpl<$Res>
-    extends _$MainStateCopyWithImpl<$Res, _$MainStateFailureImpl>
-    implements _$$MainStateFailureImplCopyWith<$Res> {
-  __$$MainStateFailureImplCopyWithImpl(_$MainStateFailureImpl _value,
-      $Res Function(_$MainStateFailureImpl) _then)
+class __$$StateFailureImplCopyWithImpl<$Res>
+    extends _$MainViewStateCopyWithImpl<$Res, _$StateFailureImpl>
+    implements _$$StateFailureImplCopyWith<$Res> {
+  __$$StateFailureImplCopyWithImpl(
+      _$StateFailureImpl _value, $Res Function(_$StateFailureImpl) _then)
       : super(_value, _then);
 
-  /// Create a copy of MainState
+  /// Create a copy of MainViewState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
   @override
   $Res call({
     Object? message = null,
   }) {
-    return _then(_$MainStateFailureImpl(
+    return _then(_$StateFailureImpl(
       null == message
           ? _value.message
           : message // ignore: cast_nullable_to_non_nullable
@@ -517,43 +528,42 @@ class __$$MainStateFailureImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$MainStateFailureImpl implements MainStateFailure {
-  const _$MainStateFailureImpl(this.message);
+class _$StateFailureImpl implements _StateFailure {
+  const _$StateFailureImpl(this.message);
 
   @override
   final String message;
 
   @override
   String toString() {
-    return 'MainState.failure(message: $message)';
+    return 'MainViewState.failure(message: $message)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$MainStateFailureImpl &&
+            other is _$StateFailureImpl &&
             (identical(other.message, message) || other.message == message));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, message);
 
-  /// Create a copy of MainState
+  /// Create a copy of MainViewState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$MainStateFailureImplCopyWith<_$MainStateFailureImpl> get copyWith =>
-      __$$MainStateFailureImplCopyWithImpl<_$MainStateFailureImpl>(
-          this, _$identity);
+  _$$StateFailureImplCopyWith<_$StateFailureImpl> get copyWith =>
+      __$$StateFailureImplCopyWithImpl<_$StateFailureImpl>(this, _$identity);
 
   @override
   @optionalTypeArgs
   TResult when<TResult extends Object?>({
     required TResult Function() initial,
     required TResult Function() loading,
-    required TResult Function(List<MainItem> data) success,
+    required TResult Function(List<MainItem> data, String title) success,
     required TResult Function(String message) failure,
   }) {
     return failure(message);
@@ -564,7 +574,7 @@ class _$MainStateFailureImpl implements MainStateFailure {
   TResult? whenOrNull<TResult extends Object?>({
     TResult? Function()? initial,
     TResult? Function()? loading,
-    TResult? Function(List<MainItem> data)? success,
+    TResult? Function(List<MainItem> data, String title)? success,
     TResult? Function(String message)? failure,
   }) {
     return failure?.call(message);
@@ -575,7 +585,7 @@ class _$MainStateFailureImpl implements MainStateFailure {
   TResult maybeWhen<TResult extends Object?>({
     TResult Function()? initial,
     TResult Function()? loading,
-    TResult Function(List<MainItem> data)? success,
+    TResult Function(List<MainItem> data, String title)? success,
     TResult Function(String message)? failure,
     required TResult orElse(),
   }) {
@@ -588,10 +598,10 @@ class _$MainStateFailureImpl implements MainStateFailure {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(MainStateInitial value) initial,
-    required TResult Function(MainStateLoading value) loading,
-    required TResult Function(MainStateSuccess value) success,
-    required TResult Function(MainStateFailure value) failure,
+    required TResult Function(_StateInitial value) initial,
+    required TResult Function(_StateLoading value) loading,
+    required TResult Function(_StateSuccess value) success,
+    required TResult Function(_StateFailure value) failure,
   }) {
     return failure(this);
   }
@@ -599,10 +609,10 @@ class _$MainStateFailureImpl implements MainStateFailure {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(MainStateInitial value)? initial,
-    TResult? Function(MainStateLoading value)? loading,
-    TResult? Function(MainStateSuccess value)? success,
-    TResult? Function(MainStateFailure value)? failure,
+    TResult? Function(_StateInitial value)? initial,
+    TResult? Function(_StateLoading value)? loading,
+    TResult? Function(_StateSuccess value)? success,
+    TResult? Function(_StateFailure value)? failure,
   }) {
     return failure?.call(this);
   }
@@ -610,10 +620,10 @@ class _$MainStateFailureImpl implements MainStateFailure {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(MainStateInitial value)? initial,
-    TResult Function(MainStateLoading value)? loading,
-    TResult Function(MainStateSuccess value)? success,
-    TResult Function(MainStateFailure value)? failure,
+    TResult Function(_StateInitial value)? initial,
+    TResult Function(_StateLoading value)? loading,
+    TResult Function(_StateSuccess value)? success,
+    TResult Function(_StateFailure value)? failure,
     required TResult orElse(),
   }) {
     if (failure != null) {
@@ -623,14 +633,14 @@ class _$MainStateFailureImpl implements MainStateFailure {
   }
 }
 
-abstract class MainStateFailure implements MainState {
-  const factory MainStateFailure(final String message) = _$MainStateFailureImpl;
+abstract class _StateFailure implements MainViewState {
+  const factory _StateFailure(final String message) = _$StateFailureImpl;
 
   String get message;
 
-  /// Create a copy of MainState
+  /// Create a copy of MainViewState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$MainStateFailureImplCopyWith<_$MainStateFailureImpl> get copyWith =>
+  _$$StateFailureImplCopyWith<_$StateFailureImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

@@ -1,68 +1,81 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_providers.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/round_text_widget.dart';
 
-class MoclListItem extends StatelessWidget {
+class MoclListItem extends ConsumerWidget {
   final ListItem item;
-  final VoidCallback onTap;
 
   const MoclListItem({
-    required this.item,
-    required this.onTap,
     super.key,
+    required this.item,
   });
 
   @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      minVerticalPadding: 10,
-      minTileHeight: 24,
-      contentPadding: const EdgeInsets.only(left: 16, right: 12),
-      onTap: onTap,
-      title: TitleView(
-        title: item.title,
-        isRead: item.isRead,
-      ),
-      subtitle: BottomView(
-        item: item,
-        isRead: item.isRead,
-      ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final textStyles = MoclTextStyles.of(context);
+    final titleStyle = textStyles.title(item.isRead);
+    final smallTitleStyle = textStyles.smallTitle(item.isRead);
+    final badgeStyle = textStyles.badge(item.isRead);
+
+    return Column(
+      children: [
+        ListTile(
+          minVerticalPadding: 10,
+          minTileHeight: 24,
+          contentPadding: const EdgeInsets.only(left: 16, right: 12),
+          onTap: () {
+            ref.read(handleListItemTapProvider(context, item));
+          },
+          title: TitleView(
+            title: item.title,
+            titleStyle: titleStyle,
+          ),
+          subtitle: BottomView(
+            item: item,
+            smallTitleStyle: smallTitleStyle,
+            badgeStyle: badgeStyle,
+          ),
+        ),
+        const DividerWidget(),
+      ],
     );
   }
 }
 
 class TitleView extends StatelessWidget {
   final String title;
-  final bool isRead;
+  final TextStyle titleStyle;
 
   const TitleView({
     super.key,
     required this.title,
-    required this.isRead,
+    required this.titleStyle,
   });
 
   @override
-  Widget build(BuildContext context) {
-    final textStyles = MoclTextStyles.of(context);
-    return Text(
-      title,
-      maxLines: 3,
-      overflow: TextOverflow.ellipsis,
-      style: textStyles.title(isRead),
-    );
-  }
+  Widget build(BuildContext context) => Text(
+        title,
+        maxLines: 3,
+        overflow: TextOverflow.ellipsis,
+        style: titleStyle,
+      );
 }
 
 class BottomView extends StatelessWidget {
   final ListItem item;
-  final bool isRead;
+  final TextStyle smallTitleStyle;
+  final TextStyle badgeStyle;
 
   const BottomView({
     super.key,
     required this.item,
-    required this.isRead,
+    required this.smallTitleStyle,
+    required this.badgeStyle,
   });
 
   @override
@@ -74,7 +87,6 @@ class BottomView extends StatelessWidget {
     final reply = item.reply;
     final nickImage = item.userInfo.nickImage;
     final hasReply = reply.isNotEmpty && reply != '0';
-    final textStyles = MoclTextStyles.of(context);
 
     return Column(
       children: [
@@ -92,17 +104,13 @@ class BottomView extends StatelessWidget {
                     Flexible(
                       child: InfoText(
                         info: item.info,
-                        isRead: isRead,
+                        textStyle: smallTitleStyle,
                       ),
                     ),
                   ],
                 ),
               ),
-              if (hasReply)
-                RoundTextWidget(
-                  text: reply,
-                  textStyle: textStyles.badge(isRead)
-                ),
+              if (hasReply) RoundTextWidget(text: reply, textStyle: badgeStyle),
             ],
           ),
         ),
@@ -113,42 +121,19 @@ class BottomView extends StatelessWidget {
 
 class InfoText extends StatelessWidget {
   final String info;
-  final bool isRead;
+  final TextStyle textStyle;
 
   const InfoText({
     super.key,
     required this.info,
-    required this.isRead,
+    required this.textStyle,
   });
 
   @override
-  Widget build(BuildContext context) {
-    final textStyles = MoclTextStyles.of(context);
-    return Text(
-      info,
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-      style: textStyles.smallTitle(isRead),
-    );
-  }
-}
-
-class ReplyBadge extends StatelessWidget {
-  final String reply;
-  final bool isRead;
-
-  const ReplyBadge({
-    super.key,
-    required this.reply,
-    required this.isRead,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final textStyles = MoclTextStyles.of(context);
-    return RoundTextWidget(
-      text: reply,
-      textStyle: textStyles.badge(isRead)
-    );
-  }
+  Widget build(BuildContext context) => Text(
+        info,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: textStyle,
+      );
 }
