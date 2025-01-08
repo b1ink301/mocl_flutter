@@ -190,12 +190,11 @@ class _AppbarHeightProviderElement extends AutoDisposeProviderElement<double>
   double get screenWidth => (origin as AppbarHeightProvider).screenWidth;
 }
 
-String _$getAppVersionHash() => r'b0deb54eb91217529aa2202c0f630d4503ec3ebb';
+String _$getAppVersionHash() => r'd1deb1e74150f4b0b16f1afca8747fc4a641c4a2';
 
 /// See also [getAppVersion].
 @ProviderFor(getAppVersion)
-final getAppVersionProvider =
-    AutoDisposeFutureProvider<Either<Failure, String>>.internal(
+final getAppVersionProvider = FutureProvider<String>.internal(
   getAppVersion,
   name: r'getAppVersionProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -207,9 +206,8 @@ final getAppVersionProvider =
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef GetAppVersionRef
-    = AutoDisposeFutureProviderRef<Either<Failure, String>>;
-String _$clearDataHash() => r'3d8bb129cd26c10c0549360ec50f8c6ab0e1db59';
+typedef GetAppVersionRef = FutureProviderRef<String>;
+String _$clearDataHash() => r'b0a541fc4f6aa6a9fbb014c67f22badd76ecc31c';
 
 /// See also [clearData].
 @ProviderFor(clearData)
@@ -225,37 +223,201 @@ final clearDataProvider = AutoDisposeFutureProvider<void>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ClearDataRef = AutoDisposeFutureProviderRef<void>;
-String _$currentSiteTypeHash() => r'afebb6f18ae1a982c0e3aac960798dff831432ea';
+String _$showToastHash() => r'38e03d8486b2e54b92b29cbe5d6e3211f7b4e71a';
 
-/// See also [CurrentSiteType].
-@ProviderFor(CurrentSiteType)
-final currentSiteTypeProvider =
-    AutoDisposeNotifierProvider<CurrentSiteType, SiteType>.internal(
-  CurrentSiteType.new,
-  name: r'currentSiteTypeProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$currentSiteTypeHash,
+/// See also [showToast].
+@ProviderFor(showToast)
+const showToastProvider = ShowToastFamily();
+
+/// See also [showToast].
+class ShowToastFamily extends Family<void> {
+  /// See also [showToast].
+  const ShowToastFamily();
+
+  /// See also [showToast].
+  ShowToastProvider call(
+    String message,
+    BuildContext context,
+  ) {
+    return ShowToastProvider(
+      message,
+      context,
+    );
+  }
+
+  @override
+  ShowToastProvider getProviderOverride(
+    covariant ShowToastProvider provider,
+  ) {
+    return call(
+      provider.message,
+      provider.context,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'showToastProvider';
+}
+
+/// See also [showToast].
+class ShowToastProvider extends AutoDisposeProvider<void> {
+  /// See also [showToast].
+  ShowToastProvider(
+    String message,
+    BuildContext context,
+  ) : this._internal(
+          (ref) => showToast(
+            ref as ShowToastRef,
+            message,
+            context,
+          ),
+          from: showToastProvider,
+          name: r'showToastProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$showToastHash,
+          dependencies: ShowToastFamily._dependencies,
+          allTransitiveDependencies: ShowToastFamily._allTransitiveDependencies,
+          message: message,
+          context: context,
+        );
+
+  ShowToastProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.message,
+    required this.context,
+  }) : super.internal();
+
+  final String message;
+  final BuildContext context;
+
+  @override
+  Override overrideWith(
+    void Function(ShowToastRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: ShowToastProvider._internal(
+        (ref) => create(ref as ShowToastRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        message: message,
+        context: context,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<void> createElement() {
+    return _ShowToastProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ShowToastProvider &&
+        other.message == message &&
+        other.context == context;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, message.hashCode);
+    hash = _SystemHash.combine(hash, context.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin ShowToastRef on AutoDisposeProviderRef<void> {
+  /// The parameter `message` of this provider.
+  String get message;
+
+  /// The parameter `context` of this provider.
+  BuildContext get context;
+}
+
+class _ShowToastProviderElement extends AutoDisposeProviderElement<void>
+    with ShowToastRef {
+  _ShowToastProviderElement(super.provider);
+
+  @override
+  String get message => (origin as ShowToastProvider).message;
+  @override
+  BuildContext get context => (origin as ShowToastProvider).context;
+}
+
+String _$appRouterHash() => r'2678e2635ae636e3c33d42456684dc183738e3ff';
+
+/// See also [appRouter].
+@ProviderFor(appRouter)
+final appRouterProvider = AutoDisposeProvider<GoRouter>.internal(
+  appRouter,
+  name: r'appRouterProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$appRouterHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$CurrentSiteType = AutoDisposeNotifier<SiteType>;
-String _$readableStateHash() => r'8264a316bb7d1b17a70a7510877be90ee5098952';
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef AppRouterRef = AutoDisposeProviderRef<GoRouter>;
+String _$currentSiteTypeNotifierHash() =>
+    r'07f07f4072252d6278460b69b2bc7c6fac864046';
 
-/// See also [ReadableState].
-@ProviderFor(ReadableState)
-final readableStateProvider =
-    AutoDisposeNotifierProvider<ReadableState, int>.internal(
-  ReadableState.new,
-  name: r'readableStateProvider',
+/// See also [CurrentSiteTypeNotifier].
+@ProviderFor(CurrentSiteTypeNotifier)
+final currentSiteTypeNotifierProvider =
+    NotifierProvider<CurrentSiteTypeNotifier, SiteType>.internal(
+  CurrentSiteTypeNotifier.new,
+  name: r'currentSiteTypeNotifierProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$readableStateHash,
+      : _$currentSiteTypeNotifierHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$ReadableState = AutoDisposeNotifier<int>;
+typedef _$CurrentSiteTypeNotifier = Notifier<SiteType>;
+String _$readableStateNotifierHash() =>
+    r'b6d400867e7860fcfc2758c47d287b0bd013485e';
+
+/// See also [ReadableStateNotifier].
+@ProviderFor(ReadableStateNotifier)
+final readableStateNotifierProvider =
+    NotifierProvider<ReadableStateNotifier, int>.internal(
+  ReadableStateNotifier.new,
+  name: r'readableStateNotifierProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$readableStateNotifierHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$ReadableStateNotifier = Notifier<int>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

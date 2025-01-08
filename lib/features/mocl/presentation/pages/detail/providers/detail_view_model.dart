@@ -21,7 +21,7 @@ class DetailViewModel extends _$DetailViewModel {
 
   @override
   DetailViewState build() {
-    _siteType = ref.watch(currentSiteTypeProvider);
+    _siteType = ref.watch(currentSiteTypeNotifierProvider);
     _getData();
     return DetailViewState.loading();
   }
@@ -62,7 +62,7 @@ class DetailViewModel extends _$DetailViewModel {
           SetReadFlagParams(siteType: _siteType, boardId: _listItem.id);
       final setReadFlag = ref.read(setReadProvider);
       await setReadFlag(params);
-      ref.read(readableStateProvider.notifier).update(_listItem.id);
+      ref.read(readableStateNotifierProvider.notifier).update(_listItem.id);
     }
   }
 }
