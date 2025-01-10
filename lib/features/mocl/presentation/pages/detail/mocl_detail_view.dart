@@ -151,7 +151,7 @@ class _DetailContent extends ConsumerWidget {
           detail: detail,
           hexColor: hexColor,
           bodyMedium: bodyMedium,
-          onTapUrl: (url) => ref.read(openUrlProvider(context, url)),
+          onTapUrl: (url) async => await ref.read(openUrlProvider(context, url)),
         ),
         const SizedBox(height: 10),
         if (detail.comments.isNotEmpty)
@@ -160,13 +160,11 @@ class _DetailContent extends ConsumerWidget {
             comments: detail.comments,
             bodySmall: bodySmall,
             bodyMedium: bodyMedium,
-            openUrl: (url) => ref.read(openUrlProvider(context, url)),
+            openUrl: (url) async => await ref.read(openUrlProvider(context, url)),
           ),
         const Divider(),
         _RefreshButton(
-            onRefresh: () {
-              ref.read(detailsNotifierProvider.notifier).refresh();
-            },
+            onRefresh: () => ref.read(detailsNotifierProvider.notifier).refresh(),
             bodyMedium: bodyMedium),
         const Divider(),
       ],

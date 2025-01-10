@@ -187,33 +187,31 @@ GoRouter appRouter(Ref ref) => GoRouter(
     );
 
 @riverpod
-Future<bool> openBrowserByUrl(ref, String url) async {
+Future<bool> openBrowserByUrl(Ref ref, String url) async {
   final Uri uri = Uri.parse(url);
   return await launchUrl(uri);
 }
 
 @riverpod
-Future<bool> shareUrl(ref, String url) async {
+Future<bool> shareUrl(Ref ref, String url) async {
   final Uri uri = Uri.parse(url);
   final result = await Share.shareUri(uri);
   return result.status == ShareResultStatus.success;
 }
 
 @Riverpod(dependencies: [_isImageUrl])
-void openUrl(ref, BuildContext context, String url) {
+Future<bool> openUrl(Ref ref, BuildContext context, String url) async {
   final uri = Uri.parse(url);
   final last = uri.pathSegments.lastOrNull;
-  final isImageUrl = ref.read(_isImageUrlProvider);
-
-  if (last != null && isImageUrl(last)) {
+  if (last != null && ref.read(_isImageUrlProvider(last))) {
     context.push(Routes.viewPhotoDlgFull, extra: url);
-  } else {
-    ref.read(openBrowserByUrlProvider)(url);
+    return true;
   }
+  return await ref.read(openBrowserByUrlProvider(url).future);
 }
 
 @riverpod
-bool _isImageUrl(ref, String url) {
+bool _isImageUrl(Ref ref, String url) {
   final imageExtensions = [
     '.jpg',
     '.jpeg',
