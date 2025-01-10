@@ -54,7 +54,7 @@ class LocalDatabase {
     int id,
   ) async {
     final StoreRef<int, Map<String, Object?>> store = intMapStoreFactory.store('${siteType.name}_read');
-    final Finder finder = Finder(filter: Filter.byKey(id));
+    final Finder finder = Finder(filter: Filter.equals(Field.value, id));
     final List<RecordSnapshot<int, Map<String, Object?>>> recordSnapshot = await store.find(_db, finder: finder);
     return recordSnapshot.isNotEmpty;
   }
@@ -64,11 +64,10 @@ class LocalDatabase {
     List<int> ids,
   ) async {
     final StoreRef<int, int> store = StoreRef<int, int>('${siteType.name}_read');
-    final List<Filter> filter = ids.map((id) => Filter.byKey(id)).toList();
-    final Finder finder = Finder(filter: Filter.or(filter));
+    final List<Filter> filters = ids.map((id) => Filter.equals(Field.value, id)).toList();
+    final Finder finder = Finder(filter: Filter.or(filters));
     final List<RecordSnapshot<int, int>> recordSnapshot = await store.find(_db, finder: finder);
     final List<int> result = recordSnapshot.map((snapshot) => snapshot.value).toList();
-
     return result;
   }
 
