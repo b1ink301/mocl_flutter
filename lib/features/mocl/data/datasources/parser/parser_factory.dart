@@ -1,4 +1,3 @@
-import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/repositories/settings_repository.dart';
 
@@ -13,7 +12,6 @@ class ParserFactory {
     required this.settingsRepository,
   });
 
-  @factoryMethod
   BaseParser createParser() {
     final parser = parsers[settingsRepository.getSiteType()];
     if (parser == null) {

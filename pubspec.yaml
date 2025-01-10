@@ -19,13 +19,6 @@ dependencies:
   # HTML Widget
   flutter_widget_from_html: ^0.15.3
 
-  # DI
-  injectable: ^2.5.0
-  get_it: ^8.0.3
-
-  # Bloc for state management
-  flutter_bloc: ^8.1.6
-
   # Value equality
   equatable: ^2.0.7
 
@@ -121,6 +114,8 @@ dependencies:
 
   easy_debounce: ^2.0.3
 
+#  path: ^1.9.0
+
 #  drift: ^2.23.1
 #  objectbox: ^4.0.3
 #  objectbox_generator: ^4.0.3
@@ -138,12 +133,8 @@ dev_dependencies:
   freezed: ^2.5.8
   analyzer: ^7.1.0
 #  test: ^1.25.14
-#  bloc_test: ^9.1.7
-#  floor_generator: ^1.5.0
-#  injectable_generator: ^2.6.2
   riverpod_generator: ^2.6.4
   riverpod_lint: ^2.6.4
-
 
 flutter:
   uses-material-design: true

@@ -9,7 +9,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart' as webview;
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
@@ -28,8 +27,11 @@ class ApiClient {
   static const userAgentPc =
       'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:126.0) Gecko/20100101 Firefox/126.0';
 
-  @PostConstruct()
-  void init() async {
+  ApiClient() {
+    _init();
+  }
+
+  void _init() {
     dio.httpClientAdapter = IOHttpClientAdapter(
         createHttpClient: () =>
             HttpClient()..badCertificateCallback = (_, __, ___) => true);
