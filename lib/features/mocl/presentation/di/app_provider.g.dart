@@ -6,7 +6,7 @@ part of 'app_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$appbarHeightHash() => r'fbc6ef67b6ce5ceea742324a7fd5dcd05b3a7d6b';
+String _$appbarHeightHash() => r'b3fd8541fb879a2cb6afd8b5810324818fed53fc';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -369,7 +369,7 @@ class _ShowToastProviderElement extends AutoDisposeProviderElement<void>
   BuildContext get context => (origin as ShowToastProvider).context;
 }
 
-String _$appRouterHash() => r'6907a14eb99249b9597a72c4b49f8b10413752c9';
+String _$appRouterHash() => r'9fe0879c2d715e6a047c47bc9f82d1d869b834c8';
 
 /// See also [appRouter].
 @ProviderFor(appRouter)

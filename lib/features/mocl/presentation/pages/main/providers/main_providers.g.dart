@@ -6,7 +6,7 @@ part of 'main_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$mainTitleHash() => r'0dc7bb27dbac15ca401842772c540257363fd641';
+String _$mainTitleHash() => r'fc97fdbfeedbfb0e4c4c2c71d34c216606f6a813';
 
 /// See also [mainTitle].
 @ProviderFor(mainTitle)
@@ -22,7 +22,7 @@ final mainTitleProvider = AutoDisposeProvider<String>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MainTitleRef = AutoDisposeProviderRef<String>;
-String _$showAddButtonHash() => r'c32d018e97a3e9f27ebf85919cae75d35efc35f0';
+String _$showAddButtonHash() => r'28c94100bcb60029d83ccecdb2c155c02bdd73f9';
 
 /// See also [showAddButton].
 @ProviderFor(showAddButton)
@@ -39,7 +39,7 @@ final showAddButtonProvider = AutoDisposeProvider<bool>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ShowAddButtonRef = AutoDisposeProviderRef<bool>;
-String _$isCurrentSiteTypeHash() => r'6680300d796f58f739f88c20dc6a60ffbfba627d';
+String _$isCurrentSiteTypeHash() => r'651fd497bf91f2bee0259aa8b5f729f183aa61e2';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -190,7 +190,7 @@ class _IsCurrentSiteTypeProviderElement extends AutoDisposeProviderElement<bool>
   SiteType get siteType => (origin as IsCurrentSiteTypeProvider).siteType;
 }
 
-String _$setMainItemsHash() => r'a4669b36368a59ad9d6a5357ca662c6da02595b6';
+String _$setMainItemsHash() => r'4690f5a223a91d6d14dc1d79138ffea39d96abb1';
 
 /// See also [setMainItems].
 @ProviderFor(setMainItems)
@@ -325,7 +325,7 @@ class _SetMainItemsProviderElement
   List<MainItem> get list => (origin as SetMainItemsProvider).list;
 }
 
-String _$handleAddButtonHash() => r'2227fc9378ff8b971d7b9e0ea927efcb4012574b';
+String _$handleAddButtonHash() => r'86c20a6cb5ea22141427b7ab2c7fa25f99c36f4b';
 
 /// See also [handleAddButton].
 @ProviderFor(handleAddButton)

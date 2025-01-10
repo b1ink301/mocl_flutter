@@ -44,18 +44,22 @@ class MoclListItem extends ConsumerWidget {
     WidgetRef ref,
     int index,
   ) {
-    final ListItem item = ref.watch(itemListNotifierProvider)[index];
-    GoRouter.of(context).push(Routes.detail, extra: item).then((_) {
-      if (context.mounted) {
-        final readId = ref.watch(readableStateNotifierProvider);
-        if (readId == item.id && !item.isRead) {
-          ref
-              .read(itemListNotifierProvider.notifier)
-              .markAsReadItem(index, item);
-          ref.read(paginationStateNotifierProvider.notifier).invalidate();
+    try {
+      final ListItem item = ref.read(itemListNotifierProvider)[index];
+      GoRouter.of(context).push(Routes.detail, extra: item).then((_) {
+        if (context.mounted) {
+          final readId = ref.read(readableStateNotifierProvider);
+          if (readId == item.id && !item.isRead) {
+            ref
+                .read(itemListNotifierProvider.notifier)
+                .markAsReadItem(index, item);
+            ref.read(paginationStateNotifierProvider.notifier).invalidate();
+          }
         }
-      }
-    });
+      });
+    } catch (e) {
+      debugPrint('_handleItemTap = $e');
+    }
   }
 }
 

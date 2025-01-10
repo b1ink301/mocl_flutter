@@ -70,7 +70,7 @@ class IsolateMessage<T> {
   final String boardTitle;
   final String baseUrl;
 
-  IsolateMessage(
+  const IsolateMessage(
     this.replyPort,
     this.responseData,
     this.lastId,
@@ -83,7 +83,7 @@ class ReadStatusRequest {
   final List<int> ids;
   final SendPort responsePort;
 
-  ReadStatusRequest(this.ids, this.responsePort);
+  const ReadStatusRequest(this.ids, this.responsePort);
 }
 
 class ReadStatusResponse {

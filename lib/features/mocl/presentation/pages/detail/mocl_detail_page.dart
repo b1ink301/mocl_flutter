@@ -13,7 +13,7 @@ import 'package:mocl_flutter/features/mocl/presentation/widgets/dummy_appbar_wid
 class DetailPage extends ConsumerWidget {
   const DetailPage({super.key});
 
-  static Widget withRiverpod(
+  static Widget init(
     BuildContext context,
     ListItem item,
   ) {

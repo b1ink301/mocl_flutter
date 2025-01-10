@@ -10,7 +10,7 @@ class LoginView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    var headers = {
+    const headers = {
       'Referer':
           'https://nid.naver.com/mobile/user/help/naverProfile.nhn?lang=ko_KR',
       'ContentType': 'application/x-www-form-urlencoded'

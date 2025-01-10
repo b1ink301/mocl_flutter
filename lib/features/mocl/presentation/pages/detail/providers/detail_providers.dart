@@ -35,7 +35,7 @@ Future<int> _markAsRead(Ref ref, ListItem listItem) async {
     final SiteType siteType = ref.read(currentSiteTypeNotifierProvider);
     final SetReadFlagParams params =
         SetReadFlagParams(siteType: siteType, boardId: listItem.id);
-    final setReadFlag = ref.read(setReadProvider);
+    final SetReadFlag setReadFlag = ref.read(setReadProvider);
     final int result = await setReadFlag(params);
     ref.read(readableStateNotifierProvider.notifier).update(listItem.id);
     return result;
@@ -45,21 +45,21 @@ Future<int> _markAsRead(Ref ref, ListItem listItem) async {
 
 @Riverpod(dependencies: [listItem, CurrentSiteTypeNotifier])
 String detailSmallTitle(Ref ref) {
-  final siteType = ref.watch(currentSiteTypeNotifierProvider);
-  final listItem = ref.watch(listItemProvider);
+  final SiteType siteType = ref.watch(currentSiteTypeNotifierProvider);
+  final ListItem listItem = ref.watch(listItemProvider);
   return '${siteType.title} > ${listItem.boardTitle}';
 }
 
 @Riverpod(dependencies: [listItem])
 String detailTitle(Ref ref) {
-  final listItem = ref.watch(listItemProvider);
+  final ListItem listItem = ref.watch(listItemProvider);
   return listItem.title;
 }
 
 @Riverpod(dependencies: [listItem, CurrentSiteTypeNotifier])
-String detailUrl(ref) {
-  final siteType = ref.watch(currentSiteTypeNotifierProvider);
-  final listItem = ref.watch(listItemProvider);
+String detailUrl(Ref ref) {
+  final SiteType siteType = ref.watch(currentSiteTypeNotifierProvider);
+  final ListItem listItem = ref.watch(listItemProvider);
   return siteType == SiteType.naverCafe
       ? 'https://m.cafe.naver.com/ca-fe/web/cafes/${listItem.board}/articles/${listItem.id}'
       : listItem.url;

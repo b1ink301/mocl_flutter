@@ -1,28 +1,23 @@
-import 'dart:io';
-
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/settings/settings_view.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/dummy_appbar_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
-  static Widget withBloc(
+  static Widget init(
     BuildContext context,
-  ) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor:
-          Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor,
-    ));
-    return const SettingsPage();
-  }
+  ) =>
+      AnnotatedRegion<SystemUiOverlayStyle>(
+        value: Theme.of(context).appBarTheme.systemOverlayStyle!,
+        child: const SettingsPage(),
+      );
 
-  Widget _buildAppBar(
-    BuildContext context,
-  ) {
-    var backgroundColor = Theme.of(context).appBarTheme.backgroundColor;
+  Widget _buildAppBar(BuildContext context) {
+    final backgroundColor = Theme.of(context).appBarTheme.backgroundColor;
     return SliverAppBar(
       title: _buildTitle(context, SiteType.settings.title),
       flexibleSpace: Container(color: backgroundColor),
@@ -40,25 +35,15 @@ class SettingsPage extends StatelessWidget {
       );
 
   @override
-  Widget build(BuildContext context) {
-    var statusBarColor =
-        Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor;
-
-    return Scaffold(
-      appBar: Platform.isIOS
-          ? AppBar(
-              toolbarHeight: 0,
-              flexibleSpace: Container(color: statusBarColor),
-            )
-          : null,
-      body: SafeArea(
-        child: CustomScrollView(
-          slivers: <Widget>[
-            _buildAppBar(context),
-            const SettingsView(),
-          ],
+  Widget build(BuildContext context) => Scaffold(
+        appBar: DummyAppBarWidget.buildDummyAppbar(),
+        body: SafeArea(
+          child: CustomScrollView(
+            slivers: <Widget>[
+              _buildAppBar(context),
+              const SettingsView(),
+            ],
+          ),
         ),
-      ),
-    );
-  }
+      );
 }

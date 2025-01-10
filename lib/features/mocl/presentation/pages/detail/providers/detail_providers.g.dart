@@ -22,7 +22,7 @@ final listItemProvider = AutoDisposeProvider<ListItem>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ListItemRef = AutoDisposeProviderRef<ListItem>;
-String _$markAsReadHash() => r'f08c16934f0224473ade5168ad7145a37596572c';
+String _$markAsReadHash() => r'e52c0d22ebcc34d1867674991180f040318689e3';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -173,7 +173,7 @@ class _MarkAsReadProviderElement extends AutoDisposeFutureProviderElement<int>
   ListItem get listItem => (origin as _MarkAsReadProvider).listItem;
 }
 
-String _$detailSmallTitleHash() => r'c59bfa6a97e8dc061c2cb74f872bec76a4530bb1';
+String _$detailSmallTitleHash() => r'2271bf4d5132dd6261e31bf922595b39826275b0';
 
 /// See also [detailSmallTitle].
 @ProviderFor(detailSmallTitle)
@@ -198,7 +198,7 @@ final detailSmallTitleProvider = AutoDisposeProvider<String>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DetailSmallTitleRef = AutoDisposeProviderRef<String>;
-String _$detailTitleHash() => r'01e0668c7ebb3c4e5e495aa3b333ac5b56b3d4bd';
+String _$detailTitleHash() => r'2fa859a32ccecb89e1bf742232e520d99b926183';
 
 /// See also [detailTitle].
 @ProviderFor(detailTitle)
@@ -217,7 +217,7 @@ final detailTitleProvider = AutoDisposeProvider<String>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DetailTitleRef = AutoDisposeProviderRef<String>;
-String _$detailUrlHash() => r'd92b795d96f57df806f8880c5fb52024fd85975c';
+String _$detailUrlHash() => r'f90c3c2d94844fcde8f28210cee4e8e44eeeb4fc';
 
 /// See also [detailUrl].
 @ProviderFor(detailUrl)

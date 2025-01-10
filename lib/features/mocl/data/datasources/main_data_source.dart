@@ -29,9 +29,9 @@ class MainDataSourceImpl extends MainDataSource {
     SiteType siteType,
   ) async {
     final result = await localDatabase.getMainData(siteType);
-    return result.map((item) {
-      return item.toMainItemModel().toEntity(siteType);
-    }).toList();
+    return result
+        .map((item) => item.toMainItemModel().toEntity(siteType))
+        .toList();
   }
 
   @override
@@ -57,7 +57,7 @@ class MainDataSourceImpl extends MainDataSource {
       return decodedData.map((item) => MainItemModel.fromJson(item)).toList();
     } on Exception catch (e) {
       debugPrint("getAllFromJson - ${e.toString()}");
-      return List.empty();
+      return const [];
     }
   }
 
@@ -67,8 +67,8 @@ class MainDataSourceImpl extends MainDataSource {
 
   @override
   Future<bool> hasItem(SiteType siteType, MainItem item) {
-    var data = MainItemMapper.fromEntityToModel(item);
-    var entity = MainItemMapper.fromModelToEntity(data);
+    final MainItemModel data = MainItemMapper.fromEntityToModel(item);
+    final MainItemData entity = MainItemMapper.fromModelToEntity(data);
     return localDatabase.hasItem(siteType, entity);
   }
 }

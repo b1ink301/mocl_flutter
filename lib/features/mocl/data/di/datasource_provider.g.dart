@@ -6,7 +6,7 @@ part of 'datasource_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$appDatabaseHash() => r'15b1eb195f2e790eca577ca91256a2130771814b';
+String _$appDatabaseHash() => r'83e3fb16cbbbe98680713582f033110fdad2ea97';
 
 /// See also [appDatabase].
 @ProviderFor(appDatabase)
@@ -22,7 +22,7 @@ final appDatabaseProvider = AutoDisposeProvider<Database>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef AppDatabaseRef = AutoDisposeProviderRef<Database>;
-String _$sharedPreferencesHash() => r'dd034076f3a6cac11ba173b2ebd1bd0debcadd42';
+String _$sharedPreferencesHash() => r'91d3d8d16af3d747cec711b8a095a63e20df9b7c';
 
 /// See also [sharedPreferences].
 @ProviderFor(sharedPreferences)
@@ -40,7 +40,7 @@ final sharedPreferencesProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef SharedPreferencesRef = AutoDisposeProviderRef<SharedPreferences>;
-String _$localDatabaseHash() => r'709216f5d947d0f62796297f45287183eab5521e';
+String _$localDatabaseHash() => r'2b0076a2942a39b7414c35ab59e8ce038d3d3a70';
 
 /// See also [localDatabase].
 @ProviderFor(localDatabase)
@@ -57,7 +57,7 @@ final localDatabaseProvider = AutoDisposeProvider<LocalDatabase>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef LocalDatabaseRef = AutoDisposeProviderRef<LocalDatabase>;
-String _$mainDatasourceHash() => r'c68152ab96187e623d517f12f7eab82e9481b3f8';
+String _$mainDatasourceHash() => r'09d6ce23be51f781c73dd2f2f11eadf93d6e4e2d';
 
 /// See also [mainDatasource].
 @ProviderFor(mainDatasource)
@@ -74,7 +74,7 @@ final mainDatasourceProvider = AutoDisposeProvider<MainDataSource>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MainDatasourceRef = AutoDisposeProviderRef<MainDataSource>;
-String _$listDatasourceHash() => r'2e3747974b0361da1f83f6ea6cfea75ea3f7eac0';
+String _$listDatasourceHash() => r'fe1d5edb2c75de17800e8c7619b0da0ae48b85b5';
 
 /// See also [listDatasource].
 @ProviderFor(listDatasource)
@@ -91,7 +91,7 @@ final listDatasourceProvider = AutoDisposeProvider<ListDataSource>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ListDatasourceRef = AutoDisposeProviderRef<ListDataSource>;
-String _$detailDatasourceHash() => r'aff642de38d0bbe92ef6b7012aadc48ecdeb03c9';
+String _$detailDatasourceHash() => r'70219dacc5468cbe88ce4fe08fb178da5926cd9a';
 
 /// See also [detailDatasource].
 @ProviderFor(detailDatasource)
@@ -108,7 +108,7 @@ final detailDatasourceProvider = AutoDisposeProvider<DetailDataSource>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DetailDatasourceRef = AutoDisposeProviderRef<DetailDataSource>;
-String _$parserFactoryHash() => r'0f09e2ff5465ad150ffee73b2586c7ea110296f1';
+String _$parserFactoryHash() => r'd600154e34d7c512bbc9ba7d6d179df9a0660c30';
 
 /// See also [parserFactory].
 @ProviderFor(parserFactory)
