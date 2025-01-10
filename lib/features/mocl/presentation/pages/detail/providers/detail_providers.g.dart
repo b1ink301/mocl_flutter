@@ -22,7 +22,7 @@ final listItemProvider = AutoDisposeProvider<ListItem>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ListItemRef = AutoDisposeProviderRef<ListItem>;
-String _$markAsReadHash() => r'6654c3c46ba7355d133354c40e4856af1d9574b2';
+String _$markAsReadHash() => r'f08c16934f0224473ade5168ad7145a37596572c';
 
 /// Copied from Dart SDK
 class _SystemHash {

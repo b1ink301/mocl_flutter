@@ -122,7 +122,7 @@ final itemListNotifierProvider =
 
 typedef _$ItemListNotifier = AutoDisposeNotifier<List<ListItem>>;
 String _$pageNumberNotifierHash() =>
-    r'78b27cc8affd4d7a1d994e61c34ca3815f10fbf1';
+    r'deb5d612104f4a6f41dcbd658cd20bf9d800841e';
 
 /// See also [PageNumberNotifier].
 @ProviderFor(PageNumberNotifier)
@@ -133,8 +133,16 @@ final pageNumberNotifierProvider =
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
       : _$pageNumberNotifierHash,
-  dependencies: const <ProviderOrFamily>[],
-  allTransitiveDependencies: const <ProviderOrFamily>{},
+  dependencies: <ProviderOrFamily>[
+    mainItemProvider,
+    currentSiteTypeNotifierProvider
+  ],
+  allTransitiveDependencies: <ProviderOrFamily>{
+    mainItemProvider,
+    ...?mainItemProvider.allTransitiveDependencies,
+    currentSiteTypeNotifierProvider,
+    ...?currentSiteTypeNotifierProvider.allTransitiveDependencies
+  },
 );
 
 typedef _$PageNumberNotifier = AutoDisposeNotifier<int>;

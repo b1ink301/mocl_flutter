@@ -48,9 +48,9 @@ class PaginationStateNotifier extends _$PaginationStateNotifier {
 
     try {
       final GetListParams params =
-      GetListParams(mainItem: mainItem, page: page, lastId: lastId);
+          GetListParams(mainItem: mainItem, page: page, lastId: lastId);
       final Either<Failure, List<ListItem>> result =
-      await ref.read(getListProvider)(params);
+          await ref.read(getListProvider)(params);
       final List<ListItem> data = result.getOrElse((f) => throw f);
 
       if (data.isNotEmpty) {
@@ -86,7 +86,7 @@ class ItemListNotifier extends _$ItemListNotifier {
   }
 }
 
-@Riverpod(dependencies: [])
+@Riverpod(dependencies: [mainItem, CurrentSiteTypeNotifier])
 class PageNumberNotifier extends _$PageNumberNotifier {
   @override
   int build() {
@@ -96,7 +96,9 @@ class PageNumberNotifier extends _$PageNumberNotifier {
 
   void nextPage() {
     final mainItem = ref.read(mainItemProvider);
-    if (mainItem.siteType != SiteType.clien && mainItem.board != "recommend") {
+    if (mainItem.siteType != SiteType.clien ||
+        (mainItem.siteType == SiteType.clien &&
+            mainItem.board != "recommend")) {
       state++;
     }
   }
