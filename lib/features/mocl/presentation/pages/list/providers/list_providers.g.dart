@@ -23,172 +23,136 @@ final listSmallTitleProvider = AutoDisposeProvider<String>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ListSmallTitleRef = AutoDisposeProviderRef<String>;
-String _$handleListItemTapHash() => r'51e762ca9468e20dbb00097012708961eb558744';
+String _$listTitleHash() => r'ab4b6238fecc90fb253993e35d662496912dbc0c';
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-/// See also [handleListItemTap].
-@ProviderFor(handleListItemTap)
-const handleListItemTapProvider = HandleListItemTapFamily();
-
-/// See also [handleListItemTap].
-class HandleListItemTapFamily extends Family<void> {
-  /// See also [handleListItemTap].
-  const HandleListItemTapFamily();
-
-  /// See also [handleListItemTap].
-  HandleListItemTapProvider call(
-    BuildContext context,
-    ListItem item,
-  ) {
-    return HandleListItemTapProvider(
-      context,
-      item,
-    );
-  }
-
-  @override
-  HandleListItemTapProvider getProviderOverride(
-    covariant HandleListItemTapProvider provider,
-  ) {
-    return call(
-      provider.context,
-      provider.item,
-    );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'handleListItemTapProvider';
-}
-
-/// See also [handleListItemTap].
-class HandleListItemTapProvider extends AutoDisposeProvider<void> {
-  /// See also [handleListItemTap].
-  HandleListItemTapProvider(
-    BuildContext context,
-    ListItem item,
-  ) : this._internal(
-          (ref) => handleListItemTap(
-            ref as HandleListItemTapRef,
-            context,
-            item,
-          ),
-          from: handleListItemTapProvider,
-          name: r'handleListItemTapProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$handleListItemTapHash,
-          dependencies: HandleListItemTapFamily._dependencies,
-          allTransitiveDependencies:
-              HandleListItemTapFamily._allTransitiveDependencies,
-          context: context,
-          item: item,
-        );
-
-  HandleListItemTapProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.context,
-    required this.item,
-  }) : super.internal();
-
-  final BuildContext context;
-  final ListItem item;
-
-  @override
-  Override overrideWith(
-    void Function(HandleListItemTapRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: HandleListItemTapProvider._internal(
-        (ref) => create(ref as HandleListItemTapRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        context: context,
-        item: item,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeProviderElement<void> createElement() {
-    return _HandleListItemTapProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is HandleListItemTapProvider &&
-        other.context == context &&
-        other.item == item;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, context.hashCode);
-    hash = _SystemHash.combine(hash, item.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
-}
+/// See also [listTitle].
+@ProviderFor(listTitle)
+final listTitleProvider = AutoDisposeProvider<String>.internal(
+  listTitle,
+  name: r'listTitleProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$listTitleHash,
+  dependencies: <ProviderOrFamily>[mainItemProvider],
+  allTransitiveDependencies: <ProviderOrFamily>{
+    mainItemProvider,
+    ...?mainItemProvider.allTransitiveDependencies
+  },
+);
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin HandleListItemTapRef on AutoDisposeProviderRef<void> {
-  /// The parameter `context` of this provider.
-  BuildContext get context;
+typedef ListTitleRef = AutoDisposeProviderRef<String>;
+String _$mainItemHash() => r'cfdaba790e8aec68dee67a9c1b304af84fef86ea';
 
-  /// The parameter `item` of this provider.
-  ListItem get item;
-}
+/// See also [mainItem].
+@ProviderFor(mainItem)
+final mainItemProvider = AutoDisposeProvider<MainItem>.internal(
+  mainItem,
+  name: r'mainItemProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$mainItemHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
 
-class _HandleListItemTapProviderElement extends AutoDisposeProviderElement<void>
-    with HandleListItemTapRef {
-  _HandleListItemTapProviderElement(super.provider);
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef MainItemRef = AutoDisposeProviderRef<MainItem>;
+String _$listItemInfoHash() => r'983444d5e5e409ca032faeb8346b8fe22c0d0954';
 
-  @override
-  BuildContext get context => (origin as HandleListItemTapProvider).context;
-  @override
-  ListItem get item => (origin as HandleListItemTapProvider).item;
-}
+/// See also [listItemInfo].
+@ProviderFor(listItemInfo)
+final listItemInfoProvider = AutoDisposeProvider<MoclListItemInfo>.internal(
+  listItemInfo,
+  name: r'listItemInfoProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$listItemInfoHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ListItemInfoRef = AutoDisposeProviderRef<MoclListItemInfo>;
+String _$paginationStateNotifierHash() =>
+    r'a4be4bc4cbd939fa4a8c7b9fe752ad04c93ae40f';
+
+/// See also [PaginationStateNotifier].
+@ProviderFor(PaginationStateNotifier)
+final paginationStateNotifierProvider = AutoDisposeAsyncNotifierProvider<
+    PaginationStateNotifier, PaginationState>.internal(
+  PaginationStateNotifier.new,
+  name: r'paginationStateNotifierProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$paginationStateNotifierHash,
+  dependencies: <ProviderOrFamily>{
+    mainItemProvider,
+    pageNumberNotifierProvider,
+    itemListNotifierProvider,
+    _lastIdNotifierProvider
+  },
+  allTransitiveDependencies: <ProviderOrFamily>{
+    mainItemProvider,
+    ...?mainItemProvider.allTransitiveDependencies,
+    pageNumberNotifierProvider,
+    ...?pageNumberNotifierProvider.allTransitiveDependencies,
+    itemListNotifierProvider,
+    ...?itemListNotifierProvider.allTransitiveDependencies,
+    _lastIdNotifierProvider,
+    ...?_lastIdNotifierProvider.allTransitiveDependencies
+  },
+);
+
+typedef _$PaginationStateNotifier = AutoDisposeAsyncNotifier<PaginationState>;
+String _$itemListNotifierHash() => r'60b0dcd9a7ccc656ab543d863fb911fd1384cb4c';
+
+/// See also [ItemListNotifier].
+@ProviderFor(ItemListNotifier)
+final itemListNotifierProvider =
+    AutoDisposeNotifierProvider<ItemListNotifier, List<ListItem>>.internal(
+  ItemListNotifier.new,
+  name: r'itemListNotifierProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$itemListNotifierHash,
+  dependencies: const <ProviderOrFamily>[],
+  allTransitiveDependencies: const <ProviderOrFamily>{},
+);
+
+typedef _$ItemListNotifier = AutoDisposeNotifier<List<ListItem>>;
+String _$pageNumberNotifierHash() =>
+    r'78b27cc8affd4d7a1d994e61c34ca3815f10fbf1';
+
+/// See also [PageNumberNotifier].
+@ProviderFor(PageNumberNotifier)
+final pageNumberNotifierProvider =
+    AutoDisposeNotifierProvider<PageNumberNotifier, int>.internal(
+  PageNumberNotifier.new,
+  name: r'pageNumberNotifierProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$pageNumberNotifierHash,
+  dependencies: const <ProviderOrFamily>[],
+  allTransitiveDependencies: const <ProviderOrFamily>{},
+);
+
+typedef _$PageNumberNotifier = AutoDisposeNotifier<int>;
+String _$lastIdNotifierHash() => r'4cc27cb92b24dad7c08899752f670a91a8388d63';
+
+/// See also [_LastIdNotifier].
+@ProviderFor(_LastIdNotifier)
+final _lastIdNotifierProvider =
+    AutoDisposeNotifierProvider<_LastIdNotifier, int>.internal(
+  _LastIdNotifier.new,
+  name: r'_lastIdNotifierProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$lastIdNotifierHash,
+  dependencies: const <ProviderOrFamily>[],
+  allTransitiveDependencies: const <ProviderOrFamily>{},
+);
+
+typedef _$LastIdNotifier = AutoDisposeNotifier<int>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

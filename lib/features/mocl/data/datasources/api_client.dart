@@ -68,7 +68,7 @@ class ApiClient {
     int page,
     int lastId,
     BaseParser parser,
-    Future<Map<int, bool>> Function(SiteType, List<int>) isReads,
+    Future<List<int>> Function(SiteType, List<int>) isReads,
   ) async {
     final String url;
     if (item.siteType == SiteType.clien) {

@@ -22,12 +22,12 @@ part 'main_providers.freezed.dart';
 class MainItemsNotifier extends _$MainItemsNotifier {
   @override
   Future<List<MainItem>> build() async {
-    final siteType = ref.watch(currentSiteTypeNotifierProvider);
-    final getList = ref.read(getMainListProvider);
-    final result = await getList(siteType);
+    final SiteType siteType = ref.watch(currentSiteTypeNotifierProvider);
+    final Either<Failure, List<MainItem>> result =
+        await ref.read(getMainListProvider)(siteType);
     return result.fold(
-      (failure) => throw failure,
-      (data) => data,
+      (Failure failure) => throw failure,
+      (List<MainItem> data) => data,
     );
   }
 

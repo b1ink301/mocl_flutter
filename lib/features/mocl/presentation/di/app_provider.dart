@@ -9,6 +9,7 @@ import 'package:mocl_flutter/core/usecases/usecase.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/mocl/domain/usecases/get_site_type.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/use_case_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/mocl_detail_page.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/photo_view_dialog.dart';
@@ -22,7 +23,9 @@ import 'package:mocl_flutter/features/mocl/presentation/widgets/dialog_page.dart
 import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:share_plus/share_plus.dart';
 import 'package:swipeable_page_route/swipeable_page_route.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 part 'app_provider.g.dart';
 
@@ -32,7 +35,7 @@ final localeCodeProvider = StateProvider<String>((ref) => 'ko');
 class CurrentSiteTypeNotifier extends _$CurrentSiteTypeNotifier {
   @override
   SiteType build() {
-    final getSiteType = ref.read(getSiteTypeProvider);
+    final GetSiteType getSiteType = ref.read(getSiteTypeProvider);
     return getSiteType(NoParams());
   }
 
@@ -109,6 +112,20 @@ Future<void> clearData(Ref ref) async {
 }
 
 @riverpod
+class ClearDataNotifer extends _$ClearDataNotifer {
+  @override
+  Future<bool> build() async {
+    return false;
+  }
+
+  Future<void> clear() async {
+    state = const AsyncLoading();
+    await AsyncValue.guard(() => ref.read(clearDataProvider.future));
+    state = const AsyncData(true);
+  }
+}
+
+@riverpod
 void showToast(Ref ref, String message, BuildContext context) {
   Fluttertoast.showToast(
     msg: message,
@@ -128,8 +145,7 @@ GoRouter appRouter(Ref ref) => GoRouter(
         GoRoute(
             path: Routes.main,
             pageBuilder: (BuildContext context, GoRouterState state) =>
-                SwipeablePage(
-                    builder: (context) => MainPage.init(context)),
+                SwipeablePage(builder: (context) => MainPage.init(context)),
             routes: [
               GoRoute(
                   path: Routes.setMainDlg,
@@ -152,11 +168,8 @@ GoRouter appRouter(Ref ref) => GoRouter(
             pageBuilder: (BuildContext context, GoRouterState state) =>
                 SwipeablePage(
                   builder: (context) {
-                    final extra =
-                        GoRouterState.of(context).extra as List<dynamic>;
-                    final siteType = extra[0] as SiteType;
-                    final item = extra[1] as ListItem;
-                    return DetailPage.withRiverpod(context, siteType, item);
+                    final item = GoRouterState.of(context).extra as ListItem;
+                    return DetailPage.withRiverpod(context, item);
                   },
                 ),
             routes: [
@@ -186,3 +199,43 @@ GoRouter appRouter(Ref ref) => GoRouter(
         )
       ],
     );
+
+@riverpod
+Future<bool> openBrowserByUrl(ref, String url) async {
+  final Uri uri = Uri.parse(url);
+  return await launchUrl(uri);
+}
+
+@riverpod
+Future<bool> shareUrl(ref, String url) async {
+  final Uri uri = Uri.parse(url);
+  final result = await Share.shareUri(uri);
+  return result.status == ShareResultStatus.success;
+}
+
+@Riverpod(dependencies: [_isImageUrl])
+void openUrl(ref, BuildContext context, String url) {
+  final uri = Uri.parse(url);
+  final last = uri.pathSegments.lastOrNull;
+  final isImageUrl = ref.read(_isImageUrlProvider);
+
+  if (last != null && isImageUrl(last)) {
+    context.push(Routes.viewPhotoDlgFull, extra: url);
+  } else {
+    ref.read(openBrowserByUrlProvider)(url);
+  }
+}
+
+@riverpod
+bool _isImageUrl(ref, String url) {
+  final imageExtensions = [
+    '.jpg',
+    '.jpeg',
+    '.png',
+    '.gif',
+    '.bmp',
+    '.webp',
+    '.tiff'
+  ];
+  return imageExtensions.any((ext) => url.toLowerCase().endsWith(ext));
+}

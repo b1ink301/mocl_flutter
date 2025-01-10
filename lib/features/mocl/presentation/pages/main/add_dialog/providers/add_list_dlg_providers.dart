@@ -1,68 +1,44 @@
-import 'dart:collection';
-
+import 'package:fpdart/fpdart.dart';
+import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/mocl/domain/usecases/get_main_list_from_json.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/use_case_provider.dart';
+import 'package:mocl_flutter/features/mocl/presentation/models/checkable_main_item.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'add_list_dlg_providers.g.dart';
 
 @riverpod
 class AddListDlgNotifier extends _$AddListDlgNotifier {
-  final List<MainItem> _selectedItems = [];
-
-  List<MainItem> get selectedItems => UnmodifiableListView(_selectedItems);
-
   @override
-  FutureOr<List<MainItem>> build() async {
-    final siteType = ref.read(currentSiteTypeNotifierProvider);
-    final getMainListFromJson = ref.read(getMainListFromJsonProvider);
-    final result = await getMainListFromJson(siteType);
+  FutureOr<List<CheckableMainItem>> build() async {
+    final SiteType siteType = ref.read(currentSiteTypeNotifierProvider);
+    final GetMainListFromJson getMainListFromJson =
+        ref.read(getMainListFromJsonProvider);
+    final Either<Failure, List<MainItem>> result =
+        await getMainListFromJson(siteType);
 
     return result.fold(
-      (failure) {
-        throw failure;
-      },
-      (data) {
-        _init(data);
-        return data;
-      },
+      (Failure failure) => throw failure,
+      (List<MainItem> data) => data
+          .map((MainItem item) =>
+              CheckableMainItem(mainItem: item, isChecked: item.hasItem))
+          .toList(),
     );
   }
 
-  void onChanged<T>(bool isChecked, T? item) {
-    if (item != null && item is MainItem) {
-      if (isChecked) {
-        _addItem(item);
-      } else {
-        _removeItem(item);
-      }
+  void onChanged(bool isChecked, int index) {
+    if (state.value != null) {
+      state.value![index] = state.value![index].copyWith(isChecked: isChecked);
     }
   }
 
-  void _clear() => _selectedItems.clear();
-
-  void _addAll(List<MainItem> list) {
-    final items = list.where((item) => item.hasItem);
-    _selectedItems.addAll(items);
-  }
-
-  void _addItem(MainItem item) {
-    if (!_selectedItems.contains(item)) {
-      _selectedItems.add(item);
-    }
-  }
-
-  void _removeItem(MainItem item) {
-    if (_selectedItems.contains(item)) {
-      _selectedItems.remove(item);
-    }
-  }
-
-  void _init(List<MainItem> data) {
-    _clear();
-    _addAll(data);
-  }
-
-  bool hasItem(MainItem item) => _selectedItems.contains(item);
+  List<MainItem> selectedItems() => state.value == null
+      ? const []
+      : state.value!
+          .where((CheckableMainItem item) => item.isChecked)
+          .map((CheckableMainItem item) => item.mainItem)
+          .toList();
 }

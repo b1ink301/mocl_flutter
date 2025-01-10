@@ -1,12 +1,11 @@
-import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/detail/providers/detail_view_model.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/detail/detail_view_util.dart';
+import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/detail/providers/detail_providers.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
@@ -17,26 +16,25 @@ class DetailView extends ConsumerWidget {
   const DetailView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(detailViewModelProvider);
-    return state.maybeMap(
-      success: (state) => _DetailView(detail: state.detail),
-      failed: (state) => SliverFillRemaining(
-        hasScrollBody: false,
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Center(
-            child: MessageWidget(message: state.message),
-          ),
-        ),
-      ),
-      orElse: () => const SliverToBoxAdapter(
-        child: Column(
-          children: [LoadingWidget(), DividerWidget()],
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context, WidgetRef ref) =>
+      ref.watch(detailsNotifierProvider).maybeMap(
+            data: (AsyncData<Details> state) =>
+                _DetailView(detail: state.value),
+            error: (AsyncError<Details> state) => SliverFillRemaining(
+              hasScrollBody: false,
+              child: Padding(
+                padding: const EdgeInsets.all(12.0),
+                child: Center(
+                  child: MessageWidget(message: state.error.toString()),
+                ),
+              ),
+            ),
+            orElse: () => const SliverToBoxAdapter(
+              child: Column(
+                children: [LoadingWidget(), DividerWidget()],
+              ),
+            ),
+          );
 }
 
 class _DetailView extends StatelessWidget {
@@ -143,8 +141,6 @@ class _DetailContent extends ConsumerWidget {
     final bodySmall = theme.textTheme.bodySmall;
     final bodyMedium = theme.textTheme.bodyMedium;
 
-    final viewModel = ref.read(detailViewModelProvider.notifier);
-
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
       mainAxisSize: MainAxisSize.min,
@@ -155,7 +151,7 @@ class _DetailContent extends ConsumerWidget {
           detail: detail,
           hexColor: hexColor,
           bodyMedium: bodyMedium,
-          onTapUrl: (url) => DetailViewUtil.openUrl(context, url),
+          onTapUrl: (url) => ref.read(openUrlProvider(context, url)),
         ),
         const SizedBox(height: 10),
         if (detail.comments.isNotEmpty)
@@ -164,10 +160,14 @@ class _DetailContent extends ConsumerWidget {
             comments: detail.comments,
             bodySmall: bodySmall,
             bodyMedium: bodyMedium,
-            openUrl: (url) => DetailViewUtil.openUrl(context, url),
+            openUrl: (url) => ref.read(openUrlProvider(context, url)),
           ),
         const Divider(),
-        _RefreshButton(onRefresh: viewModel.refresh, bodyMedium: bodyMedium),
+        _RefreshButton(
+            onRefresh: () {
+              ref.read(detailsNotifierProvider.notifier).refresh();
+            },
+            bodyMedium: bodyMedium),
         const Divider(),
       ],
     );
@@ -186,13 +186,13 @@ class _Body extends StatelessWidget {
   final Details detail;
   final String hexColor;
   final TextStyle? bodyMedium;
-  final FutureOr<bool> Function(String url)? onTapUrl;
+  final void Function(String url) onTapUrl;
 
   const _Body({
     required this.detail,
     required this.hexColor,
     required this.bodyMedium,
-    this.onTapUrl,
+    required this.onTapUrl,
   });
 
   @override
@@ -203,43 +203,15 @@ class _Body extends StatelessWidget {
           if (element.localName == 'a') {
             return {'color': hexColor, 'text-decoration': 'underline'};
           }
-          // else if (element.localName == 'div') {
-          //   if (element.innerHtml.startsWith("https://")) {
-          //     return {'color': hexColor, 'text-decoration': 'underline'};
-          //   }
-          // }
           return null;
         },
-        // customWidgetBuilder: (element) {
-        //     debugPrint('element.innerHtml=${element.innerHtml}');
-        //
-        //   if (element.localName == 'a' ||
-        //       element.localName == 'div' &&
-        //           element.innerHtml.startsWith("https://")) {
-        //
-        //     return GestureDetector(
-        //       onTap: () => onTapUrl?.call(element.innerHtml),
-        //       child: Text(
-        //         element.innerHtml,
-        //         style: bodyMedium?.copyWith(
-        //           color: Theme.of(context).indicatorColor,
-        //           decoration: TextDecoration.underline,
-        //         ),
-        //       ),
-        //     );
-        //   }
-        //
-        //   return HtmlWidget(
-        //     element.innerHtml,
-        //     textStyle: bodyMedium,
-        //     onTapUrl: onTapUrl,
-        //     onTapImage: (data) => onTapUrl?.call(data.sources.first.url),
-        //   );
-        // },
         textStyle: bodyMedium,
         renderMode: RenderMode.column,
-        onTapUrl: onTapUrl,
-        onTapImage: (data) => onTapUrl?.call(data.sources.first.url),
+        onTapUrl: (url) async {
+          onTapUrl(url);
+          return true;
+        },
+        onTapImage: (data) => onTapUrl(data.sources.first.url),
       );
 }
 
@@ -248,7 +220,7 @@ class _Comments extends StatelessWidget {
   final List<CommentItem> comments;
   final TextStyle? bodySmall;
   final TextStyle? bodyMedium;
-  final FutureOr<bool> Function(String) openUrl;
+  final void Function(String) openUrl;
 
   const _Comments({
     required this.hexColor,
@@ -313,7 +285,7 @@ class _CommentList extends StatelessWidget {
   final TextStyle? bodySmall;
   final TextStyle? bodyMedium;
   final String hexColor;
-  final FutureOr<bool> Function(String) openUrl;
+  final void Function(String) openUrl;
 
   const _CommentList({
     required this.comments,
@@ -347,7 +319,7 @@ class _CommentItem extends StatelessWidget {
   final TextStyle? bodySmall;
   final TextStyle? bodyMedium;
   final String hexColor;
-  final FutureOr<bool> Function(String) openUrl;
+  final void Function(String) openUrl;
 
   const _CommentItem({
     required this.comment,
@@ -401,7 +373,10 @@ class _CommentItem extends StatelessWidget {
             }
             return null;
           },
-          onTapUrl: openUrl,
+          onTapUrl: (url) async {
+            openUrl(url);
+            return true;
+          },
           onTapImage: (data) => openUrl(data.sources.first.url),
         ),
       ),

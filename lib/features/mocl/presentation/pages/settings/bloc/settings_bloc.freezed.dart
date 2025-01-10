@@ -111,7 +111,7 @@ class _$GetVersionEventImpl
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('type', 'SettingsEvent.getVersion'));
+    properties..add(DiagnosticsProperty('type', 'SettingsEvent.getVersion'));
   }
 
   @override
@@ -224,7 +224,7 @@ class _$ClearDataEventImpl
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('type', 'SettingsEvent.clearData'));
+    properties..add(DiagnosticsProperty('type', 'SettingsEvent.clearData'));
   }
 
   @override
@@ -412,7 +412,7 @@ class _$StateInitialImpl<T>
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('type', 'SettingsState<$T>.initial'));
+    properties..add(DiagnosticsProperty('type', 'SettingsState<$T>.initial'));
   }
 
   @override
@@ -537,7 +537,7 @@ class _$StateLoadingImpl<T>
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
     super.debugFillProperties(properties);
-    properties.add(DiagnosticsProperty('type', 'SettingsState<$T>.loading'));
+    properties..add(DiagnosticsProperty('type', 'SettingsState<$T>.loading'));
   }
 
   @override

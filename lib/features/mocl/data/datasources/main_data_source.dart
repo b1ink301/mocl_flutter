@@ -28,7 +28,7 @@ class MainDataSourceImpl extends MainDataSource {
   Future<List<MainItem>> get(
     SiteType siteType,
   ) async {
-    final result = await localDatabase.getMainItems(siteType);
+    final result = await localDatabase.getMainData(siteType);
     return result.map((item) {
       return item.toMainItemModel().toEntity(siteType);
     }).toList();
@@ -44,7 +44,7 @@ class MainDataSourceImpl extends MainDataSource {
       return MainItemMapper.fromModelToEntity(data);
     }).toList();
     await localDatabase.deleteAll(siteType);
-    return localDatabase.setMainItems(siteType, entities);
+    return localDatabase.setMainData(siteType, entities);
   }
 
   @override

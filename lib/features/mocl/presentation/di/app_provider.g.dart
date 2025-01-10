@@ -369,7 +369,7 @@ class _ShowToastProviderElement extends AutoDisposeProviderElement<void>
   BuildContext get context => (origin as ShowToastProvider).context;
 }
 
-String _$appRouterHash() => r'2678e2635ae636e3c33d42456684dc183738e3ff';
+String _$appRouterHash() => r'6907a14eb99249b9597a72c4b49f8b10413752c9';
 
 /// See also [appRouter].
 @ProviderFor(appRouter)
@@ -385,8 +385,549 @@ final appRouterProvider = AutoDisposeProvider<GoRouter>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef AppRouterRef = AutoDisposeProviderRef<GoRouter>;
+String _$openBrowserByUrlHash() => r'bc913dad85c8cfdbd39ad7abfc399bf371b01372';
+
+/// See also [openBrowserByUrl].
+@ProviderFor(openBrowserByUrl)
+const openBrowserByUrlProvider = OpenBrowserByUrlFamily();
+
+/// See also [openBrowserByUrl].
+class OpenBrowserByUrlFamily extends Family<AsyncValue<bool>> {
+  /// See also [openBrowserByUrl].
+  const OpenBrowserByUrlFamily();
+
+  /// See also [openBrowserByUrl].
+  OpenBrowserByUrlProvider call(
+    String url,
+  ) {
+    return OpenBrowserByUrlProvider(
+      url,
+    );
+  }
+
+  @override
+  OpenBrowserByUrlProvider getProviderOverride(
+    covariant OpenBrowserByUrlProvider provider,
+  ) {
+    return call(
+      provider.url,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'openBrowserByUrlProvider';
+}
+
+/// See also [openBrowserByUrl].
+class OpenBrowserByUrlProvider extends AutoDisposeFutureProvider<bool> {
+  /// See also [openBrowserByUrl].
+  OpenBrowserByUrlProvider(
+    String url,
+  ) : this._internal(
+          (ref) => openBrowserByUrl(
+            ref as OpenBrowserByUrlRef,
+            url,
+          ),
+          from: openBrowserByUrlProvider,
+          name: r'openBrowserByUrlProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$openBrowserByUrlHash,
+          dependencies: OpenBrowserByUrlFamily._dependencies,
+          allTransitiveDependencies:
+              OpenBrowserByUrlFamily._allTransitiveDependencies,
+          url: url,
+        );
+
+  OpenBrowserByUrlProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.url,
+  }) : super.internal();
+
+  final String url;
+
+  @override
+  Override overrideWith(
+    FutureOr<bool> Function(OpenBrowserByUrlRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: OpenBrowserByUrlProvider._internal(
+        (ref) => create(ref as OpenBrowserByUrlRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        url: url,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<bool> createElement() {
+    return _OpenBrowserByUrlProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is OpenBrowserByUrlProvider && other.url == url;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, url.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin OpenBrowserByUrlRef on AutoDisposeFutureProviderRef<bool> {
+  /// The parameter `url` of this provider.
+  String get url;
+}
+
+class _OpenBrowserByUrlProviderElement
+    extends AutoDisposeFutureProviderElement<bool> with OpenBrowserByUrlRef {
+  _OpenBrowserByUrlProviderElement(super.provider);
+
+  @override
+  String get url => (origin as OpenBrowserByUrlProvider).url;
+}
+
+String _$shareUrlHash() => r'9ad1f8bbedbbcf959f4969731420b1eaa644c16a';
+
+/// See also [shareUrl].
+@ProviderFor(shareUrl)
+const shareUrlProvider = ShareUrlFamily();
+
+/// See also [shareUrl].
+class ShareUrlFamily extends Family<AsyncValue<bool>> {
+  /// See also [shareUrl].
+  const ShareUrlFamily();
+
+  /// See also [shareUrl].
+  ShareUrlProvider call(
+    String url,
+  ) {
+    return ShareUrlProvider(
+      url,
+    );
+  }
+
+  @override
+  ShareUrlProvider getProviderOverride(
+    covariant ShareUrlProvider provider,
+  ) {
+    return call(
+      provider.url,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'shareUrlProvider';
+}
+
+/// See also [shareUrl].
+class ShareUrlProvider extends AutoDisposeFutureProvider<bool> {
+  /// See also [shareUrl].
+  ShareUrlProvider(
+    String url,
+  ) : this._internal(
+          (ref) => shareUrl(
+            ref as ShareUrlRef,
+            url,
+          ),
+          from: shareUrlProvider,
+          name: r'shareUrlProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$shareUrlHash,
+          dependencies: ShareUrlFamily._dependencies,
+          allTransitiveDependencies: ShareUrlFamily._allTransitiveDependencies,
+          url: url,
+        );
+
+  ShareUrlProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.url,
+  }) : super.internal();
+
+  final String url;
+
+  @override
+  Override overrideWith(
+    FutureOr<bool> Function(ShareUrlRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: ShareUrlProvider._internal(
+        (ref) => create(ref as ShareUrlRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        url: url,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<bool> createElement() {
+    return _ShareUrlProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ShareUrlProvider && other.url == url;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, url.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin ShareUrlRef on AutoDisposeFutureProviderRef<bool> {
+  /// The parameter `url` of this provider.
+  String get url;
+}
+
+class _ShareUrlProviderElement extends AutoDisposeFutureProviderElement<bool>
+    with ShareUrlRef {
+  _ShareUrlProviderElement(super.provider);
+
+  @override
+  String get url => (origin as ShareUrlProvider).url;
+}
+
+String _$openUrlHash() => r'318ab608f57fd543833622c871cb6bdcb1699a53';
+
+/// See also [openUrl].
+@ProviderFor(openUrl)
+const openUrlProvider = OpenUrlFamily();
+
+/// See also [openUrl].
+class OpenUrlFamily extends Family<void> {
+  /// See also [openUrl].
+  const OpenUrlFamily();
+
+  /// See also [openUrl].
+  OpenUrlProvider call(
+    BuildContext context,
+    String url,
+  ) {
+    return OpenUrlProvider(
+      context,
+      url,
+    );
+  }
+
+  @override
+  OpenUrlProvider getProviderOverride(
+    covariant OpenUrlProvider provider,
+  ) {
+    return call(
+      provider.context,
+      provider.url,
+    );
+  }
+
+  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
+    _isImageUrlProvider
+  ];
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
+      <ProviderOrFamily>{
+    _isImageUrlProvider,
+    ...?_isImageUrlProvider.allTransitiveDependencies
+  };
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'openUrlProvider';
+}
+
+/// See also [openUrl].
+class OpenUrlProvider extends AutoDisposeProvider<void> {
+  /// See also [openUrl].
+  OpenUrlProvider(
+    BuildContext context,
+    String url,
+  ) : this._internal(
+          (ref) => openUrl(
+            ref as OpenUrlRef,
+            context,
+            url,
+          ),
+          from: openUrlProvider,
+          name: r'openUrlProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$openUrlHash,
+          dependencies: OpenUrlFamily._dependencies,
+          allTransitiveDependencies: OpenUrlFamily._allTransitiveDependencies,
+          context: context,
+          url: url,
+        );
+
+  OpenUrlProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.context,
+    required this.url,
+  }) : super.internal();
+
+  final BuildContext context;
+  final String url;
+
+  @override
+  Override overrideWith(
+    void Function(OpenUrlRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: OpenUrlProvider._internal(
+        (ref) => create(ref as OpenUrlRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        context: context,
+        url: url,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<void> createElement() {
+    return _OpenUrlProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is OpenUrlProvider &&
+        other.context == context &&
+        other.url == url;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, context.hashCode);
+    hash = _SystemHash.combine(hash, url.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin OpenUrlRef on AutoDisposeProviderRef<void> {
+  /// The parameter `context` of this provider.
+  BuildContext get context;
+
+  /// The parameter `url` of this provider.
+  String get url;
+}
+
+class _OpenUrlProviderElement extends AutoDisposeProviderElement<void>
+    with OpenUrlRef {
+  _OpenUrlProviderElement(super.provider);
+
+  @override
+  BuildContext get context => (origin as OpenUrlProvider).context;
+  @override
+  String get url => (origin as OpenUrlProvider).url;
+}
+
+String _$isImageUrlHash() => r'5e26ede718a4a9ab63553ab05a577bfcc2b4794a';
+
+/// See also [_isImageUrl].
+@ProviderFor(_isImageUrl)
+const _isImageUrlProvider = _IsImageUrlFamily();
+
+/// See also [_isImageUrl].
+class _IsImageUrlFamily extends Family<bool> {
+  /// See also [_isImageUrl].
+  const _IsImageUrlFamily();
+
+  /// See also [_isImageUrl].
+  _IsImageUrlProvider call(
+    String url,
+  ) {
+    return _IsImageUrlProvider(
+      url,
+    );
+  }
+
+  @override
+  _IsImageUrlProvider getProviderOverride(
+    covariant _IsImageUrlProvider provider,
+  ) {
+    return call(
+      provider.url,
+    );
+  }
+
+  static const Iterable<ProviderOrFamily>? _dependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'_isImageUrlProvider';
+}
+
+/// See also [_isImageUrl].
+class _IsImageUrlProvider extends AutoDisposeProvider<bool> {
+  /// See also [_isImageUrl].
+  _IsImageUrlProvider(
+    String url,
+  ) : this._internal(
+          (ref) => _isImageUrl(
+            ref as _IsImageUrlRef,
+            url,
+          ),
+          from: _isImageUrlProvider,
+          name: r'_isImageUrlProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$isImageUrlHash,
+          dependencies: _IsImageUrlFamily._dependencies,
+          allTransitiveDependencies:
+              _IsImageUrlFamily._allTransitiveDependencies,
+          url: url,
+        );
+
+  _IsImageUrlProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.url,
+  }) : super.internal();
+
+  final String url;
+
+  @override
+  Override overrideWith(
+    bool Function(_IsImageUrlRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: _IsImageUrlProvider._internal(
+        (ref) => create(ref as _IsImageUrlRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        url: url,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<bool> createElement() {
+    return _IsImageUrlProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is _IsImageUrlProvider && other.url == url;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, url.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin _IsImageUrlRef on AutoDisposeProviderRef<bool> {
+  /// The parameter `url` of this provider.
+  String get url;
+}
+
+class _IsImageUrlProviderElement extends AutoDisposeProviderElement<bool>
+    with _IsImageUrlRef {
+  _IsImageUrlProviderElement(super.provider);
+
+  @override
+  String get url => (origin as _IsImageUrlProvider).url;
+}
+
 String _$currentSiteTypeNotifierHash() =>
-    r'07f07f4072252d6278460b69b2bc7c6fac864046';
+    r'624f78a49a7a459d4fdcecf7abc2896dcb40b34f';
 
 /// See also [CurrentSiteTypeNotifier].
 @ProviderFor(CurrentSiteTypeNotifier)
@@ -419,5 +960,21 @@ final readableStateNotifierProvider =
 );
 
 typedef _$ReadableStateNotifier = Notifier<int>;
+String _$clearDataNotiferHash() => r'9eae30cc71e28c21b0132b896f0db0f7d8bcbfc7';
+
+/// See also [ClearDataNotifer].
+@ProviderFor(ClearDataNotifer)
+final clearDataNotiferProvider =
+    AutoDisposeAsyncNotifierProvider<ClearDataNotifer, bool>.internal(
+  ClearDataNotifer.new,
+  name: r'clearDataNotiferProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$clearDataNotiferHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$ClearDataNotifer = AutoDisposeAsyncNotifier<bool>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

@@ -21,7 +21,7 @@ abstract class ListRepository {
     required int boardId,
   });
 
-  Future<Map<int, bool>> getReadFlags({
+  Future<List<int>> getReadFlags({
     required SiteType siteType,
     required List<int> boardIds,
   });

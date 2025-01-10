@@ -1,8 +1,7 @@
-part of 'pagination_notifier_provider.dart';
+part of 'list_providers.dart';
 
 @freezed
 sealed class PaginationState with _$PaginationState {
-  const factory PaginationState.initial() = _InitialList;
   const factory PaginationState.loading() = _LoadingList;
 
   const factory PaginationState.loaded() = _LoadedList;

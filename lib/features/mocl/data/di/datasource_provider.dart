@@ -7,17 +7,17 @@ import 'package:mocl_flutter/features/mocl/data/datasources/parser/damoang_parse
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/meeco_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/naver_cafe_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/parser_factory.dart';
-import 'package:mocl_flutter/features/mocl/data/db/app_database.dart';
 import 'package:mocl_flutter/features/mocl/data/di/network_provider.dart';
 import 'package:mocl_flutter/features/mocl/data/di/repository_provider.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:sembast/sembast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 part 'datasource_provider.g.dart';
 
 @riverpod
-AppDatabase appDatabase(ref) => throw UnimplementedError();
+Database appDatabase(ref) => throw UnimplementedError();
 
 @riverpod
 SharedPreferences sharedPreferences(ref) => throw UnimplementedError();

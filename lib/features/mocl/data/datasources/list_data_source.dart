@@ -26,7 +26,7 @@ abstract class ListDataSource {
     int boardId,
   );
 
-  Future<Map<int, bool>> isReadFlags(
+  Future<List<int>> isReadFlags(
     SiteType siteType,
     List<int> boardIds,
   );
@@ -71,7 +71,7 @@ class ListDataSourceImpl extends ListDataSource {
       localDatabase.isRead(siteType, boardId);
 
   @override
-  Future<Map<int, bool>> isReadFlags(
+  Future<List<int>> isReadFlags(
     SiteType siteType,
     List<int> boardIds,
   ) async =>

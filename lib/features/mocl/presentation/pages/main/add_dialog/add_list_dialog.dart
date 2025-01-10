@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
+import 'package:mocl_flutter/features/mocl/presentation/models/checkable_main_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/add_dialog/providers/add_list_dlg_providers.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/check_box_list_title_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
@@ -15,9 +15,10 @@ class AddListDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(addListDlgNotifierProvider);
-    final theme = Theme.of(context);
-    final size = MediaQuery.of(context).size;
+    final AsyncValue<List<CheckableMainItem>> state =
+        ref.watch(addListDlgNotifierProvider);
+    final ThemeData theme = Theme.of(context);
+    final Size size = MediaQuery.of(context).size;
 
     return AlertDialog(
       backgroundColor: theme.dialogBackgroundColor,
@@ -44,7 +45,7 @@ class AddListDialog extends ConsumerWidget {
 
   Widget _buildContent(
     BuildContext context,
-    AsyncValue<List<MainItem>> state,
+    AsyncValue<List<CheckableMainItem>> state,
     Size size,
   ) =>
       SizedBox(
@@ -59,25 +60,26 @@ class AddListDialog extends ConsumerWidget {
 
   Widget _buildListView(
     BuildContext context,
-    List<MainItem> items,
+    List<CheckableMainItem> items,
   ) =>
       Consumer(
-        builder: (context, ref, child) {
-          final viewModel = ref.read(addListDlgNotifierProvider.notifier);
+        builder: (BuildContext context, WidgetRef ref, Widget? child) {
+          final AddListDlgNotifier notifier =
+              ref.read(addListDlgNotifierProvider.notifier);
           return ListView.separated(
             padding: EdgeInsets.zero,
             itemCount: items.length,
             separatorBuilder: (_, __) =>
                 const DividerWidget(indent: 0, endIndent: 0),
             itemBuilder: (context, index) {
-              final item = items[index];
-              return CheckBoxListTitleWidget<MainItem>(
-                text: item.text,
-                object: item,
-                isChecked: viewModel.hasItem(item),
-                textStyle: Theme.of(context).textTheme.bodyMedium,
-                onChanged: viewModel.onChanged,
-              );
+              final CheckableMainItem item = items[index];
+              return CheckBoxListTitleWidget(
+                  text: item.mainItem.text,
+                  isChecked: item.isChecked,
+                  textStyle: Theme.of(context).textTheme.bodyMedium,
+                  onChanged: (bool isChecked) {
+                    notifier.onChanged(isChecked, index);
+                  });
             },
           );
         },
@@ -97,9 +99,9 @@ class AddListDialog extends ConsumerWidget {
         ),
         Consumer(
           builder: (context, ref, child) {
-            final viewModel = ref.read(addListDlgNotifierProvider.notifier);
+            final notifier = ref.read(addListDlgNotifierProvider.notifier);
             return TextButton(
-              onPressed: () => context.pop(viewModel.selectedItems),
+              onPressed: () => context.pop(notifier.selectedItems()),
               child: Text(
                 '적용',
                 style: theme.textTheme.headlineMedium?.copyWith(

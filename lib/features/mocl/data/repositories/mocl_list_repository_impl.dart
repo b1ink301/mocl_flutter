@@ -42,7 +42,7 @@ class ListRepositoryImpl extends ListRepository {
       dataSource.isReadFlag(siteType, boardId);
 
   @override
-  Future<Map<int, bool>> getReadFlags({
+  Future<List<int>> getReadFlags({
     required SiteType siteType,
     required List<int> boardIds,
   }) =>

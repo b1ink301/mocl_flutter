@@ -69,20 +69,20 @@ dependencies:
   flutter_native_splash: ^2.4.4
   #  gif: ^2.3.0
   # like room database
-  floor: ^1.5.0
+#  floor: ^1.5.0
   #  hive_flutter: ^1.1.0
 
   # router
   go_router: ^14.6.2
 
   # firebase
-  firebase_crashlytics: ^4.2.0
+  firebase_crashlytics: ^4.3.0
 
   # async
   async: ^2.11.0
 
   # infinite pagination
-  easy_infinite_pagination: ^0.0.6
+#  easy_infinite_pagination: ^0.0.6
 #  flutter_isolate: ^2.0.4
 
   # share
@@ -96,7 +96,7 @@ dependencies:
   timeago: ^3.7.0
 
   # like crashlytics..
-  sentry_flutter: ^8.11.2
+  sentry_flutter: ^8.12.0
 
   # change app name
   launcher_name: ^1.0.2
@@ -121,22 +121,29 @@ dependencies:
 
   easy_debounce: ^2.0.3
 
+#  drift: ^2.23.1
+#  objectbox: ^4.0.3
+#  objectbox_generator: ^4.0.3
+
+  sembast: ^3.8.1+1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^5.0.0
   build_runner: ^2.4.14
-  json_serializable: ^6.9.0
-  mockito: ^5.4.4
-  freezed: ^2.5.7
-  analyzer: ^6.7.0
-  test: ^1.25.7
-  bloc_test: ^9.1.7
-  floor_generator: ^1.5.0
-  injectable_generator: ^2.6.2
-  riverpod_generator: ^2.6.3
-  riverpod_lint: ^2.6.3
+  json_serializable: ^6.9.2
+  mockito: ^5.4.5
+  freezed: ^2.5.8
+  analyzer: ^7.1.0
+#  test: ^1.25.14
+#  bloc_test: ^9.1.7
+#  floor_generator: ^1.5.0
+#  injectable_generator: ^2.6.2
+  riverpod_generator: ^2.6.4
+  riverpod_lint: ^2.6.4
+
 
 flutter:
   uses-material-design: true
