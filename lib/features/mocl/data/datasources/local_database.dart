@@ -1,68 +1,86 @@
 import 'dart:async';
 
 import 'package:mocl_flutter/features/mocl/data/db/entities/main_item_data.dart';
-import 'package:mocl_flutter/features/mocl/data/db/entities/read_item_data.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
-
-import '../db/app_database.dart';
+import 'package:sembast/sembast.dart';
 
 class LocalDatabase {
-  final AppDatabase _database;
+  final Database _db;
 
-  LocalDatabase({required AppDatabase database}) : _database = database;
+  LocalDatabase({required Database database}) : _db = database;
 
-  Future<List<MainItemData>> getMainItems(
+  Future<List<MainItemData>> getMainData(
     SiteType siteType,
-  ) =>
-      _database.mainDao.findBySiteType(siteType);
+  ) async {
+    final StoreRef<int, Map<String, Object?>> store = intMapStoreFactory.store(siteType.name);
+    final List<RecordSnapshot<int, Map<String, Object?>>> recordSnapshot = await store.find(_db);
+    return recordSnapshot
+        .map((snapshot) => MainItemData.fromJson(snapshot.value))
+        .toList();
+  }
 
-  Future<List<int>> setMainItems(
+  Future<List<int>> setMainData(
     SiteType siteType,
     List<MainItemData> entities,
-  ) =>
-      _database.mainDao.insertList(entities);
+  ) async {
+    final StoreRef<int, Map<String, Object?>> store = intMapStoreFactory.store(siteType.name);
+    return await _db.transaction((txn) async {
+      final Iterable<Future<int>> futures =
+          entities.map((entity) async => await store.add(txn, entity.toJson()));
+      return Future.wait(futures);
+    });
+  }
 
   Future<void> deleteAll(
     SiteType siteType,
-  ) =>
-      _database.mainDao.deleteAllBySiteType(siteType);
+  ) async {
+    final store = intMapStoreFactory.store(siteType.name);
+    await store.delete(_db);
+  }
 
   Future<bool> hasItem(
     SiteType siteType,
     MainItemData entity,
-  ) =>
-      _database.mainDao
-          .findByBoard(siteType, entity.board)
-          .then((data) => data != null);
+  ) async {
+    final StoreRef<int, Map<String, Object?>> store = intMapStoreFactory.store(siteType.name);
+    final Filter filter = Filter.equals('board', entity.board);
+    final Finder finder = Finder(filter: filter);
+    final List<RecordSnapshot<int, Map<String, Object?>>> recordSnapshot = await store.find(_db, finder: finder);
+    return recordSnapshot.isNotEmpty;
+  }
 
   Future<bool> isRead(
     SiteType siteType,
     int id,
-  ) =>
-      _database.isReadDao.findById(id).then((data) => data != null);
+  ) async {
+    final StoreRef<int, Map<String, Object?>> store = intMapStoreFactory.store('${siteType.name}_read');
+    final Finder finder = Finder(filter: Filter.byKey(id));
+    final List<RecordSnapshot<int, Map<String, Object?>>> recordSnapshot = await store.find(_db, finder: finder);
+    return recordSnapshot.isNotEmpty;
+  }
 
-  FutureOr<Map<int, bool>> isReads(
+  FutureOr<List<int>> isReads(
     SiteType siteType,
     List<int> ids,
-  ) {
-    return _database.isReadDao.findByIds(ids).then((data) {
-      Map<int, bool> result = {};
-      for (var item in data) {
-        result[item.id] = true;
-      }
-      return result;
-    });
+  ) async {
+    final StoreRef<int, int> store = StoreRef<int, int>('${siteType.name}_read');
+    final List<Filter> filter = ids.map((id) => Filter.byKey(id)).toList();
+    final Finder finder = Finder(filter: Filter.or(filter));
+    final List<RecordSnapshot<int, int>> recordSnapshot = await store.find(_db, finder: finder);
+    final List<int> result = recordSnapshot.map((snapshot) => snapshot.value).toList();
+
+    return result;
   }
 
   Future<int> setRead(
     SiteType siteType,
     int id,
-  ) {
-    final entity = ReadItemData(siteType: siteType, id: id);
-    return _database.isReadDao.insert(entity);
+  ) async {
+    final StoreRef<int, int> store = StoreRef<int, int>('${siteType.name}_read');
+    return store.add(_db, id);
   }
 
   void dispose() async {
-    await _database.close();
+    await _db.close();
   }
 }

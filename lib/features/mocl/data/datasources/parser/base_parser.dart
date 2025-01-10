@@ -23,7 +23,7 @@ abstract class BaseParser {
     Response response,
     int lastId,
     String boardTitle,
-    Future<Map<int, bool>> Function(SiteType, List<int>) isReads,
+    Future<List<int>> Function(SiteType, List<int>) isReads,
   );
 
   Future<Either<Failure, Details>> detail(Response response);
@@ -87,7 +87,7 @@ class ReadStatusRequest {
 }
 
 class ReadStatusResponse {
-  final Map<int, bool> statuses;
+  final List<int> statuses;
 
   ReadStatusResponse(this.statuses);
 }

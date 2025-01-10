@@ -38,6 +38,7 @@ class DrawerWidget extends ConsumerWidget {
     if (siteType == SiteType.settings) {
       context.push(Routes.settings);
     } else {
+      context.pop();
       ref
           .read(currentSiteTypeNotifierProvider.notifier)
           .changeSiteType(siteType);

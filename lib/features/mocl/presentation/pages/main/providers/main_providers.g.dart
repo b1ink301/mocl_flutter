@@ -455,7 +455,7 @@ class _HandleAddButtonProviderElement
   BuildContext get context => (origin as HandleAddButtonProvider).context;
 }
 
-String _$mainItemsNotifierHash() => r'1d5ba785708fcb6e9e617f1066e8100adbd827ae';
+String _$mainItemsNotifierHash() => r'4486dcaa329434e8708a9916f1e4c09f90eda867';
 
 /// See also [MainItemsNotifier].
 @ProviderFor(MainItemsNotifier)

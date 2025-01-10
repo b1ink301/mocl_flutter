@@ -1,9 +1,8 @@
 import 'package:flutter/material.dart';
 
-class CheckBoxListTitleWidget<T> extends StatefulWidget {
+class CheckBoxListTitleWidget extends StatefulWidget {
   final String text;
-  final void Function<T>(bool, T?)? onChanged;
-  final T? object;
+  final void Function(bool)? onChanged;
   final bool isChecked;
   final TextStyle? textStyle;
 
@@ -13,7 +12,6 @@ class CheckBoxListTitleWidget<T> extends StatefulWidget {
     required this.isChecked,
     this.onChanged,
     this.textStyle,
-    this.object,
   });
 
   @override
@@ -26,9 +24,7 @@ class _CheckBoxListTitleState extends State<CheckBoxListTitleWidget> {
   @override
   void initState() {
     super.initState();
-    setState(() {
-      _isChecked = widget.isChecked;
-    });
+    setState(() => _isChecked = widget.isChecked);
   }
 
   @override
@@ -39,10 +35,8 @@ class _CheckBoxListTitleState extends State<CheckBoxListTitleWidget> {
           style: widget.textStyle,
         ),
         onChanged: (value) {
-          setState(() {
-            _isChecked = value!;
-            widget.onChanged?.call(_isChecked, widget.object);
-          });
+          setState(() => _isChecked = value!);
+          widget.onChanged?.call(_isChecked);
         },
         activeColor: Theme.of(context).indicatorColor,
         checkColor: Colors.white,

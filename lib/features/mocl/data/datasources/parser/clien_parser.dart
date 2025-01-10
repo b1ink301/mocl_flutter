@@ -291,7 +291,7 @@ class ClienParser extends BaseParser {
     Response response,
     int lastId,
     String boardTitle,
-    Future<Map<int, bool>> Function(SiteType, List<int>) isReads,
+    Future<List<int>> Function(SiteType, List<int>) isReads,
   ) async {
     final receivePort = ReceivePort();
     final completer = Completer<List<ListItem>>();
@@ -457,7 +457,7 @@ class ClienParser extends BaseParser {
               hit: item['hit'],
               userInfo: item['userInfo'],
               hasImage: item['hasImage'],
-              isRead: readStatusResponse.statuses[item['id']] ?? false,
+              isRead: readStatusResponse.statuses.contains(item['id']),
             ))
         .toList();
 

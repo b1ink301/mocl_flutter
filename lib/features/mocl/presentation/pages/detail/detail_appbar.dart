@@ -3,8 +3,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/detail/providers/detail_view_model.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/detail/detail_view_util.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/detail/providers/detail_providers.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/appbar_dual_text_widget.dart';
 
 class DetailAppBar extends ConsumerWidget {
@@ -12,38 +11,37 @@ class DetailAppBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final textStyle = Theme.of(context).textTheme.labelMedium!;
-    final textWidth = MediaQuery.of(context).size.width;
-    final viewModel = ref.read(detailViewModelProvider.notifier);
-    final height =
-        ref.read(appbarHeightProvider(viewModel.title, textStyle, textWidth));
+    final TextStyle textStyle = Theme.of(context).textTheme.labelMedium!;
+    final double textWidth = MediaQuery.of(context).size.width;
+    final String title = ref.watch(detailTitleProvider);
+    final String smallTitle = ref.read(detailSmallTitleProvider);
+    final double height =
+        ref.read(appbarHeightProvider(title, textStyle, textWidth));
 
     return AppbarDualTextWidget(
-      title: viewModel.title,
-      smallTitle: viewModel.smallTitle,
+      title: title,
+      smallTitle: smallTitle,
       automaticallyImplyLeading: Platform.isMacOS,
       toolbarHeight: height,
-      actions: _buildPopupMenuButton(context, viewModel),
+      actions: _buildPopupMenuButton(context, ref),
     );
   }
 
-  List<Widget> _buildPopupMenuButton(
-          BuildContext context, DetailViewModel viewModel) =>
-      [
+  List<Widget> _buildPopupMenuButton(BuildContext context, WidgetRef ref) => [
         PopupMenuButton<int>(
           icon: const Icon(Icons.more_vert),
           onSelected: (int value) {
             switch (value) {
               case 0:
-                viewModel.refresh();
+                ref.read(detailsNotifierProvider.notifier).refresh();
                 break;
               case 1:
-                final url = viewModel.itemUrl;
-                DetailViewUtil.openBrowserByUrl(url);
+                final String url = ref.read(detailUrlProvider);
+                ref.read(openBrowserByUrlProvider(url));
                 break;
               case 2:
-                final url = viewModel.itemUrl;
-                DetailViewUtil.shareUrl(url);
+                final String url = ref.read(detailUrlProvider);
+                ref.read(shareUrlProvider(url));
                 break;
             }
           },

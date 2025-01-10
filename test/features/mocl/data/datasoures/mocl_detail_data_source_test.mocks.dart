@@ -53,25 +53,15 @@ class MockDetailDataSource extends _i1.Mock implements _i2.DetailDataSource {
     _i8.BaseParser? parser,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getDetail,
-          [
-            item,
-            parser,
-          ],
-        ),
-        returnValue: _i3.Future<_i4.Either<_i5.Failure, _i6.Details>>.value(
-            _i9.dummyValue<_i4.Either<_i5.Failure, _i6.Details>>(
-          this,
-          Invocation.method(
-            #getDetail,
-            [
-              item,
-              parser,
-            ],
-          ),
-        )),
-      ) as _i3.Future<_i4.Either<_i5.Failure, _i6.Details>>);
+            Invocation.method(#getDetail, [item, parser]),
+            returnValue: _i3.Future<_i4.Either<_i5.Failure, _i6.Details>>.value(
+              _i9.dummyValue<_i4.Either<_i5.Failure, _i6.Details>>(
+                this,
+                Invocation.method(#getDetail, [item, parser]),
+              ),
+            ),
+          )
+          as _i3.Future<_i4.Either<_i5.Failure, _i6.Details>>);
 }
 
 /// A class which mocks [BaseParser].
@@ -83,106 +73,87 @@ class MockBaseParser extends _i1.Mock implements _i8.BaseParser {
   }
 
   @override
-  _i10.SiteType get siteType => (super.noSuchMethod(
-        Invocation.getter(#siteType),
-        returnValue: _i10.SiteType.clien,
-      ) as _i10.SiteType);
+  _i10.SiteType get siteType =>
+      (super.noSuchMethod(
+            Invocation.getter(#siteType),
+            returnValue: _i10.SiteType.clien,
+          )
+          as _i10.SiteType);
 
   @override
-  String get baseUrl => (super.noSuchMethod(
-        Invocation.getter(#baseUrl),
-        returnValue: _i9.dummyValue<String>(
-          this,
-          Invocation.getter(#baseUrl),
-        ),
-      ) as String);
+  String get baseUrl =>
+      (super.noSuchMethod(
+            Invocation.getter(#baseUrl),
+            returnValue: _i9.dummyValue<String>(
+              this,
+              Invocation.getter(#baseUrl),
+            ),
+          )
+          as String);
 
   @override
   _i4.Either<_i5.Failure, List<_i11.MainItem>> main(
-          _i12.Response<dynamic>? response) =>
+    _i12.Response<dynamic>? response,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #main,
-          [response],
-        ),
-        returnValue:
-            _i9.dummyValue<_i4.Either<_i5.Failure, List<_i11.MainItem>>>(
-          this,
-          Invocation.method(
-            #main,
-            [response],
-          ),
-        ),
-      ) as _i4.Either<_i5.Failure, List<_i11.MainItem>>);
+            Invocation.method(#main, [response]),
+            returnValue: _i9
+                .dummyValue<_i4.Either<_i5.Failure, List<_i11.MainItem>>>(
+                  this,
+                  Invocation.method(#main, [response]),
+                ),
+          )
+          as _i4.Either<_i5.Failure, List<_i11.MainItem>>);
 
   @override
   _i3.Future<_i4.Either<_i5.Failure, List<_i7.ListItem>>> list(
     _i12.Response<dynamic>? response,
     int? lastId,
     String? boardTitle,
-    _i3.Future<Map<int, bool>> Function(
-      _i10.SiteType,
-      List<int>,
-    )? isReads,
+    _i3.Future<List<int>> Function(_i10.SiteType, List<int>)? isReads,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #list,
-          [
-            response,
-            lastId,
-            boardTitle,
-            isReads,
-          ],
-        ),
-        returnValue:
-            _i3.Future<_i4.Either<_i5.Failure, List<_i7.ListItem>>>.value(
-                _i9.dummyValue<_i4.Either<_i5.Failure, List<_i7.ListItem>>>(
-          this,
-          Invocation.method(
-            #list,
-            [
-              response,
-              lastId,
-              boardTitle,
-              isReads,
-            ],
-          ),
-        )),
-      ) as _i3.Future<_i4.Either<_i5.Failure, List<_i7.ListItem>>>);
+            Invocation.method(#list, [response, lastId, boardTitle, isReads]),
+            returnValue:
+                _i3.Future<_i4.Either<_i5.Failure, List<_i7.ListItem>>>.value(
+                  _i9.dummyValue<_i4.Either<_i5.Failure, List<_i7.ListItem>>>(
+                    this,
+                    Invocation.method(#list, [
+                      response,
+                      lastId,
+                      boardTitle,
+                      isReads,
+                    ]),
+                  ),
+                ),
+          )
+          as _i3.Future<_i4.Either<_i5.Failure, List<_i7.ListItem>>>);
 
   @override
   _i3.Future<_i4.Either<_i5.Failure, _i6.Details>> detail(
-          _i12.Response<dynamic>? response) =>
+    _i12.Response<dynamic>? response,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #detail,
-          [response],
-        ),
-        returnValue: _i3.Future<_i4.Either<_i5.Failure, _i6.Details>>.value(
-            _i9.dummyValue<_i4.Either<_i5.Failure, _i6.Details>>(
-          this,
-          Invocation.method(
-            #detail,
-            [response],
-          ),
-        )),
-      ) as _i3.Future<_i4.Either<_i5.Failure, _i6.Details>>);
+            Invocation.method(#detail, [response]),
+            returnValue: _i3.Future<_i4.Either<_i5.Failure, _i6.Details>>.value(
+              _i9.dummyValue<_i4.Either<_i5.Failure, _i6.Details>>(
+                this,
+                Invocation.method(#detail, [response]),
+              ),
+            ),
+          )
+          as _i3.Future<_i4.Either<_i5.Failure, _i6.Details>>);
 
   @override
   _i3.Future<_i13.Result<dynamic>> comment(_i12.Response<dynamic>? response) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #comment,
-          [response],
-        ),
-        returnValue: _i3.Future<_i13.Result<dynamic>>.value(
-            _i9.dummyValue<_i13.Result<dynamic>>(
-          this,
-          Invocation.method(
-            #comment,
-            [response],
-          ),
-        )),
-      ) as _i3.Future<_i13.Result<dynamic>>);
+            Invocation.method(#comment, [response]),
+            returnValue: _i3.Future<_i13.Result<dynamic>>.value(
+              _i9.dummyValue<_i13.Result<dynamic>>(
+                this,
+                Invocation.method(#comment, [response]),
+              ),
+            ),
+          )
+          as _i3.Future<_i13.Result<dynamic>>);
 }

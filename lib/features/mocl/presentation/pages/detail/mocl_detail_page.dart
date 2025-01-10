@@ -5,10 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/detail_appbar.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/detail/providers/detail_view_model.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/mocl_detail_view.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/detail/providers/detail_providers.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/dummy_appbar_widget.dart';
 
 class DetailPage extends ConsumerWidget {
@@ -16,15 +15,10 @@ class DetailPage extends ConsumerWidget {
 
   static Widget withRiverpod(
     BuildContext context,
-    SiteType siteType,
     ListItem item,
   ) {
-
     return ProviderScope(
-      overrides: [
-        detailViewModelProvider
-            .overrideWith(() => DetailViewModel()..initialize(item))
-      ],
+      overrides: [listItemProvider.overrideWithValue(item)],
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: Theme.of(context).appBarTheme.systemOverlayStyle!,
         child: const DetailPage(),
@@ -41,7 +35,7 @@ class DetailPage extends ConsumerWidget {
         right: false,
         child: RefreshIndicator(
           onRefresh: () async {
-            ref.read(detailViewModelProvider.notifier).refresh();
+            ref.read(detailsNotifierProvider.notifier).refresh();
           },
           child: const CustomScrollView(
             slivers: [

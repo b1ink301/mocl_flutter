@@ -1,29 +1,25 @@
-import 'package:floor/floor.dart';
+import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
+import 'package:mocl_flutter/features/mocl/data/models/model_mapper.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
-import '../../models/model_mapper.dart';
+part 'main_item_data.freezed.dart';
 
-@Entity(
-  tableName: 'main',
-  primaryKeys: ['board', 'siteType'],
-)
-class MainItemData {
-  final String board;
-  final int orderBy;
-  final int type;
-  final String text;
-  final String url;
-  final SiteType siteType;
+part 'main_item_data.g.dart';
 
-  MainItemData({
-    required this.board,
-    required this.orderBy,
-    required this.type,
-    required this.text,
-    required this.url,
-    required this.siteType,
-  });
+@freezed
+class MainItemData with _$MainItemData {
+  const factory MainItemData({
+    required String board,
+    required String text,
+    required String url,
+    required SiteType siteType,
+    required int orderBy,
+    required int type,
+  }) = _MainItemData;
+
+  factory MainItemData.fromJson(Map<String, Object?> json) =>
+      _$MainItemDataFromJson(json);
 }
 
 extension MainItemDataExtention on MainItemData {

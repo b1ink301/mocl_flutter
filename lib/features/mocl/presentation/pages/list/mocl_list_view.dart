@@ -3,8 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/features/mocl/presentation/models/mocl_list_item_info.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_list_item.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/pagination_notifier_provider.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_providers.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/appbar_dual_text_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/cached_item_builder.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
@@ -17,14 +18,14 @@ class MoclListView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) => RefreshIndicator(
         onRefresh: () async {
-          ref.read(paginationNotifierProvider.notifier).refresh();
+          ref.read(paginationStateNotifierProvider.notifier).refresh();
         },
         child: NotificationListener<ScrollNotification>(
           onNotification: (ScrollNotification notification) {
             if (notification is ScrollEndNotification) {
               if (notification.metrics.pixels >=
                   notification.metrics.maxScrollExtent * 0.9) {
-                ref.read(paginationNotifierProvider.notifier).fetchNextItems();
+                ref.read(pageNumberNotifierProvider.notifier).nextPage();
               }
             }
             return false;
@@ -44,32 +45,37 @@ class _ListBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(paginationNotifierProvider);
-    final notifier = ref.read(paginationNotifierProvider.notifier);
+    final AsyncValue<PaginationState> state =
+        ref.watch(paginationStateNotifierProvider);
+    final List<ListItem> items = ref.watch(itemListNotifierProvider);
+    final int listCount = items.length;
 
     return SuperSliverList(
       delegate: SliverChildBuilderDelegate(
         (context, index) {
-          // 현재 데이터의 마지막 인덱스인 경우
-          if (index == notifier.listCount) {
+          if (index == listCount) {
             return state.maybeWhen(
-              failed: (error) => _buildError(
-                error,
-                notifier.refresh,
+              error: (Object error, StackTrace stack) => _buildError(
+                error.toString(),
+                () => ref
+                    .read(paginationStateNotifierProvider.notifier)
+                    .refresh(),
               ),
               orElse: () =>
                   const Column(children: [LoadingWidget(), DividerWidget()]),
             );
           }
 
-          // 일반 리스트 아이템 표시
-          final item = notifier.getItem(index);
+          final ListItem item = items[index];
           return CachedItemBuilder(
             key: item.key,
-            builder: () => MoclListItem(item: item),
+            builder: () => ProviderScope(overrides: [
+              listItemInfoProvider
+                  .overrideWithValue(item.toListItemInfo(context, index))
+            ], child: const MoclListItem()),
           );
         },
-        childCount: notifier.listCount + 1,
+        childCount: listCount + 1,
       ),
     );
   }
@@ -100,9 +106,8 @@ class _ListAppbar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final notifier = ref.read(paginationNotifierProvider.notifier);
-    final smallTitle = notifier.smallTitle;
-    final title = notifier.title;
+    final String smallTitle = ref.watch(listSmallTitleProvider);
+    final String title = ref.watch(listTitleProvider);
 
     return AppbarDualTextWidget(
       smallTitle: smallTitle,
@@ -110,7 +115,8 @@ class _ListAppbar extends ConsumerWidget {
       automaticallyImplyLeading: Platform.isMacOS,
       actions: [
         IconButton(
-          onPressed: () => notifier.refresh(),
+          onPressed: () =>
+              ref.read(paginationStateNotifierProvider.notifier).refresh(),
           icon: const Icon(Icons.refresh),
         )
       ],
