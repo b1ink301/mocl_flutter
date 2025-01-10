@@ -1,3 +1,4 @@
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/detail_data_source.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/list_data_source.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/local_database.dart';
@@ -17,38 +18,38 @@ import 'package:shared_preferences/shared_preferences.dart';
 part 'datasource_provider.g.dart';
 
 @riverpod
-Database appDatabase(ref) => throw UnimplementedError();
+Database appDatabase(Ref ref) => throw UnimplementedError();
 
 @riverpod
-SharedPreferences sharedPreferences(ref) => throw UnimplementedError();
+SharedPreferences sharedPreferences(Ref ref) => throw UnimplementedError();
 
 @riverpod
-LocalDatabase localDatabase(ref) {
+LocalDatabase localDatabase(Ref ref) {
   final database = ref.watch(appDatabaseProvider);
   return LocalDatabase(database: database);
 }
 
 @riverpod
-MainDataSource mainDatasource(ref) {
+MainDataSource mainDatasource(Ref ref) {
   final localDatabase = ref.watch(localDatabaseProvider);
   return MainDataSourceImpl(localDatabase: localDatabase);
 }
 
 @riverpod
-ListDataSource listDatasource(ref) {
+ListDataSource listDatasource(Ref ref) {
   final apiClient = ref.watch(apiClientProvider);
   final localDatabase = ref.watch(localDatabaseProvider);
   return ListDataSourceImpl(localDatabase: localDatabase, apiClient: apiClient);
 }
 
 @riverpod
-DetailDataSource detailDatasource(ref) {
+DetailDataSource detailDatasource(Ref ref) {
   final apiClient = ref.watch(apiClientProvider);
   return DetailDataSourceImpl(apiClient: apiClient);
 }
 
 @riverpod
-ParserFactory parserFactory(ref) {
+ParserFactory parserFactory(Ref ref) {
   final settingsRepository = ref.watch(settingsRepositoryProvider);
   return ParserFactory(
     settingsRepository: settingsRepository,

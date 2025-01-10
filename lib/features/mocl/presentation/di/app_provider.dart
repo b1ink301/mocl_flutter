@@ -10,6 +10,7 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_site_type.dart';
+import 'package:mocl_flutter/features/mocl/domain/usecases/set_site_type.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/use_case_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/mocl_detail_page.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/photo_view_dialog.dart';
@@ -41,7 +42,7 @@ class CurrentSiteTypeNotifier extends _$CurrentSiteTypeNotifier {
 
   void changeSiteType(SiteType siteType) {
     if (state != siteType) {
-      final setSiteType = ref.read(setSiteTypeProvider);
+      final SetSiteType setSiteType = ref.read(setSiteTypeProvider);
       setSiteType(siteType);
       state = siteType;
     }
@@ -55,17 +56,15 @@ const double kExtraVerticalSpace = 36.0; // 추가 수직 공간
 
 @riverpod
 double appbarHeight(
-  ref,
+  Ref ref,
   String text,
   TextStyle style,
   double screenWidth,
 ) {
-  final availableWidth = screenWidth -
-      kMoreIconSize // more 아이콘 크기
-      -
-      (kHorizontalPadding * 2); // 좌우 패딩
+  final double availableWidth =
+      screenWidth - kMoreIconSize - (kHorizontalPadding * 2); // 좌우 패딩
 
-  final textPainter = TextPainter(
+  final TextPainter textPainter = TextPainter(
     text: TextSpan(
       text: text,
       style: style,
@@ -97,8 +96,8 @@ class ReadableStateNotifier extends _$ReadableStateNotifier {
 
 @Riverpod(keepAlive: true)
 Future<String> getAppVersion(Ref ref) async {
-  final info = await PackageInfo.fromPlatform();
-  final version = 'v${info.version}-${info.buildNumber}';
+  final PackageInfo info = await PackageInfo.fromPlatform();
+  final String version = 'v${info.version}-${info.buildNumber}';
   return version;
 }
 
@@ -145,7 +144,7 @@ GoRouter appRouter(Ref ref) => GoRouter(
           path: Routes.list,
           pageBuilder: (BuildContext context, GoRouterState state) =>
               SwipeablePage(builder: (context) {
-            final item = GoRouterState.of(context).extra as MainItem;
+            final MainItem item = GoRouterState.of(context).extra as MainItem;
             return MoclListPage.init(context, item);
           }),
         ),
@@ -154,8 +153,8 @@ GoRouter appRouter(Ref ref) => GoRouter(
             pageBuilder: (BuildContext context, GoRouterState state) =>
                 SwipeablePage(
                   builder: (context) {
-                    final item = GoRouterState.of(context).extra as ListItem;
-                    return DetailPage.withRiverpod(context, item);
+                    final ListItem item = GoRouterState.of(context).extra as ListItem;
+                    return DetailPage.init(context, item);
                   },
                 ),
             routes: [
@@ -175,8 +174,7 @@ GoRouter appRouter(Ref ref) => GoRouter(
         GoRoute(
           path: Routes.settings,
           pageBuilder: (BuildContext context, GoRouterState state) =>
-              SwipeablePage(
-                  builder: (context) => SettingsPage.withBloc(context)),
+              SwipeablePage(builder: (context) => SettingsPage.init(context)),
         ),
         GoRoute(
           path: Routes.login,
@@ -195,14 +193,14 @@ Future<bool> openBrowserByUrl(Ref ref, String url) async {
 @riverpod
 Future<bool> shareUrl(Ref ref, String url) async {
   final Uri uri = Uri.parse(url);
-  final result = await Share.shareUri(uri);
+  final ShareResult result = await Share.shareUri(uri);
   return result.status == ShareResultStatus.success;
 }
 
 @Riverpod(dependencies: [_isImageUrl])
 Future<bool> openUrl(Ref ref, BuildContext context, String url) async {
-  final uri = Uri.parse(url);
-  final last = uri.pathSegments.lastOrNull;
+  final Uri uri = Uri.parse(url);
+  final String? last = uri.pathSegments.lastOrNull;
   if (last != null && ref.read(_isImageUrlProvider(last))) {
     context.push(Routes.viewPhotoDlgFull, extra: url);
     return true;
@@ -212,14 +210,14 @@ Future<bool> openUrl(Ref ref, BuildContext context, String url) async {
 
 @riverpod
 bool _isImageUrl(Ref ref, String url) {
-  final imageExtensions = [
+  final List<String> imageExtensions = [
     '.jpg',
     '.jpeg',
     '.png',
     '.gif',
     '.bmp',
     '.webp',
-    '.tiff'
+    '.tiff',
   ];
   return imageExtensions.any((ext) => url.toLowerCase().endsWith(ext));
 }

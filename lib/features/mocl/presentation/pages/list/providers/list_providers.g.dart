@@ -6,7 +6,7 @@ part of 'list_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$listSmallTitleHash() => r'8600e9b6f0e6e14b003e39b178c62cf5cdfac987';
+String _$listSmallTitleHash() => r'd3cf32183aa651e4a18a261295aaa53e8bdbb03a';
 
 /// See also [listSmallTitle].
 @ProviderFor(listSmallTitle)
@@ -23,7 +23,7 @@ final listSmallTitleProvider = AutoDisposeProvider<String>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ListSmallTitleRef = AutoDisposeProviderRef<String>;
-String _$listTitleHash() => r'ab4b6238fecc90fb253993e35d662496912dbc0c';
+String _$listTitleHash() => r'580a1c55011afe7848bc4db83dc68e8cf453cc6e';
 
 /// See also [listTitle].
 @ProviderFor(listTitle)
@@ -42,7 +42,7 @@ final listTitleProvider = AutoDisposeProvider<String>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ListTitleRef = AutoDisposeProviderRef<String>;
-String _$mainItemHash() => r'cfdaba790e8aec68dee67a9c1b304af84fef86ea';
+String _$mainItemHash() => r'edcc40f3617b90c83b8af88d352751c497df0fed';
 
 /// See also [mainItem].
 @ProviderFor(mainItem)
@@ -58,7 +58,7 @@ final mainItemProvider = AutoDisposeProvider<MainItem>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MainItemRef = AutoDisposeProviderRef<MainItem>;
-String _$listItemInfoHash() => r'983444d5e5e409ca032faeb8346b8fe22c0d0954';
+String _$listItemInfoHash() => r'f9ee83816f1b556ec54f44ef8853b10fb61bb92d';
 
 /// See also [listItemInfo].
 @ProviderFor(listItemInfo)
@@ -105,7 +105,7 @@ final paginationStateNotifierProvider = AutoDisposeAsyncNotifierProvider<
 );
 
 typedef _$PaginationStateNotifier = AutoDisposeAsyncNotifier<PaginationState>;
-String _$itemListNotifierHash() => r'60b0dcd9a7ccc656ab543d863fb911fd1384cb4c';
+String _$itemListNotifierHash() => r'36d5e456170e4e4b99b68b1eaf59e7702eab5a9c';
 
 /// See also [ItemListNotifier].
 @ProviderFor(ItemListNotifier)
@@ -116,13 +116,13 @@ final itemListNotifierProvider =
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
       : _$itemListNotifierHash,
-  dependencies: const <ProviderOrFamily>[],
-  allTransitiveDependencies: const <ProviderOrFamily>{},
+  dependencies: null,
+  allTransitiveDependencies: null,
 );
 
 typedef _$ItemListNotifier = AutoDisposeNotifier<List<ListItem>>;
 String _$pageNumberNotifierHash() =>
-    r'deb5d612104f4a6f41dcbd658cd20bf9d800841e';
+    r'd9eef8180b164692e77086315a30b750e91bc9d7';
 
 /// See also [PageNumberNotifier].
 @ProviderFor(PageNumberNotifier)
@@ -146,7 +146,7 @@ final pageNumberNotifierProvider =
 );
 
 typedef _$PageNumberNotifier = AutoDisposeNotifier<int>;
-String _$lastIdNotifierHash() => r'4cc27cb92b24dad7c08899752f670a91a8388d63';
+String _$lastIdNotifierHash() => r'596260d92355899deb04bdc3acd36bbf48cc17f8';
 
 /// See also [_LastIdNotifier].
 @ProviderFor(_LastIdNotifier)
@@ -157,8 +157,8 @@ final _lastIdNotifierProvider =
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
       : _$lastIdNotifierHash,
-  dependencies: const <ProviderOrFamily>[],
-  allTransitiveDependencies: const <ProviderOrFamily>{},
+  dependencies: null,
+  allTransitiveDependencies: null,
 );
 
 typedef _$LastIdNotifier = AutoDisposeNotifier<int>;

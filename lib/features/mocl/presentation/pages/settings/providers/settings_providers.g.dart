@@ -6,21 +6,21 @@ part of 'settings_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$clearDataNotiferHash() => r'9eae30cc71e28c21b0132b896f0db0f7d8bcbfc7';
+String _$clearDataNotifierHash() => r'ee6df5c9e91ac01acbda2b36ce6487789561770e';
 
-/// See also [ClearDataNotifer].
-@ProviderFor(ClearDataNotifer)
-final clearDataNotiferProvider =
-    AutoDisposeAsyncNotifierProvider<ClearDataNotifer, bool>.internal(
-  ClearDataNotifer.new,
-  name: r'clearDataNotiferProvider',
+/// See also [ClearDataNotifier].
+@ProviderFor(ClearDataNotifier)
+final clearDataNotifierProvider =
+    AutoDisposeAsyncNotifierProvider<ClearDataNotifier, bool>.internal(
+  ClearDataNotifier.new,
+  name: r'clearDataNotifierProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$clearDataNotiferHash,
+      : _$clearDataNotifierHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef _$ClearDataNotifer = AutoDisposeAsyncNotifier<bool>;
+typedef _$ClearDataNotifier = AutoDisposeAsyncNotifier<bool>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

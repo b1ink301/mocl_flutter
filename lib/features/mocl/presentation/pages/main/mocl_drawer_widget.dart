@@ -23,7 +23,13 @@ class DrawerWidget extends ConsumerWidget {
               ...SiteType.values.map(
                 (SiteType siteType) => _DrawerSiteItem(
                   siteType: siteType,
-                  onTap: () => _changeSiteType(context, siteType, ref),
+                  onTap: () => _changeSiteType(
+                    context,
+                    siteType,
+                    () => ref
+                        .read(currentSiteTypeNotifierProvider.notifier)
+                        .changeSiteType(siteType),
+                  ),
                 ),
               ),
               const Spacer(),
@@ -34,14 +40,17 @@ class DrawerWidget extends ConsumerWidget {
         ),
       );
 
-  void _changeSiteType(BuildContext context, SiteType siteType, WidgetRef ref) {
+  void _changeSiteType(
+    BuildContext context,
+    SiteType siteType,
+    VoidCallback onChangeSiteType,
+  ) {
+    context.pop();
+
     if (siteType == SiteType.settings) {
       context.push(Routes.settings);
     } else {
-      context.pop();
-      ref
-          .read(currentSiteTypeNotifierProvider.notifier)
-          .changeSiteType(siteType);
+      onChangeSiteType();
     }
   }
 }

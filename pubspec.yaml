@@ -1,7 +1,7 @@
 name: mocl_flutter
 description: "Mocl Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.3.0+364
+version: 1.3.0+365
 
 environment:
   sdk: '>=3.4.3 <4.0.0'

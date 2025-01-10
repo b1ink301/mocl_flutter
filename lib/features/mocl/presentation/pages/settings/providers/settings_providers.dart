@@ -4,11 +4,9 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'settings_providers.g.dart';
 
 @riverpod
-class ClearDataNotifer extends _$ClearDataNotifer {
+class ClearDataNotifier extends _$ClearDataNotifier {
   @override
-  Future<bool> build() async {
-    return false;
-  }
+  Future<bool> build() async => false;
 
   Future<void> clear() async {
     state = const AsyncLoading();

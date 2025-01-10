@@ -19,13 +19,13 @@ part 'pagination_state.dart';
 
 @riverpod
 String listSmallTitle(Ref ref) {
-  final siteType = ref.watch(currentSiteTypeNotifierProvider);
+  final SiteType siteType = ref.watch(currentSiteTypeNotifierProvider);
   return siteType.title;
 }
 
 @Riverpod(dependencies: [mainItem])
 String listTitle(Ref ref) {
-  final mainItem = ref.watch(mainItemProvider);
+  final MainItem mainItem = ref.watch(mainItemProvider);
   return mainItem.text;
 }
 
@@ -73,7 +73,7 @@ class PaginationStateNotifier extends _$PaginationStateNotifier {
   }
 }
 
-@Riverpod(dependencies: [])
+@riverpod
 class ItemListNotifier extends _$ItemListNotifier {
   @override
   List<ListItem> build() => [];
@@ -90,7 +90,7 @@ class ItemListNotifier extends _$ItemListNotifier {
 class PageNumberNotifier extends _$PageNumberNotifier {
   @override
   int build() {
-    final siteType = ref.watch(currentSiteTypeNotifierProvider);
+    final SiteType siteType = ref.watch(currentSiteTypeNotifierProvider);
     return siteType == SiteType.clien ? 0 : 1;
   }
 
@@ -107,12 +107,12 @@ class PageNumberNotifier extends _$PageNumberNotifier {
 }
 
 @riverpod
-MainItem mainItem(ref) => throw UnimplementedError();
+MainItem mainItem(Ref ref) => throw UnimplementedError();
 
 @riverpod
-MoclListItemInfo listItemInfo(ref) => throw UnimplementedError();
+MoclListItemInfo listItemInfo(Ref ref) => throw UnimplementedError();
 
-@Riverpod(dependencies: [])
+@riverpod
 class _LastIdNotifier extends _$LastIdNotifier {
   @override
   int build() => -1;

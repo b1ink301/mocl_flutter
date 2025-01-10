@@ -22,7 +22,6 @@ class ClienParser extends BaseParser {
 
   @override
   Future<Result> comment(Response response) {
-    // TODO: implement comment
     throw UnimplementedError();
   }
 

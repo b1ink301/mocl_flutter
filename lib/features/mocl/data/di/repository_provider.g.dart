@@ -7,7 +7,7 @@ part of 'repository_provider.dart';
 // **************************************************************************
 
 String _$settingsRepositoryHash() =>
-    r'fac76bb8b5d36479399b091106c7833708f55e36';
+    r'3871d9c6a964a598126c79ffbc85483cbecda9c2';
 
 /// See also [settingsRepository].
 @ProviderFor(settingsRepository)
@@ -25,7 +25,7 @@ final settingsRepositoryProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef SettingsRepositoryRef = AutoDisposeProviderRef<SettingsRepository>;
-String _$mainRepositoryHash() => r'57d9c34d3d42cd431cfe9b75d130295226f5d90c';
+String _$mainRepositoryHash() => r'87389ea9717b308f7a2cb5ff1fb8f6a42b8baeed';
 
 /// See also [mainRepository].
 @ProviderFor(mainRepository)
@@ -42,7 +42,7 @@ final mainRepositoryProvider = AutoDisposeProvider<MainRepository>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MainRepositoryRef = AutoDisposeProviderRef<MainRepository>;
-String _$listRepositoryHash() => r'37d0b46bc13607193922d6a93b53525ddb892df3';
+String _$listRepositoryHash() => r'62f3c810676d74faacb2939f62a5a635e286e08d';
 
 /// See also [listRepository].
 @ProviderFor(listRepository)
@@ -59,7 +59,7 @@ final listRepositoryProvider = AutoDisposeProvider<ListRepository>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ListRepositoryRef = AutoDisposeProviderRef<ListRepository>;
-String _$detailRepositoryHash() => r'a618b00cf8f892d92afd8da03980167c8e049690';
+String _$detailRepositoryHash() => r'6df6addd12065e0c27365b840d0ceffa2f39e2db';
 
 /// See also [detailRepository].
 @ProviderFor(detailRepository)

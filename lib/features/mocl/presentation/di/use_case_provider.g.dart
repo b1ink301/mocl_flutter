@@ -6,7 +6,7 @@ part of 'use_case_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getMainListHash() => r'b24bdaa19761538e92485b4685d3651d09f015f2';
+String _$getMainListHash() => r'ce05732ee55aa780bb9ad890d7a6d066e15d46bb';
 
 /// See also [getMainList].
 @ProviderFor(getMainList)
@@ -23,7 +23,7 @@ final getMainListProvider = AutoDisposeProvider<GetMainList>.internal(
 // ignore: unused_element
 typedef GetMainListRef = AutoDisposeProviderRef<GetMainList>;
 String _$getMainListFromJsonHash() =>
-    r'5223e6e1c0ea4f779782b857d6ca7a80957d9490';
+    r'd8a780aa278d1e7ef872262af9aca285916c4ccd';
 
 /// See also [getMainListFromJson].
 @ProviderFor(getMainListFromJson)
@@ -41,7 +41,7 @@ final getMainListFromJsonProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef GetMainListFromJsonRef = AutoDisposeProviderRef<GetMainListFromJson>;
-String _$getSiteTypeHash() => r'83b239e2b69b015104c550aaec3413d00b52954d';
+String _$getSiteTypeHash() => r'b2472415d09f7472663578eafd0e66c1ebd93e16';
 
 /// See also [getSiteType].
 @ProviderFor(getSiteType)
@@ -57,7 +57,7 @@ final getSiteTypeProvider = AutoDisposeProvider<GetSiteType>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef GetSiteTypeRef = AutoDisposeProviderRef<GetSiteType>;
-String _$setSiteTypeHash() => r'8d075b31572bcff544a58d7ccff1dca9456c5d2c';
+String _$setSiteTypeHash() => r'89765219fd01fd252775bf32ba0cc7d64d716197';
 
 /// See also [setSiteType].
 @ProviderFor(setSiteType)
@@ -73,7 +73,7 @@ final setSiteTypeProvider = AutoDisposeProvider<SetSiteType>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef SetSiteTypeRef = AutoDisposeProviderRef<SetSiteType>;
-String _$setMainListHash() => r'4b878b8e9fddc9bc3401da78b216c62bf2d27b67';
+String _$setMainListHash() => r'd5f6fa4ea0a074adc1ef02252766f76b73a54a28';
 
 /// See also [setMainList].
 @ProviderFor(setMainList)
@@ -89,7 +89,7 @@ final setMainListProvider = AutoDisposeProvider<SetMainList>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef SetMainListRef = AutoDisposeProviderRef<SetMainList>;
-String _$getListHash() => r'ca721f81b82a430548708c0b24fb01a60e2492a4';
+String _$getListHash() => r'015463e7325fcf7032585529228be16022e1bfda';
 
 /// See also [getList].
 @ProviderFor(getList)
@@ -105,7 +105,7 @@ final getListProvider = AutoDisposeProvider<GetList>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef GetListRef = AutoDisposeProviderRef<GetList>;
-String _$getDetailHash() => r'8a79d38a4cfe3846576030667b87bebe62de3692';
+String _$getDetailHash() => r'9441b879c6d2f2706817c4a14b1bff90429a231a';
 
 /// See also [getDetail].
 @ProviderFor(getDetail)
@@ -121,7 +121,7 @@ final getDetailProvider = AutoDisposeProvider<GetDetail>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef GetDetailRef = AutoDisposeProviderRef<GetDetail>;
-String _$setReadHash() => r'660b5085122223f78b8185238937ebd18e32c35f';
+String _$setReadHash() => r'1fa558f04f1a5849975ef63e0fc79818530dd369';
 
 /// See also [setRead].
 @ProviderFor(setRead)
