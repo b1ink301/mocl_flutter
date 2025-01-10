@@ -112,20 +112,6 @@ Future<void> clearData(Ref ref) async {
 }
 
 @riverpod
-class ClearDataNotifer extends _$ClearDataNotifer {
-  @override
-  Future<bool> build() async {
-    return false;
-  }
-
-  Future<void> clear() async {
-    state = const AsyncLoading();
-    await AsyncValue.guard(() => ref.read(clearDataProvider.future));
-    state = const AsyncData(true);
-  }
-}
-
-@riverpod
 void showToast(Ref ref, String message, BuildContext context) {
   Fluttertoast.showToast(
     msg: message,

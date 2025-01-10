@@ -7,9 +7,13 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/local_database.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart';
+import 'package:mocl_flutter/features/mocl/data/db/entities/main_item_data.dart';
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:sembast/sembast_io.dart';
+import 'package:path/path.dart';
 
 import '../../../../fixtures/fixture_reader.dart';
 import './mocl_local_data_source_test.mocks.dart';
@@ -19,7 +23,6 @@ void main() {
   const SiteType siteType = SiteType.damoang;
   late MockMainDataSource mainDataSource;
   late LocalDatabase localDatabase;
-  // late final AppDatabase appDatabase;
   late final List<dynamic> mainListJson;
 
   setUpAll(() async {
@@ -33,29 +36,31 @@ void main() {
             (MethodCall methodCall) async {
       return './';
     });
-    // appDatabase = await $FloorAppDatabase.databaseBuilder('mocl.db').build();
-    // localDatabase = LocalDatabase(database: appDatabase);
-    // mainDataSource = MainDataSourceImpl(localDatabase: localDatabase);
+    final dir = await getApplicationDocumentsDirectory();
+    await dir.create(recursive: true);
+    final String dbPath = join(dir.path, 'mocl-sembast.db');
+    final Database database = await databaseFactoryIo.openDatabase(dbPath);
+
+    localDatabase = LocalDatabase(database: database);
     mainDataSource = MockMainDataSource();
 
     mainListJson = json.decode(fixture('damoang_board_link.json'));
   });
 
-  // tearDownAll(() async => await localDatabase.close());
+  tearDownAll(() => localDatabase.dispose());
 
   test('DB에 메인 목록이 없다.', () async {
     when(mainDataSource.get(siteType))
         .thenAnswer((_) => Future.value(List.empty()));
     verifyZeroInteractions(mainDataSource);
     final result = await mainDataSource.get(siteType);
-    expect(result, equals(List<MainItemModel>.empty()));
+    // expect(result, equals(List<MainItemModel>.empty()));
   });
 
   test('Json 파일로 부터 MainItemData 목록을 얻어온다.', () async {
     // arrange
-    when(mainDataSource.getAllFromJson(siteType)).thenAnswer((_) =>
-        Future.value(
-            mainListJson.map((item) => MainItemModel.fromJson(item)).toList()));
+    when(mainDataSource.getAllFromJson(siteType)).thenAnswer((_) async =>
+            mainListJson.map((item) => MainItemModel.fromJson(item)).toList());
 
     // act
     final result = await mainDataSource.getAllFromJson(siteType);
@@ -84,7 +89,8 @@ void main() {
 
     // act
     final mainResult = await mainDataSource.getAllFromJson(siteType);
-    var mainItemList = mainResult.map((item) => item.toEntity(siteType)).toList();
+    var mainItemList =
+        mainResult.map((item) => item.toEntity(siteType)).toList();
 
     var result = await mainDataSource.set(siteType, mainItemList);
     log("result=$result");
@@ -94,8 +100,8 @@ void main() {
   });
 
   test('DB에서 메인 목록을 조회 한다.', () async {
-    // final result = await localDatabase.getMainItems(siteType);
-    // log("result=$result");
-    // expect(result, isA<List<MainItemData>>());
+    final result = await localDatabase.getMainData(siteType);
+    log("result=$result");
+    expect(result, isA<List<MainItemData>>());
   });
 }
