@@ -385,7 +385,7 @@ final appRouterProvider = AutoDisposeProvider<GoRouter>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef AppRouterRef = AutoDisposeProviderRef<GoRouter>;
-String _$openBrowserByUrlHash() => r'bc913dad85c8cfdbd39ad7abfc399bf371b01372';
+String _$openBrowserByUrlHash() => r'db746ea383f5f88500a430c3e3529eab3d97d5d9';
 
 /// See also [openBrowserByUrl].
 @ProviderFor(openBrowserByUrl)
@@ -515,7 +515,7 @@ class _OpenBrowserByUrlProviderElement
   String get url => (origin as OpenBrowserByUrlProvider).url;
 }
 
-String _$shareUrlHash() => r'9ad1f8bbedbbcf959f4969731420b1eaa644c16a';
+String _$shareUrlHash() => r'f0c09b9ac8a02c8848ff07ee083a60ecffc269c5';
 
 /// See also [shareUrl].
 @ProviderFor(shareUrl)
@@ -644,14 +644,14 @@ class _ShareUrlProviderElement extends AutoDisposeFutureProviderElement<bool>
   String get url => (origin as ShareUrlProvider).url;
 }
 
-String _$openUrlHash() => r'318ab608f57fd543833622c871cb6bdcb1699a53';
+String _$openUrlHash() => r'dd6694ed783c77365ef3a016213cb9dba25dd733';
 
 /// See also [openUrl].
 @ProviderFor(openUrl)
 const openUrlProvider = OpenUrlFamily();
 
 /// See also [openUrl].
-class OpenUrlFamily extends Family<void> {
+class OpenUrlFamily extends Family<AsyncValue<bool>> {
   /// See also [openUrl].
   const OpenUrlFamily();
 
@@ -698,7 +698,7 @@ class OpenUrlFamily extends Family<void> {
 }
 
 /// See also [openUrl].
-class OpenUrlProvider extends AutoDisposeProvider<void> {
+class OpenUrlProvider extends AutoDisposeFutureProvider<bool> {
   /// See also [openUrl].
   OpenUrlProvider(
     BuildContext context,
@@ -737,7 +737,7 @@ class OpenUrlProvider extends AutoDisposeProvider<void> {
 
   @override
   Override overrideWith(
-    void Function(OpenUrlRef provider) create,
+    FutureOr<bool> Function(OpenUrlRef provider) create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -755,7 +755,7 @@ class OpenUrlProvider extends AutoDisposeProvider<void> {
   }
 
   @override
-  AutoDisposeProviderElement<void> createElement() {
+  AutoDisposeFutureProviderElement<bool> createElement() {
     return _OpenUrlProviderElement(this);
   }
 
@@ -778,7 +778,7 @@ class OpenUrlProvider extends AutoDisposeProvider<void> {
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-mixin OpenUrlRef on AutoDisposeProviderRef<void> {
+mixin OpenUrlRef on AutoDisposeFutureProviderRef<bool> {
   /// The parameter `context` of this provider.
   BuildContext get context;
 
@@ -786,7 +786,7 @@ mixin OpenUrlRef on AutoDisposeProviderRef<void> {
   String get url;
 }
 
-class _OpenUrlProviderElement extends AutoDisposeProviderElement<void>
+class _OpenUrlProviderElement extends AutoDisposeFutureProviderElement<bool>
     with OpenUrlRef {
   _OpenUrlProviderElement(super.provider);
 
@@ -796,7 +796,7 @@ class _OpenUrlProviderElement extends AutoDisposeProviderElement<void>
   String get url => (origin as OpenUrlProvider).url;
 }
 
-String _$isImageUrlHash() => r'5e26ede718a4a9ab63553ab05a577bfcc2b4794a';
+String _$isImageUrlHash() => r'b53e79659f88bbe12a3c3132e5b295834219a802';
 
 /// See also [_isImageUrl].
 @ProviderFor(_isImageUrl)
