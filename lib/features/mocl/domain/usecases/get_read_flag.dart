@@ -3,23 +3,23 @@ import 'package:mocl_flutter/core/usecases/usecase.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/repositories/list_repository.dart';
 
-class GetReadFlag extends UseCase<Future<bool>, SetReadFlagParams> {
+class GetReadFlag extends UseCase<Future<bool>, GetReadFlagParams> {
   final ListRepository listRepository;
 
   GetReadFlag({required this.listRepository});
 
   @override
-  Future<bool> call(SetReadFlagParams params) => listRepository.getReadFlag(
+  Future<bool> call(GetReadFlagParams params) => listRepository.getReadFlag(
         siteType: params.siteType,
         boardId: params.boardId,
       );
 }
 
-class SetReadFlagParams extends Equatable {
+class GetReadFlagParams extends Equatable {
   final SiteType siteType;
   final int boardId;
 
-  const SetReadFlagParams({
+  const GetReadFlagParams({
     required this.siteType,
     required this.boardId,
   });

@@ -4,7 +4,7 @@ import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/features/mocl/domain/usecases/get_read_flag.dart';
+import 'package:mocl_flutter/features/mocl/domain/usecases/set_read_flag.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/use_case_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -30,13 +30,15 @@ class DetailsNotifier extends _$DetailsNotifier {
 }
 
 @riverpod
-Future<int> _markAsRead(ref, ListItem listItem) async {
+Future<int> _markAsRead(Ref ref, ListItem listItem) async {
   if (!listItem.isRead) {
-    final siteType = ref.context.read(currentSiteTypeNotifierProvider);
-    final params = SetReadFlagParams(siteType: siteType, boardId: listItem.id);
+    final SiteType siteType = ref.read(currentSiteTypeNotifierProvider);
+    final SetReadFlagParams params =
+        SetReadFlagParams(siteType: siteType, boardId: listItem.id);
     final setReadFlag = ref.read(setReadProvider);
+    final int result = await setReadFlag(params);
     ref.read(readableStateNotifierProvider.notifier).update(listItem.id);
-    return await setReadFlag(params);
+    return result;
   }
   return -1;
 }
