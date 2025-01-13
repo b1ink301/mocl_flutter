@@ -97,7 +97,7 @@ GoRouter appRouter(Ref ref) => GoRouter(
         GoRoute(
             path: Routes.main,
             pageBuilder: (BuildContext context, GoRouterState state) =>
-                SwipeablePage(builder: (context) => MainPage.init(context)),
+                SwipeablePage(builder: (BuildContext context) => MainPage.init(context)),
             routes: [
               GoRoute(
                   path: Routes.setMainDlg,
@@ -110,7 +110,7 @@ GoRouter appRouter(Ref ref) => GoRouter(
         GoRoute(
           path: Routes.list,
           pageBuilder: (BuildContext context, GoRouterState state) =>
-              SwipeablePage(builder: (context) {
+              SwipeablePage(builder: (BuildContext context) {
             final MainItem item = GoRouterState.of(context).extra as MainItem;
             return MoclListPage.init(context, item);
           }),
@@ -119,7 +119,7 @@ GoRouter appRouter(Ref ref) => GoRouter(
             path: Routes.detail,
             pageBuilder: (BuildContext context, GoRouterState state) =>
                 SwipeablePage(
-                  builder: (context) {
+                  builder: (BuildContext context) {
                     final ListItem item =
                         GoRouterState.of(context).extra as ListItem;
                     return DetailPage.init(context, item);
@@ -142,7 +142,7 @@ GoRouter appRouter(Ref ref) => GoRouter(
         GoRoute(
           path: Routes.settings,
           pageBuilder: (BuildContext context, GoRouterState state) =>
-              SwipeablePage(builder: (context) => SettingsPage.init(context)),
+              SwipeablePage(builder: (BuildContext context) => SettingsPage.init(context)),
         ),
         GoRoute(
           path: Routes.login,

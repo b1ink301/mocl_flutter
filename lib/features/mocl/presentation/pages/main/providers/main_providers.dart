@@ -18,6 +18,7 @@ part 'main_providers.g.dart';
 class MainItemsNotifier extends _$MainItemsNotifier {
   @override
   Future<List<MainItem>> build() async {
+    state = const AsyncValue.loading();
     final SiteType siteType = ref.watch(currentSiteTypeNotifierProvider);
     final Either<Failure, List<MainItem>> result =
         await ref.read(getMainListProvider)(siteType);
@@ -29,8 +30,9 @@ class MainItemsNotifier extends _$MainItemsNotifier {
 
 @riverpod
 String mainTitle(Ref ref) {
-  final SiteType siteType = ref.watch(currentSiteTypeNotifierProvider);
-  return siteType.title;
+  final String title = ref.watch(
+      currentSiteTypeNotifierProvider.select((siteType) => siteType.title));
+  return title;
 }
 
 @riverpod
@@ -48,19 +50,16 @@ bool isCurrentSiteType(Ref ref, SiteType siteType) {
 @riverpod
 Future<Either<Failure, List<int>>> setMainItems(
     Ref ref, List<MainItem> list) async {
-  final SiteType currentSiteType = ref.watch(currentSiteTypeNotifierProvider);
-  final SetMainParams params =
-      SetMainParams(siteType: currentSiteType, list: list);
+  final SiteType siteType = ref.watch(currentSiteTypeNotifierProvider);
+  final SetMainParams params = SetMainParams(siteType: siteType, list: list);
   final SetMainList setList = ref.read(setMainListProvider);
   return await setList.call(params);
 }
 
 @riverpod
 Future<void> handleAddButton(Ref ref, BuildContext context) async {
-  final SiteType siteType = ref.read(currentSiteTypeNotifierProvider);
   final List<MainItem>? result = await context.push<List<MainItem>>(
     Routes.setMainDlgFull,
-    extra: siteType,
   );
 
   if (!context.mounted || result == null) return;

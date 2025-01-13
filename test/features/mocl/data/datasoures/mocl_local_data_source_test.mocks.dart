@@ -6,11 +6,9 @@
 import 'dart:async' as _i3;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart'
+import 'package:mocl_flutter/features/mocl/data/datasources/local_database.dart'
     as _i2;
-import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart'
-    as _i6;
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart'
+import 'package:mocl_flutter/features/mocl/data/db/entities/main_item_data.dart'
     as _i4;
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart'
     as _i5;
@@ -29,39 +27,34 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart'
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-/// A class which mocks [MainDataSource].
+/// A class which mocks [LocalDatabase].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockMainDataSource extends _i1.Mock implements _i2.MainDataSource {
-  MockMainDataSource() {
+class MockLocalDatabase extends _i1.Mock implements _i2.LocalDatabase {
+  MockLocalDatabase() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i3.Future<List<_i4.MainItem>> get(_i5.SiteType? siteType) =>
+  _i3.Future<List<_i4.MainItemData>> getMainData(_i5.SiteType? siteType) =>
       (super.noSuchMethod(
-            Invocation.method(#get, [siteType]),
-            returnValue: _i3.Future<List<_i4.MainItem>>.value(<_i4.MainItem>[]),
+            Invocation.method(#getMainData, [siteType]),
+            returnValue: _i3.Future<List<_i4.MainItemData>>.value(
+              <_i4.MainItemData>[],
+            ),
           )
-          as _i3.Future<List<_i4.MainItem>>);
+          as _i3.Future<List<_i4.MainItemData>>);
 
   @override
-  _i3.Future<List<int>> set(_i5.SiteType? siteType, List<_i4.MainItem>? list) =>
+  _i3.Future<List<int>> setMainData(
+    _i5.SiteType? siteType,
+    List<_i4.MainItemData>? entities,
+  ) =>
       (super.noSuchMethod(
-            Invocation.method(#set, [siteType, list]),
+            Invocation.method(#setMainData, [siteType, entities]),
             returnValue: _i3.Future<List<int>>.value(<int>[]),
           )
           as _i3.Future<List<int>>);
-
-  @override
-  _i3.Future<List<_i6.MainItemModel>> getAllFromJson(_i5.SiteType? siteType) =>
-      (super.noSuchMethod(
-            Invocation.method(#getAllFromJson, [siteType]),
-            returnValue: _i3.Future<List<_i6.MainItemModel>>.value(
-              <_i6.MainItemModel>[],
-            ),
-          )
-          as _i3.Future<List<_i6.MainItemModel>>);
 
   @override
   _i3.Future<void> deleteAll(_i5.SiteType? siteType) =>
@@ -73,10 +66,40 @@ class MockMainDataSource extends _i1.Mock implements _i2.MainDataSource {
           as _i3.Future<void>);
 
   @override
-  _i3.Future<bool> hasItem(_i5.SiteType? siteType, _i4.MainItem? item) =>
+  _i3.Future<bool> hasItem(_i5.SiteType? siteType, _i4.MainItemData? entity) =>
       (super.noSuchMethod(
-            Invocation.method(#hasItem, [siteType, item]),
+            Invocation.method(#hasItem, [siteType, entity]),
             returnValue: _i3.Future<bool>.value(false),
           )
           as _i3.Future<bool>);
+
+  @override
+  _i3.Future<bool> isRead(_i5.SiteType? siteType, int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#isRead, [siteType, id]),
+            returnValue: _i3.Future<bool>.value(false),
+          )
+          as _i3.Future<bool>);
+
+  @override
+  _i3.FutureOr<List<int>> isReads(_i5.SiteType? siteType, List<int>? ids) =>
+      (super.noSuchMethod(
+            Invocation.method(#isReads, [siteType, ids]),
+            returnValue: _i3.Future<List<int>>.value(<int>[]),
+          )
+          as _i3.FutureOr<List<int>>);
+
+  @override
+  _i3.Future<int> setRead(_i5.SiteType? siteType, int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#setRead, [siteType, id]),
+            returnValue: _i3.Future<int>.value(0),
+          )
+          as _i3.Future<int>);
+
+  @override
+  void dispose() => super.noSuchMethod(
+    Invocation.method(#dispose, []),
+    returnValueForMissingStub: null,
+  );
 }

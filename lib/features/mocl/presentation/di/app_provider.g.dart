@@ -206,7 +206,7 @@ class _ShowToastProviderElement extends AutoDisposeProviderElement<void>
   BuildContext get context => (origin as ShowToastProvider).context;
 }
 
-String _$appRouterHash() => r'9aa2f261b7b61d896cd9231d6d6edc3877e6a109';
+String _$appRouterHash() => r'f1ca33dce438e6b9805137069c2e46064a0f4d69';
 
 /// See also [appRouter].
 @ProviderFor(appRouter)

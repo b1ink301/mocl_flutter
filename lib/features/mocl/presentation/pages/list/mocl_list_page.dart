@@ -24,7 +24,8 @@ class MoclListPage extends ConsumerWidget {
           overrides: [
             screenWidthProvider
                 .overrideWithValue(MediaQuery.of(context).size.width),
-            appbarTextStyleProvider.overrideWithValue(Theme.of(context).textTheme.labelMedium!),
+            appbarTextStyleProvider
+                .overrideWithValue(Theme.of(context).textTheme.labelMedium!),
             mainItemProvider.overrideWithValue(item),
           ],
           child: const MoclListPage(),

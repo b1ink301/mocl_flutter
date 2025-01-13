@@ -56,10 +56,7 @@ class NaverCafeParser extends BaseParser {
   }
 
   @override
-  Future<Result> comment(Response response) {
-    // TODO: implement comment
-    throw UnimplementedError();
-  }
+  Future<Result> comment(Response response) => throw UnimplementedError('comment');
 
   @override
   Future<Either<Failure, Details>> detail(Response response) async {

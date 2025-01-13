@@ -22,7 +22,7 @@ class ClienParser extends BaseParser {
 
   @override
   Future<Result> comment(Response response) {
-    throw UnimplementedError();
+    throw UnimplementedError('comment');
   }
 
   static DateTime parseDateTime(String dateTimeString) {

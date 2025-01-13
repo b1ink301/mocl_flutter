@@ -6,7 +6,7 @@ part of 'detail_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$listItemHash() => r'71699228ec40a6b7d173ef6a4474f5ba31308fb6';
+String _$listItemHash() => r'a2e72c9bd39a20673f38f5ed884a74494e31738b';
 
 /// See also [listItem].
 @ProviderFor(listItem)
@@ -173,7 +173,7 @@ class _MarkAsReadProviderElement extends AutoDisposeFutureProviderElement<int>
   ListItem get listItem => (origin as _MarkAsReadProvider).listItem;
 }
 
-String _$detailSmallTitleHash() => r'eb6c34363672413df146812f6a63f0f2a8981ae3';
+String _$detailSmallTitleHash() => r'22492db1858826bef84ef9b13abcae06ada41431';
 
 /// See also [detailSmallTitle].
 @ProviderFor(detailSmallTitle)
@@ -183,15 +183,12 @@ final detailSmallTitleProvider = AutoDisposeProvider<String>.internal(
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
       : _$detailSmallTitleHash,
-  dependencies: <ProviderOrFamily>[
-    listItemProvider,
-    currentSiteTypeNotifierProvider
-  ],
+  dependencies: <ProviderOrFamily>[listItemProvider, detailTitleProvider],
   allTransitiveDependencies: <ProviderOrFamily>{
     listItemProvider,
     ...?listItemProvider.allTransitiveDependencies,
-    currentSiteTypeNotifierProvider,
-    ...?currentSiteTypeNotifierProvider.allTransitiveDependencies
+    detailTitleProvider,
+    ...?detailTitleProvider.allTransitiveDependencies
   },
 );
 
@@ -242,7 +239,7 @@ final detailUrlProvider = AutoDisposeProvider<String>.internal(
 // ignore: unused_element
 typedef DetailUrlRef = AutoDisposeProviderRef<String>;
 String _$detailAppbarHeightHash() =>
-    r'0338fbe50f58d08ba0ba4de2649b8bdbe4ddd49f';
+    r'd0e104b9cfd1d149f5dbed886f652f2fc9fde987';
 
 /// See also [detailAppbarHeight].
 @ProviderFor(detailAppbarHeight)
@@ -381,7 +378,7 @@ class _DetailAppbarHeightProviderElement
   String get text => (origin as DetailAppbarHeightProvider).text;
 }
 
-String _$detailsNotifierHash() => r'7efe060ffee78fdbbfa564232fa7e4ab61fc90e8';
+String _$detailsNotifierHash() => r'80284ade2965d00cdfb9a396c89c40595408527a';
 
 /// See also [DetailsNotifier].
 @ProviderFor(DetailsNotifier)
@@ -392,15 +389,10 @@ final detailsNotifierProvider =
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
       : _$detailsNotifierHash,
-  dependencies: <ProviderOrFamily>[
-    listItemProvider,
-    detailAppbarHeightProvider
-  ],
+  dependencies: <ProviderOrFamily>[listItemProvider],
   allTransitiveDependencies: <ProviderOrFamily>{
     listItemProvider,
-    ...?listItemProvider.allTransitiveDependencies,
-    detailAppbarHeightProvider,
-    ...?detailAppbarHeightProvider.allTransitiveDependencies
+    ...?listItemProvider.allTransitiveDependencies
   },
 );
 

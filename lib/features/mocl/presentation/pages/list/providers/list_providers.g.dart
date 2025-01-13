@@ -42,7 +42,7 @@ final listTitleProvider = AutoDisposeProvider<String>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ListTitleRef = AutoDisposeProviderRef<String>;
-String _$mainItemHash() => r'edcc40f3617b90c83b8af88d352751c497df0fed';
+String _$mainItemHash() => r'bfd8c4675d74a8ec6b735008aa9f59eee3c014e6';
 
 /// See also [mainItem].
 @ProviderFor(mainItem)
@@ -58,22 +58,6 @@ final mainItemProvider = AutoDisposeProvider<MainItem>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MainItemRef = AutoDisposeProviderRef<MainItem>;
-String _$listItemInfoHash() => r'f9ee83816f1b556ec54f44ef8853b10fb61bb92d';
-
-/// See also [listItemInfo].
-@ProviderFor(listItemInfo)
-final listItemInfoProvider = AutoDisposeProvider<MoclListItemInfo>.internal(
-  listItemInfo,
-  name: r'listItemInfoProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$listItemInfoHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef ListItemInfoRef = AutoDisposeProviderRef<MoclListItemInfo>;
 String _$titleHeightHash() => r'147d0b003670732ee111c1d12f2b89be22b841d7';
 
 /// Copied from Dart SDK
@@ -255,7 +239,7 @@ final extentPrecalculationPolicyProvider =
 typedef ExtentPrecalculationPolicyRef
     = AutoDisposeProviderRef<ExtentPrecalculationPolicy>;
 String _$paginationStateNotifierHash() =>
-    r'a4be4bc4cbd939fa4a8c7b9fe752ad04c93ae40f';
+    r'c4a7844928b08ad4906ee0220c20b8af60c2d336';
 
 /// See also [PaginationStateNotifier].
 @ProviderFor(PaginationStateNotifier)

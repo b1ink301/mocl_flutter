@@ -17,21 +17,20 @@ class DetailPage extends ConsumerWidget {
   static Widget init(
     BuildContext context,
     ListItem item,
-  ) {
-    return ProviderScope(
-      overrides: [
-        listItemProvider.overrideWithValue(item),
-        screenWidthProvider
-            .overrideWithValue(MediaQuery.of(context).size.width),
-        appbarTextStyleProvider
-            .overrideWithValue(Theme.of(context).textTheme.labelMedium!),
-      ],
-      child: AnnotatedRegion<SystemUiOverlayStyle>(
-        value: Theme.of(context).appBarTheme.systemOverlayStyle!,
-        child: const DetailPage(),
-      ),
-    );
-  }
+  ) =>
+      ProviderScope(
+        overrides: [
+          listItemProvider.overrideWithValue(item),
+          screenWidthProvider
+              .overrideWithValue(MediaQuery.of(context).size.width),
+          appbarTextStyleProvider
+              .overrideWithValue(Theme.of(context).textTheme.labelMedium!),
+        ],
+        child: AnnotatedRegion<SystemUiOverlayStyle>(
+          value: Theme.of(context).appBarTheme.systemOverlayStyle!,
+          child: const DetailPage(),
+        ),
+      );
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
