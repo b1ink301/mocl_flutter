@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'dart:developer';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,7 +12,6 @@ import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
-import '../../../../fixtures/fixture_reader.dart';
 import './mocl_local_data_source_test.mocks.dart';
 
 @GenerateMocks([LocalDatabase])
@@ -21,7 +19,6 @@ void main() {
   const SiteType siteType = SiteType.damoang;
   late MainDataSource mainDataSource;
   late MockLocalDatabase localDatabase;
-  late final List<dynamic> mainListJson;
   late final ProviderContainer container;
 
   setUpAll(() async {
@@ -37,8 +34,6 @@ void main() {
     );
 
     mainDataSource = container.read(mainDatasourceProvider);
-
-    mainListJson = json.decode(fixture('damoang_board_link.json'));
   });
 
   tearDownAll(() => localDatabase.dispose());

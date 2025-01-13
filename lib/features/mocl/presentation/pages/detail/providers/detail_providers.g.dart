@@ -173,7 +173,7 @@ class _MarkAsReadProviderElement extends AutoDisposeFutureProviderElement<int>
   ListItem get listItem => (origin as _MarkAsReadProvider).listItem;
 }
 
-String _$detailSmallTitleHash() => r'22492db1858826bef84ef9b13abcae06ada41431';
+String _$detailSmallTitleHash() => r'0d8340a0d400d55964b9d72c2a07ea408ca5dfa3';
 
 /// See also [detailSmallTitle].
 @ProviderFor(detailSmallTitle)
