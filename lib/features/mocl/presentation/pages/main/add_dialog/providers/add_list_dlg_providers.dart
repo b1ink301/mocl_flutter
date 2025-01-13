@@ -14,6 +14,8 @@ part 'add_list_dlg_providers.g.dart';
 class AddListDlgNotifier extends _$AddListDlgNotifier {
   @override
   FutureOr<List<CheckableMainItem>> build() async {
+    state = const AsyncValue.loading();
+
     final SiteType siteType = ref.read(currentSiteTypeNotifierProvider);
     final GetMainListFromJson getMainListFromJson =
         ref.read(getMainListFromJsonProvider);

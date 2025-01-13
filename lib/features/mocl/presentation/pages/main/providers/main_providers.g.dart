@@ -6,7 +6,7 @@ part of 'main_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$mainTitleHash() => r'fc97fdbfeedbfb0e4c4c2c71d34c216606f6a813';
+String _$mainTitleHash() => r'0f4a5b000762f1f7f5786eca779b0668c124eb7c';
 
 /// See also [mainTitle].
 @ProviderFor(mainTitle)
@@ -190,7 +190,7 @@ class _IsCurrentSiteTypeProviderElement extends AutoDisposeProviderElement<bool>
   SiteType get siteType => (origin as IsCurrentSiteTypeProvider).siteType;
 }
 
-String _$setMainItemsHash() => r'4690f5a223a91d6d14dc1d79138ffea39d96abb1';
+String _$setMainItemsHash() => r'bb96780b22b459d9a6c48ab323950bf23317beb8';
 
 /// See also [setMainItems].
 @ProviderFor(setMainItems)
@@ -325,7 +325,7 @@ class _SetMainItemsProviderElement
   List<MainItem> get list => (origin as SetMainItemsProvider).list;
 }
 
-String _$handleAddButtonHash() => r'86c20a6cb5ea22141427b7ab2c7fa25f99c36f4b';
+String _$handleAddButtonHash() => r'14273d9ba47777b2f8d1c3e181755d7e09e78b0e';
 
 /// See also [handleAddButton].
 @ProviderFor(handleAddButton)
@@ -455,7 +455,7 @@ class _HandleAddButtonProviderElement
   BuildContext get context => (origin as HandleAddButtonProvider).context;
 }
 
-String _$mainItemsNotifierHash() => r'42fbe983ca72962e5a66f5e6ac00c4b67554d8ef';
+String _$mainItemsNotifierHash() => r'86b23ee300f094255bb5993053eb02c3638f2421';
 
 /// See also [MainItemsNotifier].
 @ProviderFor(MainItemsNotifier)

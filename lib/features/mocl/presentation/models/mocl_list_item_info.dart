@@ -4,14 +4,14 @@ import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 
 class MoclListItemInfo extends Equatable {
-  final TextStyle titleStyle; // = textStyles.title(item.isRead);
-  final TextStyle smallTitleStyle; // = textStyles.smallTitle(item.isRead);
-  final TextStyle badgeStyle; // = textStyles.badge(item.isRead);
-  final String id; // = item.userInfo.id;
-  final String reply; // = item.reply;
-  final String nickImage; // = item.userInfo.nickImage;
-  final String title; // = item.info;
-  final String info; // = item.info;
+  final TextStyle titleStyle;
+  final TextStyle smallTitleStyle;
+  final TextStyle badgeStyle;
+  final String id;
+  final String reply;
+  final String nickImage;
+  final String title;
+  final String info;
   final bool isRead;
   final int index;
 

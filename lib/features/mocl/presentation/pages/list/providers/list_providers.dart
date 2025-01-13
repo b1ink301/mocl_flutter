@@ -11,12 +11,13 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_list.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/use_case_provider.dart';
-import 'package:mocl_flutter/features/mocl/presentation/models/mocl_list_item_info.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
 part 'list_providers.freezed.dart';
+
 part 'list_providers.g.dart';
+
 part 'pagination_state.dart';
 
 @riverpod
@@ -40,9 +41,9 @@ String listTitle(Ref ref) {
 ])
 class PaginationStateNotifier extends _$PaginationStateNotifier {
   @override
-  Future<PaginationState> build() async => await fetchData();
+  Future<PaginationState> build() async => await _fetchData();
 
-  Future<PaginationState> fetchData() async {
+  Future<PaginationState> _fetchData() async {
     state = const AsyncValue.data(PaginationState.loading());
 
     final MainItem mainItem = ref.watch(mainItemProvider);
@@ -110,10 +111,10 @@ class PageNumberNotifier extends _$PageNumberNotifier {
 }
 
 @riverpod
-MainItem mainItem(Ref ref) => throw UnimplementedError();
+MainItem mainItem(Ref ref) => throw UnimplementedError('mainItem');
 
-@riverpod
-MoclListItemInfo listItemInfo(Ref ref) => throw UnimplementedError();
+// @riverpod
+// MoclListItemInfo listItemInfo(Ref ref) => throw UnimplementedError();
 
 @riverpod
 class _LastIdNotifier extends _$LastIdNotifier {
@@ -149,9 +150,7 @@ double titleHeight(Ref ref, String text) {
 
 class _CustomExtentPrecalculationPolicy extends ExtentPrecalculationPolicy {
   @override
-  bool shouldPrecalculateExtents(ExtentPrecalculationContext context) {
-    return true;
-  }
+  bool shouldPrecalculateExtents(ExtentPrecalculationContext context) => true;
 }
 
 @riverpod

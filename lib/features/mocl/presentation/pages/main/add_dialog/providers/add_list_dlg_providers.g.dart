@@ -7,7 +7,7 @@ part of 'add_list_dlg_providers.dart';
 // **************************************************************************
 
 String _$addListDlgNotifierHash() =>
-    r'8276b7fddc8def037991e2e0a11a083a9bcccbdd';
+    r'8caaf94ee75c113b86f1113846d01fc74f5d6397';
 
 /// See also [AddListDlgNotifier].
 @ProviderFor(AddListDlgNotifier)

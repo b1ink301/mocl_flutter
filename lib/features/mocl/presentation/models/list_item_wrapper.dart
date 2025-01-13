@@ -17,14 +17,11 @@ class ListItemWrapper with _$ListItemWrapper {
 extension ListItemWrapperExtension on ListItemWrapper {
   MoclListItemInfo toListItemInfo(BuildContext context, int index) {
     final MoclTextStyles textStyles = MoclTextStyles.of(context);
-    final TextStyle titleStyle = textStyles.title(item.isRead);
-    final TextStyle smallTitleStyle = textStyles.smallTitle(item.isRead);
-    final TextStyle badgeStyle = textStyles.badge(item.isRead);
 
     return MoclListItemInfo(
-      titleStyle: titleStyle,
-      smallTitleStyle: smallTitleStyle,
-      badgeStyle: badgeStyle,
+      titleStyle: textStyles.title(item.isRead),
+      smallTitleStyle: textStyles.smallTitle(item.isRead),
+      badgeStyle: textStyles.badge(item.isRead),
       id: item.userInfo.id,
       reply: item.reply,
       title: item.title,

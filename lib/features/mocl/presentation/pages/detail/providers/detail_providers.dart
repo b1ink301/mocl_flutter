@@ -15,12 +15,13 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'detail_providers.g.dart';
 
 @riverpod
-ListItem listItem(ref) => throw UnimplementedError();
+ListItem listItem(ref) => throw UnimplementedError('listItem');
 
-@Riverpod(dependencies: [listItem, detailAppbarHeight])
+@Riverpod(dependencies: [listItem])
 class DetailsNotifier extends _$DetailsNotifier {
   @override
   Future<Details> build() async {
+    state = const AsyncValue.loading();
     final ListItem listItem = ref.watch(listItemProvider);
     final Either<Failure, Details> result =
         await ref.read(getDetailProvider)(listItem);
@@ -46,10 +47,9 @@ Future<int> _markAsRead(Ref ref, ListItem listItem) async {
   return -1;
 }
 
-@Riverpod(dependencies: [listItem, CurrentSiteTypeNotifier])
+@Riverpod(dependencies: [listItem, detailTitle])
 String detailSmallTitle(Ref ref) {
-  final String title = ref.watch(
-      currentSiteTypeNotifierProvider.select((siteType) => siteType.title));
+  final String title = ref.watch(detailTitleProvider);
   final String boardTitle =
       ref.watch(listItemProvider.select((item) => item.boardTitle));
   return '$title > $boardTitle';
@@ -70,10 +70,10 @@ String detailUrl(Ref ref) {
       : listItem.url;
 }
 
-const double kMoreIconSize = 48.0; // more 아이콘의 크기
-const double kHorizontalPadding = 16.0; // 좌우 패딩
-const double kMinTextHeight = 30.0; // 최소 텍스트 높이
-const double kExtraVerticalSpace = 36.0; // 추가 수직 공간
+const double _kMoreIconSize = 48.0; // more 아이콘의 크기
+const double _kHorizontalPadding = 16.0; // 좌우 패딩
+const double _kMinTextHeight = 30.0; // 최소 텍스트 높이
+const double _kExtraVerticalSpace = 36.0; // 추가 수직 공간
 
 @Riverpod(dependencies: [appbarTextStyle, screenWidth])
 double detailAppbarHeight(
@@ -84,7 +84,7 @@ double detailAppbarHeight(
   final double screenWidth = ref.watch(screenWidthProvider);
 
   final double availableWidth =
-      screenWidth - kMoreIconSize - (kHorizontalPadding * 2); // 좌우 패딩
+      screenWidth - _kMoreIconSize - (_kHorizontalPadding * 2); // 좌우 패딩
 
   final TextPainter textPainter = TextPainter(
     text: TextSpan(
@@ -99,5 +99,5 @@ double detailAppbarHeight(
     );
 
   // 최소 높이와 비교하여 더 큰 값 반환
-  return max(kMinTextHeight, textPainter.height) + kExtraVerticalSpace;
+  return max(_kMinTextHeight, textPainter.height) + _kExtraVerticalSpace;
 }

@@ -12,9 +12,8 @@ class DetailAppBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final String title = ref.watch(detailTitleProvider);
-    final String smallTitle = ref.read(detailSmallTitleProvider);
-    final double height =
-        ref.read(detailAppbarHeightProvider(title));
+    final String smallTitle = ref.watch(detailSmallTitleProvider);
+    final double height = ref.read(detailAppbarHeightProvider(title));
 
     return AppbarDualTextWidget(
       title: title,

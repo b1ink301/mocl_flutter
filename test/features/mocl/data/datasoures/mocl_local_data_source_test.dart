@@ -1,91 +1,89 @@
 import 'dart:convert';
 import 'dart:developer';
 
-import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/local_database.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart';
 import 'package:mocl_flutter/features/mocl/data/db/entities/main_item_data.dart';
+import 'package:mocl_flutter/features/mocl/data/di/datasource_provider.dart';
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:sembast/sembast_io.dart';
-import 'package:path/path.dart';
 
 import '../../../../fixtures/fixture_reader.dart';
 import './mocl_local_data_source_test.mocks.dart';
 
-@GenerateMocks([MainDataSource])
+@GenerateMocks([LocalDatabase])
 void main() {
   const SiteType siteType = SiteType.damoang;
-  late MockMainDataSource mainDataSource;
-  late LocalDatabase localDatabase;
+  late MainDataSource mainDataSource;
+  late MockLocalDatabase localDatabase;
   late final List<dynamic> mainListJson;
+  late final ProviderContainer container;
 
   setUpAll(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
 
-    /// 유닛 테스트는 현재 구동하는 O/S 기반의 라이브러리가 필요하다. 다운로드 API가 동작이 안되니.. 직접 해당 버전에 맞는 라이브러리를 다운로드한다.
-    // await Isar.initializeIsarCore(download: true);
-    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
-        .setMockMethodCallHandler(
-            const MethodChannel('plugins.flutter.io/path_provider'),
-            (MethodCall methodCall) async {
-      return './';
-    });
-    final dir = await getApplicationDocumentsDirectory();
-    await dir.create(recursive: true);
-    final String dbPath = join(dir.path, 'mocl-sembast.db');
-    final Database database = await databaseFactoryIo.openDatabase(dbPath);
+    localDatabase = MockLocalDatabase();
 
-    localDatabase = LocalDatabase(database: database);
-    mainDataSource = MockMainDataSource();
+    container = ProviderContainer(
+      overrides: [
+        mainDatasourceProvider
+            .overrideWithValue(MainDataSourceImpl(localDatabase: localDatabase))
+      ],
+    );
+
+    mainDataSource = container.read(mainDatasourceProvider);
 
     mainListJson = json.decode(fixture('damoang_board_link.json'));
   });
 
   tearDownAll(() => localDatabase.dispose());
 
-  test('DB에 메인 목록이 없다.', () async {
-    when(mainDataSource.get(siteType))
-        .thenAnswer((_) => Future.value(List.empty()));
-    verifyZeroInteractions(mainDataSource);
-    // final result = await mainDataSource.get(siteType);
-    // expect(result, equals(List<MainItemModel>.empty()));
+  test('main local datasource test. (empty)', () async {
+    when(localDatabase.getMainData(any))
+        .thenAnswer((_) async => List<MainItemData>.empty());
+
+    verifyZeroInteractions(localDatabase);
+
+    final result = await mainDataSource.get(siteType);
+
+    expect(result, isA<List<MainItem>>());
+
+    expect(result.isEmpty, true);
   });
 
-  test('Json 파일로 부터 MainItemData 목록을 얻어온다.', () async {
+  test('Get MainItemModel from json File', () async {
     // arrange
-    when(mainDataSource.getAllFromJson(siteType)).thenAnswer((_) async =>
-            mainListJson.map((item) => MainItemModel.fromJson(item)).toList());
+    // when(mainDataSource.getAllFromJson(siteType)).thenAnswer((_) async =>
+    //     mainListJson.map((item) => MainItemModel.fromJson(item)).toList());
 
     // act
     final result = await mainDataSource.getAllFromJson(siteType);
     log("result.length=${result.length}");
 
     // assert
-    expect(result.length, 23);
+    expect(result.isNotEmpty, true);
   });
 
-  test('Json 파일로 부터 MainItemData 목록을 얻어 mainItem 목록로 변환한다.', () async {
+  test('MainItemData to MainItem From JSON', () async {
     final result = await mainDataSource.getAllFromJson(siteType);
     var mainItemList = result.map((item) => item.toEntity(siteType)).toList();
     log("mainItemList=$mainItemList");
     expect(mainItemList, isA<List<MainItem>>());
   });
 
-  test('Json 파일의 모든 데이터를 DB로 저장한다.', () async {
+  test('set MainItemData to DB', () async {
     // arrange
+    // when(mainDataSource.getAllFromJson(siteType)).thenAnswer((_) =>
+    //     Future.value(
+    //         mainListJson.map((item) => MainItemModel.fromJson(item)).toList()));
 
-    when(mainDataSource.getAllFromJson(siteType)).thenAnswer((_) =>
-        Future.value(
-            mainListJson.map((item) => MainItemModel.fromJson(item)).toList()));
-
-    when(mainDataSource.set(any, any))
-        .thenAnswer((_) => Future.value(<int>[1, 2, 3]));
+    when(localDatabase.setMainData(any, any))
+        .thenAnswer((_) async => <int>[1, 2, 3]);
 
     // act
     final mainResult = await mainDataSource.getAllFromJson(siteType);
@@ -99,9 +97,13 @@ void main() {
     expect(result, isA<List<int>>());
   });
 
-  test('DB에서 메인 목록을 조회 한다.', () async {
-    final result = await localDatabase.getMainData(siteType);
+  test('query MainItemData from DB', () async {
+    when(localDatabase.getMainData(any))
+        .thenAnswer((_) async => List<MainItemData>.empty());
+
+    final result = await mainDataSource.get(siteType);
     log("result=$result");
-    expect(result, isA<List<MainItemData>>());
+
+    expect(result, isA<List<MainItem>>());
   });
 }

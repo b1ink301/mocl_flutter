@@ -13,7 +13,7 @@ import 'package:mocl_flutter/features/mocl/presentation/widgets/round_text_widge
 class MoclListItem extends ConsumerWidget {
   final MoclListItemInfo itemInfo;
 
-  const MoclListItem({required this.itemInfo, super.key});
+  const MoclListItem({super.key, required this.itemInfo});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => Column(

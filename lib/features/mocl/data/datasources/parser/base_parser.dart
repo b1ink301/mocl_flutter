@@ -17,7 +17,7 @@ abstract class BaseParser {
   Either<Failure, List<MainItem>> main(
     Response response,
   ) =>
-      throw UnimplementedError();
+      throw UnimplementedError('main');
 
   Future<Either<Failure, List<ListItem>>> list(
     Response response,

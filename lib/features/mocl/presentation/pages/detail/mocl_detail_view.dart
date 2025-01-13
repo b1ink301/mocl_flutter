@@ -151,7 +151,8 @@ class _DetailContent extends ConsumerWidget {
           detail: detail,
           hexColor: hexColor,
           bodyMedium: bodyMedium,
-          onTapUrl: (url) async => await ref.read(openUrlProvider(context, url)),
+          onTapUrl: (url) async =>
+              await ref.read(openUrlProvider(context, url)),
         ),
         const SizedBox(height: 10),
         if (detail.comments.isNotEmpty)
@@ -160,11 +161,13 @@ class _DetailContent extends ConsumerWidget {
             comments: detail.comments,
             bodySmall: bodySmall,
             bodyMedium: bodyMedium,
-            openUrl: (url) async => await ref.read(openUrlProvider(context, url)),
+            openUrl: (url) async =>
+                await ref.read(openUrlProvider(context, url)),
           ),
         const Divider(),
         _RefreshButton(
-            onRefresh: () => ref.read(detailsNotifierProvider.notifier).refresh(),
+            onRefresh: () =>
+                ref.read(detailsNotifierProvider.notifier).refresh(),
             bodyMedium: bodyMedium),
         const Divider(),
       ],
@@ -392,8 +395,7 @@ class _RefreshButton extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return InkWell(
+  Widget build(BuildContext context) => InkWell(
       onTap: onRefresh,
       child: Container(
         width: double.infinity,
@@ -407,5 +409,4 @@ class _RefreshButton extends StatelessWidget {
         ),
       ),
     );
-  }
 }

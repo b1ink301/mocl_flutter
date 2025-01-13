@@ -108,7 +108,7 @@ final detailDatasourceProvider = AutoDisposeProvider<DetailDataSource>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DetailDatasourceRef = AutoDisposeProviderRef<DetailDataSource>;
-String _$parserFactoryHash() => r'd600154e34d7c512bbc9ba7d6d179df9a0660c30';
+String _$parserFactoryHash() => r'246c71962147e5b250a2168331ab1588dbca82a8';
 
 /// See also [parserFactory].
 @ProviderFor(parserFactory)
