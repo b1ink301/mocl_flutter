@@ -2,6 +2,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/providers/main_providers.dart';
 import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_routes.dart';
@@ -29,12 +30,27 @@ class _MainBody extends ConsumerWidget {
   const _MainBody();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) =>
-      ref.watch(mainItemsNotifierProvider).when(
-            data: (data) => _buildListView(context, data),
-            error: (error, stack) => _buildErrorView(context, error.toString()),
-            loading: () => _buildLoadingView(),
-          );
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen<AsyncValue>(
+      mainItemsNotifierProvider.select((value) => value),
+      (AsyncValue? previous, AsyncValue? next) {
+        if (next is AsyncError && next.error is NotLoginFailure) {
+          context.push<bool>(Routes.login).then((result) {
+            if (context.mounted && result == true) {
+              ref.read(mainItemsNotifierProvider.notifier).refresh();
+            }
+          });
+        }
+      },
+    );
+
+    return ref.watch(mainItemsNotifierProvider).when(
+          data: (data) => _buildListView(context, data),
+          error: (error, stack) => _buildErrorView(
+              context, error is Failure ? error.message : error.toString()),
+          loading: () => _buildLoadingView(),
+        );
+  }
 
   Widget _buildLoadingView() => const SliverToBoxAdapter(
       child: Column(children: [LoadingWidget(), DividerWidget()]));

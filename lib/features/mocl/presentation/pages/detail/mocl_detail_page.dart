@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/detail_appbar.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/mocl_detail_view.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/providers/detail_providers.dart';
@@ -18,7 +19,13 @@ class DetailPage extends ConsumerWidget {
     ListItem item,
   ) {
     return ProviderScope(
-      overrides: [listItemProvider.overrideWithValue(item)],
+      overrides: [
+        listItemProvider.overrideWithValue(item),
+        screenWidthProvider
+            .overrideWithValue(MediaQuery.of(context).size.width),
+        appbarTextStyleProvider
+            .overrideWithValue(Theme.of(context).textTheme.labelMedium!),
+      ],
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: Theme.of(context).appBarTheme.systemOverlayStyle!,
         child: const DetailPage(),

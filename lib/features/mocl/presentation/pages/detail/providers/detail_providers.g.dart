@@ -173,7 +173,7 @@ class _MarkAsReadProviderElement extends AutoDisposeFutureProviderElement<int>
   ListItem get listItem => (origin as _MarkAsReadProvider).listItem;
 }
 
-String _$detailSmallTitleHash() => r'2271bf4d5132dd6261e31bf922595b39826275b0';
+String _$detailSmallTitleHash() => r'eb6c34363672413df146812f6a63f0f2a8981ae3';
 
 /// See also [detailSmallTitle].
 @ProviderFor(detailSmallTitle)
@@ -198,7 +198,7 @@ final detailSmallTitleProvider = AutoDisposeProvider<String>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DetailSmallTitleRef = AutoDisposeProviderRef<String>;
-String _$detailTitleHash() => r'2fa859a32ccecb89e1bf742232e520d99b926183';
+String _$detailTitleHash() => r'ccdd0e6b61dab49331f7aacf0fd2a63a978f88b5';
 
 /// See also [detailTitle].
 @ProviderFor(detailTitle)
@@ -241,7 +241,147 @@ final detailUrlProvider = AutoDisposeProvider<String>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DetailUrlRef = AutoDisposeProviderRef<String>;
-String _$detailsNotifierHash() => r'fe8febd81891393ab0b00fa5ee08cc7b0a19b7c3';
+String _$detailAppbarHeightHash() =>
+    r'0338fbe50f58d08ba0ba4de2649b8bdbe4ddd49f';
+
+/// See also [detailAppbarHeight].
+@ProviderFor(detailAppbarHeight)
+const detailAppbarHeightProvider = DetailAppbarHeightFamily();
+
+/// See also [detailAppbarHeight].
+class DetailAppbarHeightFamily extends Family<double> {
+  /// See also [detailAppbarHeight].
+  const DetailAppbarHeightFamily();
+
+  /// See also [detailAppbarHeight].
+  DetailAppbarHeightProvider call(
+    String text,
+  ) {
+    return DetailAppbarHeightProvider(
+      text,
+    );
+  }
+
+  @override
+  DetailAppbarHeightProvider getProviderOverride(
+    covariant DetailAppbarHeightProvider provider,
+  ) {
+    return call(
+      provider.text,
+    );
+  }
+
+  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
+    appbarTextStyleProvider,
+    screenWidthProvider
+  ];
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
+      <ProviderOrFamily>{
+    appbarTextStyleProvider,
+    ...?appbarTextStyleProvider.allTransitiveDependencies,
+    screenWidthProvider,
+    ...?screenWidthProvider.allTransitiveDependencies
+  };
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'detailAppbarHeightProvider';
+}
+
+/// See also [detailAppbarHeight].
+class DetailAppbarHeightProvider extends AutoDisposeProvider<double> {
+  /// See also [detailAppbarHeight].
+  DetailAppbarHeightProvider(
+    String text,
+  ) : this._internal(
+          (ref) => detailAppbarHeight(
+            ref as DetailAppbarHeightRef,
+            text,
+          ),
+          from: detailAppbarHeightProvider,
+          name: r'detailAppbarHeightProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$detailAppbarHeightHash,
+          dependencies: DetailAppbarHeightFamily._dependencies,
+          allTransitiveDependencies:
+              DetailAppbarHeightFamily._allTransitiveDependencies,
+          text: text,
+        );
+
+  DetailAppbarHeightProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.text,
+  }) : super.internal();
+
+  final String text;
+
+  @override
+  Override overrideWith(
+    double Function(DetailAppbarHeightRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: DetailAppbarHeightProvider._internal(
+        (ref) => create(ref as DetailAppbarHeightRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        text: text,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<double> createElement() {
+    return _DetailAppbarHeightProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is DetailAppbarHeightProvider && other.text == text;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, text.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin DetailAppbarHeightRef on AutoDisposeProviderRef<double> {
+  /// The parameter `text` of this provider.
+  String get text;
+}
+
+class _DetailAppbarHeightProviderElement
+    extends AutoDisposeProviderElement<double> with DetailAppbarHeightRef {
+  _DetailAppbarHeightProviderElement(super.provider);
+
+  @override
+  String get text => (origin as DetailAppbarHeightProvider).text;
+}
+
+String _$detailsNotifierHash() => r'7efe060ffee78fdbbfa564232fa7e4ab61fc90e8';
 
 /// See also [DetailsNotifier].
 @ProviderFor(DetailsNotifier)
@@ -252,10 +392,15 @@ final detailsNotifierProvider =
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
       : _$detailsNotifierHash,
-  dependencies: <ProviderOrFamily>[listItemProvider],
+  dependencies: <ProviderOrFamily>[
+    listItemProvider,
+    detailAppbarHeightProvider
+  ],
   allTransitiveDependencies: <ProviderOrFamily>{
     listItemProvider,
-    ...?listItemProvider.allTransitiveDependencies
+    ...?listItemProvider.allTransitiveDependencies,
+    detailAppbarHeightProvider,
+    ...?detailAppbarHeightProvider.allTransitiveDependencies
   },
 );
 

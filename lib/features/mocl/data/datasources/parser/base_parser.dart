@@ -17,7 +17,7 @@ abstract class BaseParser {
   Either<Failure, List<MainItem>> main(
     Response response,
   ) =>
-      Left(GetMainFailure(message: 'UnimplementedError()!'));
+      throw UnimplementedError();
 
   Future<Either<Failure, List<ListItem>>> list(
     Response response,
@@ -89,5 +89,5 @@ class ReadStatusRequest {
 class ReadStatusResponse {
   final List<int> statuses;
 
-  ReadStatusResponse(this.statuses);
+  const ReadStatusResponse(this.statuses);
 }

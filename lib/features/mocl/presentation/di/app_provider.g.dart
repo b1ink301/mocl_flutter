@@ -6,191 +6,7 @@ part of 'app_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$appbarHeightHash() => r'b3fd8541fb879a2cb6afd8b5810324818fed53fc';
-
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-/// See also [appbarHeight].
-@ProviderFor(appbarHeight)
-const appbarHeightProvider = AppbarHeightFamily();
-
-/// See also [appbarHeight].
-class AppbarHeightFamily extends Family<double> {
-  /// See also [appbarHeight].
-  const AppbarHeightFamily();
-
-  /// See also [appbarHeight].
-  AppbarHeightProvider call(
-    String text,
-    TextStyle style,
-    double screenWidth,
-  ) {
-    return AppbarHeightProvider(
-      text,
-      style,
-      screenWidth,
-    );
-  }
-
-  @override
-  AppbarHeightProvider getProviderOverride(
-    covariant AppbarHeightProvider provider,
-  ) {
-    return call(
-      provider.text,
-      provider.style,
-      provider.screenWidth,
-    );
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'appbarHeightProvider';
-}
-
-/// See also [appbarHeight].
-class AppbarHeightProvider extends AutoDisposeProvider<double> {
-  /// See also [appbarHeight].
-  AppbarHeightProvider(
-    String text,
-    TextStyle style,
-    double screenWidth,
-  ) : this._internal(
-          (ref) => appbarHeight(
-            ref as AppbarHeightRef,
-            text,
-            style,
-            screenWidth,
-          ),
-          from: appbarHeightProvider,
-          name: r'appbarHeightProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$appbarHeightHash,
-          dependencies: AppbarHeightFamily._dependencies,
-          allTransitiveDependencies:
-              AppbarHeightFamily._allTransitiveDependencies,
-          text: text,
-          style: style,
-          screenWidth: screenWidth,
-        );
-
-  AppbarHeightProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.text,
-    required this.style,
-    required this.screenWidth,
-  }) : super.internal();
-
-  final String text;
-  final TextStyle style;
-  final double screenWidth;
-
-  @override
-  Override overrideWith(
-    double Function(AppbarHeightRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: AppbarHeightProvider._internal(
-        (ref) => create(ref as AppbarHeightRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        text: text,
-        style: style,
-        screenWidth: screenWidth,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeProviderElement<double> createElement() {
-    return _AppbarHeightProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is AppbarHeightProvider &&
-        other.text == text &&
-        other.style == style &&
-        other.screenWidth == screenWidth;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, text.hashCode);
-    hash = _SystemHash.combine(hash, style.hashCode);
-    hash = _SystemHash.combine(hash, screenWidth.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin AppbarHeightRef on AutoDisposeProviderRef<double> {
-  /// The parameter `text` of this provider.
-  String get text;
-
-  /// The parameter `style` of this provider.
-  TextStyle get style;
-
-  /// The parameter `screenWidth` of this provider.
-  double get screenWidth;
-}
-
-class _AppbarHeightProviderElement extends AutoDisposeProviderElement<double>
-    with AppbarHeightRef {
-  _AppbarHeightProviderElement(super.provider);
-
-  @override
-  String get text => (origin as AppbarHeightProvider).text;
-  @override
-  TextStyle get style => (origin as AppbarHeightProvider).style;
-  @override
-  double get screenWidth => (origin as AppbarHeightProvider).screenWidth;
-}
-
-String _$getAppVersionHash() => r'd1deb1e74150f4b0b16f1afca8747fc4a641c4a2';
+String _$getAppVersionHash() => r'c4281fce8377945fd7409c9eca1fb5f423da0eff';
 
 /// See also [getAppVersion].
 @ProviderFor(getAppVersion)
@@ -224,6 +40,27 @@ final clearDataProvider = AutoDisposeFutureProvider<void>.internal(
 // ignore: unused_element
 typedef ClearDataRef = AutoDisposeFutureProviderRef<void>;
 String _$showToastHash() => r'38e03d8486b2e54b92b29cbe5d6e3211f7b4e71a';
+
+/// Copied from Dart SDK
+class _SystemHash {
+  _SystemHash._();
+
+  static int combine(int hash, int value) {
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + value);
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
+    return hash ^ (hash >> 6);
+  }
+
+  static int finish(int hash) {
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
+    // ignore: parameter_assignments
+    hash = hash ^ (hash >> 11);
+    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
+  }
+}
 
 /// See also [showToast].
 @ProviderFor(showToast)
@@ -369,7 +206,7 @@ class _ShowToastProviderElement extends AutoDisposeProviderElement<void>
   BuildContext get context => (origin as ShowToastProvider).context;
 }
 
-String _$appRouterHash() => r'9fe0879c2d715e6a047c47bc9f82d1d869b834c8';
+String _$appRouterHash() => r'9aa2f261b7b61d896cd9231d6d6edc3877e6a109';
 
 /// See also [appRouter].
 @ProviderFor(appRouter)
@@ -515,7 +352,7 @@ class _OpenBrowserByUrlProviderElement
   String get url => (origin as OpenBrowserByUrlProvider).url;
 }
 
-String _$shareUrlHash() => r'f0c09b9ac8a02c8848ff07ee083a60ecffc269c5';
+String _$shareUrlHash() => r'53ee6be8cda84c6ac68994490517e17ac423ab93';
 
 /// See also [shareUrl].
 @ProviderFor(shareUrl)
@@ -644,7 +481,7 @@ class _ShareUrlProviderElement extends AutoDisposeFutureProviderElement<bool>
   String get url => (origin as ShareUrlProvider).url;
 }
 
-String _$openUrlHash() => r'dd6694ed783c77365ef3a016213cb9dba25dd733';
+String _$openUrlHash() => r'41295218d6ea91bda7c36e29bb298c287a6fb1ec';
 
 /// See also [openUrl].
 @ProviderFor(openUrl)
@@ -796,7 +633,7 @@ class _OpenUrlProviderElement extends AutoDisposeFutureProviderElement<bool>
   String get url => (origin as OpenUrlProvider).url;
 }
 
-String _$isImageUrlHash() => r'b53e79659f88bbe12a3c3132e5b295834219a802';
+String _$isImageUrlHash() => r'c1900604e1db0e98de79c598b4ec322d221645af';
 
 /// See also [_isImageUrl].
 @ProviderFor(_isImageUrl)
@@ -926,8 +763,41 @@ class _IsImageUrlProviderElement extends AutoDisposeProviderElement<bool>
   String get url => (origin as _IsImageUrlProvider).url;
 }
 
+String _$appbarTextStyleHash() => r'831bec677d811438105caedd0b3152db2db72e02';
+
+/// See also [appbarTextStyle].
+@ProviderFor(appbarTextStyle)
+final appbarTextStyleProvider = AutoDisposeProvider<TextStyle>.internal(
+  appbarTextStyle,
+  name: r'appbarTextStyleProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$appbarTextStyleHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef AppbarTextStyleRef = AutoDisposeProviderRef<TextStyle>;
+String _$screenWidthHash() => r'f9429b6bf80fa9cf2ffb37cba2678dbfcafd523e';
+
+/// See also [screenWidth].
+@ProviderFor(screenWidth)
+final screenWidthProvider = Provider<double>.internal(
+  screenWidth,
+  name: r'screenWidthProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$screenWidthHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ScreenWidthRef = ProviderRef<double>;
 String _$currentSiteTypeNotifierHash() =>
-    r'624f78a49a7a459d4fdcecf7abc2896dcb40b34f';
+    r'c73bf72962d97791de69a72d75d769545797e8e7';
 
 /// See also [CurrentSiteTypeNotifier].
 @ProviderFor(CurrentSiteTypeNotifier)

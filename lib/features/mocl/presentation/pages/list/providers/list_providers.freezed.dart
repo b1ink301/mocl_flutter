@@ -40,23 +40,23 @@ mixin _$PaginationState {
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(_LoadingList value) loading,
-    required TResult Function(_LoadedList value) loaded,
-    required TResult Function(_FailedList value) failed,
+    required TResult Function(LoadingList value) loading,
+    required TResult Function(LoadedList value) loaded,
+    required TResult Function(FailedList value) failed,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_LoadingList value)? loading,
-    TResult? Function(_LoadedList value)? loaded,
-    TResult? Function(_FailedList value)? failed,
+    TResult? Function(LoadingList value)? loading,
+    TResult? Function(LoadedList value)? loaded,
+    TResult? Function(FailedList value)? failed,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(_LoadingList value)? loading,
-    TResult Function(_LoadedList value)? loaded,
-    TResult Function(_FailedList value)? failed,
+    TResult Function(LoadingList value)? loading,
+    TResult Function(LoadedList value)? loaded,
+    TResult Function(FailedList value)? failed,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -104,7 +104,7 @@ class __$$LoadingListImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$LoadingListImpl implements _LoadingList {
+class _$LoadingListImpl implements LoadingList {
   const _$LoadingListImpl();
 
   @override
@@ -158,9 +158,9 @@ class _$LoadingListImpl implements _LoadingList {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(_LoadingList value) loading,
-    required TResult Function(_LoadedList value) loaded,
-    required TResult Function(_FailedList value) failed,
+    required TResult Function(LoadingList value) loading,
+    required TResult Function(LoadedList value) loaded,
+    required TResult Function(FailedList value) failed,
   }) {
     return loading(this);
   }
@@ -168,9 +168,9 @@ class _$LoadingListImpl implements _LoadingList {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_LoadingList value)? loading,
-    TResult? Function(_LoadedList value)? loaded,
-    TResult? Function(_FailedList value)? failed,
+    TResult? Function(LoadingList value)? loading,
+    TResult? Function(LoadedList value)? loaded,
+    TResult? Function(FailedList value)? failed,
   }) {
     return loading?.call(this);
   }
@@ -178,9 +178,9 @@ class _$LoadingListImpl implements _LoadingList {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(_LoadingList value)? loading,
-    TResult Function(_LoadedList value)? loaded,
-    TResult Function(_FailedList value)? failed,
+    TResult Function(LoadingList value)? loading,
+    TResult Function(LoadedList value)? loaded,
+    TResult Function(FailedList value)? failed,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -190,8 +190,8 @@ class _$LoadingListImpl implements _LoadingList {
   }
 }
 
-abstract class _LoadingList implements PaginationState {
-  const factory _LoadingList() = _$LoadingListImpl;
+abstract class LoadingList implements PaginationState {
+  const factory LoadingList() = _$LoadingListImpl;
 }
 
 /// @nodoc
@@ -215,7 +215,7 @@ class __$$LoadedListImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$LoadedListImpl implements _LoadedList {
+class _$LoadedListImpl implements LoadedList {
   const _$LoadedListImpl();
 
   @override
@@ -269,9 +269,9 @@ class _$LoadedListImpl implements _LoadedList {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(_LoadingList value) loading,
-    required TResult Function(_LoadedList value) loaded,
-    required TResult Function(_FailedList value) failed,
+    required TResult Function(LoadingList value) loading,
+    required TResult Function(LoadedList value) loaded,
+    required TResult Function(FailedList value) failed,
   }) {
     return loaded(this);
   }
@@ -279,9 +279,9 @@ class _$LoadedListImpl implements _LoadedList {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_LoadingList value)? loading,
-    TResult? Function(_LoadedList value)? loaded,
-    TResult? Function(_FailedList value)? failed,
+    TResult? Function(LoadingList value)? loading,
+    TResult? Function(LoadedList value)? loaded,
+    TResult? Function(FailedList value)? failed,
   }) {
     return loaded?.call(this);
   }
@@ -289,9 +289,9 @@ class _$LoadedListImpl implements _LoadedList {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(_LoadingList value)? loading,
-    TResult Function(_LoadedList value)? loaded,
-    TResult Function(_FailedList value)? failed,
+    TResult Function(LoadingList value)? loading,
+    TResult Function(LoadedList value)? loaded,
+    TResult Function(FailedList value)? failed,
     required TResult orElse(),
   }) {
     if (loaded != null) {
@@ -301,8 +301,8 @@ class _$LoadedListImpl implements _LoadedList {
   }
 }
 
-abstract class _LoadedList implements PaginationState {
-  const factory _LoadedList() = _$LoadedListImpl;
+abstract class LoadedList implements PaginationState {
+  const factory LoadedList() = _$LoadedListImpl;
 }
 
 /// @nodoc
@@ -340,7 +340,7 @@ class __$$FailedListImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$FailedListImpl implements _FailedList {
+class _$FailedListImpl implements FailedList {
   const _$FailedListImpl(this.message);
 
   @override
@@ -407,9 +407,9 @@ class _$FailedListImpl implements _FailedList {
   @override
   @optionalTypeArgs
   TResult map<TResult extends Object?>({
-    required TResult Function(_LoadingList value) loading,
-    required TResult Function(_LoadedList value) loaded,
-    required TResult Function(_FailedList value) failed,
+    required TResult Function(LoadingList value) loading,
+    required TResult Function(LoadedList value) loaded,
+    required TResult Function(FailedList value) failed,
   }) {
     return failed(this);
   }
@@ -417,9 +417,9 @@ class _$FailedListImpl implements _FailedList {
   @override
   @optionalTypeArgs
   TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(_LoadingList value)? loading,
-    TResult? Function(_LoadedList value)? loaded,
-    TResult? Function(_FailedList value)? failed,
+    TResult? Function(LoadingList value)? loading,
+    TResult? Function(LoadedList value)? loaded,
+    TResult? Function(FailedList value)? failed,
   }) {
     return failed?.call(this);
   }
@@ -427,9 +427,9 @@ class _$FailedListImpl implements _FailedList {
   @override
   @optionalTypeArgs
   TResult maybeMap<TResult extends Object?>({
-    TResult Function(_LoadingList value)? loading,
-    TResult Function(_LoadedList value)? loaded,
-    TResult Function(_FailedList value)? failed,
+    TResult Function(LoadingList value)? loading,
+    TResult Function(LoadedList value)? loaded,
+    TResult Function(FailedList value)? failed,
     required TResult orElse(),
   }) {
     if (failed != null) {
@@ -439,8 +439,8 @@ class _$FailedListImpl implements _FailedList {
   }
 }
 
-abstract class _FailedList implements PaginationState {
-  const factory _FailedList(final String message) = _$FailedListImpl;
+abstract class FailedList implements PaginationState {
+  const factory FailedList(final String message) = _$FailedListImpl;
 
   String get message;
 

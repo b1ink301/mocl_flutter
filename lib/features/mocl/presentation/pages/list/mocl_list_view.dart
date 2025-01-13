@@ -2,12 +2,12 @@ import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/mocl_list_item_info.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_providers.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/appbar_dual_text_widget.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/cached_item_builder.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
@@ -50,13 +50,23 @@ class _ListBody extends ConsumerWidget {
     final List<ListItem> items = ref.watch(itemListNotifierProvider);
     final int listCount = items.length;
 
+    if (listCount == 0 && state is AsyncData && state.value is FailedList) {
+      return _buildError(
+        state.value?.toString() ?? 'UnknownError',
+        () => ref.read(paginationStateNotifierProvider.notifier).refresh(),
+      );
+    }
+
     return SuperSliverList(
+      layoutKeptAliveChildren: true,
+      extentPrecalculationPolicy: ref.watch(extentPrecalculationPolicyProvider),
+      extentEstimation: (int? index, double crossAxisExtent) => 76,
       delegate: SliverChildBuilderDelegate(
-        (context, index) {
+        (BuildContext context, int index) {
           if (index == listCount) {
             return state.maybeWhen(
               error: (Object error, StackTrace stack) => _buildError(
-                error.toString(),
+                error is Failure ? error.message : error.toString(),
                 () => ref
                     .read(paginationStateNotifierProvider.notifier)
                     .refresh(),
@@ -67,12 +77,9 @@ class _ListBody extends ConsumerWidget {
           }
 
           final ListItem item = items[index];
-          return CachedItemBuilder(
+          return MoclListItem(
             key: item.key,
-            builder: () => ProviderScope(overrides: [
-              listItemInfoProvider
-                  .overrideWithValue(item.toListItemInfo(context, index))
-            ], child: const MoclListItem()),
+            itemInfo: item.toListItemInfo(context, index),
           );
         },
         childCount: listCount + 1,
@@ -105,21 +112,16 @@ class _ListAppbar extends ConsumerWidget {
   const _ListAppbar();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final String smallTitle = ref.watch(listSmallTitleProvider);
-    final String title = ref.watch(listTitleProvider);
-
-    return AppbarDualTextWidget(
-      smallTitle: smallTitle,
-      title: title,
-      automaticallyImplyLeading: Platform.isMacOS,
-      actions: [
-        IconButton(
-          onPressed: () =>
-              ref.read(paginationStateNotifierProvider.notifier).refresh(),
-          icon: const Icon(Icons.refresh),
-        )
-      ],
-    );
-  }
+  Widget build(BuildContext context, WidgetRef ref) => AppbarDualTextWidget(
+        smallTitle: ref.watch(listSmallTitleProvider),
+        title: ref.watch(listTitleProvider),
+        automaticallyImplyLeading: Platform.isMacOS,
+        actions: [
+          IconButton(
+            onPressed: () =>
+                ref.read(paginationStateNotifierProvider.notifier).refresh(),
+            icon: const Icon(Icons.refresh),
+          )
+        ],
+      );
 }

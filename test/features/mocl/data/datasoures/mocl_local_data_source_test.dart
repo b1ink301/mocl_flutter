@@ -53,7 +53,7 @@ void main() {
     when(mainDataSource.get(siteType))
         .thenAnswer((_) => Future.value(List.empty()));
     verifyZeroInteractions(mainDataSource);
-    final result = await mainDataSource.get(siteType);
+    // final result = await mainDataSource.get(siteType);
     // expect(result, equals(List<MainItemModel>.empty()));
   });
 

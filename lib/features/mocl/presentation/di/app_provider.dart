@@ -1,5 +1,3 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -47,37 +45,6 @@ class CurrentSiteTypeNotifier extends _$CurrentSiteTypeNotifier {
       state = siteType;
     }
   }
-}
-
-const double kMoreIconSize = 48.0; // more 아이콘의 크기
-const double kHorizontalPadding = 16.0; // 좌우 패딩
-const double kMinTextHeight = 30.0; // 최소 텍스트 높이
-const double kExtraVerticalSpace = 36.0; // 추가 수직 공간
-
-@riverpod
-double appbarHeight(
-  Ref ref,
-  String text,
-  TextStyle style,
-  double screenWidth,
-) {
-  final double availableWidth =
-      screenWidth - kMoreIconSize - (kHorizontalPadding * 2); // 좌우 패딩
-
-  final TextPainter textPainter = TextPainter(
-    text: TextSpan(
-      text: text,
-      style: style,
-    ),
-    maxLines: 3,
-    textDirection: TextDirection.ltr,
-  )..layout(
-      minWidth: 0,
-      maxWidth: availableWidth,
-    );
-
-  // 최소 높이와 비교하여 더 큰 값 반환
-  return max(kMinTextHeight, textPainter.height) + kExtraVerticalSpace;
 }
 
 @Riverpod(keepAlive: true)
@@ -153,7 +120,8 @@ GoRouter appRouter(Ref ref) => GoRouter(
             pageBuilder: (BuildContext context, GoRouterState state) =>
                 SwipeablePage(
                   builder: (context) {
-                    final ListItem item = GoRouterState.of(context).extra as ListItem;
+                    final ListItem item =
+                        GoRouterState.of(context).extra as ListItem;
                     return DetailPage.init(context, item);
                   },
                 ),
@@ -221,3 +189,10 @@ bool _isImageUrl(Ref ref, String url) {
   ];
   return imageExtensions.any((ext) => url.toLowerCase().endsWith(ext));
 }
+
+@riverpod
+TextStyle appbarTextStyle(Ref ref) =>
+    throw UnimplementedError('appbarTextStyle');
+
+@Riverpod(keepAlive: true)
+double screenWidth(Ref ref) => throw UnimplementedError('screenWidth');
