@@ -49,7 +49,8 @@ Future<int> _markAsRead(Ref ref, ListItem listItem) async {
 
 @Riverpod(dependencies: [listItem, detailTitle])
 String detailSmallTitle(Ref ref) {
-  final String title = ref.watch(detailTitleProvider);
+  final String title = ref.watch(
+      currentSiteTypeNotifierProvider.select((siteType) => siteType.title));
   final String boardTitle =
       ref.watch(listItemProvider.select((item) => item.boardTitle));
   return '$title > $boardTitle';
