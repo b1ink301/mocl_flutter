@@ -57,7 +57,7 @@ final getSiteTypeProvider = AutoDisposeProvider<GetSiteType>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef GetSiteTypeRef = AutoDisposeProviderRef<GetSiteType>;
-String _$setSiteTypeHash() => r'89765219fd01fd252775bf32ba0cc7d64d716197';
+String _$setSiteTypeHash() => r'10d6c2b46f7f3bbfbbf0bbf50bd45639d972d2fc';
 
 /// See also [setSiteType].
 @ProviderFor(setSiteType)
@@ -73,7 +73,7 @@ final setSiteTypeProvider = AutoDisposeProvider<SetSiteType>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef SetSiteTypeRef = AutoDisposeProviderRef<SetSiteType>;
-String _$setMainListHash() => r'd5f6fa4ea0a074adc1ef02252766f76b73a54a28';
+String _$setMainListHash() => r'a7dca9466437affed95b08f16d533074c69d6bad';
 
 /// See also [setMainList].
 @ProviderFor(setMainList)
@@ -89,7 +89,7 @@ final setMainListProvider = AutoDisposeProvider<SetMainList>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef SetMainListRef = AutoDisposeProviderRef<SetMainList>;
-String _$getListHash() => r'015463e7325fcf7032585529228be16022e1bfda';
+String _$getListHash() => r'13e66f49d98ab5c5603332b216161a8024446cf5';
 
 /// See also [getList].
 @ProviderFor(getList)
@@ -105,7 +105,7 @@ final getListProvider = AutoDisposeProvider<GetList>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef GetListRef = AutoDisposeProviderRef<GetList>;
-String _$getDetailHash() => r'9441b879c6d2f2706817c4a14b1bff90429a231a';
+String _$getDetailHash() => r'9e52d076ed851299b5dcc809b53a78b70921ae20';
 
 /// See also [getDetail].
 @ProviderFor(getDetail)
@@ -121,7 +121,7 @@ final getDetailProvider = AutoDisposeProvider<GetDetail>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef GetDetailRef = AutoDisposeProviderRef<GetDetail>;
-String _$setReadHash() => r'1fa558f04f1a5849975ef63e0fc79818530dd369';
+String _$setReadHash() => r'bdac2c82f0f02b4d04cc70641fa91ff848208e26';
 
 /// See also [setRead].
 @ProviderFor(setRead)

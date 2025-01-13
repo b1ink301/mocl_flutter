@@ -11,12 +11,10 @@ class DetailAppBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final TextStyle textStyle = Theme.of(context).textTheme.labelMedium!;
-    final double textWidth = MediaQuery.of(context).size.width;
     final String title = ref.watch(detailTitleProvider);
     final String smallTitle = ref.read(detailSmallTitleProvider);
     final double height =
-        ref.read(appbarHeightProvider(title, textStyle, textWidth));
+        ref.read(detailAppbarHeightProvider(title));
 
     return AppbarDualTextWidget(
       title: title,

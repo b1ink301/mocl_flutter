@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
@@ -14,7 +17,7 @@ part 'detail_providers.g.dart';
 @riverpod
 ListItem listItem(ref) => throw UnimplementedError();
 
-@Riverpod(dependencies: [listItem])
+@Riverpod(dependencies: [listItem, detailAppbarHeight])
 class DetailsNotifier extends _$DetailsNotifier {
   @override
   Future<Details> build() async {
@@ -45,15 +48,17 @@ Future<int> _markAsRead(Ref ref, ListItem listItem) async {
 
 @Riverpod(dependencies: [listItem, CurrentSiteTypeNotifier])
 String detailSmallTitle(Ref ref) {
-  final SiteType siteType = ref.watch(currentSiteTypeNotifierProvider);
-  final ListItem listItem = ref.watch(listItemProvider);
-  return '${siteType.title} > ${listItem.boardTitle}';
+  final String title = ref.watch(
+      currentSiteTypeNotifierProvider.select((siteType) => siteType.title));
+  final String boardTitle =
+      ref.watch(listItemProvider.select((item) => item.boardTitle));
+  return '$title > $boardTitle';
 }
 
 @Riverpod(dependencies: [listItem])
 String detailTitle(Ref ref) {
-  final ListItem listItem = ref.watch(listItemProvider);
-  return listItem.title;
+  final String title = ref.watch(listItemProvider.select((item) => item.title));
+  return title;
 }
 
 @Riverpod(dependencies: [listItem, CurrentSiteTypeNotifier])
@@ -63,4 +68,36 @@ String detailUrl(Ref ref) {
   return siteType == SiteType.naverCafe
       ? 'https://m.cafe.naver.com/ca-fe/web/cafes/${listItem.board}/articles/${listItem.id}'
       : listItem.url;
+}
+
+const double kMoreIconSize = 48.0; // more 아이콘의 크기
+const double kHorizontalPadding = 16.0; // 좌우 패딩
+const double kMinTextHeight = 30.0; // 최소 텍스트 높이
+const double kExtraVerticalSpace = 36.0; // 추가 수직 공간
+
+@Riverpod(dependencies: [appbarTextStyle, screenWidth])
+double detailAppbarHeight(
+  Ref ref,
+  String text,
+) {
+  final TextStyle style = ref.watch(appbarTextStyleProvider);
+  final double screenWidth = ref.watch(screenWidthProvider);
+
+  final double availableWidth =
+      screenWidth - kMoreIconSize - (kHorizontalPadding * 2); // 좌우 패딩
+
+  final TextPainter textPainter = TextPainter(
+    text: TextSpan(
+      text: text,
+      style: style,
+    ),
+    maxLines: 3,
+    textDirection: TextDirection.ltr,
+  )..layout(
+      minWidth: 0,
+      maxWidth: availableWidth,
+    );
+
+  // 최소 높이와 비교하여 더 큰 값 반환
+  return max(kMinTextHeight, textPainter.height) + kExtraVerticalSpace;
 }

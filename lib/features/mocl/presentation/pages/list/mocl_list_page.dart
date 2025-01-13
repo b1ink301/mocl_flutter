@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
+import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_list_view.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_providers.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/dummy_appbar_widget.dart';
@@ -20,7 +21,12 @@ class MoclListPage extends ConsumerWidget {
       AnnotatedRegion<SystemUiOverlayStyle>(
         value: Theme.of(context).appBarTheme.systemOverlayStyle!,
         child: ProviderScope(
-          overrides: [mainItemProvider.overrideWithValue(item)],
+          overrides: [
+            screenWidthProvider
+                .overrideWithValue(MediaQuery.of(context).size.width),
+            appbarTextStyleProvider.overrideWithValue(Theme.of(context).textTheme.labelMedium!),
+            mainItemProvider.overrideWithValue(item),
+          ],
           child: const MoclListPage(),
         ),
       );

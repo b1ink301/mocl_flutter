@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -10,30 +13,30 @@ import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/use_case_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/mocl_list_item_info.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 part 'list_providers.freezed.dart';
-
 part 'list_providers.g.dart';
-
 part 'pagination_state.dart';
 
 @riverpod
 String listSmallTitle(Ref ref) {
-  final SiteType siteType = ref.watch(currentSiteTypeNotifierProvider);
-  return siteType.title;
+  final String title = ref.watch(
+      currentSiteTypeNotifierProvider.select((siteType) => siteType.title));
+  return title;
 }
 
 @Riverpod(dependencies: [mainItem])
 String listTitle(Ref ref) {
-  final MainItem mainItem = ref.watch(mainItemProvider);
-  return mainItem.text;
+  final String title = ref.watch(mainItemProvider.select((item) => item.text));
+  return title;
 }
 
 @Riverpod(dependencies: [
   mainItem,
   PageNumberNotifier,
   ItemListNotifier,
-  _LastIdNotifier
+  _LastIdNotifier,
 ])
 class PaginationStateNotifier extends _$PaginationStateNotifier {
   @override
@@ -95,10 +98,10 @@ class PageNumberNotifier extends _$PageNumberNotifier {
   }
 
   void nextPage() {
-    final mainItem = ref.read(mainItemProvider);
-    if (mainItem.siteType != SiteType.clien ||
-        (mainItem.siteType == SiteType.clien &&
-            mainItem.board != "recommend")) {
+    final (siteType, board) = ref
+        .read(mainItemProvider.select((item) => (item.siteType, item.board)));
+    if (siteType != SiteType.clien ||
+        (siteType == SiteType.clien && board != "recommend")) {
       state++;
     }
   }
@@ -121,3 +124,36 @@ class _LastIdNotifier extends _$LastIdNotifier {
 
   void update(int newId) => state = newId;
 }
+
+@Riverpod(dependencies: [appbarTextStyle, screenWidth])
+double titleHeight(Ref ref, String text) {
+  final TextStyle style = ref.watch(appbarTextStyleProvider);
+  final double screenWidth = ref.watch(screenWidthProvider);
+  final double availableWidth = screenWidth - 16 - 12;
+
+  final TextPainter textPainter = TextPainter(
+    text: TextSpan(
+      text: text,
+      style: style,
+    ),
+    maxLines: 3,
+    textDirection: TextDirection.ltr,
+  )..layout(
+      minWidth: 0,
+      maxWidth: availableWidth,
+    );
+
+  // 최소 높이와 비교하여 더 큰 값 반환
+  return max(76, textPainter.height);
+}
+
+class _CustomExtentPrecalculationPolicy extends ExtentPrecalculationPolicy {
+  @override
+  bool shouldPrecalculateExtents(ExtentPrecalculationContext context) {
+    return true;
+  }
+}
+
+@riverpod
+ExtentPrecalculationPolicy extentPrecalculationPolicy(Ref ref) =>
+    _CustomExtentPrecalculationPolicy();

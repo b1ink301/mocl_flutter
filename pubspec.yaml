@@ -122,6 +122,8 @@ dependencies:
 
   sembast: ^3.8.1+1
 
+  path: ^1.9.0
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

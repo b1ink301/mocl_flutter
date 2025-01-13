@@ -6,7 +6,7 @@ part of 'list_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$listSmallTitleHash() => r'd3cf32183aa651e4a18a261295aaa53e8bdbb03a';
+String _$listSmallTitleHash() => r'df68719e3dc6782a0f6313627f1ae6118734791c';
 
 /// See also [listSmallTitle].
 @ProviderFor(listSmallTitle)
@@ -23,7 +23,7 @@ final listSmallTitleProvider = AutoDisposeProvider<String>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ListSmallTitleRef = AutoDisposeProviderRef<String>;
-String _$listTitleHash() => r'580a1c55011afe7848bc4db83dc68e8cf453cc6e';
+String _$listTitleHash() => r'f66173a39402b6859adc850630de48fbb04ba43e';
 
 /// See also [listTitle].
 @ProviderFor(listTitle)
@@ -74,6 +74,186 @@ final listItemInfoProvider = AutoDisposeProvider<MoclListItemInfo>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ListItemInfoRef = AutoDisposeProviderRef<MoclListItemInfo>;
+String _$titleHeightHash() => r'147d0b003670732ee111c1d12f2b89be22b841d7';
+
+/// Copied from Dart SDK
+class _SystemHash {
+  _SystemHash._();
+
+  static int combine(int hash, int value) {
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + value);
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
+    return hash ^ (hash >> 6);
+  }
+
+  static int finish(int hash) {
+    // ignore: parameter_assignments
+    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
+    // ignore: parameter_assignments
+    hash = hash ^ (hash >> 11);
+    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
+  }
+}
+
+/// See also [titleHeight].
+@ProviderFor(titleHeight)
+const titleHeightProvider = TitleHeightFamily();
+
+/// See also [titleHeight].
+class TitleHeightFamily extends Family<double> {
+  /// See also [titleHeight].
+  const TitleHeightFamily();
+
+  /// See also [titleHeight].
+  TitleHeightProvider call(
+    String text,
+  ) {
+    return TitleHeightProvider(
+      text,
+    );
+  }
+
+  @override
+  TitleHeightProvider getProviderOverride(
+    covariant TitleHeightProvider provider,
+  ) {
+    return call(
+      provider.text,
+    );
+  }
+
+  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
+    appbarTextStyleProvider,
+    screenWidthProvider
+  ];
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
+      <ProviderOrFamily>{
+    appbarTextStyleProvider,
+    ...?appbarTextStyleProvider.allTransitiveDependencies,
+    screenWidthProvider,
+    ...?screenWidthProvider.allTransitiveDependencies
+  };
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'titleHeightProvider';
+}
+
+/// See also [titleHeight].
+class TitleHeightProvider extends AutoDisposeProvider<double> {
+  /// See also [titleHeight].
+  TitleHeightProvider(
+    String text,
+  ) : this._internal(
+          (ref) => titleHeight(
+            ref as TitleHeightRef,
+            text,
+          ),
+          from: titleHeightProvider,
+          name: r'titleHeightProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$titleHeightHash,
+          dependencies: TitleHeightFamily._dependencies,
+          allTransitiveDependencies:
+              TitleHeightFamily._allTransitiveDependencies,
+          text: text,
+        );
+
+  TitleHeightProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.text,
+  }) : super.internal();
+
+  final String text;
+
+  @override
+  Override overrideWith(
+    double Function(TitleHeightRef provider) create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: TitleHeightProvider._internal(
+        (ref) => create(ref as TitleHeightRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        text: text,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<double> createElement() {
+    return _TitleHeightProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is TitleHeightProvider && other.text == text;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, text.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin TitleHeightRef on AutoDisposeProviderRef<double> {
+  /// The parameter `text` of this provider.
+  String get text;
+}
+
+class _TitleHeightProviderElement extends AutoDisposeProviderElement<double>
+    with TitleHeightRef {
+  _TitleHeightProviderElement(super.provider);
+
+  @override
+  String get text => (origin as TitleHeightProvider).text;
+}
+
+String _$extentPrecalculationPolicyHash() =>
+    r'97fe21e21592c66ee79750d0632c56bc6f68bc39';
+
+/// See also [extentPrecalculationPolicy].
+@ProviderFor(extentPrecalculationPolicy)
+final extentPrecalculationPolicyProvider =
+    AutoDisposeProvider<ExtentPrecalculationPolicy>.internal(
+  extentPrecalculationPolicy,
+  name: r'extentPrecalculationPolicyProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$extentPrecalculationPolicyHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ExtentPrecalculationPolicyRef
+    = AutoDisposeProviderRef<ExtentPrecalculationPolicy>;
 String _$paginationStateNotifierHash() =>
     r'a4be4bc4cbd939fa4a8c7b9fe752ad04c93ae40f';
 
@@ -122,7 +302,7 @@ final itemListNotifierProvider =
 
 typedef _$ItemListNotifier = AutoDisposeNotifier<List<ListItem>>;
 String _$pageNumberNotifierHash() =>
-    r'd9eef8180b164692e77086315a30b750e91bc9d7';
+    r'e3e71ff756532e1bfbfcc582facca67f5fa9c3c7';
 
 /// See also [PageNumberNotifier].
 @ProviderFor(PageNumberNotifier)

@@ -11,33 +11,32 @@ import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widge
 import 'package:mocl_flutter/features/mocl/presentation/widgets/round_text_widget.dart';
 
 class MoclListItem extends ConsumerWidget {
-  const MoclListItem({super.key});
+  final MoclListItemInfo itemInfo;
+
+  const MoclListItem({required this.itemInfo, super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final MoclListItemInfo itemInfo = ref.watch(listItemInfoProvider);
-    return Column(
-      children: [
-        ListTile(
-          minVerticalPadding: 10,
-          minTileHeight: 24,
-          contentPadding: const EdgeInsets.only(left: 16, right: 12),
-          onTap: () => _handleItemTap(context, ref, itemInfo.index),
-          title:
-              TitleView(title: itemInfo.title, titleStyle: itemInfo.titleStyle),
-          subtitle: BottomView(
-            smallTitleStyle: itemInfo.smallTitleStyle,
-            badgeStyle: itemInfo.badgeStyle,
-            id: itemInfo.id,
-            reply: itemInfo.reply,
-            nickImage: itemInfo.nickImage,
-            info: itemInfo.info,
+  Widget build(BuildContext context, WidgetRef ref) => Column(
+        children: [
+          ListTile(
+            minVerticalPadding: 10,
+            minTileHeight: 24,
+            contentPadding: const EdgeInsets.only(left: 16, right: 12),
+            onTap: () => _handleItemTap(context, ref, itemInfo.index),
+            title: TitleView(
+                title: itemInfo.title, titleStyle: itemInfo.titleStyle),
+            subtitle: BottomView(
+              smallTitleStyle: itemInfo.smallTitleStyle,
+              badgeStyle: itemInfo.badgeStyle,
+              id: itemInfo.id,
+              reply: itemInfo.reply,
+              nickImage: itemInfo.nickImage,
+              info: itemInfo.info,
+            ),
           ),
-        ),
-        const DividerWidget(),
-      ],
-    );
-  }
+          const DividerWidget(),
+        ],
+      );
 
   void _handleItemTap(
     BuildContext context,

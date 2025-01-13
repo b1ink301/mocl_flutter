@@ -3,6 +3,7 @@ import 'package:mocl_flutter/features/mocl/data/datasources/detail_data_source.d
 import 'package:mocl_flutter/features/mocl/data/datasources/list_data_source.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/local_database.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/clien_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/damoang_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/meeco_parser.dart';
@@ -53,7 +54,7 @@ ParserFactory parserFactory(Ref ref) {
   final settingsRepository = ref.watch(settingsRepositoryProvider);
   return ParserFactory(
     settingsRepository: settingsRepository,
-    parsers: {
+    parsers: <SiteType, BaseParser>{
       SiteType.clien: ClienParser(),
       SiteType.damoang: DamoangParser(),
       SiteType.meeco: MeecoParser(),

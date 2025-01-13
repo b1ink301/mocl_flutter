@@ -21,10 +21,7 @@ class MainItemsNotifier extends _$MainItemsNotifier {
     final SiteType siteType = ref.watch(currentSiteTypeNotifierProvider);
     final Either<Failure, List<MainItem>> result =
         await ref.read(getMainListProvider)(siteType);
-    return result.fold(
-      (Failure failure) => throw failure,
-      (List<MainItem> data) => data,
-    );
+    return result.getOrElse((Failure failure) => throw failure);
   }
 
   void refresh() => ref.invalidateSelf();
