@@ -5,10 +5,10 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/repositories/detail_repository.dart';
 
-class GetDetail extends UseCase<Future<Either<Failure, Details>>, ListItem> {
+class GetDetail implements UseCase<Future<Either<Failure, Details>>, ListItem> {
   final DetailRepository detailRepository;
 
-  GetDetail({required this.detailRepository});
+  const GetDetail({required this.detailRepository});
 
   @override
   Future<Either<Failure, Details>> call(ListItem params) =>

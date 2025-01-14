@@ -7,13 +7,13 @@ class ParserFactory {
   final Map<SiteType, BaseParser> parsers;
   final SettingsRepository settingsRepository;
 
-  ParserFactory({
+  const ParserFactory({
     required this.parsers,
     required this.settingsRepository,
   });
 
-  BaseParser createParser() {
-    final parser = parsers[settingsRepository.getSiteType()];
+  BaseParser get currentParser {
+    final BaseParser? parser = parsers[settingsRepository.getSiteType()];
     if (parser == null) {
       throw Exception('No parser found for the given site type');
     }

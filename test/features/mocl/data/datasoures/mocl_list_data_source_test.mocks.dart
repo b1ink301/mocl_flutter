@@ -5,16 +5,15 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i5;
 
-import 'package:cookie_jar/cookie_jar.dart' as _i3;
+import 'package:cookie_jar/cookie_jar.dart' as _i4;
 import 'package:dio/dio.dart' as _i2;
 import 'package:fpdart/fpdart.dart' as _i6;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i12;
 import 'package:mocl_flutter/core/error/failures.dart' as _i7;
-import 'package:mocl_flutter/features/mocl/data/datasources/api_client.dart'
-    as _i4;
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart'
     as _i10;
+import 'package:mocl_flutter/features/mocl/data/network/api_client.dart' as _i3;
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart'
     as _i13;
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart'
@@ -38,44 +37,24 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart'
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeDio_0 extends _i1.SmartFake implements _i2.Dio {
-  _FakeDio_0(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
-class _FakeCookieJar_1 extends _i1.SmartFake implements _i3.CookieJar {
-  _FakeCookieJar_1(Object parent, Invocation parentInvocation)
-    : super(parent, parentInvocation);
-}
-
-class _FakeResponse_2<T> extends _i1.SmartFake implements _i2.Response<T> {
-  _FakeResponse_2(Object parent, Invocation parentInvocation)
+class _FakeResponse_0<T> extends _i1.SmartFake implements _i2.Response<T> {
+  _FakeResponse_0(Object parent, Invocation parentInvocation)
     : super(parent, parentInvocation);
 }
 
 /// A class which mocks [ApiClient].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockApiClient extends _i1.Mock implements _i4.ApiClient {
+class MockApiClient extends _i1.Mock implements _i3.ApiClient {
   MockApiClient() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i2.Dio get dio =>
-      (super.noSuchMethod(
-            Invocation.getter(#dio),
-            returnValue: _FakeDio_0(this, Invocation.getter(#dio)),
-          )
-          as _i2.Dio);
-
-  @override
-  _i3.CookieJar get cookieJar =>
-      (super.noSuchMethod(
-            Invocation.getter(#cookieJar),
-            returnValue: _FakeCookieJar_1(this, Invocation.getter(#cookieJar)),
-          )
-          as _i3.CookieJar);
+  void init(_i4.CookieJar? cookieJar) => super.noSuchMethod(
+    Invocation.method(#init, [cookieJar]),
+    returnValueForMissingStub: null,
+  );
 
   @override
   _i5.Future<_i2.Response<dynamic>> getUri(
@@ -85,7 +64,7 @@ class MockApiClient extends _i1.Mock implements _i4.ApiClient {
       (super.noSuchMethod(
             Invocation.method(#getUri, [uri], {#headers: headers}),
             returnValue: _i5.Future<_i2.Response<dynamic>>.value(
-              _FakeResponse_2<dynamic>(
+              _FakeResponse_0<dynamic>(
                 this,
                 Invocation.method(#getUri, [uri], {#headers: headers}),
               ),
@@ -111,7 +90,7 @@ class MockApiClient extends _i1.Mock implements _i4.ApiClient {
               },
             ),
             returnValue: _i5.Future<_i2.Response<dynamic>>.value(
-              _FakeResponse_2<dynamic>(
+              _FakeResponse_0<dynamic>(
                 this,
                 Invocation.method(
                   #get,

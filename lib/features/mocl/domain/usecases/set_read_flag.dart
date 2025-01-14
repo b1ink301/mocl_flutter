@@ -3,10 +3,10 @@ import 'package:mocl_flutter/core/usecases/usecase.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/repositories/list_repository.dart';
 
-class SetReadFlag extends UseCase<Future<int>, SetReadFlagParams> {
+class SetReadFlag implements UseCase<Future<int>, SetReadFlagParams> {
   final ListRepository listRepository;
 
-  SetReadFlag({required this.listRepository});
+  const SetReadFlag({required this.listRepository});
 
   @override
   Future<int> call(SetReadFlagParams params) => listRepository.setReadFlag(

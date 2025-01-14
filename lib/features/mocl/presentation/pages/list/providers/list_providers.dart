@@ -15,9 +15,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
 part 'list_providers.freezed.dart';
-
 part 'list_providers.g.dart';
-
 part 'pagination_state.dart';
 
 @riverpod
@@ -38,6 +36,7 @@ String listTitle(Ref ref) {
   PageNumberNotifier,
   ItemListNotifier,
   _LastIdNotifier,
+  // titleHeight,
 ])
 class PaginationStateNotifier extends _$PaginationStateNotifier {
   @override
@@ -58,6 +57,11 @@ class PaginationStateNotifier extends _$PaginationStateNotifier {
       final List<ListItem> data = result.getOrElse((f) => throw f);
 
       if (data.isNotEmpty) {
+        // final List<ListItemWrapper> list = data.map((item) {
+        //   final double height = ref.read(titleHeightProvider(item.title));
+        //   return ListItemWrapper(item: item, height: height);
+        // }).toList();
+
         ref.read(_lastIdNotifierProvider.notifier).update(data.last.id);
         ref.read(itemListNotifierProvider.notifier).addItems(data);
       }
@@ -87,6 +91,7 @@ class ItemListNotifier extends _$ItemListNotifier {
   void markAsReadItem(int index, ListItem item) {
     if (index < 0 || index >= state.length) return;
     state[index] = item.copyWith(isRead: true);
+    // state[index] = item.copyWith(item: item.item.copyWith(isRead: true));
   }
 }
 
@@ -145,7 +150,7 @@ double titleHeight(Ref ref, String text) {
     );
 
   // 최소 높이와 비교하여 더 큰 값 반환
-  return max(76, textPainter.height);
+  return max(76, textPainter.height) + 27;
 }
 
 class _CustomExtentPrecalculationPolicy extends ExtentPrecalculationPolicy {

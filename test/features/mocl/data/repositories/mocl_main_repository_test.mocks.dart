@@ -150,12 +150,12 @@ class MockParserFactory extends _i1.Mock implements _i9.ParserFactory {
           as _i2.SettingsRepository);
 
   @override
-  _i3.BaseParser createParser() =>
+  _i3.BaseParser get currentParser =>
       (super.noSuchMethod(
-            Invocation.method(#createParser, []),
+            Invocation.getter(#currentParser),
             returnValue: _FakeBaseParser_1(
               this,
-              Invocation.method(#createParser, []),
+              Invocation.getter(#currentParser),
             ),
           )
           as _i3.BaseParser);

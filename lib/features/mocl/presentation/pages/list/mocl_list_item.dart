@@ -20,7 +20,7 @@ class MoclListItem extends ConsumerWidget {
         children: [
           ListTile(
             minVerticalPadding: 10,
-            minTileHeight: 24,
+            minTileHeight: 76,
             contentPadding: const EdgeInsets.only(left: 16, right: 12),
             onTap: () => _handleItemTap(context, ref, itemInfo.index),
             title: TitleView(
@@ -44,7 +44,8 @@ class MoclListItem extends ConsumerWidget {
     int index,
   ) {
     try {
-      final ListItem item = ref.read(itemListNotifierProvider)[index];
+      final ListItem item =
+          ref.read(itemListNotifierProvider)[index];
       GoRouter.of(context).push(Routes.detail, extra: item).then((_) {
         if (context.mounted) {
           final readId = ref.read(readableStateNotifierProvider);

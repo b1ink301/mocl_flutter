@@ -16,34 +16,31 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
+const String _userAgentMobile =
+    'Mozilla/5.0 (Linux; Android 14; Pixel 8 Build/AP2A.240905.003; wv) '
+    'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/130.0.6723.58 Mobile '
+    'Safari/537.36 Yappli/1673b203.20240919 (Linux; Android 14; Google Build/Pixel 8)';
+const String _userAgentPc =
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:126.0) Gecko/20100101 Firefox/126.0';
+
 class ApiClient {
-  final dio = Dio();
-  final cookieJar = cookiejar.CookieJar();
+  final Dio _dio;
 
-  static const userAgentMobile =
-      'Mozilla/5.0 (Linux; Android 14; Pixel 8 Build/AP2A.240905.003; wv) '
-      'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/130.0.6723.58 Mobile '
-      'Safari/537.36 Yappli/1673b203.20240919 (Linux; Android 14; Google Build/Pixel 8)';
-  static const userAgentPc =
-      'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:126.0) Gecko/20100101 Firefox/126.0';
+  const ApiClient(this._dio);
 
-  ApiClient() {
-    _init();
-  }
-
-  void _init() {
-    dio.httpClientAdapter = IOHttpClientAdapter(
+  void init(cookiejar.CookieJar cookieJar) {
+    _dio.httpClientAdapter = IOHttpClientAdapter(
         createHttpClient: () =>
             HttpClient()..badCertificateCallback = (_, __, ___) => true);
 
-    dio.interceptors.add(diocookie.CookieManager(cookieJar));
+    _dio.interceptors.add(diocookie.CookieManager(cookieJar));
   }
 
   Future<Response> getUri(
     Uri uri, {
     Map<String, String>? headers,
   }) =>
-      dio.getUri(
+      _dio.getUri(
         uri,
         options: headers != null ? Options(headers: headers) : null,
       );
@@ -54,7 +51,7 @@ class ApiClient {
     ResponseType? responseType,
     String? contentType,
   }) =>
-      dio.get(
+      _dio.get(
         url,
         options: headers != null
             ? Options(
@@ -87,14 +84,13 @@ class ApiClient {
     } else {
       url = '${item.url}?page=$page';
     }
-    final headers = {
-      'User-Agent': item.siteType == SiteType.meeco
-          ? ApiClient.userAgentMobile
-          : ApiClient.userAgentPc
+    final Map<String, String> headers = {
+      'User-Agent':
+          item.siteType == SiteType.meeco ? _userAgentMobile : _userAgentPc
     };
 
     try {
-      final response = await get(url, headers: headers);
+      final Response response = await get(url, headers: headers);
       log('getList $url, $headers response = ${response.statusCode}');
 
       return response.statusCode == 200
@@ -109,7 +105,7 @@ class ApiClient {
                   message: 'response.statusCode = ${response.statusCode}'),
             );
     } on DioException catch (e) {
-      final message = e.message ?? 'Unknown Error';
+      final String message = e.message ?? 'Unknown Error';
       log('getList = $url message = $message');
       return Left(GetListFailure(message: message));
     }
@@ -117,15 +113,16 @@ class ApiClient {
 
   Future<InterceptorsWrapper> _buildInterceptorCookie(BaseParser parser) async {
     webview.CookieManager cookieManager = webview.CookieManager.instance();
-    final uri = WebUri(parser.baseUrl);
-    final cookies = await cookieManager.getCookies(url: uri);
+    final webview.WebUri uri = WebUri(parser.baseUrl);
+    final List<webview.Cookie> cookies =
+        await cookieManager.getCookies(url: uri);
 
     // Dio의 쿠키jar에 쿠키 추가
     final List<cookiejar.Cookie> dioCookies = cookies
         .map((cookie) => cookiejar.Cookie(cookie.name, cookie.value))
         .toList();
 
-    final interceptor = InterceptorsWrapper(
+    final InterceptorsWrapper interceptor = InterceptorsWrapper(
       onRequest: (options, handler) {
         options.headers['Cookie'] = dioCookies
             .map((cookie) => '${cookie.name}=${cookie.value}')
@@ -146,34 +143,35 @@ class ApiClient {
           'https://apis.naver.com/cafe-web/cafe-articleapi/v2/cafes/${item.board}/articles/${item.id}';
       final commentUrl = '$detailUrl/comments';
       final headers = {
-        'User-Agent': ApiClient.userAgentMobile,
+        'User-Agent': _userAgentMobile,
       };
 
       debugPrint('commentUrl=$commentUrl');
 
       final interceptor = await _buildInterceptorCookie(parser);
-      dio.interceptors.add(interceptor);
+      _dio.interceptors.add(interceptor);
 
       try {
-        final commentFuture = get(
+        final Future<Response> commentFuture = get(
           commentUrl,
           headers: headers,
           responseType: ResponseType.json,
           // contentType: Headers.jsonContentType,
         );
-        final detailFuture = get(
+        final Future<Response> detailFuture = get(
           detailUrl,
           headers: headers,
           responseType: ResponseType.json,
           // contentType: Headers.jsonContentType,
         );
 
-        final responses = await Future.wait([detailFuture, commentFuture]);
+        final List<Response> responses =
+            await Future.wait([detailFuture, commentFuture]);
 
         if (responses.first.statusCode == 200 &&
             responses.last.statusCode == 200) {
-          var data = responses.map((response) => response.data).toList();
-          var result = Response<List<dynamic>>(
+          final List data = responses.map((response) => response.data).toList();
+          final Response<List> result = Response<List<dynamic>>(
               data: data, requestOptions: RequestOptions());
           return parser.detail(result);
         } else {
@@ -182,22 +180,21 @@ class ApiClient {
           );
         }
       } on DioException catch (e) {
-        final message = e.message ?? 'Unknown Error';
+        final String message = e.message ?? 'Unknown Error';
         log('getDetail = $detailUrl message = $message');
         return Left(GetDetailFailure(message: message));
       } finally {
-        dio.interceptors.remove(interceptor);
+        _dio.interceptors.remove(interceptor);
       }
     } else {
-      final url = item.url;
+      final String url = item.url;
 
-      final headers = {
-        'User-Agent': parser.siteType == SiteType.meeco
-            ? ApiClient.userAgentMobile
-            : ApiClient.userAgentPc
+      final Map<String, String> headers = {
+        'User-Agent':
+            parser.siteType == SiteType.meeco ? _userAgentMobile : _userAgentPc
       };
       try {
-        final response = await get(url, headers: headers);
+        final Response response = await get(url, headers: headers);
         log('getDetail $url, $headers response = ${response.statusCode}');
         return response.statusCode == 200
             ? parser.detail(response)
@@ -206,7 +203,7 @@ class ApiClient {
                     message: 'response.statusCode = ${response.statusCode}'),
               );
       } on DioException catch (e) {
-        final message = e.message ?? 'Unknown Error';
+        final String message = e.message ?? 'Unknown Error';
         log('getDetail = $url message = $message');
         return Left(GetDetailFailure(message: message));
       }
@@ -215,18 +212,19 @@ class ApiClient {
 
   Future<Either<Failure, List<MainItem>>> getMain(BaseParser parser) async {
     if (parser.siteType != SiteType.naverCafe) {
-      throw FormatException('Not support site');
+      throw FormatException('Not supported site');
     }
 
-    final interceptor = await _buildInterceptorCookie(parser);
-    dio.interceptors.add(interceptor);
+    final InterceptorsWrapper interceptor =
+        await _buildInterceptorCookie(parser);
+    _dio.interceptors.add(interceptor);
 
-    final url =
+    final String url =
         'https://apis.naver.com/cafe-home-web/cafe-home/v1/cafes/join?perPage=100';
-    final headers = {'User-Agent': ApiClient.userAgentMobile};
+    final Map<String, String> headers = {'User-Agent': _userAgentMobile};
 
     try {
-      final response = await get(url, headers: headers);
+      final Response response = await get(url, headers: headers);
       log('getMain $url, $headers response = ${response.statusCode}');
       if (response.statusCode == 200) {
         return parser.main(response);
@@ -237,15 +235,15 @@ class ApiClient {
         );
       }
     } on DioException catch (e) {
-      final message = e.message ?? 'Unknown Error';
+      final String message = e.message ?? 'Unknown Error';
       log('getMain = $url message = $message');
       return Left(GetMainFailure(message: message));
     } on FormatException catch (e) {
-      final message = e.message;
+      final String message = e.message;
       log('getMain = $url message = $message');
       return Left(GetMainFailure(message: message));
     } finally {
-      dio.interceptors.remove(interceptor);
+      _dio.interceptors.remove(interceptor);
     }
   }
 }

@@ -40,7 +40,7 @@ final sharedPreferencesProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef SharedPreferencesRef = AutoDisposeProviderRef<SharedPreferences>;
-String _$localDatabaseHash() => r'2b0076a2942a39b7414c35ab59e8ce038d3d3a70';
+String _$localDatabaseHash() => r'f553251e91d46b94f90cf62f331b18fcdb8d3690';
 
 /// See also [localDatabase].
 @ProviderFor(localDatabase)
@@ -57,7 +57,7 @@ final localDatabaseProvider = AutoDisposeProvider<LocalDatabase>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef LocalDatabaseRef = AutoDisposeProviderRef<LocalDatabase>;
-String _$mainDatasourceHash() => r'09d6ce23be51f781c73dd2f2f11eadf93d6e4e2d';
+String _$mainDatasourceHash() => r'e26de1c94713490b9ace7b5f68128ddb19b02bb2';
 
 /// See also [mainDatasource].
 @ProviderFor(mainDatasource)
@@ -74,7 +74,7 @@ final mainDatasourceProvider = AutoDisposeProvider<MainDataSource>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MainDatasourceRef = AutoDisposeProviderRef<MainDataSource>;
-String _$listDatasourceHash() => r'fe1d5edb2c75de17800e8c7619b0da0ae48b85b5';
+String _$listDatasourceHash() => r'631cf1d7bc9712bbfa347a00782685bd9ded67b6';
 
 /// See also [listDatasource].
 @ProviderFor(listDatasource)
@@ -91,7 +91,7 @@ final listDatasourceProvider = AutoDisposeProvider<ListDataSource>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ListDatasourceRef = AutoDisposeProviderRef<ListDataSource>;
-String _$detailDatasourceHash() => r'70219dacc5468cbe88ce4fe08fb178da5926cd9a';
+String _$detailDatasourceHash() => r'908b15c5e6750ada51d3e330c98408d1e162cc23';
 
 /// See also [detailDatasource].
 @ProviderFor(detailDatasource)
@@ -108,7 +108,7 @@ final detailDatasourceProvider = AutoDisposeProvider<DetailDataSource>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DetailDatasourceRef = AutoDisposeProviderRef<DetailDataSource>;
-String _$parserFactoryHash() => r'246c71962147e5b250a2168331ab1588dbca82a8';
+String _$parserFactoryHash() => r'0432ed55c013680a0269dbe703dfa47999dcb591';
 
 /// See also [parserFactory].
 @ProviderFor(parserFactory)

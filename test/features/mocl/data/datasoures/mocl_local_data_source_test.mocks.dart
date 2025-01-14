@@ -6,10 +6,9 @@
 import 'dart:async' as _i3;
 
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mocl_flutter/features/mocl/data/datasources/local_database.dart'
-    as _i2;
 import 'package:mocl_flutter/features/mocl/data/db/entities/main_item_data.dart'
     as _i4;
+import 'package:mocl_flutter/features/mocl/data/db/local_database.dart' as _i2;
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart'
     as _i5;
 
@@ -98,8 +97,11 @@ class MockLocalDatabase extends _i1.Mock implements _i2.LocalDatabase {
           as _i3.Future<int>);
 
   @override
-  void dispose() => super.noSuchMethod(
-    Invocation.method(#dispose, []),
-    returnValueForMissingStub: null,
-  );
+  _i3.Future<void> dispose() =>
+      (super.noSuchMethod(
+            Invocation.method(#dispose, []),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 }

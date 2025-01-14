@@ -42,7 +42,7 @@ final mainRepositoryProvider = AutoDisposeProvider<MainRepository>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MainRepositoryRef = AutoDisposeProviderRef<MainRepository>;
-String _$listRepositoryHash() => r'de5363d91db6e19cb4de07bc18a032563eb33f6b';
+String _$listRepositoryHash() => r'fc2f93154f514789835da9bfff6fd26d44a40bae';
 
 /// See also [listRepository].
 @ProviderFor(listRepository)
@@ -59,7 +59,7 @@ final listRepositoryProvider = AutoDisposeProvider<ListRepository>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ListRepositoryRef = AutoDisposeProviderRef<ListRepository>;
-String _$detailRepositoryHash() => r'616bc1680d290569419c2d2bc68bc8a75a53da10';
+String _$detailRepositoryHash() => r'1aad15eae09eba15e898b7295804e5125248da34';
 
 /// See also [detailRepository].
 @ProviderFor(detailRepository)

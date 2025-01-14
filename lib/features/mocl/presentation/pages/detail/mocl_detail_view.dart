@@ -3,7 +3,9 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:mocl_flutter/core/util/utilities.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/providers/detail_providers.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
@@ -62,7 +64,7 @@ class _DetailView extends StatelessWidget {
 class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
   final Details detail;
 
-  _HeaderSectionDelegate({required this.detail});
+  const _HeaderSectionDelegate({required this.detail});
 
   List<Widget>? _buildLikeView(BuildContext context, TextStyle bodySmall) =>
       detail.likeCount.isNotEmpty && detail.likeCount != '0'
@@ -81,9 +83,9 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    final bodySmall = Theme.of(context).textTheme.bodySmall!;
-    final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
-    final likeView = _buildLikeView(context, bodySmall);
+    final TextStyle bodySmall = Theme.of(context).textTheme.bodySmall!;
+    final Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    final List<Widget>? likeView = _buildLikeView(context, bodySmall);
 
     return Container(
       color: backgroundColor,
@@ -124,9 +126,8 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
   double get minExtent => Platform.isIOS ? 44 : 45;
 
   @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
-    return false;
-  }
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
+      false;
 }
 
 class _DetailContent extends ConsumerWidget {
@@ -136,10 +137,10 @@ class _DetailContent extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final hexColor = _getHexColor(theme.indicatorColor);
-    final bodySmall = theme.textTheme.bodySmall;
-    final bodyMedium = theme.textTheme.bodyMedium;
+    final ThemeData theme = Theme.of(context);
+    final String hexColor = theme.indicatorColor.stringHexColor;
+    final TextStyle? bodySmall = theme.textTheme.bodySmall;
+    final TextStyle? bodyMedium = theme.textTheme.bodyMedium;
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -172,14 +173,6 @@ class _DetailContent extends ConsumerWidget {
         const Divider(),
       ],
     );
-  }
-
-  String _getHexColor(Color color) {
-    final red = (color.r * 255).toInt().toRadixString(16).padLeft(2, '0');
-    final green = (color.g * 255).toInt().toRadixString(16).padLeft(2, '0');
-    final blue = (color.b * 255).toInt().toRadixString(16).padLeft(2, '0');
-    // final alpha = (color.a * 255).toInt().toRadixString(16).padLeft(2, '0');
-    return '#$red$green$blue'.toUpperCase();
   }
 }
 
@@ -232,26 +225,24 @@ class _Comments extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 10),
-        const Divider(),
-        _CommentHeader(
-          commentCount: comments.length,
-          bodyMedium: bodyMedium,
-        ),
-        const Divider(),
-        _CommentList(
-          comments: comments,
-          bodySmall: bodySmall,
-          bodyMedium: bodyMedium,
-          hexColor: hexColor,
-          openUrl: openUrl,
-        )
-      ],
-    );
-  }
+  Widget build(BuildContext context) => Column(
+        children: [
+          const SizedBox(height: 10),
+          const Divider(),
+          _CommentHeader(
+            commentCount: comments.length,
+            bodyMedium: bodyMedium,
+          ),
+          const Divider(),
+          _CommentList(
+            comments: comments,
+            bodySmall: bodySmall,
+            bodyMedium: bodyMedium,
+            hexColor: hexColor,
+            openUrl: openUrl,
+          )
+        ],
+      );
 }
 
 class _CommentHeader extends StatelessWidget {
@@ -264,21 +255,19 @@ class _CommentHeader extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 42,
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          '댓글 ($commentCount)',
-          style: bodyMedium?.copyWith(
-            color: Theme.of(context).indicatorColor,
-            fontSize: 15,
+  Widget build(BuildContext context) => SizedBox(
+        height: 42,
+        child: Align(
+          alignment: Alignment.centerLeft,
+          child: Text(
+            '댓글 ($commentCount)',
+            style: bodyMedium?.copyWith(
+              color: Theme.of(context).indicatorColor,
+              fontSize: 15,
+            ),
           ),
         ),
-      ),
-    );
-  }
+      );
 }
 
 class _CommentList extends StatelessWidget {
@@ -297,22 +286,20 @@ class _CommentList extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: EdgeInsets.zero,
-      separatorBuilder: (_, __) => const Divider(),
-      shrinkWrap: true,
-      physics: const ClampingScrollPhysics(),
-      itemCount: comments.length,
-      itemBuilder: (_, index) => _CommentItem(
-        comment: comments[index],
-        bodySmall: bodySmall,
-        bodyMedium: bodyMedium,
-        hexColor: hexColor,
-        openUrl: openUrl,
-      ),
-    );
-  }
+  Widget build(BuildContext context) => ListView.separated(
+        padding: EdgeInsets.zero,
+        separatorBuilder: (_, __) => const Divider(),
+        shrinkWrap: true,
+        physics: const ClampingScrollPhysics(),
+        itemCount: comments.length,
+        itemBuilder: (_, index) => _CommentItem(
+          comment: comments[index],
+          bodySmall: bodySmall,
+          bodyMedium: bodyMedium,
+          hexColor: hexColor,
+          openUrl: openUrl,
+        ),
+      );
 }
 
 class _CommentItem extends StatelessWidget {
@@ -332,21 +319,22 @@ class _CommentItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userInfo = comment.userInfo;
-    final left = comment.isReply ? 16.0 : 0.0;
+    final UserInfo userInfo = comment.userInfo;
+    final double left = comment.isReply ? 16.0 : 0.0;
 
-    final likeView = comment.likeCount.isNotEmpty && comment.likeCount != '0'
-        ? [
-            const Spacer(),
-            Icon(Icons.favorite_outline, color: bodySmall!.color, size: 17),
-            const SizedBox(width: 4),
-            Text(comment.likeCount, style: bodySmall),
-            const SizedBox(width: 4),
-          ]
-        : [];
+    final List<Widget> likeView =
+        comment.likeCount.isNotEmpty && comment.likeCount != '0'
+            ? [
+                const Spacer(),
+                Icon(Icons.favorite_outline, color: bodySmall!.color, size: 17),
+                const SizedBox(width: 4),
+                Text(comment.likeCount, style: bodySmall),
+                const SizedBox(width: 4),
+              ]
+            : const <Widget>[];
 
     return ListTile(
-      key: Key(comment.id.toString()),
+      key: ValueKey(comment.id.toString()),
       contentPadding: EdgeInsets.only(left: left, top: 4, bottom: 4),
       title: Row(
         mainAxisSize: MainAxisSize.min,
@@ -396,17 +384,17 @@ class _RefreshButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => InkWell(
-      onTap: onRefresh,
-      child: Container(
-        width: double.infinity,
-        height: 58,
-        alignment: Alignment.center,
-        child: Text(
-          '새로고침',
-          style: bodyMedium?.copyWith(
-            color: Theme.of(context).indicatorColor,
+        onTap: onRefresh,
+        child: Container(
+          width: double.infinity,
+          height: 58,
+          alignment: Alignment.center,
+          child: Text(
+            '새로고침',
+            style: bodyMedium?.copyWith(
+              color: Theme.of(context).indicatorColor,
+            ),
           ),
         ),
-      ),
-    );
+      );
 }

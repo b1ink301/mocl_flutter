@@ -14,7 +14,9 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-class NaverCafeParser extends BaseParser {
+class NaverCafeParser implements BaseParser {
+  const NaverCafeParser();
+
   @override
   SiteType get siteType => SiteType.naverCafe;
 
@@ -37,10 +39,10 @@ class NaverCafeParser extends BaseParser {
     } else {
       final List<dynamic> cafes = json['result']['cafes'];
       var orderBy = 0;
-      final data = cafes.map((cafe) {
+      final List<MainItem> data = cafes.map((cafe) {
         Map<String, dynamic> json = {
           'siteType': siteType.name,
-          'orderBy': orderBy,
+          'orderBy': orderBy++,
           'url': cafe['cafeId'].toString(),
           'board': cafe['cafeUrl'],
           'text': cafe['mobileCafeName'],
@@ -56,7 +58,8 @@ class NaverCafeParser extends BaseParser {
   }
 
   @override
-  Future<Result> comment(Response response) => throw UnimplementedError('comment');
+  Future<Result> comment(Response response) =>
+      throw UnimplementedError('comment');
 
   @override
   Future<Either<Failure, Details>> detail(Response response) async {

@@ -37,7 +37,8 @@ class LocalDatabase {
   Future<void> deleteAll(
     SiteType siteType,
   ) async {
-    final store = intMapStoreFactory.store(siteType.name);
+    final StoreRef<int, Map<String, Object?>> store =
+        intMapStoreFactory.store(siteType.name);
     await store.delete(_db);
   }
 
@@ -91,7 +92,5 @@ class LocalDatabase {
     return store.add(_db, id);
   }
 
-  void dispose() async {
-    await _db.close();
-  }
+  Future<void> dispose() async => await _db.close();
 }

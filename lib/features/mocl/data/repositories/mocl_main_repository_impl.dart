@@ -2,7 +2,7 @@ import 'dart:core';
 
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/api_client.dart';
+import 'package:mocl_flutter/features/mocl/data/network/api_client.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/parser_factory.dart';
@@ -11,18 +11,18 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/repositories/main_repository.dart';
 
-class MainRepositoryImpl extends MainRepository {
+class MainRepositoryImpl implements MainRepository {
   final MainDataSource dataSource;
   final ApiClient apiClient;
   final ParserFactory parserFactory;
 
-  MainRepositoryImpl({
+  const MainRepositoryImpl({
     required this.dataSource,
     required this.apiClient,
     required this.parserFactory,
   });
 
-  BaseParser _currentParser() => parserFactory.createParser();
+  BaseParser get _currentParser => parserFactory.currentParser;
 
   @override
   Stream<Either<Failure, List<MainItem>>> getMainListStream({
@@ -30,7 +30,7 @@ class MainRepositoryImpl extends MainRepository {
   }) async* {
     try {
       if (siteType == SiteType.naverCafe) {
-        yield await apiClient.getMain(_currentParser());
+        yield await apiClient.getMain(_currentParser);
       } else {
         final result = await dataSource.get(siteType);
         yield Right(result);
@@ -73,11 +73,12 @@ class MainRepositoryImpl extends MainRepository {
   }
 
   @override
-  Future<Either<Failure, List<MainItem>>> getMainList(
-      {required SiteType siteType}) async {
+  Future<Either<Failure, List<MainItem>>> getMainList({
+    required SiteType siteType,
+  }) async {
     try {
       if (siteType == SiteType.naverCafe) {
-        return await apiClient.getMain(_currentParser());
+        return await apiClient.getMain(_currentParser);
       } else {
         final result = await dataSource.get(siteType);
         return Right(result);

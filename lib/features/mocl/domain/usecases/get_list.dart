@@ -7,10 +7,10 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/repositories/list_repository.dart';
 
 class GetList
-    extends UseCase<Future<Either<Failure, List<ListItem>>>, GetListParams> {
+    implements UseCase<Future<Either<Failure, List<ListItem>>>, GetListParams> {
   final ListRepository listRepository;
 
-  GetList({required this.listRepository});
+  const GetList({required this.listRepository});
 
   @override
   Future<Either<Failure, List<ListItem>>> call(

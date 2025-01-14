@@ -32,10 +32,11 @@ class _MainBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     ref.listen<AsyncValue>(
-      mainItemsNotifierProvider.select((value) => value),
+      mainItemsNotifierProvider
+          .select((AsyncValue<List<MainItem>> value) => value),
       (AsyncValue? previous, AsyncValue? next) {
         if (next is AsyncError && next.error is NotLoginFailure) {
-          context.push<bool>(Routes.login).then((result) {
+          context.push<bool>(Routes.login).then((bool? result) {
             if (context.mounted && result == true) {
               ref.read(mainItemsNotifierProvider.notifier).refresh();
             }
@@ -45,8 +46,8 @@ class _MainBody extends ConsumerWidget {
     );
 
     return ref.watch(mainItemsNotifierProvider).when(
-          data: (data) => _buildListView(context, data),
-          error: (error, stack) => _buildErrorView(
+          data: (List<MainItem> data) => _buildListView(context, data),
+          error: (Object error, StackTrace stack) => _buildErrorView(
               context, error is Failure ? error.message : error.toString()),
           loading: () => _buildLoadingView(),
         );
@@ -74,7 +75,7 @@ class _MainBody extends ConsumerWidget {
         ? _buildEmptyView(textStyle)
         : SliverList.separated(
             itemCount: items.length,
-            itemBuilder: (context, index) =>
+            itemBuilder: (BuildContext context, int index) =>
                 _buildListItem(context, items[index], textStyle),
             separatorBuilder: (_, __) => const DividerWidget(),
           );

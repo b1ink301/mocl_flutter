@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/api_client.dart';
+import 'package:mocl_flutter/features/mocl/data/network/api_client.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/detail_data_source.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/list_data_source.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart';
@@ -30,7 +30,6 @@ MainRepository mainRepository(Ref ref) {
   final MainDataSource datasource = ref.watch(mainDatasourceProvider);
   final ApiClient apiClient = ref.watch(apiClientProvider);
   final ParserFactory parserFactory = ref.watch(parserFactoryProvider);
-
   return MainRepositoryImpl(
     dataSource: datasource,
     apiClient: apiClient,
@@ -44,7 +43,7 @@ ListRepository listRepository(Ref ref) {
   final ParserFactory parserFactory = ref.watch(parserFactoryProvider);
   return ListRepositoryImpl(
     dataSource: datasource,
-    parserFactory: parserFactory,
+    parser: parserFactory.currentParser,
   );
 }
 
@@ -54,6 +53,6 @@ DetailRepository detailRepository(Ref ref) {
   final ParserFactory parserFactory = ref.watch(parserFactoryProvider);
   return DetailRepositoryImpl(
     dataSource: datasource,
-    parserFactory: parserFactory,
+    parser: parserFactory.currentParser,
   );
 }

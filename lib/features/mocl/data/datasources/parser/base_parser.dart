@@ -14,6 +14,8 @@ abstract class BaseParser {
   abstract final SiteType siteType;
   abstract final String baseUrl;
 
+  const BaseParser();
+
   Either<Failure, List<MainItem>> main(
     Response response,
   ) =>
