@@ -15,7 +15,10 @@ class ListItemWrapper with _$ListItemWrapper {
 }
 
 extension ListItemWrapperExtension on ListItemWrapper {
-  MoclListItemInfo toListItemInfo(BuildContext context, int index) {
+  ValueKey get key => item.key;
+
+  MoclListItemInfo toListItemInfo(
+      BuildContext context, int index) {
     final MoclTextStyles textStyles = MoclTextStyles.of(context);
 
     return MoclListItemInfo(
@@ -29,6 +32,7 @@ extension ListItemWrapperExtension on ListItemWrapper {
       info: item.info,
       isRead: item.isRead,
       index: index,
+      height: height,
     );
   }
 }

@@ -50,41 +50,39 @@ class _ListBody extends ConsumerWidget {
     final List<ListItem> items = ref.watch(itemListNotifierProvider);
     final int listCount = items.length;
 
-    if (listCount == 0 && state is AsyncData && state.value is FailedList) {
-      return _buildError(
-        state.value?.toString() ?? 'UnknownError',
-        () => ref.read(paginationStateNotifierProvider.notifier).refresh(),
-      );
-    }
-
-    return SuperSliverList(
-      layoutKeptAliveChildren: true,
-      extentPrecalculationPolicy: ref.watch(extentPrecalculationPolicyProvider),
-      extentEstimation: (int? index, double crossAxisExtent) => 76,
-      delegate: SliverChildBuilderDelegate(
-        (BuildContext context, int index) {
-          if (index == listCount) {
-            return state.maybeWhen(
-              error: (Object error, StackTrace stack) => _buildError(
-                error is Failure ? error.message : error.toString(),
-                () => ref
-                    .read(paginationStateNotifierProvider.notifier)
-                    .refresh(),
-              ),
-              orElse: () =>
-                  const Column(children: [LoadingWidget(), DividerWidget()]),
-            );
-          }
-
-          final ListItem item = items[index];
-          return MoclListItem(
-            key: item.key,
-            itemInfo: item.toListItemInfo(context, index),
+    return (listCount == 0 && state is AsyncData && state.value is FailedList)
+        ? _buildError(
+            state.value?.toString() ?? 'UnknownError',
+            () => ref.read(paginationStateNotifierProvider.notifier).refresh(),
+          )
+        : SuperSliverList(
+            layoutKeptAliveChildren: true,
+            extentPrecalculationPolicy:
+                ref.watch(extentPrecalculationPolicyProvider),
+            extentEstimation: (int? index, double crossAxisExtent) => 76,
+            delegate: SliverChildBuilderDelegate(
+              (BuildContext context, int index) {
+                if (index == listCount) {
+                  return state.maybeWhen(
+                    error: (Object error, StackTrace stack) => _buildError(
+                      error is Failure ? error.message : error.toString(),
+                      () => ref
+                          .read(paginationStateNotifierProvider.notifier)
+                          .refresh(),
+                    ),
+                    orElse: () => const Column(
+                        children: [LoadingWidget(), DividerWidget()]),
+                  );
+                }
+                final ListItem item = items[index];
+                return MoclListItem(
+                  key: item.key,
+                  itemInfo: item.toListItemInfo(context, index, 0),
+                );
+              },
+              childCount: listCount + 1,
+            ),
           );
-        },
-        childCount: listCount + 1,
-      ),
-    );
   }
 
   Widget _buildError(String errorMessage, VoidCallback onRetry) => Column(

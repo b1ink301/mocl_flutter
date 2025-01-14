@@ -1,6 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:mocl_flutter/core/util/read_json_from_assets.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/local_database.dart';
+import 'package:mocl_flutter/features/mocl/data/db/local_database.dart';
 import 'package:mocl_flutter/features/mocl/data/db/entities/main_item_data.dart';
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/mocl/data/models/model_mapper.dart';
@@ -19,16 +19,16 @@ abstract class MainDataSource {
   Future<bool> hasItem(SiteType siteType, MainItem item);
 }
 
-class MainDataSourceImpl extends MainDataSource {
+class MainDataSourceImpl implements MainDataSource {
   final LocalDatabase localDatabase;
 
-  MainDataSourceImpl({required this.localDatabase});
+  const MainDataSourceImpl({required this.localDatabase});
 
   @override
   Future<List<MainItem>> get(
     SiteType siteType,
   ) async {
-    final result = await localDatabase.getMainData(siteType);
+    final List<MainItemData> result = await localDatabase.getMainData(siteType);
     return result
         .map((item) => item.toMainItemModel().toEntity(siteType))
         .toList();
@@ -39,8 +39,8 @@ class MainDataSourceImpl extends MainDataSource {
     SiteType siteType,
     List<MainItem> list,
   ) async {
-    var entities = list.map((item) {
-      var data = MainItemMapper.fromEntityToModel(item);
+    final List<MainItemData> entities = list.map((item) {
+      final MainItemModel data = MainItemMapper.fromEntityToModel(item);
       return MainItemMapper.fromModelToEntity(data);
     }).toList();
     await localDatabase.deleteAll(siteType);
@@ -52,8 +52,9 @@ class MainDataSourceImpl extends MainDataSource {
     SiteType siteType,
   ) async {
     try {
-      final jsonPath = '${siteType.name.toLowerCase()}/board_link.json';
-      final decodedData = await readJsonFromAssets<List<dynamic>>(jsonPath);
+      final String jsonPath = '${siteType.name.toLowerCase()}/board_link.json';
+      final List decodedData =
+          await readJsonFromAssets<List<dynamic>>(jsonPath);
       return decodedData.map((item) => MainItemModel.fromJson(item)).toList();
     } on Exception catch (e) {
       debugPrint("getAllFromJson - ${e.toString()}");

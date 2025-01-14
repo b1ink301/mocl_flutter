@@ -40,9 +40,8 @@ class DetailPage extends ConsumerWidget {
         left: false,
         right: false,
         child: RefreshIndicator(
-          onRefresh: () async {
-            ref.read(detailsNotifierProvider.notifier).refresh();
-          },
+          onRefresh: () async =>
+              ref.read(detailsNotifierProvider.notifier).refresh(),
           child: const CustomScrollView(
             slivers: [
               DetailAppBar(),

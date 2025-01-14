@@ -17,7 +17,7 @@ class SettingsPage extends StatelessWidget {
       );
 
   Widget _buildAppBar(BuildContext context) {
-    final backgroundColor = Theme.of(context).appBarTheme.backgroundColor;
+    final Color? backgroundColor = Theme.of(context).appBarTheme.backgroundColor;
     return SliverAppBar(
       title: _buildTitle(context, SiteType.settings.title),
       flexibleSpace: Container(color: backgroundColor),

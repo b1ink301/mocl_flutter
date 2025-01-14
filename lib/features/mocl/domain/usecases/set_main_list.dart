@@ -7,10 +7,10 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/repositories/main_repository.dart';
 
 class SetMainList
-    extends UseCase<Future<Either<Failure, List<int>>>, SetMainParams> {
+    implements UseCase<Future<Either<Failure, List<int>>>, SetMainParams> {
   final MainRepository mainRepository;
 
-  SetMainList({required this.mainRepository});
+  const SetMainList({required this.mainRepository});
 
   @override
   Future<Either<Failure, List<int>>> call(SetMainParams params) =>

@@ -8,12 +8,15 @@ import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-class DamoangParser extends BaseParser {
+class DamoangParser implements BaseParser {
+  const DamoangParser();
+
   @override
   SiteType get siteType => SiteType.damoang;
 
@@ -21,10 +24,12 @@ class DamoangParser extends BaseParser {
   String get baseUrl => 'https://damoang.net';
 
   @override
-  Future<Result> comment(Response response) {
-    // TODO: implement comment
-    throw UnimplementedError();
-  }
+  Either<Failure, List<MainItem>> main(Response response) =>
+      throw UnimplementedError('main');
+
+  @override
+  Future<Result> comment(Response response) =>
+      throw UnimplementedError('comment');
 
   @override
   Future<Either<Failure, Details>> detail(Response response) async {

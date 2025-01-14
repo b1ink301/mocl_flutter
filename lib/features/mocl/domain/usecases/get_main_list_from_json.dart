@@ -6,10 +6,10 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/repositories/main_repository.dart';
 
 class GetMainListFromJson
-    extends FutureUseCase<Either<Failure, List<MainItem>>, SiteType> {
+    implements FutureUseCase<Either<Failure, List<MainItem>>, SiteType> {
   final MainRepository mainRepository;
 
-  GetMainListFromJson({required this.mainRepository});
+  const GetMainListFromJson({required this.mainRepository});
 
   @override
   Future<Either<Failure, List<MainItem>>> call(SiteType params) =>

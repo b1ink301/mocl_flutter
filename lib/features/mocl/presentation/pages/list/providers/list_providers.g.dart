@@ -58,7 +58,7 @@ final mainItemProvider = AutoDisposeProvider<MainItem>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MainItemRef = AutoDisposeProviderRef<MainItem>;
-String _$titleHeightHash() => r'147d0b003670732ee111c1d12f2b89be22b841d7';
+String _$titleHeightHash() => r'3379c5345d6d4bfcde2a36c6981625f51d9dab34';
 
 /// Copied from Dart SDK
 class _SystemHash {

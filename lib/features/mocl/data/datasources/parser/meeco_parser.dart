@@ -9,12 +9,15 @@ import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-class MeecoParser extends BaseParser {
+class MeecoParser implements BaseParser {
+  const MeecoParser();
+
   @override
   SiteType get siteType => SiteType.meeco;
 
@@ -22,10 +25,12 @@ class MeecoParser extends BaseParser {
   String get baseUrl => 'https://meeco.kr';
 
   @override
-  Future<Result> comment(Response response) {
-    // TODO: implement comment
-    throw UnimplementedError();
-  }
+  Either<Failure, List<MainItem>> main(Response response) =>
+      throw UnimplementedError('main');
+
+  @override
+  Future<Result> comment(Response response) =>
+      throw UnimplementedError('comment');
 
   @override
   Future<Either<Failure, Details>> detail(Response response) async {

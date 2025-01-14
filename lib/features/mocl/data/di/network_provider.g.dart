@@ -6,7 +6,39 @@ part of 'network_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$apiClientHash() => r'61d47ad220d8fd27b1a1258e8d30e08859d61652';
+String _$dioHash() => r'088d5c03610503c2407a8d7429b0e9f3ee76406f';
+
+/// See also [dio].
+@ProviderFor(dio)
+final dioProvider = AutoDisposeProvider<Dio>.internal(
+  dio,
+  name: r'dioProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$dioHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef DioRef = AutoDisposeProviderRef<Dio>;
+String _$cookieJarHash() => r'faac22de9751ccb26d253ff2ac40f660f01b425c';
+
+/// See also [cookieJar].
+@ProviderFor(cookieJar)
+final cookieJarProvider = AutoDisposeProvider<CookieJar>.internal(
+  cookieJar,
+  name: r'cookieJarProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$cookieJarHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef CookieJarRef = AutoDisposeProviderRef<CookieJar>;
+String _$apiClientHash() => r'7bcfcd24e898e7026dcb9ed28bc1fc11e08c0121';
 
 /// See also [apiClient].
 @ProviderFor(apiClient)

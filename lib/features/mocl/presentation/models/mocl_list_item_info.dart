@@ -14,6 +14,7 @@ class MoclListItemInfo extends Equatable {
   final String info;
   final bool isRead;
   final int index;
+  final double height;
 
   const MoclListItemInfo({
     required this.titleStyle,
@@ -26,6 +27,7 @@ class MoclListItemInfo extends Equatable {
     required this.info,
     required this.isRead,
     required this.index,
+    this.height = 0,
   });
 
   @override
@@ -33,7 +35,8 @@ class MoclListItemInfo extends Equatable {
 }
 
 extension ListItemExtension on ListItem {
-  MoclListItemInfo toListItemInfo(BuildContext context, int index) {
+  MoclListItemInfo toListItemInfo(
+      BuildContext context, int index, double height) {
     final MoclTextStyles textStyles = MoclTextStyles.of(context);
     final TextStyle titleStyle = textStyles.title(isRead);
     final TextStyle smallTitleStyle = textStyles.smallTitle(isRead);
@@ -50,6 +53,7 @@ extension ListItemExtension on ListItem {
       info: info,
       isRead: isRead,
       index: index,
+      height: height,
     );
   }
 }
