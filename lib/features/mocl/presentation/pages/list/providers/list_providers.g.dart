@@ -58,7 +58,7 @@ final mainItemProvider = AutoDisposeProvider<MainItem>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MainItemRef = AutoDisposeProviderRef<MainItem>;
-String _$titleHeightHash() => r'3379c5345d6d4bfcde2a36c6981625f51d9dab34';
+String _$titleHeightHash() => r'db651b17f1a464563f1fbd0d9e130579f3648c25';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -239,7 +239,7 @@ final extentPrecalculationPolicyProvider =
 typedef ExtentPrecalculationPolicyRef
     = AutoDisposeProviderRef<ExtentPrecalculationPolicy>;
 String _$paginationStateNotifierHash() =>
-    r'c4a7844928b08ad4906ee0220c20b8af60c2d336';
+    r'2884404010049898451a43f6b454fdc1a8ed4a56';
 
 /// See also [PaginationStateNotifier].
 @ProviderFor(PaginationStateNotifier)
@@ -286,7 +286,7 @@ final itemListNotifierProvider =
 
 typedef _$ItemListNotifier = AutoDisposeNotifier<List<ListItem>>;
 String _$pageNumberNotifierHash() =>
-    r'e3e71ff756532e1bfbfcc582facca67f5fa9c3c7';
+    r'8e9dc62088bde73d120c269dc2b697cb3a5a80b2';
 
 /// See also [PageNumberNotifier].
 @ProviderFor(PageNumberNotifier)
@@ -310,7 +310,7 @@ final pageNumberNotifierProvider =
 );
 
 typedef _$PageNumberNotifier = AutoDisposeNotifier<int>;
-String _$lastIdNotifierHash() => r'596260d92355899deb04bdc3acd36bbf48cc17f8';
+String _$lastIdNotifierHash() => r'b9513f7960d1375c814b52d14f9d5c119425e57c';
 
 /// See also [_LastIdNotifier].
 @ProviderFor(_LastIdNotifier)

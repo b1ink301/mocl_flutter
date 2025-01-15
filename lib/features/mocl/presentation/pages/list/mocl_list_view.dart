@@ -47,41 +47,51 @@ class _ListBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final AsyncValue<PaginationState> state =
         ref.watch(paginationStateNotifierProvider);
+    final PaginationStateNotifier paginationStateNotifier =
+        ref.read(paginationStateNotifierProvider.notifier);
     final List<ListItem> items = ref.watch(itemListNotifierProvider);
     final int listCount = items.length;
 
     return (listCount == 0 && state is AsyncData && state.value is FailedList)
         ? _buildError(
             state.value?.toString() ?? 'UnknownError',
-            () => ref.read(paginationStateNotifierProvider.notifier).refresh(),
+            () => paginationStateNotifier.refresh(),
           )
-        : SuperSliverList(
+        : SuperSliverList.separated(
             layoutKeptAliveChildren: true,
             extentPrecalculationPolicy:
                 ref.watch(extentPrecalculationPolicyProvider),
-            extentEstimation: (int? index, double crossAxisExtent) => 76,
-            delegate: SliverChildBuilderDelegate(
-              (BuildContext context, int index) {
-                if (index == listCount) {
+            extentEstimation: (int? index, double crossAxisExtent) => 76.0,
+            itemCount: listCount + 1,
+            itemBuilder: (BuildContext context, int index) {
+              if (index == listCount) {
+                if (state is AsyncData && state.value is FailedList) {
+                  return _buildError(
+                    (state.value as FailedList).message,
+                    () => paginationStateNotifier.retry(),
+                  );
+                } else if (state is AsyncData && state.value is ReachedMax) {
+                  return const SizedBox.shrink();
+                } else {
                   return state.maybeWhen(
                     error: (Object error, StackTrace stack) => _buildError(
                       error is Failure ? error.message : error.toString(),
-                      () => ref
-                          .read(paginationStateNotifierProvider.notifier)
-                          .refresh(),
+                      () => paginationStateNotifier.retry(),
                     ),
                     orElse: () => const Column(
                         children: [LoadingWidget(), DividerWidget()]),
                   );
                 }
-                final ListItem item = items[index];
-                return MoclListItem(
-                  key: item.key,
-                  itemInfo: item.toListItemInfo(context, index, 0),
-                );
-              },
-              childCount: listCount + 1,
-            ),
+              }
+
+              final ListItem item = items[index];
+              return MoclListItem(
+                key: item.key,
+                itemInfo: item.toListItemInfo(context, index, 0),
+              );
+            },
+            separatorBuilder: (BuildContext context, int index) =>
+                const DividerWidget(),
           );
   }
 
