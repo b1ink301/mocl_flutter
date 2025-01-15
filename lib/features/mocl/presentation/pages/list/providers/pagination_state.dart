@@ -7,4 +7,6 @@ sealed class PaginationState with _$PaginationState {
   const factory PaginationState.loaded() = LoadedList;
 
   const factory PaginationState.failed(String message) = FailedList;
+
+  const factory PaginationState.reachedMax() = ReachedMax;
 }

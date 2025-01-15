@@ -6,7 +6,6 @@ import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/mocl_list_item_info.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_providers.dart';
 import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_routes.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/round_text_widget.dart';
 
@@ -16,26 +15,21 @@ class MoclListItem extends ConsumerWidget {
   const MoclListItem({super.key, required this.itemInfo});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => Column(
-        children: [
-          ListTile(
-            minVerticalPadding: 10,
-            minTileHeight: 76,
-            contentPadding: const EdgeInsets.only(left: 16, right: 12),
-            onTap: () => _handleItemTap(context, ref, itemInfo.index),
-            title: TitleView(
-                title: itemInfo.title, titleStyle: itemInfo.titleStyle),
-            subtitle: BottomView(
-              smallTitleStyle: itemInfo.smallTitleStyle,
-              badgeStyle: itemInfo.badgeStyle,
-              id: itemInfo.id,
-              reply: itemInfo.reply,
-              nickImage: itemInfo.nickImage,
-              info: itemInfo.info,
-            ),
-          ),
-          const DividerWidget(),
-        ],
+  Widget build(BuildContext context, WidgetRef ref) => ListTile(
+        minVerticalPadding: 10,
+        minTileHeight: 76,
+        contentPadding: const EdgeInsets.only(left: 16, right: 12),
+        onTap: () => _handleItemTap(context, ref, itemInfo.index),
+        title:
+            TitleView(title: itemInfo.title, titleStyle: itemInfo.titleStyle),
+        subtitle: BottomView(
+          smallTitleStyle: itemInfo.smallTitleStyle,
+          badgeStyle: itemInfo.badgeStyle,
+          id: itemInfo.id,
+          reply: itemInfo.reply,
+          nickImage: itemInfo.nickImage,
+          info: itemInfo.info,
+        ),
       );
 
   void _handleItemTap(
@@ -44,8 +38,7 @@ class MoclListItem extends ConsumerWidget {
     int index,
   ) {
     try {
-      final ListItem item =
-          ref.read(itemListNotifierProvider)[index];
+      final ListItem item = ref.read(itemListNotifierProvider)[index];
       GoRouter.of(context).push(Routes.detail, extra: item).then((_) {
         if (context.mounted) {
           final readId = ref.read(readableStateNotifierProvider);

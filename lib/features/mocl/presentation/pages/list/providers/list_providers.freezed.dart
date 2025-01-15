@@ -21,6 +21,7 @@ mixin _$PaginationState {
     required TResult Function() loading,
     required TResult Function() loaded,
     required TResult Function(String message) failed,
+    required TResult Function() reachedMax,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -28,6 +29,7 @@ mixin _$PaginationState {
     TResult? Function()? loading,
     TResult? Function()? loaded,
     TResult? Function(String message)? failed,
+    TResult? Function()? reachedMax,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -35,6 +37,7 @@ mixin _$PaginationState {
     TResult Function()? loading,
     TResult Function()? loaded,
     TResult Function(String message)? failed,
+    TResult Function()? reachedMax,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -43,6 +46,7 @@ mixin _$PaginationState {
     required TResult Function(LoadingList value) loading,
     required TResult Function(LoadedList value) loaded,
     required TResult Function(FailedList value) failed,
+    required TResult Function(ReachedMax value) reachedMax,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -50,6 +54,7 @@ mixin _$PaginationState {
     TResult? Function(LoadingList value)? loading,
     TResult? Function(LoadedList value)? loaded,
     TResult? Function(FailedList value)? failed,
+    TResult? Function(ReachedMax value)? reachedMax,
   }) =>
       throw _privateConstructorUsedError;
   @optionalTypeArgs
@@ -57,6 +62,7 @@ mixin _$PaginationState {
     TResult Function(LoadingList value)? loading,
     TResult Function(LoadedList value)? loaded,
     TResult Function(FailedList value)? failed,
+    TResult Function(ReachedMax value)? reachedMax,
     required TResult orElse(),
   }) =>
       throw _privateConstructorUsedError;
@@ -127,6 +133,7 @@ class _$LoadingListImpl implements LoadingList {
     required TResult Function() loading,
     required TResult Function() loaded,
     required TResult Function(String message) failed,
+    required TResult Function() reachedMax,
   }) {
     return loading();
   }
@@ -137,6 +144,7 @@ class _$LoadingListImpl implements LoadingList {
     TResult? Function()? loading,
     TResult? Function()? loaded,
     TResult? Function(String message)? failed,
+    TResult? Function()? reachedMax,
   }) {
     return loading?.call();
   }
@@ -147,6 +155,7 @@ class _$LoadingListImpl implements LoadingList {
     TResult Function()? loading,
     TResult Function()? loaded,
     TResult Function(String message)? failed,
+    TResult Function()? reachedMax,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -161,6 +170,7 @@ class _$LoadingListImpl implements LoadingList {
     required TResult Function(LoadingList value) loading,
     required TResult Function(LoadedList value) loaded,
     required TResult Function(FailedList value) failed,
+    required TResult Function(ReachedMax value) reachedMax,
   }) {
     return loading(this);
   }
@@ -171,6 +181,7 @@ class _$LoadingListImpl implements LoadingList {
     TResult? Function(LoadingList value)? loading,
     TResult? Function(LoadedList value)? loaded,
     TResult? Function(FailedList value)? failed,
+    TResult? Function(ReachedMax value)? reachedMax,
   }) {
     return loading?.call(this);
   }
@@ -181,6 +192,7 @@ class _$LoadingListImpl implements LoadingList {
     TResult Function(LoadingList value)? loading,
     TResult Function(LoadedList value)? loaded,
     TResult Function(FailedList value)? failed,
+    TResult Function(ReachedMax value)? reachedMax,
     required TResult orElse(),
   }) {
     if (loading != null) {
@@ -238,6 +250,7 @@ class _$LoadedListImpl implements LoadedList {
     required TResult Function() loading,
     required TResult Function() loaded,
     required TResult Function(String message) failed,
+    required TResult Function() reachedMax,
   }) {
     return loaded();
   }
@@ -248,6 +261,7 @@ class _$LoadedListImpl implements LoadedList {
     TResult? Function()? loading,
     TResult? Function()? loaded,
     TResult? Function(String message)? failed,
+    TResult? Function()? reachedMax,
   }) {
     return loaded?.call();
   }
@@ -258,6 +272,7 @@ class _$LoadedListImpl implements LoadedList {
     TResult Function()? loading,
     TResult Function()? loaded,
     TResult Function(String message)? failed,
+    TResult Function()? reachedMax,
     required TResult orElse(),
   }) {
     if (loaded != null) {
@@ -272,6 +287,7 @@ class _$LoadedListImpl implements LoadedList {
     required TResult Function(LoadingList value) loading,
     required TResult Function(LoadedList value) loaded,
     required TResult Function(FailedList value) failed,
+    required TResult Function(ReachedMax value) reachedMax,
   }) {
     return loaded(this);
   }
@@ -282,6 +298,7 @@ class _$LoadedListImpl implements LoadedList {
     TResult? Function(LoadingList value)? loading,
     TResult? Function(LoadedList value)? loaded,
     TResult? Function(FailedList value)? failed,
+    TResult? Function(ReachedMax value)? reachedMax,
   }) {
     return loaded?.call(this);
   }
@@ -292,6 +309,7 @@ class _$LoadedListImpl implements LoadedList {
     TResult Function(LoadingList value)? loading,
     TResult Function(LoadedList value)? loaded,
     TResult Function(FailedList value)? failed,
+    TResult Function(ReachedMax value)? reachedMax,
     required TResult orElse(),
   }) {
     if (loaded != null) {
@@ -376,6 +394,7 @@ class _$FailedListImpl implements FailedList {
     required TResult Function() loading,
     required TResult Function() loaded,
     required TResult Function(String message) failed,
+    required TResult Function() reachedMax,
   }) {
     return failed(message);
   }
@@ -386,6 +405,7 @@ class _$FailedListImpl implements FailedList {
     TResult? Function()? loading,
     TResult? Function()? loaded,
     TResult? Function(String message)? failed,
+    TResult? Function()? reachedMax,
   }) {
     return failed?.call(message);
   }
@@ -396,6 +416,7 @@ class _$FailedListImpl implements FailedList {
     TResult Function()? loading,
     TResult Function()? loaded,
     TResult Function(String message)? failed,
+    TResult Function()? reachedMax,
     required TResult orElse(),
   }) {
     if (failed != null) {
@@ -410,6 +431,7 @@ class _$FailedListImpl implements FailedList {
     required TResult Function(LoadingList value) loading,
     required TResult Function(LoadedList value) loaded,
     required TResult Function(FailedList value) failed,
+    required TResult Function(ReachedMax value) reachedMax,
   }) {
     return failed(this);
   }
@@ -420,6 +442,7 @@ class _$FailedListImpl implements FailedList {
     TResult? Function(LoadingList value)? loading,
     TResult? Function(LoadedList value)? loaded,
     TResult? Function(FailedList value)? failed,
+    TResult? Function(ReachedMax value)? reachedMax,
   }) {
     return failed?.call(this);
   }
@@ -430,6 +453,7 @@ class _$FailedListImpl implements FailedList {
     TResult Function(LoadingList value)? loading,
     TResult Function(LoadedList value)? loaded,
     TResult Function(FailedList value)? failed,
+    TResult Function(ReachedMax value)? reachedMax,
     required TResult orElse(),
   }) {
     if (failed != null) {
@@ -449,4 +473,121 @@ abstract class FailedList implements PaginationState {
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$FailedListImplCopyWith<_$FailedListImpl> get copyWith =>
       throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class _$$ReachedMaxImplCopyWith<$Res> {
+  factory _$$ReachedMaxImplCopyWith(
+          _$ReachedMaxImpl value, $Res Function(_$ReachedMaxImpl) then) =
+      __$$ReachedMaxImplCopyWithImpl<$Res>;
+}
+
+/// @nodoc
+class __$$ReachedMaxImplCopyWithImpl<$Res>
+    extends _$PaginationStateCopyWithImpl<$Res, _$ReachedMaxImpl>
+    implements _$$ReachedMaxImplCopyWith<$Res> {
+  __$$ReachedMaxImplCopyWithImpl(
+      _$ReachedMaxImpl _value, $Res Function(_$ReachedMaxImpl) _then)
+      : super(_value, _then);
+
+  /// Create a copy of PaginationState
+  /// with the given fields replaced by the non-null parameter values.
+}
+
+/// @nodoc
+
+class _$ReachedMaxImpl implements ReachedMax {
+  const _$ReachedMaxImpl();
+
+  @override
+  String toString() {
+    return 'PaginationState.reachedMax()';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is _$ReachedMaxImpl);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  @optionalTypeArgs
+  TResult when<TResult extends Object?>({
+    required TResult Function() loading,
+    required TResult Function() loaded,
+    required TResult Function(String message) failed,
+    required TResult Function() reachedMax,
+  }) {
+    return reachedMax();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? whenOrNull<TResult extends Object?>({
+    TResult? Function()? loading,
+    TResult? Function()? loaded,
+    TResult? Function(String message)? failed,
+    TResult? Function()? reachedMax,
+  }) {
+    return reachedMax?.call();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeWhen<TResult extends Object?>({
+    TResult Function()? loading,
+    TResult Function()? loaded,
+    TResult Function(String message)? failed,
+    TResult Function()? reachedMax,
+    required TResult orElse(),
+  }) {
+    if (reachedMax != null) {
+      return reachedMax();
+    }
+    return orElse();
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult map<TResult extends Object?>({
+    required TResult Function(LoadingList value) loading,
+    required TResult Function(LoadedList value) loaded,
+    required TResult Function(FailedList value) failed,
+    required TResult Function(ReachedMax value) reachedMax,
+  }) {
+    return reachedMax(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult? mapOrNull<TResult extends Object?>({
+    TResult? Function(LoadingList value)? loading,
+    TResult? Function(LoadedList value)? loaded,
+    TResult? Function(FailedList value)? failed,
+    TResult? Function(ReachedMax value)? reachedMax,
+  }) {
+    return reachedMax?.call(this);
+  }
+
+  @override
+  @optionalTypeArgs
+  TResult maybeMap<TResult extends Object?>({
+    TResult Function(LoadingList value)? loading,
+    TResult Function(LoadedList value)? loaded,
+    TResult Function(FailedList value)? failed,
+    TResult Function(ReachedMax value)? reachedMax,
+    required TResult orElse(),
+  }) {
+    if (reachedMax != null) {
+      return reachedMax(this);
+    }
+    return orElse();
+  }
+}
+
+abstract class ReachedMax implements PaginationState {
+  const factory ReachedMax() = _$ReachedMaxImpl;
 }

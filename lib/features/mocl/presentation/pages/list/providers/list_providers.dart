@@ -15,7 +15,9 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
 
 part 'list_providers.freezed.dart';
+
 part 'list_providers.g.dart';
+
 part 'pagination_state.dart';
 
 @riverpod
@@ -48,6 +50,8 @@ class PaginationStateNotifier extends _$PaginationStateNotifier {
     final MainItem mainItem = ref.watch(mainItemProvider);
     final int page = ref.watch(pageNumberNotifierProvider);
     final int lastId = ref.read(_lastIdNotifierProvider);
+    final PageNumberNotifier pageNumberNotifier =
+        ref.read(pageNumberNotifierProvider.notifier);
 
     try {
       final GetListParams params =
@@ -57,24 +61,30 @@ class PaginationStateNotifier extends _$PaginationStateNotifier {
       final List<ListItem> data = result.getOrElse((f) => throw f);
 
       if (data.isNotEmpty) {
-        // final List<ListItemWrapper> list = data.map((item) {
-        //   final double height = ref.read(titleHeightProvider(item.title));
-        //   return ListItemWrapper(item: item, height: height);
-        // }).toList();
-
         ref.read(_lastIdNotifierProvider.notifier).update(data.last.id);
         ref.read(itemListNotifierProvider.notifier).addItems(data);
       }
-      return const PaginationState.loaded();
+
+      final bool isReachedMax = pageNumberNotifier.isReachedMax();
+      return isReachedMax
+          ? const PaginationState.reachedMax()
+          : const PaginationState.loaded();
     } catch (e) {
-      return PaginationState.failed(e.toString());
+      pageNumberNotifier.errorState();
+      final String error = e is Failure ? e.message : e.toString();
+      return PaginationState.failed(error);
     }
   }
 
   void invalidate() => state = const AsyncData(PaginationState.loaded());
 
-  void refresh() {
+  void retry() {
+    ref.read(pageNumberNotifierProvider.notifier).clearErrorState();
     ref.invalidateSelf();
+  }
+
+  void refresh() {
+    retry();
     ref.invalidate(pageNumberNotifierProvider);
     ref.invalidate(itemListNotifierProvider);
     ref.invalidate(_lastIdNotifierProvider);
@@ -91,42 +101,59 @@ class ItemListNotifier extends _$ItemListNotifier {
   void markAsReadItem(int index, ListItem item) {
     if (index < 0 || index >= state.length) return;
     state[index] = item.copyWith(isRead: true);
-    // state[index] = item.copyWith(item: item.item.copyWith(isRead: true));
   }
 }
 
 @Riverpod(dependencies: [mainItem, CurrentSiteTypeNotifier])
 class PageNumberNotifier extends _$PageNumberNotifier {
+  bool _hasErrorState = false;
+
   @override
   int build() {
     final SiteType siteType = ref.watch(currentSiteTypeNotifierProvider);
     return siteType == SiteType.clien ? 0 : 1;
   }
 
-  void nextPage() {
+  bool isReachedMax() {
+    if (_hasErrorState) {
+      return true;
+    }
+
     final (siteType, board) = ref
         .read(mainItemProvider.select((item) => (item.siteType, item.board)));
     if (siteType != SiteType.clien ||
         (siteType == SiteType.clien && board != "recommend")) {
+      return false;
+    }
+
+    return true;
+  }
+
+  void errorState() => _hasErrorState = true;
+
+  void clearErrorState() => _hasErrorState = false;
+
+  void nextPage() {
+    if (!isReachedMax()) {
       state++;
     }
   }
 
-  void reset() => state = 1;
+  void reset() {
+    _hasErrorState = false;
+    ref.invalidateSelf();
+  }
 }
 
 @riverpod
 MainItem mainItem(Ref ref) => throw UnimplementedError('mainItem');
-
-// @riverpod
-// MoclListItemInfo listItemInfo(Ref ref) => throw UnimplementedError();
 
 @riverpod
 class _LastIdNotifier extends _$LastIdNotifier {
   @override
   int build() => -1;
 
-  void reset() => state = -1;
+  void reset() => ref.invalidateSelf();
 
   void update(int newId) => state = newId;
 }
@@ -138,19 +165,13 @@ double titleHeight(Ref ref, String text) {
   final double availableWidth = screenWidth - 16 - 12;
 
   final TextPainter textPainter = TextPainter(
-    text: TextSpan(
-      text: text,
-      style: style,
-    ),
+    text: TextSpan(text: text, style: style),
     maxLines: 3,
     textDirection: TextDirection.ltr,
-  )..layout(
-      minWidth: 0,
-      maxWidth: availableWidth,
-    );
+  )..layout(minWidth: 0, maxWidth: availableWidth);
 
   // 최소 높이와 비교하여 더 큰 값 반환
-  return max(76, textPainter.height) + 27;
+  return max(49, textPainter.height) + 27;
 }
 
 class _CustomExtentPrecalculationPolicy extends ExtentPrecalculationPolicy {
