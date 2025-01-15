@@ -21,17 +21,12 @@ part 'list_providers.g.dart';
 part 'pagination_state.dart';
 
 @riverpod
-String listSmallTitle(Ref ref) {
-  final String title = ref.watch(
-      currentSiteTypeNotifierProvider.select((siteType) => siteType.title));
-  return title;
-}
+String listSmallTitle(Ref ref) => ref.watch(
+    currentSiteTypeNotifierProvider.select((siteType) => siteType.title));
 
 @Riverpod(dependencies: [mainItem])
-String listTitle(Ref ref) {
-  final String title = ref.watch(mainItemProvider.select((item) => item.text));
-  return title;
-}
+String listTitle(Ref ref) =>
+    ref.watch(mainItemProvider.select((MainItem item) => item.text));
 
 @Riverpod(dependencies: [
   mainItem,
