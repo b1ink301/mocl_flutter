@@ -6,7 +6,7 @@ part of 'list_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$listSmallTitleHash() => r'df68719e3dc6782a0f6313627f1ae6118734791c';
+String _$listSmallTitleHash() => r'afb276d55425a9e7f1bf477590ddc03e0236bea3';
 
 /// See also [listSmallTitle].
 @ProviderFor(listSmallTitle)
@@ -23,7 +23,7 @@ final listSmallTitleProvider = AutoDisposeProvider<String>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ListSmallTitleRef = AutoDisposeProviderRef<String>;
-String _$listTitleHash() => r'f66173a39402b6859adc850630de48fbb04ba43e';
+String _$listTitleHash() => r'334015293ab03a204a6f3c31553fea624aaf7120';
 
 /// See also [listTitle].
 @ProviderFor(listTitle)
@@ -238,93 +238,185 @@ final extentPrecalculationPolicyProvider =
 // ignore: unused_element
 typedef ExtentPrecalculationPolicyRef
     = AutoDisposeProviderRef<ExtentPrecalculationPolicy>;
-String _$paginationStateNotifierHash() =>
-    r'2884404010049898451a43f6b454fdc1a8ed4a56';
+String _$reqListDataHash() => r'cdcf4c43a7ecb290d0fc590c4ef4eeb34261c345';
 
-/// See also [PaginationStateNotifier].
-@ProviderFor(PaginationStateNotifier)
-final paginationStateNotifierProvider = AutoDisposeAsyncNotifierProvider<
-    PaginationStateNotifier, PaginationState>.internal(
-  PaginationStateNotifier.new,
-  name: r'paginationStateNotifierProvider',
+/// See also [reqListData].
+@ProviderFor(reqListData)
+const reqListDataProvider = ReqListDataFamily();
+
+/// See also [reqListData].
+class ReqListDataFamily
+    extends Family<AsyncValue<Either<Failure, List<ListItem>>>> {
+  /// See also [reqListData].
+  const ReqListDataFamily();
+
+  /// See also [reqListData].
+  ReqListDataProvider call(
+    int page,
+    int lastId,
+  ) {
+    return ReqListDataProvider(
+      page,
+      lastId,
+    );
+  }
+
+  @override
+  ReqListDataProvider getProviderOverride(
+    covariant ReqListDataProvider provider,
+  ) {
+    return call(
+      provider.page,
+      provider.lastId,
+    );
+  }
+
+  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
+    mainItemProvider
+  ];
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
+      <ProviderOrFamily>{
+    mainItemProvider,
+    ...?mainItemProvider.allTransitiveDependencies
+  };
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'reqListDataProvider';
+}
+
+/// See also [reqListData].
+class ReqListDataProvider
+    extends AutoDisposeFutureProvider<Either<Failure, List<ListItem>>> {
+  /// See also [reqListData].
+  ReqListDataProvider(
+    int page,
+    int lastId,
+  ) : this._internal(
+          (ref) => reqListData(
+            ref as ReqListDataRef,
+            page,
+            lastId,
+          ),
+          from: reqListDataProvider,
+          name: r'reqListDataProvider',
+          debugGetCreateSourceHash:
+              const bool.fromEnvironment('dart.vm.product')
+                  ? null
+                  : _$reqListDataHash,
+          dependencies: ReqListDataFamily._dependencies,
+          allTransitiveDependencies:
+              ReqListDataFamily._allTransitiveDependencies,
+          page: page,
+          lastId: lastId,
+        );
+
+  ReqListDataProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.page,
+    required this.lastId,
+  }) : super.internal();
+
+  final int page;
+  final int lastId;
+
+  @override
+  Override overrideWith(
+    FutureOr<Either<Failure, List<ListItem>>> Function(ReqListDataRef provider)
+        create,
+  ) {
+    return ProviderOverride(
+      origin: this,
+      override: ReqListDataProvider._internal(
+        (ref) => create(ref as ReqListDataRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        page: page,
+        lastId: lastId,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeFutureProviderElement<Either<Failure, List<ListItem>>>
+      createElement() {
+    return _ReqListDataProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ReqListDataProvider &&
+        other.page == page &&
+        other.lastId == lastId;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, page.hashCode);
+    hash = _SystemHash.combine(hash, lastId.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin ReqListDataRef
+    on AutoDisposeFutureProviderRef<Either<Failure, List<ListItem>>> {
+  /// The parameter `page` of this provider.
+  int get page;
+
+  /// The parameter `lastId` of this provider.
+  int get lastId;
+}
+
+class _ReqListDataProviderElement
+    extends AutoDisposeFutureProviderElement<Either<Failure, List<ListItem>>>
+    with ReqListDataRef {
+  _ReqListDataProviderElement(super.provider);
+
+  @override
+  int get page => (origin as ReqListDataProvider).page;
+  @override
+  int get lastId => (origin as ReqListDataProvider).lastId;
+}
+
+String _$listStateNotifierHash() => r'fd2b7facdc2e00702b42e8e0604bb87e967db9e7';
+
+/// See also [ListStateNotifier].
+@ProviderFor(ListStateNotifier)
+final listStateNotifierProvider =
+    AutoDisposeNotifierProvider<ListStateNotifier, ListState>.internal(
+  ListStateNotifier.new,
+  name: r'listStateNotifierProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$paginationStateNotifierHash,
-  dependencies: <ProviderOrFamily>{
-    mainItemProvider,
-    pageNumberNotifierProvider,
-    itemListNotifierProvider,
-    _lastIdNotifierProvider
-  },
+      : _$listStateNotifierHash,
+  dependencies: <ProviderOrFamily>[mainItemProvider, reqListDataProvider],
   allTransitiveDependencies: <ProviderOrFamily>{
     mainItemProvider,
     ...?mainItemProvider.allTransitiveDependencies,
-    pageNumberNotifierProvider,
-    ...?pageNumberNotifierProvider.allTransitiveDependencies,
-    itemListNotifierProvider,
-    ...?itemListNotifierProvider.allTransitiveDependencies,
-    _lastIdNotifierProvider,
-    ...?_lastIdNotifierProvider.allTransitiveDependencies
+    reqListDataProvider,
+    ...?reqListDataProvider.allTransitiveDependencies
   },
 );
 
-typedef _$PaginationStateNotifier = AutoDisposeAsyncNotifier<PaginationState>;
-String _$itemListNotifierHash() => r'36d5e456170e4e4b99b68b1eaf59e7702eab5a9c';
-
-/// See also [ItemListNotifier].
-@ProviderFor(ItemListNotifier)
-final itemListNotifierProvider =
-    AutoDisposeNotifierProvider<ItemListNotifier, List<ListItem>>.internal(
-  ItemListNotifier.new,
-  name: r'itemListNotifierProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$itemListNotifierHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef _$ItemListNotifier = AutoDisposeNotifier<List<ListItem>>;
-String _$pageNumberNotifierHash() =>
-    r'8e9dc62088bde73d120c269dc2b697cb3a5a80b2';
-
-/// See also [PageNumberNotifier].
-@ProviderFor(PageNumberNotifier)
-final pageNumberNotifierProvider =
-    AutoDisposeNotifierProvider<PageNumberNotifier, int>.internal(
-  PageNumberNotifier.new,
-  name: r'pageNumberNotifierProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$pageNumberNotifierHash,
-  dependencies: <ProviderOrFamily>[
-    mainItemProvider,
-    currentSiteTypeNotifierProvider
-  ],
-  allTransitiveDependencies: <ProviderOrFamily>{
-    mainItemProvider,
-    ...?mainItemProvider.allTransitiveDependencies,
-    currentSiteTypeNotifierProvider,
-    ...?currentSiteTypeNotifierProvider.allTransitiveDependencies
-  },
-);
-
-typedef _$PageNumberNotifier = AutoDisposeNotifier<int>;
-String _$lastIdNotifierHash() => r'b9513f7960d1375c814b52d14f9d5c119425e57c';
-
-/// See also [_LastIdNotifier].
-@ProviderFor(_LastIdNotifier)
-final _lastIdNotifierProvider =
-    AutoDisposeNotifierProvider<_LastIdNotifier, int>.internal(
-  _LastIdNotifier.new,
-  name: r'_lastIdNotifierProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$lastIdNotifierHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-typedef _$LastIdNotifier = AutoDisposeNotifier<int>;
+typedef _$ListStateNotifier = AutoDisposeNotifier<ListState>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

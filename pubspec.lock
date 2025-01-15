@@ -1124,6 +1124,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.0"
+  rearch:
+    dependency: "direct main"
+    description:
+      name: rearch
+      sha256: "785dd54973d1789ae8d730e6f634f5ffc46399ccc80959cc876de0130ff5e0e8"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.16.0"
   riverpod:
     dependency: transitive
     description:
