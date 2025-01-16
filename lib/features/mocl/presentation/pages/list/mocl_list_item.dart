@@ -17,7 +17,7 @@ class MoclListItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final itemInfo = item.toListItemInfo(context, index, 0);
+    final MoclListItemInfo itemInfo = item.toListItemInfo(context, index, 0);
     return ListTile(
       minVerticalPadding: 10,
       minTileHeight: 76,
