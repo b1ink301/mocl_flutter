@@ -1124,14 +1124,6 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.5.0"
-  rearch:
-    dependency: "direct main"
-    description:
-      name: rearch
-      sha256: "785dd54973d1789ae8d730e6f634f5ffc46399ccc80959cc876de0130ff5e0e8"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.16.0"
   riverpod:
     dependency: transitive
     description:
@@ -1629,10 +1621,10 @@ packages:
     dependency: transitive
     description:
       name: video_player_avfoundation
-      sha256: "61c54fb08fee52861d819a9b3b8e30b92456dad43a875434c677c892eb7772de"
+      sha256: "8a4e73a3faf2b13512978a43cf1cdda66feeeb900a0527f1fbfd7b19cf3458d3"
       url: "https://pub.dev"
     source: hosted
-    version: "2.6.6"
+    version: "2.6.7"
   video_player_platform_interface:
     dependency: transitive
     description:

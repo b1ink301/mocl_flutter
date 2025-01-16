@@ -70,3 +70,7 @@ Future<void> handleAddButton(Ref ref, BuildContext context) async {
     (data) => ref.read(mainItemsNotifierProvider.notifier).refresh(),
   );
 }
+
+@Riverpod(keepAlive: true)
+GlobalKey<ScaffoldState> mainScaffoldState(Ref ref) =>
+    GlobalKey<ScaffoldState>();

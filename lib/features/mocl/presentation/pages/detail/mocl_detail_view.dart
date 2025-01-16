@@ -8,6 +8,7 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/providers/detail_providers.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_providers.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
@@ -273,7 +274,7 @@ class _CommentHeader extends StatelessWidget {
       ]));
 }
 
-class _CommentList extends StatelessWidget {
+class _CommentList extends ConsumerWidget {
   final List<CommentItem> comments;
   final TextStyle? bodySmall;
   final TextStyle? bodyMedium;
@@ -289,7 +290,10 @@ class _CommentList extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => SuperSliverList.separated(
+  Widget build(BuildContext context, WidgetRef ref) =>
+      SuperSliverList.separated(
+        extentPrecalculationPolicy:
+            ref.watch(extentPrecalculationPolicyProvider),
         layoutKeptAliveChildren: true,
         separatorBuilder: (_, __) =>
             const DividerWidget(indent: 0, endIndent: 0),
