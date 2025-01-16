@@ -10,27 +10,30 @@ import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widge
 import 'package:mocl_flutter/features/mocl/presentation/widgets/round_text_widget.dart';
 
 class MoclListItem extends ConsumerWidget {
-  final MoclListItemInfo itemInfo;
+  final ListItem item;
+  final int index;
 
-  const MoclListItem({super.key, required this.itemInfo});
+  const MoclListItem({super.key, required this.item, required this.index});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => ListTile(
-        minVerticalPadding: 10,
-        minTileHeight: 76,
-        contentPadding: const EdgeInsets.only(left: 16, right: 12),
-        onTap: () => _handleItemTap(context, ref, itemInfo.index),
-        title:
-            TitleView(title: itemInfo.title, titleStyle: itemInfo.titleStyle),
-        subtitle: BottomView(
-          smallTitleStyle: itemInfo.smallTitleStyle,
-          badgeStyle: itemInfo.badgeStyle,
-          id: itemInfo.id,
-          reply: itemInfo.reply,
-          nickImage: itemInfo.nickImage,
-          info: itemInfo.info,
-        ),
-      );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final MoclListItemInfo itemInfo = item.toListItemInfo(context, index, 0);
+    return ListTile(
+      minVerticalPadding: 10,
+      minTileHeight: 76,
+      contentPadding: const EdgeInsets.only(left: 16, right: 12),
+      onTap: () => _handleItemTap(context, ref, itemInfo.index),
+      title: TitleView(title: itemInfo.title, titleStyle: itemInfo.titleStyle),
+      subtitle: BottomView(
+        smallTitleStyle: itemInfo.smallTitleStyle,
+        badgeStyle: itemInfo.badgeStyle,
+        id: itemInfo.id,
+        reply: itemInfo.reply,
+        nickImage: itemInfo.nickImage,
+        info: itemInfo.info,
+      ),
+    );
+  }
 
   void _handleItemTap(
     BuildContext context,
@@ -38,15 +41,11 @@ class MoclListItem extends ConsumerWidget {
     int index,
   ) {
     try {
-      final ListItem item = ref.read(itemListNotifierProvider)[index];
       GoRouter.of(context).push(Routes.detail, extra: item).then((_) {
         if (context.mounted) {
           final readId = ref.read(readableStateNotifierProvider);
           if (readId == item.id && !item.isRead) {
-            ref
-                .read(itemListNotifierProvider.notifier)
-                .markAsReadItem(index, item);
-            ref.read(paginationStateNotifierProvider.notifier).invalidate();
+            ref.read(listStateNotifierProvider.notifier).markAsRead(index);
           }
         }
       });
