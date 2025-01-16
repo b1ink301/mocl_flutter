@@ -125,7 +125,7 @@ dependencies:
 #  objectbox: ^4.0.3
 #  objectbox_generator: ^4.0.3
 
-  rearch: ^1.16.0
+#  rearch: ^1.16.0
 
   # nosql
   sembast: ^3.8.1+1
@@ -154,7 +154,6 @@ flutter:
     - assets/damoang/
     - assets/clien/
     - assets/meeco/
-    - assets/navercafe/
 
 launcher_name:
   default: "Mocl"

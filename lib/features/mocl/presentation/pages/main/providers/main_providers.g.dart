@@ -455,6 +455,23 @@ class _HandleAddButtonProviderElement
   BuildContext get context => (origin as HandleAddButtonProvider).context;
 }
 
+String _$mainScaffoldStateHash() => r'e08ed879718fe9af8a42c31c3df1fbd7c053b5eb';
+
+/// See also [mainScaffoldState].
+@ProviderFor(mainScaffoldState)
+final mainScaffoldStateProvider = Provider<GlobalKey<ScaffoldState>>.internal(
+  mainScaffoldState,
+  name: r'mainScaffoldStateProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$mainScaffoldStateHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef MainScaffoldStateRef = ProviderRef<GlobalKey<ScaffoldState>>;
 String _$mainItemsNotifierHash() => r'86b23ee300f094255bb5993053eb02c3638f2421';
 
 /// See also [MainItemsNotifier].
