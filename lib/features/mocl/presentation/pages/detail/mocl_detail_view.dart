@@ -13,6 +13,7 @@ import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.d
 import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 import 'package:sliver_tools/sliver_tools.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 class DetailView extends ConsumerWidget {
   const DetailView({super.key});
@@ -39,26 +40,71 @@ class DetailView extends ConsumerWidget {
           );
 }
 
-class _DetailView extends StatelessWidget {
+class _DetailView extends ConsumerWidget {
   final Details detail;
 
   const _DetailView({required this.detail});
 
   @override
-  Widget build(BuildContext context) => MultiSliver(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ThemeData theme = Theme.of(context);
+    final String hexColor = theme.indicatorColor.stringHexColor;
+    final TextStyle? bodySmall = theme.textTheme.bodySmall;
+    final TextStyle? bodyMedium = theme.textTheme.bodyMedium;
+
+    return SliverPadding(
+      padding: const EdgeInsets.only(left: 16, right: 8),
+      sliver: MultiSliver(
         children: [
           SliverPersistentHeader(
             pinned: true,
             delegate: _HeaderSectionDelegate(detail: detail),
           ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 8, 0),
-            sliver: SliverToBoxAdapter(
-              child: _DetailContent(detail: detail),
-            ),
+          const _SpaceWidget(),
+          _Body(
+            detail: detail,
+            hexColor: hexColor,
+            bodyMedium: bodyMedium,
+            onTapUrl: (url) async =>
+                await ref.read(openUrlProvider(context, url)),
           ),
+          const _SpaceWidget(),
+          if (detail.comments.isNotEmpty)
+            _Comments(
+              hexColor: hexColor,
+              comments: detail.comments,
+              bodySmall: bodySmall,
+              bodyMedium: bodyMedium,
+              openUrl: (url) async =>
+                  await ref.read(openUrlProvider(context, url)),
+            ),
+          const _DividerWidget(),
+          _RefreshButton(
+              onRefresh: () =>
+                  ref.read(detailsNotifierProvider.notifier).refresh(),
+              bodyMedium: bodyMedium),
+          const _DividerWidget(),
         ],
+      ),
+    );
+  }
+}
+
+class _SpaceWidget extends StatelessWidget {
+  const _SpaceWidget();
+
+  @override
+  Widget build(BuildContext context) => const SliverPadding(
+        padding: EdgeInsets.only(top: 10),
       );
+}
+
+class _DividerWidget extends StatelessWidget {
+  const _DividerWidget();
+
+  @override
+  Widget build(BuildContext context) =>
+      const SliverToBoxAdapter(child: Divider(indent: 0, endIndent: 0));
 }
 
 class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
@@ -87,93 +133,44 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
     final Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
     final List<Widget>? likeView = _buildLikeView(context, bodySmall);
 
-    return Container(
-      color: backgroundColor,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Row(
-                    children: [
-                      if (detail.userInfo.nickImage.isNotEmpty &&
-                          detail.userInfo.nickImage.startsWith('http'))
-                        NickImageWidget(url: detail.userInfo.nickImage),
-                      Flexible(
-                        child: Text(detail.info, style: bodySmall),
-                      ),
-                    ],
-                  ),
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(vertical: 12),
+          color: backgroundColor,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Row(
+                  children: [
+                    if (detail.userInfo.nickImage.isNotEmpty &&
+                        detail.userInfo.nickImage.startsWith('http'))
+                      NickImageWidget(url: detail.userInfo.nickImage),
+                    Flexible(
+                      child: Text(detail.info, style: bodySmall),
+                    ),
+                  ],
                 ),
-                if (likeView != null) ...likeView,
-              ],
-            ),
+              ),
+              if (likeView != null) ...likeView,
+            ],
           ),
-          const DividerWidget(),
-        ],
-      ),
+        ),
+        const DividerWidget(indent: 0, endIndent: 0),
+      ],
     );
   }
+
+  @override
+  bool shouldRebuild(covariant _HeaderSectionDelegate oldDelegate) =>
+      oldDelegate.detail != detail;
 
   @override
   double get maxExtent => Platform.isIOS ? 44 : 45;
 
   @override
   double get minExtent => Platform.isIOS ? 44 : 45;
-
-  @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
-      false;
-}
-
-class _DetailContent extends ConsumerWidget {
-  final Details detail;
-
-  const _DetailContent({required this.detail});
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final ThemeData theme = Theme.of(context);
-    final String hexColor = theme.indicatorColor.stringHexColor;
-    final TextStyle? bodySmall = theme.textTheme.bodySmall;
-    final TextStyle? bodyMedium = theme.textTheme.bodyMedium;
-
-    return Column(
-      mainAxisAlignment: MainAxisAlignment.start,
-      mainAxisSize: MainAxisSize.min,
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SizedBox(height: 10),
-        _Body(
-          detail: detail,
-          hexColor: hexColor,
-          bodyMedium: bodyMedium,
-          onTapUrl: (url) async =>
-              await ref.read(openUrlProvider(context, url)),
-        ),
-        const SizedBox(height: 10),
-        if (detail.comments.isNotEmpty)
-          _Comments(
-            hexColor: hexColor,
-            comments: detail.comments,
-            bodySmall: bodySmall,
-            bodyMedium: bodyMedium,
-            openUrl: (url) async =>
-                await ref.read(openUrlProvider(context, url)),
-          ),
-        const Divider(),
-        _RefreshButton(
-            onRefresh: () =>
-                ref.read(detailsNotifierProvider.notifier).refresh(),
-            bodyMedium: bodyMedium),
-        const Divider(),
-      ],
-    );
-  }
 }
 
 class _Body extends StatelessWidget {
@@ -190,22 +187,27 @@ class _Body extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => HtmlWidget(
-        detail.bodyHtml,
-        onLoadingBuilder: (_, __, ___) => const LoadingWidget(),
-        customStylesBuilder: (element) {
-          if (element.localName == 'a') {
-            return {'color': hexColor, 'text-decoration': 'underline'};
-          }
-          return null;
-        },
-        textStyle: bodyMedium,
-        renderMode: RenderMode.column,
-        onTapUrl: (url) async {
-          onTapUrl(url);
-          return true;
-        },
-        onTapImage: (data) => onTapUrl(data.sources.first.url),
+  Widget build(BuildContext context) => SliverToBoxAdapter(
+        child: SingleChildScrollView(
+          physics: const NeverScrollableScrollPhysics(),
+          child: HtmlWidget(
+            detail.bodyHtml,
+            onLoadingBuilder: (_, __, ___) => const LoadingWidget(),
+            customStylesBuilder: (element) {
+              if (element.localName == 'a') {
+                return {'color': hexColor, 'text-decoration': 'underline'};
+              }
+              return null;
+            },
+            textStyle: bodyMedium,
+            renderMode: RenderMode.column,
+            onTapUrl: (url) async {
+              onTapUrl(url);
+              return true;
+            },
+            onTapImage: (data) => onTapUrl(data.sources.first.url),
+          ),
+        ),
       );
 }
 
@@ -225,15 +227,15 @@ class _Comments extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => Column(
+  Widget build(BuildContext context) => MultiSliver(
         children: [
-          const SizedBox(height: 10),
-          const Divider(),
+          const _SpaceWidget(),
+          const _DividerWidget(),
           _CommentHeader(
             commentCount: comments.length,
             bodyMedium: bodyMedium,
           ),
-          const Divider(),
+          const _DividerWidget(),
           _CommentList(
             comments: comments,
             bodySmall: bodySmall,
@@ -255,9 +257,10 @@ class _CommentHeader extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => SizedBox(
-        height: 42,
-        child: Align(
+  Widget build(BuildContext context) => SliverFixedExtentList(
+      itemExtent: 42,
+      delegate: SliverChildListDelegate([
+        Align(
           alignment: Alignment.centerLeft,
           child: Text(
             '댓글 ($commentCount)',
@@ -267,7 +270,7 @@ class _CommentHeader extends StatelessWidget {
             ),
           ),
         ),
-      );
+      ]));
 }
 
 class _CommentList extends StatelessWidget {
@@ -286,13 +289,12 @@ class _CommentList extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => ListView.separated(
-        padding: EdgeInsets.zero,
-        separatorBuilder: (_, __) => const Divider(),
-        shrinkWrap: true,
-        physics: const ClampingScrollPhysics(),
+  Widget build(BuildContext context) => SuperSliverList.separated(
+        layoutKeptAliveChildren: true,
+        separatorBuilder: (_, __) =>
+            const DividerWidget(indent: 0, endIndent: 0),
         itemCount: comments.length,
-        itemBuilder: (_, index) => _CommentItem(
+        itemBuilder: (_, int index) => _CommentItem(
           comment: comments[index],
           bodySmall: bodySmall,
           bodyMedium: bodyMedium,
@@ -383,16 +385,18 @@ class _RefreshButton extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => InkWell(
-        onTap: onRefresh,
-        child: Container(
-          width: double.infinity,
-          height: 58,
-          alignment: Alignment.center,
-          child: Text(
-            '새로고침',
-            style: bodyMedium?.copyWith(
-              color: Theme.of(context).indicatorColor,
+  Widget build(BuildContext context) => SliverToBoxAdapter(
+        child: InkWell(
+          onTap: onRefresh,
+          child: Container(
+            width: double.infinity,
+            height: 58,
+            alignment: Alignment.center,
+            child: Text(
+              '새로고침',
+              style: bodyMedium?.copyWith(
+                color: Theme.of(context).indicatorColor,
+              ),
             ),
           ),
         ),
