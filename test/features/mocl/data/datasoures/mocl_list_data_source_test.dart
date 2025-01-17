@@ -18,6 +18,7 @@ import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sembast/sembast_io.dart';
@@ -75,7 +76,7 @@ void main() {
     provideDummyBuilder<Either<Failure, List<ListItem>>>(
         (_, __) => Right(const <ListItem>[]));
 
-    when(mockApiClient.getList(any, any, any, any, any))
+    when(mockApiClient.getList(any, any, any, any, any, any))
         .thenAnswer((_) async => Right(const <ListItem>[]));
 
     final item = mainItemModel.toEntity(siteType);
@@ -83,7 +84,7 @@ void main() {
 
     // act
     final Either<Failure, List<ListItem>> result =
-        await listDataSource.getList(item, 0, -1, parser);
+        await listDataSource.getList(item, 0, -1, SortType.recent, parser);
     // assert
     expect(result.isRight(), true);
 
@@ -93,15 +94,15 @@ void main() {
   test('list remote datasource test. (failed)', () async {
     //arrange
     provideDummyBuilder<Either<Failure, List<ListItem>>>(
-            (_, __) => Left(GetListFailure(message: '----')));
+        (_, __) => Left(GetListFailure(message: '----')));
 
-    when(mockApiClient.getList(any, any, any, any, any))
+    when(mockApiClient.getList(any, any, any, any, any, any))
         .thenAnswer((_) async => Left(GetListFailure(message: '----')));
 
     //act
     final MainItem item = mainItemModel.toEntity(siteType);
     final Either<Failure, List<ListItem>> result =
-        await listDataSource.getList(item, 0, -1, parser);
+        await listDataSource.getList(item, 0, -1, SortType.recent, parser);
     expect(result.isLeft(), true);
     expect(result.getLeft().toNullable(), isA<GetListFailure>());
   });

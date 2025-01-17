@@ -123,7 +123,7 @@ class _MainAppBar extends ConsumerWidget {
     final Color? backgroundColor =
         Theme.of(context).appBarTheme.backgroundColor;
     final String title = ref.watch(mainTitleProvider);
-    final bool hasIconButton = ref.read(showAddButtonProvider);
+    final bool hasIconButton = ref.watch(showAddButtonProvider);
 
     return SliverAppBar(
       title: MessageWidget(
@@ -143,6 +143,25 @@ class _MainAppBar extends ConsumerWidget {
               IconButton(
                 onPressed: () => ref.read(handleAddButtonProvider(context)),
                 icon: const Icon(Icons.add),
+              ),
+              PopupMenuButton<int>(
+                icon: const Icon(Icons.more_vert),
+                onSelected: (int value) {
+                  switch (value) {
+                    case 0:
+                      context.push<bool>(Routes.login).then((bool? result) {});
+                      break;
+                  }
+                },
+                itemBuilder: (BuildContext context) {
+                  final textStyle = Theme.of(context).textTheme.headlineSmall;
+                  return [
+                    PopupMenuItem(
+                      value: 0,
+                      child: Text('로그인', style: textStyle),
+                    ),
+                  ];
+                },
               )
             ],
     );

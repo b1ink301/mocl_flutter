@@ -8,6 +8,7 @@ import 'package:mocl_flutter/features/mocl/domain/usecases/get_detail.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_list.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_main_list.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_main_list_from_json.dart';
+import 'package:mocl_flutter/features/mocl/domain/usecases/get_search_list.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_main_list.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_read_flag.dart';
@@ -36,7 +37,8 @@ GetSiteType getSiteType(Ref ref) {
 
 @riverpod
 SetSiteType setSiteType(Ref ref) {
-  final SettingsRepository settingsRepository = ref.watch(settingsRepositoryProvider);
+  final SettingsRepository settingsRepository =
+      ref.watch(settingsRepositoryProvider);
   return SetSiteType(settingsRepository: settingsRepository);
 }
 
@@ -50,6 +52,12 @@ SetMainList setMainList(Ref ref) {
 GetList getList(Ref ref) {
   final ListRepository listRepository = ref.watch(listRepositoryProvider);
   return GetList(listRepository: listRepository);
+}
+
+@riverpod
+GetSearchList getSearchList(Ref ref) {
+  final ListRepository listRepository = ref.watch(listRepositoryProvider);
+  return GetSearchList(listRepository: listRepository);
 }
 
 @riverpod
