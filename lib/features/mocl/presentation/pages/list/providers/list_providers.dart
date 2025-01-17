@@ -7,6 +7,7 @@ import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_list.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/use_case_provider.dart';
@@ -55,54 +56,66 @@ ExtentPrecalculationPolicy extentPrecalculationPolicy(Ref ref) =>
 @Riverpod(dependencies: [mainItem])
 Future<Either<Failure, List<ListItem>>> reqListData(
     Ref ref, int page, int lastId) async {
-  final MainItem mainItem = ref.read(mainItemProvider);
-  final GetListParams params =
-      GetListParams(mainItem: mainItem, page: page, lastId: lastId);
+  final MainItem mainItem = ref.watch(mainItemProvider);
+  final SortType sortType = ref.watch(sortTypeNotifierProvider);
+
+  final GetListParams params = GetListParams(
+      mainItem: mainItem, page: page, lastId: lastId, sortType: sortType);
 
   return await ref.read(getListProvider)(params);
 }
 
-@Riverpod(dependencies: [mainItem, reqListData])
+@riverpod
+int _initialPage(Ref ref) {
+  final SiteType siteType = ref.watch(currentSiteTypeNotifierProvider);
+  final int page = siteType == SiteType.clien ? 0 : 1;
+  return page;
+}
+
+@Riverpod(dependencies: [mainItem, reqListData, SortTypeNotifier, _initialPage])
 class ListStateNotifier extends _$ListStateNotifier {
   @override
   ListState build() {
-    Future.microtask(() => loadMore());
-    return ListState.initial(_getInitialPage());
+    _initialize();
+    return ListState.initial(ref.watch(_initialPageProvider));
   }
 
-  int _getInitialPage() {
-    final siteType = ref.watch(currentSiteTypeNotifierProvider);
-    return siteType == SiteType.clien ? 0 : 1;
-  }
+  // TODO: AsyncValue 로 변경해도.. 맘에 안든다.. 개선 필요함.
+  void _initialize() => Future.microtask(() => loadMore());
 
   Future<void> loadMore() async {
     if (state.isLoading || state.hasReachedMax) return;
 
     state = state.copyWith(isLoading: true, error: null);
 
-    final Either<Failure, List<ListItem>> result = await ref
-        .read(reqListDataProvider(state.currentPage, state.lastId).future);
+    try {
+      final Either<Failure, List<ListItem>> result = await ref
+          .read(reqListDataProvider(state.currentPage, state.lastId).future);
 
-    result.fold(
-      (Failure failure) {
-        state = state.copyWith(
-          isLoading: false,
-          error: failure.message,
-        );
-      },
-      (List<ListItem> newItems) {
-        final bool hasReachedMax = _checkIfReachedMax(newItems.isEmpty);
+      result.fold(
+        (Failure failure) {
+          state = state.copyWith(
+            isLoading: false,
+            error: failure.message,
+          );
+        },
+        (List<ListItem> newItems) {
+          final bool hasReachedMax = _checkIfReachedMax(newItems.isEmpty);
 
-        state = state.copyWith(
-          items: [...state.items, ...newItems],
-          isLoading: false,
-          currentPage:
-              hasReachedMax ? state.currentPage : state.currentPage + 1,
-          lastId: newItems.isEmpty ? state.lastId : newItems.last.id,
-          hasReachedMax: _checkIfReachedMax(newItems.isEmpty),
-        );
-      },
-    );
+          state = state.copyWith(
+            items: [...state.items, ...newItems],
+            isLoading: false,
+            currentPage:
+                hasReachedMax ? state.currentPage : state.currentPage + 1,
+            lastId: newItems.isEmpty ? state.lastId : newItems.last.id,
+            hasReachedMax: _checkIfReachedMax(newItems.isEmpty),
+          );
+        },
+      );
+    } catch (e) {
+      final String error = e is Failure ? e.message : e.toString();
+      state = state.copyWith(isLoading: false, error: error);
+    }
   }
 
   bool _checkIfReachedMax(bool isEmpty) {
@@ -124,4 +137,12 @@ class ListStateNotifier extends _$ListStateNotifier {
 
     state = state.copyWith(items: updatedItems);
   }
+}
+
+@riverpod
+class SortTypeNotifier extends _$SortTypeNotifier {
+  @override
+  SortType build() => SortType.recent;
+
+  void changeSortType(SortType sortType) => state = sortType;
 }

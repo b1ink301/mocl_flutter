@@ -15,6 +15,7 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
 
 const String _userAgentMobile =
     'Mozilla/5.0 (Linux; Android 14; Pixel 8 Build/AP2A.240905.003; wv) '
@@ -66,12 +67,14 @@ class ApiClient {
     MainItem item,
     int page,
     int lastId,
+    SortType sortType,
     BaseParser parser,
     Future<List<int>> Function(SiteType, List<int>) isReads,
   ) async {
     final String url;
+    final String sort = sortType.toQuery(parser.siteType);
     if (item.siteType == SiteType.clien) {
-      url = '${item.url}?od=T31&category=0&po=$page';
+      url = '${item.url}?category=0&po=$page$sort';
     } else if (item.siteType == SiteType.naverCafe) {
       url = "https://apis.naver.com/cafe-web/cafe2/ArticleListV2dot1.json?"
           "search.clubid=${item.url}"
@@ -82,7 +85,7 @@ class ApiClient {
           "&adUnit=MW_CAFE_ARTICLE_LIST_RS"
           "&search.page=$page";
     } else {
-      url = '${item.url}?page=$page';
+      url = '${item.url}?page=$page$sort';
     }
     final Map<String, String> headers = {
       'User-Agent':
@@ -107,6 +110,61 @@ class ApiClient {
     } on DioException catch (e) {
       final String message = e.message ?? 'Unknown Error';
       log('getList = $url message = $message');
+      return Left(GetListFailure(message: message));
+    }
+  }
+
+  Future<Either<Failure, List<ListItem>>> getSearchList(
+    MainItem item,
+    int page,
+    int lastId,
+    SortType sortType,
+    String keyword,
+    BaseParser parser,
+    Future<List<int>> Function(SiteType, List<int>) isReads,
+  ) async {
+    final String url;
+    final String sort = sortType.toQuery(parser.siteType);
+    if (item.siteType == SiteType.clien) {
+      final String searchUrl = item.url.replaceFirst('board', 'search/board');
+      url = '$searchUrl?category=0&po=$page$sort&sv=$keyword';
+    } else if (item.siteType == SiteType.naverCafe) {
+      url = "https://apis.naver.com/cafe-web/cafe2/ArticleListV2dot1.json?"
+          "search.clubid=${item.url}"
+          "&search.queryType=lastArticle"
+          "&search.perPage=50"
+          "&ad=true"
+          "&uuid=6dd62de1-7279-49f0-b009-6ccc554ac679"
+          "&adUnit=MW_CAFE_ARTICLE_LIST_RS"
+          "&search.page=$page";
+    } else if (item.siteType == SiteType.damoang) {
+      final extra = '&sfl=wr_subject&sop=and&stx=$keyword';
+      url = '${item.url}?page=$page$sort$extra';
+    } else {
+      url = '${item.url}?page=$page$sort';
+    }
+    final Map<String, String> headers = {
+      'User-Agent':
+          item.siteType == SiteType.meeco ? _userAgentMobile : _userAgentPc
+    };
+
+    try {
+      final Response response = await get(url, headers: headers);
+      log('getSearchList $url, $headers response = ${response.statusCode}, ${response.data}');
+      return response.statusCode == 200
+          ? parser.list(
+              response,
+              lastId,
+              item.text,
+              isReads,
+            )
+          : Left(
+              GetListFailure(
+                  message: 'response.statusCode = ${response.statusCode}'),
+            );
+    } on DioException catch (e) {
+      final String message = e.message ?? 'Unknown Error';
+      log('getSearchList = $url message = $message');
       return Left(GetListFailure(message: message));
     }
   }
@@ -246,4 +304,20 @@ class ApiClient {
       _dio.interceptors.remove(interceptor);
     }
   }
+}
+
+extension SortTypeExtension on SortType {
+  String toQuery(SiteType siteType) => switch (siteType) {
+        SiteType.clien => switch (this) {
+            SortType.recent => '',
+            SortType.recommend => '&od=T33',
+          },
+        SiteType.damoang => switch (this) {
+            SortType.recent => '',
+            SortType.recommend => '&sst=wr_good',
+          },
+        SiteType.meeco => '',
+        SiteType.naverCafe => '',
+        SiteType.settings => ''
+      };
 }

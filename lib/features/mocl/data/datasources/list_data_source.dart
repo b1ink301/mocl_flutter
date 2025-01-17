@@ -5,6 +5,7 @@ import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.d
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
 
 import '../db/local_database.dart';
 
@@ -13,6 +14,16 @@ abstract class ListDataSource {
     MainItem item,
     int page,
     int lastId,
+    SortType sortType,
+    BaseParser parser,
+  );
+
+  Future<Either<Failure, List<ListItem>>> getSearchList(
+    MainItem item,
+    int page,
+    int lastId,
+    SortType sortType,
+    String keyword,
     BaseParser parser,
   );
 
@@ -46,15 +57,22 @@ class ListDataSourceImpl implements ListDataSource {
     MainItem item,
     int page,
     int lastId,
+    SortType sortType,
     BaseParser parser,
   ) =>
-      apiClient.getList(
-        item,
-        page,
-        lastId,
-        parser,
-        isReadFlags
-      );
+      apiClient.getList(item, page, lastId, sortType, parser, isReadFlags);
+
+  @override
+  Future<Either<Failure, List<ListItem>>> getSearchList(
+    MainItem item,
+    int page,
+    int lastId,
+    SortType sortType,
+    String keyword,
+    BaseParser parser,
+  ) =>
+      apiClient.getSearchList(
+          item, page, lastId, sortType, keyword, parser, isReadFlags);
 
   @override
   Future<int> setReadFlag(

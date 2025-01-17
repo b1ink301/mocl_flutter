@@ -14,7 +14,7 @@ class MoclTheme {
           systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: Color(0xFF4d5057),
             systemNavigationBarColor: Color(0xFFEAEBE6),
-            systemNavigationBarIconBrightness: Brightness.light,
+            systemNavigationBarIconBrightness: Brightness.dark,
             statusBarIconBrightness: Brightness.light,
             statusBarBrightness: Brightness.dark,
             systemStatusBarContrastEnforced: false,
@@ -64,7 +64,7 @@ class MoclTheme {
           systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: Color(0xFF1f1f1f),
             systemNavigationBarColor: Color(0xFF333333),
-            systemNavigationBarIconBrightness: Brightness.light,
+            systemNavigationBarIconBrightness: Brightness.dark,
             statusBarIconBrightness: Brightness.light,
             statusBarBrightness: Brightness.dark,
             systemStatusBarContrastEnforced: false,

@@ -105,6 +105,23 @@ final getListProvider = AutoDisposeProvider<GetList>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef GetListRef = AutoDisposeProviderRef<GetList>;
+String _$getSearchListHash() => r'f81c982841129f43705ec6f44ac0b94dcb0d8590';
+
+/// See also [getSearchList].
+@ProviderFor(getSearchList)
+final getSearchListProvider = AutoDisposeProvider<GetSearchList>.internal(
+  getSearchList,
+  name: r'getSearchListProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$getSearchListHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef GetSearchListRef = AutoDisposeProviderRef<GetSearchList>;
 String _$getDetailHash() => r'9e52d076ed851299b5dcc809b53a78b70921ae20';
 
 /// See also [getDetail].

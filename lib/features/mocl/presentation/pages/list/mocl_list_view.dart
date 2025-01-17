@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/list/list_search_delegate.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_providers.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_state.dart';
@@ -95,16 +97,66 @@ class _ListAppbar extends ConsumerWidget {
   const _ListAppbar();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => AppbarDualTextWidget(
-        smallTitle: ref.watch(listSmallTitleProvider),
-        title: ref.watch(listTitleProvider),
-        automaticallyImplyLeading: Platform.isMacOS,
-        actions: [
-          IconButton(
-            onPressed: () =>
-                ref.read(listStateNotifierProvider.notifier).refresh(),
-            icon: const Icon(Icons.refresh),
-          )
-        ],
-      );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final SortType sortType = ref.watch(sortTypeNotifierProvider);
+
+    return AppbarDualTextWidget(
+      smallTitle: ref.watch(listSmallTitleProvider),
+      title: ref.watch(listTitleProvider),
+      automaticallyImplyLeading: Platform.isMacOS,
+      actions: [
+        IconButton(
+          icon: const Icon(Icons.search),
+          onPressed: () {
+            showSearch(
+                context: context,
+                delegate:
+                    ListSearchDelegate(item: ref.watch(mainItemProvider)));
+          },
+        ),
+        PopupMenuButton<SortType>(
+          icon: const Icon(Icons.sort),
+          onSelected: (SortType value) {
+            ref.read(sortTypeNotifierProvider.notifier).changeSortType(value);
+            ref.watch(listStateNotifierProvider.notifier).refresh();
+          },
+          itemBuilder: (BuildContext context) {
+            final TextStyle? textStyle =
+                Theme.of(context).textTheme.headlineSmall;
+            return [
+              CheckedPopupMenuItem<SortType>(
+                value: SortType.recent,
+                checked: sortType == SortType.recent,
+                child: Text('최신순', style: textStyle),
+              ),
+              CheckedPopupMenuItem<SortType>(
+                value: SortType.recommend,
+                checked: sortType == SortType.recommend,
+                child: Text('추천순', style: textStyle),
+              ),
+            ];
+          },
+        ),
+        PopupMenuButton<int>(
+          icon: const Icon(Icons.more_vert),
+          onSelected: (int value) {
+            switch (value) {
+              case 0:
+                ref.read(listStateNotifierProvider.notifier).refresh();
+                break;
+            }
+          },
+          itemBuilder: (BuildContext context) {
+            final textStyle = Theme.of(context).textTheme.headlineSmall;
+            return [
+              PopupMenuItem(
+                value: 0,
+                child: Text('새로고침', style: textStyle),
+              ),
+            ];
+          },
+        )
+      ],
+    );
+  }
 }

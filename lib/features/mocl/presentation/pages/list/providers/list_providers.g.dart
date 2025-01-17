@@ -238,7 +238,7 @@ final extentPrecalculationPolicyProvider =
 // ignore: unused_element
 typedef ExtentPrecalculationPolicyRef
     = AutoDisposeProviderRef<ExtentPrecalculationPolicy>;
-String _$reqListDataHash() => r'cdcf4c43a7ecb290d0fc590c4ef4eeb34261c345';
+String _$reqListDataHash() => r'a151941859e96b5a11dcb00a67d4c4734ec97198';
 
 /// See also [reqListData].
 @ProviderFor(reqListData)
@@ -397,7 +397,23 @@ class _ReqListDataProviderElement
   int get lastId => (origin as ReqListDataProvider).lastId;
 }
 
-String _$listStateNotifierHash() => r'fd2b7facdc2e00702b42e8e0604bb87e967db9e7';
+String _$initialPageHash() => r'2677bd42115edf23acbcc6771d6620253659e1bc';
+
+/// See also [_initialPage].
+@ProviderFor(_initialPage)
+final _initialPageProvider = AutoDisposeProvider<int>.internal(
+  _initialPage,
+  name: r'_initialPageProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$initialPageHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef _InitialPageRef = AutoDisposeProviderRef<int>;
+String _$listStateNotifierHash() => r'6f8e6a310ca279830542c4a5aa6434df39d1d8f0';
 
 /// See also [ListStateNotifier].
 @ProviderFor(ListStateNotifier)
@@ -408,15 +424,40 @@ final listStateNotifierProvider =
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
       : _$listStateNotifierHash,
-  dependencies: <ProviderOrFamily>[mainItemProvider, reqListDataProvider],
+  dependencies: <ProviderOrFamily>{
+    mainItemProvider,
+    reqListDataProvider,
+    sortTypeNotifierProvider,
+    _initialPageProvider
+  },
   allTransitiveDependencies: <ProviderOrFamily>{
     mainItemProvider,
     ...?mainItemProvider.allTransitiveDependencies,
     reqListDataProvider,
-    ...?reqListDataProvider.allTransitiveDependencies
+    ...?reqListDataProvider.allTransitiveDependencies,
+    sortTypeNotifierProvider,
+    ...?sortTypeNotifierProvider.allTransitiveDependencies,
+    _initialPageProvider,
+    ...?_initialPageProvider.allTransitiveDependencies
   },
 );
 
 typedef _$ListStateNotifier = AutoDisposeNotifier<ListState>;
+String _$sortTypeNotifierHash() => r'19fe9c4b29d4d6b3d4c1c845099428124cb94554';
+
+/// See also [SortTypeNotifier].
+@ProviderFor(SortTypeNotifier)
+final sortTypeNotifierProvider =
+    AutoDisposeNotifierProvider<SortTypeNotifier, SortType>.internal(
+  SortTypeNotifier.new,
+  name: r'sortTypeNotifierProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$sortTypeNotifierHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$SortTypeNotifier = AutoDisposeNotifier<SortType>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
