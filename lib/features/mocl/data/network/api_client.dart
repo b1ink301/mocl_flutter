@@ -185,7 +185,7 @@ class ApiClient {
       final Map<String, String> headers = {'User-Agent': _userAgentMobile};
 
       final InterceptorsWrapper interceptor =
-          await _buildInterceptorCookie(item.url);
+          await _buildInterceptorCookie(parser.baseUrl);
       _dio.interceptors.add(interceptor);
 
       try {
