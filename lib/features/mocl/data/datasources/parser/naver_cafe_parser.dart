@@ -380,7 +380,7 @@ class NaverCafeParser implements BaseParser {
         "search.clubid=$url"
         "&search.queryType=lastArticle"
         "&search.perPage=20"
-        "&ad=false"
+        "&ad=true"
         "&uuid=6dd62de1-7279-49f0-b009-6ccc554ac679"
         "&adUnit=MW_CAFE_ARTICLE_LIST_RS"
         "&search.page=$page";
