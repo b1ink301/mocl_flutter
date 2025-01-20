@@ -239,28 +239,22 @@ class NaverCafeParser implements BaseParser {
 
     final List<dynamic> articleList = responseData['articleList'];
 
-    for (final article in articleList) {
-      final String type = article['type'];
-      if (type == 'AD') {
-        continue;
-      }
-
-      final Map<String, dynamic> item = article['item'];
-      final int id = item['articleId'] ?? -1;
+    for (final Map<String, dynamic> article in articleList) {
+      final int id = article['articleId'] ?? -1;
 
       if (id <= 0 || lastId > 0 && id >= lastId) continue;
 
-      final int board = item['cafeId'] ?? -2;
-      final String nickName = item['writerNickname'] ?? '-';
-      final String category = item['menuName'] ?? '-';
-      final String title = item['subject'] ?? '-';
-      final String nickImage = item['profileImage'] ?? '-';
-      final int hit = item['readCount'] ?? 0;
-      final int like = item['likeItCount'] ?? 0;
-      final int commentCount = item['commentCount'] ?? 0;
-      final int time = item['writeDateTimestamp'] ?? 0;
-      final String userId = item['memberKey'] ?? '-';
-      final bool hasImage = item['attachImage'] as bool? ?? false;
+      final int board = article['cafeId'] ?? -2;
+      final String nickName = article['writerNickname'] ?? '-';
+      final String category = article['menuName'] ?? '-';
+      final String title = article['subject'] ?? '-';
+      final String nickImage = article['profileImage'] ?? '-';
+      final int hit = article['readCount'] ?? 0;
+      final int like = article['likeItCount'] ?? 0;
+      final int commentCount = article['commentCount'] ?? 0;
+      final int time = article['writeDateTimestamp'] ?? 0;
+      final String userId = article['memberKey'] ?? '-';
+      final bool hasImage = article['attachImage'] as bool? ?? false;
       final dateTime = DateTime.fromMillisecondsSinceEpoch(time);
       final parsedTime = timeago.format(dateTime, locale: 'ko');
       final info = BaseParser.parserInfo(nickName, parsedTime, hit.toString());
@@ -380,9 +374,8 @@ class NaverCafeParser implements BaseParser {
         "search.clubid=$url"
         "&search.queryType=lastArticle"
         "&search.perPage=20"
-        "&ad=true"
+        "&ad=false"
         "&uuid=6dd62de1-7279-49f0-b009-6ccc554ac679"
-        "&adUnit=MW_CAFE_ARTICLE_LIST_RS"
         "&search.page=$page";
   }
 
