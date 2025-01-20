@@ -7,12 +7,14 @@ import 'package:fpdart/fpdart.dart';
 import 'package:html/parser.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/network/api_client.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class MeecoParser implements BaseParser {
@@ -401,5 +403,26 @@ class MeecoParser implements BaseParser {
     } else {
       throw Exception('Error parsing $dateTimeString');
     }
+  }
+
+  @override
+  String urlByDetail(
+    String url,
+    String board,
+      int id,
+  ) => url;
+
+  @override
+  String urlByList(String url, int page, SortType sortType) =>
+      '$url?page=$page${sortType.toQuery(siteType)}';
+
+  @override
+  String urlBySearchList(String url, int page, String keyword) {
+    throw UnimplementedError();
+  }
+
+  @override
+  String urlByMain() {
+    throw UnimplementedError('urlByMain');
   }
 }

@@ -50,7 +50,7 @@ void main() async {
     container = ProviderContainer(
       overrides: [
         detailDatasourceProvider
-            .overrideWithValue(DetailDataSourceImpl(apiClient: mockApiClient))
+            .overrideWithValue(DetailDataSourceImpl(apiClient: mockApiClient, parser: parser))
       ],
     );
 
@@ -67,7 +67,7 @@ void main() async {
 
     // act
     final Either<Failure, Details> result =
-        await detailDataSource.getDetail(item, parser);
+        await detailDataSource.getDetail(item);
 
     debugPrint('result=$result');
 
@@ -89,7 +89,7 @@ void main() async {
         (_) async => Left(GetDetailFailure(message: 'GetDetailFailure')));
 
     // act
-    final result = await detailDataSource.getDetail(item, parser);
+    final result = await detailDataSource.getDetail(item);
 
     // assert
     expect(result.isLeft(), true);

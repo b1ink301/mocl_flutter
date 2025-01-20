@@ -12,6 +12,7 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class NaverCafeParser implements BaseParser {
@@ -359,4 +360,42 @@ class NaverCafeParser implements BaseParser {
       throw Exception('Error parsing $dateTimeString');
     }
   }
+
+  @override
+  String urlByDetail(
+    String url,
+    String board,
+    int id,
+  ) =>
+      'https://apis.naver.com/cafe-web/cafe-articleapi/v2/cafes/$board/articles/$id';
+
+  @override
+  String urlByList(
+    String url,
+    int page,
+    SortType sortType,
+  ) {
+    // final String sort = sortType.toQuery(siteType);
+    return "https://apis.naver.com/cafe-web/cafe2/ArticleListV2dot1.json?"
+        "search.clubid=$url"
+        "&search.queryType=lastArticle"
+        "&search.perPage=20"
+        "&ad=false"
+        "&uuid=6dd62de1-7279-49f0-b009-6ccc554ac679"
+        "&adUnit=MW_CAFE_ARTICLE_LIST_RS"
+        "&search.page=$page";
+  }
+
+  @override
+  String urlBySearchList(
+    String url,
+    int page,
+    String keyword,
+  ) {
+    throw UnimplementedError();
+  }
+
+  @override
+  String urlByMain() =>
+      'https://apis.naver.com/cafe-home-web/cafe-home/v1/cafes/join?perPage=100';
 }

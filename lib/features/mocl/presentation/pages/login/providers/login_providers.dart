@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
@@ -55,6 +57,7 @@ Future<bool> hasLogin(Ref ref, CookieManager cookieManager, WebUri uri) async {
       isHttpOnly: cookie.isHttpOnly,
       sameSite: cookie.sameSite,
     );
+    log('[hasLogin] cookie=$cookie, uri=$uri');
   }
 
   final SiteType siteType = ref.watch(currentSiteTypeNotifierProvider);

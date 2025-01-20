@@ -6,12 +6,14 @@ import 'package:fpdart/fpdart.dart';
 import 'package:html/parser.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/network/api_client.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class ClienParser implements BaseParser {
@@ -24,10 +26,12 @@ class ClienParser implements BaseParser {
   String get baseUrl => 'https://m.clien.net';
 
   @override
-  Either<Failure, List<MainItem>> main(Response response) => throw UnimplementedError('main');
+  Either<Failure, List<MainItem>> main(Response response) =>
+      throw UnimplementedError('main');
 
   @override
-  Future<Result> comment(Response response) => throw UnimplementedError('comment');
+  Future<Result> comment(Response response) =>
+      throw UnimplementedError('comment');
 
   static DateTime parseDateTime(String dateTimeString) {
     final times = dateTimeString.split(' ');
@@ -465,5 +469,37 @@ class ClienParser implements BaseParser {
         .toList();
 
     replyPort.send(resultList);
+  }
+
+  @override
+  String urlByDetail(
+    String url,
+    String board,
+      int id,
+  ) => url;
+
+  @override
+  String urlByList(
+    String url,
+    int page,
+    SortType sortType,
+  ) {
+    final String sort = sortType.toQuery(siteType);
+    return '$url?category=0&po=$page$sort';
+  }
+
+  @override
+  String urlBySearchList(
+    String url,
+    int page,
+    String keyword,
+  ) {
+    final String searchUrl = url.replaceFirst('board', 'search/board');
+    return '$searchUrl?sk=title&sv=$keyword&po=$page';
+  }
+
+  @override
+  String urlByMain() {
+    throw UnimplementedError('urlByMain');
   }
 }

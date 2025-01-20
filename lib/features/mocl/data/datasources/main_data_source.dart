@@ -1,9 +1,13 @@
 import 'package:flutter/foundation.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/util/read_json_from_assets.dart';
-import 'package:mocl_flutter/features/mocl/data/db/local_database.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/db/entities/main_item_data.dart';
+import 'package:mocl_flutter/features/mocl/data/db/local_database.dart';
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/mocl/data/models/model_mapper.dart';
+import 'package:mocl_flutter/features/mocl/data/network/api_client.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
@@ -21,17 +25,30 @@ abstract class MainDataSource {
 
 class MainDataSourceImpl implements MainDataSource {
   final LocalDatabase localDatabase;
+  final ApiClient apiClient;
+  final BaseParser parser;
 
-  const MainDataSourceImpl({required this.localDatabase});
+  const MainDataSourceImpl({
+    required this.localDatabase,
+    required this.apiClient,
+    required this.parser,
+  });
 
   @override
   Future<List<MainItem>> get(
     SiteType siteType,
   ) async {
-    final List<MainItemData> result = await localDatabase.getMainData(siteType);
-    return result
-        .map((item) => item.toMainItemModel().toEntity(siteType))
-        .toList();
+    if (siteType == SiteType.naverCafe) {
+      final Either<Failure, List<MainItem>> result =
+          await apiClient.getMain(parser);
+      return result.getOrElse((Failure f) => throw f);
+    } else {
+      final List<MainItemData> result =
+          await localDatabase.getMainData(siteType);
+      return result
+          .map((MainItemData item) => item.toMainItemModel().toEntity(siteType))
+          .toList();
+    }
   }
 
   @override
