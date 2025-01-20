@@ -5,7 +5,6 @@ import 'package:cookie_jar/cookie_jar.dart' as cookiejar;
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart' as diocookie;
-import 'package:flutter/foundation.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart' as webview;
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:fpdart/fpdart.dart';
@@ -71,26 +70,15 @@ class ApiClient {
     BaseParser parser,
     Future<List<int>> Function(SiteType, List<int>) isReads,
   ) async {
-    final String url;
-    final String sort = sortType.toQuery(parser.siteType);
-    if (item.siteType == SiteType.clien) {
-      url = '${item.url}?category=0&po=$page$sort';
-    } else if (item.siteType == SiteType.naverCafe) {
-      url = "https://apis.naver.com/cafe-web/cafe2/ArticleListV2dot1.json?"
-          "search.clubid=${item.url}"
-          "&search.queryType=lastArticle"
-          "&search.perPage=50"
-          "&ad=true"
-          "&uuid=6dd62de1-7279-49f0-b009-6ccc554ac679"
-          "&adUnit=MW_CAFE_ARTICLE_LIST_RS"
-          "&search.page=$page";
-    } else {
-      url = '${item.url}?page=$page$sort';
-    }
+    final String url = parser.urlByList(item.url, page, sortType);
     final Map<String, String> headers = {
       'User-Agent':
           item.siteType == SiteType.meeco ? _userAgentMobile : _userAgentPc
     };
+
+    final InterceptorsWrapper interceptor =
+        await _buildInterceptorCookie(item.url);
+    _dio.interceptors.add(interceptor);
 
     try {
       final Response response = await get(url, headers: headers);
@@ -111,6 +99,8 @@ class ApiClient {
       final String message = e.message ?? 'Unknown Error';
       log('getList = $url message = $message');
       return Left(GetListFailure(message: message));
+    } finally {
+      _dio.interceptors.remove(interceptor);
     }
   }
 
@@ -123,34 +113,24 @@ class ApiClient {
     BaseParser parser,
     Future<List<int>> Function(SiteType, List<int>) isReads,
   ) async {
-    final String url;
-    final String sort = sortType.toQuery(parser.siteType);
-    if (item.siteType == SiteType.clien) {
-      final String searchUrl = item.url.replaceFirst('board', 'search/board');
-      url = '$searchUrl?category=0&po=$page$sort&sv=$keyword';
-    } else if (item.siteType == SiteType.naverCafe) {
-      url = "https://apis.naver.com/cafe-web/cafe2/ArticleListV2dot1.json?"
-          "search.clubid=${item.url}"
-          "&search.queryType=lastArticle"
-          "&search.perPage=50"
-          "&ad=true"
-          "&uuid=6dd62de1-7279-49f0-b009-6ccc554ac679"
-          "&adUnit=MW_CAFE_ARTICLE_LIST_RS"
-          "&search.page=$page";
-    } else if (item.siteType == SiteType.damoang) {
-      final extra = '&sfl=wr_subject&sop=and&stx=$keyword';
-      url = '${item.url}?page=$page$sort$extra';
-    } else {
-      url = '${item.url}?page=$page$sort';
-    }
+    final String url = parser.urlBySearchList(item.url, page, keyword);
+    final host = WebUri(parser.baseUrl).host;
     final Map<String, String> headers = {
+      'Host': host,
+      'Referer': item.url,
       'User-Agent':
-          item.siteType == SiteType.meeco ? _userAgentMobile : _userAgentPc
+          item.siteType == SiteType.meeco ? _userAgentMobile : _userAgentPc,
     };
+
+    log('getSearchList $url, $headers');
+
+    final InterceptorsWrapper interceptor =
+        await _buildInterceptorCookie(item.url);
+    _dio.interceptors.add(interceptor);
 
     try {
       final Response response = await get(url, headers: headers);
-      log('getSearchList $url, $headers response = ${response.statusCode}, ${response.data}');
+      log('getSearchList $url, $headers response = ${response.statusCode}');
       return response.statusCode == 200
           ? parser.list(
               response,
@@ -166,12 +146,16 @@ class ApiClient {
       final String message = e.message ?? 'Unknown Error';
       log('getSearchList = $url message = $message');
       return Left(GetListFailure(message: message));
+    } finally {
+      _dio.interceptors.remove(interceptor);
     }
   }
 
-  Future<InterceptorsWrapper> _buildInterceptorCookie(BaseParser parser) async {
-    webview.CookieManager cookieManager = webview.CookieManager.instance();
-    final webview.WebUri uri = WebUri(parser.baseUrl);
+  Future<InterceptorsWrapper> _buildInterceptorCookie(String baseUrl) async {
+    final webview.CookieManager cookieManager =
+        webview.CookieManager.instance();
+    final webview.WebUri uri = WebUri(baseUrl);
+
     final List<webview.Cookie> cookies =
         await cookieManager.getCookies(url: uri);
 
@@ -188,7 +172,6 @@ class ApiClient {
         return handler.next(options);
       },
     );
-
     return interceptor;
   }
 
@@ -196,33 +179,20 @@ class ApiClient {
     ListItem item,
     BaseParser parser,
   ) async {
+    final String url = parser.urlByDetail(item.url, item.board, item.id);
     if (parser.siteType == SiteType.naverCafe) {
-      final detailUrl =
-          'https://apis.naver.com/cafe-web/cafe-articleapi/v2/cafes/${item.board}/articles/${item.id}';
-      final commentUrl = '$detailUrl/comments';
-      final headers = {
-        'User-Agent': _userAgentMobile,
-      };
+      final String commentUrl = '$url/comments';
+      final Map<String, String> headers = {'User-Agent': _userAgentMobile};
 
-      debugPrint('commentUrl=$commentUrl');
-
-      final interceptor = await _buildInterceptorCookie(parser);
+      final InterceptorsWrapper interceptor =
+          await _buildInterceptorCookie(item.url);
       _dio.interceptors.add(interceptor);
 
       try {
-        final Future<Response> commentFuture = get(
-          commentUrl,
-          headers: headers,
-          responseType: ResponseType.json,
-          // contentType: Headers.jsonContentType,
-        );
-        final Future<Response> detailFuture = get(
-          detailUrl,
-          headers: headers,
-          responseType: ResponseType.json,
-          // contentType: Headers.jsonContentType,
-        );
-
+        final Future<Response> commentFuture =
+            get(commentUrl, headers: headers, responseType: ResponseType.json);
+        final Future<Response> detailFuture =
+            get(url, headers: headers, responseType: ResponseType.json);
         final List<Response> responses =
             await Future.wait([detailFuture, commentFuture]);
 
@@ -239,14 +209,12 @@ class ApiClient {
         }
       } on DioException catch (e) {
         final String message = e.message ?? 'Unknown Error';
-        log('getDetail = $detailUrl message = $message');
+        log('getDetail = $url message = $message');
         return Left(GetDetailFailure(message: message));
       } finally {
         _dio.interceptors.remove(interceptor);
       }
     } else {
-      final String url = item.url;
-
       final Map<String, String> headers = {
         'User-Agent':
             parser.siteType == SiteType.meeco ? _userAgentMobile : _userAgentPc
@@ -273,25 +241,20 @@ class ApiClient {
       throw FormatException('Not supported site');
     }
 
-    final InterceptorsWrapper interceptor =
-        await _buildInterceptorCookie(parser);
-    _dio.interceptors.add(interceptor);
-
-    final String url =
-        'https://apis.naver.com/cafe-home-web/cafe-home/v1/cafes/join?perPage=100';
+    final String url = parser.urlByMain();
     final Map<String, String> headers = {'User-Agent': _userAgentMobile};
+    final InterceptorsWrapper interceptor = await _buildInterceptorCookie(url);
+    _dio.interceptors.add(interceptor);
 
     try {
       final Response response = await get(url, headers: headers);
       log('getMain $url, $headers response = ${response.statusCode}');
-      if (response.statusCode == 200) {
-        return parser.main(response);
-      } else {
-        return Left(
-          GetMainFailure(
-              message: 'response.statusCode = ${response.statusCode}'),
-        );
-      }
+      return response.statusCode == 200
+          ? parser.main(response)
+          : Left(
+              GetMainFailure(
+                  message: 'response.statusCode = ${response.statusCode}'),
+            );
     } on DioException catch (e) {
       final String message = e.message ?? 'Unknown Error';
       log('getMain = $url message = $message');
@@ -307,17 +270,29 @@ class ApiClient {
 }
 
 extension SortTypeExtension on SortType {
-  String toQuery(SiteType siteType) => switch (siteType) {
-        SiteType.clien => switch (this) {
-            SortType.recent => '',
-            SortType.recommend => '&od=T33',
-          },
-        SiteType.damoang => switch (this) {
-            SortType.recent => '',
-            SortType.recommend => '&sst=wr_good',
-          },
-        SiteType.meeco => '',
-        SiteType.naverCafe => '',
-        SiteType.settings => ''
-      };
+  String toQuery(SiteType siteType) {
+    switch (siteType) {
+      case SiteType.clien:
+        return switch (this) {
+          SortType.recent => '',
+          SortType.recommend => '&od=T33',
+        };
+      case SiteType.damoang:
+        switch (this) {
+          case SortType.recent:
+            return '';
+          case SortType.recommend:
+            final now = DateTime.now();
+            final today =
+                '${now.year}-${now.month.toString().padLeft(2, '0')}-${now.day.toString().padLeft(2, '0')}';
+            return '&&sfl=wr_datetime&sst=wr_good&stx=$today';
+        }
+      case SiteType.meeco:
+        return '';
+      case SiteType.naverCafe:
+        return '';
+      case SiteType.settings:
+        return '';
+    }
+  }
 }

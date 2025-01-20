@@ -1,17 +1,16 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mocl_flutter/features/mocl/data/network/api_client.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/detail_data_source.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/list_data_source.dart';
-import 'package:mocl_flutter/features/mocl/data/db/local_database.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/clien_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/damoang_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/meeco_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/naver_cafe_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/parser_factory.dart';
+import 'package:mocl_flutter/features/mocl/data/db/local_database.dart';
 import 'package:mocl_flutter/features/mocl/data/di/network_provider.dart';
 import 'package:mocl_flutter/features/mocl/data/di/repository_provider.dart';
+import 'package:mocl_flutter/features/mocl/data/network/api_client.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/repositories/settings_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -35,33 +34,54 @@ LocalDatabase localDatabase(Ref ref) {
 @riverpod
 MainDataSource mainDatasource(Ref ref) {
   final LocalDatabase localDatabase = ref.watch(localDatabaseProvider);
-  return MainDataSourceImpl(localDatabase: localDatabase);
+  final ApiClient apiClient = ref.watch(apiClientProvider);
+  final BaseParser parser = ref.watch(currentParserProvider);
+  return MainDataSourceImpl(
+      localDatabase: localDatabase, apiClient: apiClient, parser: parser);
 }
 
 @riverpod
 ListDataSource listDatasource(Ref ref) {
   final ApiClient apiClient = ref.watch(apiClientProvider);
   final LocalDatabase localDatabase = ref.watch(localDatabaseProvider);
-  return ListDataSourceImpl(localDatabase: localDatabase, apiClient: apiClient);
+  final BaseParser currentParser = ref.watch(currentParserProvider);
+  return ListDataSourceImpl(
+      localDatabase: localDatabase,
+      apiClient: apiClient,
+      parser: currentParser);
 }
 
 @riverpod
 DetailDataSource detailDatasource(Ref ref) {
   final ApiClient apiClient = ref.watch(apiClientProvider);
-  return DetailDataSourceImpl(apiClient: apiClient);
+  final BaseParser currentParser = ref.watch(currentParserProvider);
+  return DetailDataSourceImpl(apiClient: apiClient, parser: currentParser);
 }
 
 @riverpod
-ParserFactory parserFactory(Ref ref) {
+BaseParser clienParser(Ref ref) => const ClienParser();
+
+@riverpod
+BaseParser damoangParser(Ref ref) => const DamoangParser();
+
+@riverpod
+BaseParser meecoParser(Ref ref) => const MeecoParser();
+
+@riverpod
+BaseParser naverCafeParser(Ref ref) => const NaverCafeParser();
+
+// 현재 선택된 Parser를 제공하는 provider
+@riverpod
+BaseParser currentParser(Ref ref) {
   final SettingsRepository settingsRepository =
       ref.watch(settingsRepositoryProvider);
-  return ParserFactory(
-    settingsRepository: settingsRepository,
-    parsers: <SiteType, BaseParser>{
-      SiteType.clien: const ClienParser(),
-      SiteType.damoang: const DamoangParser(),
-      SiteType.meeco: const MeecoParser(),
-      SiteType.naverCafe: const NaverCafeParser(),
-    },
-  );
+  final SiteType siteType = settingsRepository.getSiteType();
+
+  return switch (siteType) {
+    SiteType.clien => ref.watch(clienParserProvider),
+    SiteType.damoang => ref.watch(damoangParserProvider),
+    SiteType.meeco => ref.watch(meecoParserProvider),
+    SiteType.naverCafe => ref.watch(naverCafeParserProvider),
+    SiteType.settings => throw UnimplementedError(),
+  };
 }

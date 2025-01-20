@@ -1,13 +1,8 @@
-import 'package:cookie_jar/cookie_jar.dart';
-import 'package:dio/dio.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/features/mocl/data/network/api_client.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/clien_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/parser_factory.dart';
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/mocl/data/repositories/mocl_main_repository_impl.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
@@ -18,26 +13,22 @@ import 'package:mocl_flutter/features/mocl/domain/repositories/settings_reposito
 
 import './mocl_main_repository_test.mocks.dart';
 
-@GenerateMocks([MainDataSource, SettingsRepository, ParserFactory])
+@GenerateMocks([MainDataSource, SettingsRepository])
 void main() {
   const SiteType siteType = SiteType.damoang;
   late MockMainDataSource mockMainDataSource;
   late MainRepository moclRepository;
-  late MockParserFactory mockParserFactory;
 
   setUpAll(() async {
     // TestWidgetsFlutterBinding.ensureInitialized();
     // SharedPreferences.setMockInitialValues({});
     // final prefs = await SharedPreferences.getInstance();
 
-    mockParserFactory = MockParserFactory();
-    when(mockParserFactory.currentParser).thenReturn(ClienParser());
+    // when(mockParserFactory.currentParser).thenReturn(ClienParser());
 
     mockMainDataSource = MockMainDataSource();
     moclRepository = MainRepositoryImpl(
       dataSource: mockMainDataSource,
-      apiClient: ApiClient(Dio())..init(CookieJar()),
-      parserFactory: mockParserFactory,
     );
   });
 

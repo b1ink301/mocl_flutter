@@ -92,7 +92,7 @@ class SearchResultViewState extends ConsumerState<SearchResultView> {
     final resultAsync = ref.watch(reqSearchListDataProvider);
     return resultAsync.when(
       data: (Either<Failure, List<ListItem>> data) => data.fold(
-          (Failure f) => Text(f.message),
+          (Failure f) => Text(f.message, style: const TextStyle(color: Colors.black)),
           (List<ListItem> items) => ListView.separated(
                 itemBuilder: (BuildContext context, int index) {
                   final ListItem item = items[index];
@@ -106,7 +106,7 @@ class SearchResultViewState extends ConsumerState<SearchResultView> {
                     const DividerWidget(),
                 itemCount: items.length,
               )),
-      error: (e, s) => Text(e.toString()),
+      error: (e, s) => Text(e.toString(), style: const TextStyle(color: Colors.black)),
       loading: () => const LoadingWidget(),
     );
   }

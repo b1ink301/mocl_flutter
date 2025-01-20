@@ -3,14 +3,30 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i3;
+import 'dart:async' as _i4;
 
+import 'package:cookie_jar/cookie_jar.dart' as _i8;
+import 'package:dio/dio.dart' as _i2;
+import 'package:fpdart/fpdart.dart' as _i9;
 import 'package:mockito/mockito.dart' as _i1;
+import 'package:mockito/src/dummies.dart' as _i15;
+import 'package:mocl_flutter/core/error/failures.dart' as _i10;
+import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart'
+    as _i14;
 import 'package:mocl_flutter/features/mocl/data/db/entities/main_item_data.dart'
-    as _i4;
-import 'package:mocl_flutter/features/mocl/data/db/local_database.dart' as _i2;
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart'
     as _i5;
+import 'package:mocl_flutter/features/mocl/data/db/local_database.dart' as _i3;
+import 'package:mocl_flutter/features/mocl/data/network/api_client.dart' as _i7;
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart'
+    as _i16;
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart'
+    as _i11;
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart'
+    as _i12;
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart'
+    as _i6;
+import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart'
+    as _i13;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -26,82 +42,261 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart'
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
+class _FakeResponse_0<T> extends _i1.SmartFake implements _i2.Response<T> {
+  _FakeResponse_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
 /// A class which mocks [LocalDatabase].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockLocalDatabase extends _i1.Mock implements _i2.LocalDatabase {
+class MockLocalDatabase extends _i1.Mock implements _i3.LocalDatabase {
   MockLocalDatabase() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i3.Future<List<_i4.MainItemData>> getMainData(_i5.SiteType? siteType) =>
+  _i4.Future<List<_i5.MainItemData>> getMainData(_i6.SiteType? siteType) =>
       (super.noSuchMethod(
             Invocation.method(#getMainData, [siteType]),
-            returnValue: _i3.Future<List<_i4.MainItemData>>.value(
-              <_i4.MainItemData>[],
+            returnValue: _i4.Future<List<_i5.MainItemData>>.value(
+              <_i5.MainItemData>[],
             ),
           )
-          as _i3.Future<List<_i4.MainItemData>>);
+          as _i4.Future<List<_i5.MainItemData>>);
 
   @override
-  _i3.Future<List<int>> setMainData(
-    _i5.SiteType? siteType,
-    List<_i4.MainItemData>? entities,
+  _i4.Future<List<int>> setMainData(
+    _i6.SiteType? siteType,
+    List<_i5.MainItemData>? entities,
   ) =>
       (super.noSuchMethod(
             Invocation.method(#setMainData, [siteType, entities]),
-            returnValue: _i3.Future<List<int>>.value(<int>[]),
+            returnValue: _i4.Future<List<int>>.value(<int>[]),
           )
-          as _i3.Future<List<int>>);
+          as _i4.Future<List<int>>);
 
   @override
-  _i3.Future<void> deleteAll(_i5.SiteType? siteType) =>
+  _i4.Future<void> deleteAll(_i6.SiteType? siteType) =>
       (super.noSuchMethod(
             Invocation.method(#deleteAll, [siteType]),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
           )
-          as _i3.Future<void>);
+          as _i4.Future<void>);
 
   @override
-  _i3.Future<bool> hasItem(_i5.SiteType? siteType, _i4.MainItemData? entity) =>
+  _i4.Future<bool> hasItem(_i6.SiteType? siteType, _i5.MainItemData? entity) =>
       (super.noSuchMethod(
             Invocation.method(#hasItem, [siteType, entity]),
-            returnValue: _i3.Future<bool>.value(false),
+            returnValue: _i4.Future<bool>.value(false),
           )
-          as _i3.Future<bool>);
+          as _i4.Future<bool>);
 
   @override
-  _i3.Future<bool> isRead(_i5.SiteType? siteType, int? id) =>
+  _i4.Future<bool> isRead(_i6.SiteType? siteType, int? id) =>
       (super.noSuchMethod(
             Invocation.method(#isRead, [siteType, id]),
-            returnValue: _i3.Future<bool>.value(false),
+            returnValue: _i4.Future<bool>.value(false),
           )
-          as _i3.Future<bool>);
+          as _i4.Future<bool>);
 
   @override
-  _i3.FutureOr<List<int>> isReads(_i5.SiteType? siteType, List<int>? ids) =>
+  _i4.FutureOr<List<int>> isReads(_i6.SiteType? siteType, List<int>? ids) =>
       (super.noSuchMethod(
             Invocation.method(#isReads, [siteType, ids]),
-            returnValue: _i3.Future<List<int>>.value(<int>[]),
+            returnValue: _i4.Future<List<int>>.value(<int>[]),
           )
-          as _i3.FutureOr<List<int>>);
+          as _i4.FutureOr<List<int>>);
 
   @override
-  _i3.Future<int> setRead(_i5.SiteType? siteType, int? id) =>
+  _i4.Future<int> setRead(_i6.SiteType? siteType, int? id) =>
       (super.noSuchMethod(
             Invocation.method(#setRead, [siteType, id]),
-            returnValue: _i3.Future<int>.value(0),
+            returnValue: _i4.Future<int>.value(0),
           )
-          as _i3.Future<int>);
+          as _i4.Future<int>);
 
   @override
-  _i3.Future<void> dispose() =>
+  _i4.Future<void> dispose() =>
       (super.noSuchMethod(
             Invocation.method(#dispose, []),
-            returnValue: _i3.Future<void>.value(),
-            returnValueForMissingStub: _i3.Future<void>.value(),
+            returnValue: _i4.Future<void>.value(),
+            returnValueForMissingStub: _i4.Future<void>.value(),
           )
-          as _i3.Future<void>);
+          as _i4.Future<void>);
+}
+
+/// A class which mocks [ApiClient].
+///
+/// See the documentation for Mockito's code generation for more information.
+class MockApiClient extends _i1.Mock implements _i7.ApiClient {
+  MockApiClient() {
+    _i1.throwOnMissingStub(this);
+  }
+
+  @override
+  void init(_i8.CookieJar? cookieJar) => super.noSuchMethod(
+    Invocation.method(#init, [cookieJar]),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  _i4.Future<_i2.Response<dynamic>> getUri(
+    Uri? uri, {
+    Map<String, String>? headers,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#getUri, [uri], {#headers: headers}),
+            returnValue: _i4.Future<_i2.Response<dynamic>>.value(
+              _FakeResponse_0<dynamic>(
+                this,
+                Invocation.method(#getUri, [uri], {#headers: headers}),
+              ),
+            ),
+          )
+          as _i4.Future<_i2.Response<dynamic>>);
+
+  @override
+  _i4.Future<_i2.Response<dynamic>> get(
+    String? url, {
+    Map<String, String>? headers,
+    _i2.ResponseType? responseType,
+    String? contentType,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(
+              #get,
+              [url],
+              {
+                #headers: headers,
+                #responseType: responseType,
+                #contentType: contentType,
+              },
+            ),
+            returnValue: _i4.Future<_i2.Response<dynamic>>.value(
+              _FakeResponse_0<dynamic>(
+                this,
+                Invocation.method(
+                  #get,
+                  [url],
+                  {
+                    #headers: headers,
+                    #responseType: responseType,
+                    #contentType: contentType,
+                  },
+                ),
+              ),
+            ),
+          )
+          as _i4.Future<_i2.Response<dynamic>>);
+
+  @override
+  _i4.Future<_i9.Either<_i10.Failure, List<_i11.ListItem>>> getList(
+    _i12.MainItem? item,
+    int? page,
+    int? lastId,
+    _i13.SortType? sortType,
+    _i14.BaseParser? parser,
+    _i4.Future<List<int>> Function(_i6.SiteType, List<int>)? isReads,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getList, [
+              item,
+              page,
+              lastId,
+              sortType,
+              parser,
+              isReads,
+            ]),
+            returnValue: _i4.Future<
+              _i9.Either<_i10.Failure, List<_i11.ListItem>>
+            >.value(
+              _i15.dummyValue<_i9.Either<_i10.Failure, List<_i11.ListItem>>>(
+                this,
+                Invocation.method(#getList, [
+                  item,
+                  page,
+                  lastId,
+                  sortType,
+                  parser,
+                  isReads,
+                ]),
+              ),
+            ),
+          )
+          as _i4.Future<_i9.Either<_i10.Failure, List<_i11.ListItem>>>);
+
+  @override
+  _i4.Future<_i9.Either<_i10.Failure, List<_i11.ListItem>>> getSearchList(
+    _i12.MainItem? item,
+    int? page,
+    int? lastId,
+    _i13.SortType? sortType,
+    String? keyword,
+    _i14.BaseParser? parser,
+    _i4.Future<List<int>> Function(_i6.SiteType, List<int>)? isReads,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getSearchList, [
+              item,
+              page,
+              lastId,
+              sortType,
+              keyword,
+              parser,
+              isReads,
+            ]),
+            returnValue: _i4.Future<
+              _i9.Either<_i10.Failure, List<_i11.ListItem>>
+            >.value(
+              _i15.dummyValue<_i9.Either<_i10.Failure, List<_i11.ListItem>>>(
+                this,
+                Invocation.method(#getSearchList, [
+                  item,
+                  page,
+                  lastId,
+                  sortType,
+                  keyword,
+                  parser,
+                  isReads,
+                ]),
+              ),
+            ),
+          )
+          as _i4.Future<_i9.Either<_i10.Failure, List<_i11.ListItem>>>);
+
+  @override
+  _i4.Future<_i9.Either<_i10.Failure, _i16.Details>> getDetail(
+    _i11.ListItem? item,
+    _i14.BaseParser? parser,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getDetail, [item, parser]),
+            returnValue:
+                _i4.Future<_i9.Either<_i10.Failure, _i16.Details>>.value(
+                  _i15.dummyValue<_i9.Either<_i10.Failure, _i16.Details>>(
+                    this,
+                    Invocation.method(#getDetail, [item, parser]),
+                  ),
+                ),
+          )
+          as _i4.Future<_i9.Either<_i10.Failure, _i16.Details>>);
+
+  @override
+  _i4.Future<_i9.Either<_i10.Failure, List<_i12.MainItem>>> getMain(
+    _i14.BaseParser? parser,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#getMain, [parser]),
+            returnValue: _i4.Future<
+              _i9.Either<_i10.Failure, List<_i12.MainItem>>
+            >.value(
+              _i15.dummyValue<_i9.Either<_i10.Failure, List<_i12.MainItem>>>(
+                this,
+                Invocation.method(#getMain, [parser]),
+              ),
+            ),
+          )
+          as _i4.Future<_i9.Either<_i10.Failure, List<_i12.MainItem>>>);
 }

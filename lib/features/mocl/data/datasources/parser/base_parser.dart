@@ -9,12 +9,36 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
 
 abstract class BaseParser {
   abstract final SiteType siteType;
   abstract final String baseUrl;
 
   const BaseParser();
+
+  String urlByMain() => throw UnimplementedError('urlByMain');
+
+  String urlByList(
+    String url,
+    int page,
+    SortType sortType,
+  ) =>
+      throw UnimplementedError('urlByList');
+
+  String urlBySearchList(
+    String url,
+    int page,
+    String keyword,
+  ) =>
+      throw UnimplementedError('urlBySearchList');
+
+  String urlByDetail(
+    String url,
+    String board,
+    int id,
+  ) =>
+      throw UnimplementedError('urlByDetail');
 
   Either<Failure, List<MainItem>> main(
     Response response,

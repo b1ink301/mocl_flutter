@@ -64,7 +64,9 @@ void main() {
     container = ProviderContainer(
       overrides: [
         listDatasourceProvider.overrideWithValue(ListDataSourceImpl(
-            apiClient: mockApiClient, localDatabase: localDatabase))
+            apiClient: mockApiClient,
+            localDatabase: localDatabase,
+            parser: parser))
       ],
     );
 
@@ -84,7 +86,7 @@ void main() {
 
     // act
     final Either<Failure, List<ListItem>> result =
-        await listDataSource.getList(item, 0, -1, SortType.recent, parser);
+        await listDataSource.getList(item, 0, -1, SortType.recent);
     // assert
     expect(result.isRight(), true);
 
@@ -102,7 +104,7 @@ void main() {
     //act
     final MainItem item = mainItemModel.toEntity(siteType);
     final Either<Failure, List<ListItem>> result =
-        await listDataSource.getList(item, 0, -1, SortType.recent, parser);
+        await listDataSource.getList(item, 0, -1, SortType.recent);
     expect(result.isLeft(), true);
     expect(result.getLeft().toNullable(), isA<GetListFailure>());
   });
