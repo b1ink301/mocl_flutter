@@ -169,6 +169,8 @@ class ApiClient {
         options.headers['Cookie'] = dioCookies
             .map((cookie) => '${cookie.name}=${cookie.value}')
             .join('; ');
+
+        log('[_buildInterceptorCookie] ${options.headers['Cookie']}');
         return handler.next(options);
       },
     );
@@ -219,6 +221,10 @@ class ApiClient {
         'User-Agent':
             parser.siteType == SiteType.meeco ? _userAgentMobile : _userAgentPc
       };
+
+      final InterceptorsWrapper interceptor =
+          await _buildInterceptorCookie(parser.baseUrl);
+      _dio.interceptors.add(interceptor);
       try {
         final Response response = await get(url, headers: headers);
         log('getDetail $url, $headers response = ${response.statusCode}');
@@ -232,15 +238,13 @@ class ApiClient {
         final String message = e.message ?? 'Unknown Error';
         log('getDetail = $url message = $message');
         return Left(GetDetailFailure(message: message));
+      } finally {
+        _dio.interceptors.remove(interceptor);
       }
     }
   }
 
   Future<Either<Failure, List<MainItem>>> getMain(BaseParser parser) async {
-    if (parser.siteType != SiteType.naverCafe) {
-      throw FormatException('Not supported site');
-    }
-
     final String url = parser.urlByMain();
     final Map<String, String> headers = {'User-Agent': _userAgentMobile};
     final InterceptorsWrapper interceptor = await _buildInterceptorCookie(url);

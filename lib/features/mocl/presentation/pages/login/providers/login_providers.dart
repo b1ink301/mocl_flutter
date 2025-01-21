@@ -33,7 +33,8 @@ WebUri reqUrl(Ref ref) {
   final String url = switch (ref.watch(currentSiteTypeNotifierProvider)) {
     SiteType.clien => 'https://m.clien.net/service/mypage/myInfo',
     SiteType.damoang => 'https://damoang.net/bbs/login.php?url=/bbs/memo.php',
-    SiteType.meeco => '',
+    SiteType.meeco =>
+      'https://meeco.kr/index.php?mid=index&act=dispMemberLoginForm',
     SiteType.naverCafe =>
       'https://nid.naver.com/mobile/user/help/naverProfile.nhn?lang=ko_KR',
     _ => ''
@@ -64,7 +65,7 @@ Future<bool> hasLogin(Ref ref, CookieManager cookieManager, WebUri uri) async {
   return switch (siteType) {
     SiteType.clien => uri.path == '/service/mypage/myInfo',
     SiteType.damoang => uri.path == '/bbs/memo.php',
-    SiteType.meeco => false,
+    SiteType.meeco => uri.path == '/',
     SiteType.naverCafe => uri.path == '/user2/help/myInfoV2',
     _ => throw UnimplementedError()
   };
