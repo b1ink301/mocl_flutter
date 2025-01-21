@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:html/parser.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
@@ -61,12 +60,17 @@ class MeecoParser implements BaseParser {
     final infoElement =
         container?.querySelector('header.atc_hd > div.atc_info');
 
+    final nickName =
+        container?.querySelector('span.nickname > a > span')?.text.trim() ??
+            infoElement?.querySelector('span.nickname')?.text.trim() ??
+            '';
+
     final tmpUrl =
         infoElement?.querySelector('span.pf > img.pf_img')?.attributes['src'] ??
             '';
     final nickImage = BaseParser.covertUrl(baseUrl, tmpUrl);
-    final nickName =
-        infoElement?.querySelector('span.nickname')?.text.trim() ?? '';
+    // final nickName =
+    //     infoElement?.querySelector('span.nickname')?.text.trim() ?? '';
 
     final bodyHtml = container?.querySelector('div.atc_body');
     bodyHtml
@@ -80,7 +84,7 @@ class MeecoParser implements BaseParser {
     final likeCount = '';
 
     var index = 0;
-    final comments = container
+    final List<CommentItem> comments = container
             ?.querySelectorAll(
                 'div.cmt > div.cmt_list_parent > div.cmt_list > article')
             .map((element) {
@@ -90,7 +94,6 @@ class MeecoParser implements BaseParser {
               final profileElement = headerElement
                   ?.querySelector('div.pf_wrap > span.pf > img.pf_img');
 
-              debugPrint('headerElement=${headerElement?.innerHtml}');
               final tmpUrl = profileElement?.attributes['src']?.trim() ?? '';
               final nickImage = BaseParser.covertUrl(baseUrl, tmpUrl);
               final nickName = profileElement?.attributes['alt'] ?? '익명';
@@ -409,8 +412,9 @@ class MeecoParser implements BaseParser {
   String urlByDetail(
     String url,
     String board,
-      int id,
-  ) => url;
+    int id,
+  ) =>
+      url;
 
   @override
   String urlByList(String url, int page, SortType sortType) =>
