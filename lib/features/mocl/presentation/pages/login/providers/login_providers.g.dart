@@ -22,7 +22,7 @@ final headersProvider = AutoDisposeProvider<Map<String, String>>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef HeadersRef = AutoDisposeProviderRef<Map<String, String>>;
-String _$reqUrlHash() => r'917024090a1779f9950ee3f454a254d657585855';
+String _$reqUrlHash() => r'b1fcbf2660c66c853fa40eff35a0b2135a152d08';
 
 /// See also [reqUrl].
 @ProviderFor(reqUrl)
@@ -38,7 +38,7 @@ final reqUrlProvider = AutoDisposeProvider<WebUri>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ReqUrlRef = AutoDisposeProviderRef<WebUri>;
-String _$hasLoginHash() => r'83e0143a9c314edd10a191ac55ef9ebdf03f7265';
+String _$hasLoginHash() => r'e4c5c24aee8e1d8320573cb9467c106486a3e7de';
 
 /// Copied from Dart SDK
 class _SystemHash {

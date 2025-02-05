@@ -206,11 +206,11 @@ class _ShowToastProviderElement extends AutoDisposeProviderElement<void>
   BuildContext get context => (origin as ShowToastProvider).context;
 }
 
-String _$appRouterHash() => r'f1ca33dce438e6b9805137069c2e46064a0f4d69';
+String _$appRouterHash() => r'19fed69014bbc995e01f07f4f89c45863613bcb5';
 
 /// See also [appRouter].
 @ProviderFor(appRouter)
-final appRouterProvider = AutoDisposeProvider<GoRouter>.internal(
+final appRouterProvider = Provider<GoRouter>.internal(
   appRouter,
   name: r'appRouterProvider',
   debugGetCreateSourceHash:
@@ -221,7 +221,7 @@ final appRouterProvider = AutoDisposeProvider<GoRouter>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef AppRouterRef = AutoDisposeProviderRef<GoRouter>;
+typedef AppRouterRef = ProviderRef<GoRouter>;
 String _$openBrowserByUrlHash() => r'db746ea383f5f88500a430c3e3529eab3d97d5d9';
 
 /// See also [openBrowserByUrl].
@@ -796,6 +796,24 @@ final screenWidthProvider = Provider<double>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ScreenWidthRef = ProviderRef<double>;
+String _$appRouterForCupertinoHash() =>
+    r'08b31e70b51bf69726d5be79c8f917d8594c3aeb';
+
+/// See also [appRouterForCupertino].
+@ProviderFor(appRouterForCupertino)
+final appRouterForCupertinoProvider = AutoDisposeProvider<GoRouter>.internal(
+  appRouterForCupertino,
+  name: r'appRouterForCupertinoProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$appRouterForCupertinoHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef AppRouterForCupertinoRef = AutoDisposeProviderRef<GoRouter>;
 String _$currentSiteTypeNotifierHash() =>
     r'c73bf72962d97791de69a72d75d769545797e8e7';
 

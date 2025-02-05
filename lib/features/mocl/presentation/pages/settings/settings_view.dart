@@ -25,17 +25,17 @@ class SettingsView extends ConsumerWidget {
                       ),
                     )),
             const DividerWidget(),
-            ref.watch(clearDataNotifierProvider).maybeWhen(
+            ref.watch(sizeCacheDirNotifierProvider).maybeWhen(
                 orElse: () => _buildLoadingView(context),
                 data: (data) => InkWell(
                       onTap: () =>
-                          ref.read(clearDataNotifierProvider.notifier).clear(),
+                          ref.read(sizeCacheDirNotifierProvider.notifier).clear(),
                       child: Container(
                         width: double.infinity,
                         height: 58,
                         alignment: Alignment.center,
                         child: Text(
-                          '캐시 데이터 삭제',
+                          '캐시 데이터 삭제 ($data)',
                           style:
                               Theme.of(context).textTheme.bodyMedium?.copyWith(
                                     color: Theme.of(context).indicatorColor,

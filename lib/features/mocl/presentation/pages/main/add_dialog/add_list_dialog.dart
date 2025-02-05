@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/checkable_main_item.dart';
@@ -20,12 +21,17 @@ class AddListDialog extends ConsumerWidget {
     final ThemeData theme = Theme.of(context);
     final Size size = MediaQuery.of(context).size;
 
-    return AlertDialog(
-      backgroundColor: theme.dialogBackgroundColor,
-      elevation: 8,
-      titlePadding: EdgeInsets.zero,
-      contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-      title: _buildTitle(context),
+    return PlatformAlertDialog(
+      material: (_, __) => MaterialAlertDialogData(
+        elevation: 8,
+        title: _buildTitle(context),
+        titlePadding: EdgeInsets.zero,
+        contentPadding:
+            const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+      ),
+      cupertino: (_, __) => CupertinoAlertDialogData(
+        title: PlatformText('게시판 선택'),
+      ),
       content: _buildContent(context, state, size),
       actions: _buildActions(context, theme),
     );
@@ -34,7 +40,7 @@ class AddListDialog extends ConsumerWidget {
   Widget _buildTitle(BuildContext context) => Column(
         children: [
           const SizedBox(height: 20),
-          Text(
+          PlatformText(
             '게시판 선택',
             style: Theme.of(context).textTheme.headlineMedium,
           ),
@@ -50,7 +56,7 @@ class AddListDialog extends ConsumerWidget {
   ) =>
       SizedBox(
         width: size.width * 0.7,
-        height: size.height * 0.7,
+        height: size.height * 0.6,
         child: state.when(
           data: (data) => _buildListView(context, data),
           error: (failure, _) => MessageWidget(message: failure.toString()),
@@ -90,9 +96,9 @@ class AddListDialog extends ConsumerWidget {
     ThemeData theme,
   ) =>
       [
-        TextButton(
+        PlatformDialogAction(
           onPressed: () => context.pop(),
-          child: Text(
+          child: PlatformText(
             '취소',
             style: theme.textTheme.headlineMedium,
           ),
@@ -100,9 +106,9 @@ class AddListDialog extends ConsumerWidget {
         Consumer(
           builder: (context, ref, child) {
             final notifier = ref.read(addListDlgNotifierProvider.notifier);
-            return TextButton(
+            return PlatformDialogAction(
               onPressed: () => context.pop(notifier.selectedItems()),
-              child: Text(
+              child: PlatformText(
                 '적용',
                 style: theme.textTheme.headlineMedium?.copyWith(
                   color: theme.indicatorColor,

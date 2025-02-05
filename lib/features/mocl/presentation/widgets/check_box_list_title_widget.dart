@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class CheckBoxListTitleWidget extends StatefulWidget {
   final String text;
@@ -28,19 +29,25 @@ class _CheckBoxListTitleState extends State<CheckBoxListTitleWidget> {
   }
 
   @override
-  Widget build(BuildContext context) => CheckboxListTile(
-        value: _isChecked,
+  Widget build(BuildContext context) => PlatformListTile(
         title: Text(
           widget.text,
           style: widget.textStyle,
         ),
-        onChanged: (value) {
-          setState(() => _isChecked = value!);
+        onTap: () {
+          setState(() => _isChecked = !_isChecked);
           widget.onChanged?.call(_isChecked);
         },
-        activeColor: Theme.of(context).indicatorColor,
-        checkColor: Colors.white,
-        isThreeLine: false,
-        selected: _isChecked,
+        trailing: PlatformCheckbox(
+          onChanged: (value) {
+            if (value != null) {
+              setState(() => _isChecked = value);
+              widget.onChanged?.call(_isChecked);
+            }
+          },
+          activeColor: Theme.of(context).indicatorColor,
+          checkColor: Colors.white,
+          value: _isChecked,
+        ),
       );
 }

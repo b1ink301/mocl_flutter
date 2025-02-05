@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
@@ -11,6 +12,8 @@ import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/use_case_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_routes.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+import '../add_dialog/add_list_dialog.dart';
 
 part 'main_providers.g.dart';
 
@@ -58,9 +61,20 @@ Future<Either<Failure, List<int>>> setMainItems(
 
 @riverpod
 Future<void> handleAddButton(Ref ref, BuildContext context) async {
-  final List<MainItem>? result = await context.push<List<MainItem>>(
-    Routes.setMainDlgFull,
-  );
+  List<MainItem>? result;
+  if (isCupertino(context)) {
+    result = await showPlatformDialog(
+      context: context,
+      builder: (context) => AddListDialog(),
+      material: MaterialDialogData(
+        useSafeArea: false,
+      ),
+    );
+  } else {
+    result = await context.push<List<MainItem>>(
+      Routes.setMainDlgFull,
+    );
+  }
 
   if (!context.mounted || result == null) return;
   final Either<Failure, List<int>> state =
@@ -74,3 +88,15 @@ Future<void> handleAddButton(Ref ref, BuildContext context) async {
 @Riverpod(keepAlive: true)
 GlobalKey<ScaffoldState> mainScaffoldState(Ref ref) =>
     GlobalKey<ScaffoldState>();
+
+@riverpod
+class MainSidebarNotifier extends _$MainSidebarNotifier {
+  @override
+  bool build() => false;
+
+  void open() => state = true;
+
+  void close() => state = false;
+
+  void toggle() => state = !state;
+}

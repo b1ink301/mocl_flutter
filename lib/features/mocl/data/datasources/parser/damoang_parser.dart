@@ -281,7 +281,10 @@ class DamoangParser implements BaseParser {
       if (uri == null) continue;
       final idString = uri.pathSegments.lastOrNull ?? '-1';
       final id = int.tryParse(idString) ?? -1;
-      if (id <= 0 || lastId > 0 && id >= lastId) continue;
+      if (id <= 0 || lastId > 0 && id >= lastId) {
+        print('[LIST] skip id=$id, lastId=$lastId');
+        continue;
+      }
 
       final metaElement = infoElement?.querySelector(
           'div.da-list-meta > div.d-flex > div.wr-name > span.sv_wrap > a.sv_member');

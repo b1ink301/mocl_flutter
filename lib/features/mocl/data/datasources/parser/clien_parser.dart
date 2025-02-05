@@ -348,7 +348,11 @@ class ClienParser implements BaseParser {
 
     for (final element in elementList) {
       final id = int.tryParse(element.attributes['data-board-sn'] ?? '') ?? 0;
-      if (id <= 0 || lastId > 0 && id >= lastId) continue;
+
+      if (id <= 0 || lastId > 0 && id >= lastId) {
+        print('[LIST] skip id=$id, lastId=$lastId');
+        continue;
+      }
 
       final userId = element.attributes['data-author-id']?.trim() ?? '';
       final tmpUrl = element.attributes['href']?.trim() ?? '';
@@ -475,8 +479,9 @@ class ClienParser implements BaseParser {
   String urlByDetail(
     String url,
     String board,
-      int id,
-  ) => url;
+    int id,
+  ) =>
+      url;
 
   @override
   String urlByList(

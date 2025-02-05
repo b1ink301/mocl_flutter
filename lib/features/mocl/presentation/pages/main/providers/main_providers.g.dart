@@ -325,7 +325,7 @@ class _SetMainItemsProviderElement
   List<MainItem> get list => (origin as SetMainItemsProvider).list;
 }
 
-String _$handleAddButtonHash() => r'14273d9ba47777b2f8d1c3e181755d7e09e78b0e';
+String _$handleAddButtonHash() => r'0df7d9ac79297edffe90dce7a18d3820941ad702';
 
 /// See also [handleAddButton].
 @ProviderFor(handleAddButton)
@@ -488,5 +488,22 @@ final mainItemsNotifierProvider = AutoDisposeAsyncNotifierProvider<
 );
 
 typedef _$MainItemsNotifier = AutoDisposeAsyncNotifier<List<MainItem>>;
+String _$mainSidebarNotifierHash() =>
+    r'7cf94c97c85560c6689389f28a0d7eb385adf4c5';
+
+/// See also [MainSidebarNotifier].
+@ProviderFor(MainSidebarNotifier)
+final mainSidebarNotifierProvider =
+    AutoDisposeNotifierProvider<MainSidebarNotifier, bool>.internal(
+  MainSidebarNotifier.new,
+  name: r'mainSidebarNotifierProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$mainSidebarNotifierHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+typedef _$MainSidebarNotifier = AutoDisposeNotifier<bool>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

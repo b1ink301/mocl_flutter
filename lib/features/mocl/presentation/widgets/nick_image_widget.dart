@@ -1,6 +1,10 @@
+import 'dart:io';
+import 'dart:math';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:path_provider/path_provider.dart';
 
 class NickImageWidget extends StatelessWidget {
   static const Duration _fadeOutDuration = Duration.zero;
@@ -19,7 +23,13 @@ class NickImageWidget extends StatelessWidget {
   });
 
   // 이미지 프리로딩을 위한 캐시 매니저
-  static final DefaultCacheManager _cacheManager = DefaultCacheManager();
+  static final CacheManager _cacheManager = CacheManager(
+    Config(
+      DefaultCacheManager.key,
+      stalePeriod: const Duration(days: 7),
+      //one week cache period
+    ),
+  );
 
   // 이미지 프리로딩 메서드
   static Future<void> preloadImage(String url) async {
@@ -82,9 +92,41 @@ class NickImageWidget extends StatelessWidget {
         ),
       );
 
+  static Future<String> getSizeCacheDir() async {
+    final Directory tempDir = await getTemporaryDirectory();
+    final Directory libCacheDir =
+        Directory("${tempDir.path}/libCachedImageData");
+
+    if (libCacheDir.existsSync()) {
+      int totalBytes = 0;
+      libCacheDir.listSync(recursive: true).forEach((file) {
+        totalBytes += file.statSync().size;
+      });
+
+      debugPrint('totalBytes=$totalBytes');
+
+      const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+      final i = (log(totalBytes) / log(1024)).floor();
+      final sizeText =
+          '${(totalBytes / pow(1024, i)).toStringAsFixed(1)} ${suffixes[i]}';
+
+      debugPrint('sizeText=$sizeText');
+      return sizeText;
+    }
+    return '0 KB';
+  }
+
   // 캐시 관리 메서드들
   static Future<void> clearCache() async {
-    await _cacheManager.emptyCache();
+    // await _cacheManager.emptyCache(); // 모든 캐시 삭제가 안됨.
+    final Directory tempDir = await getTemporaryDirectory();
+    final Directory libCacheDir =
+        Directory("${tempDir.path}/libCachedImageData");
+    if (libCacheDir.existsSync()) {
+      await libCacheDir.delete(recursive: true);
+    } else {
+      await Future.delayed(Duration(milliseconds: 300));
+    }
   }
 
   static Future<void> removeFile(String url) async {

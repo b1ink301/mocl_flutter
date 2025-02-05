@@ -7,12 +7,13 @@ class DummyAppBarWidget extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
-    final statusBarColor =
-        Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor;
+    // final statusBarColor =
+    //     Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor;
 
     return AppBar(
       toolbarHeight: 0,
-      flexibleSpace: Container(color: statusBarColor),
+      scrolledUnderElevation: 0,
+      // flexibleSpace: Container(color: statusBarColor),
     );
   }
 

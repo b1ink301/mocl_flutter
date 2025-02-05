@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:mocl_flutter/core/util/utilities.dart';
@@ -52,6 +53,8 @@ class _DetailView extends ConsumerWidget {
     final String hexColor = theme.indicatorColor.stringHexColor;
     final TextStyle? bodySmall = theme.textTheme.bodySmall;
     final TextStyle? bodyMedium = theme.textTheme.bodyMedium;
+
+    ref.read(detailTitleNotifierProvider.notifier).update(detail.title);
 
     return SliverPadding(
       padding: const EdgeInsets.only(left: 16, right: 8),
@@ -149,7 +152,7 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
                         detail.userInfo.nickImage.startsWith('http'))
                       NickImageWidget(url: detail.userInfo.nickImage),
                     Flexible(
-                      child: Text(detail.info, style: bodySmall),
+                      child: PlatformText(detail.info, style: bodySmall),
                     ),
                   ],
                 ),
@@ -263,7 +266,7 @@ class _CommentHeader extends StatelessWidget {
       delegate: SliverChildListDelegate([
         Align(
           alignment: Alignment.centerLeft,
-          child: Text(
+          child: PlatformText(
             '댓글 ($commentCount)',
             style: bodyMedium?.copyWith(
               color: Theme.of(context).indicatorColor,
@@ -334,20 +337,26 @@ class _CommentItem extends StatelessWidget {
                 const Spacer(),
                 Icon(Icons.favorite_outline, color: bodySmall!.color, size: 17),
                 const SizedBox(width: 4),
-                Text(comment.likeCount, style: bodySmall),
+                PlatformText(comment.likeCount, style: bodySmall),
                 const SizedBox(width: 4),
               ]
             : const <Widget>[];
 
-    return ListTile(
+    return PlatformListTile(
       key: ValueKey(comment.id.toString()),
-      contentPadding: EdgeInsets.only(left: left, top: 4, bottom: 4),
+      material: (_, __) => MaterialListTileData(
+        contentPadding: EdgeInsets.only(left: left, top: 4, bottom: 4),
+      ),
+      cupertino: (_, __) => CupertinoListTileData(
+        padding: EdgeInsets.only(left: left, top: 8, bottom: 8),
+      ),
+      // contentPadding: EdgeInsets.only(left: left, top: 4, bottom: 4),
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           if (userInfo.nickImage.isNotEmpty)
             NickImageWidget(url: userInfo.nickImage),
-          Text(comment.info, style: bodySmall),
+          PlatformText(comment.info, style: bodySmall),
           ...likeView,
         ],
       ),
@@ -396,7 +405,7 @@ class _RefreshButton extends StatelessWidget {
             width: double.infinity,
             height: 58,
             alignment: Alignment.center,
-            child: Text(
+            child: PlatformText(
               '새로고침',
               style: bodyMedium?.copyWith(
                 color: Theme.of(context).indicatorColor,

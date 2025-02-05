@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_list_item.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/list/widget/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_providers.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_search_proivders.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
@@ -33,7 +34,7 @@ class ListSearchDelegate extends SearchDelegate {
   @override
   List<Widget>? buildActions(BuildContext context) {
     return [
-      IconButton(
+      PlatformIconButton(
         icon: const Icon(Icons.clear),
         onPressed: () {
           query = ''; // 검색어 초기화
@@ -44,7 +45,7 @@ class ListSearchDelegate extends SearchDelegate {
 
   @override
   Widget? buildLeading(BuildContext context) {
-    return IconButton(
+    return PlatformIconButton(
       icon: const Icon(Icons.arrow_back),
       onPressed: () {
         close(context, ''); // 검색 종료
@@ -92,7 +93,10 @@ class SearchResultViewState extends ConsumerState<SearchResultView> {
     final resultAsync = ref.watch(reqSearchListDataProvider);
     return resultAsync.when(
       data: (Either<Failure, List<ListItem>> data) => data.fold(
-          (Failure f) => Text(f.message, style: const TextStyle(color: Colors.black)),
+          (Failure f) => PlatformText(
+                f.message,
+                style: const TextStyle(color: Colors.black),
+              ),
           (List<ListItem> items) => ListView.separated(
                 itemBuilder: (BuildContext context, int index) {
                   final ListItem item = items[index];
@@ -106,7 +110,10 @@ class SearchResultViewState extends ConsumerState<SearchResultView> {
                     const DividerWidget(),
                 itemCount: items.length,
               )),
-      error: (e, s) => Text(e.toString(), style: const TextStyle(color: Colors.black)),
+      error: (e, s) => PlatformText(
+        e.toString(),
+        style: const TextStyle(color: Colors.black),
+      ),
       loading: () => const LoadingWidget(),
     );
   }
