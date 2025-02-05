@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
@@ -90,14 +91,15 @@ void showToast(Ref ref, String message, BuildContext context) {
   );
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 GoRouter appRouter(Ref ref) => GoRouter(
       initialLocation: Routes.main,
       routes: <RouteBase>[
         GoRoute(
             path: Routes.main,
             pageBuilder: (BuildContext context, GoRouterState state) =>
-                SwipeablePage(builder: (BuildContext context) => MainPage.init(context)),
+                SwipeablePage(
+                    builder: (BuildContext context) => MainPage.init(context)),
             routes: [
               GoRoute(
                   path: Routes.setMainDlg,
@@ -142,7 +144,9 @@ GoRouter appRouter(Ref ref) => GoRouter(
         GoRoute(
           path: Routes.settings,
           pageBuilder: (BuildContext context, GoRouterState state) =>
-              SwipeablePage(builder: (BuildContext context) => SettingsPage.init(context)),
+              SwipeablePage(
+                  builder: (BuildContext context) =>
+                      SettingsPage.init(context)),
         ),
         GoRoute(
           path: Routes.login,
@@ -196,3 +200,59 @@ TextStyle appbarTextStyle(Ref ref) =>
 
 @Riverpod(keepAlive: true)
 double screenWidth(Ref ref) => throw UnimplementedError('screenWidth');
+
+@riverpod
+GoRouter appRouterForCupertino(Ref ref) => GoRouter(
+      initialLocation: Routes.main,
+      routes: <RouteBase>[
+        GoRoute(
+            path: Routes.main,
+            pageBuilder: (BuildContext context, GoRouterState state) =>
+                platformPage(context: context, child: MainPage.init(context)),
+            routes: [
+              GoRoute(
+                  path: Routes.setMainDlg,
+                  pageBuilder: (BuildContext context, GoRouterState state) =>
+                      CupertinoModalPopupPage(
+                        builder: (BuildContext context) =>
+                            AddListDialog.init(context),
+                      )),
+            ]),
+        GoRoute(
+          path: Routes.list,
+          pageBuilder: (BuildContext context, GoRouterState state) {
+            final MainItem item = state.extra as MainItem;
+            return platformPage(context: context, child: MoclListPage.init(context, item));
+          },
+        ),
+        GoRoute(
+            path: Routes.detail,
+            pageBuilder: (BuildContext context, GoRouterState state) {
+              final ListItem item = state.extra as ListItem;
+              return platformPage(context: context, child: DetailPage.init(context, item));
+            },
+            routes: [
+              GoRoute(
+                  path: Routes.viewPhotoDlg,
+                  pageBuilder: (BuildContext context, GoRouterState state) =>
+                      CupertinoModalPopupPage(
+                        builder: (BuildContext context) {
+                          final url = GoRouterState.of(context).extra as String;
+                          return PhotoViewDialog(
+                            imageProvider: NetworkImage(url),
+                            filterQuality: FilterQuality.high,
+                          );
+                        },
+                      )),
+            ]),
+        GoRoute(
+            path: Routes.settings,
+            pageBuilder: (BuildContext context, GoRouterState state) =>
+                platformPage(context: context, child: SettingsPage.init(context))),
+        GoRoute(
+          path: Routes.login,
+          builder: (BuildContext context, GoRouterState state) =>
+              const LoginPage(),
+        )
+      ],
+    );

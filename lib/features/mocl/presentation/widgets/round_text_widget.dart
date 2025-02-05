@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class RoundTextWidget extends StatelessWidget {
   final String text;
@@ -34,7 +35,7 @@ class RoundTextWidget extends StatelessWidget {
         border: Border.all(color: effectiveBorderColor),
         borderRadius: BorderRadius.circular(borderRadius),
       ),
-      child: Text(
+      child: PlatformText(
         text,
         maxLines: 1,
         style: effectiveTextStyle,

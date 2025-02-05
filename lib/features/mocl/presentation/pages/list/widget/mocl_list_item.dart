@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
@@ -18,13 +19,18 @@ class MoclListItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final MoclListItemInfo itemInfo = item.toListItemInfo(context, index, 0);
-    return ListTile(
-      minVerticalPadding: 10,
-      minTileHeight: 76,
-      contentPadding: const EdgeInsets.only(left: 16, right: 12),
+    return PlatformListTile(
+      material: (_, __) => MaterialListTileData(
+        minVerticalPadding: 10,
+        contentPadding: const EdgeInsets.only(left: 16, right: 12),
+      ),
+      cupertino: (_, __) => CupertinoListTileData(
+        padding:
+            const EdgeInsets.only(left: 16, right: 12, top: 10, bottom: 10),
+      ),
       onTap: () => _handleItemTap(context, ref, itemInfo.index),
-      title: TitleView(title: itemInfo.title, titleStyle: itemInfo.titleStyle),
-      subtitle: BottomView(
+      title: _TitleView(title: itemInfo.title, titleStyle: itemInfo.titleStyle),
+      subtitle: _BottomView(
         smallTitleStyle: itemInfo.smallTitleStyle,
         badgeStyle: itemInfo.badgeStyle,
         id: itemInfo.id,
@@ -55,18 +61,17 @@ class MoclListItem extends ConsumerWidget {
   }
 }
 
-class TitleView extends StatelessWidget {
+class _TitleView extends StatelessWidget {
   final String title;
   final TextStyle titleStyle;
 
-  const TitleView({
-    super.key,
+  const _TitleView({
     required this.title,
     required this.titleStyle,
   });
 
   @override
-  Widget build(BuildContext context) => Text(
+  Widget build(BuildContext context) => PlatformText(
         title,
         maxLines: 3,
         overflow: TextOverflow.ellipsis,
@@ -74,7 +79,7 @@ class TitleView extends StatelessWidget {
       );
 }
 
-class BottomView extends StatelessWidget {
+class _BottomView extends StatelessWidget {
   final String id;
   final String reply;
   final String nickImage;
@@ -82,8 +87,7 @@ class BottomView extends StatelessWidget {
   final TextStyle smallTitleStyle;
   final TextStyle badgeStyle;
 
-  const BottomView({
-    super.key,
+  const _BottomView({
     required this.id,
     required this.reply,
     required this.nickImage,
@@ -110,7 +114,7 @@ class BottomView extends StatelessWidget {
                             nickImage.startsWith('http'))
                           NickImageWidget(url: nickImage),
                         Flexible(
-                          child: InfoText(
+                          child: _InfoText(
                             info: info,
                             textStyle: smallTitleStyle,
                           ),
@@ -127,18 +131,17 @@ class BottomView extends StatelessWidget {
         );
 }
 
-class InfoText extends StatelessWidget {
+class _InfoText extends StatelessWidget {
   final String info;
   final TextStyle textStyle;
 
-  const InfoText({
-    super.key,
+  const _InfoText({
     required this.info,
     required this.textStyle,
   });
 
   @override
-  Widget build(BuildContext context) => Text(
+  Widget build(BuildContext context) => PlatformText(
         info,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,

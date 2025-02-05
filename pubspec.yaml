@@ -9,6 +9,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  # localization
+  intl: any
 
   # icons
   cupertino_icons: ^1.0.8
@@ -29,14 +33,14 @@ dependencies:
   #  internet_connection_checker_plus: ^2.4.2
   # Http Client
   #  http: ^1.2.2
-  dio: ^5.7.0
+  dio: ^5.8.0+1
 
   # cookie
   cookie_jar: ^4.0.8
-  dio_cookie_manager: ^3.1.1
+  dio_cookie_manager: ^3.2.0
 
   # Local cache
-  shared_preferences: ^2.3.5
+  shared_preferences: ^2.5.1
 
   # json
   json_annotation: ^4.9.0
@@ -57,7 +61,7 @@ dependencies:
   url_launcher: ^6.3.1
 
   # swipe back
-  swipeable_page_route: ^0.4.6
+  swipeable_page_route: ^0.4.7
 
   # splash
   flutter_native_splash: ^2.4.4
@@ -67,10 +71,10 @@ dependencies:
   #  hive_flutter: ^1.1.0
 
   # router
-  go_router: ^14.6.3
+  go_router: ^14.7.2
 
   # firebase
-  firebase_crashlytics: ^4.3.0
+  firebase_crashlytics: ^4.3.1
 
   # async
   async: ^2.11.0
@@ -84,16 +88,13 @@ dependencies:
   share_plus_platform_interface: ^5.0.2
 
   # package info
-  package_info_plus: ^8.1.3
+  package_info_plus: ^8.2.0
 
   # time format
   timeago: ^3.7.0
 
   # like crashlytics..
   sentry_flutter: ^8.12.0
-
-  # change app name
-  launcher_name: ^1.0.2
 
   # sliver tools
   sliver_tools: ^0.2.12
@@ -128,7 +129,11 @@ dependencies:
 #  rearch: ^1.16.0
 
   # nosql
-  sembast: ^3.8.1+1
+  sembast: ^3.8.3
+
+  flutter_platform_widgets: ^7.0.1
+  cupertino_sidebar: ^1.0.1
+#  sidebarx: ^0.17.1
 
 dev_dependencies:
   flutter_test:
@@ -147,13 +152,14 @@ dev_dependencies:
   riverpod_generator: ^2.6.4
   riverpod_lint: ^2.6.4
 
+  # flavor
+  flutter_flavorizr: ^2.2.3
+
 flutter:
   uses-material-design: true
+  generate: true
   assets:
     - assets/
     - assets/damoang/
     - assets/clien/
     - assets/meeco/
-
-launcher_name:
-  default: "Mocl"

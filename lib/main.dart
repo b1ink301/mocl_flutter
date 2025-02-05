@@ -30,14 +30,14 @@ Future<void> main() async {
   unawaited(_firebase());
 
   final SharedPreferences sharedPreferences =
-      await SharedPreferences.getInstance();
+  await SharedPreferences.getInstance();
 
   final Database database = await _database();
 
   await SentryFlutter.init(
-    (options) {
+        (options) {
       options.dsn =
-          'https://6dfe8c0776dd308db231083174773363@o4507983399813120.ingest.us.sentry.io/4507983631876096';
+      'https://6dfe8c0776dd308db231083174773363@o4507983399813120.ingest.us.sentry.io/4507983631876096';
       options.tracesSampleRate = 1.0;
       options.profilesSampleRate = 1.0;
     },

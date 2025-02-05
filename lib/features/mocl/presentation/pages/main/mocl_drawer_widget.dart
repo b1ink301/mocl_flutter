@@ -64,11 +64,7 @@ class _DrawerHeader extends StatelessWidget {
         color: Theme.of(context).primaryColor,
         child: Center(
           child: ClipOval(
-            child: Image.asset(
-              'assets/icon.png',
-              width: 80,
-              height: 80,
-            ),
+            child: Image.asset('assets/icon.png', width: 80, height: 80),
           ),
         ),
       );
@@ -91,18 +87,11 @@ class _DrawerSiteItem extends ConsumerWidget {
             titleTextStyle: Theme.of(context).textTheme.bodyMedium,
             onTap: onTap,
             trailing: ref.watch(isCurrentSiteTypeProvider(siteType))
-                ? Icon(
-                    Icons.check_outlined,
-                    color: Theme.of(context).indicatorColor,
-                  )
+                ? Icon(Icons.check_outlined,
+                    color: Theme.of(context).indicatorColor)
                 : null,
           ),
-          const Divider(
-            height: 1,
-            thickness: 1,
-            indent: 12,
-            endIndent: 8,
-          ),
+          const Divider(height: 1, thickness: 1, indent: 12, endIndent: 8),
         ],
       );
 }

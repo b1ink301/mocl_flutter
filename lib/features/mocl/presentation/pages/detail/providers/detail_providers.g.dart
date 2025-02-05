@@ -173,7 +173,7 @@ class _MarkAsReadProviderElement extends AutoDisposeFutureProviderElement<int>
   ListItem get listItem => (origin as _MarkAsReadProvider).listItem;
 }
 
-String _$detailSmallTitleHash() => r'0d8340a0d400d55964b9d72c2a07ea408ca5dfa3';
+String _$detailSmallTitleHash() => r'9bc30084263914d4fcba17904ecc6e1f8f20d2b5';
 
 /// See also [detailSmallTitle].
 @ProviderFor(detailSmallTitle)
@@ -239,7 +239,7 @@ final detailUrlProvider = AutoDisposeProvider<String>.internal(
 // ignore: unused_element
 typedef DetailUrlRef = AutoDisposeProviderRef<String>;
 String _$detailAppbarHeightHash() =>
-    r'd0e104b9cfd1d149f5dbed886f652f2fc9fde987';
+    r'2d2ff4d5afa07dcf2b883a9010511a83ad210c63';
 
 /// See also [detailAppbarHeight].
 @ProviderFor(detailAppbarHeight)
@@ -397,5 +397,27 @@ final detailsNotifierProvider =
 );
 
 typedef _$DetailsNotifier = AutoDisposeAsyncNotifier<Details>;
+String _$detailTitleNotifierHash() =>
+    r'6e04686cb95e02da3179d89e6fa7b96e08eb7b58';
+
+/// See also [DetailTitleNotifier].
+@ProviderFor(DetailTitleNotifier)
+final detailTitleNotifierProvider =
+    AutoDisposeNotifierProvider<DetailTitleNotifier, String>.internal(
+  DetailTitleNotifier.new,
+  name: r'detailTitleNotifierProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$detailTitleNotifierHash,
+  dependencies: <ProviderOrFamily>[listItemProvider, detailTitleProvider],
+  allTransitiveDependencies: <ProviderOrFamily>{
+    listItemProvider,
+    ...?listItemProvider.allTransitiveDependencies,
+    detailTitleProvider,
+    ...?detailTitleProvider.allTransitiveDependencies
+  },
+);
+
+typedef _$DetailTitleNotifier = AutoDisposeNotifier<String>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

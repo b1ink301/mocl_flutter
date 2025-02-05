@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'dart:math';
 
 import 'package:flutter/material.dart';
@@ -49,11 +50,28 @@ Future<int> _markAsRead(Ref ref, ListItem listItem) async {
 
 @Riverpod(dependencies: [listItem, detailTitle])
 String detailSmallTitle(Ref ref) {
-  final String title = ref.watch(
-      currentSiteTypeNotifierProvider.select((siteType) => siteType.title));
   final String boardTitle =
       ref.watch(listItemProvider.select((item) => item.boardTitle));
-  return '$title > $boardTitle';
+  if (Platform.isIOS) {
+    return boardTitle;
+  } else {
+    final String title = ref.watch(
+        currentSiteTypeNotifierProvider.select((siteType) => siteType.title));
+
+    return '$title > $boardTitle';
+  }
+}
+
+@Riverpod(dependencies: [listItem, detailTitle])
+class DetailTitleNotifier extends _$DetailTitleNotifier {
+  @override
+  String build() => ref.watch(detailTitleProvider);
+
+  void update(String title) {
+    if (state != title) {
+      state = title;
+    }
+  }
 }
 
 @Riverpod(dependencies: [listItem])
@@ -73,8 +91,8 @@ String detailUrl(Ref ref) {
 
 const double _kMoreIconSize = 48.0; // more 아이콘의 크기
 const double _kHorizontalPadding = 16.0; // 좌우 패딩
-const double _kMinTextHeight = 30.0; // 최소 텍스트 높이
-const double _kExtraVerticalSpace = 36.0; // 추가 수직 공간
+double _kMinTextHeight = !Platform.isIOS ? 30 : 10; // 최소 텍스트 높이
+double _kExtraVerticalSpace = !Platform.isIOS ? 36 : 0; // 추가 수직 공간
 
 @Riverpod(dependencies: [appbarTextStyle, screenWidth])
 double detailAppbarHeight(
@@ -84,8 +102,10 @@ double detailAppbarHeight(
   final TextStyle style = ref.watch(appbarTextStyleProvider);
   final double screenWidth = ref.watch(screenWidthProvider);
 
-  final double availableWidth =
-      screenWidth - _kMoreIconSize - (_kHorizontalPadding * 2); // 좌우 패딩
+  final double availableWidth = screenWidth -
+      (!Platform.isIOS
+          ? _kMoreIconSize + _kHorizontalPadding * 2
+          : 32); // 좌우 패딩
 
   final TextPainter textPainter = TextPainter(
     text: TextSpan(

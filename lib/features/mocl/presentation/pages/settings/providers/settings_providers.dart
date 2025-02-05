@@ -1,16 +1,23 @@
+import 'package:flutter/foundation.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'settings_providers.g.dart';
 
 @riverpod
-class ClearDataNotifier extends _$ClearDataNotifier {
+class SizeCacheDirNotifier extends _$SizeCacheDirNotifier {
   @override
-  Future<bool> build() async => false;
+  Future<String> build() async => await _getSizeCacheDir();
 
   Future<void> clear() async {
     state = const AsyncLoading();
-    await AsyncValue.guard(() => ref.read(clearDataProvider.future));
-    state = const AsyncData(true);
+    await ref.read(clearDataProvider.future);
+    state = await AsyncValue.guard(() => _getSizeCacheDir());
+
+    debugPrint('clear cache = $state');
   }
+
+  Future<String> _getSizeCacheDir() async =>
+      await NickImageWidget.getSizeCacheDir();
 }
