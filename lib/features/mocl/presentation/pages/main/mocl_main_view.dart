@@ -151,7 +151,16 @@ class _MainAppBar extends ConsumerWidget {
           ? null
           : [
               PlatformIconButton(
-                onPressed: () => ref.read(handleAddButtonProvider(context)),
+                onPressed: () async {
+                  ref.read(handleAddButtonProvider(context));
+
+                  // final result = await WoltModalSheet.show(
+                  //   context: context,
+                  //   pageListBuilder: (bottomSheetContext) => [
+                  //     AddListModalSheetPage(context: bottomSheetContext),
+                  //   ],
+                  // );
+                },
                 icon: const Icon(Icons.add),
               ),
               PlatformPopupMenu(

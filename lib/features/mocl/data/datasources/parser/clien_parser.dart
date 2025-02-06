@@ -492,7 +492,9 @@ class ClienParser implements BaseParser {
     SortType sortType,
   ) {
     final String sort = sortType.toQuery(siteType);
-    return 'https://m.clien.net/service/api/board/under/list?category=0&boardSn=0&po=$page$sort&boardCd=$board';
+    return board == "recommend"
+        ? url
+        : 'https://m.clien.net/service/api/board/under/list?category=0&boardSn=0&po=$page$sort&boardCd=$board';
   }
 
   @override
