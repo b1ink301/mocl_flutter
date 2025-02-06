@@ -348,11 +348,7 @@ class ClienParser implements BaseParser {
 
     for (final element in elementList) {
       final id = int.tryParse(element.attributes['data-board-sn'] ?? '') ?? 0;
-
-      if (id <= 0 || lastId > 0 && id >= lastId) {
-        print('[LIST] skip id=$id, lastId=$lastId');
-        continue;
-      }
+      if (id <= 0 || lastId > 0 && id >= lastId) continue;
 
       final userId = element.attributes['data-author-id']?.trim() ?? '';
       final tmpUrl = element.attributes['href']?.trim() ?? '';
@@ -394,6 +390,7 @@ class ClienParser implements BaseParser {
                   'div.list_infomation > div.list_author > span.nickimg > img')
               ?.attributes['src'] ??
           '';
+
       final hit = element
               .querySelector(
                   'div.list_infomation > div.list_number > div.list_hit > span')
@@ -410,13 +407,17 @@ class ClienParser implements BaseParser {
                   'div.list_infomation > div.list_author > span.nickname')
               ?.text
               .trim() ??
+          // element
+          //     .querySelector(
+          //     'div.list_infomation > div.list_author > span.nickimg > img')
+          //     ?.attributes['alt'] ??
           '';
       final hasImage =
           element.querySelector('div.list_title > span.fa-picture-o') != null;
 
       var parsedTime = '';
       try {
-        var dateTime = parseDateTime(time);
+        final dateTime = parseDateTime(time);
         parsedTime = timeago.format(dateTime, locale: 'ko');
       } catch (e) {
         parsedTime = time;
@@ -486,22 +487,22 @@ class ClienParser implements BaseParser {
   @override
   String urlByList(
     String url,
+    String board,
     int page,
     SortType sortType,
   ) {
     final String sort = sortType.toQuery(siteType);
-    return '$url?category=0&po=$page$sort';
+    return 'https://m.clien.net/service/api/board/under/list?category=0&boardSn=0&po=$page$sort&boardCd=$board';
   }
 
   @override
   String urlBySearchList(
     String url,
+    String board,
     int page,
     String keyword,
-  ) {
-    final String searchUrl = url.replaceFirst('board', 'search/board');
-    return '$searchUrl?sk=title&sv=$keyword&po=$page';
-  }
+  ) =>
+      'https://m.clien.net/service/api/board/under/list?category=0&boardSn=0&po=$page&boardCd=$board&sk=title&sv=$keyword';
 
   @override
   String urlByMain() {

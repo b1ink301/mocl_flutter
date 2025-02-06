@@ -19,6 +19,7 @@ class MainView extends ConsumerWidget {
         left: false,
         right: false,
         child: RefreshIndicator.adaptive(
+          color: Theme.of(context).indicatorColor,
           onRefresh: () async =>
               ref.read(mainItemsNotifierProvider.notifier).refresh(),
           child: CustomScrollView(
@@ -137,16 +138,13 @@ class _MainAppBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => SliverAppBar(
-      forceElevated: true,
-      scrolledUnderElevation: 1,
-      shadowColor: Colors.grey,
-      flexibleSpace:
-          Container(color: Theme.of(context).appBarTheme.backgroundColor),
+      scrolledUnderElevation: 0,
+      // flexibleSpace:
+      //     Container(color: Theme.of(context).appBarTheme.backgroundColor),
       title: PlatformText(ref.watch(mainTitleProvider)),
       titleTextStyle: Theme.of(context).textTheme.labelMedium,
       titleSpacing: 0,
       floating: true,
-      pinned: false,
       centerTitle: false,
       toolbarHeight: 64,
       actions: !ref.watch(showAddButtonProvider)

@@ -21,6 +21,7 @@ abstract class BaseParser {
 
   String urlByList(
     String url,
+    String board,
     int page,
     SortType sortType,
   ) =>
@@ -28,6 +29,7 @@ abstract class BaseParser {
 
   String urlBySearchList(
     String url,
+    String board,
     int page,
     String keyword,
   ) =>

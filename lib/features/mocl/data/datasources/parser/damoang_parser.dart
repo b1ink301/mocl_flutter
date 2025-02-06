@@ -282,7 +282,6 @@ class DamoangParser implements BaseParser {
       final idString = uri.pathSegments.lastOrNull ?? '-1';
       final id = int.tryParse(idString) ?? -1;
       if (id <= 0 || lastId > 0 && id >= lastId) {
-        print('[LIST] skip id=$id, lastId=$lastId');
         continue;
       }
 
@@ -451,15 +450,26 @@ class DamoangParser implements BaseParser {
   String urlByDetail(
     String url,
     String board,
-      int id,
-  ) => url;
+    int id,
+  ) =>
+      url;
 
   @override
-  String urlByList(String url, int page, SortType sortType) =>
+  String urlByList(
+    String url,
+    String board,
+    int page,
+    SortType sortType,
+  ) =>
       '$url?page=$page${sortType.toQuery(siteType)}';
 
   @override
-  String urlBySearchList(String url, int page, String keyword) =>
+  String urlBySearchList(
+    String url,
+      String board,
+    int page,
+    String keyword,
+  ) =>
       '$url?page=$page&sfl=wr_subject&sop=and&stx=$keyword';
 
   @override

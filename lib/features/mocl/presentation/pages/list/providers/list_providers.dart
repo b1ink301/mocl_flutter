@@ -102,6 +102,24 @@ class ListStateNotifier extends _$ListStateNotifier {
         (List<ListItem> newItems) {
           final bool hasReachedMax = _checkIfReachedMax(newItems.isEmpty);
 
+          // final List<ListItem> mergedItems = [
+          //   ...state.items,
+          //   ...newItems,
+          // ];
+          // final List<ListItem> uniqueItems = mergedItems.toSet().toList();
+
+          // final items = state.items.toList();
+          // final List<ListItem> filteredItems = newItems.where((newItem) {
+          //   final result =  !items.any((existingItem) {
+          //     debugPrint('newItem.id=${newItem.id}, existingItem.id=${existingItem.id}');
+          //     return existingItem.id == newItem.id;
+          //   });
+          //   debugPrint('result=${newItem.id}, $result');
+          //   return result;
+          // }).toList();
+          //
+          // debugPrint('filteredItems=${filteredItems.length}');
+
           state = state.copyWith(
             items: [...state.items, ...newItems],
             isLoading: false,
