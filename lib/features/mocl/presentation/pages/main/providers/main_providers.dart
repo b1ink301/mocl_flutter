@@ -1,19 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_main_list.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/use_case_provider.dart';
-import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_routes.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/main/widgets/add_list_modal_sheet_page.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import '../add_dialog/add_list_dialog.dart';
+import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 part 'main_providers.g.dart';
 
@@ -61,20 +58,27 @@ Future<Either<Failure, List<int>>> setMainItems(
 
 @riverpod
 Future<void> handleAddButton(Ref ref, BuildContext context) async {
-  List<MainItem>? result;
-  if (isCupertino(context)) {
-    result = await showPlatformDialog(
-      context: context,
-      builder: (context) => AddListDialog(),
-      material: MaterialDialogData(
-        useSafeArea: false,
-      ),
-    );
-  } else {
-    result = await context.push<List<MainItem>>(
-      Routes.setMainDlgFull,
-    );
-  }
+  List<MainItem>? result = await WoltModalSheet.show(
+    context: context,
+    pageListBuilder: (bottomSheetContext) => [
+      AddListModalSheetPage(context: bottomSheetContext),
+    ],
+  );
+
+  // List<MainItem>? result;
+  // if (isCupertino(context)) {
+  //   result = await showPlatformDialog(
+  //     context: context,
+  //     builder: (context) => AddListDialog(),
+  //     material: MaterialDialogData(
+  //       useSafeArea: false,
+  //     ),
+  //   );
+  // } else {
+  //   result = await context.push<List<MainItem>>(
+  //     Routes.setMainDlgFull,
+  //   );
+  // }
 
   if (!context.mounted || result == null) return;
   final Either<Failure, List<int>> state =

@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/list/widget/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_providers.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_state.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/widget/list_cupertino_app_bar.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/widget/list_material_app_bar.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/list/widget/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 import 'package:super_sliver_list/super_sliver_list.dart';
@@ -58,8 +58,6 @@ class _ListBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final ListState state = ref.watch(listStateNotifierProvider);
 
-    debugPrint('_ListBody length=${state.items.length}, error=${state.error}, isLoading=${state.isLoading}');
-
     return SuperSliverList.separated(
       layoutKeptAliveChildren: true,
       extentPrecalculationPolicy: ref.watch(extentPrecalculationPolicyProvider),
@@ -92,15 +90,21 @@ class _ListBody extends ConsumerWidget {
 
   Widget _buildError(String errorMessage, VoidCallback onRetry) => Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Row(
+        child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            PlatformText(errorMessage),
-            const SizedBox(width: 8),
-            ElevatedButton(
+            PlatformText(
+              errorMessage,
+              maxLines: 4,
+              overflow: TextOverflow.ellipsis,
+            ),
+            const SizedBox(height: 8),
+            PlatformElevatedButton(
               onPressed: onRetry,
               child: PlatformText('재시도'),
             ),
+            const SizedBox(height: 16),
+            const DividerWidget(indent: 0, endIndent: 0),
           ],
         ),
       );
