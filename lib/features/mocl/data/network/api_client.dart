@@ -70,8 +70,12 @@ class ApiClient {
     BaseParser parser,
     Future<List<int>> Function(SiteType, List<int>) isReads,
   ) async {
-    final String url = parser.urlByList(item.url, page, sortType);
+    final String url = parser.urlByList(item.url, item.board, page, sortType);
+    final String host = WebUri(parser.baseUrl).host;
     final Map<String, String> headers = {
+      'Host': host,
+      'Cache-control': 'no-cache',
+      'Pragma': 'no-cache',
       'User-Agent':
           item.siteType == SiteType.meeco ? _userAgentMobile : _userAgentPc
     };
@@ -81,8 +85,9 @@ class ApiClient {
     _dio.interceptors.add(interceptor);
 
     try {
-      final Response response = await get(url, headers: headers);
-      log('getList $url, $headers response = ${response.statusCode}');
+      final Response response =
+          await get(url, headers: headers, responseType: ResponseType.plain);
+      log('[getList] $url, $headers response = ${response.statusCode}');
 
       return response.statusCode == 200
           ? parser.list(
@@ -97,7 +102,11 @@ class ApiClient {
             );
     } on DioException catch (e) {
       final String message = e.message ?? 'Unknown Error';
-      log('getList = $url message = $message');
+      log('[getList] = $url message = $message');
+      if (e.response?.statusCode == 400) {
+        await webview.CookieManager.instance().removeSessionCookies();
+      }
+
       return Left(GetListFailure(message: message));
     } finally {
       _dio.interceptors.remove(interceptor);
@@ -113,7 +122,8 @@ class ApiClient {
     BaseParser parser,
     Future<List<int>> Function(SiteType, List<int>) isReads,
   ) async {
-    final String url = parser.urlBySearchList(item.url, page, keyword);
+    final String url =
+        parser.urlBySearchList(item.url, item.board, page, keyword);
     final host = WebUri(parser.baseUrl).host;
     final Map<String, String> headers = {
       'Host': host,
@@ -144,6 +154,9 @@ class ApiClient {
             );
     } on DioException catch (e) {
       final String message = e.message ?? 'Unknown Error';
+      if (e.response?.statusCode == 400) {
+        await webview.CookieManager.instance().removeSessionCookies();
+      }
       log('getSearchList = $url message = $message');
       return Left(GetListFailure(message: message));
     } finally {
@@ -159,7 +172,6 @@ class ApiClient {
     final List<webview.Cookie> cookies =
         await cookieManager.getCookies(url: uri);
 
-    // Dio의 쿠키jar에 쿠키 추가
     final List<cookiejar.Cookie> dioCookies = cookies
         .map((cookie) => cookiejar.Cookie(cookie.name, cookie.value))
         .toList();
@@ -278,7 +290,7 @@ extension SortTypeExtension on SortType {
     switch (siteType) {
       case SiteType.clien:
         return switch (this) {
-          SortType.recent => '',
+          SortType.recent => '&od=T31',
           SortType.recommend => '&od=T33',
         };
       case SiteType.damoang:

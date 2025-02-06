@@ -417,11 +417,21 @@ class MeecoParser implements BaseParser {
       url;
 
   @override
-  String urlByList(String url, int page, SortType sortType) =>
+  String urlByList(
+    String url,
+    String board,
+    int page,
+    SortType sortType,
+  ) =>
       '$url?page=$page${sortType.toQuery(siteType)}';
 
   @override
-  String urlBySearchList(String url, int page, String keyword) {
+  String urlBySearchList(
+    String url,
+      String board,
+    int page,
+    String keyword,
+  ) {
     throw UnimplementedError();
   }
 

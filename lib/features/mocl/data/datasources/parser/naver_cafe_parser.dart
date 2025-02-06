@@ -366,6 +366,7 @@ class NaverCafeParser implements BaseParser {
   @override
   String urlByList(
     String url,
+    String board,
     int page,
     SortType sortType,
   ) {
@@ -382,6 +383,7 @@ class NaverCafeParser implements BaseParser {
   @override
   String urlBySearchList(
     String url,
+    String board,
     int page,
     String keyword,
   ) {

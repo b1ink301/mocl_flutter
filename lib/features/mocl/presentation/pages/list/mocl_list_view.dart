@@ -17,6 +17,7 @@ class MoclListView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) =>
       RefreshIndicator.adaptive(
+        color: Theme.of(context).indicatorColor,
         onRefresh: () async {
           ref.read(listStateNotifierProvider.notifier).refresh();
         },
