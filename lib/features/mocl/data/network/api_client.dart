@@ -86,7 +86,7 @@ class ApiClient {
 
     try {
       final Response response =
-          await get(url, headers: headers, responseType: ResponseType.plain);
+          await get(url, headers: headers);
       log('[getList] $url, $headers response = ${response.statusCode}');
 
       return response.statusCode == 200
