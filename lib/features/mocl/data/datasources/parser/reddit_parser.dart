@@ -185,6 +185,7 @@ class RedditParser implements BaseParser {
       return;
     }
 
+    final htmlUnescape = HtmlUnescape();
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
     final items = list
@@ -209,7 +210,7 @@ class RedditParser implements BaseParser {
 
           return ListItem(
             id: id.hashCode,
-            title: title,
+            title: htmlUnescape.convert(title),
             reply: reply,
             category: category,
             time: milliseconds.toString(),
