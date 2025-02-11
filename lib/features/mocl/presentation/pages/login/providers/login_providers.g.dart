@@ -6,7 +6,7 @@ part of 'login_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$headersHash() => r'10f3fd28b422d583481c4492533660310e715031';
+String _$headersHash() => r'38605bce377db09021c6d5e7a6786f75ada4dcff';
 
 /// See also [headers].
 @ProviderFor(headers)
@@ -22,7 +22,7 @@ final headersProvider = AutoDisposeProvider<Map<String, String>>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef HeadersRef = AutoDisposeProviderRef<Map<String, String>>;
-String _$reqUrlHash() => r'b1fcbf2660c66c853fa40eff35a0b2135a152d08';
+String _$reqUrlHash() => r'2a6d28df7128a8eecef7e3037ba74bb15dd16c42';
 
 /// See also [reqUrl].
 @ProviderFor(reqUrl)
@@ -38,7 +38,7 @@ final reqUrlProvider = AutoDisposeProvider<WebUri>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ReqUrlRef = AutoDisposeProviderRef<WebUri>;
-String _$hasLoginHash() => r'e4c5c24aee8e1d8320573cb9467c106486a3e7de';
+String _$hasLoginHash() => r'acfa9f69d10e1f1360ddade55034aa4128d85af9';
 
 /// Copied from Dart SDK
 class _SystemHash {

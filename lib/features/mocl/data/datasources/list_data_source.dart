@@ -3,6 +3,7 @@ import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/db/local_database.dart';
 import 'package:mocl_flutter/features/mocl/data/network/api_client.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
@@ -12,14 +13,14 @@ abstract class ListDataSource {
   Future<Either<Failure, List<ListItem>>> getList(
     MainItem item,
     int page,
-    int lastId,
+    LastId lastId,
     SortType sortType,
   );
 
   Future<Either<Failure, List<ListItem>>> getSearchList(
     MainItem item,
     int page,
-    int lastId,
+    LastId lastId,
     SortType sortType,
     String keyword,
   );
@@ -55,7 +56,7 @@ class ListDataSourceImpl implements ListDataSource {
   Future<Either<Failure, List<ListItem>>> getList(
     MainItem item,
     int page,
-    int lastId,
+    LastId lastId,
     SortType sortType,
   ) =>
       apiClient.getList(item, page, lastId, sortType, parser, isReadFlags);
@@ -64,7 +65,7 @@ class ListDataSourceImpl implements ListDataSource {
   Future<Either<Failure, List<ListItem>>> getSearchList(
     MainItem item,
     int page,
-    int lastId,
+    LastId lastId,
     SortType sortType,
     String keyword,
   ) =>

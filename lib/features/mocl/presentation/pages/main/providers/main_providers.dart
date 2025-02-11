@@ -60,6 +60,7 @@ Future<Either<Failure, List<int>>> setMainItems(
 Future<void> handleAddButton(Ref ref, BuildContext context) async {
   List<MainItem>? result = await WoltModalSheet.show(
     context: context,
+    modalTypeBuilder: (context) => WoltModalType.bottomSheet(),
     pageListBuilder: (bottomSheetContext) => [
       AddListModalSheetPage(context: bottomSheetContext),
     ],

@@ -21,13 +21,13 @@ class Details with _$Details {
   }) = _Details;
 
   factory Details.empty() => const Details(
-        title: 'title',
-        time: 'time',
-        viewCount: 'viewCount',
-        likeCount: 'likeCount',
-        bodyHtml: 'bodyHtml',
-        csrf: 'csrf',
-        info: 'info',
+        title: '',
+        time: '',
+        viewCount: '',
+        likeCount: '',
+        bodyHtml: '',
+        csrf: '',
+        info: '',
         userInfo:
             UserInfo(id: 'id', nickName: 'nickName', nickImage: 'nickImage'),
         comments: [],

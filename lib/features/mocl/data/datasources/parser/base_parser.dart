@@ -4,6 +4,7 @@ import 'dart:isolate';
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
@@ -24,6 +25,7 @@ abstract class BaseParser {
     String board,
     int page,
     SortType sortType,
+    LastId lastId,
   ) =>
       throw UnimplementedError('urlByList');
 
@@ -32,6 +34,7 @@ abstract class BaseParser {
     String board,
     int page,
     String keyword,
+    LastId lastId,
   ) =>
       throw UnimplementedError('urlBySearchList');
 
@@ -49,7 +52,7 @@ abstract class BaseParser {
 
   Future<Either<Failure, List<ListItem>>> list(
     Response response,
-    int lastId,
+    LastId lastId,
     String boardTitle,
     Future<List<int>> Function(SiteType, List<int>) isReads,
   );

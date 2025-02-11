@@ -5,6 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/login/providers/login_providers.dart';
 
+const String _googleLoginUserAgent =
+    'Mozilla/5.0 (Linux; Android 9; SM-G950N) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/88.0.4324.93 Mobile Safari/537.36';
+
 class LoginView extends ConsumerWidget {
   const LoginView({super.key});
 
@@ -17,21 +20,45 @@ class LoginView extends ConsumerWidget {
         incognito: false,
         isInspectable: kDebugMode,
         sharedCookiesEnabled: true,
+        safeBrowsingEnabled: false,
         clearCache: false,
         cacheEnabled: true,
+        supportMultipleWindows: true,
         disableContextMenu: false,
         javaScriptEnabled: true,
+        javaScriptCanOpenWindowsAutomatically: true,
         useHybridComposition: true,
         thirdPartyCookiesEnabled: true,
         mixedContentMode: MixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
-        userAgent:
-            'Mozilla/5.0 (Linux; Android 9; SM-G950N) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/88.0.4324.93 Mobile Safari/537.36',
+        userAgent: _googleLoginUserAgent,
       ),
       initialUrlRequest: URLRequest(
         url: ref.watch(reqUrlProvider),
         headers: ref.watch(headersProvider),
         httpShouldHandleCookies: true,
       ),
+      onCreateWindow: (controller, createWindowAction) async {
+        debugPrint('onCreateWindow ${createWindowAction.request.url}');
+
+        if (createWindowAction.request.url
+            .toString()
+            .contains("login/google")) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return InAppWebView(
+                initialUrlRequest: createWindowAction.request,
+                initialSettings: InAppWebViewSettings(
+                  javaScriptEnabled: true,
+                  thirdPartyCookiesEnabled: true,
+                  mixedContentMode: MixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
+                ),
+              );
+            },
+          );
+        }
+        return true;
+      },
       onReceivedServerTrustAuthRequest: (
         InAppWebViewController controller,
         URLAuthenticationChallenge challenge,

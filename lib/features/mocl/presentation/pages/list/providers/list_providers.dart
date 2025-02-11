@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
@@ -55,7 +56,7 @@ ExtentPrecalculationPolicy extentPrecalculationPolicy(Ref ref) =>
 
 @Riverpod(dependencies: [mainItem])
 Future<Either<Failure, List<ListItem>>> reqListData(
-    Ref ref, int page, int lastId) async {
+    Ref ref, int page, LastId lastId) async {
   final MainItem mainItem = ref.watch(mainItemProvider);
   final SortType sortType = ref.watch(sortTypeNotifierProvider);
 
@@ -125,7 +126,9 @@ class ListStateNotifier extends _$ListStateNotifier {
             isLoading: false,
             currentPage:
                 hasReachedMax ? state.currentPage : state.currentPage + 1,
-            lastId: newItems.isEmpty ? state.lastId : newItems.last.id,
+            lastId: newItems.isEmpty
+                ? state.lastId
+                : LastId(intId: newItems.last.id, stringId: newItems.last.url),
             hasReachedMax: _checkIfReachedMax(newItems.isEmpty),
           );
         },
@@ -139,6 +142,8 @@ class ListStateNotifier extends _$ListStateNotifier {
   bool _checkIfReachedMax(bool isEmpty) {
     final MainItem mainItem = ref.read(mainItemProvider);
     // if (isEmpty) return true;
+
+    // if (mainItem.siteType == SiteType.reddit) return true;
     if (mainItem.siteType != SiteType.clien) return false;
     return mainItem.board == "recommend";
   }

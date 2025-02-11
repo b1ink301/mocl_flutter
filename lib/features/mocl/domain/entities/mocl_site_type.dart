@@ -3,6 +3,7 @@ enum SiteType {
   damoang,
   meeco,
   naverCafe,
+  reddit,
   settings,
 }
 
@@ -12,6 +13,7 @@ extension SiteTypeExtension on SiteType {
         SiteType.damoang => '다모앙',
         SiteType.settings => '설정',
         SiteType.meeco => '미코',
-        SiteType.naverCafe => '네이버카페'
+        SiteType.naverCafe => '네이버카페',
+        SiteType.reddit => '레딧'
       };
 }

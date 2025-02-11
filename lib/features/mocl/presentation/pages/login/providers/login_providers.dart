@@ -19,6 +19,10 @@ Map<String, String> headers(Ref ref) =>
           'Referer': 'https://damoang.net/bbs/memo.php',
           'ContentType': 'application/x-www-form-urlencoded',
         },
+      SiteType.reddit => <String, String>{
+        'Referer': 'https://www.reddit.com/settings/',
+        'ContentType': 'application/x-www-form-urlencoded',
+      },
       SiteType.meeco => <String, String>{},
       SiteType.naverCafe => {
           'Referer':
@@ -37,6 +41,8 @@ WebUri reqUrl(Ref ref) {
       'https://meeco.kr/index.php?mid=index&act=dispMemberLoginForm',
     SiteType.naverCafe =>
       'https://nid.naver.com/mobile/user/help/naverProfile.nhn?lang=ko_KR',
+    SiteType.reddit =>
+      'https://www.reddit.com/login?dest=https://www.reddit.com/settings/',
     _ => ''
   };
   return WebUri(url);
@@ -67,6 +73,7 @@ Future<bool> hasLogin(Ref ref, CookieManager cookieManager, WebUri uri) async {
     SiteType.damoang => uri.path == '/bbs/memo.php',
     SiteType.meeco => uri.path == '/',
     SiteType.naverCafe => uri.path == '/user2/help/myInfoV2',
+    SiteType.reddit => uri.path == '/settings/',
     _ => throw UnimplementedError()
   };
 }

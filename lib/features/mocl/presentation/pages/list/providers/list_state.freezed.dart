@@ -19,8 +19,8 @@ mixin _$ListState {
   List<ListItem> get items => throw _privateConstructorUsedError;
   bool get isLoading => throw _privateConstructorUsedError;
   int get currentPage => throw _privateConstructorUsedError;
+  LastId get lastId => throw _privateConstructorUsedError;
   bool get hasReachedMax => throw _privateConstructorUsedError;
-  int get lastId => throw _privateConstructorUsedError;
   String? get error => throw _privateConstructorUsedError;
 
   /// Create a copy of ListState
@@ -39,9 +39,11 @@ abstract class $ListStateCopyWith<$Res> {
       {List<ListItem> items,
       bool isLoading,
       int currentPage,
+      LastId lastId,
       bool hasReachedMax,
-      int lastId,
       String? error});
+
+  $LastIdCopyWith<$Res> get lastId;
 }
 
 /// @nodoc
@@ -62,8 +64,8 @@ class _$ListStateCopyWithImpl<$Res, $Val extends ListState>
     Object? items = null,
     Object? isLoading = null,
     Object? currentPage = null,
-    Object? hasReachedMax = null,
     Object? lastId = null,
+    Object? hasReachedMax = null,
     Object? error = freezed,
   }) {
     return _then(_value.copyWith(
@@ -79,19 +81,29 @@ class _$ListStateCopyWithImpl<$Res, $Val extends ListState>
           ? _value.currentPage
           : currentPage // ignore: cast_nullable_to_non_nullable
               as int,
+      lastId: null == lastId
+          ? _value.lastId
+          : lastId // ignore: cast_nullable_to_non_nullable
+              as LastId,
       hasReachedMax: null == hasReachedMax
           ? _value.hasReachedMax
           : hasReachedMax // ignore: cast_nullable_to_non_nullable
               as bool,
-      lastId: null == lastId
-          ? _value.lastId
-          : lastId // ignore: cast_nullable_to_non_nullable
-              as int,
       error: freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
               as String?,
     ) as $Val);
+  }
+
+  /// Create a copy of ListState
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $LastIdCopyWith<$Res> get lastId {
+    return $LastIdCopyWith<$Res>(_value.lastId, (value) {
+      return _then(_value.copyWith(lastId: value) as $Val);
+    });
   }
 }
 
@@ -107,9 +119,12 @@ abstract class _$$ListStateImplCopyWith<$Res>
       {List<ListItem> items,
       bool isLoading,
       int currentPage,
+      LastId lastId,
       bool hasReachedMax,
-      int lastId,
       String? error});
+
+  @override
+  $LastIdCopyWith<$Res> get lastId;
 }
 
 /// @nodoc
@@ -128,8 +143,8 @@ class __$$ListStateImplCopyWithImpl<$Res>
     Object? items = null,
     Object? isLoading = null,
     Object? currentPage = null,
-    Object? hasReachedMax = null,
     Object? lastId = null,
+    Object? hasReachedMax = null,
     Object? error = freezed,
   }) {
     return _then(_$ListStateImpl(
@@ -145,14 +160,14 @@ class __$$ListStateImplCopyWithImpl<$Res>
           ? _value.currentPage
           : currentPage // ignore: cast_nullable_to_non_nullable
               as int,
+      lastId: null == lastId
+          ? _value.lastId
+          : lastId // ignore: cast_nullable_to_non_nullable
+              as LastId,
       hasReachedMax: null == hasReachedMax
           ? _value.hasReachedMax
           : hasReachedMax // ignore: cast_nullable_to_non_nullable
               as bool,
-      lastId: null == lastId
-          ? _value.lastId
-          : lastId // ignore: cast_nullable_to_non_nullable
-              as int,
       error: freezed == error
           ? _value.error
           : error // ignore: cast_nullable_to_non_nullable
@@ -168,8 +183,8 @@ class _$ListStateImpl implements _ListState {
       {required final List<ListItem> items,
       required this.isLoading,
       required this.currentPage,
+      required this.lastId,
       this.hasReachedMax = false,
-      this.lastId = -1,
       this.error})
       : _items = items;
 
@@ -186,17 +201,16 @@ class _$ListStateImpl implements _ListState {
   @override
   final int currentPage;
   @override
-  @JsonKey()
-  final bool hasReachedMax;
+  final LastId lastId;
   @override
   @JsonKey()
-  final int lastId;
+  final bool hasReachedMax;
   @override
   final String? error;
 
   @override
   String toString() {
-    return 'ListState(items: $items, isLoading: $isLoading, currentPage: $currentPage, hasReachedMax: $hasReachedMax, lastId: $lastId, error: $error)';
+    return 'ListState(items: $items, isLoading: $isLoading, currentPage: $currentPage, lastId: $lastId, hasReachedMax: $hasReachedMax, error: $error)';
   }
 
   @override
@@ -209,9 +223,9 @@ class _$ListStateImpl implements _ListState {
                 other.isLoading == isLoading) &&
             (identical(other.currentPage, currentPage) ||
                 other.currentPage == currentPage) &&
+            (identical(other.lastId, lastId) || other.lastId == lastId) &&
             (identical(other.hasReachedMax, hasReachedMax) ||
                 other.hasReachedMax == hasReachedMax) &&
-            (identical(other.lastId, lastId) || other.lastId == lastId) &&
             (identical(other.error, error) || other.error == error));
   }
 
@@ -221,8 +235,8 @@ class _$ListStateImpl implements _ListState {
       const DeepCollectionEquality().hash(_items),
       isLoading,
       currentPage,
-      hasReachedMax,
       lastId,
+      hasReachedMax,
       error);
 
   /// Create a copy of ListState
@@ -239,8 +253,8 @@ abstract class _ListState implements ListState {
       {required final List<ListItem> items,
       required final bool isLoading,
       required final int currentPage,
+      required final LastId lastId,
       final bool hasReachedMax,
-      final int lastId,
       final String? error}) = _$ListStateImpl;
 
   @override
@@ -250,9 +264,9 @@ abstract class _ListState implements ListState {
   @override
   int get currentPage;
   @override
-  bool get hasReachedMax;
+  LastId get lastId;
   @override
-  int get lastId;
+  bool get hasReachedMax;
   @override
   String? get error;
 

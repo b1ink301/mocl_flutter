@@ -325,7 +325,7 @@ class _SetMainItemsProviderElement
   List<MainItem> get list => (origin as SetMainItemsProvider).list;
 }
 
-String _$handleAddButtonHash() => r'b61d471049fbe2ae921ced9a1fd152fe97fc5b23';
+String _$handleAddButtonHash() => r'adeb3dd82cb16a790852813d0ed8f205f170632d';
 
 /// See also [handleAddButton].
 @ProviderFor(handleAddButton)

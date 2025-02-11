@@ -6,7 +6,7 @@ part of 'list_search_proivders.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$reqSearchListDataHash() => r'8c7471a9ce5433d6b13e891790d704ddf749d967';
+String _$reqSearchListDataHash() => r'61b6d7ec5c1715a2d8031fc327a271e85db2af8f';
 
 /// See also [reqSearchListData].
 @ProviderFor(reqSearchListData)

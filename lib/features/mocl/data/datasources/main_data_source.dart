@@ -35,9 +35,7 @@ class MainDataSourceImpl implements MainDataSource {
   });
 
   @override
-  Future<List<MainItem>> get(
-    SiteType siteType,
-  ) async {
+  Future<List<MainItem>> get(SiteType siteType) async {
     if (siteType == SiteType.naverCafe) {
       final Either<Failure, List<MainItem>> result =
           await apiClient.getMain(parser);

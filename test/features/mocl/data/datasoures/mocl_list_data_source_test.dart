@@ -15,6 +15,7 @@ import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.d
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/damoang_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/di/datasource_provider.dart';
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
@@ -86,7 +87,7 @@ void main() {
 
     // act
     final Either<Failure, List<ListItem>> result =
-        await listDataSource.getList(item, 0, -1, SortType.recent);
+        await listDataSource.getList(item, 0, LastId.empty(), SortType.recent);
     // assert
     expect(result.isRight(), true);
 
@@ -104,7 +105,7 @@ void main() {
     //act
     final MainItem item = mainItemModel.toEntity(siteType);
     final Either<Failure, List<ListItem>> result =
-        await listDataSource.getList(item, 0, -1, SortType.recent);
+        await listDataSource.getList(item, 0, LastId.empty(), SortType.recent);
     expect(result.isLeft(), true);
     expect(result.getLeft().toNullable(), isA<GetListFailure>());
   });
