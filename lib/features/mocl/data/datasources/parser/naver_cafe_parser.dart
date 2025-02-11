@@ -103,7 +103,7 @@ class NaverCafeParser implements BaseParser {
           final id = comment['id'] ?? 'id';
           final writer = comment['writer'];
           var body = comment['content'] ?? '';
-          final userId = writer['id'];
+          final userId = writer['memberKey'].toString();
           final nickImage = ''; //writer['image']['url'] ?? '';
           final nickName = writer['nick'] ?? '';
           final isReply = comment['isRef'];
@@ -362,8 +362,8 @@ class NaverCafeParser implements BaseParser {
     String board,
     int id,
   ) =>
-      'https://apis.naver.com/cafe-web/cafe-articleapi/v3/cafes/$board/articles/$id?query=&useCafeId=true&requestFrom=A';
-  // 'https://apis.naver.com/cafe-web/cafe-articleapi/v2/cafes/$board/articles/$id';
+      'https://apis.naver.com/cafe-web/cafe-articleapi/v3/cafes/$board/articles/$id';
+  // 'https://apis.naver.com/cafe-web/cafe-articleapi/v2/cafes/$board/articles/$id'; //?query=&useCafeId=true&requestFrom=A
 
   @override
   String urlByList(

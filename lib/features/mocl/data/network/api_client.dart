@@ -211,6 +211,8 @@ class ApiClient {
         final List<Response> responses =
             await Future.wait([detailFuture, commentFuture]);
 
+        log('[getDetail] $url, commentUrl=$commentUrl');
+
         if (responses.first.statusCode == 200 &&
             responses.last.statusCode == 200) {
           final List data = responses.map((response) => response.data).toList();
