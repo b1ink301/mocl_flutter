@@ -90,3 +90,7 @@ $ flutter build appbundle --bundle-sksl-path flutter_01.sksl.json
 $ flutter config --jdk-dir "/usr/local/Cellar/openjdk@17/17.0.13/libexec/openjdk.jdk/Contents/Home"
 
 $ dart run flutter_native_splash:create --path=./flutter_native_splash.yaml
+
+flutter run flutter_flavorizr -p assets:download assets:extract ios:xcconfig assets:clean
+flutter run flutter_flavorizr -p assets:download assets:extract -p google:firebase
+dart pub global activate flutterfire_cli

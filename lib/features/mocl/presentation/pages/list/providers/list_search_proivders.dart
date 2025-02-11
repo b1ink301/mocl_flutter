@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
@@ -34,7 +35,7 @@ Future<Either<Failure, List<ListItem>>> reqSearchListData(Ref ref) async {
   final GetSearchListParams params = GetSearchListParams(
       mainItem: mainItem,
       page: 0,
-      lastId: -1,
+      lastId: LastId.empty(),
       sortType: sortType,
       keyword: keyword);
 

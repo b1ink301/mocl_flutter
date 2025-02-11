@@ -10,6 +10,7 @@ import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
@@ -65,12 +66,13 @@ class ApiClient {
   Future<Either<Failure, List<ListItem>>> getList(
     MainItem item,
     int page,
-    int lastId,
+    LastId lastId,
     SortType sortType,
     BaseParser parser,
     Future<List<int>> Function(SiteType, List<int>) isReads,
   ) async {
-    final String url = parser.urlByList(item.url, item.board, page, sortType);
+    final String url =
+        parser.urlByList(item.url, item.board, page, sortType, lastId);
     final String host = WebUri(parser.baseUrl).host;
     final Map<String, String> headers = {
       'Host': host,
@@ -85,8 +87,7 @@ class ApiClient {
     _dio.interceptors.add(interceptor);
 
     try {
-      final Response response =
-          await get(url, headers: headers);
+      final Response response = await get(url, headers: headers);
       log('[getList] $url, $headers response = ${response.statusCode}');
 
       return response.statusCode == 200
@@ -116,14 +117,14 @@ class ApiClient {
   Future<Either<Failure, List<ListItem>>> getSearchList(
     MainItem item,
     int page,
-    int lastId,
+    LastId lastId,
     SortType sortType,
     String keyword,
     BaseParser parser,
     Future<List<int>> Function(SiteType, List<int>) isReads,
   ) async {
     final String url =
-        parser.urlBySearchList(item.url, item.board, page, keyword);
+        parser.urlBySearchList(item.url, item.board, page, keyword, lastId);
     final host = WebUri(parser.baseUrl).host;
     final Map<String, String> headers = {
       'Host': host,
@@ -239,7 +240,7 @@ class ApiClient {
       _dio.interceptors.add(interceptor);
       try {
         final Response response = await get(url, headers: headers);
-        log('getDetail $url, $headers response = ${response.statusCode}');
+        log('[getDetail] $url, $headers response = ${response.statusCode}');
         return response.statusCode == 200
             ? parser.detail(response)
             : Left(
@@ -264,7 +265,7 @@ class ApiClient {
 
     try {
       final Response response = await get(url, headers: headers);
-      log('getMain $url, $headers response = ${response.statusCode}');
+      log('[getMain] $url, $headers response = ${response.statusCode}');
       return response.statusCode == 200
           ? parser.main(response)
           : Left(
@@ -309,6 +310,13 @@ extension SortTypeExtension on SortType {
         return '';
       case SiteType.settings:
         return '';
+      case SiteType.reddit:
+        switch (this) {
+          case SortType.recent:
+            return 'new';
+          case SortType.recommend:
+            return 'hot';
+        }
     }
   }
 }

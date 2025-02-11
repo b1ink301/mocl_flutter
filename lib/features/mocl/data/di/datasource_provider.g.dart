@@ -174,7 +174,23 @@ final naverCafeParserProvider = AutoDisposeProvider<BaseParser>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef NaverCafeParserRef = AutoDisposeProviderRef<BaseParser>;
-String _$currentParserHash() => r'4f9aad8b7ef7ca9132664f0c1183013a730458d2';
+String _$redditParserHash() => r'1ee70552c3c68561a07872bde800da9e6b18f7c8';
+
+/// See also [redditParser].
+@ProviderFor(redditParser)
+final redditParserProvider = AutoDisposeProvider<BaseParser>.internal(
+  redditParser,
+  name: r'redditParserProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$redditParserHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef RedditParserRef = AutoDisposeProviderRef<BaseParser>;
+String _$currentParserHash() => r'65bbe30c9f5401bf6018ccc981e0202dd2350abb';
 
 /// See also [currentParser].
 @ProviderFor(currentParser)

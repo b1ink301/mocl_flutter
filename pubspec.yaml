@@ -40,7 +40,7 @@ dependencies:
   dio_cookie_manager: ^3.2.0
 
   # Local cache
-  shared_preferences: ^2.5.1
+  shared_preferences: ^2.5.2
 
   # json
   json_annotation: ^4.9.0
@@ -88,7 +88,7 @@ dependencies:
   share_plus_platform_interface: ^5.0.2
 
   # package info
-  package_info_plus: ^8.2.0
+  package_info_plus: ^8.2.1
 
   # time format
   timeago: ^3.7.0
@@ -104,7 +104,7 @@ dependencies:
 
   # webview
   flutter_inappwebview: ^6.1.5
-#  webview_flutter: ^4.10.0
+  webview_flutter: ^4.10.0
 
   # photo view
   photo_view: ^0.15.0
@@ -136,6 +136,7 @@ dependencies:
 #  sidebarx: ^0.17.1
 
   wolt_modal_sheet: ^0.11.0
+  html_unescape: ^2.0.0
 
 dev_dependencies:
   flutter_test:
@@ -165,3 +166,4 @@ flutter:
     - assets/damoang/
     - assets/clien/
     - assets/meeco/
+    - assets/reddit/

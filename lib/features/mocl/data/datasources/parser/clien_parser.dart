@@ -7,6 +7,7 @@ import 'package:html/parser.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/network/api_client.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
@@ -296,7 +297,7 @@ class ClienParser implements BaseParser {
   @override
   Future<Either<Failure, List<ListItem>>> list(
     Response response,
-    int lastId,
+    LastId lastId,
     String boardTitle,
     Future<List<int>> Function(SiteType, List<int>) isReads,
   ) async {
@@ -319,7 +320,7 @@ class ClienParser implements BaseParser {
           IsolateMessage<String>(
             receivePort.sendPort,
             response.data,
-            lastId,
+            lastId.intId,
             boardTitle,
             baseUrl,
           ));
@@ -490,6 +491,7 @@ class ClienParser implements BaseParser {
     String board,
     int page,
     SortType sortType,
+    LastId lastId,
   ) {
     final String sort = sortType.toQuery(siteType);
     return board == "recommend"
@@ -503,6 +505,7 @@ class ClienParser implements BaseParser {
     String board,
     int page,
     String keyword,
+    LastId lastId,
   ) =>
       'https://m.clien.net/service/api/board/under/list?category=0&boardSn=0&po=$page&boardCd=$board&sk=title&sv=$keyword';
 

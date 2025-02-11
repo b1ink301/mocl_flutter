@@ -238,7 +238,7 @@ final extentPrecalculationPolicyProvider =
 // ignore: unused_element
 typedef ExtentPrecalculationPolicyRef
     = AutoDisposeProviderRef<ExtentPrecalculationPolicy>;
-String _$reqListDataHash() => r'a151941859e96b5a11dcb00a67d4c4734ec97198';
+String _$reqListDataHash() => r'9648b8f2f547931bd0b0ed69a299bf5f5b8d37ec';
 
 /// See also [reqListData].
 @ProviderFor(reqListData)
@@ -253,7 +253,7 @@ class ReqListDataFamily
   /// See also [reqListData].
   ReqListDataProvider call(
     int page,
-    int lastId,
+    LastId lastId,
   ) {
     return ReqListDataProvider(
       page,
@@ -298,7 +298,7 @@ class ReqListDataProvider
   /// See also [reqListData].
   ReqListDataProvider(
     int page,
-    int lastId,
+    LastId lastId,
   ) : this._internal(
           (ref) => reqListData(
             ref as ReqListDataRef,
@@ -330,7 +330,7 @@ class ReqListDataProvider
   }) : super.internal();
 
   final int page;
-  final int lastId;
+  final LastId lastId;
 
   @override
   Override overrideWith(
@@ -383,7 +383,7 @@ mixin ReqListDataRef
   int get page;
 
   /// The parameter `lastId` of this provider.
-  int get lastId;
+  LastId get lastId;
 }
 
 class _ReqListDataProviderElement
@@ -394,7 +394,7 @@ class _ReqListDataProviderElement
   @override
   int get page => (origin as ReqListDataProvider).page;
   @override
-  int get lastId => (origin as ReqListDataProvider).lastId;
+  LastId get lastId => (origin as ReqListDataProvider).lastId;
 }
 
 String _$initialPageHash() => r'2677bd42115edf23acbcc6771d6620253659e1bc';
@@ -413,7 +413,7 @@ final _initialPageProvider = AutoDisposeProvider<int>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef _InitialPageRef = AutoDisposeProviderRef<int>;
-String _$listStateNotifierHash() => r'6f8e6a310ca279830542c4a5aa6434df39d1d8f0';
+String _$listStateNotifierHash() => r'1308fa076bfd1e2ec14c2321b84318de93644460';
 
 /// See also [ListStateNotifier].
 @ProviderFor(ListStateNotifier)

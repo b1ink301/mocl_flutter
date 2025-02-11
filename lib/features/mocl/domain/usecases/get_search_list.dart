@@ -2,6 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/usecases/usecase.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
@@ -30,7 +31,7 @@ class GetSearchList
 class GetSearchListParams extends Equatable {
   final MainItem mainItem;
   final int page;
-  final int lastId;
+  final LastId lastId;
   final SortType sortType;
   final String keyword;
 

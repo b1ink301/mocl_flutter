@@ -31,10 +31,10 @@ class _CheckBoxListTitleState extends State<CheckBoxListTitleWidget> {
   @override
   Widget build(BuildContext context) => PlatformListTile(
         material: (context, platform) => MaterialListTileData(
-          contentPadding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+          contentPadding: const EdgeInsets.fromLTRB(16, 2, 8, 2),
         ),
         cupertino: (context, platform) => CupertinoListTileData(
-          padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+          padding: const EdgeInsets.fromLTRB(16, 2, 8, 2),
         ),
         title: PlatformText(
           widget.text,
