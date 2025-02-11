@@ -54,8 +54,6 @@ class _DetailView extends ConsumerWidget {
     final TextStyle? bodySmall = theme.textTheme.bodySmall;
     final TextStyle? bodyMedium = theme.textTheme.bodyMedium;
 
-    ref.read(detailTitleNotifierProvider.notifier).update(detail.title);
-
     return SliverPadding(
       padding: const EdgeInsets.only(left: 16, right: 8),
       sliver: MultiSliver(

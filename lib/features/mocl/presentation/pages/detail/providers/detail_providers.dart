@@ -28,6 +28,7 @@ class DetailsNotifier extends _$DetailsNotifier {
         await ref.read(getDetailProvider)(listItem);
     final Details data = result.getOrElse((f) => throw f);
     ref.read(_markAsReadProvider(listItem));
+    ref.read(detailTitleNotifierProvider.notifier).update(data.title);
     return data;
   }
 
@@ -68,7 +69,7 @@ class DetailTitleNotifier extends _$DetailTitleNotifier {
   String build() => ref.watch(detailTitleProvider);
 
   void update(String title) {
-    if (state != title) {
+    if (title.isNotEmpty && state != title) {
       state = title;
     }
   }

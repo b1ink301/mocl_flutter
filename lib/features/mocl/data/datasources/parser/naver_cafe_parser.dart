@@ -83,12 +83,12 @@ class NaverCafeParser implements BaseParser {
     final detail = responseData.first['result'];
     final article = detail['article'];
 
-    final bodyHtml = article['contentHtml'] ?? '';
+    final bodyHtml = article['contentHtml'].toString();
     final writer = article['writer'];
-    final title = article['subject'] ?? '';
+    final title = article['subject'].toString();
     // final id = writer['id'] ?? '';
-    final nickName = writer['nick'] ?? '';
-    final nickImage = writer['image']['url'] ?? '';
+    final nickName = writer['nick'].toString();
+    final nickImage = writer['image']['url'].toString();
     final time = article['writeDate'] ?? 0;
     final viewCount = (article['readCount'] ?? 0).toString();
     // final commentCount = writer['commentCount'];
@@ -100,12 +100,12 @@ class NaverCafeParser implements BaseParser {
 
     final commentItems = comments
         .map((comment) {
-          final id = comment['id'] ?? 'id';
+          final id = comment['id'] ?? -1;
           final writer = comment['writer'];
-          var body = comment['content'] ?? '';
+          var body = comment['content'].toString();
           final userId = writer['memberKey'].toString();
           final nickImage = ''; //writer['image']['url'] ?? '';
-          final nickName = writer['nick'] ?? '';
+          final nickName = writer['nick'].toString();
           final isReply = comment['isRef'];
           final time = comment['updateDate'] ?? 0;
           final likeCount = '0';
@@ -246,15 +246,15 @@ class NaverCafeParser implements BaseParser {
       if (id <= 0 || lastId > 0 && id >= lastId) continue;
 
       final int board = article['cafeId'] ?? -2;
-      final String nickName = article['writerNickname'] ?? '-';
-      final String category = article['menuName'] ?? '-';
-      final String title = article['subject'] ?? '-';
-      final String nickImage = article['profileImage'] ?? '-';
+      final String nickName = article['writerNickname'].toString();
+      final String category = article['menuName'].toString();
+      final String title = article['subject'].toString();
+      final String nickImage = article['profileImage'].toString();
       final int hit = article['readCount'] ?? 0;
       final int like = article['likeItCount'] ?? 0;
       final int commentCount = article['commentCount'] ?? 0;
       final int time = article['writeDateTimestamp'] ?? 0;
-      final String userId = article['memberKey'] ?? '-';
+      final String userId = article['memberKey'].toString();
       final bool hasImage = article['attachImage'] as bool? ?? false;
       final dateTime = DateTime.fromMillisecondsSinceEpoch(time);
       final parsedTime = timeago.format(dateTime, locale: 'ko');
