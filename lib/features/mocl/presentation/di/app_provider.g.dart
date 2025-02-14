@@ -796,24 +796,6 @@ final screenWidthProvider = Provider<double>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ScreenWidthRef = ProviderRef<double>;
-String _$appRouterForCupertinoHash() =>
-    r'08b31e70b51bf69726d5be79c8f917d8594c3aeb';
-
-/// See also [appRouterForCupertino].
-@ProviderFor(appRouterForCupertino)
-final appRouterForCupertinoProvider = AutoDisposeProvider<GoRouter>.internal(
-  appRouterForCupertino,
-  name: r'appRouterForCupertinoProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$appRouterForCupertinoHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef AppRouterForCupertinoRef = AutoDisposeProviderRef<GoRouter>;
 String _$currentSiteTypeNotifierHash() =>
     r'c73bf72962d97791de69a72d75d769545797e8e7';
 

@@ -85,7 +85,7 @@ class NaverCafeParser implements BaseParser {
 
     final bodyHtml = article['contentHtml'].toString();
     final writer = article['writer'];
-    final title = article['subject'].toString();
+    final title = article['subject'].toString().trim();
     // final id = writer['id'] ?? '';
     final nickName = writer['nick'].toString();
     final nickImage = writer['image']['url'].toString();

@@ -1,15 +1,15 @@
 import 'dart:io';
 import 'dart:math';
-import 'dart:developer' as dev;
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:octo_image/octo_image.dart';
 import 'package:path_provider/path_provider.dart';
 
 class NickImageWidget extends StatelessWidget {
-  static const Duration _fadeOutDuration = Duration.zero;
-  static const Duration _fadeInDuration = Duration.zero;
+  // static const Duration _fadeOutDuration = Duration.zero;
+  // static const Duration _fadeInDuration = Duration.zero;
 
   // 메모리 캐시 크기 상수화
   static const int _memCacheHeight = 32; // 실제 높이의 2배로 설정 (고해상도 디스플레이 대응)
@@ -59,43 +59,19 @@ class NickImageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => CachedNetworkImage(
-        // 메모리 캐시 크기 최적화
         memCacheHeight: _memCacheHeight,
-        // memCacheWidth: _memCacheHeight, // 정사각형 이미지 가정
-
-        // 페이드 애니메이션 상수화
-        fadeOutDuration: _fadeOutDuration,
-        fadeInDuration: _fadeInDuration,
-
         height: height,
-
         imageBuilder: (context, imageProvider) => Padding(
           padding: const EdgeInsets.only(right: 8),
-          child: Image(image: imageProvider),
+          child: OctoImage(image: imageProvider),
         ),
-
-        // 에러 처리 추가
-        errorWidget: (context, url, error) {
-          dev.log('error=$error');
-          return const SizedBox.shrink();
-        },
-
-        // 로딩 상태 처리
-        placeholder: (context, url) => SizedBox(
-          height: height,
-          width: height,
-        ),
-
+        errorWidget: (context, url, error) => const SizedBox.shrink(),
+        placeholder: (context, url) => SizedBox(height: height, width: height),
         imageUrl: url,
         cacheKey: url,
-
-        // 이미지 품질 최적화
         fit: BoxFit.contain,
         filterQuality: FilterQuality.low,
-
-        // 캐시 정책 설정
         cacheManager: _cacheManager,
-        // maxHeightDiskCache: _memCacheHeight,
       );
 
   static Future<String> getSizeCacheDir() async {

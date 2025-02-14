@@ -4,7 +4,6 @@ A new Flutter project.
 
 ## Getting Started
 
-
 ## build_runner 실행
 
 ```shell
@@ -17,6 +16,9 @@ dart run build_runner build --delete-conflicting-outputs
 
 ```shell
 flutter run --flavor prd -t lib/main_prd.dart
+```
+
+```shell
 flutter run --release --flavor prd -t lib/main_prd.dart
 ```
 
@@ -24,6 +26,9 @@ flutter run --release --flavor prd -t lib/main_prd.dart
 
 ```shell
 flutter run --flavor dev -t lib/main_dev.dart
+```
+
+```shell
 flutter run --release --flavor dev -t lib/main_dev.dart
 ```
 
@@ -41,6 +46,9 @@ flutter build [appbundle|apk|ios|ipa] --flavor [dev|prd] -t lib/[main_dev|main_p
 
 ```shell
 flutter build apk --flavor prd -t lib/main_prd.dart
+```
+
+```shell
 flutter build appbundle --flavor prd -t lib/main_prd.dart 
 ```
 
@@ -73,12 +81,14 @@ flutter build ipa --flavor prd -t lib/main_prd.dart
 flutter build ipa --flavor dev -t lib/main_dev.dart
 ```
 
-
 ## Flavor 설정
 * flavorizr.yaml 파일의 정의
 
 ```shell
 dart run flutter_flavorizr
+```
+
+```shell
 dart run flutter_flavorizr -p android:buildGradle # 특정 항목만..
 ```
 

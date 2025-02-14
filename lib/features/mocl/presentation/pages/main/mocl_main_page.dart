@@ -1,7 +1,6 @@
 import 'package:cupertino_sidebar/cupertino_sidebar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -11,6 +10,7 @@ import 'package:mocl_flutter/features/mocl/presentation/pages/main/mocl_drawer_w
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/mocl_main_view.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/providers/main_providers.dart';
 import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_routes.dart';
+import 'package:mocl_flutter/src/generated/i18n/app_localizations.dart';
 
 class MainPage extends ConsumerWidget {
   const MainPage({super.key});
