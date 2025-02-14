@@ -8,6 +8,7 @@ import 'package:mocl_flutter/features/mocl/data/datasources/parser/damoang_parse
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/meeco_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/naver_cafe_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/parser/reddit_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/parser/theqoo_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/db/local_database.dart';
 import 'package:mocl_flutter/features/mocl/data/di/network_provider.dart';
 import 'package:mocl_flutter/features/mocl/data/di/repository_provider.dart';
@@ -74,6 +75,9 @@ BaseParser naverCafeParser(Ref ref) => const NaverCafeParser();
 @riverpod
 BaseParser redditParser(Ref ref) => const RedditParser();
 
+@riverpod
+BaseParser theqooParser(Ref ref) => const TheQoo();
+
 // 현재 선택된 Parser를 제공하는 provider
 @riverpod
 BaseParser currentParser(Ref ref) {
@@ -87,6 +91,7 @@ BaseParser currentParser(Ref ref) {
     SiteType.meeco => ref.watch(meecoParserProvider),
     SiteType.naverCafe => ref.watch(naverCafeParserProvider),
     SiteType.reddit => ref.watch(redditParserProvider),
+    SiteType.theqoo => ref.watch(theqooParserProvider),
     SiteType.settings => throw UnimplementedError(),
   };
 }

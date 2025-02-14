@@ -79,7 +79,9 @@ class ApiClient {
       'Cache-control': 'no-cache',
       'Pragma': 'no-cache',
       'User-Agent':
-          item.siteType == SiteType.meeco ? _userAgentMobile : _userAgentPc
+          (item.siteType == SiteType.meeco || item.siteType == SiteType.theqoo)
+              ? _userAgentMobile
+              : _userAgentPc
     };
 
     final InterceptorsWrapper interceptor =
@@ -234,7 +236,7 @@ class ApiClient {
     } else {
       final Map<String, String> headers = {
         'User-Agent':
-            parser.siteType == SiteType.meeco ? _userAgentMobile : _userAgentPc
+            (parser.siteType == SiteType.meeco || parser.siteType == SiteType.theqoo) ? _userAgentMobile : _userAgentPc
       };
 
       final InterceptorsWrapper interceptor =
@@ -319,6 +321,8 @@ extension SortTypeExtension on SortType {
           case SortType.recommend:
             return 'hot';
         }
+      case SiteType.theqoo:
+        return '';
     }
   }
 }

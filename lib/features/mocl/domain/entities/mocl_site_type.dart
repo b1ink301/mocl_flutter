@@ -4,6 +4,7 @@ enum SiteType {
   meeco,
   naverCafe,
   reddit,
+  theqoo,
   settings,
 }
 
@@ -14,6 +15,7 @@ extension SiteTypeExtension on SiteType {
         SiteType.settings => '설정',
         SiteType.meeco => '미코',
         SiteType.naverCafe => '네이버카페',
-        SiteType.reddit => '레딧'
+        SiteType.reddit => '레딧',
+        SiteType.theqoo => '더쿠',
       };
 }

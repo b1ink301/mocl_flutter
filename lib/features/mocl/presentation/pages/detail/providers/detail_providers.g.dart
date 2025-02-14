@@ -378,7 +378,7 @@ class _DetailAppbarHeightProviderElement
   String get text => (origin as DetailAppbarHeightProvider).text;
 }
 
-String _$detailsNotifierHash() => r'80284ade2965d00cdfb9a396c89c40595408527a';
+String _$detailsNotifierHash() => r'26526494740868f369979d642d6859a09e145e40';
 
 /// See also [DetailsNotifier].
 @ProviderFor(DetailsNotifier)
@@ -398,7 +398,7 @@ final detailsNotifierProvider =
 
 typedef _$DetailsNotifier = AutoDisposeAsyncNotifier<Details>;
 String _$detailTitleNotifierHash() =>
-    r'6e04686cb95e02da3179d89e6fa7b96e08eb7b58';
+    r'2c0eed6e6d6396efab1fdc1b172511429d686e9d';
 
 /// See also [DetailTitleNotifier].
 @ProviderFor(DetailTitleNotifier)

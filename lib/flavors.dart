@@ -8,14 +8,9 @@ class F {
 
   static String get name => appFlavor?.name ?? '';
 
-  static String get title {
-    switch (appFlavor) {
-      case Flavor.prd:
-        return 'Mocl';
-      case Flavor.dev:
-        return 'Mocl_DEV';
-      default:
-        return 'Mocl';
-    }
-  }
+  static String get title => switch (appFlavor) {
+        Flavor.prd => 'Mocl',
+        Flavor.dev => 'Mocl_DEV',
+        _ => 'Mocl'
+      };
 }

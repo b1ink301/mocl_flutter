@@ -190,7 +190,23 @@ final redditParserProvider = AutoDisposeProvider<BaseParser>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef RedditParserRef = AutoDisposeProviderRef<BaseParser>;
-String _$currentParserHash() => r'65bbe30c9f5401bf6018ccc981e0202dd2350abb';
+String _$theqooParserHash() => r'0e6a2801ee4cb3fdd26c97f98220b40c22754bb3';
+
+/// See also [theqooParser].
+@ProviderFor(theqooParser)
+final theqooParserProvider = AutoDisposeProvider<BaseParser>.internal(
+  theqooParser,
+  name: r'theqooParserProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$theqooParserHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef TheqooParserRef = AutoDisposeProviderRef<BaseParser>;
+String _$currentParserHash() => r'765a048980d3fc4ff601d9e96bdbc55ae37b74d9';
 
 /// See also [currentParser].
 @ProviderFor(currentParser)

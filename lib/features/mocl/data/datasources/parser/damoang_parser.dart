@@ -263,15 +263,18 @@ class DamoangParser implements BaseParser {
         'form[id=fboardlist] > section[id=bo_list] > ul.list-group > li.list-group-item > div.d-flex');
 
     for (final element in elementList) {
-      var category = element
-              .querySelector('div.wr-num > div > span')
-              ?.text
-              .trim()
-              .split(' ')
-              .firstOrNull ??
-          '';
 
-      if (category == "공지" || category == "홍보") continue;
+      final test = element.querySelector('div.wr-num > div.rcmd-box > span.orangered > img');
+      final category = test?.attributes['alt'] ?? '';
+      // print('aaa=$aaa');
+      // final category = element
+      //         .querySelector('div.wr-num')
+      //         ?.text
+      //         .trim() ??
+      //     '';
+
+      print('category=$category');
+      if (category == "공지" || category == "홍보" || category == "추천") continue;
 
       final infoElement = element.querySelector('div.flex-grow-1');
       final link = infoElement?.querySelector("div.d-flex > div > a");
@@ -289,7 +292,6 @@ class DamoangParser implements BaseParser {
       final metaElement = infoElement?.querySelector(
           'div.da-list-meta > div.d-flex > div.wr-name > span.sv_wrap > a.sv_member');
       final profile = metaElement?.attributes['href'] ?? '';
-      final nickName = metaElement?.text.trim() ?? '';
       final userId = Uri.parse(profile).queryParameters['mb_id'] ?? '';
 
       final reply = infoElement
@@ -330,6 +332,12 @@ class DamoangParser implements BaseParser {
               ?.querySelector("span.profile_img > img.mb-photo")
               ?.attributes["src"]
               ?.trim() ??
+          '';
+
+      final nickName = metaElement
+          ?.querySelector("span.sv_name")
+          ?.text
+          .trim() ??
           '';
 
       final hitElement =

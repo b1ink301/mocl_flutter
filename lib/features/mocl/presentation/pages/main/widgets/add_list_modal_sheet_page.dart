@@ -13,8 +13,8 @@ class AddListModalSheetPage extends SliverWoltModalSheetPage {
   AddListModalSheetPage({required this.context})
       : super(
           topBarTitle: Text('게시판 선택'),
-          backgroundColor: Theme.of(context).dialogBackgroundColor,
-          surfaceTintColor: Theme.of(context).dialogBackgroundColor,
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
           navBarHeight: 64,
           enableDrag: false,
           isTopBarLayerAlwaysVisible: true,

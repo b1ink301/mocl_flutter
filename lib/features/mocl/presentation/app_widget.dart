@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_gen/gen_l10n/app_localizations.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/config/mocl_theme.dart';
 import 'package:mocl_flutter/features/mocl/presentation/common/mocl_custom_scroll_behavior.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
+import 'package:mocl_flutter/src/generated/i18n/app_localizations.dart';
 
 class AppWidget extends ConsumerWidget {
   const AppWidget({super.key});
