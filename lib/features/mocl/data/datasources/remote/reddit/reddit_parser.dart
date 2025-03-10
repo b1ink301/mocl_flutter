@@ -6,17 +6,18 @@ import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/network/api_client.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/ext.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
 import 'package:timeago/timeago.dart' as timeago;
+
+import '../base/base_parser.dart';
 
 class RedditParser implements BaseParser {
   const RedditParser();
@@ -25,7 +26,7 @@ class RedditParser implements BaseParser {
   String get baseUrl => 'https://www.reddit.com';
 
   @override
-  Future<Result> comment(Response response) {
+  Future<Either<Failure, List<CommentItem>>> comments(Response response) {
     throw UnimplementedError('comment');
   }
 
@@ -232,7 +233,7 @@ class RedditParser implements BaseParser {
   }
 
   @override
-  Either<Failure, List<MainItem>> main(Response response) {
+  Future<Either<Failure, List<MainItem>>> main(Response response) {
     throw UnimplementedError('main');
   }
 
@@ -259,4 +260,10 @@ class RedditParser implements BaseParser {
   String urlBySearchList(
           String url, String board, int page, String keyword, LastId lastId) =>
       url;
+
+  @override
+  String urlByComments(String url, String board, int id, int page) {
+    // TODO: implement urlByComments
+    throw UnimplementedError();
+  }
 }

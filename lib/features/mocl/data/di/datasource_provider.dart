@@ -2,30 +2,31 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/detail_data_source.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/list_data_source.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/clien_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/damoang_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/meeco_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/naver_cafe_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/reddit_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/theqoo_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/db/local_database.dart';
 import 'package:mocl_flutter/features/mocl/data/di/network_provider.dart';
 import 'package:mocl_flutter/features/mocl/data/di/repository_provider.dart';
-import 'package:mocl_flutter/features/mocl/data/network/api_client.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/repositories/settings_repository.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sembast/sembast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import '../datasources/local/local_database.dart';
+import '../datasources/remote/base/base_api.dart';
+import '../datasources/remote/base/base_parser.dart';
+import '../datasources/remote/clien/clien_parser.dart';
+import '../datasources/remote/damoang/damoang_parser.dart';
+import '../datasources/remote/meeco/meeco_parser.dart';
+import '../datasources/remote/navercafe/naver_cafe_parser.dart';
+import '../datasources/remote/reddit/reddit_parser.dart';
+import '../datasources/remote/theqoo/theqoo_parser.dart';
+
 part 'datasource_provider.g.dart';
 
 @riverpod
-Database appDatabase(Ref ref) => throw UnimplementedError();
+Database appDatabase(Ref ref) => throw UnimplementedError('appDatabase');
 
 @riverpod
-SharedPreferences sharedPreferences(Ref ref) => throw UnimplementedError();
+SharedPreferences sharedPreferences(Ref ref) => throw UnimplementedError('sharedPreferences');
 
 @riverpod
 LocalDatabase localDatabase(Ref ref) {
@@ -36,51 +37,66 @@ LocalDatabase localDatabase(Ref ref) {
 @riverpod
 MainDataSource mainDatasource(Ref ref) {
   final LocalDatabase localDatabase = ref.watch(localDatabaseProvider);
-  final ApiClient apiClient = ref.watch(apiClientProvider);
-  final BaseParser parser = ref.watch(currentParserProvider);
+  final (parser, apiClient) = ref.watch(currentParserProvider);
   return MainDataSourceImpl(
       localDatabase: localDatabase, apiClient: apiClient, parser: parser);
 }
 
 @riverpod
 ListDataSource listDatasource(Ref ref) {
-  final ApiClient apiClient = ref.watch(apiClientProvider);
   final LocalDatabase localDatabase = ref.watch(localDatabaseProvider);
-  final BaseParser currentParser = ref.watch(currentParserProvider);
+  final (parser, apiClient) = ref.watch(currentParserProvider);
   return ListDataSourceImpl(
       localDatabase: localDatabase,
       apiClient: apiClient,
-      parser: currentParser);
+      parser: parser);
 }
 
 @riverpod
 DetailDataSource detailDatasource(Ref ref) {
-  final ApiClient apiClient = ref.watch(apiClientProvider);
-  final BaseParser currentParser = ref.watch(currentParserProvider);
-  return DetailDataSourceImpl(apiClient: apiClient, parser: currentParser);
+  final (currentParser, currentApi) = ref.watch(currentParserProvider);
+  return DetailDataSourceImpl(apiClient: currentApi, parser: currentParser);
 }
 
 @riverpod
-BaseParser clienParser(Ref ref) => const ClienParser();
+(BaseParser, BaseApi) clienParser(Ref ref) {
+  final baseApi = ref.watch(clienApiClientProvider);
+  return (const ClienParser(), baseApi);
+}
 
 @riverpod
-BaseParser damoangParser(Ref ref) => const DamoangParser();
+(BaseParser, BaseApi) damoangParser(Ref ref) {
+  final baseApi = ref.watch(damoangApiClientProvider);
+  return (const DamoangParser(), baseApi);
+}
 
 @riverpod
-BaseParser meecoParser(Ref ref) => const MeecoParser();
+(BaseParser, BaseApi) meecoParser(Ref ref) {
+  final baseApi = ref.watch(meecoApiClientProvider);
+  return (const MeecoParser(), baseApi);
+}
 
 @riverpod
-BaseParser naverCafeParser(Ref ref) => const NaverCafeParser();
+(BaseParser, BaseApi) naverCafeParser(Ref ref) {
+  final baseApi = ref.watch(naverCafeApiClientProvider);
+  return( const NaverCafeParser(), baseApi);
+}
 
 @riverpod
-BaseParser redditParser(Ref ref) => const RedditParser();
+(BaseParser, BaseApi) redditParser(Ref ref) {
+  final baseApi = ref.watch(redditApiClientProvider);
+  return (const RedditParser(), baseApi);
+}
 
 @riverpod
-BaseParser theqooParser(Ref ref) => const TheQoo();
+(BaseParser, BaseApi) theqooParser(Ref ref) {
+  final baseApi = ref.watch(theQooApiClientProvider);
+  return (const TheQoo(), baseApi);
+}
 
 // 현재 선택된 Parser를 제공하는 provider
 @riverpod
-BaseParser currentParser(Ref ref) {
+(BaseParser, BaseApi) currentParser(Ref ref) {
   final SettingsRepository settingsRepository =
       ref.watch(settingsRepositoryProvider);
   final SiteType siteType = settingsRepository.getSiteType();

@@ -5,30 +5,34 @@
 // ignore_for_file: no_leading_underscores_for_library_prefixes
 import 'dart:async' as _i4;
 
-import 'package:cookie_jar/cookie_jar.dart' as _i8;
+import 'package:cookie_jar/cookie_jar.dart' as _i9;
 import 'package:dio/dio.dart' as _i2;
-import 'package:fpdart/fpdart.dart' as _i9;
+import 'package:fpdart/fpdart.dart' as _i10;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i16;
-import 'package:mocl_flutter/core/error/failures.dart' as _i10;
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart'
-    as _i15;
-import 'package:mocl_flutter/features/mocl/data/db/entities/main_item_data.dart'
+import 'package:mockito/src/dummies.dart' as _i8;
+import 'package:mocl_flutter/core/error/failures.dart' as _i11;
+import 'package:mocl_flutter/features/mocl/data/datasources/local/entities/main_item_data.dart'
     as _i5;
-import 'package:mocl_flutter/features/mocl/data/db/local_database.dart' as _i3;
-import 'package:mocl_flutter/features/mocl/data/network/api_client.dart' as _i7;
-import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart'
+import 'package:mocl_flutter/features/mocl/data/datasources/local/local_database.dart'
+    as _i3;
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_api.dart'
+    as _i7;
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_parser.dart'
     as _i13;
+import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart'
+    as _i16;
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_comment_item.dart'
+    as _i18;
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart'
-    as _i17;
+    as _i14;
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart'
-    as _i11;
+    as _i15;
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart'
     as _i12;
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart'
     as _i6;
 import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart'
-    as _i14;
+    as _i17;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -129,16 +133,27 @@ class MockLocalDatabase extends _i1.Mock implements _i3.LocalDatabase {
           as _i4.Future<void>);
 }
 
-/// A class which mocks [ApiClient].
+/// A class which mocks [BaseApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockApiClient extends _i1.Mock implements _i7.ApiClient {
-  MockApiClient() {
+class MockBaseApi extends _i1.Mock implements _i7.BaseApi {
+  MockBaseApi() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  void init(_i8.CookieJar? cookieJar) => super.noSuchMethod(
+  String get userAgent =>
+      (super.noSuchMethod(
+            Invocation.getter(#userAgent),
+            returnValue: _i8.dummyValue<String>(
+              this,
+              Invocation.getter(#userAgent),
+            ),
+          )
+          as String);
+
+  @override
+  void init(_i9.CookieJar? cookieJar) => super.noSuchMethod(
     Invocation.method(#init, [cookieJar]),
     returnValueForMissingStub: null,
   );
@@ -194,16 +209,103 @@ class MockApiClient extends _i1.Mock implements _i7.ApiClient {
           as _i4.Future<_i2.Response<dynamic>>);
 
   @override
-  _i4.Future<_i9.Either<_i10.Failure, List<_i11.ListItem>>> getList(
+  _i4.Future<_i2.Response<dynamic>> postUri(
+    String? url, {
+    Map<String, String>? headers,
+    Object? data,
+    _i2.ResponseType? responseType,
+    String? contentType,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(
+              #postUri,
+              [url],
+              {
+                #headers: headers,
+                #data: data,
+                #responseType: responseType,
+                #contentType: contentType,
+              },
+            ),
+            returnValue: _i4.Future<_i2.Response<dynamic>>.value(
+              _FakeResponse_0<dynamic>(
+                this,
+                Invocation.method(
+                  #postUri,
+                  [url],
+                  {
+                    #headers: headers,
+                    #data: data,
+                    #responseType: responseType,
+                    #contentType: contentType,
+                  },
+                ),
+              ),
+            ),
+          )
+          as _i4.Future<_i2.Response<dynamic>>);
+
+  @override
+  _i4.Future<_i10.Either<_i11.Failure, T>> withSyncCookie<T>(
+    String? baseUrl,
+    _i4.Future<_i10.Either<_i11.Failure, T>> Function()? action,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#withSyncCookie, [baseUrl, action]),
+            returnValue: _i4.Future<_i10.Either<_i11.Failure, T>>.value(
+              _i8.dummyValue<_i10.Either<_i11.Failure, T>>(
+                this,
+                Invocation.method(#withSyncCookie, [baseUrl, action]),
+              ),
+            ),
+          )
+          as _i4.Future<_i10.Either<_i11.Failure, T>>);
+
+  @override
+  _i4.Future<_i10.Either<_i11.Failure, List<_i12.MainItem>>> main(
+    _i13.BaseParser? parser,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#main, [parser]),
+            returnValue: _i4.Future<
+              _i10.Either<_i11.Failure, List<_i12.MainItem>>
+            >.value(
+              _i8.dummyValue<_i10.Either<_i11.Failure, List<_i12.MainItem>>>(
+                this,
+                Invocation.method(#main, [parser]),
+              ),
+            ),
+          )
+          as _i4.Future<_i10.Either<_i11.Failure, List<_i12.MainItem>>>);
+
+  @override
+  _i4.Future<_i10.Either<_i11.Failure, _i14.Details>> detail(
+    _i15.ListItem? item,
+    _i13.BaseParser? parser,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#detail, [item, parser]),
+            returnValue:
+                _i4.Future<_i10.Either<_i11.Failure, _i14.Details>>.value(
+                  _i8.dummyValue<_i10.Either<_i11.Failure, _i14.Details>>(
+                    this,
+                    Invocation.method(#detail, [item, parser]),
+                  ),
+                ),
+          )
+          as _i4.Future<_i10.Either<_i11.Failure, _i14.Details>>);
+
+  @override
+  _i4.Future<_i10.Either<_i11.Failure, List<_i15.ListItem>>> list(
     _i12.MainItem? item,
     int? page,
-    _i13.LastId? lastId,
-    _i14.SortType? sortType,
-    _i15.BaseParser? parser,
+    _i16.LastId? lastId,
+    _i17.SortType? sortType,
+    _i13.BaseParser? parser,
     _i4.Future<List<int>> Function(_i6.SiteType, List<int>)? isReads,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#getList, [
+            Invocation.method(#list, [
               item,
               page,
               lastId,
@@ -212,11 +314,11 @@ class MockApiClient extends _i1.Mock implements _i7.ApiClient {
               isReads,
             ]),
             returnValue: _i4.Future<
-              _i9.Either<_i10.Failure, List<_i11.ListItem>>
+              _i10.Either<_i11.Failure, List<_i15.ListItem>>
             >.value(
-              _i16.dummyValue<_i9.Either<_i10.Failure, List<_i11.ListItem>>>(
+              _i8.dummyValue<_i10.Either<_i11.Failure, List<_i15.ListItem>>>(
                 this,
-                Invocation.method(#getList, [
+                Invocation.method(#list, [
                   item,
                   page,
                   lastId,
@@ -227,20 +329,20 @@ class MockApiClient extends _i1.Mock implements _i7.ApiClient {
               ),
             ),
           )
-          as _i4.Future<_i9.Either<_i10.Failure, List<_i11.ListItem>>>);
+          as _i4.Future<_i10.Either<_i11.Failure, List<_i15.ListItem>>>);
 
   @override
-  _i4.Future<_i9.Either<_i10.Failure, List<_i11.ListItem>>> getSearchList(
+  _i4.Future<_i10.Either<_i11.Failure, List<_i15.ListItem>>> searchList(
     _i12.MainItem? item,
     int? page,
-    _i13.LastId? lastId,
-    _i14.SortType? sortType,
+    _i16.LastId? lastId,
+    _i17.SortType? sortType,
     String? keyword,
-    _i15.BaseParser? parser,
+    _i13.BaseParser? parser,
     _i4.Future<List<int>> Function(_i6.SiteType, List<int>)? isReads,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#getSearchList, [
+            Invocation.method(#searchList, [
               item,
               page,
               lastId,
@@ -250,11 +352,11 @@ class MockApiClient extends _i1.Mock implements _i7.ApiClient {
               isReads,
             ]),
             returnValue: _i4.Future<
-              _i9.Either<_i10.Failure, List<_i11.ListItem>>
+              _i10.Either<_i11.Failure, List<_i15.ListItem>>
             >.value(
-              _i16.dummyValue<_i9.Either<_i10.Failure, List<_i11.ListItem>>>(
+              _i8.dummyValue<_i10.Either<_i11.Failure, List<_i15.ListItem>>>(
                 this,
-                Invocation.method(#getSearchList, [
+                Invocation.method(#searchList, [
                   item,
                   page,
                   lastId,
@@ -266,39 +368,24 @@ class MockApiClient extends _i1.Mock implements _i7.ApiClient {
               ),
             ),
           )
-          as _i4.Future<_i9.Either<_i10.Failure, List<_i11.ListItem>>>);
+          as _i4.Future<_i10.Either<_i11.Failure, List<_i15.ListItem>>>);
 
   @override
-  _i4.Future<_i9.Either<_i10.Failure, _i17.Details>> getDetail(
-    _i11.ListItem? item,
-    _i15.BaseParser? parser,
+  _i4.Future<_i10.Either<_i11.Failure, List<_i18.CommentItem>>> comments(
+    _i15.ListItem? item,
+    _i13.BaseParser? parser,
+    int? page,
   ) =>
       (super.noSuchMethod(
-            Invocation.method(#getDetail, [item, parser]),
-            returnValue:
-                _i4.Future<_i9.Either<_i10.Failure, _i17.Details>>.value(
-                  _i16.dummyValue<_i9.Either<_i10.Failure, _i17.Details>>(
-                    this,
-                    Invocation.method(#getDetail, [item, parser]),
-                  ),
-                ),
-          )
-          as _i4.Future<_i9.Either<_i10.Failure, _i17.Details>>);
-
-  @override
-  _i4.Future<_i9.Either<_i10.Failure, List<_i12.MainItem>>> getMain(
-    _i15.BaseParser? parser,
-  ) =>
-      (super.noSuchMethod(
-            Invocation.method(#getMain, [parser]),
+            Invocation.method(#comments, [item, parser, page]),
             returnValue: _i4.Future<
-              _i9.Either<_i10.Failure, List<_i12.MainItem>>
+              _i10.Either<_i11.Failure, List<_i18.CommentItem>>
             >.value(
-              _i16.dummyValue<_i9.Either<_i10.Failure, List<_i12.MainItem>>>(
+              _i8.dummyValue<_i10.Either<_i11.Failure, List<_i18.CommentItem>>>(
                 this,
-                Invocation.method(#getMain, [parser]),
+                Invocation.method(#comments, [item, parser, page]),
               ),
             ),
           )
-          as _i4.Future<_i9.Either<_i10.Failure, List<_i12.MainItem>>>);
+          as _i4.Future<_i10.Either<_i11.Failure, List<_i18.CommentItem>>>);
 }

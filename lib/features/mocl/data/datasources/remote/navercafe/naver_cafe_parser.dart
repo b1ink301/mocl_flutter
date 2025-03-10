@@ -5,16 +5,18 @@ import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:html/parser.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart' as mainitem;
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
 import 'package:timeago/timeago.dart' as timeago;
+
+import '../../../../domain/entities/mocl_comment_item.dart';
+import '../base/base_parser.dart';
 
 class NaverCafeParser implements BaseParser {
   const NaverCafeParser();
@@ -26,7 +28,7 @@ class NaverCafeParser implements BaseParser {
   String get baseUrl => 'https://m.cafe.naver.com';
 
   @override
-  Either<Failure, List<MainItem>> main(Response response) {
+  Future<Either<Failure, List<MainItem>>> main(Response response) async {
     final Map<String, dynamic> json = response.data['message'];
     final String status = json['status'];
     if (status != '200') {
@@ -41,7 +43,7 @@ class NaverCafeParser implements BaseParser {
     } else {
       final List<dynamic> cafes = json['result']['cafes'];
       var orderBy = 0;
-      final List<MainItem> data = cafes.map((cafe) {
+      final List<mainitem.MainItem> data = cafes.map((cafe) {
         Map<String, dynamic> json = {
           'siteType': siteType.name,
           'orderBy': orderBy++,
@@ -52,15 +54,15 @@ class NaverCafeParser implements BaseParser {
           'hasItem': false,
           'type': 0,
         };
-        return MainItem.fromJson(json);
+        return mainitem.MainItem.fromJson(json);
       }).toList();
 
-      return Right(data);
+      return Right(data.cast<MainItem>());
     }
   }
 
   @override
-  Future<Result> comment(Response response) =>
+  Future<Either<Failure, List<CommentItem>>> comments(Response response) =>
       throw UnimplementedError('comment');
 
   @override
@@ -391,10 +393,16 @@ class NaverCafeParser implements BaseParser {
     String keyword,
     LastId lastId,
   ) {
-    throw UnimplementedError();
+    throw UnimplementedError('urlBySearchList');
   }
 
   @override
   String urlByMain() =>
       'https://apis.naver.com/cafe-home-web/cafe-home/v1/cafes/join?perPage=100';
+
+  @override
+  String urlByComments(String url, String board, int id, int page) {
+    // TODO: implement urlByComments
+    throw UnimplementedError();
+  }
 }

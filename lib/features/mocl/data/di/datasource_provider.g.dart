@@ -6,7 +6,7 @@ part of 'datasource_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$appDatabaseHash() => r'83e3fb16cbbbe98680713582f033110fdad2ea97';
+String _$appDatabaseHash() => r'337a2efcc40cfdba8a9cddb8e65c137e060ccbac';
 
 /// See also [appDatabase].
 @ProviderFor(appDatabase)
@@ -22,7 +22,7 @@ final appDatabaseProvider = AutoDisposeProvider<Database>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef AppDatabaseRef = AutoDisposeProviderRef<Database>;
-String _$sharedPreferencesHash() => r'91d3d8d16af3d747cec711b8a095a63e20df9b7c';
+String _$sharedPreferencesHash() => r'7467c5c92fd904c96335ccc198d72f69e80a168b';
 
 /// See also [sharedPreferences].
 @ProviderFor(sharedPreferences)
@@ -57,7 +57,7 @@ final localDatabaseProvider = AutoDisposeProvider<LocalDatabase>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef LocalDatabaseRef = AutoDisposeProviderRef<LocalDatabase>;
-String _$mainDatasourceHash() => r'088eb2fb9497e4f77163c7d303b07daa29252fe8';
+String _$mainDatasourceHash() => r'9b27f07587919fae29b30659c37c0b130624fe33';
 
 /// See also [mainDatasource].
 @ProviderFor(mainDatasource)
@@ -74,7 +74,7 @@ final mainDatasourceProvider = AutoDisposeProvider<MainDataSource>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MainDatasourceRef = AutoDisposeProviderRef<MainDataSource>;
-String _$listDatasourceHash() => r'10c913580bf72b23658bf4956d27d541cf672059';
+String _$listDatasourceHash() => r'a27ab280c35535a8f2a62e640ed4de6671b77332';
 
 /// See also [listDatasource].
 @ProviderFor(listDatasource)
@@ -91,7 +91,7 @@ final listDatasourceProvider = AutoDisposeProvider<ListDataSource>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ListDatasourceRef = AutoDisposeProviderRef<ListDataSource>;
-String _$detailDatasourceHash() => r'88f103d728b8acb9e2d102fa8c06df2aea11b50d';
+String _$detailDatasourceHash() => r'6b99a4b9d8d63e1c902884a501243e3d041194e1';
 
 /// See also [detailDatasource].
 @ProviderFor(detailDatasource)
@@ -108,11 +108,11 @@ final detailDatasourceProvider = AutoDisposeProvider<DetailDataSource>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DetailDatasourceRef = AutoDisposeProviderRef<DetailDataSource>;
-String _$clienParserHash() => r'8b4fc722dfc7a56530b8eb78b8990df4a7d4bb9e';
+String _$clienParserHash() => r'254d2e1d20016775a33535e8208e07c1af54f54c';
 
 /// See also [clienParser].
 @ProviderFor(clienParser)
-final clienParserProvider = AutoDisposeProvider<BaseParser>.internal(
+final clienParserProvider = AutoDisposeProvider<(BaseParser, BaseApi)>.internal(
   clienParser,
   name: r'clienParserProvider',
   debugGetCreateSourceHash:
@@ -123,12 +123,13 @@ final clienParserProvider = AutoDisposeProvider<BaseParser>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef ClienParserRef = AutoDisposeProviderRef<BaseParser>;
-String _$damoangParserHash() => r'd02ce83bf20ffc6d66411e075132421a50bd92ef';
+typedef ClienParserRef = AutoDisposeProviderRef<(BaseParser, BaseApi)>;
+String _$damoangParserHash() => r'5dd9330d8b76fa8b299bc2bb8fab435430a580d0';
 
 /// See also [damoangParser].
 @ProviderFor(damoangParser)
-final damoangParserProvider = AutoDisposeProvider<BaseParser>.internal(
+final damoangParserProvider =
+    AutoDisposeProvider<(BaseParser, BaseApi)>.internal(
   damoangParser,
   name: r'damoangParserProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -140,12 +141,12 @@ final damoangParserProvider = AutoDisposeProvider<BaseParser>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef DamoangParserRef = AutoDisposeProviderRef<BaseParser>;
-String _$meecoParserHash() => r'f14d25353e2ac0e4021b7852465ffc1e89a97ea5';
+typedef DamoangParserRef = AutoDisposeProviderRef<(BaseParser, BaseApi)>;
+String _$meecoParserHash() => r'a7294bd82f5467ab9a893c9f0381e352ff2cbacd';
 
 /// See also [meecoParser].
 @ProviderFor(meecoParser)
-final meecoParserProvider = AutoDisposeProvider<BaseParser>.internal(
+final meecoParserProvider = AutoDisposeProvider<(BaseParser, BaseApi)>.internal(
   meecoParser,
   name: r'meecoParserProvider',
   debugGetCreateSourceHash:
@@ -156,12 +157,13 @@ final meecoParserProvider = AutoDisposeProvider<BaseParser>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef MeecoParserRef = AutoDisposeProviderRef<BaseParser>;
-String _$naverCafeParserHash() => r'da642bf0d6a762df798aa7b480504a2354468a6e';
+typedef MeecoParserRef = AutoDisposeProviderRef<(BaseParser, BaseApi)>;
+String _$naverCafeParserHash() => r'5bfa50b1fae5c9aba8d239e60989dc733d113ec9';
 
 /// See also [naverCafeParser].
 @ProviderFor(naverCafeParser)
-final naverCafeParserProvider = AutoDisposeProvider<BaseParser>.internal(
+final naverCafeParserProvider =
+    AutoDisposeProvider<(BaseParser, BaseApi)>.internal(
   naverCafeParser,
   name: r'naverCafeParserProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -173,12 +175,13 @@ final naverCafeParserProvider = AutoDisposeProvider<BaseParser>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef NaverCafeParserRef = AutoDisposeProviderRef<BaseParser>;
-String _$redditParserHash() => r'1ee70552c3c68561a07872bde800da9e6b18f7c8';
+typedef NaverCafeParserRef = AutoDisposeProviderRef<(BaseParser, BaseApi)>;
+String _$redditParserHash() => r'7592d9d287aa94d6fc3cae3aed8979fbf9aee524';
 
 /// See also [redditParser].
 @ProviderFor(redditParser)
-final redditParserProvider = AutoDisposeProvider<BaseParser>.internal(
+final redditParserProvider =
+    AutoDisposeProvider<(BaseParser, BaseApi)>.internal(
   redditParser,
   name: r'redditParserProvider',
   debugGetCreateSourceHash:
@@ -189,12 +192,13 @@ final redditParserProvider = AutoDisposeProvider<BaseParser>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef RedditParserRef = AutoDisposeProviderRef<BaseParser>;
-String _$theqooParserHash() => r'0e6a2801ee4cb3fdd26c97f98220b40c22754bb3';
+typedef RedditParserRef = AutoDisposeProviderRef<(BaseParser, BaseApi)>;
+String _$theqooParserHash() => r'109d4c85eb4cccac277bb06066d3518791893c98';
 
 /// See also [theqooParser].
 @ProviderFor(theqooParser)
-final theqooParserProvider = AutoDisposeProvider<BaseParser>.internal(
+final theqooParserProvider =
+    AutoDisposeProvider<(BaseParser, BaseApi)>.internal(
   theqooParser,
   name: r'theqooParserProvider',
   debugGetCreateSourceHash:
@@ -205,12 +209,13 @@ final theqooParserProvider = AutoDisposeProvider<BaseParser>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef TheqooParserRef = AutoDisposeProviderRef<BaseParser>;
-String _$currentParserHash() => r'765a048980d3fc4ff601d9e96bdbc55ae37b74d9';
+typedef TheqooParserRef = AutoDisposeProviderRef<(BaseParser, BaseApi)>;
+String _$currentParserHash() => r'5c61f20a79e46ee41ab76fb69162b4e8f743d4da';
 
 /// See also [currentParser].
 @ProviderFor(currentParser)
-final currentParserProvider = AutoDisposeProvider<BaseParser>.internal(
+final currentParserProvider =
+    AutoDisposeProvider<(BaseParser, BaseApi)>.internal(
   currentParser,
   name: r'currentParserProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -222,6 +227,6 @@ final currentParserProvider = AutoDisposeProvider<BaseParser>.internal(
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef CurrentParserRef = AutoDisposeProviderRef<BaseParser>;
+typedef CurrentParserRef = AutoDisposeProviderRef<(BaseParser, BaseApi)>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
