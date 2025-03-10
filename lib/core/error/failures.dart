@@ -13,6 +13,10 @@ class ServerFailure extends Failure {
   const ServerFailure({required super.message});
 }
 
+class NetworkFailure extends Failure {
+  const NetworkFailure({required super.message});
+}
+
 class GetMainFailure extends Failure {
   const GetMainFailure({required super.message});
 }
@@ -27,6 +31,10 @@ class GetListFailure extends Failure {
 
 class GetDetailFailure extends Failure {
   const GetDetailFailure({required super.message});
+}
+
+class GetCommentsFailure extends Failure {
+  const GetCommentsFailure({required super.message});
 }
 
 class SetMainFailure extends Failure {

@@ -5,10 +5,10 @@ import 'package:fpdart/fpdart.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/features/mocl/data/network/api_client.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/detail_data_source.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/damoang_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_api.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/damoang/damoang_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/di/datasource_provider.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
@@ -16,10 +16,10 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 
 import 'mocl_detail_data_source_test.mocks.dart';
 
-@GenerateMocks([ApiClient])
+@GenerateMocks([BaseApi])
 void main() async {
   late final DetailDataSource detailDataSource;
-  late final MockApiClient mockApiClient;
+  late final MockBaseApi mockApiClient;
   late final ProviderContainer container;
   late final BaseParser parser;
 
@@ -45,7 +45,7 @@ void main() async {
     TestWidgetsFlutterBinding.ensureInitialized();
 
     parser = DamoangParser();
-    mockApiClient = MockApiClient();
+    mockApiClient = MockBaseApi();
 
     container = ProviderContainer(
       overrides: [
@@ -62,7 +62,7 @@ void main() async {
         (_, __) => Right(Details.empty()));
 
     // arrange
-    when(mockApiClient.getDetail(any, any))
+    when(mockApiClient.detail(any, any))
         .thenAnswer((_) async => Right(Details.empty()));
 
     // act
@@ -85,7 +85,7 @@ void main() async {
         (_, __) => Right(Details.empty()));
 
     // arrange
-    when(mockApiClient.getDetail(any, any)).thenAnswer(
+    when(mockApiClient.detail(any, any)).thenAnswer(
         (_) async => Left(GetDetailFailure(message: 'GetDetailFailure')));
 
     // act

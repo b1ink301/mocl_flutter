@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
@@ -7,17 +6,17 @@ import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:html/parser.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/network/api_client.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
 import 'package:timeago/timeago.dart' as timeago;
+
+import '../base/base_parser.dart';
 
 class TheQoo extends BaseParser {
   const TheQoo();
@@ -29,8 +28,8 @@ class TheQoo extends BaseParser {
   String urlByMain() => 'https://theqoo.net/';
 
   @override
-  Future<Result> comment(Response response) {
-    throw UnimplementedError();
+  Future<Either<Failure, List<CommentItem>>> comments(Response response) {
+    throw UnimplementedError('comments');
   }
 
   @override
@@ -47,24 +46,19 @@ class TheQoo extends BaseParser {
   }
 
   static void _detailIsolate(List<dynamic> args) {
-    final responseData = args[0] as String;
+    final responseData = args[0] as List<dynamic>;
     final sendPort = args[1] as SendPort;
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
-    final document = parse(responseData);
-    final container = document.querySelector('html > body > div[id=container] > div.content > section');
-
-    debugPrint('responseData=${container?.innerHtml}');
-
-    final bodyContainer = container?.querySelector('article');
-    final commentContainer = container?.querySelector('div[id=comment]');
-    debugPrint('commentContainer=${commentContainer?.innerHtml}');
+    final document = parse(responseData.first);
+    final container = document.querySelector(
+        'html > body > div[id=container] > div.content > section > article');
 
     final title =
-        bodyContainer?.querySelector('div.title-wrap > h3')?.text.trim() ?? '';
+        container?.querySelector('div.title-wrap > h3')?.text.trim() ?? '';
     final infoElement =
-    bodyContainer?.querySelector('div.title-wrap > div.under-title');
+        container?.querySelector('div.title-wrap > div.under-title');
     final nickName = infoElement?.querySelector('span.name')?.text.trim() ?? '';
     final time = infoElement?.querySelector('span.date')?.text.trim() ?? '';
     var viewCount = infoElement?.querySelector('span.hit')?.text.trim() ?? '';
@@ -73,59 +67,52 @@ class TheQoo extends BaseParser {
         ?.querySelectorAll('input, button')
         .forEach((element) => element.remove());
 
-    print(
-        'title=$title, nickName=$nickName, nickName=$nickName, time=$time, viewCount=$viewCount, bodyHtml=$bodyHtml');
-
     var likeCount = '';
     final nickImage = '';
 
-    var index = 0;
-    final comments = commentContainer
-            ?.querySelectorAll('ul.list > li')
-            .map((element) {
-              print('comments = ${element.outerHtml}');
-              final nickName = '';
+    final json = responseData.lastOrNull as Map<String, dynamic>?;
+    final comments = <CommentItem>[];
 
-              final id = '-1';
-              final isReply = false;
-              final time = element.querySelector(
-                  'ul.list-element > li.date')?.text.trim() ?? '';
+    int nowCommentPage = 0;
+    if (json != null) {
+      nowCommentPage = json['now_comment_page'] ?? 0;
+      final addedNumber = json['added_number'];
+      // final documentSrl = json['document_srl'];
 
-              final nickImage = '';
-              final likeCount = '';
+      debugPrint('nowCommentPage=$nowCommentPage, addedNumber=$addedNumber');
 
-              final body =
-                  element.querySelector('ul.list-element > li.title')?.innerHtml ?? '';
+      final List<dynamic> list = json['comment_list'];
+      var index = 1;
+      for (final element in list) {
+        debugPrint('element=$element');
+        final String body = element['ct']?.toString() ?? '';
+        final String time = element['rd']?.toString() ?? '';
+        final int id = element['srl'] ?? -1;
 
-              var parsedTime = '';
-              try {
-                var dateTime = parseDateTime(time);
-                parsedTime = timeago.format(dateTime, locale: 'ko');
-              } catch (e) {
-                parsedTime = time;
-              }
-              final info = '$nickName ・ $parsedTime';
+        final int commentIndex = addedNumber + index++;
+        final nickName = '$commentIndex. 무명의 더쿠';
+        final info = nickName;
 
-              return CommentItem(
-                id: index++,
-                isReply: isReply,
-                bodyHtml: body,
-                likeCount: likeCount,
-                mediaHtml: '',
-                isVideo: false,
-                time: time,
-                info: info,
-                userInfo: UserInfo(
-                  id: id,
-                  nickName: nickName,
-                  nickImage: nickImage,
-                ),
-                authorId: '',
-              );
-            })
-            .whereType<CommentItem>()
-            .toList() ??
-        [];
+        final comment = CommentItem(
+          id: id,
+          isReply: false,
+          bodyHtml: body,
+          likeCount: likeCount,
+          mediaHtml: '',
+          isVideo: false,
+          time: time,
+          info: info,
+          userInfo: UserInfo(
+            id: id.toString(),
+            nickName: nickName,
+            nickImage: '',
+          ),
+          authorId: '',
+        );
+
+        comments.add(comment);
+      }
+    }
 
     var parsedTime = '';
     try {
@@ -136,23 +123,21 @@ class TheQoo extends BaseParser {
     }
     final info = BaseParser.parserInfo(nickName, parsedTime, viewCount);
 
-    // debugPrint('bodyHtml=${bodyHtml?.innerHtml}');
-
     final detail = Details(
-      title: title,
-      viewCount: viewCount,
-      likeCount: likeCount,
-      csrf: '',
-      time: time,
-      info: info,
-      userInfo: UserInfo(
-        id: nickName,
-        nickName: nickName,
-        nickImage: nickImage,
-      ),
-      comments: comments,
-      bodyHtml: bodyHtml?.innerHtml ?? '',
-    );
+        title: title,
+        viewCount: viewCount,
+        likeCount: likeCount,
+        csrf: '',
+        time: time,
+        info: info,
+        userInfo: UserInfo(
+          id: nickName,
+          nickName: nickName,
+          nickImage: nickImage,
+        ),
+        comments: comments,
+        bodyHtml: bodyHtml?.innerHtml ?? '',
+        extraData: {'nowCommentPage': nowCommentPage});
 
     final result = Right<Failure, Details>(detail);
     sendPort.send(result);
@@ -255,9 +240,6 @@ class TheQoo extends BaseParser {
               .trim() ??
           '';
 
-      print(
-          'id=$id, url=$url, lastPath=$lastPath, board=$board, hit=$hit, time=$time, reply=$reply, category=$category');
-
       final nickName = '';
       final hasImage = false;
       var parsedTime = '';
@@ -322,9 +304,7 @@ class TheQoo extends BaseParser {
   }
 
   @override
-  Either<Failure, List<MainItem>> main(
-    Response response,
-  ) {
+  Future<Either<Failure, List<MainItem>>> main(Response response) async {
     final responseData = response.data;
     final document = parse(responseData);
     final container = document.querySelector(
@@ -369,7 +349,7 @@ class TheQoo extends BaseParser {
     SortType sortType,
     LastId lastId,
   ) {
-    final String sort = sortType.toQuery(siteType);
+    // final String sort = sortType.toQuery(siteType);
     return '$url&page=$page';
   }
 

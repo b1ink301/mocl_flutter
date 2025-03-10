@@ -4,25 +4,25 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/local/entities/main_item_data.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/local/local_database.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/damoang_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/db/entities/main_item_data.dart';
-import 'package:mocl_flutter/features/mocl/data/db/local_database.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_api.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/damoang/damoang_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/di/datasource_provider.dart';
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
-import 'package:mocl_flutter/features/mocl/data/network/api_client.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
 import './mocl_local_data_source_test.mocks.dart';
 
-@GenerateMocks([LocalDatabase, ApiClient])
+@GenerateMocks([LocalDatabase, BaseApi])
 void main() {
   const SiteType siteType = SiteType.damoang;
   late MainDataSource mainDataSource;
   late MockLocalDatabase localDatabase;
   late final ProviderContainer container;
-  late final MockApiClient mockApiClient;
+  late final MockBaseApi mockApiClient;
 
   setUpAll(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
@@ -30,7 +30,7 @@ void main() {
     // final prefs = await SharedPreferences.getInstance();
 
     localDatabase = MockLocalDatabase();
-    mockApiClient = MockApiClient();
+    mockApiClient = MockBaseApi();
 
     container = ProviderContainer(
       overrides: [

@@ -38,21 +38,108 @@ final cookieJarProvider = AutoDisposeProvider<CookieJar>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef CookieJarRef = AutoDisposeProviderRef<CookieJar>;
-String _$apiClientHash() => r'7bcfcd24e898e7026dcb9ed28bc1fc11e08c0121';
+String _$theQooApiClientHash() => r'40d23b310e0c900ff4b974cf8862674ebbf2fa30';
 
-/// See also [apiClient].
-@ProviderFor(apiClient)
-final apiClientProvider = AutoDisposeProvider<ApiClient>.internal(
-  apiClient,
-  name: r'apiClientProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$apiClientHash,
+/// See also [theQooApiClient].
+@ProviderFor(theQooApiClient)
+final theQooApiClientProvider = AutoDisposeProvider<BaseApi>.internal(
+  theQooApiClient,
+  name: r'theQooApiClientProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$theQooApiClientHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef ApiClientRef = AutoDisposeProviderRef<ApiClient>;
+typedef TheQooApiClientRef = AutoDisposeProviderRef<BaseApi>;
+String _$clienApiClientHash() => r'69e9a26c04d4586719c1d033537496c6deca13dd';
+
+/// See also [clienApiClient].
+@ProviderFor(clienApiClient)
+final clienApiClientProvider = AutoDisposeProvider<BaseApi>.internal(
+  clienApiClient,
+  name: r'clienApiClientProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$clienApiClientHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ClienApiClientRef = AutoDisposeProviderRef<BaseApi>;
+String _$damoangApiClientHash() => r'9f9a1416fb9d3d2075c7f50f6e2b31cee94722f8';
+
+/// See also [damoangApiClient].
+@ProviderFor(damoangApiClient)
+final damoangApiClientProvider = AutoDisposeProvider<BaseApi>.internal(
+  damoangApiClient,
+  name: r'damoangApiClientProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$damoangApiClientHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef DamoangApiClientRef = AutoDisposeProviderRef<BaseApi>;
+String _$naverCafeApiClientHash() =>
+    r'e42004228c11a05a2f0e9649b0590afd09db7b43';
+
+/// See also [naverCafeApiClient].
+@ProviderFor(naverCafeApiClient)
+final naverCafeApiClientProvider = AutoDisposeProvider<BaseApi>.internal(
+  naverCafeApiClient,
+  name: r'naverCafeApiClientProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$naverCafeApiClientHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef NaverCafeApiClientRef = AutoDisposeProviderRef<BaseApi>;
+String _$redditApiClientHash() => r'5bde1814ef36148bc3234c729b9814a760080332';
+
+/// See also [redditApiClient].
+@ProviderFor(redditApiClient)
+final redditApiClientProvider = AutoDisposeProvider<BaseApi>.internal(
+  redditApiClient,
+  name: r'redditApiClientProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$redditApiClientHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef RedditApiClientRef = AutoDisposeProviderRef<BaseApi>;
+String _$meecoApiClientHash() => r'70b0f3b891f308fb00fbad934dbf4b3cee9997ad';
+
+/// See also [meecoApiClient].
+@ProviderFor(meecoApiClient)
+final meecoApiClientProvider = AutoDisposeProvider<BaseApi>.internal(
+  meecoApiClient,
+  name: r'meecoApiClientProvider',
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$meecoApiClientHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef MeecoApiClientRef = AutoDisposeProviderRef<BaseApi>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

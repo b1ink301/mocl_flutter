@@ -5,6 +5,7 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:mocl_flutter/core/util/utilities.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';

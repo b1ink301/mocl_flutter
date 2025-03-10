@@ -94,7 +94,7 @@ dependencies:
   timeago: ^3.7.0
 
   # like crashlytics..
-  sentry_flutter: ^8.13.2
+  sentry_flutter: ^8.14.0
 
   # sliver tools
   sliver_tools: ^0.2.12
@@ -130,9 +130,9 @@ dependencies:
 #  rearch: ^1.16.0
 
   # nosql
-  sembast: ^3.8.4
+  sembast: ^3.8.4+1
 
-  flutter_platform_widgets: ^7.0.1
+  flutter_platform_widgets: ^8.0.0
   cupertino_sidebar: ^1.0.1
 #  sidebarx: ^0.17.1
 

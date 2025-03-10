@@ -8,11 +8,11 @@ import 'package:fpdart/fpdart.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/features/mocl/data/network/api_client.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/list_data_source.dart';
-import 'package:mocl_flutter/features/mocl/data/db/local_database.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/damoang_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/local/local_database.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_api.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/damoang/damoang_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/di/datasource_provider.dart';
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart';
@@ -26,12 +26,12 @@ import 'package:sembast/sembast_io.dart';
 
 import 'mocl_list_data_source_test.mocks.dart';
 
-@GenerateMocks([ApiClient])
+@GenerateMocks([BaseApi])
 void main() {
   const SiteType siteType = SiteType.damoang;
   late final ListDataSource listDataSource;
   late final BaseParser parser;
-  late final MockApiClient mockApiClient;
+  late final MockBaseApi mockApiClient;
   late final LocalDatabase localDatabase;
   late final ProviderContainer container;
 
@@ -61,7 +61,7 @@ void main() {
     localDatabase = LocalDatabase(database: database);
 
     parser = DamoangParser();
-    mockApiClient = MockApiClient();
+    mockApiClient = MockBaseApi();
     container = ProviderContainer(
       overrides: [
         listDatasourceProvider.overrideWithValue(ListDataSourceImpl(
@@ -79,7 +79,7 @@ void main() {
     provideDummyBuilder<Either<Failure, List<ListItem>>>(
         (_, __) => Right(const <ListItem>[]));
 
-    when(mockApiClient.getList(any, any, any, any, any, any))
+    when(mockApiClient.list(any, any, any, any, any, any))
         .thenAnswer((_) async => Right(const <ListItem>[]));
 
     final item = mainItemModel.toEntity(siteType);
@@ -99,7 +99,7 @@ void main() {
     provideDummyBuilder<Either<Failure, List<ListItem>>>(
         (_, __) => Left(GetListFailure(message: '----')));
 
-    when(mockApiClient.getList(any, any, any, any, any, any))
+    when(mockApiClient.list(any, any, any, any, any, any))
         .thenAnswer((_) async => Left(GetListFailure(message: '----')));
 
     //act
