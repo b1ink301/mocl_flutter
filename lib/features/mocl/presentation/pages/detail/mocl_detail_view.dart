@@ -293,10 +293,10 @@ class _CommentList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) =>
-      SuperSliverList.separated(
-        extentPrecalculationPolicy:
-            ref.watch(extentPrecalculationPolicyProvider),
-        layoutKeptAliveChildren: true,
+      SliverList.separated(
+        // extentPrecalculationPolicy:
+        //     ref.watch(extentPrecalculationPolicyProvider),
+        // layoutKeptAliveChildren: true,
         separatorBuilder: (_, __) =>
             const DividerWidget(indent: 0, endIndent: 0),
         itemCount: comments.length,

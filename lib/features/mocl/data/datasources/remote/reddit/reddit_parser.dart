@@ -4,9 +4,10 @@ import 'dart:isolate';
 
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:html/dom.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/ext.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_ext.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
@@ -18,6 +19,8 @@ import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import '../base/base_parser.dart';
+
+part 'reddit_ext.dart';
 
 class RedditParser implements BaseParser {
   const RedditParser();

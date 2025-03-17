@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cupertino_sidebar/cupertino_sidebar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -44,13 +46,13 @@ class MainPage extends ConsumerWidget {
           }
         },
         child: PlatformScaffold(
-          key: scaffoldState,
           body: PlatformWidget(
             material: (_, __) => const MainView(),
             cupertino: (_, __) => const _MainCupertinoView(),
           ),
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           material: (_, __) => MaterialScaffoldData(
+            widgetKey: scaffoldState,
             drawer: const DrawerWidget(),
             drawerEdgeDragWidth: ref.watch(screenWidthProvider),
             drawerEnableOpenDragGesture: true,
@@ -72,58 +74,107 @@ class _MainCupertinoView extends ConsumerWidget {
         .read(currentSiteTypeNotifierProvider.notifier)
         .changeSiteType(siteType);
 
-    return Stack(
-      children: [
-        const CupertinoTabTransitionBuilder(
-          child: MainView(),
-        ),
-        if (isSidebarExpanded)
-          GestureDetector(
-            onTap: sidebarClose,
-            behavior: HitTestBehavior.opaque, // 뒤쪽 터치 이벤트 캔슬
-            child: Container(
-              color: Colors.black45, // 투명한 레이어
-            ),
+    if (Platform.isIOS) {
+      return Stack(
+        children: [
+          const CupertinoTabTransitionBuilder(
+            child: MainView(),
           ),
-        CupertinoSidebarCollapsible(
-          isExpanded: isSidebarExpanded,
-          child: CupertinoSidebar(
-            maxWidth: 240,
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-            selectedIndex: SiteType.values
-                .indexOf(ref.watch(currentSiteTypeNotifierProvider)),
-            onDestinationSelected: (index) {
-              final siteType = SiteType.values
-                  .where((s) => s != SiteType.settings)
-                  .toList()[index];
-              changeSiteType(siteType);
-              sidebarClose();
-            },
-            navigationBar: SidebarNavigationBar(
-              title: PlatformText(AppLocalizations.of(context)!.menu),
-            ),
-            children: [
-              SidebarSection(
-                label: PlatformText(AppLocalizations.of(context)!.site),
-                children: SiteType.values
-                    .where((s) => s != SiteType.settings)
-                    .map(
-                      (s) => SidebarDestination(label: PlatformText(s.title)),
-                    )
-                    .toList(),
+          if (isSidebarExpanded)
+            GestureDetector(
+              onTap: sidebarClose,
+              behavior: HitTestBehavior.opaque, // 뒤쪽 터치 이벤트 캔슬
+              child: Container(
+                color: Colors.black38, // 투명한 레이어
               ),
-              SidebarSection(label: PlatformText('설정'), children: [
-                SidebarDestination(
-                    label: PlatformText(SiteType.settings.title),
-                    onTap: () {
-                      context.push(Routes.settings);
-                      sidebarClose();
-                    }),
-              ]),
-            ],
+            ),
+          CupertinoSidebarCollapsible(
+            isExpanded: isSidebarExpanded,
+            child: CupertinoSidebar(
+              maxWidth: 240,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              selectedIndex: SiteType.values
+                  .indexOf(ref.watch(currentSiteTypeNotifierProvider)),
+              onDestinationSelected: (index) {
+                final siteType = SiteType.values
+                    .where((s) => s != SiteType.settings)
+                    .toList()[index];
+                changeSiteType(siteType);
+                sidebarClose();
+              },
+              navigationBar: SidebarNavigationBar(
+                title: PlatformText(AppLocalizations.of(context)!.menu),
+              ),
+              children: [
+                SidebarSection(
+                  label: PlatformText(AppLocalizations.of(context)!.site),
+                  children: SiteType.values
+                      .where((s) => s != SiteType.settings)
+                      .map(
+                        (s) => SidebarDestination(label: PlatformText(s.title)),
+                      )
+                      .toList(),
+                ),
+                SidebarSection(label: PlatformText('설정'), children: [
+                  SidebarDestination(
+                      label: PlatformText(SiteType.settings.title),
+                      onTap: () {
+                        context.push(Routes.settings);
+                        sidebarClose();
+                      }),
+                ]),
+              ],
+            ),
           ),
-        ),
-      ],
-    );
+        ],
+      );
+    } else {
+      return Row(
+        children: [
+          CupertinoSidebarCollapsible(
+            isExpanded: isSidebarExpanded,
+            child: CupertinoSidebar(
+              maxWidth: 250,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              selectedIndex: SiteType.values
+                  .indexOf(ref.watch(currentSiteTypeNotifierProvider)),
+              onDestinationSelected: (index) {
+                final siteType = SiteType.values
+                    .where((s) => s != SiteType.settings)
+                    .toList()[index];
+                changeSiteType(siteType);
+                // sidebarClose();
+              },
+              navigationBar: SidebarNavigationBar(
+                title: PlatformText(AppLocalizations.of(context)!.menu),
+              ),
+              children: [
+                SidebarSection(
+                  label: PlatformText(AppLocalizations.of(context)!.site),
+                  children: SiteType.values
+                      .where((s) => s != SiteType.settings)
+                      .map(
+                        (s) => SidebarDestination(label: PlatformText(s.title)),
+                      )
+                      .toList(),
+                ),
+                SidebarSection(label: PlatformText('설정'), children: [
+                  SidebarDestination(
+                      label: PlatformText(SiteType.settings.title),
+                      onTap: () {
+                        context.push(Routes.settings);
+                        // sidebarClose();
+                      }),
+                ]),
+              ],
+            ),
+          ),
+          Expanded(
+              child: const CupertinoTabTransitionBuilder(
+            child: MainView(),
+          )),
+        ],
+      );
+    }
   }
 }

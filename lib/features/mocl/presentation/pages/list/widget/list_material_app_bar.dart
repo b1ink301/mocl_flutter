@@ -25,7 +25,7 @@ class ListMaterialAppBar extends ConsumerWidget {
             showSearch(
                 context: context,
                 delegate:
-                ListSearchDelegate(item: ref.watch(mainItemProvider)));
+                    ListSearchDelegate(item: ref.watch(mainItemProvider)));
           },
         ),
         PopupMenuButton<SortType>(

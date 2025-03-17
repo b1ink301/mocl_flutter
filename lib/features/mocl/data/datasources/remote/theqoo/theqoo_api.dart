@@ -123,7 +123,8 @@ class TheQooApi extends BaseApi {
       });
 
   @override
-  Future<Either<Failure, List<CommentItem>>> comments(ListItem item, BaseParser parser, int page) {
+  Future<Either<Failure, List<CommentItem>>> comments(
+      ListItem item, BaseParser parser, int page) {
     // TODO: implement comments
     throw UnimplementedError();
   }

@@ -5,7 +5,7 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 part 'list_state.freezed.dart';
 
 @freezed
-class ListState with _$ListState {
+abstract class ListState with _$ListState {
   const factory ListState({
     required List<ListItem> items,
     required bool isLoading,

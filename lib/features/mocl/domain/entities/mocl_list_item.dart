@@ -8,7 +8,7 @@ import 'mocl_user_info.dart';
 part 'mocl_list_item.freezed.dart';
 
 @freezed
-class ListItem with _$ListItem {
+abstract class ListItem with _$ListItem {
   const factory ListItem({
     required int id,
     required String title,

@@ -31,6 +31,7 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
     const appBarPadding = 16.0; // 예시 padding 값
     return titleHeight + appBarPadding * 2;
   }
+
   @override
   Widget build(BuildContext context) {
     return Container(

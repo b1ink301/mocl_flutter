@@ -6,38 +6,22 @@ part of 'login_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$headersHash() => r'38605bce377db09021c6d5e7a6786f75ada4dcff';
+String _$urlRequestHash() => r'309fca7c9d71708450c0a653780faab23ac1216c';
 
-/// See also [headers].
-@ProviderFor(headers)
-final headersProvider = AutoDisposeProvider<Map<String, String>>.internal(
-  headers,
-  name: r'headersProvider',
+/// See also [urlRequest].
+@ProviderFor(urlRequest)
+final urlRequestProvider = AutoDisposeProvider<URLRequest>.internal(
+  urlRequest,
+  name: r'urlRequestProvider',
   debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$headersHash,
+      const bool.fromEnvironment('dart.vm.product') ? null : _$urlRequestHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef HeadersRef = AutoDisposeProviderRef<Map<String, String>>;
-String _$reqUrlHash() => r'2a6d28df7128a8eecef7e3037ba74bb15dd16c42';
-
-/// See also [reqUrl].
-@ProviderFor(reqUrl)
-final reqUrlProvider = AutoDisposeProvider<WebUri>.internal(
-  reqUrl,
-  name: r'reqUrlProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$reqUrlHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef ReqUrlRef = AutoDisposeProviderRef<WebUri>;
+typedef UrlRequestRef = AutoDisposeProviderRef<URLRequest>;
 String _$hasLoginHash() => r'acfa9f69d10e1f1360ddade55034aa4128d85af9';
 
 /// Copied from Dart SDK

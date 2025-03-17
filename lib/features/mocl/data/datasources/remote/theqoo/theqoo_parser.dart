@@ -4,8 +4,10 @@ import 'dart:isolate';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_ext.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
@@ -17,6 +19,8 @@ import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import '../base/base_parser.dart';
+
+part 'theqoo_ext.dart';
 
 class TheQoo extends BaseParser {
   const TheQoo();
@@ -200,7 +204,7 @@ class TheQoo extends BaseParser {
     for (final element in elementList) {
       final tmpUrl = element.querySelector('a.list-link')?.attributes['href'];
       if (tmpUrl == null) continue;
-      final url = BaseParser.covertUrl(baseUrl, tmpUrl);
+      final url = tmpUrl.toUrl(baseUrl);
 
       final tmp = tmpUrl.split('?');
       final pathList = tmp.firstOrNull?.split('/') ?? [];

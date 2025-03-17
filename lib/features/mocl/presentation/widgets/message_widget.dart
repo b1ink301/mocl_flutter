@@ -15,11 +15,12 @@ class MessageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => PlatformText(
-    message,
-    style: textStyle ?? TextStyle(
-      fontSize: fontSize ?? 16,
-    ),
-    textAlign: TextAlign.start,
-    maxLines: 3,
-  );
+        message,
+        style: textStyle ??
+            TextStyle(
+              fontSize: fontSize ?? 16,
+            ),
+        textAlign: TextAlign.start,
+        maxLines: 3,
+      );
 }

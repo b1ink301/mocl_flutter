@@ -1,6 +1,6 @@
 part of 'clien_parser.dart';
 
-extension ClienExt on String {
+extension StringExt on String {
   DateTime _toDateTime() {
     final times = split(' ');
 
@@ -56,7 +56,7 @@ extension ClienExt on String {
   }
 }
 
-extension ClienDetailExt on Element {
+extension ElementDetailExt on Element {
   Details _toDetails(List<CommentItem> comments) {
     final csrf = querySelector(
                 "body > nav.navigation > div.dropdown-menu > form > input[name=_csrf]")
@@ -200,7 +200,7 @@ extension ClienDetailExt on Element {
   }
 }
 
-extension ClienListExt on Element {
+extension ElementListExt on Element {
   ListItem? _toListItem(
     int lastId,
     String baseUrl,
@@ -211,7 +211,7 @@ extension ClienListExt on Element {
 
     final userId = attributes['data-author-id']?.trim() ?? '';
     final tmpUrl = attributes['href']?.trim() ?? '';
-    final url = BaseParser.covertUrl(baseUrl, tmpUrl);
+    final url = tmpUrl.toUrl(baseUrl);
 
     final reply = attributes['data-comment-count']?.trim() ?? '';
 
@@ -294,8 +294,25 @@ extension ClienListExt on Element {
   }
 }
 
-extension ClienMainExt on Element {
-  MainItem? _toMainItem() {
-    return null;
+extension ElementMainExt on Element {
+  MainItem? _toMainItem(String baseUrl, int orderBy) {
+    final urlElement = querySelector('a');
+    if (urlElement == null) {
+      return null;
+    }
+    final String href = urlElement.attributes['href'] ?? '';
+    final String title = urlElement.attributes['title'] ?? '';
+    final int type = urlElement.classes.contains('somoim') ? 1 : 0;
+    final String url = baseUrl + href;
+    final Uri uri = Uri.parse(url);
+    final String board = uri.pathSegments.last;
+
+    return MainItem(
+        siteType: SiteType.clien,
+        board: board,
+        text: title,
+        url: url,
+        orderBy: orderBy,
+        type: type);
   }
 }

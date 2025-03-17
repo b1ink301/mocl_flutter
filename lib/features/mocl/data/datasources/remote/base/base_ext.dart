@@ -35,3 +35,8 @@ extension SortTypeExtension on SortType {
     }
   }
 }
+
+extension StringExtension on String {
+  String toUrl(String baseUrl) =>
+      isNotEmpty && !startsWith("http") ? '$baseUrl$this' : this;
+}

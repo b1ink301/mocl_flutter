@@ -7,7 +7,6 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
-
 void main() {
   testWidgets('Counter increments smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
@@ -26,17 +25,18 @@ void main() {
     // expect(find.text('1'), findsOneWidget);
   });
 
-  setUp(() {
-
-  });
+  setUp(() {});
 
   group("description", () {
-    test("description", () async {
-      // arrange
+    test(
+      "description",
+      () async {
+        // arrange
 
-      // act
+        // act
 
-      // assert
-    },);
+        // assert
+      },
+    );
   });
 }

@@ -26,7 +26,8 @@ class RoundTextWidget extends StatelessWidget {
     BuildContext context,
   ) {
     final effectiveTextStyle = textStyle ?? DefaultTextStyle.of(context).style;
-    final effectiveBorderColor = borderColor ?? effectiveTextStyle.color ?? const Color(0xFF000000);
+    final effectiveBorderColor =
+        borderColor ?? effectiveTextStyle.color ?? const Color(0xFF000000);
 
     return Container(
       padding: padding,

@@ -10,7 +10,8 @@ class ListCupertinoAppBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) =>
       CupertinoSliverNavigationBar(
-          transitionBetweenRoutes: false,
+        heroTag: 'list-appbar',
+        transitionBetweenRoutes: false,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         previousPageTitle: ref.watch(listSmallTitleProvider),
         largeTitle: Text(ref.watch(listTitleProvider)),

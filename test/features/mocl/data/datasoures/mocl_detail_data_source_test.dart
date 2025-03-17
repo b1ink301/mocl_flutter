@@ -44,13 +44,13 @@ void main() async {
   setUpAll(() async {
     TestWidgetsFlutterBinding.ensureInitialized();
 
-    parser = DamoangParser();
+    parser = DamoangParser(true);
     mockApiClient = MockBaseApi();
 
     container = ProviderContainer(
       overrides: [
-        detailDatasourceProvider
-            .overrideWithValue(DetailDataSourceImpl(apiClient: mockApiClient, parser: parser))
+        detailDatasourceProvider.overrideWithValue(
+            DetailDataSourceImpl(apiClient: mockApiClient, parser: parser))
       ],
     );
 

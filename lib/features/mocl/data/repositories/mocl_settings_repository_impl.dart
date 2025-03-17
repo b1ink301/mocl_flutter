@@ -19,5 +19,13 @@ class SettingsRepositoryImpl implements SettingsRepository {
   void setSiteType(SiteType siteType) =>
       _prefs.setString(_extraSiteType, siteType.name);
 
+  @override
+  bool isShowNickImage() => _prefs.getBool(_extraShowNickImage) ?? false;
+
+  @override
+  void setShowNickImage(bool showNickImage) =>
+      _prefs.setBool(_extraShowNickImage, showNickImage);
+
   static final String _extraSiteType = 'site_type';
+  static final String _extraShowNickImage = 'show_nick_image';
 }

@@ -7,7 +7,7 @@ import 'package:mocl_flutter/features/mocl/presentation/models/mocl_list_item_in
 part 'list_item_wrapper.freezed.dart';
 
 @freezed
-class ListItemWrapper with _$ListItemWrapper {
+abstract class ListItemWrapper with _$ListItemWrapper {
   factory ListItemWrapper({
     required ListItem item,
     required double height,
@@ -17,8 +17,7 @@ class ListItemWrapper with _$ListItemWrapper {
 extension ListItemWrapperExtension on ListItemWrapper {
   ValueKey get key => item.key;
 
-  MoclListItemInfo toListItemInfo(
-      BuildContext context, int index) {
+  MoclListItemInfo toListItemInfo(BuildContext context, int index) {
     final MoclTextStyles textStyles = MoclTextStyles.of(context);
 
     return MoclListItemInfo(

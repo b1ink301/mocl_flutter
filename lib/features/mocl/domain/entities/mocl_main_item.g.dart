@@ -6,8 +6,7 @@ part of 'mocl_main_item.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$MainItemImpl _$$MainItemImplFromJson(Map<String, dynamic> json) =>
-    _$MainItemImpl(
+_MainItem _$MainItemFromJson(Map<String, dynamic> json) => _MainItem(
       siteType: $enumDecode(_$SiteTypeEnumMap, json['siteType']),
       board: json['board'] as String,
       text: json['text'] as String,
@@ -18,8 +17,7 @@ _$MainItemImpl _$$MainItemImplFromJson(Map<String, dynamic> json) =>
       icon: json['icon'] as String? ?? '',
     );
 
-Map<String, dynamic> _$$MainItemImplToJson(_$MainItemImpl instance) =>
-    <String, dynamic>{
+Map<String, dynamic> _$MainItemToJson(_MainItem instance) => <String, dynamic>{
       'siteType': _$SiteTypeEnumMap[instance.siteType]!,
       'board': instance.board,
       'text': instance.text,

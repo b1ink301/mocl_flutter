@@ -26,7 +26,8 @@ part 'datasource_provider.g.dart';
 Database appDatabase(Ref ref) => throw UnimplementedError('appDatabase');
 
 @riverpod
-SharedPreferences sharedPreferences(Ref ref) => throw UnimplementedError('sharedPreferences');
+SharedPreferences sharedPreferences(Ref ref) =>
+    throw UnimplementedError('sharedPreferences');
 
 @riverpod
 LocalDatabase localDatabase(Ref ref) {
@@ -47,9 +48,7 @@ ListDataSource listDatasource(Ref ref) {
   final LocalDatabase localDatabase = ref.watch(localDatabaseProvider);
   final (parser, apiClient) = ref.watch(currentParserProvider);
   return ListDataSourceImpl(
-      localDatabase: localDatabase,
-      apiClient: apiClient,
-      parser: parser);
+      localDatabase: localDatabase, apiClient: apiClient, parser: parser);
 }
 
 @riverpod
@@ -67,7 +66,9 @@ DetailDataSource detailDatasource(Ref ref) {
 @riverpod
 (BaseParser, BaseApi) damoangParser(Ref ref) {
   final baseApi = ref.watch(damoangApiClientProvider);
-  return (const DamoangParser(), baseApi);
+  final settingsRepository = ref.watch(settingsRepositoryProvider);
+  final isShowNickImage = settingsRepository.isShowNickImage();
+  return (DamoangParser(isShowNickImage), baseApi);
 }
 
 @riverpod
@@ -79,7 +80,7 @@ DetailDataSource detailDatasource(Ref ref) {
 @riverpod
 (BaseParser, BaseApi) naverCafeParser(Ref ref) {
   final baseApi = ref.watch(naverCafeApiClientProvider);
-  return( const NaverCafeParser(), baseApi);
+  return (const NaverCafeParser(), baseApi);
 }
 
 @riverpod

@@ -1,6 +1,7 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart' as webview;
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
@@ -74,7 +75,8 @@ class ClienApi extends BaseApi {
           'User-Agent': userAgent
         };
         final Response response = await get(url, headers: headers);
-        log('[getList] $url, $headers response = ${response.statusCode}');
+        debugPrint(
+            '[getList] $url, $headers response = ${response.statusCode}');
 
         return response.statusCode == 200
             ? parser.list(response, lastId, item.text, isReads)
