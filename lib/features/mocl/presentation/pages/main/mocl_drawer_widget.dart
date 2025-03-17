@@ -20,19 +20,26 @@ class DrawerWidget extends ConsumerWidget {
           child: Column(
             children: [
               const _DrawerHeader(),
-              ...SiteType.values.map(
-                (SiteType siteType) => _DrawerSiteItem(
-                  siteType: siteType,
-                  onTap: () => _changeSiteType(
-                    context,
-                    siteType,
-                    () => ref
-                        .read(currentSiteTypeNotifierProvider.notifier)
-                        .changeSiteType(siteType),
-                  ),
+              Expanded(
+                child: ListView(
+                  shrinkWrap: true,
+                  padding: EdgeInsets.zero,
+                  children: SiteType.values
+                      .map(
+                        (SiteType siteType) => _DrawerSiteItem(
+                          siteType: siteType,
+                          onTap: () => _changeSiteType(
+                            context,
+                            siteType,
+                            () => ref
+                                .read(currentSiteTypeNotifierProvider.notifier)
+                                .changeSiteType(siteType),
+                          ),
+                        ),
+                      )
+                      .toList(),
                 ),
               ),
-              const Spacer(),
               const AppVersionWidget(),
               SizedBox(height: MediaQuery.of(context).padding.bottom)
             ],
