@@ -1,3 +1,4 @@
+// dart format width=80
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
@@ -9,135 +10,27 @@ part of 'last_id.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$LastId {
-  dynamic get extra => throw _privateConstructorUsedError;
-  int get intId => throw _privateConstructorUsedError;
-  String get stringId => throw _privateConstructorUsedError;
+  dynamic get extra;
+  int get intId;
+  String get stringId;
 
   /// Create a copy of LastId
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $LastIdCopyWith<LastId> get copyWith => throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $LastIdCopyWith<$Res> {
-  factory $LastIdCopyWith(LastId value, $Res Function(LastId) then) =
-      _$LastIdCopyWithImpl<$Res, LastId>;
-  @useResult
-  $Res call({dynamic extra, int intId, String stringId});
-}
-
-/// @nodoc
-class _$LastIdCopyWithImpl<$Res, $Val extends LastId>
-    implements $LastIdCopyWith<$Res> {
-  _$LastIdCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of LastId
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? extra = freezed,
-    Object? intId = null,
-    Object? stringId = null,
-  }) {
-    return _then(_value.copyWith(
-      extra: freezed == extra
-          ? _value.extra
-          : extra // ignore: cast_nullable_to_non_nullable
-              as dynamic,
-      intId: null == intId
-          ? _value.intId
-          : intId // ignore: cast_nullable_to_non_nullable
-              as int,
-      stringId: null == stringId
-          ? _value.stringId
-          : stringId // ignore: cast_nullable_to_non_nullable
-              as String,
-    ) as $Val);
-  }
-}
-
-/// @nodoc
-abstract class _$$LastIdImplCopyWith<$Res> implements $LastIdCopyWith<$Res> {
-  factory _$$LastIdImplCopyWith(
-          _$LastIdImpl value, $Res Function(_$LastIdImpl) then) =
-      __$$LastIdImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({dynamic extra, int intId, String stringId});
-}
-
-/// @nodoc
-class __$$LastIdImplCopyWithImpl<$Res>
-    extends _$LastIdCopyWithImpl<$Res, _$LastIdImpl>
-    implements _$$LastIdImplCopyWith<$Res> {
-  __$$LastIdImplCopyWithImpl(
-      _$LastIdImpl _value, $Res Function(_$LastIdImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of LastId
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? extra = freezed,
-    Object? intId = null,
-    Object? stringId = null,
-  }) {
-    return _then(_$LastIdImpl(
-      extra: freezed == extra
-          ? _value.extra
-          : extra // ignore: cast_nullable_to_non_nullable
-              as dynamic,
-      intId: null == intId
-          ? _value.intId
-          : intId // ignore: cast_nullable_to_non_nullable
-              as int,
-      stringId: null == stringId
-          ? _value.stringId
-          : stringId // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _$LastIdImpl implements _LastId {
-  const _$LastIdImpl({this.extra, this.intId = -1, this.stringId = ''});
-
-  @override
-  final dynamic extra;
-  @override
-  @JsonKey()
-  final int intId;
-  @override
-  @JsonKey()
-  final String stringId;
-
-  @override
-  String toString() {
-    return 'LastId(extra: $extra, intId: $intId, stringId: $stringId)';
-  }
+  $LastIdCopyWith<LastId> get copyWith =>
+      _$LastIdCopyWithImpl<LastId>(this as LastId, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$LastIdImpl &&
+            other is LastId &&
             const DeepCollectionEquality().equals(other.extra, extra) &&
             (identical(other.intId, intId) || other.intId == intId) &&
             (identical(other.stringId, stringId) ||
@@ -148,32 +41,136 @@ class _$LastIdImpl implements _LastId {
   int get hashCode => Object.hash(
       runtimeType, const DeepCollectionEquality().hash(extra), intId, stringId);
 
+  @override
+  String toString() {
+    return 'LastId(extra: $extra, intId: $intId, stringId: $stringId)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $LastIdCopyWith<$Res> {
+  factory $LastIdCopyWith(LastId value, $Res Function(LastId) _then) =
+      _$LastIdCopyWithImpl;
+  @useResult
+  $Res call({dynamic extra, int intId, String stringId});
+}
+
+/// @nodoc
+class _$LastIdCopyWithImpl<$Res> implements $LastIdCopyWith<$Res> {
+  _$LastIdCopyWithImpl(this._self, this._then);
+
+  final LastId _self;
+  final $Res Function(LastId) _then;
+
   /// Create a copy of LastId
   /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? extra = freezed,
+    Object? intId = null,
+    Object? stringId = null,
+  }) {
+    return _then(_self.copyWith(
+      extra: freezed == extra
+          ? _self.extra
+          : extra // ignore: cast_nullable_to_non_nullable
+              as dynamic,
+      intId: null == intId
+          ? _self.intId
+          : intId // ignore: cast_nullable_to_non_nullable
+              as int,
+      stringId: null == stringId
+          ? _self.stringId
+          : stringId // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
+}
+
+/// @nodoc
+
+class _LastId implements LastId {
+  const _LastId({this.extra, this.intId = -1, this.stringId = ''});
+
+  @override
+  final dynamic extra;
+  @override
+  @JsonKey()
+  final int intId;
+  @override
+  @JsonKey()
+  final String stringId;
+
+  /// Create a copy of LastId
+  /// with the given fields replaced by the non-null parameter values.
+  @override
   @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$LastIdCopyWith<_LastId> get copyWith =>
+      __$LastIdCopyWithImpl<_LastId>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _LastId &&
+            const DeepCollectionEquality().equals(other.extra, extra) &&
+            (identical(other.intId, intId) || other.intId == intId) &&
+            (identical(other.stringId, stringId) ||
+                other.stringId == stringId));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType, const DeepCollectionEquality().hash(extra), intId, stringId);
+
+  @override
+  String toString() {
+    return 'LastId(extra: $extra, intId: $intId, stringId: $stringId)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$LastIdCopyWith<$Res> implements $LastIdCopyWith<$Res> {
+  factory _$LastIdCopyWith(_LastId value, $Res Function(_LastId) _then) =
+      __$LastIdCopyWithImpl;
+  @override
+  @useResult
+  $Res call({dynamic extra, int intId, String stringId});
+}
+
+/// @nodoc
+class __$LastIdCopyWithImpl<$Res> implements _$LastIdCopyWith<$Res> {
+  __$LastIdCopyWithImpl(this._self, this._then);
+
+  final _LastId _self;
+  final $Res Function(_LastId) _then;
+
+  /// Create a copy of LastId
+  /// with the given fields replaced by the non-null parameter values.
   @override
   @pragma('vm:prefer-inline')
-  _$$LastIdImplCopyWith<_$LastIdImpl> get copyWith =>
-      __$$LastIdImplCopyWithImpl<_$LastIdImpl>(this, _$identity);
+  $Res call({
+    Object? extra = freezed,
+    Object? intId = null,
+    Object? stringId = null,
+  }) {
+    return _then(_LastId(
+      extra: freezed == extra
+          ? _self.extra
+          : extra // ignore: cast_nullable_to_non_nullable
+              as dynamic,
+      intId: null == intId
+          ? _self.intId
+          : intId // ignore: cast_nullable_to_non_nullable
+              as int,
+      stringId: null == stringId
+          ? _self.stringId
+          : stringId // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
+  }
 }
 
-abstract class _LastId implements LastId {
-  const factory _LastId(
-      {final dynamic extra,
-      final int intId,
-      final String stringId}) = _$LastIdImpl;
-
-  @override
-  dynamic get extra;
-  @override
-  int get intId;
-  @override
-  String get stringId;
-
-  /// Create a copy of LastId
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$LastIdImplCopyWith<_$LastIdImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
+// dart format on

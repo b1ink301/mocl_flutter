@@ -60,7 +60,7 @@ void main() {
     final Database database = await databaseFactoryIo.openDatabase(dbPath);
     localDatabase = LocalDatabase(database: database);
 
-    parser = DamoangParser();
+    parser = DamoangParser(true);
     mockApiClient = MockBaseApi();
     container = ProviderContainer(
       overrides: [

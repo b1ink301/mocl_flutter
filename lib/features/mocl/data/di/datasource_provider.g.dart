@@ -124,7 +124,7 @@ final clienParserProvider = AutoDisposeProvider<(BaseParser, BaseApi)>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ClienParserRef = AutoDisposeProviderRef<(BaseParser, BaseApi)>;
-String _$damoangParserHash() => r'5dd9330d8b76fa8b299bc2bb8fab435430a580d0';
+String _$damoangParserHash() => r'7810acc45aabf36c95175ef69845f4f32544397b';
 
 /// See also [damoangParser].
 @ProviderFor(damoangParser)

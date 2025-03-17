@@ -1,3 +1,4 @@
+// dart format width=80
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
@@ -9,203 +10,34 @@ part of 'main_item_data.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
-MainItemData _$MainItemDataFromJson(Map<String, dynamic> json) {
-  return _MainItemData.fromJson(json);
-}
 
 /// @nodoc
 mixin _$MainItemData {
-  String get board => throw _privateConstructorUsedError;
-  String get text => throw _privateConstructorUsedError;
-  String get url => throw _privateConstructorUsedError;
-  SiteType get siteType => throw _privateConstructorUsedError;
-  int get orderBy => throw _privateConstructorUsedError;
-  int get type => throw _privateConstructorUsedError;
-
-  /// Serializes this MainItemData to a JSON map.
-  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+  String get board;
+  String get text;
+  String get url;
+  SiteType get siteType;
+  int get orderBy;
+  int get type;
 
   /// Create a copy of MainItemData
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
   $MainItemDataCopyWith<MainItemData> get copyWith =>
-      throw _privateConstructorUsedError;
-}
+      _$MainItemDataCopyWithImpl<MainItemData>(
+          this as MainItemData, _$identity);
 
-/// @nodoc
-abstract class $MainItemDataCopyWith<$Res> {
-  factory $MainItemDataCopyWith(
-          MainItemData value, $Res Function(MainItemData) then) =
-      _$MainItemDataCopyWithImpl<$Res, MainItemData>;
-  @useResult
-  $Res call(
-      {String board,
-      String text,
-      String url,
-      SiteType siteType,
-      int orderBy,
-      int type});
-}
-
-/// @nodoc
-class _$MainItemDataCopyWithImpl<$Res, $Val extends MainItemData>
-    implements $MainItemDataCopyWith<$Res> {
-  _$MainItemDataCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of MainItemData
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? board = null,
-    Object? text = null,
-    Object? url = null,
-    Object? siteType = null,
-    Object? orderBy = null,
-    Object? type = null,
-  }) {
-    return _then(_value.copyWith(
-      board: null == board
-          ? _value.board
-          : board // ignore: cast_nullable_to_non_nullable
-              as String,
-      text: null == text
-          ? _value.text
-          : text // ignore: cast_nullable_to_non_nullable
-              as String,
-      url: null == url
-          ? _value.url
-          : url // ignore: cast_nullable_to_non_nullable
-              as String,
-      siteType: null == siteType
-          ? _value.siteType
-          : siteType // ignore: cast_nullable_to_non_nullable
-              as SiteType,
-      orderBy: null == orderBy
-          ? _value.orderBy
-          : orderBy // ignore: cast_nullable_to_non_nullable
-              as int,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as int,
-    ) as $Val);
-  }
-}
-
-/// @nodoc
-abstract class _$$MainItemDataImplCopyWith<$Res>
-    implements $MainItemDataCopyWith<$Res> {
-  factory _$$MainItemDataImplCopyWith(
-          _$MainItemDataImpl value, $Res Function(_$MainItemDataImpl) then) =
-      __$$MainItemDataImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {String board,
-      String text,
-      String url,
-      SiteType siteType,
-      int orderBy,
-      int type});
-}
-
-/// @nodoc
-class __$$MainItemDataImplCopyWithImpl<$Res>
-    extends _$MainItemDataCopyWithImpl<$Res, _$MainItemDataImpl>
-    implements _$$MainItemDataImplCopyWith<$Res> {
-  __$$MainItemDataImplCopyWithImpl(
-      _$MainItemDataImpl _value, $Res Function(_$MainItemDataImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of MainItemData
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? board = null,
-    Object? text = null,
-    Object? url = null,
-    Object? siteType = null,
-    Object? orderBy = null,
-    Object? type = null,
-  }) {
-    return _then(_$MainItemDataImpl(
-      board: null == board
-          ? _value.board
-          : board // ignore: cast_nullable_to_non_nullable
-              as String,
-      text: null == text
-          ? _value.text
-          : text // ignore: cast_nullable_to_non_nullable
-              as String,
-      url: null == url
-          ? _value.url
-          : url // ignore: cast_nullable_to_non_nullable
-              as String,
-      siteType: null == siteType
-          ? _value.siteType
-          : siteType // ignore: cast_nullable_to_non_nullable
-              as SiteType,
-      orderBy: null == orderBy
-          ? _value.orderBy
-          : orderBy // ignore: cast_nullable_to_non_nullable
-              as int,
-      type: null == type
-          ? _value.type
-          : type // ignore: cast_nullable_to_non_nullable
-              as int,
-    ));
-  }
-}
-
-/// @nodoc
-@JsonSerializable()
-class _$MainItemDataImpl implements _MainItemData {
-  const _$MainItemDataImpl(
-      {required this.board,
-      required this.text,
-      required this.url,
-      required this.siteType,
-      required this.orderBy,
-      required this.type});
-
-  factory _$MainItemDataImpl.fromJson(Map<String, dynamic> json) =>
-      _$$MainItemDataImplFromJson(json);
-
-  @override
-  final String board;
-  @override
-  final String text;
-  @override
-  final String url;
-  @override
-  final SiteType siteType;
-  @override
-  final int orderBy;
-  @override
-  final int type;
-
-  @override
-  String toString() {
-    return 'MainItemData(board: $board, text: $text, url: $url, siteType: $siteType, orderBy: $orderBy, type: $type)';
-  }
+  /// Serializes this MainItemData to a JSON map.
+  Map<String, dynamic> toJson();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$MainItemDataImpl &&
+            other is MainItemData &&
             (identical(other.board, board) || other.board == board) &&
             (identical(other.text, text) || other.text == text) &&
             (identical(other.url, url) || other.url == url) &&
@@ -220,51 +52,205 @@ class _$MainItemDataImpl implements _MainItemData {
   int get hashCode =>
       Object.hash(runtimeType, board, text, url, siteType, orderBy, type);
 
-  /// Create a copy of MainItemData
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  @pragma('vm:prefer-inline')
-  _$$MainItemDataImplCopyWith<_$MainItemDataImpl> get copyWith =>
-      __$$MainItemDataImplCopyWithImpl<_$MainItemDataImpl>(this, _$identity);
-
-  @override
-  Map<String, dynamic> toJson() {
-    return _$$MainItemDataImplToJson(
-      this,
-    );
+  String toString() {
+    return 'MainItemData(board: $board, text: $text, url: $url, siteType: $siteType, orderBy: $orderBy, type: $type)';
   }
 }
 
-abstract class _MainItemData implements MainItemData {
-  const factory _MainItemData(
-      {required final String board,
-      required final String text,
-      required final String url,
-      required final SiteType siteType,
-      required final int orderBy,
-      required final int type}) = _$MainItemDataImpl;
+/// @nodoc
+abstract mixin class $MainItemDataCopyWith<$Res> {
+  factory $MainItemDataCopyWith(
+          MainItemData value, $Res Function(MainItemData) _then) =
+      _$MainItemDataCopyWithImpl;
+  @useResult
+  $Res call(
+      {String board,
+      String text,
+      String url,
+      SiteType siteType,
+      int orderBy,
+      int type});
+}
 
-  factory _MainItemData.fromJson(Map<String, dynamic> json) =
-      _$MainItemDataImpl.fromJson;
+/// @nodoc
+class _$MainItemDataCopyWithImpl<$Res> implements $MainItemDataCopyWith<$Res> {
+  _$MainItemDataCopyWithImpl(this._self, this._then);
+
+  final MainItemData _self;
+  final $Res Function(MainItemData) _then;
+
+  /// Create a copy of MainItemData
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? board = null,
+    Object? text = null,
+    Object? url = null,
+    Object? siteType = null,
+    Object? orderBy = null,
+    Object? type = null,
+  }) {
+    return _then(_self.copyWith(
+      board: null == board
+          ? _self.board
+          : board // ignore: cast_nullable_to_non_nullable
+              as String,
+      text: null == text
+          ? _self.text
+          : text // ignore: cast_nullable_to_non_nullable
+              as String,
+      url: null == url
+          ? _self.url
+          : url // ignore: cast_nullable_to_non_nullable
+              as String,
+      siteType: null == siteType
+          ? _self.siteType
+          : siteType // ignore: cast_nullable_to_non_nullable
+              as SiteType,
+      orderBy: null == orderBy
+          ? _self.orderBy
+          : orderBy // ignore: cast_nullable_to_non_nullable
+              as int,
+      type: null == type
+          ? _self.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _MainItemData implements MainItemData {
+  const _MainItemData(
+      {required this.board,
+      required this.text,
+      required this.url,
+      required this.siteType,
+      required this.orderBy,
+      required this.type});
+  factory _MainItemData.fromJson(Map<String, dynamic> json) =>
+      _$MainItemDataFromJson(json);
 
   @override
-  String get board;
+  final String board;
   @override
-  String get text;
+  final String text;
   @override
-  String get url;
+  final String url;
   @override
-  SiteType get siteType;
+  final SiteType siteType;
   @override
-  int get orderBy;
+  final int orderBy;
   @override
-  int get type;
+  final int type;
 
   /// Create a copy of MainItemData
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$MainItemDataImplCopyWith<_$MainItemDataImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @pragma('vm:prefer-inline')
+  _$MainItemDataCopyWith<_MainItemData> get copyWith =>
+      __$MainItemDataCopyWithImpl<_MainItemData>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$MainItemDataToJson(
+      this,
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _MainItemData &&
+            (identical(other.board, board) || other.board == board) &&
+            (identical(other.text, text) || other.text == text) &&
+            (identical(other.url, url) || other.url == url) &&
+            (identical(other.siteType, siteType) ||
+                other.siteType == siteType) &&
+            (identical(other.orderBy, orderBy) || other.orderBy == orderBy) &&
+            (identical(other.type, type) || other.type == type));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, board, text, url, siteType, orderBy, type);
+
+  @override
+  String toString() {
+    return 'MainItemData(board: $board, text: $text, url: $url, siteType: $siteType, orderBy: $orderBy, type: $type)';
+  }
 }
+
+/// @nodoc
+abstract mixin class _$MainItemDataCopyWith<$Res>
+    implements $MainItemDataCopyWith<$Res> {
+  factory _$MainItemDataCopyWith(
+          _MainItemData value, $Res Function(_MainItemData) _then) =
+      __$MainItemDataCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {String board,
+      String text,
+      String url,
+      SiteType siteType,
+      int orderBy,
+      int type});
+}
+
+/// @nodoc
+class __$MainItemDataCopyWithImpl<$Res>
+    implements _$MainItemDataCopyWith<$Res> {
+  __$MainItemDataCopyWithImpl(this._self, this._then);
+
+  final _MainItemData _self;
+  final $Res Function(_MainItemData) _then;
+
+  /// Create a copy of MainItemData
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? board = null,
+    Object? text = null,
+    Object? url = null,
+    Object? siteType = null,
+    Object? orderBy = null,
+    Object? type = null,
+  }) {
+    return _then(_MainItemData(
+      board: null == board
+          ? _self.board
+          : board // ignore: cast_nullable_to_non_nullable
+              as String,
+      text: null == text
+          ? _self.text
+          : text // ignore: cast_nullable_to_non_nullable
+              as String,
+      url: null == url
+          ? _self.url
+          : url // ignore: cast_nullable_to_non_nullable
+              as String,
+      siteType: null == siteType
+          ? _self.siteType
+          : siteType // ignore: cast_nullable_to_non_nullable
+              as SiteType,
+      orderBy: null == orderBy
+          ? _self.orderBy
+          : orderBy // ignore: cast_nullable_to_non_nullable
+              as int,
+      type: null == type
+          ? _self.type
+          : type // ignore: cast_nullable_to_non_nullable
+              as int,
+    ));
+  }
+}
+
+// dart format on

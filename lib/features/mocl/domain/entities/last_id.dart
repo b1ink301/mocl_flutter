@@ -3,7 +3,7 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 part 'last_id.freezed.dart';
 
 @freezed
-class LastId with _$LastId {
+abstract class LastId with _$LastId {
   const factory LastId({
     dynamic extra,
     @Default(-1) int intId,

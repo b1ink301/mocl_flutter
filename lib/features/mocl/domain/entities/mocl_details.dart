@@ -8,7 +8,7 @@ import 'mocl_user_info.dart';
 part 'mocl_details.freezed.dart';
 
 @freezed
-class Details with _$Details {
+abstract class Details with _$Details {
   const factory Details({
     required String title,
     required String time,

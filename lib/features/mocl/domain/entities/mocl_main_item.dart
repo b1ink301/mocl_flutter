@@ -6,7 +6,7 @@ part 'mocl_main_item.freezed.dart';
 part 'mocl_main_item.g.dart';
 
 @freezed
-class MainItem with _$MainItem {
+abstract class MainItem with _$MainItem {
   const factory MainItem({
     required SiteType siteType,
     required String board,

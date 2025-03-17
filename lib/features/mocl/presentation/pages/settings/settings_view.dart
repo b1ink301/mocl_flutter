@@ -28,8 +28,9 @@ class SettingsView extends ConsumerWidget {
             ref.watch(sizeCacheDirNotifierProvider).maybeWhen(
                 orElse: () => _buildLoadingView(context),
                 data: (data) => InkWell(
-                      onTap: () =>
-                          ref.read(sizeCacheDirNotifierProvider.notifier).clear(),
+                      onTap: () => ref
+                          .read(sizeCacheDirNotifierProvider.notifier)
+                          .clear(),
                       child: Container(
                         width: double.infinity,
                         height: 58,

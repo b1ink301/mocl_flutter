@@ -1,12 +1,13 @@
 import 'dart:async';
 
+import 'package:dartx/dartx.dart';
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/ext.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_ext.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
@@ -32,10 +33,13 @@ class ClienParser implements BaseParser {
   Future<Either<Failure, List<MainItem>>> main(Response response) async {
     try {
       final document = parse(response.data);
+      var index = 0;
       final List<MainItem> list = document
-          .querySelectorAll("div.comment_row")
-          .map((element) => element._toMainItem())
+          .querySelectorAll(
+              "div.navigation > div.menu_list > div.swiper-wrapper > div.menu_slide > div > ul > li")
+          .map((element) => element._toMainItem(baseUrl, index++))
           .whereType<MainItem>()
+          .distinctBy((element) => element.board)
           .toList();
 
       return Right(list);
@@ -71,19 +75,15 @@ class ClienParser implements BaseParser {
       final container =
           document.querySelector('body > div.nav_container > div.content_view');
 
-      if (container == null) {
-        return Left(GetDetailFailure(message: 'container is null'));
-      } else {
-        final comments = container
-            .querySelectorAll(
-                "div.post_comment > div.comment > div.comment_row")
-            .map((element) => element._toComments(index++))
-            .whereType<CommentItem>()
-            .toList();
+      final comments = container
+              ?.querySelectorAll(
+                  "div.post_comment > div.comment > div.comment_row")
+              .map((element) => element._toComments(index++))
+              .whereType<CommentItem>()
+              .toList() ??
+          const [];
 
-        final detail = container._toDetails(comments);
-        return Right(detail);
-      }
+      return Right(container!._toDetails(comments));
     } catch (e) {
       return Left(GetDetailFailure(message: e.toString()));
     }
@@ -133,7 +133,7 @@ class ClienParser implements BaseParser {
       'https://m.clien.net/service/api/board/under/list?category=0&boardSn=0&po=$page&boardCd=$board&sk=title&sv=$keyword';
 
   @override
-  String urlByMain() => throw UnimplementedError('urlByMain');
+  String urlByMain() => baseUrl;
 
   @override
   String urlByComments(String url, String board, int id, int page) =>

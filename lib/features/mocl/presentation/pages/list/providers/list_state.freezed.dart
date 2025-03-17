@@ -1,3 +1,4 @@
+// dart format width=80
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
@@ -9,31 +10,61 @@ part of 'list_state.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$ListState {
-  List<ListItem> get items => throw _privateConstructorUsedError;
-  bool get isLoading => throw _privateConstructorUsedError;
-  int get currentPage => throw _privateConstructorUsedError;
-  LastId get lastId => throw _privateConstructorUsedError;
-  bool get hasReachedMax => throw _privateConstructorUsedError;
-  String? get error => throw _privateConstructorUsedError;
+  List<ListItem> get items;
+  bool get isLoading;
+  int get currentPage;
+  LastId get lastId;
+  bool get hasReachedMax;
+  String? get error;
 
   /// Create a copy of ListState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
   $ListStateCopyWith<ListState> get copyWith =>
-      throw _privateConstructorUsedError;
+      _$ListStateCopyWithImpl<ListState>(this as ListState, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is ListState &&
+            const DeepCollectionEquality().equals(other.items, items) &&
+            (identical(other.isLoading, isLoading) ||
+                other.isLoading == isLoading) &&
+            (identical(other.currentPage, currentPage) ||
+                other.currentPage == currentPage) &&
+            (identical(other.lastId, lastId) || other.lastId == lastId) &&
+            (identical(other.hasReachedMax, hasReachedMax) ||
+                other.hasReachedMax == hasReachedMax) &&
+            (identical(other.error, error) || other.error == error));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      const DeepCollectionEquality().hash(items),
+      isLoading,
+      currentPage,
+      lastId,
+      hasReachedMax,
+      error);
+
+  @override
+  String toString() {
+    return 'ListState(items: $items, isLoading: $isLoading, currentPage: $currentPage, lastId: $lastId, hasReachedMax: $hasReachedMax, error: $error)';
+  }
 }
 
 /// @nodoc
-abstract class $ListStateCopyWith<$Res> {
-  factory $ListStateCopyWith(ListState value, $Res Function(ListState) then) =
-      _$ListStateCopyWithImpl<$Res, ListState>;
+abstract mixin class $ListStateCopyWith<$Res> {
+  factory $ListStateCopyWith(ListState value, $Res Function(ListState) _then) =
+      _$ListStateCopyWithImpl;
   @useResult
   $Res call(
       {List<ListItem> items,
@@ -47,14 +78,11 @@ abstract class $ListStateCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$ListStateCopyWithImpl<$Res, $Val extends ListState>
-    implements $ListStateCopyWith<$Res> {
-  _$ListStateCopyWithImpl(this._value, this._then);
+class _$ListStateCopyWithImpl<$Res> implements $ListStateCopyWith<$Res> {
+  _$ListStateCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final ListState _self;
+  final $Res Function(ListState) _then;
 
   /// Create a copy of ListState
   /// with the given fields replaced by the non-null parameter values.
@@ -68,32 +96,32 @@ class _$ListStateCopyWithImpl<$Res, $Val extends ListState>
     Object? hasReachedMax = null,
     Object? error = freezed,
   }) {
-    return _then(_value.copyWith(
+    return _then(_self.copyWith(
       items: null == items
-          ? _value.items
+          ? _self.items
           : items // ignore: cast_nullable_to_non_nullable
               as List<ListItem>,
       isLoading: null == isLoading
-          ? _value.isLoading
+          ? _self.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
               as bool,
       currentPage: null == currentPage
-          ? _value.currentPage
+          ? _self.currentPage
           : currentPage // ignore: cast_nullable_to_non_nullable
               as int,
       lastId: null == lastId
-          ? _value.lastId
+          ? _self.lastId
           : lastId // ignore: cast_nullable_to_non_nullable
               as LastId,
       hasReachedMax: null == hasReachedMax
-          ? _value.hasReachedMax
+          ? _self.hasReachedMax
           : hasReachedMax // ignore: cast_nullable_to_non_nullable
               as bool,
       error: freezed == error
-          ? _value.error
+          ? _self.error
           : error // ignore: cast_nullable_to_non_nullable
               as String?,
-    ) as $Val);
+    ));
   }
 
   /// Create a copy of ListState
@@ -101,85 +129,16 @@ class _$ListStateCopyWithImpl<$Res, $Val extends ListState>
   @override
   @pragma('vm:prefer-inline')
   $LastIdCopyWith<$Res> get lastId {
-    return $LastIdCopyWith<$Res>(_value.lastId, (value) {
-      return _then(_value.copyWith(lastId: value) as $Val);
+    return $LastIdCopyWith<$Res>(_self.lastId, (value) {
+      return _then(_self.copyWith(lastId: value));
     });
   }
 }
 
 /// @nodoc
-abstract class _$$ListStateImplCopyWith<$Res>
-    implements $ListStateCopyWith<$Res> {
-  factory _$$ListStateImplCopyWith(
-          _$ListStateImpl value, $Res Function(_$ListStateImpl) then) =
-      __$$ListStateImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {List<ListItem> items,
-      bool isLoading,
-      int currentPage,
-      LastId lastId,
-      bool hasReachedMax,
-      String? error});
 
-  @override
-  $LastIdCopyWith<$Res> get lastId;
-}
-
-/// @nodoc
-class __$$ListStateImplCopyWithImpl<$Res>
-    extends _$ListStateCopyWithImpl<$Res, _$ListStateImpl>
-    implements _$$ListStateImplCopyWith<$Res> {
-  __$$ListStateImplCopyWithImpl(
-      _$ListStateImpl _value, $Res Function(_$ListStateImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of ListState
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? items = null,
-    Object? isLoading = null,
-    Object? currentPage = null,
-    Object? lastId = null,
-    Object? hasReachedMax = null,
-    Object? error = freezed,
-  }) {
-    return _then(_$ListStateImpl(
-      items: null == items
-          ? _value._items
-          : items // ignore: cast_nullable_to_non_nullable
-              as List<ListItem>,
-      isLoading: null == isLoading
-          ? _value.isLoading
-          : isLoading // ignore: cast_nullable_to_non_nullable
-              as bool,
-      currentPage: null == currentPage
-          ? _value.currentPage
-          : currentPage // ignore: cast_nullable_to_non_nullable
-              as int,
-      lastId: null == lastId
-          ? _value.lastId
-          : lastId // ignore: cast_nullable_to_non_nullable
-              as LastId,
-      hasReachedMax: null == hasReachedMax
-          ? _value.hasReachedMax
-          : hasReachedMax // ignore: cast_nullable_to_non_nullable
-              as bool,
-      error: freezed == error
-          ? _value.error
-          : error // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _$ListStateImpl implements _ListState {
-  const _$ListStateImpl(
+class _ListState implements ListState {
+  const _ListState(
       {required final List<ListItem> items,
       required this.isLoading,
       required this.currentPage,
@@ -208,16 +167,19 @@ class _$ListStateImpl implements _ListState {
   @override
   final String? error;
 
+  /// Create a copy of ListState
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'ListState(items: $items, isLoading: $isLoading, currentPage: $currentPage, lastId: $lastId, hasReachedMax: $hasReachedMax, error: $error)';
-  }
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$ListStateCopyWith<_ListState> get copyWith =>
+      __$ListStateCopyWithImpl<_ListState>(this, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ListStateImpl &&
+            other is _ListState &&
             const DeepCollectionEquality().equals(other._items, _items) &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
@@ -239,41 +201,88 @@ class _$ListStateImpl implements _ListState {
       hasReachedMax,
       error);
 
+  @override
+  String toString() {
+    return 'ListState(items: $items, isLoading: $isLoading, currentPage: $currentPage, lastId: $lastId, hasReachedMax: $hasReachedMax, error: $error)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$ListStateCopyWith<$Res>
+    implements $ListStateCopyWith<$Res> {
+  factory _$ListStateCopyWith(
+          _ListState value, $Res Function(_ListState) _then) =
+      __$ListStateCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {List<ListItem> items,
+      bool isLoading,
+      int currentPage,
+      LastId lastId,
+      bool hasReachedMax,
+      String? error});
+
+  @override
+  $LastIdCopyWith<$Res> get lastId;
+}
+
+/// @nodoc
+class __$ListStateCopyWithImpl<$Res> implements _$ListStateCopyWith<$Res> {
+  __$ListStateCopyWithImpl(this._self, this._then);
+
+  final _ListState _self;
+  final $Res Function(_ListState) _then;
+
   /// Create a copy of ListState
   /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$ListStateImplCopyWith<_$ListStateImpl> get copyWith =>
-      __$$ListStateImplCopyWithImpl<_$ListStateImpl>(this, _$identity);
-}
-
-abstract class _ListState implements ListState {
-  const factory _ListState(
-      {required final List<ListItem> items,
-      required final bool isLoading,
-      required final int currentPage,
-      required final LastId lastId,
-      final bool hasReachedMax,
-      final String? error}) = _$ListStateImpl;
-
-  @override
-  List<ListItem> get items;
-  @override
-  bool get isLoading;
-  @override
-  int get currentPage;
-  @override
-  LastId get lastId;
-  @override
-  bool get hasReachedMax;
-  @override
-  String? get error;
+  $Res call({
+    Object? items = null,
+    Object? isLoading = null,
+    Object? currentPage = null,
+    Object? lastId = null,
+    Object? hasReachedMax = null,
+    Object? error = freezed,
+  }) {
+    return _then(_ListState(
+      items: null == items
+          ? _self._items
+          : items // ignore: cast_nullable_to_non_nullable
+              as List<ListItem>,
+      isLoading: null == isLoading
+          ? _self.isLoading
+          : isLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      currentPage: null == currentPage
+          ? _self.currentPage
+          : currentPage // ignore: cast_nullable_to_non_nullable
+              as int,
+      lastId: null == lastId
+          ? _self.lastId
+          : lastId // ignore: cast_nullable_to_non_nullable
+              as LastId,
+      hasReachedMax: null == hasReachedMax
+          ? _self.hasReachedMax
+          : hasReachedMax // ignore: cast_nullable_to_non_nullable
+              as bool,
+      error: freezed == error
+          ? _self.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
 
   /// Create a copy of ListState
   /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$ListStateImplCopyWith<_$ListStateImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @pragma('vm:prefer-inline')
+  $LastIdCopyWith<$Res> get lastId {
+    return $LastIdCopyWith<$Res>(_self.lastId, (value) {
+      return _then(_self.copyWith(lastId: value));
+    });
+  }
 }
+
+// dart format on

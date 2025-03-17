@@ -41,10 +41,11 @@ class DetailPage extends ConsumerWidget {
           ? PlatformAppBar(
               cupertino: (BuildContext context, PlatformTarget platform) =>
                   CupertinoNavigationBarData(
-                previousPageTitle: ref.watch(detailSmallTitleProvider),
-                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                    trailing: _buildPopupMenuButton(context, ref)
-              ),
+                      heroTag: 'detail-appbar',
+                      previousPageTitle: ref.watch(detailSmallTitleProvider),
+                      backgroundColor:
+                          Theme.of(context).scaffoldBackgroundColor,
+                      trailing: _buildPopupMenuButton(context, ref)),
             )
           : null,
       body: SafeArea(

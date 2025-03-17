@@ -1,16 +1,14 @@
 import 'dart:developer';
 import 'dart:io';
 
+import 'package:cookie_jar/cookie_jar.dart' as cookiejar;
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart' as diocookie;
-import 'package:cookie_jar/cookie_jar.dart' as cookiejar;
 import 'package:flutter_inappwebview/flutter_inappwebview.dart' as webview;
 import 'package:fpdart/fpdart.dart';
-
 import 'package:mocl_flutter/core/error/failures.dart';
-
-import 'base_action.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_action.dart';
 
 const String userAgentMobile =
     'Mozilla/5.0 (Linux; Android 14; Pixel 8 Build/AP2A.240905.003; wv) '
@@ -115,6 +113,7 @@ abstract class BaseApi with BaseAction {
       _dio.interceptors.add(interceptor);
       return await action();
     } on DioException catch (e) {
+      log('DioException: $e');
       final String message = e.message ?? 'Unknown Error';
       return Left(NetworkFailure(message: message));
     } on Failure catch (e) {

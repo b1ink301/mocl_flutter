@@ -1,3 +1,4 @@
+// dart format width=80
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
@@ -9,39 +10,92 @@ part of 'mocl_list_item.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
 
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
-
 /// @nodoc
-mixin _$ListItem {
-  int get id => throw _privateConstructorUsedError;
-  String get title => throw _privateConstructorUsedError;
-  String get reply => throw _privateConstructorUsedError;
-  String get category => throw _privateConstructorUsedError;
-  String get time => throw _privateConstructorUsedError;
-  String get url => throw _privateConstructorUsedError;
-  String get info => throw _privateConstructorUsedError;
-  String get board => throw _privateConstructorUsedError;
-  String get boardTitle => throw _privateConstructorUsedError;
-  String get like => throw _privateConstructorUsedError;
-  String get hit => throw _privateConstructorUsedError;
-  UserInfo get userInfo => throw _privateConstructorUsedError;
-  bool get hasImage => throw _privateConstructorUsedError;
-  bool get isRead => throw _privateConstructorUsedError;
+mixin _$ListItem implements DiagnosticableTreeMixin {
+  int get id;
+  String get title;
+  String get reply;
+  String get category;
+  String get time;
+  String get url;
+  String get info;
+  String get board;
+  String get boardTitle;
+  String get like;
+  String get hit;
+  UserInfo get userInfo;
+  bool get hasImage;
+  bool get isRead;
 
   /// Create a copy of ListItem
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
   $ListItemCopyWith<ListItem> get copyWith =>
-      throw _privateConstructorUsedError;
+      _$ListItemCopyWithImpl<ListItem>(this as ListItem, _$identity);
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    properties
+      ..add(DiagnosticsProperty('type', 'ListItem'))
+      ..add(DiagnosticsProperty('id', id))
+      ..add(DiagnosticsProperty('title', title))
+      ..add(DiagnosticsProperty('reply', reply))
+      ..add(DiagnosticsProperty('category', category))
+      ..add(DiagnosticsProperty('time', time))
+      ..add(DiagnosticsProperty('url', url))
+      ..add(DiagnosticsProperty('info', info))
+      ..add(DiagnosticsProperty('board', board))
+      ..add(DiagnosticsProperty('boardTitle', boardTitle))
+      ..add(DiagnosticsProperty('like', like))
+      ..add(DiagnosticsProperty('hit', hit))
+      ..add(DiagnosticsProperty('userInfo', userInfo))
+      ..add(DiagnosticsProperty('hasImage', hasImage))
+      ..add(DiagnosticsProperty('isRead', isRead));
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is ListItem &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.title, title) || other.title == title) &&
+            (identical(other.reply, reply) || other.reply == reply) &&
+            (identical(other.category, category) ||
+                other.category == category) &&
+            (identical(other.time, time) || other.time == time) &&
+            (identical(other.url, url) || other.url == url) &&
+            (identical(other.info, info) || other.info == info) &&
+            (identical(other.board, board) || other.board == board) &&
+            (identical(other.boardTitle, boardTitle) ||
+                other.boardTitle == boardTitle) &&
+            (identical(other.like, like) || other.like == like) &&
+            (identical(other.hit, hit) || other.hit == hit) &&
+            (identical(other.userInfo, userInfo) ||
+                other.userInfo == userInfo) &&
+            (identical(other.hasImage, hasImage) ||
+                other.hasImage == hasImage) &&
+            (identical(other.isRead, isRead) || other.isRead == isRead));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, id, title, reply, category, time,
+      url, info, board, boardTitle, like, hit, userInfo, hasImage, isRead);
+
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'ListItem(id: $id, title: $title, reply: $reply, category: $category, time: $time, url: $url, info: $info, board: $board, boardTitle: $boardTitle, like: $like, hit: $hit, userInfo: $userInfo, hasImage: $hasImage, isRead: $isRead)';
+  }
 }
 
 /// @nodoc
-abstract class $ListItemCopyWith<$Res> {
-  factory $ListItemCopyWith(ListItem value, $Res Function(ListItem) then) =
-      _$ListItemCopyWithImpl<$Res, ListItem>;
+abstract mixin class $ListItemCopyWith<$Res> {
+  factory $ListItemCopyWith(ListItem value, $Res Function(ListItem) _then) =
+      _$ListItemCopyWithImpl;
   @useResult
   $Res call(
       {int id,
@@ -63,14 +117,11 @@ abstract class $ListItemCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$ListItemCopyWithImpl<$Res, $Val extends ListItem>
-    implements $ListItemCopyWith<$Res> {
-  _$ListItemCopyWithImpl(this._value, this._then);
+class _$ListItemCopyWithImpl<$Res> implements $ListItemCopyWith<$Res> {
+  _$ListItemCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final ListItem _self;
+  final $Res Function(ListItem) _then;
 
   /// Create a copy of ListItem
   /// with the given fields replaced by the non-null parameter values.
@@ -92,64 +143,64 @@ class _$ListItemCopyWithImpl<$Res, $Val extends ListItem>
     Object? hasImage = null,
     Object? isRead = null,
   }) {
-    return _then(_value.copyWith(
+    return _then(_self.copyWith(
       id: null == id
-          ? _value.id
+          ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
               as int,
       title: null == title
-          ? _value.title
+          ? _self.title
           : title // ignore: cast_nullable_to_non_nullable
               as String,
       reply: null == reply
-          ? _value.reply
+          ? _self.reply
           : reply // ignore: cast_nullable_to_non_nullable
               as String,
       category: null == category
-          ? _value.category
+          ? _self.category
           : category // ignore: cast_nullable_to_non_nullable
               as String,
       time: null == time
-          ? _value.time
+          ? _self.time
           : time // ignore: cast_nullable_to_non_nullable
               as String,
       url: null == url
-          ? _value.url
+          ? _self.url
           : url // ignore: cast_nullable_to_non_nullable
               as String,
       info: null == info
-          ? _value.info
+          ? _self.info
           : info // ignore: cast_nullable_to_non_nullable
               as String,
       board: null == board
-          ? _value.board
+          ? _self.board
           : board // ignore: cast_nullable_to_non_nullable
               as String,
       boardTitle: null == boardTitle
-          ? _value.boardTitle
+          ? _self.boardTitle
           : boardTitle // ignore: cast_nullable_to_non_nullable
               as String,
       like: null == like
-          ? _value.like
+          ? _self.like
           : like // ignore: cast_nullable_to_non_nullable
               as String,
       hit: null == hit
-          ? _value.hit
+          ? _self.hit
           : hit // ignore: cast_nullable_to_non_nullable
               as String,
       userInfo: null == userInfo
-          ? _value.userInfo
+          ? _self.userInfo
           : userInfo // ignore: cast_nullable_to_non_nullable
               as UserInfo,
       hasImage: null == hasImage
-          ? _value.hasImage
+          ? _self.hasImage
           : hasImage // ignore: cast_nullable_to_non_nullable
               as bool,
       isRead: null == isRead
-          ? _value.isRead
+          ? _self.isRead
           : isRead // ignore: cast_nullable_to_non_nullable
               as bool,
-    ) as $Val);
+    ));
   }
 
   /// Create a copy of ListItem
@@ -157,133 +208,16 @@ class _$ListItemCopyWithImpl<$Res, $Val extends ListItem>
   @override
   @pragma('vm:prefer-inline')
   $UserInfoCopyWith<$Res> get userInfo {
-    return $UserInfoCopyWith<$Res>(_value.userInfo, (value) {
-      return _then(_value.copyWith(userInfo: value) as $Val);
+    return $UserInfoCopyWith<$Res>(_self.userInfo, (value) {
+      return _then(_self.copyWith(userInfo: value));
     });
   }
 }
 
 /// @nodoc
-abstract class _$$ListItemImplCopyWith<$Res>
-    implements $ListItemCopyWith<$Res> {
-  factory _$$ListItemImplCopyWith(
-          _$ListItemImpl value, $Res Function(_$ListItemImpl) then) =
-      __$$ListItemImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {int id,
-      String title,
-      String reply,
-      String category,
-      String time,
-      String url,
-      String info,
-      String board,
-      String boardTitle,
-      String like,
-      String hit,
-      UserInfo userInfo,
-      bool hasImage,
-      bool isRead});
 
-  @override
-  $UserInfoCopyWith<$Res> get userInfo;
-}
-
-/// @nodoc
-class __$$ListItemImplCopyWithImpl<$Res>
-    extends _$ListItemCopyWithImpl<$Res, _$ListItemImpl>
-    implements _$$ListItemImplCopyWith<$Res> {
-  __$$ListItemImplCopyWithImpl(
-      _$ListItemImpl _value, $Res Function(_$ListItemImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of ListItem
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? id = null,
-    Object? title = null,
-    Object? reply = null,
-    Object? category = null,
-    Object? time = null,
-    Object? url = null,
-    Object? info = null,
-    Object? board = null,
-    Object? boardTitle = null,
-    Object? like = null,
-    Object? hit = null,
-    Object? userInfo = null,
-    Object? hasImage = null,
-    Object? isRead = null,
-  }) {
-    return _then(_$ListItemImpl(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as int,
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      reply: null == reply
-          ? _value.reply
-          : reply // ignore: cast_nullable_to_non_nullable
-              as String,
-      category: null == category
-          ? _value.category
-          : category // ignore: cast_nullable_to_non_nullable
-              as String,
-      time: null == time
-          ? _value.time
-          : time // ignore: cast_nullable_to_non_nullable
-              as String,
-      url: null == url
-          ? _value.url
-          : url // ignore: cast_nullable_to_non_nullable
-              as String,
-      info: null == info
-          ? _value.info
-          : info // ignore: cast_nullable_to_non_nullable
-              as String,
-      board: null == board
-          ? _value.board
-          : board // ignore: cast_nullable_to_non_nullable
-              as String,
-      boardTitle: null == boardTitle
-          ? _value.boardTitle
-          : boardTitle // ignore: cast_nullable_to_non_nullable
-              as String,
-      like: null == like
-          ? _value.like
-          : like // ignore: cast_nullable_to_non_nullable
-              as String,
-      hit: null == hit
-          ? _value.hit
-          : hit // ignore: cast_nullable_to_non_nullable
-              as String,
-      userInfo: null == userInfo
-          ? _value.userInfo
-          : userInfo // ignore: cast_nullable_to_non_nullable
-              as UserInfo,
-      hasImage: null == hasImage
-          ? _value.hasImage
-          : hasImage // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isRead: null == isRead
-          ? _value.isRead
-          : isRead // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _$ListItemImpl with DiagnosticableTreeMixin implements _ListItem {
-  const _$ListItemImpl(
+class _ListItem with DiagnosticableTreeMixin implements ListItem {
+  const _ListItem(
       {required this.id,
       required this.title,
       required this.reply,
@@ -328,14 +262,16 @@ class _$ListItemImpl with DiagnosticableTreeMixin implements _ListItem {
   @override
   final bool isRead;
 
+  /// Create a copy of ListItem
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
-    return 'ListItem(id: $id, title: $title, reply: $reply, category: $category, time: $time, url: $url, info: $info, board: $board, boardTitle: $boardTitle, like: $like, hit: $hit, userInfo: $userInfo, hasImage: $hasImage, isRead: $isRead)';
-  }
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$ListItemCopyWith<_ListItem> get copyWith =>
+      __$ListItemCopyWithImpl<_ListItem>(this, _$identity);
 
   @override
   void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-    super.debugFillProperties(properties);
     properties
       ..add(DiagnosticsProperty('type', 'ListItem'))
       ..add(DiagnosticsProperty('id', id))
@@ -358,7 +294,7 @@ class _$ListItemImpl with DiagnosticableTreeMixin implements _ListItem {
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ListItemImpl &&
+            other is _ListItem &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.title, title) || other.title == title) &&
             (identical(other.reply, reply) || other.reply == reply) &&
@@ -383,65 +319,135 @@ class _$ListItemImpl with DiagnosticableTreeMixin implements _ListItem {
   int get hashCode => Object.hash(runtimeType, id, title, reply, category, time,
       url, info, board, boardTitle, like, hit, userInfo, hasImage, isRead);
 
+  @override
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
+    return 'ListItem(id: $id, title: $title, reply: $reply, category: $category, time: $time, url: $url, info: $info, board: $board, boardTitle: $boardTitle, like: $like, hit: $hit, userInfo: $userInfo, hasImage: $hasImage, isRead: $isRead)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$ListItemCopyWith<$Res>
+    implements $ListItemCopyWith<$Res> {
+  factory _$ListItemCopyWith(_ListItem value, $Res Function(_ListItem) _then) =
+      __$ListItemCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {int id,
+      String title,
+      String reply,
+      String category,
+      String time,
+      String url,
+      String info,
+      String board,
+      String boardTitle,
+      String like,
+      String hit,
+      UserInfo userInfo,
+      bool hasImage,
+      bool isRead});
+
+  @override
+  $UserInfoCopyWith<$Res> get userInfo;
+}
+
+/// @nodoc
+class __$ListItemCopyWithImpl<$Res> implements _$ListItemCopyWith<$Res> {
+  __$ListItemCopyWithImpl(this._self, this._then);
+
+  final _ListItem _self;
+  final $Res Function(_ListItem) _then;
+
   /// Create a copy of ListItem
   /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$ListItemImplCopyWith<_$ListItemImpl> get copyWith =>
-      __$$ListItemImplCopyWithImpl<_$ListItemImpl>(this, _$identity);
-}
-
-abstract class _ListItem implements ListItem {
-  const factory _ListItem(
-      {required final int id,
-      required final String title,
-      required final String reply,
-      required final String category,
-      required final String time,
-      required final String url,
-      required final String info,
-      required final String board,
-      required final String boardTitle,
-      required final String like,
-      required final String hit,
-      required final UserInfo userInfo,
-      required final bool hasImage,
-      required final bool isRead}) = _$ListItemImpl;
-
-  @override
-  int get id;
-  @override
-  String get title;
-  @override
-  String get reply;
-  @override
-  String get category;
-  @override
-  String get time;
-  @override
-  String get url;
-  @override
-  String get info;
-  @override
-  String get board;
-  @override
-  String get boardTitle;
-  @override
-  String get like;
-  @override
-  String get hit;
-  @override
-  UserInfo get userInfo;
-  @override
-  bool get hasImage;
-  @override
-  bool get isRead;
+  $Res call({
+    Object? id = null,
+    Object? title = null,
+    Object? reply = null,
+    Object? category = null,
+    Object? time = null,
+    Object? url = null,
+    Object? info = null,
+    Object? board = null,
+    Object? boardTitle = null,
+    Object? like = null,
+    Object? hit = null,
+    Object? userInfo = null,
+    Object? hasImage = null,
+    Object? isRead = null,
+  }) {
+    return _then(_ListItem(
+      id: null == id
+          ? _self.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as int,
+      title: null == title
+          ? _self.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
+      reply: null == reply
+          ? _self.reply
+          : reply // ignore: cast_nullable_to_non_nullable
+              as String,
+      category: null == category
+          ? _self.category
+          : category // ignore: cast_nullable_to_non_nullable
+              as String,
+      time: null == time
+          ? _self.time
+          : time // ignore: cast_nullable_to_non_nullable
+              as String,
+      url: null == url
+          ? _self.url
+          : url // ignore: cast_nullable_to_non_nullable
+              as String,
+      info: null == info
+          ? _self.info
+          : info // ignore: cast_nullable_to_non_nullable
+              as String,
+      board: null == board
+          ? _self.board
+          : board // ignore: cast_nullable_to_non_nullable
+              as String,
+      boardTitle: null == boardTitle
+          ? _self.boardTitle
+          : boardTitle // ignore: cast_nullable_to_non_nullable
+              as String,
+      like: null == like
+          ? _self.like
+          : like // ignore: cast_nullable_to_non_nullable
+              as String,
+      hit: null == hit
+          ? _self.hit
+          : hit // ignore: cast_nullable_to_non_nullable
+              as String,
+      userInfo: null == userInfo
+          ? _self.userInfo
+          : userInfo // ignore: cast_nullable_to_non_nullable
+              as UserInfo,
+      hasImage: null == hasImage
+          ? _self.hasImage
+          : hasImage // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isRead: null == isRead
+          ? _self.isRead
+          : isRead // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
 
   /// Create a copy of ListItem
   /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$ListItemImplCopyWith<_$ListItemImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @pragma('vm:prefer-inline')
+  $UserInfoCopyWith<$Res> get userInfo {
+    return $UserInfoCopyWith<$Res>(_self.userInfo, (value) {
+      return _then(_self.copyWith(userInfo: value));
+    });
+  }
 }
+
+// dart format on

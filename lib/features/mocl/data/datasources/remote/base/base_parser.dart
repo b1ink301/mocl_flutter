@@ -67,12 +67,6 @@ abstract class BaseParser {
 
   Future<Either<Failure, List<CommentItem>>> comments(Response response);
 
-  static String covertUrl(
-    String baseUrl,
-    String path,
-  ) =>
-      path.isNotEmpty && !path.startsWith("http") ? '$baseUrl$path' : path;
-
   static String parserInfo(
     String nickName,
     String parsedTime,

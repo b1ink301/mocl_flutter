@@ -10,19 +10,12 @@ class LoginPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final backgroundColor = Theme
-        .of(context)
-        .appBarTheme
-        .backgroundColor;
-    final style = Theme
-        .of(context)
-        .textTheme
-        .labelMedium;
+    final backgroundColor = Theme.of(context).appBarTheme.backgroundColor;
+    final style = Theme.of(context).textTheme.labelMedium;
     final siteType = ref.watch(currentSiteTypeNotifierProvider);
     return PlatformScaffold(
       appBar: PlatformAppBar(
-          material: (_, __) =>
-              MaterialAppBarData(
+          material: (_, __) => MaterialAppBarData(
                 title: PlatformText('로그인', style: style),
                 flexibleSpace: Container(color: backgroundColor),
                 backgroundColor: backgroundColor,
@@ -30,8 +23,7 @@ class LoginPage extends ConsumerWidget {
                 centerTitle: false,
                 toolbarHeight: 64,
               ),
-          cupertino: (_, __) =>
-              CupertinoNavigationBarData(
+          cupertino: (_, __) => CupertinoNavigationBarData(
                 title: PlatformText('로그인'),
                 previousPageTitle: siteType.title,
                 backgroundColor: backgroundColor,

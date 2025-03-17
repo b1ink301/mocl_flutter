@@ -37,7 +37,7 @@ void main() {
         mainDatasourceProvider.overrideWithValue(MainDataSourceImpl(
             localDatabase: localDatabase,
             apiClient: mockApiClient,
-            parser: DamoangParser()))
+            parser: DamoangParser(true)))
       ],
     );
 

@@ -105,4 +105,18 @@ class MockSettingsRepository extends _i1.Mock
     Invocation.method(#setSiteType, [siteType]),
     returnValueForMissingStub: null,
   );
+
+  @override
+  bool isShowNickImage() =>
+      (super.noSuchMethod(
+            Invocation.method(#isShowNickImage, []),
+            returnValue: false,
+          )
+          as bool);
+
+  @override
+  void setShowNickImage(bool? showNickImage) => super.noSuchMethod(
+    Invocation.method(#setShowNickImage, [showNickImage]),
+    returnValueForMissingStub: null,
+  );
 }

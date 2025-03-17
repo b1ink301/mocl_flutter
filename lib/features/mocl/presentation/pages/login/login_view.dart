@@ -32,11 +32,7 @@ class LoginView extends ConsumerWidget {
         mixedContentMode: MixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
         userAgent: _googleLoginUserAgent,
       ),
-      initialUrlRequest: URLRequest(
-        url: ref.watch(reqUrlProvider),
-        headers: ref.watch(headersProvider),
-        httpShouldHandleCookies: true,
-      ),
+      initialUrlRequest: ref.watch(urlRequestProvider),
       onCreateWindow: (controller, createWindowAction) async {
         debugPrint('onCreateWindow ${createWindowAction.request.url}');
 

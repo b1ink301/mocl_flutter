@@ -1,3 +1,4 @@
+// dart format width=80
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
@@ -9,113 +10,60 @@ part of 'mocl_user_info.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$UserInfo {
-  String get id => throw _privateConstructorUsedError;
-  String get nickName => throw _privateConstructorUsedError;
-  String get nickImage => throw _privateConstructorUsedError;
-  String get nameMemo => throw _privateConstructorUsedError;
-  String get ip => throw _privateConstructorUsedError;
-  bool get isBlock => throw _privateConstructorUsedError;
-  bool get isMe => throw _privateConstructorUsedError;
-  bool get isAuthor => throw _privateConstructorUsedError;
+  String get id;
+  String get nickName;
+  String get nickImage;
+  String get nameMemo;
+  String get ip;
+  bool get isBlock;
+  bool get isMe;
+  bool get isAuthor;
 
   /// Create a copy of UserInfo
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $UserInfoCopyWith<UserInfo> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $UserInfoCopyWith<$Res> {
-  factory $UserInfoCopyWith(UserInfo value, $Res Function(UserInfo) then) =
-      _$UserInfoCopyWithImpl<$Res, UserInfo>;
-  @useResult
-  $Res call(
-      {String id,
-      String nickName,
-      String nickImage,
-      String nameMemo,
-      String ip,
-      bool isBlock,
-      bool isMe,
-      bool isAuthor});
-}
-
-/// @nodoc
-class _$UserInfoCopyWithImpl<$Res, $Val extends UserInfo>
-    implements $UserInfoCopyWith<$Res> {
-  _$UserInfoCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of UserInfo
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
+  $UserInfoCopyWith<UserInfo> get copyWith =>
+      _$UserInfoCopyWithImpl<UserInfo>(this as UserInfo, _$identity);
+
   @override
-  $Res call({
-    Object? id = null,
-    Object? nickName = null,
-    Object? nickImage = null,
-    Object? nameMemo = null,
-    Object? ip = null,
-    Object? isBlock = null,
-    Object? isMe = null,
-    Object? isAuthor = null,
-  }) {
-    return _then(_value.copyWith(
-      id: null == id
-          ? _value.id
-          : id // ignore: cast_nullable_to_non_nullable
-              as String,
-      nickName: null == nickName
-          ? _value.nickName
-          : nickName // ignore: cast_nullable_to_non_nullable
-              as String,
-      nickImage: null == nickImage
-          ? _value.nickImage
-          : nickImage // ignore: cast_nullable_to_non_nullable
-              as String,
-      nameMemo: null == nameMemo
-          ? _value.nameMemo
-          : nameMemo // ignore: cast_nullable_to_non_nullable
-              as String,
-      ip: null == ip
-          ? _value.ip
-          : ip // ignore: cast_nullable_to_non_nullable
-              as String,
-      isBlock: null == isBlock
-          ? _value.isBlock
-          : isBlock // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isMe: null == isMe
-          ? _value.isMe
-          : isMe // ignore: cast_nullable_to_non_nullable
-              as bool,
-      isAuthor: null == isAuthor
-          ? _value.isAuthor
-          : isAuthor // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is UserInfo &&
+            (identical(other.id, id) || other.id == id) &&
+            (identical(other.nickName, nickName) ||
+                other.nickName == nickName) &&
+            (identical(other.nickImage, nickImage) ||
+                other.nickImage == nickImage) &&
+            (identical(other.nameMemo, nameMemo) ||
+                other.nameMemo == nameMemo) &&
+            (identical(other.ip, ip) || other.ip == ip) &&
+            (identical(other.isBlock, isBlock) || other.isBlock == isBlock) &&
+            (identical(other.isMe, isMe) || other.isMe == isMe) &&
+            (identical(other.isAuthor, isAuthor) ||
+                other.isAuthor == isAuthor));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, id, nickName, nickImage,
+      nameMemo, ip, isBlock, isMe, isAuthor);
+
+  @override
+  String toString() {
+    return 'UserInfo(id: $id, nickName: $nickName, nickImage: $nickImage, nameMemo: $nameMemo, ip: $ip, isBlock: $isBlock, isMe: $isMe, isAuthor: $isAuthor)';
   }
 }
 
 /// @nodoc
-abstract class _$$UserInfoImplCopyWith<$Res>
-    implements $UserInfoCopyWith<$Res> {
-  factory _$$UserInfoImplCopyWith(
-          _$UserInfoImpl value, $Res Function(_$UserInfoImpl) then) =
-      __$$UserInfoImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $UserInfoCopyWith<$Res> {
+  factory $UserInfoCopyWith(UserInfo value, $Res Function(UserInfo) _then) =
+      _$UserInfoCopyWithImpl;
   @useResult
   $Res call(
       {String id,
@@ -129,12 +77,11 @@ abstract class _$$UserInfoImplCopyWith<$Res>
 }
 
 /// @nodoc
-class __$$UserInfoImplCopyWithImpl<$Res>
-    extends _$UserInfoCopyWithImpl<$Res, _$UserInfoImpl>
-    implements _$$UserInfoImplCopyWith<$Res> {
-  __$$UserInfoImplCopyWithImpl(
-      _$UserInfoImpl _value, $Res Function(_$UserInfoImpl) _then)
-      : super(_value, _then);
+class _$UserInfoCopyWithImpl<$Res> implements $UserInfoCopyWith<$Res> {
+  _$UserInfoCopyWithImpl(this._self, this._then);
+
+  final UserInfo _self;
+  final $Res Function(UserInfo) _then;
 
   /// Create a copy of UserInfo
   /// with the given fields replaced by the non-null parameter values.
@@ -150,37 +97,37 @@ class __$$UserInfoImplCopyWithImpl<$Res>
     Object? isMe = null,
     Object? isAuthor = null,
   }) {
-    return _then(_$UserInfoImpl(
+    return _then(_self.copyWith(
       id: null == id
-          ? _value.id
+          ? _self.id
           : id // ignore: cast_nullable_to_non_nullable
               as String,
       nickName: null == nickName
-          ? _value.nickName
+          ? _self.nickName
           : nickName // ignore: cast_nullable_to_non_nullable
               as String,
       nickImage: null == nickImage
-          ? _value.nickImage
+          ? _self.nickImage
           : nickImage // ignore: cast_nullable_to_non_nullable
               as String,
       nameMemo: null == nameMemo
-          ? _value.nameMemo
+          ? _self.nameMemo
           : nameMemo // ignore: cast_nullable_to_non_nullable
               as String,
       ip: null == ip
-          ? _value.ip
+          ? _self.ip
           : ip // ignore: cast_nullable_to_non_nullable
               as String,
       isBlock: null == isBlock
-          ? _value.isBlock
+          ? _self.isBlock
           : isBlock // ignore: cast_nullable_to_non_nullable
               as bool,
       isMe: null == isMe
-          ? _value.isMe
+          ? _self.isMe
           : isMe // ignore: cast_nullable_to_non_nullable
               as bool,
       isAuthor: null == isAuthor
-          ? _value.isAuthor
+          ? _self.isAuthor
           : isAuthor // ignore: cast_nullable_to_non_nullable
               as bool,
     ));
@@ -189,8 +136,8 @@ class __$$UserInfoImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$UserInfoImpl implements _UserInfo {
-  const _$UserInfoImpl(
+class _UserInfo implements UserInfo {
+  const _UserInfo(
       {required this.id,
       required this.nickName,
       required this.nickImage,
@@ -222,16 +169,19 @@ class _$UserInfoImpl implements _UserInfo {
   @JsonKey()
   final bool isAuthor;
 
+  /// Create a copy of UserInfo
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'UserInfo(id: $id, nickName: $nickName, nickImage: $nickImage, nameMemo: $nameMemo, ip: $ip, isBlock: $isBlock, isMe: $isMe, isAuthor: $isAuthor)';
-  }
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$UserInfoCopyWith<_UserInfo> get copyWith =>
+      __$UserInfoCopyWithImpl<_UserInfo>(this, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$UserInfoImpl &&
+            other is _UserInfo &&
             (identical(other.id, id) || other.id == id) &&
             (identical(other.nickName, nickName) ||
                 other.nickName == nickName) &&
@@ -250,47 +200,86 @@ class _$UserInfoImpl implements _UserInfo {
   int get hashCode => Object.hash(runtimeType, id, nickName, nickImage,
       nameMemo, ip, isBlock, isMe, isAuthor);
 
+  @override
+  String toString() {
+    return 'UserInfo(id: $id, nickName: $nickName, nickImage: $nickImage, nameMemo: $nameMemo, ip: $ip, isBlock: $isBlock, isMe: $isMe, isAuthor: $isAuthor)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$UserInfoCopyWith<$Res>
+    implements $UserInfoCopyWith<$Res> {
+  factory _$UserInfoCopyWith(_UserInfo value, $Res Function(_UserInfo) _then) =
+      __$UserInfoCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {String id,
+      String nickName,
+      String nickImage,
+      String nameMemo,
+      String ip,
+      bool isBlock,
+      bool isMe,
+      bool isAuthor});
+}
+
+/// @nodoc
+class __$UserInfoCopyWithImpl<$Res> implements _$UserInfoCopyWith<$Res> {
+  __$UserInfoCopyWithImpl(this._self, this._then);
+
+  final _UserInfo _self;
+  final $Res Function(_UserInfo) _then;
+
   /// Create a copy of UserInfo
   /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$UserInfoImplCopyWith<_$UserInfoImpl> get copyWith =>
-      __$$UserInfoImplCopyWithImpl<_$UserInfoImpl>(this, _$identity);
+  $Res call({
+    Object? id = null,
+    Object? nickName = null,
+    Object? nickImage = null,
+    Object? nameMemo = null,
+    Object? ip = null,
+    Object? isBlock = null,
+    Object? isMe = null,
+    Object? isAuthor = null,
+  }) {
+    return _then(_UserInfo(
+      id: null == id
+          ? _self.id
+          : id // ignore: cast_nullable_to_non_nullable
+              as String,
+      nickName: null == nickName
+          ? _self.nickName
+          : nickName // ignore: cast_nullable_to_non_nullable
+              as String,
+      nickImage: null == nickImage
+          ? _self.nickImage
+          : nickImage // ignore: cast_nullable_to_non_nullable
+              as String,
+      nameMemo: null == nameMemo
+          ? _self.nameMemo
+          : nameMemo // ignore: cast_nullable_to_non_nullable
+              as String,
+      ip: null == ip
+          ? _self.ip
+          : ip // ignore: cast_nullable_to_non_nullable
+              as String,
+      isBlock: null == isBlock
+          ? _self.isBlock
+          : isBlock // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isMe: null == isMe
+          ? _self.isMe
+          : isMe // ignore: cast_nullable_to_non_nullable
+              as bool,
+      isAuthor: null == isAuthor
+          ? _self.isAuthor
+          : isAuthor // ignore: cast_nullable_to_non_nullable
+              as bool,
+    ));
+  }
 }
 
-abstract class _UserInfo implements UserInfo {
-  const factory _UserInfo(
-      {required final String id,
-      required final String nickName,
-      required final String nickImage,
-      final String nameMemo,
-      final String ip,
-      final bool isBlock,
-      final bool isMe,
-      final bool isAuthor}) = _$UserInfoImpl;
-
-  @override
-  String get id;
-  @override
-  String get nickName;
-  @override
-  String get nickImage;
-  @override
-  String get nameMemo;
-  @override
-  String get ip;
-  @override
-  bool get isBlock;
-  @override
-  bool get isMe;
-  @override
-  bool get isAuthor;
-
-  /// Create a copy of UserInfo
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$UserInfoImplCopyWith<_$UserInfoImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
+// dart format on

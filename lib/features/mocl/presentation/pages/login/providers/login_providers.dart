@@ -9,31 +9,30 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'login_providers.g.dart';
 
 @riverpod
-Map<String, String> headers(Ref ref) =>
-    switch (ref.watch(currentSiteTypeNotifierProvider)) {
-      SiteType.clien => {
-          'Referer': 'https://m.clien.net/service/mypage/myInfo',
-          'ContentType': 'application/x-www-form-urlencoded',
-        },
-      SiteType.damoang => {
-          'Referer': 'https://damoang.net/bbs/memo.php',
-          'ContentType': 'application/x-www-form-urlencoded',
-        },
-      SiteType.reddit => <String, String>{
+URLRequest urlRequest(Ref ref) {
+  final siteType = ref.watch(currentSiteTypeNotifierProvider);
+  final Map<String, String> headers = switch (siteType) {
+    SiteType.clien => {
+        'Referer': 'https://m.clien.net/service/mypage/myInfo',
+        'ContentType': 'application/x-www-form-urlencoded',
+      },
+    SiteType.damoang => {
+        'Referer': 'https://damoang.net/bbs/memo.php',
+        'ContentType': 'application/x-www-form-urlencoded',
+      },
+    SiteType.reddit => <String, String>{
         'Referer': 'https://www.reddit.com/settings/',
         'ContentType': 'application/x-www-form-urlencoded',
       },
-      SiteType.meeco => <String, String>{},
-      SiteType.naverCafe => {
-          'Referer':
-              'https://nid.naver.com/mobile/user/help/naverProfile.nhn?lang=ko_KR',
-          'ContentType': 'application/x-www-form-urlencoded',
-        },
-      _ => const {}
-    };
+    SiteType.meeco => <String, String>{},
+    SiteType.naverCafe => {
+        'Referer':
+            'https://nid.naver.com/mobile/user/help/naverProfile.nhn?lang=ko_KR',
+        'ContentType': 'application/x-www-form-urlencoded',
+      },
+    _ => const {}
+  };
 
-@riverpod
-WebUri reqUrl(Ref ref) {
   final String url = switch (ref.watch(currentSiteTypeNotifierProvider)) {
     SiteType.clien => 'https://m.clien.net/service/mypage/myInfo',
     SiteType.damoang => 'https://damoang.net/bbs/login.php?url=/bbs/memo.php',
@@ -45,7 +44,12 @@ WebUri reqUrl(Ref ref) {
       'https://www.reddit.com/login?dest=https://www.reddit.com/settings/',
     _ => ''
   };
-  return WebUri(url);
+
+  return URLRequest(
+    url: WebUri(url),
+    headers: headers,
+    httpShouldHandleCookies: true,
+  );
 }
 
 @riverpod

@@ -7,13 +7,13 @@ class AppVersionWidget extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => FutureBuilder<String>(
-    builder: (BuildContext context, AsyncSnapshot<String> snapshot) =>
-    snapshot.hasData && snapshot.data != null
-        ? ListTile(
-      title: Text(snapshot.data!, textAlign: TextAlign.center),
-      titleTextStyle: Theme.of(context).textTheme.bodySmall,
-    )
-        : SizedBox.shrink(),
-    future: ref.read(getAppVersionProvider.future),
-  );
+        builder: (BuildContext context, AsyncSnapshot<String> snapshot) =>
+            snapshot.hasData && snapshot.data != null
+                ? ListTile(
+                    title: Text(snapshot.data!, textAlign: TextAlign.center),
+                    titleTextStyle: Theme.of(context).textTheme.bodySmall,
+                  )
+                : SizedBox.shrink(),
+        future: ref.read(getAppVersionProvider.future),
+      );
 }
