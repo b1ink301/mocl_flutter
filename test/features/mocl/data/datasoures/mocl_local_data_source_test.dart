@@ -8,7 +8,7 @@ import 'package:mocl_flutter/features/mocl/data/datasources/local/entities/main_
 import 'package:mocl_flutter/features/mocl/data/datasources/local/local_database.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_api.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/remote/damoang/damoang_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/parser/damoang_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/di/datasource_provider.dart';
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';

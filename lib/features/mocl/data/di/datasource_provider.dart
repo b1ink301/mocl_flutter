@@ -13,12 +13,12 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../datasources/local/local_database.dart';
 import '../datasources/remote/base/base_api.dart';
 import '../datasources/remote/base/base_parser.dart';
-import '../datasources/remote/clien/clien_parser.dart';
-import '../datasources/remote/damoang/damoang_parser.dart';
-import '../datasources/remote/meeco/meeco_parser.dart';
-import '../datasources/remote/navercafe/naver_cafe_parser.dart';
-import '../datasources/remote/reddit/reddit_parser.dart';
-import '../datasources/remote/theqoo/theqoo_parser.dart';
+import '../datasources/remote/parser/clien_parser.dart';
+import '../datasources/remote/parser/damoang_parser.dart';
+import '../datasources/remote/parser/meeco_parser.dart';
+import '../datasources/remote/parser/naver_cafe_parser.dart';
+import '../datasources/remote/parser/reddit_parser.dart';
+import '../datasources/remote/parser/theqoo_parser.dart';
 
 part 'datasource_provider.g.dart';
 

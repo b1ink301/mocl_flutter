@@ -3,13 +3,13 @@ import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../datasources/remote/api/clien_api.dart';
+import '../datasources/remote/api/damoang_api.dart';
+import '../datasources/remote/api/meeco_api.dart';
+import '../datasources/remote/api/naver_cafe_api.dart';
+import '../datasources/remote/api/reddit_api.dart';
+import '../datasources/remote/api/theqoo_api.dart';
 import '../datasources/remote/base/base_api.dart';
-import '../datasources/remote/clien/clien_api.dart';
-import '../datasources/remote/damoang/damoang_api.dart';
-import '../datasources/remote/meeco/meeco_api.dart';
-import '../datasources/remote/navercafe/naver_cafe_api.dart';
-import '../datasources/remote/reddit/reddit_api.dart';
-import '../datasources/remote/theqoo/theqoo_api.dart';
 
 part 'network_provider.g.dart';
 

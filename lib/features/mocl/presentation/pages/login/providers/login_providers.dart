@@ -53,7 +53,11 @@ URLRequest urlRequest(Ref ref) {
 }
 
 @riverpod
-Future<bool> hasLogin(Ref ref, CookieManager cookieManager, WebUri uri) async {
+Future<bool> hasLogin(
+  Ref ref,
+  CookieManager cookieManager,
+  WebUri uri,
+) async {
   final List<Cookie> cookies = await cookieManager.getCookies(url: uri);
 
   for (final Cookie cookie in cookies) {

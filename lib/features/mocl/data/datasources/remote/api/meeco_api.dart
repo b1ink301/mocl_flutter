@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart' as webview;
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_api.dart';
@@ -48,7 +47,8 @@ class MeecoApi extends BaseApi {
       await withSyncCookie<List<ListItem>>(parser.baseUrl, () async {
         final String url =
             parser.urlByList(item.url, item.board, page, sortType, lastId);
-        final String host = webview.WebUri(parser.baseUrl).host;
+
+        final String host = Uri.parse(parser.baseUrl).host;
         final Map<String, String> headers = {
           'Host': host,
           'User-Agent': userAgent
@@ -80,7 +80,7 @@ class MeecoApi extends BaseApi {
       withSyncCookie<List<ListItem>>(parser.baseUrl, () async {
         final String url =
             parser.urlBySearchList(item.url, item.board, page, keyword, lastId);
-        final String host = webview.WebUri(parser.baseUrl).host;
+        final String host = Uri.parse(parser.baseUrl).host;
         final Map<String, String> headers = {
           'Host': host,
           'Referer': item.url,
@@ -102,8 +102,10 @@ class MeecoApi extends BaseApi {
 
   @override
   Future<Either<Failure, List<CommentItem>>> comments(
-      ListItem item, BaseParser parser, int page) {
-    // TODO: implement comments
+    ListItem item,
+    BaseParser parser,
+    int page,
+  ) {
     throw UnimplementedError();
   }
 }

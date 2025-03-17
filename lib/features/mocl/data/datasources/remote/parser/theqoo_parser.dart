@@ -2,12 +2,11 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_ext.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
@@ -18,10 +17,6 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-import '../base/base_parser.dart';
-
-part 'theqoo_ext.dart';
-
 class TheQoo extends BaseParser {
   const TheQoo();
 
@@ -30,11 +25,6 @@ class TheQoo extends BaseParser {
 
   @override
   String urlByMain() => 'https://theqoo.net/';
-
-  @override
-  Future<Either<Failure, List<CommentItem>>> comments(Response response) {
-    throw UnimplementedError('comments');
-  }
 
   @override
   String urlByDetail(String url, String board, int id) => url;
@@ -51,6 +41,7 @@ class TheQoo extends BaseParser {
 
   static void _detailIsolate(List<dynamic> args) {
     final responseData = args[0] as List<dynamic>;
+    ;
     final sendPort = args[1] as SendPort;
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
@@ -58,6 +49,8 @@ class TheQoo extends BaseParser {
     final document = parse(responseData.first);
     final container = document.querySelector(
         'html > body > div[id=container] > div.content > section > article');
+
+    final commentContainer = container?.querySelector('div[id=comment]');
 
     final title =
         container?.querySelector('div.title-wrap > h3')?.text.trim() ?? '';
@@ -74,49 +67,57 @@ class TheQoo extends BaseParser {
     var likeCount = '';
     final nickImage = '';
 
-    final json = responseData.lastOrNull as Map<String, dynamic>?;
-    final comments = <CommentItem>[];
+    var index = 0;
+    final comments = commentContainer
+            ?.querySelectorAll('ul.list > li')
+            .map((element) {
+              final nickName = '';
 
-    int nowCommentPage = 0;
-    if (json != null) {
-      nowCommentPage = json['now_comment_page'] ?? 0;
-      final addedNumber = json['added_number'];
-      // final documentSrl = json['document_srl'];
+              final id = '-1';
+              final isReply = false;
+              final time = element
+                      .querySelector('ul.list-element > li.date')
+                      ?.text
+                      .trim() ??
+                  '';
 
-      debugPrint('nowCommentPage=$nowCommentPage, addedNumber=$addedNumber');
+              final nickImage = '';
+              final likeCount = '';
 
-      final List<dynamic> list = json['comment_list'];
-      var index = 1;
-      for (final element in list) {
-        debugPrint('element=$element');
-        final String body = element['ct']?.toString() ?? '';
-        final String time = element['rd']?.toString() ?? '';
-        final int id = element['srl'] ?? -1;
+              final body = element
+                      .querySelector('ul.list-element > li.title')
+                      ?.innerHtml ??
+                  '';
 
-        final int commentIndex = addedNumber + index++;
-        final nickName = '$commentIndex. 무명의 더쿠';
-        final info = nickName;
+              var parsedTime = '';
+              try {
+                var dateTime = parseDateTime(time);
+                parsedTime = timeago.format(dateTime, locale: 'ko');
+              } catch (e) {
+                parsedTime = time;
+              }
+              final info = '$nickName ・ $parsedTime';
 
-        final comment = CommentItem(
-          id: id,
-          isReply: false,
-          bodyHtml: body,
-          likeCount: likeCount,
-          mediaHtml: '',
-          isVideo: false,
-          time: time,
-          info: info,
-          userInfo: UserInfo(
-            id: id.toString(),
-            nickName: nickName,
-            nickImage: '',
-          ),
-          authorId: '',
-        );
-
-        comments.add(comment);
-      }
-    }
+              return CommentItem(
+                id: index++,
+                isReply: isReply,
+                bodyHtml: body,
+                likeCount: likeCount,
+                mediaHtml: '',
+                isVideo: false,
+                time: time,
+                info: info,
+                userInfo: UserInfo(
+                  id: id,
+                  nickName: nickName,
+                  nickImage: nickImage,
+                ),
+                authorId: '',
+              );
+            })
+            .whereType<CommentItem>()
+            .toList() ??
+        [];
 
     var parsedTime = '';
     try {
@@ -127,21 +128,23 @@ class TheQoo extends BaseParser {
     }
     final info = BaseParser.parserInfo(nickName, parsedTime, viewCount);
 
+    // debugPrint('bodyHtml=${bodyHtml?.innerHtml}');
+
     final detail = Details(
-        title: title,
-        viewCount: viewCount,
-        likeCount: likeCount,
-        csrf: '',
-        time: time,
-        info: info,
-        userInfo: UserInfo(
-          id: nickName,
-          nickName: nickName,
-          nickImage: nickImage,
-        ),
-        comments: comments,
-        bodyHtml: bodyHtml?.innerHtml ?? '',
-        extraData: {'nowCommentPage': nowCommentPage});
+      title: title,
+      viewCount: viewCount,
+      likeCount: likeCount,
+      csrf: '',
+      time: time,
+      info: info,
+      userInfo: UserInfo(
+        id: nickName,
+        nickName: nickName,
+        nickImage: nickImage,
+      ),
+      comments: comments,
+      bodyHtml: bodyHtml?.innerHtml ?? '',
+    );
 
     final result = Right<Failure, Details>(detail);
     sendPort.send(result);
@@ -308,7 +311,9 @@ class TheQoo extends BaseParser {
   }
 
   @override
-  Future<Either<Failure, List<MainItem>>> main(Response response) async {
+  Future<Either<Failure, List<MainItem>>> main(
+    Response response,
+  ) async {
     final responseData = response.data;
     final document = parse(responseData);
     final container = document.querySelector(
@@ -409,5 +414,11 @@ class TheQoo extends BaseParser {
         }
       }
     }
+  }
+
+  @override
+  Future<Either<Failure, List<CommentItem>>> comments(Response response) {
+    // TODO: implement comments
+    throw UnimplementedError();
   }
 }
