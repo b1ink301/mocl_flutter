@@ -1,8 +1,6 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
-import 'package:flutter_inappwebview/flutter_inappwebview.dart' as webview;
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_api.dart';
@@ -15,8 +13,8 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
 
-class ClienApi extends BaseApi {
-  const ClienApi(super.dio, super.userAgent);
+class TheQooApi extends BaseApi {
+  const TheQooApi(super.dio, super.userAgent);
 
   @override
   Future<Either<Failure, Details>> detail(
@@ -25,36 +23,37 @@ class ClienApi extends BaseApi {
   ) async =>
       await withSyncCookie(parser.baseUrl, () async {
         final String url = parser.urlByDetail(item.url, item.board, item.id);
-        final Map<String, String> headers = {'User-Agent': userAgent};
+        final String commentUrl = 'https://theqoo.net/index.php';
+        final Map<String, String> headers = {
+          'User-Agent': userAgent,
+          'origin': 'https://theqoo.net',
+        };
 
-        final Response response = await get(url, headers: headers);
-        log('[detail] $url, $headers response = ${response.statusCode}');
-        return response.statusCode == 200
-            ? parser.detail(response)
-            : Left(
-                GetDetailFailure(
-                    message: 'response.statusCode = ${response.statusCode}'),
-              );
-      });
+        final Future<Response> commentFuture = postUri(
+          commentUrl,
+          data: {
+            'act': 'dispTheqooContentCommentListTheqoo',
+            'document_srl': '3641556060',
+            'cpage': 0,
+          },
+          headers: headers,
+          responseType: ResponseType.json,
+        );
+        final Future<Response> detailFuture = get(url, headers: headers);
+        final List<Response> responses =
+            await Future.wait([detailFuture, commentFuture]);
 
-  @override
-  Future<Either<Failure, List<CommentItem>>> comments(
-    ListItem item,
-    BaseParser parser,
-    int page,
-  ) async =>
-      await withSyncCookie(parser.baseUrl, () async {
-        final String url =
-            parser.urlByComments(item.url, item.board, item.id, page);
-        final Map<String, String> headers = {'User-Agent': userAgent};
-        final Response response = await get(url, headers: headers);
-        log('[comments] $url, $headers response = ${response.statusCode}');
-        return response.statusCode == 200
-            ? parser.comments(response.data)
-            : Left(
-                GetDetailFailure(
-                    message: 'response.statusCode = ${response.statusCode}'),
-              );
+        log('[getDetail] $url, commentUrl=$commentUrl');
+
+        if (responses.first.statusCode == 200 &&
+            responses.last.statusCode == 200) {
+          final List data = responses.map((response) => response.data).toList();
+          final Response<List> result = Response<List<dynamic>>(
+              data: data, requestOptions: RequestOptions());
+          return parser.detail(result);
+        } else {
+          throw GetDetailFailure(message: 'response.statusCode = not 200');
+        }
       });
 
   @override
@@ -66,17 +65,16 @@ class ClienApi extends BaseApi {
     BaseParser parser,
     Future<List<int>> Function(SiteType, List<int>) isReads,
   ) async =>
-      await withSyncCookie<List<ListItem>>(parser.baseUrl, () async {
+      await withSyncCookie(parser.baseUrl, () async {
         final String url =
             parser.urlByList(item.url, item.board, page, sortType, lastId);
-        final String host = webview.WebUri(parser.baseUrl).host;
+        final String host = Uri.parse(parser.baseUrl).host;
         final Map<String, String> headers = {
           'Host': host,
           'User-Agent': userAgent
         };
         final Response response = await get(url, headers: headers);
-        debugPrint(
-            '[getList] $url, $headers response = ${response.statusCode}');
+        log('[getList] $url, $headers response = ${response.statusCode}');
 
         return response.statusCode == 200
             ? parser.list(response, lastId, item.text, isReads)
@@ -85,19 +83,8 @@ class ClienApi extends BaseApi {
       });
 
   @override
-  Future<Either<Failure, List<MainItem>>> main(BaseParser parser) async =>
-      await withSyncCookie(parser.baseUrl, () async {
-        final String url = parser.urlByMain();
-        final Map<String, String> headers = {'User-Agent': userAgent};
-        final Response response = await get(url, headers: headers);
-        log('[main] $url, $headers response = ${response.statusCode}');
-        return response.statusCode == 200
-            ? parser.main(response)
-            : Left(
-                GetMainFailure(
-                    message: 'response.statusCode = ${response.statusCode}'),
-              );
-      });
+  Future<Either<Failure, List<MainItem>>> main(BaseParser parser) =>
+      throw UnimplementedError();
 
   @override
   Future<Either<Failure, List<ListItem>>> searchList(
@@ -108,11 +95,11 @@ class ClienApi extends BaseApi {
     String keyword,
     BaseParser parser,
     Future<List<int>> Function(SiteType, List<int>) isReads,
-  ) =>
+  ) async =>
       withSyncCookie<List<ListItem>>(parser.baseUrl, () async {
         final String url =
             parser.urlBySearchList(item.url, item.board, page, keyword, lastId);
-        final String host = webview.WebUri(parser.baseUrl).host;
+        final String host = Uri.parse(parser.baseUrl).host;
         final Map<String, String> headers = {
           'Host': host,
           'Referer': item.url,
@@ -131,4 +118,12 @@ class ClienApi extends BaseApi {
             : Left(GetListFailure(
                 message: 'response.statusCode = ${response.statusCode}'));
       });
+
+  @override
+  Future<Either<Failure, List<CommentItem>>> comments(
+    ListItem item,
+    BaseParser parser,
+    int page,
+  ) =>
+      throw UnimplementedError();
 }
