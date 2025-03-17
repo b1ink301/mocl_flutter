@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class RoundTextWidget extends StatelessWidget {
   final String text;
@@ -25,7 +26,8 @@ class RoundTextWidget extends StatelessWidget {
     BuildContext context,
   ) {
     final effectiveTextStyle = textStyle ?? DefaultTextStyle.of(context).style;
-    final effectiveBorderColor = borderColor ?? effectiveTextStyle.color ?? const Color(0xFF000000);
+    final effectiveBorderColor =
+        borderColor ?? effectiveTextStyle.color ?? const Color(0xFF000000);
 
     return Container(
       padding: padding,
@@ -34,7 +36,7 @@ class RoundTextWidget extends StatelessWidget {
         border: Border.all(color: effectiveBorderColor),
         borderRadius: BorderRadius.circular(borderRadius),
       ),
-      child: Text(
+      child: PlatformText(
         text,
         maxLines: 1,
         style: effectiveTextStyle,

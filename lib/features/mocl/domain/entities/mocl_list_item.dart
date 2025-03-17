@@ -1,5 +1,6 @@
 import 'dart:core';
 
+import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'mocl_user_info.dart';
@@ -7,7 +8,7 @@ import 'mocl_user_info.dart';
 part 'mocl_list_item.freezed.dart';
 
 @freezed
-class ListItem with _$ListItem {
+abstract class ListItem with _$ListItem {
   const factory ListItem({
     required int id,
     required String title,
@@ -41,4 +42,8 @@ class ListItem with _$ListItem {
         hasImage: false,
         isRead: false,
       );
+}
+
+extension ListItemExtension on ListItem {
+  ValueKey get key => ValueKey(Object.hash(id, isRead));
 }

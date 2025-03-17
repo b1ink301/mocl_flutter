@@ -1,138 +1,180 @@
+import 'dart:io';
+
+import 'package:cupertino_sidebar/cupertino_sidebar.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/features/mocl/presentation/injection.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/main/add_dialog/bloc/main_data_json_bloc.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/main/bloc/main_data_bloc.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/main/bloc/site_type_bloc.dart';
+import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/mocl_drawer_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/mocl_main_view.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/settings/bloc/get_version_cubit.dart';
-import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/dummy_appbar.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/main/providers/main_providers.dart';
+import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_routes.dart';
+import 'package:mocl_flutter/src/generated/i18n/app_localizations.dart';
 
-class MainPage extends StatelessWidget {
+class MainPage extends ConsumerWidget {
   const MainPage({super.key});
 
-  static Widget withBloc(
-    BuildContext context,
-  ) =>
-      MultiBlocProvider(
-        providers: [
-          BlocProvider(create: (_) => getIt<MainDataJsonBloc>()),
-          BlocProvider(
-            create: (_) {
-              final siteTypeBloc = context.read<SiteTypeBloc>();
-              return getIt<MainDataBloc>()..initialize(siteTypeBloc);
-            },
-          ),
-          BlocProvider(create: (_) => getIt<GetVersionCubit>()..getVersion()),
+  static Widget init(BuildContext context) => ProviderScope(
+        overrides: [
+          screenWidthProvider
+              .overrideWithValue(MediaQuery.of(context).size.width)
         ],
         child: AnnotatedRegion<SystemUiOverlayStyle>(
-            value: Theme.of(context).appBarTheme.systemOverlayStyle!,
-            child: const MainPage()),
-      );
-
-  Widget _buildAppBar(
-    BuildContext context,
-  ) {
-    final siteType = context.watch<SiteTypeBloc>();
-    final backgroundColor = Theme.of(context).appBarTheme.backgroundColor;
-
-    return SliverAppBar(
-      title: _buildTitle(context, siteType.title),
-      flexibleSpace: Container(color: backgroundColor),
-      backgroundColor: backgroundColor,
-      titleSpacing: 0,
-      floating: true,
-      pinned: false,
-      centerTitle: false,
-      toolbarHeight: 64,
-      actions: SiteType.naverCafe == siteType.state
-          ? null
-          : [
-              Builder(
-                  builder: (context) => IconButton(
-                        onPressed: () =>
-                            _handleAddButton(context, siteType.state),
-                        icon: const Icon(Icons.add),
-                      ))
-            ],
-    );
-  }
-
-  void _handleAddButton(BuildContext context, SiteType siteType) async {
-    final result = await context.push<List<MainItem>>(
-      Routes.setMainDlgFull,
-      extra: siteType,
-    );
-    if (context.mounted && result != null) {
-      context
-          .read<MainDataBloc>()
-          .addMainList(siteType: siteType, list: result);
-    }
-  }
-
-  Widget _buildTitle(BuildContext context, String title) => MessageWidget(
-        message: title,
-        textStyle: Theme.of(context).textTheme.labelMedium,
-      );
-
-  @override
-  Widget build(BuildContext context) => Scaffold(
-        drawerEdgeDragWidth: MediaQuery.of(context).size.width,
-        drawerEnableOpenDragGesture: true,
-        drawer: _buildDrawer(context),
-        appBar: buildDummyAppbar(context),
-        body: BlocListener<MainDataBloc, MainDataState>(
-          listener: (BuildContext context, MainDataState state) async {
-            if (state is StateRequireLogin) {
-              final result = await context.push<bool>(Routes.login) ?? false;
-              if (context.mounted && result) {
-                final siteType = context.read<SiteTypeBloc>().state;
-                context.read<MainDataBloc>().refresh(siteType);
-              }
-            }
-          },
-          child: SafeArea(
-            left: false,
-            right: false,
-            child: RefreshIndicator(
-              onRefresh: () async {
-                final siteTypeBloc = context.read<SiteTypeBloc>();
-                context.read<MainDataBloc>().refresh(siteTypeBloc.state);
-              },
-              child: CustomScrollView(
-                // cacheExtent: 0,
-                slivers: <Widget>[
-                  _buildAppBar(context),
-                  const MainView(),
-                ],
-              ),
-            ),
-          ),
+          value: Theme.of(context).appBarTheme.systemOverlayStyle!,
+          child: const MainPage(),
         ),
       );
 
-  Widget _buildDrawer(BuildContext context) =>
-      DrawerWidget(onChangeSite: (siteType) {
-        if (siteType == SiteType.settings) {
-          // Fluttertoast.showToast(
-          //     msg: "준비 중입니다.",
-          //     toastLength: Toast.LENGTH_LONG,
-          //     gravity: ToastGravity.BOTTOM,
-          //     timeInSecForIosWeb: 2,
-          //     backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-          //     textColor: Colors.white,
-          //     fontSize: 16.0
-          // );
-          context.push(Routes.settings);
-        } else {
-          context.read<SiteTypeBloc>().setSiteType(siteType);
-        }
-      });
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final GlobalKey<ScaffoldState> scaffoldState =
+        ref.watch(mainScaffoldStateProvider);
+
+    return PopScope(
+        canPop: false,
+        onPopInvokedWithResult: (bool didPop, _) {
+          if (didPop) {
+            return;
+          }
+          if (scaffoldState.currentState?.isDrawerOpen == true) {
+            scaffoldState.currentState?.closeDrawer();
+          } else {
+            SystemNavigator.pop();
+          }
+        },
+        child: PlatformScaffold(
+          body: PlatformWidget(
+            material: (_, __) => const MainView(),
+            cupertino: (_, __) => const _MainCupertinoView(),
+          ),
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          material: (_, __) => MaterialScaffoldData(
+            widgetKey: scaffoldState,
+            drawer: const DrawerWidget(),
+            drawerEdgeDragWidth: ref.watch(screenWidthProvider),
+            drawerEnableOpenDragGesture: true,
+          ),
+          cupertino: (_, __) => CupertinoPageScaffoldData(),
+        ));
+  }
+}
+
+class _MainCupertinoView extends ConsumerWidget {
+  const _MainCupertinoView();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isSidebarExpanded = ref.watch(mainSidebarNotifierProvider);
+    final sidebarClose = ref.read(mainSidebarNotifierProvider.notifier).close;
+
+    changeSiteType(SiteType siteType) => ref
+        .read(currentSiteTypeNotifierProvider.notifier)
+        .changeSiteType(siteType);
+
+    if (Platform.isIOS) {
+      return Stack(
+        children: [
+          const CupertinoTabTransitionBuilder(
+            child: MainView(),
+          ),
+          if (isSidebarExpanded)
+            GestureDetector(
+              onTap: sidebarClose,
+              behavior: HitTestBehavior.opaque, // 뒤쪽 터치 이벤트 캔슬
+              child: Container(
+                color: Colors.black38, // 투명한 레이어
+              ),
+            ),
+          CupertinoSidebarCollapsible(
+            isExpanded: isSidebarExpanded,
+            child: CupertinoSidebar(
+              maxWidth: 240,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              selectedIndex: SiteType.values
+                  .indexOf(ref.watch(currentSiteTypeNotifierProvider)),
+              onDestinationSelected: (index) {
+                final siteType = SiteType.values
+                    .where((s) => s != SiteType.settings)
+                    .toList()[index];
+                changeSiteType(siteType);
+                sidebarClose();
+              },
+              navigationBar: SidebarNavigationBar(
+                title: PlatformText(AppLocalizations.of(context)!.menu),
+              ),
+              children: [
+                SidebarSection(
+                  label: PlatformText(AppLocalizations.of(context)!.site),
+                  children: SiteType.values
+                      .where((s) => s != SiteType.settings)
+                      .map(
+                        (s) => SidebarDestination(label: PlatformText(s.title)),
+                      )
+                      .toList(),
+                ),
+                SidebarSection(label: PlatformText('설정'), children: [
+                  SidebarDestination(
+                      label: PlatformText(SiteType.settings.title),
+                      onTap: () {
+                        context.push(Routes.settings);
+                        sidebarClose();
+                      }),
+                ]),
+              ],
+            ),
+          ),
+        ],
+      );
+    } else {
+      return Row(
+        children: [
+          CupertinoSidebarCollapsible(
+            isExpanded: isSidebarExpanded,
+            child: CupertinoSidebar(
+              maxWidth: 250,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              selectedIndex: SiteType.values
+                  .indexOf(ref.watch(currentSiteTypeNotifierProvider)),
+              onDestinationSelected: (index) {
+                final siteType = SiteType.values
+                    .where((s) => s != SiteType.settings)
+                    .toList()[index];
+                changeSiteType(siteType);
+                // sidebarClose();
+              },
+              navigationBar: SidebarNavigationBar(
+                title: PlatformText(AppLocalizations.of(context)!.menu),
+              ),
+              children: [
+                SidebarSection(
+                  label: PlatformText(AppLocalizations.of(context)!.site),
+                  children: SiteType.values
+                      .where((s) => s != SiteType.settings)
+                      .map(
+                        (s) => SidebarDestination(label: PlatformText(s.title)),
+                      )
+                      .toList(),
+                ),
+                SidebarSection(label: PlatformText('설정'), children: [
+                  SidebarDestination(
+                      label: PlatformText(SiteType.settings.title),
+                      onTap: () {
+                        context.push(Routes.settings);
+                        // sidebarClose();
+                      }),
+                ]),
+              ],
+            ),
+          ),
+          Expanded(
+              child: const CupertinoTabTransitionBuilder(
+            child: MainView(),
+          )),
+        ],
+      );
+    }
+  }
 }

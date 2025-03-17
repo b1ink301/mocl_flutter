@@ -1,53 +1,53 @@
 import 'dart:io';
 
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/presentation/injection.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/list/bloc/list_page_cubit.dart';
+import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_list_view.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/appbar_dual_text_widget.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/dummy_appbar.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_providers.dart';
 
-class MoclListPage extends StatelessWidget {
+class MoclListPage extends ConsumerWidget {
   const MoclListPage({super.key});
 
-  static Widget withBloc(
+  static Widget init(
     BuildContext context,
     MainItem item,
   ) =>
-      MultiBlocProvider(
-        providers: [
-          BlocProvider(
-            create: (context) => getIt<ListPageCubit>(param1: item),
-          ),
-        ],
-        child: AnnotatedRegion<SystemUiOverlayStyle>(
-          value: Theme.of(context).appBarTheme.systemOverlayStyle!,
+      AnnotatedRegion<SystemUiOverlayStyle>(
+        value: Theme.of(context).appBarTheme.systemOverlayStyle!,
+        child: ProviderScope(
+          overrides: [
+            screenWidthProvider
+                .overrideWithValue(MediaQuery.of(context).size.width),
+            appbarTextStyleProvider.overrideWithValue(Platform.isIOS
+                ? CupertinoTheme.of(context)
+                    .textTheme
+                    .navLargeTitleTextStyle
+                    .copyWith(height: 1.3)
+                : Theme.of(context).textTheme.labelMedium!),
+            mainItemProvider.overrideWithValue(item),
+          ],
           child: const MoclListPage(),
         ),
       );
 
   @override
-  Widget build(BuildContext context) {
-    final child = Scaffold(
-      appBar: buildDummyAppbar(context),
-      body: SafeArea(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final child = PlatformScaffold(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      body: const SafeArea(
         left: false,
         right: false,
-        child: RefreshIndicator(
-          onRefresh: context.read<ListPageCubit>().refresh,
-          child: const CustomScrollView(
-            slivers: <Widget>[
-              _ListAppbar(),
-              MoclListView(),
-            ],
-          ),
-        ),
+        child: MoclListView(),
       ),
+      material: (context, platform) => MaterialScaffoldData(),
+      cupertino: (context, platform) => CupertinoPageScaffoldData(),
     );
 
     return Platform.isMacOS
@@ -60,28 +60,5 @@ class MoclListPage extends StatelessWidget {
             child: child,
           )
         : child;
-  }
-}
-
-class _ListAppbar extends StatelessWidget {
-  const _ListAppbar();
-
-  @override
-  Widget build(BuildContext context) {
-    final bloc = context.read<ListPageCubit>();
-    final smallTitle = bloc.smallTitle;
-    final title = bloc.title;
-
-    return AppbarDualTextWidget(
-      smallTitle: smallTitle,
-      title: title,
-      automaticallyImplyLeading: Platform.isMacOS,
-      actions: [
-        IconButton(
-          onPressed: bloc.refresh,
-          icon: const Icon(Icons.refresh),
-        )
-      ],
-    );
   }
 }

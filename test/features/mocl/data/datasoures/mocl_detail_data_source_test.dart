@@ -1,24 +1,30 @@
+import 'package:flutter/foundation.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/detail_data_source.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_api.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/parser/damoang_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/di/datasource_provider.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 
 import 'mocl_detail_data_source_test.mocks.dart';
 
-@GenerateMocks([DetailDataSource, BaseParser])
+@GenerateMocks([BaseApi])
 void main() async {
-  late final MockDetailDataSource detailDataSource;
-  late final MockBaseParser parser;
-  // late final ApiClient apiClient;
+  late final DetailDataSource detailDataSource;
+  late final MockBaseApi mockApiClient;
+  late final ProviderContainer container;
+  late final BaseParser parser;
 
   // var json = '''{id: 1310241, title: 사설 댓글팀 보면 여론조작하는 세력을 놔두는거 같아요, reply: , category: , image: https://damoang.net/data/member_image/go/google_a2c50979.gif?1720228754, time: 16:01, url: https://damoang.net/free/1310241, board: free, boardTitle: boardTitle, like: , hit: 36, userInfo: Instance of 'UserInfo', hasImage: false, isRead: false}''';
-  var item = ListItem(
+  final item = ListItem(
     id: 1310241,
     title: '사설 댓글팀 보면 여론조작하는 세력을 놔두는거 같아요',
     reply: '',
@@ -35,41 +41,61 @@ void main() async {
     isRead: false,
   );
 
-  setUpAll(() {
-    parser = MockBaseParser();
-    // apiClient = ApiClient();
-    detailDataSource = MockDetailDataSource();
+  setUpAll(() async {
+    TestWidgetsFlutterBinding.ensureInitialized();
+
+    parser = DamoangParser(true);
+    mockApiClient = MockBaseApi();
+
+    container = ProviderContainer(
+      overrides: [
+        detailDatasourceProvider.overrideWithValue(
+            DetailDataSourceImpl(apiClient: mockApiClient, parser: parser))
+      ],
+    );
+
+    detailDataSource = container.read(detailDatasourceProvider);
   });
 
-  test('상세 데이터를 가져온다. (성공)', () async {
-    // arrange
-    provideDummyBuilder<Result<Details>>(
-        (_, __) => ResultSuccess(Details.empty()));
+  test('[API] detail remote datasource test. (success)', () async {
+    provideDummyBuilder<Either<Failure, Details>>(
+        (_, __) => Right(Details.empty()));
 
-    when(detailDataSource.getDetail(any, any))
-        .thenAnswer((_) => Future.value(ResultSuccess(Details.empty())));
+    // arrange
+    when(mockApiClient.detail(any, any))
+        .thenAnswer((_) async => Right(Details.empty()));
 
     // act
-    Result result = await detailDataSource.getDetail(item, parser);
+    final Either<Failure, Details> result =
+        await detailDataSource.getDetail(item);
+
+    debugPrint('result=$result');
 
     // assert
-    expect(result, isA<ResultSuccess>());
+    expect(result, isA<Right>());
+
+    final details = result.getRight().toNullable();
+
+    expect(details, isA<Details>());
   });
 
-  test('상세 데이터를 가져온다. (에러)', () async {
+  test('[API] detail remote datasource test. (failed)', () async {
     // arrange
-    provideDummyBuilder<Result<Details>>(
-        (_, __) => ResultSuccess(Details.empty()));
+    provideDummyBuilder<Either<Failure, Details>>(
+        (_, __) => Right(Details.empty()));
 
-    when(detailDataSource.getDetail(any, any)).thenAnswer(
-        (_) => Future.value(ResultFailure(GetDetailFailure(message: '---'))));
+    // arrange
+    when(mockApiClient.detail(any, any)).thenAnswer(
+        (_) async => Left(GetDetailFailure(message: 'GetDetailFailure')));
 
     // act
-    Result result = await detailDataSource.getDetail(item, parser);
+    final result = await detailDataSource.getDetail(item);
 
     // assert
-    expect(result, isA<ResultFailure>());
+    expect(result.isLeft(), true);
 
-    expect((result as ResultFailure?)?.failure, isA<GetDetailFailure>());
+    final failure = result.getLeft().toNullable();
+
+    expect(failure, isA<GetDetailFailure>());
   });
 }

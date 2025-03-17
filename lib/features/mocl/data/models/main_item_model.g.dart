@@ -6,8 +6,8 @@ part of 'main_item_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$MainItemDataImpl _$$MainItemDataImplFromJson(Map<String, dynamic> json) =>
-    _$MainItemDataImpl(
+_MainItemData _$MainItemDataFromJson(Map<String, dynamic> json) =>
+    _MainItemData(
       orderBy: (json['no'] as num).toInt(),
       board: json['board'] as String,
       type: (json['type'] as num).toInt(),
@@ -16,7 +16,7 @@ _$MainItemDataImpl _$$MainItemDataImplFromJson(Map<String, dynamic> json) =>
       siteType: $enumDecodeNullable(_$SiteTypeEnumMap, json['siteType']),
     );
 
-Map<String, dynamic> _$$MainItemDataImplToJson(_$MainItemDataImpl instance) =>
+Map<String, dynamic> _$MainItemDataToJson(_MainItemData instance) =>
     <String, dynamic>{
       'no': instance.orderBy,
       'board': instance.board,
@@ -31,5 +31,7 @@ const _$SiteTypeEnumMap = {
   SiteType.damoang: 'damoang',
   SiteType.meeco: 'meeco',
   SiteType.naverCafe: 'naverCafe',
+  SiteType.reddit: 'reddit',
+  SiteType.theqoo: 'theqoo',
   SiteType.settings: 'settings',
 };

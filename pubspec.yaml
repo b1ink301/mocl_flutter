@@ -1,7 +1,7 @@
 name: mocl_flutter
 description: "Mocl Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.3.0+364
+version: 1.3.0+368
 
 environment:
   sdk: '>=3.4.3 <4.0.0'
@@ -9,6 +9,10 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_localizations:
+    sdk: flutter
+  # localization
+  intl: any
 
   # icons
   cupertino_icons: ^1.0.8
@@ -17,41 +21,36 @@ dependencies:
   html: ^0.15.5
 
   # HTML Widget
-  flutter_widget_from_html: ^0.15.3
-
-  # DI
-  injectable: ^2.5.0
-  get_it: ^8.0.3
-
-  # Bloc for state management
-  flutter_bloc: ^8.1.6
+  flutter_widget_from_html: ^0.16.0
 
   # Value equality
   equatable: ^2.0.7
 
   # Functional programming thingies
-  #  dartz: ^0.10.1
+  fpdart: ^1.1.1
+
   # Remote API
   #  internet_connection_checker_plus: ^2.4.2
   # Http Client
   #  http: ^1.2.2
-  dio: ^5.7.0
+  dio: ^5.8.0+1
 
   # cookie
   cookie_jar: ^4.0.8
-  dio_cookie_manager: ^3.1.1
+  dio_cookie_manager: ^3.2.0
 
   # Local cache
-  shared_preferences: ^2.3.4
+  shared_preferences: ^2.5.2
 
   # json
   json_annotation: ^4.9.0
 
   # Path
   path_provider: ^2.1.5
+  path: ^1.9.1
 
   # class 자동화
-  freezed_annotation: ^2.4.4
+  freezed_annotation: ^3.0.0
 
   # 이미지 캐시
   cached_network_image: ^3.4.1
@@ -62,80 +61,111 @@ dependencies:
   url_launcher: ^6.3.1
 
   # swipe back
-  swipeable_page_route: ^0.4.6
+  swipeable_page_route: ^0.4.7
 
   # splash
-  flutter_native_splash: ^2.4.4
+#  flutter_native_splash: ^2.4.4
   #  gif: ^2.3.0
   # like room database
-  floor: ^1.5.0
+#  floor: ^1.5.0
   #  hive_flutter: ^1.1.0
 
   # router
-  go_router: ^14.6.2
+  go_router: ^14.8.1
 
   # firebase
-  firebase_crashlytics: ^4.2.0
+  firebase_crashlytics: ^4.3.4
 
   # async
-  async: ^2.11.0
+  async: ^2.12.0
 
   # infinite pagination
-  easy_infinite_pagination: ^0.0.6
+#  easy_infinite_pagination: ^0.0.6
 #  flutter_isolate: ^2.0.4
 
   # share
-  share_plus: ^10.1.3
+  share_plus: ^10.1.4
   share_plus_platform_interface: ^5.0.2
 
   # package info
-  package_info_plus: ^8.1.2
+  package_info_plus: ^8.3.0
 
   # time format
   timeago: ^3.7.0
 
   # like crashlytics..
-  sentry_flutter: ^8.11.2
-
-  # change app name
-  launcher_name: ^1.0.2
+  sentry_flutter: ^8.14.0
 
   # sliver tools
   sliver_tools: ^0.2.12
 
   # toast
-  fluttertoast: ^8.2.10
+  fluttertoast: ^8.2.12
 
+  # webview
   flutter_inappwebview: ^6.1.5
-#  webview_flutter: ^4.10.0
 
+  # photo view
   photo_view: ^0.15.0
 
+  # dart utility
   dartx: ^1.2.0
+
+  # riverpod
+  flutter_riverpod: ^2.6.1
+  riverpod_annotation: ^2.6.1
+
+  # sliver list
+  super_sliver_list: ^0.4.1
+
+  # debounce/throttle
+  easy_debounce: ^2.0.3
+
+  octo_image: ^2.1.0
+
+#  drift: ^2.23.1
+#  objectbox: ^4.0.3
+#  objectbox_generator: ^4.0.3
+
+#  rearch: ^1.16.0
+
+  # nosql
+  sembast: ^3.8.4+1
+
+  flutter_platform_widgets: ^8.0.0
+  cupertino_sidebar: ^1.0.1
+#  sidebarx: ^0.17.1
+
+  wolt_modal_sheet: ^0.11.0
+  html_unescape: ^2.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  integration_test:
+    sdk: flutter
 
   flutter_lints: ^5.0.0
-  build_runner: ^2.4.14
-  json_serializable: ^6.9.0
-  mockito: ^5.4.4
-  freezed: ^2.5.7
-  analyzer: ^6.7.0
-  test: ^1.25.7
-  bloc_test: ^9.1.7
-  floor_generator: ^1.5.0
-  injectable_generator: ^2.6.2
+  build_runner: ^2.4.15
+  json_serializable: ^6.9.4
+  mockito: ^5.4.5
+  freezed: ^3.0.4
+  analyzer: ^7.3.0
+#  test: ^1.25.10
+  test_api: ^0.7.4
+  riverpod_generator: ^2.6.4
+  riverpod_lint: ^2.6.4
+
+  # flavor
+  flutter_flavorizr: ^2.3.0
 
 flutter:
   uses-material-design: true
+  generate: true
   assets:
     - assets/
     - assets/damoang/
     - assets/clien/
     - assets/meeco/
-    - assets/navercafe/
-
-launcher_name:
-  default: "Mocl"
+    - assets/reddit/
+    - assets/theqoo/

@@ -1,19 +1,20 @@
 import 'package:equatable/equatable.dart';
-import 'package:injectable/injectable.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/usecases/usecase.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/repositories/main_repository.dart';
 
-@injectable
-class SetMainList extends UseCase<Future<void>, SetMainParams> {
+class SetMainList
+    implements UseCase<Future<Either<Failure, List<int>>>, SetMainParams> {
   final MainRepository mainRepository;
 
-  SetMainList({required this.mainRepository});
+  const SetMainList({required this.mainRepository});
 
   @override
-  Future<Result> call(SetMainParams params) => mainRepository.setMainList(
+  Future<Either<Failure, List<int>>> call(SetMainParams params) =>
+      mainRepository.setMainList(
         siteType: params.siteType,
         list: params.list,
       );

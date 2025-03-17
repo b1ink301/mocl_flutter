@@ -1,8 +1,58 @@
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
 
 class MoclTheme {
+  static CupertinoThemeData get lightCupertinoTheme =>
+      MaterialBasedCupertinoThemeData(materialTheme: lightTheme).copyWith(
+        brightness: Brightness.light,
+        primaryColor: const Color(0xFF0E7EA3),
+        textTheme: CupertinoTextThemeData(
+          navActionTextStyle: TextStyle(
+            inherit: false,
+            fontFamily: 'CupertinoSystemText',
+            fontSize: 17.0,
+            letterSpacing: -0.41,
+            color: const Color(0xFF0E7EA3),
+            decoration: TextDecoration.none,
+          ),
+          navLargeTitleTextStyle: TextStyle(
+            inherit: false,
+            fontFamily: 'CupertinoSystemDisplay',
+            fontSize: 34.0,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.38,
+            color: Colors.black,
+          ),
+        ),
+      );
+
+  static CupertinoThemeData get dartCupertinoTheme =>
+      MaterialBasedCupertinoThemeData(materialTheme: darkTheme).copyWith(
+        brightness: Brightness.dark,
+        applyThemeToAll: true,
+        primaryColor: const Color(0xFFFF4081),
+        textTheme: CupertinoTextThemeData(
+          navActionTextStyle: TextStyle(
+            inherit: false,
+            fontFamily: 'CupertinoSystemText',
+            fontSize: 17.0,
+            letterSpacing: -0.41,
+            color: const Color(0xFFFF4081),
+            decoration: TextDecoration.none,
+          ),
+          navLargeTitleTextStyle: const TextStyle(
+            inherit: false,
+            fontFamily: 'CupertinoSystemDisplay',
+            fontSize: 34.0,
+            fontWeight: FontWeight.w700,
+            letterSpacing: 0.38,
+            color: Colors.white,
+          ),
+        ),
+      );
+
   static ThemeData get lightTheme => ThemeData.light().copyWith(
         extensions: [
           MoclTextStyles.light(),
@@ -14,9 +64,9 @@ class MoclTheme {
           systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: Color(0xFF4d5057),
             systemNavigationBarColor: Color(0xFFEAEBE6),
-            systemNavigationBarIconBrightness: Brightness.light,
+            systemNavigationBarIconBrightness: Brightness.dark,
             statusBarIconBrightness: Brightness.light,
-            statusBarBrightness: Brightness.dark,
+            statusBarBrightness: Brightness.light,
             systemStatusBarContrastEnforced: false,
             systemNavigationBarContrastEnforced: false,
           ),
@@ -26,7 +76,6 @@ class MoclTheme {
         highlightColor: const Color(0xFFAAAAAA),
         primaryColor: const Color(0xFF595D66),
         scaffoldBackgroundColor: const Color(0xFFEAEBE6),
-        dialogBackgroundColor: const Color(0xFFEAEBE6),
         popupMenuTheme: const PopupMenuThemeData(
           color: Color(0xFFEAEBE6),
           textStyle: TextStyle(color: Color(0xFF111111), fontSize: 17),
@@ -64,7 +113,7 @@ class MoclTheme {
           systemOverlayStyle: SystemUiOverlayStyle(
             statusBarColor: Color(0xFF1f1f1f),
             systemNavigationBarColor: Color(0xFF333333),
-            systemNavigationBarIconBrightness: Brightness.light,
+            systemNavigationBarIconBrightness: Brightness.dark,
             statusBarIconBrightness: Brightness.light,
             statusBarBrightness: Brightness.dark,
             systemStatusBarContrastEnforced: false,
@@ -89,7 +138,6 @@ class MoclTheme {
         ),
         primaryColor: const Color(0xFF292929),
         scaffoldBackgroundColor: const Color(0xFF333333),
-        dialogBackgroundColor: const Color(0xFF333333),
         popupMenuTheme: PopupMenuThemeData(
           color: const Color(0xFF333333),
           textStyle: const TextStyle(color: Color(0xFFEEEEEE), fontSize: 17),

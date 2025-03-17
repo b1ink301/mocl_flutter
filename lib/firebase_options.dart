@@ -68,7 +68,8 @@ class DefaultFirebaseOptions {
     projectId: 'mocl-b418e',
     databaseURL: 'https://mocl-b418e.firebaseio.com',
     storageBucket: 'mocl-b418e.appspot.com',
-    androidClientId: '275270612301-3jajhso3ce2c9ungjkgifi3em060uupa.apps.googleusercontent.com',
+    androidClientId:
+        '275270612301-3jajhso3ce2c9ungjkgifi3em060uupa.apps.googleusercontent.com',
     iosBundleId: 'net.b1ink.moclFlutter',
   );
 
@@ -79,7 +80,8 @@ class DefaultFirebaseOptions {
     projectId: 'mocl-b418e',
     databaseURL: 'https://mocl-b418e.firebaseio.com',
     storageBucket: 'mocl-b418e.appspot.com',
-    androidClientId: '275270612301-3jajhso3ce2c9ungjkgifi3em060uupa.apps.googleusercontent.com',
+    androidClientId:
+        '275270612301-3jajhso3ce2c9ungjkgifi3em060uupa.apps.googleusercontent.com',
     iosBundleId: 'net.b1ink.moclFlutter',
   );
 
