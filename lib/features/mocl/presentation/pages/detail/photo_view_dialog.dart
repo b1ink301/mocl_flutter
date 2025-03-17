@@ -30,33 +30,37 @@ class PhotoViewDialog extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => Stack(children: [
-        Positioned.fill(
-          child: PhotoView(
-            imageProvider: imageProvider,
-            loadingBuilder: loadingBuilder ?? defaultLoading,
-            backgroundDecoration: backgroundDecoration ??
-                BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                ),
-            minScale: minScale,
-            maxScale: maxScale,
-            initialScale: initialScale,
-            basePosition: basePosition,
-            filterQuality: filterQuality,
-            disableGestures: disableGestures,
-            errorBuilder: errorBuilder,
+  Widget build(BuildContext context) => SafeArea(
+        left: false,
+        right: false,
+        child: Stack(children: [
+          Positioned.fill(
+            child: PhotoView(
+              imageProvider: imageProvider,
+              loadingBuilder: loadingBuilder ?? defaultLoading,
+              backgroundDecoration: backgroundDecoration ??
+                  BoxDecoration(
+                    color: Theme.of(context).scaffoldBackgroundColor,
+                  ),
+              minScale: minScale,
+              maxScale: maxScale,
+              initialScale: initialScale,
+              basePosition: basePosition,
+              filterQuality: filterQuality,
+              disableGestures: disableGestures,
+              errorBuilder: errorBuilder,
+            ),
           ),
-        ),
-        Positioned(
-          top: 10.0,
-          right: 10.0,
-          child: IconButton(
-            onPressed: () => {context.pop()},
-            icon: Icon(Icons.close),
-          ),
-        )
-      ]);
+          Positioned(
+            top: 10.0,
+            right: 10.0,
+            child: IconButton(
+              onPressed: () => context.pop(),
+              icon: const Icon(Icons.close),
+            ),
+          )
+        ]),
+      );
 
   Widget defaultLoading(
     BuildContext context,

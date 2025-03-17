@@ -1,31 +1,67 @@
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/main/bloc/main_data_bloc.dart';
-import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/main/providers/main_providers.dart';
+import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_routes.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 
-class MainView extends StatelessWidget {
+class MainView extends ConsumerWidget {
   const MainView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    final textStyle = Theme.of(context).textTheme.bodyMedium;
+  Widget build(BuildContext context, WidgetRef ref) => SafeArea(
+        left: false,
+        right: false,
+        child: RefreshIndicator.adaptive(
+          color: Theme.of(context).indicatorColor,
+          onRefresh: () async =>
+              ref.read(mainItemsNotifierProvider.notifier).refresh(),
+          child: CustomScrollView(
+            slivers: <Widget>[
+              PlatformWidget(
+                material: (_, __) => const _MainAppBar(),
+                cupertino: (_, __) => const _MainNavigationBar(),
+              ),
+              const _MainBody(),
+            ],
+          ),
+        ),
+      );
+}
 
-    return BlocBuilder<MainDataBloc, MainDataState>(
-      builder: (context, state) => state.map(
-        initial: (_) => _buildLoadingView(),
-        loading: (_) => _buildLoadingView(),
-        success: (state) => state.data.isEmpty
-            ? _buildEmptyView(textStyle)
-            : _buildListView(context, state.data, textStyle),
-        failure: (state) => _buildErrorView(context, state.message),
-        requireLogin: (state) => _buildErrorView(context, state.message),
-      ),
+class _MainBody extends ConsumerWidget {
+  const _MainBody();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    ref.listen<AsyncValue>(
+      mainItemsNotifierProvider
+          .select((AsyncValue<List<MainItem>> value) => value),
+      (AsyncValue? previous, AsyncValue? next) {
+        if (next case AsyncError error when error.error is NotLoginFailure) {
+          // }
+          // if (next is AsyncError && next.error is NotLoginFailure) {
+          context.push<bool>(Routes.login).then((bool? result) {
+            if (context.mounted && result == true) {
+              ref.read(mainItemsNotifierProvider.notifier).refresh();
+            }
+          });
+        }
+      },
     );
+
+    return ref.watch(mainItemsNotifierProvider).when(
+          data: (List<MainItem> data) => _buildListView(context, data),
+          error: (Object error, StackTrace stack) => _buildErrorView(
+              context, error is Failure ? error.message : error.toString()),
+          loading: () => _buildLoadingView(),
+        );
   }
 
   Widget _buildLoadingView() => const SliverToBoxAdapter(
@@ -34,7 +70,7 @@ class MainView extends StatelessWidget {
   Widget _buildEmptyView(TextStyle? textStyle) => SliverFillRemaining(
         hasScrollBody: false,
         child: Center(
-          child: Text(
+          child: PlatformText(
             '항목이 없습니다.\n+ 버튼을 눌려서 항목을 추가해 주세요!',
             style: textStyle,
           ),
@@ -44,26 +80,36 @@ class MainView extends StatelessWidget {
   Widget _buildListView(
     BuildContext context,
     List<MainItem> items,
-    TextStyle? textStyle,
-  ) =>
-      SliverList.separated(
-        itemCount: items.length,
-        itemBuilder: (context, index) =>
-            _buildListItem(context, items[index], textStyle),
-        separatorBuilder: (_, __) => const DividerWidget(),
-      );
+  ) {
+    final textStyle = Theme.of(context).textTheme.bodyMedium;
+    return items.isEmpty
+        ? _buildEmptyView(textStyle)
+        : SliverList.separated(
+            itemCount: items.length,
+            itemBuilder: (BuildContext context, int index) =>
+                _buildListItem(context, items[index], textStyle),
+            separatorBuilder: (_, __) => const DividerWidget(),
+          );
+  }
 
   Widget _buildListItem(
     BuildContext context,
     MainItem item,
     TextStyle? textStyle,
   ) =>
-      ListTile(
+      PlatformListTile(
         key: ValueKey(item.board),
-        minTileHeight: 68,
         leading: item.icon.isEmpty ? null : _buildIconView(item.icon),
-        title: Text(item.text, style: textStyle),
-        onTap: () => context.push(Routes.list, extra: item),
+        title: PlatformText(item.text, style: textStyle),
+        onTap: () async {
+          await context.push(Routes.list, extra: item);
+        },
+        material: (_, __) => MaterialListTileData(
+          contentPadding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+        ),
+        cupertino: (_, __) => CupertinoListTileData(
+            padding: const EdgeInsets.fromLTRB(16, 18, 8, 18),
+            additionalInfo: Icon(CupertinoIcons.chevron_forward)),
       );
 
   Widget _buildErrorView(
@@ -73,7 +119,7 @@ class MainView extends StatelessWidget {
       SliverPadding(
         padding: const EdgeInsets.all(12.0),
         sliver: SliverToBoxAdapter(
-          child: Text(
+          child: PlatformText(
             message,
             style: TextStyle(
               fontSize: 16,
@@ -85,4 +131,108 @@ class MainView extends StatelessWidget {
 
   Widget _buildIconView(String url) => CircleAvatar(
       radius: 24, backgroundImage: CachedNetworkImageProvider(url));
+}
+
+class _MainAppBar extends ConsumerWidget {
+  const _MainAppBar();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => SliverAppBar(
+      scrolledUnderElevation: 0,
+      // flexibleSpace:
+      //     Container(color: Theme.of(context).appBarTheme.backgroundColor),
+      title: PlatformText(ref.watch(mainTitleProvider)),
+      titleTextStyle: Theme.of(context).textTheme.labelMedium,
+      titleSpacing: 0,
+      floating: true,
+      centerTitle: false,
+      toolbarHeight: 64,
+      actions: !ref.watch(showAddButtonProvider)
+          ? null
+          : [
+              PlatformIconButton(
+                onPressed: () async {
+                  ref.read(handleAddButtonProvider(context));
+
+                  // final result = await WoltModalSheet.show(
+                  //   context: context,
+                  //   pageListBuilder: (bottomSheetContext) => [
+                  //     AddListModalSheetPage(context: bottomSheetContext),
+                  //   ],
+                  // );
+                },
+                icon: const Icon(Icons.add),
+              ),
+              PlatformPopupMenu(
+                  options: [
+                    PopupMenuOption(
+                      label: '로그인',
+                      onTap: (_) => context
+                          .push<bool>(Routes.login)
+                          .then((bool? result) {}),
+                    ),
+                  ],
+                  icon: Icon(
+                    size: 24,
+                    context.platformIcon(
+                      material: Icons.more_vert_rounded,
+                      cupertino: CupertinoIcons.ellipsis,
+                    ),
+                  ))
+            ]);
+}
+
+class _MainNavigationBar extends ConsumerWidget {
+  const _MainNavigationBar();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) =>
+      CupertinoSliverNavigationBar(
+        largeTitle: PlatformText(ref.watch(mainTitleProvider)),
+        padding: const EdgeInsetsDirectional.only(start: 5, end: 10),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        leading: PlatformIconButton(
+          padding: const EdgeInsets.all(0),
+          onPressed: () =>
+              ref.read(mainSidebarNotifierProvider.notifier).toggle(),
+          icon: Icon(
+            size: 24,
+            color: Theme.of(context).indicatorColor,
+            context.platformIcon(
+              material: Icons.menu,
+              cupertino: CupertinoIcons.sidebar_left,
+            ),
+          ),
+        ),
+        trailing: !ref.watch(showAddButtonProvider)
+            ? null
+            : PlatformPopupMenu(
+                icon: Icon(
+                  color: Theme.of(context).indicatorColor,
+                  size: 24,
+                  context.platformIcon(
+                    material: Icons.more_vert_rounded,
+                    cupertino: CupertinoIcons.ellipsis,
+                  ),
+                ),
+                options: [
+                  PopupMenuOption(
+                    label: '게시판 추가',
+                    onTap: (_) => ref.read(handleAddButtonProvider(context)),
+                  ),
+                  PopupMenuOption(
+                    label: '로그인',
+                    onTap: (_) {
+                      context.push<bool>(Routes.login).then((result) {
+                        if (context.mounted && result == true) {
+                          ref
+                              .read(mainItemsNotifierProvider.notifier)
+                              .refresh();
+                        }
+                      });
+                    },
+                  ),
+                ],
+              ),
+      );
 }

@@ -1,0 +1,30 @@
+app:
+  android:
+    flavorDimensions: "env"
+
+flavors:
+  prd:
+    app:
+      name: "Mocl"
+
+    android:
+      applicationId: "kr.b1ink.mocl"
+    ios:
+      bundleId: "kr.b1ink.mocl"
+    macos:
+      bundleId: "kr.b1ink.mocl"
+
+  dev:
+    app:
+      name: "Mocl_DEV"
+
+    android:
+      applicationId: "kr.b1ink.mocl.dev"
+      customConfig:
+        versionNameSuffix: "\"_dev\""
+    ios:
+      bundleId: "kr.b1ink.mocl.dev"
+    macos:
+      bundleId: "kr.b1ink.mocl.dev"
+
+ide: idea

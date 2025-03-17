@@ -1,117 +1,121 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/features/mocl/presentation/injection.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/main/add_dialog/bloc/main_data_json_bloc.dart';
+import 'package:mocl_flutter/features/mocl/presentation/models/checkable_main_item.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/main/add_dialog/providers/add_list_dlg_providers.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/check_box_list_title_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
 
-class AddListDialog extends StatelessWidget {
+class AddListDialog extends ConsumerWidget {
   const AddListDialog({super.key});
 
-  static Widget withBloc(
-    BuildContext context,
-    SiteType siteType,
-  ) =>
-      BlocProvider(
-        child: const AddListDialog(),
-        create: (BuildContext context) =>
-            getIt<MainDataJsonBloc>()..add(GetListEvent(siteType: siteType)),
-      );
+  static Widget init(BuildContext context) => const AddListDialog();
 
   @override
-  Widget build(BuildContext context) => _buildAlertDialog(context);
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AsyncValue<List<CheckableMainItem>> state =
+        ref.watch(addListDlgNotifierProvider);
+    final ThemeData theme = Theme.of(context);
+    final Size size = MediaQuery.of(context).size;
 
-  AlertDialog _buildAlertDialog(BuildContext context) => AlertDialog(
-        backgroundColor: Theme.of(context).dialogBackgroundColor,
-        title: Column(
-          children: [
-            const SizedBox(height: 20),
-            Text(
-              '게시판 선택',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-            const SizedBox(height: 20),
-            const DividerWidget(thickness: 1, indent: 16, endIndent: 16),
-          ],
-        ),
+    return PlatformAlertDialog(
+      material: (_, __) => MaterialAlertDialogData(
         elevation: 8,
+        title: _buildTitle(context),
+        titlePadding: EdgeInsets.zero,
         contentPadding:
             const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-        titlePadding: EdgeInsets.zero,
-        content: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.7,
-          height: MediaQuery.of(context).size.height * 0.7,
-          child: BlocBuilder<MainDataJsonBloc, MainDataJsonState>(
-            builder: (context, state) {
-              final bloc = context.read<MainDataJsonBloc>();
-              return state.map(
-                initial: (_) => const LoadingWidget(),
-                loading: (_) => const LoadingWidget(),
-                success: (state) =>
-                    _buildListView(context, state.data, bloc.onChanged),
-                failure: (state) => MessageWidget(message: state.message),
-              );
-            },
+      ),
+      cupertino: (_, __) => CupertinoAlertDialogData(
+        title: PlatformText('게시판 선택'),
+      ),
+      content: _buildContent(context, state, size),
+      actions: _buildActions(context, theme),
+    );
+  }
+
+  Widget _buildTitle(BuildContext context) => Column(
+        children: [
+          const SizedBox(height: 20),
+          PlatformText(
+            '게시판 선택',
+            style: Theme.of(context).textTheme.headlineMedium,
           ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              if (context.mounted) {
-                context.pop();
-              }
-            },
-            child: Text(
-              '취소',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              if (context.mounted) {
-                final bloc = BlocProvider.of<MainDataJsonBloc>(context);
-                log('[onPressed] =${bloc.selectedItems.length}');
-                context.pop(bloc.selectedItems);
-              }
-            },
-            child: Text(
-              '적용',
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineMedium
-                  ?.copyWith(color: Theme.of(context).indicatorColor),
-            ),
-          ),
+          const SizedBox(height: 20),
+          const DividerWidget(thickness: 1, indent: 16, endIndent: 16),
         ],
+      );
+
+  Widget _buildContent(
+    BuildContext context,
+    AsyncValue<List<CheckableMainItem>> state,
+    Size size,
+  ) =>
+      SizedBox(
+        width: size.width * 0.7,
+        height: size.height * 0.6,
+        child: state.when(
+          data: (data) => _buildListView(context, data),
+          error: (failure, _) => MessageWidget(message: failure.toString()),
+          loading: () => const LoadingWidget(),
+        ),
       );
 
   Widget _buildListView(
     BuildContext context,
-    List<MainItem> data,
-    void Function<T>(bool, T?)? onChanged,
+    List<CheckableMainItem> items,
   ) =>
-      ListView.separated(
-        padding: EdgeInsets.zero,
-        itemCount: data.length,
-        itemBuilder: (context, index) {
-          final item = data[index];
-          final bloc = context.read<MainDataJsonBloc>();
-          return CheckBoxListTitleWidget<MainItem>(
-            text: item.text,
-            object: item,
-            isChecked: bloc.hasItem(item),
-            textStyle: Theme.of(context).textTheme.bodyMedium,
-            onChanged: onChanged,
+      Consumer(
+        builder: (BuildContext context, WidgetRef ref, Widget? child) {
+          final AddListDlgNotifier notifier =
+              ref.read(addListDlgNotifierProvider.notifier);
+          return ListView.separated(
+            padding: EdgeInsets.zero,
+            itemCount: items.length,
+            separatorBuilder: (_, __) =>
+                const DividerWidget(indent: 0, endIndent: 0),
+            itemBuilder: (context, index) {
+              final CheckableMainItem item = items[index];
+              return CheckBoxListTitleWidget(
+                  text: item.mainItem.text,
+                  isChecked: item.isChecked,
+                  textStyle: Theme.of(context).textTheme.bodyMedium,
+                  onChanged: (bool isChecked) {
+                    notifier.onChanged(isChecked, index);
+                  });
+            },
           );
         },
-        separatorBuilder: (BuildContext context, int index) =>
-            const DividerWidget(indent: 0, endIndent: 0),
       );
+
+  List<Widget> _buildActions(
+    BuildContext context,
+    ThemeData theme,
+  ) =>
+      [
+        PlatformDialogAction(
+          onPressed: () => context.pop(),
+          child: PlatformText(
+            '취소',
+            style: theme.textTheme.headlineMedium,
+          ),
+        ),
+        Consumer(
+          builder: (context, ref, child) {
+            final notifier = ref.read(addListDlgNotifierProvider.notifier);
+            return PlatformDialogAction(
+              onPressed: () => context.pop(notifier.selectedItems()),
+              child: PlatformText(
+                '적용',
+                style: theme.textTheme.headlineMedium?.copyWith(
+                  color: theme.indicatorColor,
+                ),
+              ),
+            );
+          },
+        ),
+      ];
 }

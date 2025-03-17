@@ -3,25 +3,32 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i3;
+import 'dart:async' as _i6;
 
-import 'package:dio/dio.dart' as _i10;
+import 'package:cookie_jar/cookie_jar.dart' as _i5;
+import 'package:dio/dio.dart' as _i2;
+import 'package:fpdart/fpdart.dart' as _i7;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i8;
-import 'package:mocl_flutter/features/mocl/data/datasources/list_data_source.dart'
-    as _i2;
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart'
-    as _i7;
+import 'package:mockito/src/dummies.dart' as _i4;
+import 'package:mocl_flutter/core/error/failures.dart' as _i8;
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_api.dart'
+    as _i3;
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_parser.dart'
+    as _i10;
+import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart'
+    as _i13;
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_comment_item.dart'
+    as _i16;
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart'
     as _i11;
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart'
-    as _i5;
+    as _i12;
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart'
-    as _i6;
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart'
-    as _i4;
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart'
     as _i9;
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart'
+    as _i15;
+import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart'
+    as _i14;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -37,219 +44,261 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart'
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-/// A class which mocks [ListDataSource].
+class _FakeResponse_0<T> extends _i1.SmartFake implements _i2.Response<T> {
+  _FakeResponse_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
+}
+
+/// A class which mocks [BaseApi].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockListDataSource extends _i1.Mock implements _i2.ListDataSource {
-  MockListDataSource() {
+class MockBaseApi extends _i1.Mock implements _i3.BaseApi {
+  MockBaseApi() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i3.Future<_i4.Result<List<_i5.ListItem>>> getList(
-    _i6.MainItem? item,
-    int? page,
-    int? lastId,
-    _i7.BaseParser? parser,
+  String get userAgent =>
+      (super.noSuchMethod(
+            Invocation.getter(#userAgent),
+            returnValue: _i4.dummyValue<String>(
+              this,
+              Invocation.getter(#userAgent),
+            ),
+          )
+          as String);
+
+  @override
+  void init(_i5.CookieJar? cookieJar) => super.noSuchMethod(
+    Invocation.method(#init, [cookieJar]),
+    returnValueForMissingStub: null,
+  );
+
+  @override
+  _i6.Future<_i2.Response<dynamic>> getUri(
+    Uri? uri, {
+    Map<String, String>? headers,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(#getUri, [uri], {#headers: headers}),
+            returnValue: _i6.Future<_i2.Response<dynamic>>.value(
+              _FakeResponse_0<dynamic>(
+                this,
+                Invocation.method(#getUri, [uri], {#headers: headers}),
+              ),
+            ),
+          )
+          as _i6.Future<_i2.Response<dynamic>>);
+
+  @override
+  _i6.Future<_i2.Response<dynamic>> get(
+    String? url, {
+    Map<String, String>? headers,
+    _i2.ResponseType? responseType,
+    String? contentType,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(
+              #get,
+              [url],
+              {
+                #headers: headers,
+                #responseType: responseType,
+                #contentType: contentType,
+              },
+            ),
+            returnValue: _i6.Future<_i2.Response<dynamic>>.value(
+              _FakeResponse_0<dynamic>(
+                this,
+                Invocation.method(
+                  #get,
+                  [url],
+                  {
+                    #headers: headers,
+                    #responseType: responseType,
+                    #contentType: contentType,
+                  },
+                ),
+              ),
+            ),
+          )
+          as _i6.Future<_i2.Response<dynamic>>);
+
+  @override
+  _i6.Future<_i2.Response<dynamic>> postUri(
+    String? url, {
+    Map<String, String>? headers,
+    Object? data,
+    _i2.ResponseType? responseType,
+    String? contentType,
+  }) =>
+      (super.noSuchMethod(
+            Invocation.method(
+              #postUri,
+              [url],
+              {
+                #headers: headers,
+                #data: data,
+                #responseType: responseType,
+                #contentType: contentType,
+              },
+            ),
+            returnValue: _i6.Future<_i2.Response<dynamic>>.value(
+              _FakeResponse_0<dynamic>(
+                this,
+                Invocation.method(
+                  #postUri,
+                  [url],
+                  {
+                    #headers: headers,
+                    #data: data,
+                    #responseType: responseType,
+                    #contentType: contentType,
+                  },
+                ),
+              ),
+            ),
+          )
+          as _i6.Future<_i2.Response<dynamic>>);
+
+  @override
+  _i6.Future<_i7.Either<_i8.Failure, T>> withSyncCookie<T>(
+    String? baseUrl,
+    _i6.Future<_i7.Either<_i8.Failure, T>> Function()? action,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getList,
-          [
-            item,
-            page,
-            lastId,
-            parser,
-          ],
-        ),
-        returnValue: _i3.Future<_i4.Result<List<_i5.ListItem>>>.value(
-            _i8.dummyValue<_i4.Result<List<_i5.ListItem>>>(
-          this,
-          Invocation.method(
-            #getList,
-            [
+            Invocation.method(#withSyncCookie, [baseUrl, action]),
+            returnValue: _i6.Future<_i7.Either<_i8.Failure, T>>.value(
+              _i4.dummyValue<_i7.Either<_i8.Failure, T>>(
+                this,
+                Invocation.method(#withSyncCookie, [baseUrl, action]),
+              ),
+            ),
+          )
+          as _i6.Future<_i7.Either<_i8.Failure, T>>);
+
+  @override
+  _i6.Future<_i7.Either<_i8.Failure, List<_i9.MainItem>>> main(
+    _i10.BaseParser? parser,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#main, [parser]),
+            returnValue:
+                _i6.Future<_i7.Either<_i8.Failure, List<_i9.MainItem>>>.value(
+                  _i4.dummyValue<_i7.Either<_i8.Failure, List<_i9.MainItem>>>(
+                    this,
+                    Invocation.method(#main, [parser]),
+                  ),
+                ),
+          )
+          as _i6.Future<_i7.Either<_i8.Failure, List<_i9.MainItem>>>);
+
+  @override
+  _i6.Future<_i7.Either<_i8.Failure, _i11.Details>> detail(
+    _i12.ListItem? item,
+    _i10.BaseParser? parser,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#detail, [item, parser]),
+            returnValue:
+                _i6.Future<_i7.Either<_i8.Failure, _i11.Details>>.value(
+                  _i4.dummyValue<_i7.Either<_i8.Failure, _i11.Details>>(
+                    this,
+                    Invocation.method(#detail, [item, parser]),
+                  ),
+                ),
+          )
+          as _i6.Future<_i7.Either<_i8.Failure, _i11.Details>>);
+
+  @override
+  _i6.Future<_i7.Either<_i8.Failure, List<_i12.ListItem>>> list(
+    _i9.MainItem? item,
+    int? page,
+    _i13.LastId? lastId,
+    _i14.SortType? sortType,
+    _i10.BaseParser? parser,
+    _i6.Future<List<int>> Function(_i15.SiteType, List<int>)? isReads,
+  ) =>
+      (super.noSuchMethod(
+            Invocation.method(#list, [
               item,
               page,
               lastId,
+              sortType,
               parser,
-            ],
-          ),
-        )),
-      ) as _i3.Future<_i4.Result<List<_i5.ListItem>>>);
-
-  @override
-  _i3.Future<int> setReadFlag(
-    _i9.SiteType? siteType,
-    int? id,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #setReadFlag,
-          [
-            siteType,
-            id,
-          ],
-        ),
-        returnValue: _i3.Future<int>.value(0),
-      ) as _i3.Future<int>);
-
-  @override
-  _i3.Future<bool> isReadFlag(
-    _i9.SiteType? siteType,
-    int? boardId,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #isReadFlag,
-          [
-            siteType,
-            boardId,
-          ],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
-
-  @override
-  _i3.Future<Map<int, bool>> isReadFlags(
-    _i9.SiteType? siteType,
-    List<int>? boardIds,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #isReadFlags,
-          [
-            siteType,
-            boardIds,
-          ],
-        ),
-        returnValue: _i3.Future<Map<int, bool>>.value(<int, bool>{}),
-      ) as _i3.Future<Map<int, bool>>);
-}
-
-/// A class which mocks [BaseParser].
-///
-/// See the documentation for Mockito's code generation for more information.
-class MockBaseParser extends _i1.Mock implements _i7.BaseParser {
-  MockBaseParser() {
-    _i1.throwOnMissingStub(this);
-  }
-
-  @override
-  _i9.SiteType get siteType => (super.noSuchMethod(
-        Invocation.getter(#siteType),
-        returnValue: _i9.SiteType.clien,
-      ) as _i9.SiteType);
-
-  @override
-  set siteType(_i9.SiteType? _siteType) => super.noSuchMethod(
-        Invocation.setter(
-          #siteType,
-          _siteType,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  String get baseUrl => (super.noSuchMethod(
-        Invocation.getter(#baseUrl),
-        returnValue: _i8.dummyValue<String>(
-          this,
-          Invocation.getter(#baseUrl),
-        ),
-      ) as String);
-
-  @override
-  set baseUrl(String? _baseUrl) => super.noSuchMethod(
-        Invocation.setter(
-          #baseUrl,
-          _baseUrl,
-        ),
-        returnValueForMissingStub: null,
-      );
-
-  @override
-  _i4.Result<List<_i6.MainItem>> main(_i10.Response<dynamic>? response) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #main,
-          [response],
-        ),
-        returnValue: _i8.dummyValue<_i4.Result<List<_i6.MainItem>>>(
-          this,
-          Invocation.method(
-            #main,
-            [response],
-          ),
-        ),
-      ) as _i4.Result<List<_i6.MainItem>>);
-
-  @override
-  _i3.Future<_i4.Result<List<_i5.ListItem>>> list(
-    _i10.Response<dynamic>? response,
-    int? lastId,
-    String? boardTitle,
-    _i3.Future<Map<int, bool>> Function(
-      _i9.SiteType,
-      List<int>,
-    )? isReads,
-  ) =>
-      (super.noSuchMethod(
-        Invocation.method(
-          #list,
-          [
-            response,
-            lastId,
-            boardTitle,
-            isReads,
-          ],
-        ),
-        returnValue: _i3.Future<_i4.Result<List<_i5.ListItem>>>.value(
-            _i8.dummyValue<_i4.Result<List<_i5.ListItem>>>(
-          this,
-          Invocation.method(
-            #list,
-            [
-              response,
-              lastId,
-              boardTitle,
               isReads,
-            ],
-          ),
-        )),
-      ) as _i3.Future<_i4.Result<List<_i5.ListItem>>>);
+            ]),
+            returnValue:
+                _i6.Future<_i7.Either<_i8.Failure, List<_i12.ListItem>>>.value(
+                  _i4.dummyValue<_i7.Either<_i8.Failure, List<_i12.ListItem>>>(
+                    this,
+                    Invocation.method(#list, [
+                      item,
+                      page,
+                      lastId,
+                      sortType,
+                      parser,
+                      isReads,
+                    ]),
+                  ),
+                ),
+          )
+          as _i6.Future<_i7.Either<_i8.Failure, List<_i12.ListItem>>>);
 
   @override
-  _i3.Future<_i4.Result<_i11.Details>> detail(
-          _i10.Response<dynamic>? response) =>
+  _i6.Future<_i7.Either<_i8.Failure, List<_i12.ListItem>>> searchList(
+    _i9.MainItem? item,
+    int? page,
+    _i13.LastId? lastId,
+    _i14.SortType? sortType,
+    String? keyword,
+    _i10.BaseParser? parser,
+    _i6.Future<List<int>> Function(_i15.SiteType, List<int>)? isReads,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #detail,
-          [response],
-        ),
-        returnValue: _i3.Future<_i4.Result<_i11.Details>>.value(
-            _i8.dummyValue<_i4.Result<_i11.Details>>(
-          this,
-          Invocation.method(
-            #detail,
-            [response],
-          ),
-        )),
-      ) as _i3.Future<_i4.Result<_i11.Details>>);
+            Invocation.method(#searchList, [
+              item,
+              page,
+              lastId,
+              sortType,
+              keyword,
+              parser,
+              isReads,
+            ]),
+            returnValue:
+                _i6.Future<_i7.Either<_i8.Failure, List<_i12.ListItem>>>.value(
+                  _i4.dummyValue<_i7.Either<_i8.Failure, List<_i12.ListItem>>>(
+                    this,
+                    Invocation.method(#searchList, [
+                      item,
+                      page,
+                      lastId,
+                      sortType,
+                      keyword,
+                      parser,
+                      isReads,
+                    ]),
+                  ),
+                ),
+          )
+          as _i6.Future<_i7.Either<_i8.Failure, List<_i12.ListItem>>>);
 
   @override
-  _i3.Future<_i4.Result<dynamic>> comment(_i10.Response<dynamic>? response) =>
+  _i6.Future<_i7.Either<_i8.Failure, List<_i16.CommentItem>>> comments(
+    _i12.ListItem? item,
+    _i10.BaseParser? parser,
+    int? page,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #comment,
-          [response],
-        ),
-        returnValue: _i3.Future<_i4.Result<dynamic>>.value(
-            _i8.dummyValue<_i4.Result<dynamic>>(
-          this,
-          Invocation.method(
-            #comment,
-            [response],
-          ),
-        )),
-      ) as _i3.Future<_i4.Result<dynamic>>);
+            Invocation.method(#comments, [item, parser, page]),
+            returnValue: _i6.Future<
+              _i7.Either<_i8.Failure, List<_i16.CommentItem>>
+            >.value(
+              _i4.dummyValue<_i7.Either<_i8.Failure, List<_i16.CommentItem>>>(
+                this,
+                Invocation.method(#comments, [item, parser, page]),
+              ),
+            ),
+          )
+          as _i6.Future<_i7.Either<_i8.Failure, List<_i16.CommentItem>>>);
 }

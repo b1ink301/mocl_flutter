@@ -1,8 +1,10 @@
 import 'dart:developer';
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:fpdart/fpdart.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
@@ -22,13 +24,13 @@ void main() {
   });
 
   test('main 유즈케이스는 빈값을 리턴한다.', () async {
-    provideDummyBuilder<Result<List<MainItem>>>(
+    provideDummyBuilder<Either<Failure, List<MainItem>>>(
         (Object parent, Invocation invocation) {
-      return Result.success(const []);
+      return Right(const []);
     });
 
     when(mockMainRepository.getMainList(siteType: anyNamed('siteType')))
-        .thenAnswer((_) async => Result.success(const []));
+        .thenAnswer((_) async => Right(const []));
 
     var result = await getMainList(SiteType.damoang);
     var expected = Result<List<MainItem>>.success(const []);

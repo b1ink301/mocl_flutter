@@ -1,16 +1,13 @@
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
-import 'package:mocl_flutter/features/mocl/data/db/entities/main_item_data.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
+
+import '../datasources/local/entities/main_item_data.dart';
 
 class MainItemMapper {
   MainItemMapper._();
 
-  static MainItem toEntity(
-    MainItemModel model,
-    SiteType siteType,
-  ) =>
-      MainItem(
+  static MainItem toEntity(MainItemModel model, SiteType siteType) => MainItem(
         siteType: siteType,
         board: model.board,
         type: model.type,
@@ -19,10 +16,7 @@ class MainItemMapper {
         orderBy: model.orderBy,
       );
 
-  static MainItemModel toModel(
-    MainItemData data,
-  ) =>
-      MainItemModel(
+  static MainItemModel toModel(MainItemData data) => MainItemModel(
         siteType: data.siteType,
         board: data.board,
         type: data.type,
@@ -31,15 +25,10 @@ class MainItemMapper {
         orderBy: data.orderBy,
       );
 
-  static MainItem fromDbToEntity(
-    MainItemData data,
-  ) =>
+  static MainItem fromDbToEntity(MainItemData data) =>
       data.toMainItemModel().toEntity(data.siteType);
 
-  static MainItemData fromModelToEntity(
-    MainItemModel model,
-  ) =>
-      MainItemData(
+  static MainItemData fromModelToEntity(MainItemModel model) => MainItemData(
         siteType: model.siteType ?? SiteType.damoang,
         board: model.board,
         type: model.type,
@@ -48,10 +37,7 @@ class MainItemMapper {
         orderBy: model.orderBy,
       );
 
-  static MainItemModel fromEntityToModel(
-    MainItem entity,
-  ) =>
-      MainItemModel(
+  static MainItemModel fromEntityToModel(MainItem entity) => MainItemModel(
         siteType: entity.siteType,
         board: entity.board,
         type: entity.type,

@@ -2,10 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/api_client.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/clien_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/parser_factory.dart';
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/mocl/data/repositories/mocl_main_repository_impl.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
@@ -16,30 +13,26 @@ import 'package:mocl_flutter/features/mocl/domain/repositories/settings_reposito
 
 import './mocl_main_repository_test.mocks.dart';
 
-@GenerateMocks([MainDataSource, SettingsRepository, ParserFactory])
+@GenerateMocks([MainDataSource, SettingsRepository])
 void main() {
   const SiteType siteType = SiteType.damoang;
   late MockMainDataSource mockMainDataSource;
   late MainRepository moclRepository;
-  late MockParserFactory parserFactory;
 
   setUpAll(() async {
     // TestWidgetsFlutterBinding.ensureInitialized();
     // SharedPreferences.setMockInitialValues({});
     // final prefs = await SharedPreferences.getInstance();
 
-    parserFactory = MockParserFactory();
-    when(parserFactory.createParser()).thenReturn(ClienParser());
+    // when(mockParserFactory.currentParser).thenReturn(ClienParser());
 
     mockMainDataSource = MockMainDataSource();
     moclRepository = MainRepositoryImpl(
       dataSource: mockMainDataSource,
-      apiClient: ApiClient(),
-      parserFactory: parserFactory,
     );
   });
 
-  const mainItemModel = MainItemModel(
+  const MainItemModel mainItemModel = MainItemModel(
     orderBy: 1,
     board: "notice",
     type: 0,
@@ -48,7 +41,7 @@ void main() {
     siteType: siteType,
   );
 
-  final mainItem = mainItemModel.toEntity(siteType);
+  final MainItem mainItem = mainItemModel.toEntity(siteType);
 
   group("메인 목록", () {
     test('메인 목록 요청시 에러 발생', () async {

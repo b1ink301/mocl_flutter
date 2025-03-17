@@ -1,0 +1,7 @@
+#include "../../Flutter/prdProfile.xcconfig"
+#include "Warnings.xcconfig"
+
+FLUTTER_TARGET=lib/main_prd.dart
+ASSET_PREFIX=prd
+BUNDLE_NAME=Mocl
+BUNDLE_DISPLAY_NAME=Mocl

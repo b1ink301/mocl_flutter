@@ -1,77 +1,81 @@
-import 'dart:developer';
-
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/login/providers/login_providers.dart';
 
-class LoginView extends StatelessWidget {
+const String _googleLoginUserAgent =
+    'Mozilla/5.0 (Linux; Android 9; SM-G950N) AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/88.0.4324.93 Mobile Safari/537.36';
+
+class LoginView extends ConsumerWidget {
   const LoginView({super.key});
 
   @override
-  Widget build(BuildContext context) {
-    var headers = {
-      'Referer':
-          'https://nid.naver.com/mobile/user/help/naverProfile.nhn?lang=ko_KR',
-      'ContentType': 'application/x-www-form-urlencoded'
-    };
-
-    // final uri = Uri.parse('https://nid.naver.com/nidlogin.login');
-    // final WebViewController controller = WebViewController()
-    //   ..setJavaScriptMode(JavaScriptMode.unrestricted)
-    //   ..loadRequest(uri, headers: headers);
-    //
-    // return WebViewWidget(controller: controller);
-
+  Widget build(BuildContext context, WidgetRef ref) {
     CookieManager cookieManager = CookieManager.instance();
-    final uri = WebUri('https://naver.com');
 
     return InAppWebView(
       initialSettings: InAppWebViewSettings(
         incognito: false,
         isInspectable: kDebugMode,
         sharedCookiesEnabled: true,
+        safeBrowsingEnabled: false,
         clearCache: false,
         cacheEnabled: true,
+        supportMultipleWindows: true,
         disableContextMenu: false,
         javaScriptEnabled: true,
+        javaScriptCanOpenWindowsAutomatically: true,
         useHybridComposition: true,
         thirdPartyCookiesEnabled: true,
         mixedContentMode: MixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
+        userAgent: _googleLoginUserAgent,
       ),
-      initialUrlRequest: URLRequest(
-        url: WebUri(
-            "https://nid.naver.com/mobile/user/help/naverProfile.nhn?lang=ko_KR"),
-        headers: headers,
-        httpShouldHandleCookies: true,
-      ),
-      onReceivedServerTrustAuthRequest: (controller, challenge) async =>
-          ServerTrustAuthResponse(
-              action: ServerTrustAuthResponseAction.PROCEED),
-      onLoadStop: (controller, url) async {
-        final cookies = await cookieManager.getCookies(url: uri);
-        for (final cookie in cookies) {
-          log('[onLoadStop] cookie=$cookie');
+      initialUrlRequest: ref.watch(urlRequestProvider),
+      onCreateWindow: (controller, createWindowAction) async {
+        debugPrint('onCreateWindow ${createWindowAction.request.url}');
 
-          await cookieManager.setCookie(
-            url: uri,
-            name: cookie.name,
-            value: cookie.value,
-            domain: cookie.domain,
-            path: cookie.path ?? '/',
-            expiresDate: cookie.expiresDate,
-            isSecure: cookie.isSecure,
-            isHttpOnly: cookie.isHttpOnly,
-            sameSite: cookie.sameSite,
+        if (createWindowAction.request.url
+            .toString()
+            .contains("login/google")) {
+          showDialog(
+            context: context,
+            builder: (context) {
+              return InAppWebView(
+                initialUrlRequest: createWindowAction.request,
+                initialSettings: InAppWebViewSettings(
+                  javaScriptEnabled: true,
+                  thirdPartyCookiesEnabled: true,
+                  mixedContentMode: MixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
+                ),
+              );
+            },
           );
         }
+        return true;
+      },
+      onReceivedServerTrustAuthRequest: (
+        InAppWebViewController controller,
+        URLAuthenticationChallenge challenge,
+      ) async =>
+          ServerTrustAuthResponse(
+              action: ServerTrustAuthResponseAction.PROCEED),
+      onLoadStop: (
+        InAppWebViewController controller,
+        WebUri? url,
+      ) async {
+        if (url == null) {
+          return;
+        }
 
-        debugPrint('url?.path=${url?.path}');
+        final bool hasLogin =
+            await ref.read(hasLoginProvider(cookieManager, url).future);
 
-        if (url?.path == '/user2/help/myInfoV2') {
-          if (context.mounted) {
-            GoRouter.of(context).pop(true);
-          }
+        debugPrint('hasLogin=$hasLogin, uri=$url');
+
+        if (hasLogin && context.mounted) {
+          context.pop(true);
         }
       },
     );

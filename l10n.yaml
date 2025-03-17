@@ -1,0 +1,5 @@
+#template-arb-file: app_en.arb
+#output-localization-file: app_localizations.dart
+arb-dir: lib/i18n
+output-dir: lib/src/generated/i18n
+synthetic-package: false
