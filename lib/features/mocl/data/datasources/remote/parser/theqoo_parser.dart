@@ -41,7 +41,6 @@ class TheQoo extends BaseParser {
 
   static void _detailIsolate(List<dynamic> args) {
     final responseData = args[0] as List<dynamic>;
-    ;
     final sendPort = args[1] as SendPort;
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
@@ -179,6 +178,7 @@ class TheQoo extends BaseParser {
             lastId.intId,
             boardTitle,
             baseUrl,
+            false,
           ));
 
       return Right(await completer.future);
@@ -249,13 +249,13 @@ class TheQoo extends BaseParser {
 
       final nickName = '';
       final hasImage = false;
-      var parsedTime = '';
-      try {
-        final dateTime = parseDateTime(time);
-        parsedTime = timeago.format(dateTime, locale: 'ko');
-      } catch (e) {
-        parsedTime = time;
-      }
+      // var parsedTime = '';
+      // try {
+      //   final dateTime = parseDateTime(time);
+      //   parsedTime = timeago.format(dateTime, locale: 'ko');
+      // } catch (e) {
+      //   parsedTime = time;
+      // }
 
       final info = '$hit 읽음';
 

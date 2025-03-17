@@ -216,6 +216,7 @@ class MeecoParser implements BaseParser {
             lastId.intId,
             boardTitle,
             baseUrl,
+            false,
           ));
 
       return Right(await completer.future);
