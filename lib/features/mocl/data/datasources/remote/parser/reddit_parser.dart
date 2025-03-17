@@ -158,6 +158,7 @@ class RedditParser implements BaseParser {
           -1,
           boardTitle,
           baseUrl,
+          false,
         ),
       );
 

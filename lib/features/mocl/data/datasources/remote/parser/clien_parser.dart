@@ -18,7 +18,9 @@ import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class ClienParser implements BaseParser {
-  const ClienParser();
+  final bool isShowNickImage;
+
+  const ClienParser(this.isShowNickImage);
 
   @override
   SiteType get siteType => SiteType.clien;
@@ -88,13 +90,15 @@ class ClienParser implements BaseParser {
   Future<Either<Failure, Details>> detail(Response response) async {
     final responseData = response.data;
     final resultPort = ReceivePort();
-    await Isolate.spawn(_detailIsolate, [responseData, resultPort.sendPort]);
+    await Isolate.spawn(
+        _detailIsolate, [responseData, isShowNickImage, resultPort.sendPort]);
     return await resultPort.first as Either<Failure, Details>;
   }
 
   static void _detailIsolate(List<dynamic> args) {
     final responseData = args[0] as String;
-    final sendPort = args[1] as SendPort;
+    final isShowNickImage = args[1] as bool;
+    final sendPort = args[2] as SendPort;
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
@@ -141,23 +145,41 @@ class ClienParser implements BaseParser {
     authorIpElement
         ?.querySelectorAll('.fa')
         .forEach((element) => element.remove());
-    // var authorIp = authorIpElement?.text.trim() ?? '';
+
     final user = container
             ?.querySelector(
                 "div.post_view > div.post_contact > span.contact_note > div.post_memo > div.memo_box > button.button_input")
             ?.attributes['onclick'] ??
         '';
-    final nickName = container
-            ?.querySelector(
-                "div.post_view > div.post_contact > span.contact_name > span.nickname")
-            ?.text
-            .trim() ??
-        '';
-    final nickImage = container
-            ?.querySelector(
-                "div.post_view > div.post_contact > span.contact_name > span.nickimg > img")
-            ?.attributes['src'] ??
-        '';
+    var nickName = '';
+    var nickImage = '';
+    if (isShowNickImage) {
+      nickName = container
+              ?.querySelector(
+                  "div.post_view > div.post_contact > span.contact_name > span.nickname")
+              ?.text
+              .trim() ??
+          '';
+      nickImage = container
+              ?.querySelector(
+                  "div.post_view > div.post_contact > span.contact_name > span.nickimg > img")
+              ?.attributes['src'] ??
+          '';
+    } else {
+      nickName = container
+              ?.querySelector(
+                  "div.post_view > div.post_contact > span.contact_name > span.nickname")
+              ?.text
+              .trim() ??
+          '';
+      if (nickName.isEmpty) {
+        nickName = container
+                ?.querySelector(
+                    "div.post_view > div.post_contact > span.contact_name > span.nickimg > img")
+                ?.attributes['alt'] ??
+            '';
+      }
+    }
     final likeCount = container
             ?.querySelector(
                 "div.post_button > div.symph_area > button.symph_count > strong")
@@ -182,40 +204,50 @@ class ClienParser implements BaseParser {
                 return null;
               }
               final id = element.attributes['data-author-id'] ?? '';
-              // var sn =
-              //     int.tryParse(element.attributes['data-comment-sn'] ?? '-1') ??
-              //         -1;
               final isReply = element.classes.contains('re');
-              final nickName = element
-                      .querySelector(
-                          "div.comment_info > div.post_contact > span.contact_name > span.nickname")
-                      ?.text
-                      .trim() ??
-                  '';
-              // var ip = element
-              //         .querySelector(
-              //             "div.comment_info > div.comment_info_area > div.comment_ip > span.ip_address")
-              //         ?.text
-              //         .trim() ??
-              //     '';
+
               final timeElement = element.querySelector(
                   "div.comment_info > div.comment_info_area > div.comment_time");
               timeElement?.querySelector("span.timestamp")?.remove();
               final time = timeElement?.text.trim() ?? '';
-              final nickImage = element
-                      .querySelector(
-                          "div.comment_info > div.post_contact > span.contact_name > span.nickimg > img")
-                      ?.attributes['src'] ??
-                  '';
+
+              var nickName = '';
+              var nickImage = '';
+
+              if (isShowNickImage) {
+                nickName = element
+                        .querySelector(
+                            "div.comment_info > div.post_contact > span.contact_name > span.nickname")
+                        ?.text
+                        .trim() ??
+                    '';
+                nickImage = element
+                        .querySelector(
+                            "div.comment_info > div.post_contact > span.contact_name > span.nickimg > img")
+                        ?.attributes['src'] ??
+                    '';
+              } else {
+                nickName = element
+                        .querySelector(
+                            "div.comment_info > div.post_contact > span.contact_name > span.nickname")
+                        ?.text
+                        .trim() ??
+                    '';
+                if (nickName.isEmpty) {
+                  nickName = element
+                          .querySelector(
+                              "div.comment_info > div.post_contact > span.contact_name > span.nickimg > img")
+                          ?.attributes['alt'] ??
+                      '';
+                }
+              }
+
               final likeCount = element
                       .querySelector(
                           "div.comment_content_symph > button > strong")
                       ?.text
                       .trim() ??
                   '';
-              // var bodyElement = element
-              //     .querySelector("div.comment_content > div.comment_view");
-
               final bodyElements = element.querySelectorAll(
                   "div.comment_content, div.comment-img, div.comment-video");
               for (final tmp in bodyElements) {
@@ -224,21 +256,7 @@ class ClienParser implements BaseParser {
                     .forEach((element) => element.remove());
               }
 
-              // bodyElement
-              //     ?.querySelectorAll('input, span.name, button')
-              //     .forEach((element) => element.remove());
-
-              var body = bodyElements.map((item) => item.innerHtml).join();
-              // var body = bodyElement?.outerHtml ?? '';
-              // var video = element
-              //         .querySelector("div.comment-video > video > source")
-              //         ?.attributes['src'] ??
-              //     '';
-              // var img = element
-              //         .querySelector("div.comment-img > img")
-              //         ?.attributes['src'] ??
-              //     '';
-
+              final body = bodyElements.map((item) => item.innerHtml).join();
               var parsedTime = '';
               try {
                 var dateTime = parseDateTime(time);
@@ -319,6 +337,7 @@ class ClienParser implements BaseParser {
             lastId.intId,
             boardTitle,
             baseUrl,
+            isShowNickImage,
           ));
 
       return Right(await completer.future);
@@ -334,6 +353,7 @@ class ClienParser implements BaseParser {
     final lastId = message.lastId;
     final boardTitle = message.boardTitle;
     final baseUrl = message.baseUrl;
+    final isShowNickImage = message.isShowNickImage;
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
@@ -382,11 +402,13 @@ class ClienParser implements BaseParser {
               ?.text
               .trim() ??
           '';
-      final nickImage = element
-              .querySelector(
-                  'div.list_infomation > div.list_author > span.nickimg > img')
-              ?.attributes['src'] ??
-          '';
+      final nickImage = isShowNickImage
+          ? element
+                  .querySelector(
+                      'div.list_infomation > div.list_author > span.nickimg > img')
+                  ?.attributes['src'] ??
+              ''
+          : '';
 
       final hit = element
               .querySelector(

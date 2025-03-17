@@ -19,6 +19,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 class DamoangParser implements BaseParser {
   final bool isShowNickImage;
+
   const DamoangParser(this.isShowNickImage);
 
   @override
@@ -36,14 +37,16 @@ class DamoangParser implements BaseParser {
     final responseData = response.data;
     final resultPort = ReceivePort();
 
-    await Isolate.spawn(_detailIsolate, [responseData, resultPort.sendPort]);
+    await Isolate.spawn(
+        _detailIsolate, [responseData, isShowNickImage, resultPort.sendPort]);
 
     return await resultPort.first as Either<Failure, Details>;
   }
 
   static void _detailIsolate(List<dynamic> args) {
     final responseData = args[0] as String;
-    final sendPort = args[1] as SendPort;
+    final isShowNickImage = args[1] as bool;
+    final sendPort = args[2] as SendPort;
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
@@ -95,10 +98,12 @@ class DamoangParser implements BaseParser {
         'section[id=bo_v_info] > div.d-flex > div.me-auto > span.d-inline-block > span.sv_wrap > a.sv_member');
 
     final nickName = memberElement?.text.trim() ?? '';
-    final nickImage = memberElement
-            ?.querySelector('span.profile_img > img')
-            ?.attributes['src'] ??
-        '';
+    final nickImage = isShowNickImage
+        ? memberElement
+                ?.querySelector('span.profile_img > img')
+                ?.attributes['src'] ??
+            ''
+        : '';
 
     var index = 0;
     final comments = container
@@ -124,11 +129,13 @@ class DamoangParser implements BaseParser {
               timeElement?.querySelector("span.visually-hidden")?.remove();
               final time = timeElement?.text.trim() ?? '';
 
-              final nickImage = nickElement
-                      ?.querySelector('span.profile_img > img.mb-photo')
-                      ?.attributes['src']
-                      ?.trim() ??
-                  '';
+              final nickImage = isShowNickImage
+                  ? nickElement
+                          ?.querySelector('span.profile_img > img.mb-photo')
+                          ?.attributes['src']
+                          ?.trim() ??
+                      ''
+                  : '';
 
               final likeCount = element
                       .querySelector(
@@ -233,6 +240,7 @@ class DamoangParser implements BaseParser {
           lastId.intId,
           boardTitle,
           baseUrl,
+          isShowNickImage,
         ),
       );
 
@@ -248,7 +256,7 @@ class DamoangParser implements BaseParser {
     final responseData = message.responseData;
     final lastId = message.lastId;
     final boardTitle = message.boardTitle;
-    // final baseUrl = message.baseUrl;
+    final isShowNickImage = message.isShowNickImage;
 
     final parsedItems = <Map<String, dynamic>>[];
     final ids = <int>[];
@@ -263,12 +271,6 @@ class DamoangParser implements BaseParser {
       final test = element
           .querySelector('div.wr-num > div.rcmd-box > span.orangered > img');
       final category = test?.attributes['alt'] ?? '';
-      // print('aaa=$aaa');
-      // final category = element
-      //         .querySelector('div.wr-num')
-      //         ?.text
-      //         .trim() ??
-      //     '';
 
       if (category == "공지" || category == "홍보" || category == "추천") continue;
 
@@ -324,11 +326,13 @@ class DamoangParser implements BaseParser {
         parsedTime = time;
       }
 
-      final nickImage = metaElement
-              ?.querySelector("span.profile_img > img.mb-photo")
-              ?.attributes["src"]
-              ?.trim() ??
-          '';
+      final nickImage = isShowNickImage
+          ? metaElement
+                  ?.querySelector("span.profile_img > img.mb-photo")
+                  ?.attributes["src"]
+                  ?.trim() ??
+              ''
+          : '';
 
       final nickName =
           metaElement?.querySelector("span.sv_name")?.text.trim() ?? '';
