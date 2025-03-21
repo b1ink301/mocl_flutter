@@ -142,7 +142,7 @@ final damoangParserProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DamoangParserRef = AutoDisposeProviderRef<(BaseParser, BaseApi)>;
-String _$meecoParserHash() => r'a7294bd82f5467ab9a893c9f0381e352ff2cbacd';
+String _$meecoParserHash() => r'32e5757f9698eec13fc506f1b1390539783c48fd';
 
 /// See also [meecoParser].
 @ProviderFor(meecoParser)

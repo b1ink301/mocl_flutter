@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:html/parser.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
@@ -132,6 +133,13 @@ class ClienParser implements BaseParser {
     bodyHtmlElement
         ?.querySelectorAll('input, button')
         .forEach((element) => element.remove());
+    final linkHtml = container
+            ?.querySelector("div.post_view > div.attached_link > div.link_list")
+            ?.innerHtml ??
+        '';
+
+    debugPrint('linkHtml = $linkHtml');
+
     final bodyHtml = bodyHtmlElement?.innerHtml ?? '';
     final viewCountElement = container?.querySelector(
         "div.post_information > div.post_time > div.view_count");
@@ -288,6 +296,11 @@ class ClienParser implements BaseParser {
             .toList() ??
         [];
 
+    var newBoldHtml = bodyHtml;
+    if (linkHtml.isNotEmpty) {
+      newBoldHtml += '</br>$linkHtml';
+    }
+
     final detail = Details(
       title: title,
       viewCount: viewCount,
@@ -301,7 +314,7 @@ class ClienParser implements BaseParser {
         nickImage: nickImage,
       ),
       comments: comments,
-      bodyHtml: bodyHtml,
+      bodyHtml: newBoldHtml,
     );
 
     final result = Right<Failure, Details>(detail);
