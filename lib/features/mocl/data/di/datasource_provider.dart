@@ -75,8 +75,10 @@ DetailDataSource detailDatasource(Ref ref) {
 
 @riverpod
 (BaseParser, BaseApi) meecoParser(Ref ref) {
+  final settingsRepository = ref.watch(settingsRepositoryProvider);
+  final isShowNickImage = settingsRepository.isShowNickImage();
   final baseApi = ref.watch(meecoApiClientProvider);
-  return (const MeecoParser(), baseApi);
+  return (MeecoParser(isShowNickImage), baseApi);
 }
 
 @riverpod

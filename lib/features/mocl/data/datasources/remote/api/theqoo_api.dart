@@ -33,7 +33,7 @@ class TheQooApi extends BaseApi {
           commentUrl,
           data: {
             'act': 'dispTheqooContentCommentListTheqoo',
-            'document_srl': '3641556060',
+            'document_srl': item.id,
             'cpage': 0,
           },
           headers: headers,

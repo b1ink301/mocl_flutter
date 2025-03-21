@@ -72,6 +72,9 @@ class DamoangParser implements BaseParser {
         .querySelectorAll('i, span.visually-hidden')
         .forEach((e) => e.remove()));
 
+    final linkHtml = container
+        ?.querySelector('section[id=bo_v_atc] > section[id=bo_v_data]')?.innerHtml ?? '';
+
     var viewCount = '';
     var likeCount = '';
     if (headerElements?.length == 2) {
@@ -191,6 +194,11 @@ class DamoangParser implements BaseParser {
 
     // debugPrint('bodyHtml=${bodyHtml?.innerHtml}');
 
+    var newBodyHtml = bodyHtml?.innerHtml ?? '';
+    if (linkHtml.isNotEmpty) {
+      newBodyHtml += '</br>$linkHtml';
+    }
+
     final detail = Details(
       title: title,
       viewCount: viewCount,
@@ -204,7 +212,7 @@ class DamoangParser implements BaseParser {
         nickImage: nickImage,
       ),
       comments: comments,
-      bodyHtml: bodyHtml?.innerHtml ?? '',
+      bodyHtml: newBodyHtml,
     );
 
     final result = Right<Failure, Details>(detail);
@@ -277,8 +285,9 @@ class DamoangParser implements BaseParser {
       final infoElement = element.querySelector('div.flex-grow-1');
       final link = infoElement?.querySelector("div.d-flex > div > a");
       if (link == null) continue;
-
       final url = link.attributes["href"]?.trim() ?? '';
+      if (url.isEmpty || url.startsWith('/promotion'))  continue;
+
       final uri = Uri.tryParse(url);
       if (uri == null) continue;
       final idString = uri.pathSegments.lastOrNull ?? '-1';
