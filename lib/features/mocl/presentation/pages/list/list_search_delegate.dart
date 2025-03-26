@@ -32,8 +32,7 @@ class ListSearchDelegate extends SearchDelegate {
   }
 
   @override
-  List<Widget>? buildActions(BuildContext context) {
-    return [
+  List<Widget>? buildActions(BuildContext context) => [
       PlatformIconButton(
         icon: const Icon(Icons.clear),
         onPressed: () {
@@ -41,17 +40,14 @@ class ListSearchDelegate extends SearchDelegate {
         },
       ),
     ];
-  }
 
   @override
-  Widget? buildLeading(BuildContext context) {
-    return PlatformIconButton(
+  Widget? buildLeading(BuildContext context) => PlatformIconButton(
       icon: const Icon(Icons.arrow_back),
       onPressed: () {
         close(context, ''); // 검색 종료
       },
     );
-  }
 
   @override
   Widget buildResults(BuildContext context) {

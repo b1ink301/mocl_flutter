@@ -77,7 +77,7 @@ void main() {
   test('list remote datasource test. (success)', () async {
     // arrange
     provideDummyBuilder<Either<Failure, List<ListItem>>>(
-        (_, __) => Right(const <ListItem>[]));
+        (_, _) => Right(const <ListItem>[]));
 
     when(mockApiClient.list(any, any, any, any, any, any))
         .thenAnswer((_) async => Right(const <ListItem>[]));
@@ -97,7 +97,7 @@ void main() {
   test('list remote datasource test. (failed)', () async {
     //arrange
     provideDummyBuilder<Either<Failure, List<ListItem>>>(
-        (_, __) => Left(GetListFailure(message: '----')));
+        (_, _) => Left(GetListFailure(message: '----')));
 
     when(mockApiClient.list(any, any, any, any, any, any))
         .thenAnswer((_) async => Left(GetListFailure(message: '----')));

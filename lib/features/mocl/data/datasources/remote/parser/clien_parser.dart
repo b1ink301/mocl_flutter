@@ -107,6 +107,7 @@ class ClienParser implements BaseParser {
     var index = 0;
     final container =
         document.querySelector('body > div.nav_container > div.content_view');
+        // document.querySelector('body > div.nav_container > div.nav_body > div.nav_content > div.content_view');
 
     final csrf = document
             .querySelector(
@@ -138,7 +139,22 @@ class ClienParser implements BaseParser {
             ?.innerHtml ??
         '';
 
-    debugPrint('linkHtml = $linkHtml');
+    final marketHtmlElement = container?.querySelector(
+        "div.post_view > div.market_product");
+
+    marketHtmlElement
+        ?.querySelectorAll('div.product_address')
+        .forEach((element) => element.remove());
+
+    final recentsElement = container?.querySelector(
+        "div.writer_board");
+
+    debugPrint('recentsElement=${recentsElement?.innerHtml}');
+
+    final recentsWritersElement = container?.querySelector(
+        "div.writer_menu");
+
+    debugPrint('recentsWritersElement=${recentsWritersElement?.innerHtml}');
 
     final bodyHtml = bodyHtmlElement?.innerHtml ?? '';
     final viewCountElement = container?.querySelector(
@@ -296,9 +312,17 @@ class ClienParser implements BaseParser {
             .toList() ??
         [];
 
-    var newBoldHtml = bodyHtml;
+    var marketHtml = marketHtmlElement?.innerHtml ?? '';
+    var newBodyHtml = '';
+    if (marketHtml.isNotEmpty) {
+      marketHtml = marketHtml.replaceAll('</span>', '&nbsp;&nbsp;&nbsp;</span>');
+      newBodyHtml = '$marketHtml</br>$bodyHtml';
+    }
     if (linkHtml.isNotEmpty) {
-      newBoldHtml += '</br>$linkHtml';
+      newBodyHtml += '$bodyHtml</br>$linkHtml';
+    }
+    if (newBodyHtml.isEmpty) {
+      newBodyHtml = bodyHtml;
     }
 
     final detail = Details(
@@ -314,7 +338,7 @@ class ClienParser implements BaseParser {
         nickImage: nickImage,
       ),
       comments: comments,
-      bodyHtml: newBoldHtml,
+      bodyHtml: newBodyHtml,
     );
 
     final result = Right<Failure, Details>(detail);
@@ -525,20 +549,20 @@ class ClienParser implements BaseParser {
     LastId lastId,
   ) {
     final String sort = sortType.toQuery(siteType);
-    return board == "recommend"
-        ? url
-        : 'https://m.clien.net/service/api/board/under/list?category=0&boardSn=0&po=$page$sort&boardCd=$board';
+    return '$url?category=0&po=$page$sort';
   }
 
   @override
   String urlBySearchList(
-    String url,
-    String board,
-    int page,
-    String keyword,
-    LastId lastId,
-  ) =>
-      'https://m.clien.net/service/api/board/under/list?category=0&boardSn=0&po=$page&boardCd=$board&sk=title&sv=$keyword';
+      String url,
+      String board,
+      int page,
+      String keyword,
+      LastId lastId,
+  ) {
+    final String searchUrl = url.replaceFirst('board', 'search/board');
+    return '$searchUrl?sk=title&sv=$keyword&po=$page';
+  }
 
   @override
   String urlByMain() {
@@ -547,13 +571,11 @@ class ClienParser implements BaseParser {
 
   @override
   Future<Either<Failure, List<CommentItem>>> comments(Response response) {
-    // TODO: implement comments
     throw UnimplementedError();
   }
 
   @override
   String urlByComments(String url, String board, int id, int page) {
-    // TODO: implement urlByComments
     throw UnimplementedError();
   }
 }

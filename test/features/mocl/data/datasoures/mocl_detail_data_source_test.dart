@@ -59,7 +59,7 @@ void main() async {
 
   test('[API] detail remote datasource test. (success)', () async {
     provideDummyBuilder<Either<Failure, Details>>(
-        (_, __) => Right(Details.empty()));
+        (_, _) => Right(Details.empty()));
 
     // arrange
     when(mockApiClient.detail(any, any))
@@ -82,7 +82,7 @@ void main() async {
   test('[API] detail remote datasource test. (failed)', () async {
     // arrange
     provideDummyBuilder<Either<Failure, Details>>(
-        (_, __) => Right(Details.empty()));
+        (_, _) => Right(Details.empty()));
 
     // arrange
     when(mockApiClient.detail(any, any)).thenAnswer(

@@ -33,7 +33,9 @@ class MoclListPage extends ConsumerWidget {
                 : Theme.of(context).textTheme.labelMedium!),
             mainItemProvider.overrideWithValue(item),
           ],
-          child: const MoclListPage(),
+          child: const MoclListPage(
+            key: ValueKey('MoclListPage'),
+          ),
         ),
       );
 
@@ -42,12 +44,11 @@ class MoclListPage extends ConsumerWidget {
     final child = PlatformScaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: const SafeArea(
+        key: ValueKey('MoclListPage-SafeArea'),
         left: false,
         right: false,
         child: MoclListView(),
       ),
-      material: (context, platform) => MaterialScaffoldData(),
-      cupertino: (context, platform) => CupertinoPageScaffoldData(),
     );
 
     return Platform.isMacOS
