@@ -28,14 +28,15 @@ String _$sharedPreferencesHash() => r'7467c5c92fd904c96335ccc198d72f69e80a168b';
 @ProviderFor(sharedPreferences)
 final sharedPreferencesProvider =
     AutoDisposeProvider<SharedPreferences>.internal(
-  sharedPreferences,
-  name: r'sharedPreferencesProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$sharedPreferencesHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      sharedPreferences,
+      name: r'sharedPreferencesProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$sharedPreferencesHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
@@ -47,9 +48,10 @@ String _$localDatabaseHash() => r'f553251e91d46b94f90cf62f331b18fcdb8d3690';
 final localDatabaseProvider = AutoDisposeProvider<LocalDatabase>.internal(
   localDatabase,
   name: r'localDatabaseProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$localDatabaseHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$localDatabaseHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -64,9 +66,10 @@ String _$mainDatasourceHash() => r'9b27f07587919fae29b30659c37c0b130624fe33';
 final mainDatasourceProvider = AutoDisposeProvider<MainDataSource>.internal(
   mainDatasource,
   name: r'mainDatasourceProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$mainDatasourceHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$mainDatasourceHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -81,9 +84,10 @@ String _$listDatasourceHash() => r'a27ab280c35535a8f2a62e640ed4de6671b77332';
 final listDatasourceProvider = AutoDisposeProvider<ListDataSource>.internal(
   listDatasource,
   name: r'listDatasourceProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$listDatasourceHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$listDatasourceHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -98,9 +102,10 @@ String _$detailDatasourceHash() => r'6b99a4b9d8d63e1c902884a501243e3d041194e1';
 final detailDatasourceProvider = AutoDisposeProvider<DetailDataSource>.internal(
   detailDatasource,
   name: r'detailDatasourceProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$detailDatasourceHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$detailDatasourceHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -130,14 +135,15 @@ String _$damoangParserHash() => r'7810acc45aabf36c95175ef69845f4f32544397b';
 @ProviderFor(damoangParser)
 final damoangParserProvider =
     AutoDisposeProvider<(BaseParser, BaseApi)>.internal(
-  damoangParser,
-  name: r'damoangParserProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$damoangParserHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      damoangParser,
+      name: r'damoangParserProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$damoangParserHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
@@ -164,14 +170,15 @@ String _$naverCafeParserHash() => r'5bfa50b1fae5c9aba8d239e60989dc733d113ec9';
 @ProviderFor(naverCafeParser)
 final naverCafeParserProvider =
     AutoDisposeProvider<(BaseParser, BaseApi)>.internal(
-  naverCafeParser,
-  name: r'naverCafeParserProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$naverCafeParserHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      naverCafeParser,
+      name: r'naverCafeParserProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$naverCafeParserHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
@@ -182,13 +189,15 @@ String _$redditParserHash() => r'7592d9d287aa94d6fc3cae3aed8979fbf9aee524';
 @ProviderFor(redditParser)
 final redditParserProvider =
     AutoDisposeProvider<(BaseParser, BaseApi)>.internal(
-  redditParser,
-  name: r'redditParserProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$redditParserHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      redditParser,
+      name: r'redditParserProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$redditParserHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
@@ -199,13 +208,15 @@ String _$theqooParserHash() => r'109d4c85eb4cccac277bb06066d3518791893c98';
 @ProviderFor(theqooParser)
 final theqooParserProvider =
     AutoDisposeProvider<(BaseParser, BaseApi)>.internal(
-  theqooParser,
-  name: r'theqooParserProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$theqooParserHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      theqooParser,
+      name: r'theqooParserProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$theqooParserHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
@@ -216,14 +227,15 @@ String _$currentParserHash() => r'5c61f20a79e46ee41ab76fb69162b4e8f743d4da';
 @ProviderFor(currentParser)
 final currentParserProvider =
     AutoDisposeProvider<(BaseParser, BaseApi)>.internal(
-  currentParser,
-  name: r'currentParserProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$currentParserHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      currentParser,
+      name: r'currentParserProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$currentParserHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element

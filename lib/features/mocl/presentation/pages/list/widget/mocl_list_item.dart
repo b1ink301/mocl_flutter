@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/mocl_list_item_info.dart';
@@ -17,35 +18,36 @@ class MoclListItem extends ConsumerWidget {
   const MoclListItem({super.key, required this.item, required this.index});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final MoclListItemInfo itemInfo = item.toListItemInfo(context, index, 0);
-    return PlatformListTile(
-      material: (_, __) => MaterialListTileData(
-        minVerticalPadding: 10,
-        contentPadding: const EdgeInsets.only(left: 16, right: 12),
-      ),
-      cupertino: (_, __) => CupertinoListTileData(
-        padding:
-            const EdgeInsets.only(left: 16, right: 12, top: 10, bottom: 10),
-      ),
-      onTap: () => _handleItemTap(context, ref, itemInfo.index),
-      title: _TitleView(title: itemInfo.title, titleStyle: itemInfo.titleStyle),
-      subtitle: _BottomView(
-        smallTitleStyle: itemInfo.smallTitleStyle,
-        badgeStyle: itemInfo.badgeStyle,
-        id: itemInfo.id,
-        reply: itemInfo.reply,
-        nickImage: itemInfo.nickImage,
-        info: itemInfo.info,
-      ),
-    );
-  }
+  Widget build(BuildContext context, WidgetRef ref) => PlatformListTile(
+    material:
+        (_, _) => MaterialListTileData(
+          minVerticalPadding: 10,
+          contentPadding: const EdgeInsets.only(left: 16, right: 12),
+        ),
+    cupertino:
+        (_, _) => CupertinoListTileData(
+          padding: const EdgeInsets.only(
+            left: 16,
+            right: 12,
+            top: 10,
+            bottom: 10,
+          ),
+        ),
+    onTap: () => _handleItemTap(context, ref),
+    title: _TitleView(title: item.title, isRead: item.isRead),
+    subtitle:
+        item.userInfo.id.isEmpty
+            ? null
+            : _BottomView(
+              id: item.userInfo.id,
+              reply: item.reply,
+              nickImage: item.userInfo.nickImage,
+              info: item.info,
+              isRead: item.isRead,
+            ),
+  );
 
-  void _handleItemTap(
-    BuildContext context,
-    WidgetRef ref,
-    int index,
-  ) {
+  void _handleItemTap(BuildContext context, WidgetRef ref) {
     try {
       GoRouter.of(context).push(Routes.detail, extra: item).then((_) {
         if (context.mounted) {
@@ -63,20 +65,17 @@ class MoclListItem extends ConsumerWidget {
 
 class _TitleView extends StatelessWidget {
   final String title;
-  final TextStyle titleStyle;
+  final bool isRead;
 
-  const _TitleView({
-    required this.title,
-    required this.titleStyle,
-  });
+  const _TitleView({required this.title, required this.isRead});
 
   @override
   Widget build(BuildContext context) => PlatformText(
-        title,
-        maxLines: 3,
-        overflow: TextOverflow.ellipsis,
-        style: titleStyle,
-      );
+    title,
+    maxLines: 1,
+    overflow: TextOverflow.ellipsis,
+    style: MoclTextStyles.of(context).title(isRead),
+  );
 }
 
 class _BottomView extends StatelessWidget {
@@ -84,67 +83,56 @@ class _BottomView extends StatelessWidget {
   final String reply;
   final String nickImage;
   final String info;
-  final TextStyle smallTitleStyle;
-  final TextStyle badgeStyle;
+  final bool isRead;
 
   const _BottomView({
     required this.id,
     required this.reply,
     required this.nickImage,
     required this.info,
-    required this.smallTitleStyle,
-    required this.badgeStyle,
+    required this.isRead,
   });
 
   @override
-  Widget build(BuildContext context) => id.isEmpty
-      ? const SizedBox.shrink()
-      : Column(
+  Widget build(BuildContext context) => Column(
+    children: [
+      const SizedBox(height: 8),
+      SizedBox(
+        height: 20,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const SizedBox(height: 8),
-            SizedBox(
-              height: 20,
+            Expanded(
               child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Expanded(
-                    child: Row(
-                      children: [
-                        if (nickImage.isNotEmpty &&
-                            nickImage.startsWith('http'))
-                          NickImageWidget(url: nickImage),
-                        Flexible(
-                          child: _InfoText(
-                            info: info,
-                            textStyle: smallTitleStyle,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  if (reply.isNotEmpty && reply != '0')
-                    RoundTextWidget(text: reply, textStyle: badgeStyle),
+                  if (nickImage.isNotEmpty) NickImageWidget(url: nickImage),
+                  Flexible(child: _InfoText(info: info, isRead: isRead)),
                 ],
               ),
             ),
+            if (reply.isNotEmpty && reply != '0')
+              RoundTextWidget(
+                text: reply,
+                textStyle: MoclTextStyles.of(context).badge(isRead),
+              ),
           ],
-        );
+        ),
+      ),
+    ],
+  );
 }
 
 class _InfoText extends StatelessWidget {
   final String info;
-  final TextStyle textStyle;
+  final bool isRead;
 
-  const _InfoText({
-    required this.info,
-    required this.textStyle,
-  });
+  const _InfoText({required this.info, required this.isRead});
 
   @override
   Widget build(BuildContext context) => PlatformText(
-        info,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: textStyle,
-      );
+    info,
+    maxLines: 1,
+    overflow: TextOverflow.ellipsis,
+    style: MoclTextStyles.of(context).smallTitle(isRead),
+  );
 }

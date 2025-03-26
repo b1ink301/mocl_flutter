@@ -47,17 +47,20 @@ class MainPage extends ConsumerWidget {
         },
         child: PlatformScaffold(
           body: PlatformWidget(
-            material: (_, __) => const MainView(),
-            cupertino: (_, __) => const _MainCupertinoView(),
+            key: ValueKey('MainPage-PlatformWidget'),
+            material: (_, _) => const MainView(),
+            cupertino: (_, _) => const _MainCupertinoView(),
           ),
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          material: (_, __) => MaterialScaffoldData(
+          material: (_, _) => MaterialScaffoldData(
             widgetKey: scaffoldState,
-            drawer: const DrawerWidget(),
+            drawer: const DrawerWidget(
+              key: ValueKey('MainPage-DrawerWidget'),
+            ),
             drawerEdgeDragWidth: ref.watch(screenWidthProvider),
             drawerEnableOpenDragGesture: true,
           ),
-          cupertino: (_, __) => CupertinoPageScaffoldData(),
+          // cupertino: (_, _) => CupertinoPageScaffoldData(),
         ));
   }
 }

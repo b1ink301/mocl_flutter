@@ -13,14 +13,15 @@ String _$sizeCacheDirNotifierHash() =>
 @ProviderFor(SizeCacheDirNotifier)
 final sizeCacheDirNotifierProvider =
     AutoDisposeAsyncNotifierProvider<SizeCacheDirNotifier, String>.internal(
-  SizeCacheDirNotifier.new,
-  name: r'sizeCacheDirNotifierProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$sizeCacheDirNotifierHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      SizeCacheDirNotifier.new,
+      name: r'sizeCacheDirNotifierProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$sizeCacheDirNotifierHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$SizeCacheDirNotifier = AutoDisposeAsyncNotifier<String>;
 // ignore_for_file: type=lint

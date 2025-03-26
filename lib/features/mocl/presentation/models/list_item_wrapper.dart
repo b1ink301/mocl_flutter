@@ -21,9 +21,9 @@ extension ListItemWrapperExtension on ListItemWrapper {
     final MoclTextStyles textStyles = MoclTextStyles.of(context);
 
     return MoclListItemInfo(
-      titleStyle: textStyles.title(item.isRead),
-      smallTitleStyle: textStyles.smallTitle(item.isRead),
-      badgeStyle: textStyles.badge(item.isRead),
+      // titleStyle: textStyles.title(item.isRead),
+      // smallTitleStyle: textStyles.smallTitle(item.isRead),
+      // badgeStyle: textStyles.badge(item.isRead),
       id: item.userInfo.id,
       reply: item.reply,
       title: item.title,

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/material.dart';
@@ -16,15 +17,23 @@ import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.d
 import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
-class DetailView extends ConsumerWidget {
+class DetailView extends ConsumerStatefulWidget {
   const DetailView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) =>
-      ref.watch(detailsNotifierProvider).maybeMap(
-            data: (AsyncData<Details> state) =>
-                _DetailView(detail: state.value),
-            error: (AsyncError<Details> state) => SliverFillRemaining(
+  DetailViewState createState() => DetailViewState();
+}
+
+class DetailViewState extends ConsumerState<DetailView> {
+  @override
+  Widget build(BuildContext context) =>
+      ref
+          .watch(detailsNotifierProvider)
+          .maybeMap(
+        data: (AsyncData<Details> state) => _DetailView(detail: state.value),
+        error:
+            (AsyncError<Details> state) =>
+            SliverFillRemaining(
               hasScrollBody: false,
               child: Padding(
                 padding: const EdgeInsets.all(12.0),
@@ -33,13 +42,14 @@ class DetailView extends ConsumerWidget {
                 ),
               ),
             ),
-            orElse: () => const SliverToBoxAdapter(
-              child: Column(
-                children: [LoadingWidget(), DividerWidget()],
-              ),
-            ),
-          );
+        orElse:
+            () =>
+        const SliverToBoxAdapter(
+          child: Column(children: [LoadingWidget(), DividerWidget()]),
+        ),
+      );
 }
+
 
 class _DetailView extends ConsumerWidget {
   final Details detail;
@@ -66,8 +76,10 @@ class _DetailView extends ConsumerWidget {
             detail: detail,
             hexColor: hexColor,
             bodyMedium: bodyMedium,
-            onTapUrl: (url) async =>
-                await ref.read(openUrlProvider(context, url)),
+            onTapUrl: (url) async {
+              final result = ref.read(openUrlProvider(context, url));
+              return result.valueOrNull == true;
+            },
           ),
           const _SpaceWidget(),
           if (detail.comments.isNotEmpty)
@@ -76,14 +88,15 @@ class _DetailView extends ConsumerWidget {
               comments: detail.comments,
               bodySmall: bodySmall,
               bodyMedium: bodyMedium,
-              openUrl: (url) async =>
-                  await ref.read(openUrlProvider(context, url)),
+              openUrl:
+                  (url) async => await ref.read(openUrlProvider(context, url)),
             ),
           const _DividerWidget(),
           _RefreshButton(
-              onRefresh: () =>
-                  ref.read(detailsNotifierProvider.notifier).refresh(),
-              bodyMedium: bodyMedium),
+            onRefresh:
+                () => ref.read(detailsNotifierProvider.notifier).refresh(),
+            bodyMedium: bodyMedium,
+          ),
           const _DividerWidget(),
         ],
       ),
@@ -95,9 +108,8 @@ class _SpaceWidget extends StatelessWidget {
   const _SpaceWidget();
 
   @override
-  Widget build(BuildContext context) => const SliverPadding(
-        padding: EdgeInsets.only(top: 10),
-      );
+  Widget build(BuildContext context) =>
+      const SliverPadding(padding: EdgeInsets.only(top: 10));
 }
 
 class _DividerWidget extends StatelessWidget {
@@ -116,22 +128,25 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
   List<Widget>? _buildLikeView(BuildContext context, TextStyle bodySmall) =>
       detail.likeCount.isNotEmpty && detail.likeCount != '0'
           ? [
-              const SizedBox(width: 10),
-              Icon(Icons.favorite_outline, color: bodySmall.color, size: 17),
-              const SizedBox(width: 4),
-              Text(detail.likeCount, style: bodySmall),
-              const SizedBox(width: 10),
-            ]
+        const SizedBox(width: 10),
+        Icon(Icons.favorite_outline, color: bodySmall.color, size: 17),
+        const SizedBox(width: 4),
+        Text(detail.likeCount, style: bodySmall),
+        const SizedBox(width: 10),
+      ]
           : null;
 
   @override
-  Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
-    final TextStyle bodySmall = Theme.of(context).textTheme.bodySmall!;
-    final Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+  Widget build(BuildContext context,
+      double shrinkOffset,
+      bool overlapsContent,) {
+    final TextStyle bodySmall = Theme
+        .of(context)
+        .textTheme
+        .bodySmall!;
+    final Color backgroundColor = Theme
+        .of(context)
+        .scaffoldBackgroundColor;
     final List<Widget>? likeView = _buildLikeView(context, bodySmall);
 
     return Column(
@@ -178,7 +193,7 @@ class _Body extends StatelessWidget {
   final Details detail;
   final String hexColor;
   final TextStyle? bodyMedium;
-  final void Function(String url) onTapUrl;
+  final FutureOr<bool> Function(String url) onTapUrl;
 
   const _Body({
     required this.detail,
@@ -188,26 +203,21 @@ class _Body extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => SliverToBoxAdapter(
-        child: SingleChildScrollView(
-          physics: const NeverScrollableScrollPhysics(),
-          child: HtmlWidget(
-            detail.bodyHtml,
-            onLoadingBuilder: (_, __, ___) => const LoadingWidget(),
-            customStylesBuilder: (element) {
-              if (element.localName == 'a') {
-                return {'color': hexColor, 'text-decoration': 'underline'};
-              }
-              return null;
-            },
-            textStyle: bodyMedium,
-            renderMode: RenderMode.column,
-            onTapUrl: (url) async {
-              onTapUrl(url);
-              return true;
-            },
-            onTapImage: (data) => onTapUrl(data.sources.first.url),
-          ),
+  Widget build(BuildContext context) =>
+      SliverToBoxAdapter(
+        child: HtmlWidget(
+          detail.bodyHtml,
+          onLoadingBuilder: (_, _, _) => const LoadingWidget(),
+          customStylesBuilder: (element) {
+            if (element.localName == 'a') {
+              return {'color': hexColor, 'text-decoration': 'underline'};
+            }
+            return null;
+          },
+          textStyle: bodyMedium,
+          renderMode: RenderMode.column,
+          onTapUrl: (url) => onTapUrl(url),
+          onTapImage: (data) => onTapUrl(data.sources.first.url),
         ),
       );
 }
@@ -228,14 +238,12 @@ class _Comments extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => MultiSliver(
+  Widget build(BuildContext context) =>
+      MultiSliver(
         children: [
           const _SpaceWidget(),
           const _DividerWidget(),
-          _CommentHeader(
-            commentCount: comments.length,
-            bodyMedium: bodyMedium,
-          ),
+          _CommentHeader(commentCount: comments.length, bodyMedium: bodyMedium),
           const _DividerWidget(),
           _CommentList(
             comments: comments,
@@ -243,7 +251,7 @@ class _Comments extends StatelessWidget {
             bodyMedium: bodyMedium,
             hexColor: hexColor,
             openUrl: openUrl,
-          )
+          ),
         ],
       );
 }
@@ -252,26 +260,27 @@ class _CommentHeader extends StatelessWidget {
   final int commentCount;
   final TextStyle? bodyMedium;
 
-  const _CommentHeader({
-    required this.commentCount,
-    required this.bodyMedium,
-  });
+  const _CommentHeader({required this.commentCount, required this.bodyMedium});
 
   @override
-  Widget build(BuildContext context) => SliverFixedExtentList(
-      itemExtent: 42,
-      delegate: SliverChildListDelegate([
-        Align(
-          alignment: Alignment.centerLeft,
-          child: PlatformText(
-            '댓글 ($commentCount)',
-            style: bodyMedium?.copyWith(
-              color: Theme.of(context).indicatorColor,
-              fontSize: 15,
+  Widget build(BuildContext context) =>
+      SliverFixedExtentList(
+        itemExtent: 42,
+        delegate: SliverChildListDelegate([
+          Align(
+            alignment: Alignment.centerLeft,
+            child: PlatformText(
+              '댓글 ($commentCount)',
+              style: bodyMedium?.copyWith(
+                color: Theme
+                    .of(context)
+                    .indicatorColor,
+                fontSize: 15,
+              ),
             ),
           ),
-        ),
-      ]));
+        ]),
+      );
 }
 
 class _CommentList extends ConsumerWidget {
@@ -296,15 +305,17 @@ class _CommentList extends ConsumerWidget {
         //     ref.watch(extentPrecalculationPolicyProvider),
         // layoutKeptAliveChildren: true,
         separatorBuilder: (_, __) =>
-            const DividerWidget(indent: 0, endIndent: 0),
+        const DividerWidget(indent: 0, endIndent: 0),
         itemCount: comments.length,
-        itemBuilder: (_, int index) => _CommentItem(
-          comment: comments[index],
-          bodySmall: bodySmall,
-          bodyMedium: bodyMedium,
-          hexColor: hexColor,
-          openUrl: openUrl,
-        ),
+        itemBuilder:
+            (_, int index) =>
+            _CommentItem(
+              comment: comments[index],
+              bodySmall: bodySmall,
+              bodyMedium: bodyMedium,
+              hexColor: hexColor,
+              openUrl: openUrl,
+            ),
       );
 }
 
@@ -329,24 +340,28 @@ class _CommentItem extends StatelessWidget {
     final double left = comment.isReply ? 16.0 : 0.0;
 
     final List<Widget> likeView =
-        comment.likeCount.isNotEmpty && comment.likeCount != '0'
-            ? [
-                const Spacer(),
-                Icon(Icons.favorite_outline, color: bodySmall!.color, size: 17),
-                const SizedBox(width: 4),
-                PlatformText(comment.likeCount, style: bodySmall),
-                const SizedBox(width: 4),
-              ]
-            : const <Widget>[];
+    comment.likeCount.isNotEmpty && comment.likeCount != '0'
+        ? [
+      const Spacer(),
+      Icon(Icons.favorite_outline, color: bodySmall!.color, size: 17),
+      const SizedBox(width: 4),
+      PlatformText(comment.likeCount, style: bodySmall),
+      const SizedBox(width: 4),
+    ]
+        : const <Widget>[];
 
     return PlatformListTile(
       key: ValueKey(comment.id.toString()),
-      material: (_, __) => MaterialListTileData(
-        contentPadding: EdgeInsets.only(left: left, top: 4, bottom: 4),
-      ),
-      cupertino: (_, __) => CupertinoListTileData(
-        padding: EdgeInsets.only(left: left, top: 8, bottom: 8),
-      ),
+      material:
+          (_, _) =>
+          MaterialListTileData(
+            contentPadding: EdgeInsets.only(left: left, top: 4, bottom: 4),
+          ),
+      cupertino:
+          (_, _) =>
+          CupertinoListTileData(
+            padding: EdgeInsets.only(left: left, top: 8, bottom: 8),
+          ),
       // contentPadding: EdgeInsets.only(left: left, top: 4, bottom: 4),
       title: Row(
         mainAxisSize: MainAxisSize.min,
@@ -361,12 +376,8 @@ class _CommentItem extends StatelessWidget {
         padding: const EdgeInsets.only(top: 8.0),
         child: HtmlWidget(
           comment.bodyHtml,
-          onLoadingBuilder: (
-            context,
-            element,
-            progress,
-          ) =>
-              const LoadingWidget(),
+          onLoadingBuilder:
+              (context, element, progress) => const LoadingWidget(),
           textStyle: bodyMedium,
           customStylesBuilder: (element) {
             if (element.localName == 'a') {
@@ -389,13 +400,11 @@ class _RefreshButton extends StatelessWidget {
   final VoidCallback onRefresh;
   final TextStyle? bodyMedium;
 
-  const _RefreshButton({
-    required this.onRefresh,
-    required this.bodyMedium,
-  });
+  const _RefreshButton({required this.onRefresh, required this.bodyMedium});
 
   @override
-  Widget build(BuildContext context) => SliverToBoxAdapter(
+  Widget build(BuildContext context) =>
+      SliverToBoxAdapter(
         child: InkWell(
           onTap: onRefresh,
           child: Container(
@@ -404,9 +413,9 @@ class _RefreshButton extends StatelessWidget {
             alignment: Alignment.center,
             child: PlatformText(
               '새로고침',
-              style: bodyMedium?.copyWith(
-                color: Theme.of(context).indicatorColor,
-              ),
+              style: bodyMedium?.copyWith(color: Theme
+                  .of(context)
+                  .indicatorColor),
             ),
           ),
         ),

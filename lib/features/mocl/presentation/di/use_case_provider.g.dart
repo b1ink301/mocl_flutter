@@ -29,14 +29,15 @@ String _$getMainListFromJsonHash() =>
 @ProviderFor(getMainListFromJson)
 final getMainListFromJsonProvider =
     AutoDisposeProvider<GetMainListFromJson>.internal(
-  getMainListFromJson,
-  name: r'getMainListFromJsonProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$getMainListFromJsonHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      getMainListFromJson,
+      name: r'getMainListFromJsonProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$getMainListFromJsonHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
@@ -112,9 +113,10 @@ String _$getSearchListHash() => r'f81c982841129f43705ec6f44ac0b94dcb0d8590';
 final getSearchListProvider = AutoDisposeProvider<GetSearchList>.internal(
   getSearchList,
   name: r'getSearchListProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$getSearchListHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$getSearchListHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );

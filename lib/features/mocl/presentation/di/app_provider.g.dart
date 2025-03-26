@@ -13,9 +13,10 @@ String _$getAppVersionHash() => r'c4281fce8377945fd7409c9eca1fb5f423da0eff';
 final getAppVersionProvider = FutureProvider<String>.internal(
   getAppVersion,
   name: r'getAppVersionProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$getAppVersionHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$getAppVersionHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -72,24 +73,13 @@ class ShowToastFamily extends Family<void> {
   const ShowToastFamily();
 
   /// See also [showToast].
-  ShowToastProvider call(
-    String message,
-    BuildContext context,
-  ) {
-    return ShowToastProvider(
-      message,
-      context,
-    );
+  ShowToastProvider call(String message, BuildContext context) {
+    return ShowToastProvider(message, context);
   }
 
   @override
-  ShowToastProvider getProviderOverride(
-    covariant ShowToastProvider provider,
-  ) {
-    return call(
-      provider.message,
-      provider.context,
-    );
+  ShowToastProvider getProviderOverride(covariant ShowToastProvider provider) {
+    return call(provider.message, provider.context);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -110,26 +100,20 @@ class ShowToastFamily extends Family<void> {
 /// See also [showToast].
 class ShowToastProvider extends AutoDisposeProvider<void> {
   /// See also [showToast].
-  ShowToastProvider(
-    String message,
-    BuildContext context,
-  ) : this._internal(
-          (ref) => showToast(
-            ref as ShowToastRef,
-            message,
-            context,
-          ),
-          from: showToastProvider,
-          name: r'showToastProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$showToastHash,
-          dependencies: ShowToastFamily._dependencies,
-          allTransitiveDependencies: ShowToastFamily._allTransitiveDependencies,
-          message: message,
-          context: context,
-        );
+  ShowToastProvider(String message, BuildContext context)
+    : this._internal(
+        (ref) => showToast(ref as ShowToastRef, message, context),
+        from: showToastProvider,
+        name: r'showToastProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$showToastHash,
+        dependencies: ShowToastFamily._dependencies,
+        allTransitiveDependencies: ShowToastFamily._allTransitiveDependencies,
+        message: message,
+        context: context,
+      );
 
   ShowToastProvider._internal(
     super._createNotifier, {
@@ -146,9 +130,7 @@ class ShowToastProvider extends AutoDisposeProvider<void> {
   final BuildContext context;
 
   @override
-  Override overrideWith(
-    void Function(ShowToastRef provider) create,
-  ) {
+  Override overrideWith(void Function(ShowToastRef provider) create) {
     return ProviderOverride(
       origin: this,
       override: ShowToastProvider._internal(
@@ -234,21 +216,15 @@ class OpenBrowserByUrlFamily extends Family<AsyncValue<bool>> {
   const OpenBrowserByUrlFamily();
 
   /// See also [openBrowserByUrl].
-  OpenBrowserByUrlProvider call(
-    String url,
-  ) {
-    return OpenBrowserByUrlProvider(
-      url,
-    );
+  OpenBrowserByUrlProvider call(String url) {
+    return OpenBrowserByUrlProvider(url);
   }
 
   @override
   OpenBrowserByUrlProvider getProviderOverride(
     covariant OpenBrowserByUrlProvider provider,
   ) {
-    return call(
-      provider.url,
-    );
+    return call(provider.url);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -269,24 +245,20 @@ class OpenBrowserByUrlFamily extends Family<AsyncValue<bool>> {
 /// See also [openBrowserByUrl].
 class OpenBrowserByUrlProvider extends AutoDisposeFutureProvider<bool> {
   /// See also [openBrowserByUrl].
-  OpenBrowserByUrlProvider(
-    String url,
-  ) : this._internal(
-          (ref) => openBrowserByUrl(
-            ref as OpenBrowserByUrlRef,
-            url,
-          ),
-          from: openBrowserByUrlProvider,
-          name: r'openBrowserByUrlProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$openBrowserByUrlHash,
-          dependencies: OpenBrowserByUrlFamily._dependencies,
-          allTransitiveDependencies:
-              OpenBrowserByUrlFamily._allTransitiveDependencies,
-          url: url,
-        );
+  OpenBrowserByUrlProvider(String url)
+    : this._internal(
+        (ref) => openBrowserByUrl(ref as OpenBrowserByUrlRef, url),
+        from: openBrowserByUrlProvider,
+        name: r'openBrowserByUrlProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$openBrowserByUrlHash,
+        dependencies: OpenBrowserByUrlFamily._dependencies,
+        allTransitiveDependencies:
+            OpenBrowserByUrlFamily._allTransitiveDependencies,
+        url: url,
+      );
 
   OpenBrowserByUrlProvider._internal(
     super._createNotifier, {
@@ -345,7 +317,8 @@ mixin OpenBrowserByUrlRef on AutoDisposeFutureProviderRef<bool> {
 }
 
 class _OpenBrowserByUrlProviderElement
-    extends AutoDisposeFutureProviderElement<bool> with OpenBrowserByUrlRef {
+    extends AutoDisposeFutureProviderElement<bool>
+    with OpenBrowserByUrlRef {
   _OpenBrowserByUrlProviderElement(super.provider);
 
   @override
@@ -364,21 +337,13 @@ class ShareUrlFamily extends Family<AsyncValue<bool>> {
   const ShareUrlFamily();
 
   /// See also [shareUrl].
-  ShareUrlProvider call(
-    String url,
-  ) {
-    return ShareUrlProvider(
-      url,
-    );
+  ShareUrlProvider call(String url) {
+    return ShareUrlProvider(url);
   }
 
   @override
-  ShareUrlProvider getProviderOverride(
-    covariant ShareUrlProvider provider,
-  ) {
-    return call(
-      provider.url,
-    );
+  ShareUrlProvider getProviderOverride(covariant ShareUrlProvider provider) {
+    return call(provider.url);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -399,23 +364,19 @@ class ShareUrlFamily extends Family<AsyncValue<bool>> {
 /// See also [shareUrl].
 class ShareUrlProvider extends AutoDisposeFutureProvider<bool> {
   /// See also [shareUrl].
-  ShareUrlProvider(
-    String url,
-  ) : this._internal(
-          (ref) => shareUrl(
-            ref as ShareUrlRef,
-            url,
-          ),
-          from: shareUrlProvider,
-          name: r'shareUrlProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$shareUrlHash,
-          dependencies: ShareUrlFamily._dependencies,
-          allTransitiveDependencies: ShareUrlFamily._allTransitiveDependencies,
-          url: url,
-        );
+  ShareUrlProvider(String url)
+    : this._internal(
+        (ref) => shareUrl(ref as ShareUrlRef, url),
+        from: shareUrlProvider,
+        name: r'shareUrlProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$shareUrlHash,
+        dependencies: ShareUrlFamily._dependencies,
+        allTransitiveDependencies: ShareUrlFamily._allTransitiveDependencies,
+        url: url,
+      );
 
   ShareUrlProvider._internal(
     super._createNotifier, {
@@ -430,9 +391,7 @@ class ShareUrlProvider extends AutoDisposeFutureProvider<bool> {
   final String url;
 
   @override
-  Override overrideWith(
-    FutureOr<bool> Function(ShareUrlRef provider) create,
-  ) {
+  Override overrideWith(FutureOr<bool> Function(ShareUrlRef provider) create) {
     return ProviderOverride(
       origin: this,
       override: ShareUrlProvider._internal(
@@ -493,28 +452,17 @@ class OpenUrlFamily extends Family<AsyncValue<bool>> {
   const OpenUrlFamily();
 
   /// See also [openUrl].
-  OpenUrlProvider call(
-    BuildContext context,
-    String url,
-  ) {
-    return OpenUrlProvider(
-      context,
-      url,
-    );
+  OpenUrlProvider call(BuildContext context, String url) {
+    return OpenUrlProvider(context, url);
   }
 
   @override
-  OpenUrlProvider getProviderOverride(
-    covariant OpenUrlProvider provider,
-  ) {
-    return call(
-      provider.context,
-      provider.url,
-    );
+  OpenUrlProvider getProviderOverride(covariant OpenUrlProvider provider) {
+    return call(provider.context, provider.url);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    _isImageUrlProvider
+    _isImageUrlProvider,
   ];
 
   @override
@@ -522,9 +470,9 @@ class OpenUrlFamily extends Family<AsyncValue<bool>> {
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    _isImageUrlProvider,
-    ...?_isImageUrlProvider.allTransitiveDependencies
-  };
+        _isImageUrlProvider,
+        ...?_isImageUrlProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -537,26 +485,20 @@ class OpenUrlFamily extends Family<AsyncValue<bool>> {
 /// See also [openUrl].
 class OpenUrlProvider extends AutoDisposeFutureProvider<bool> {
   /// See also [openUrl].
-  OpenUrlProvider(
-    BuildContext context,
-    String url,
-  ) : this._internal(
-          (ref) => openUrl(
-            ref as OpenUrlRef,
-            context,
-            url,
-          ),
-          from: openUrlProvider,
-          name: r'openUrlProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$openUrlHash,
-          dependencies: OpenUrlFamily._dependencies,
-          allTransitiveDependencies: OpenUrlFamily._allTransitiveDependencies,
-          context: context,
-          url: url,
-        );
+  OpenUrlProvider(BuildContext context, String url)
+    : this._internal(
+        (ref) => openUrl(ref as OpenUrlRef, context, url),
+        from: openUrlProvider,
+        name: r'openUrlProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$openUrlHash,
+        dependencies: OpenUrlFamily._dependencies,
+        allTransitiveDependencies: OpenUrlFamily._allTransitiveDependencies,
+        context: context,
+        url: url,
+      );
 
   OpenUrlProvider._internal(
     super._createNotifier, {
@@ -573,9 +515,7 @@ class OpenUrlProvider extends AutoDisposeFutureProvider<bool> {
   final String url;
 
   @override
-  Override overrideWith(
-    FutureOr<bool> Function(OpenUrlRef provider) create,
-  ) {
+  Override overrideWith(FutureOr<bool> Function(OpenUrlRef provider) create) {
     return ProviderOverride(
       origin: this,
       override: OpenUrlProvider._internal(
@@ -645,21 +585,15 @@ class _IsImageUrlFamily extends Family<bool> {
   const _IsImageUrlFamily();
 
   /// See also [_isImageUrl].
-  _IsImageUrlProvider call(
-    String url,
-  ) {
-    return _IsImageUrlProvider(
-      url,
-    );
+  _IsImageUrlProvider call(String url) {
+    return _IsImageUrlProvider(url);
   }
 
   @override
   _IsImageUrlProvider getProviderOverride(
     covariant _IsImageUrlProvider provider,
   ) {
-    return call(
-      provider.url,
-    );
+    return call(provider.url);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -680,24 +614,19 @@ class _IsImageUrlFamily extends Family<bool> {
 /// See also [_isImageUrl].
 class _IsImageUrlProvider extends AutoDisposeProvider<bool> {
   /// See also [_isImageUrl].
-  _IsImageUrlProvider(
-    String url,
-  ) : this._internal(
-          (ref) => _isImageUrl(
-            ref as _IsImageUrlRef,
-            url,
-          ),
-          from: _isImageUrlProvider,
-          name: r'_isImageUrlProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$isImageUrlHash,
-          dependencies: _IsImageUrlFamily._dependencies,
-          allTransitiveDependencies:
-              _IsImageUrlFamily._allTransitiveDependencies,
-          url: url,
-        );
+  _IsImageUrlProvider(String url)
+    : this._internal(
+        (ref) => _isImageUrl(ref as _IsImageUrlRef, url),
+        from: _isImageUrlProvider,
+        name: r'_isImageUrlProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$isImageUrlHash,
+        dependencies: _IsImageUrlFamily._dependencies,
+        allTransitiveDependencies: _IsImageUrlFamily._allTransitiveDependencies,
+        url: url,
+      );
 
   _IsImageUrlProvider._internal(
     super._createNotifier, {
@@ -712,9 +641,7 @@ class _IsImageUrlProvider extends AutoDisposeProvider<bool> {
   final String url;
 
   @override
-  Override overrideWith(
-    bool Function(_IsImageUrlRef provider) create,
-  ) {
+  Override overrideWith(bool Function(_IsImageUrlRef provider) create) {
     return ProviderOverride(
       origin: this,
       override: _IsImageUrlProvider._internal(
@@ -770,9 +697,10 @@ String _$appbarTextStyleHash() => r'831bec677d811438105caedd0b3152db2db72e02';
 final appbarTextStyleProvider = AutoDisposeProvider<TextStyle>.internal(
   appbarTextStyle,
   name: r'appbarTextStyleProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$appbarTextStyleHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$appbarTextStyleHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -803,14 +731,15 @@ String _$currentSiteTypeNotifierHash() =>
 @ProviderFor(CurrentSiteTypeNotifier)
 final currentSiteTypeNotifierProvider =
     NotifierProvider<CurrentSiteTypeNotifier, SiteType>.internal(
-  CurrentSiteTypeNotifier.new,
-  name: r'currentSiteTypeNotifierProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$currentSiteTypeNotifierHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      CurrentSiteTypeNotifier.new,
+      name: r'currentSiteTypeNotifierProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$currentSiteTypeNotifierHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$CurrentSiteTypeNotifier = Notifier<SiteType>;
 String _$readableStateNotifierHash() =>
@@ -820,14 +749,15 @@ String _$readableStateNotifierHash() =>
 @ProviderFor(ReadableStateNotifier)
 final readableStateNotifierProvider =
     NotifierProvider<ReadableStateNotifier, int>.internal(
-  ReadableStateNotifier.new,
-  name: r'readableStateNotifierProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$readableStateNotifierHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      ReadableStateNotifier.new,
+      name: r'readableStateNotifierProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$readableStateNotifierHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$ReadableStateNotifier = Notifier<int>;
 // ignore_for_file: type=lint

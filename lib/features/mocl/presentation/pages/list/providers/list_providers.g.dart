@@ -13,9 +13,10 @@ String _$listSmallTitleHash() => r'afb276d55425a9e7f1bf477590ddc03e0236bea3';
 final listSmallTitleProvider = AutoDisposeProvider<String>.internal(
   listSmallTitle,
   name: r'listSmallTitleProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$listSmallTitleHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$listSmallTitleHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -35,7 +36,7 @@ final listTitleProvider = AutoDisposeProvider<String>.internal(
   dependencies: <ProviderOrFamily>[mainItemProvider],
   allTransitiveDependencies: <ProviderOrFamily>{
     mainItemProvider,
-    ...?mainItemProvider.allTransitiveDependencies
+    ...?mainItemProvider.allTransitiveDependencies,
   },
 );
 
@@ -91,26 +92,20 @@ class TitleHeightFamily extends Family<double> {
   const TitleHeightFamily();
 
   /// See also [titleHeight].
-  TitleHeightProvider call(
-    String text,
-  ) {
-    return TitleHeightProvider(
-      text,
-    );
+  TitleHeightProvider call(String text) {
+    return TitleHeightProvider(text);
   }
 
   @override
   TitleHeightProvider getProviderOverride(
     covariant TitleHeightProvider provider,
   ) {
-    return call(
-      provider.text,
-    );
+    return call(provider.text);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
     appbarTextStyleProvider,
-    screenWidthProvider
+    screenWidthProvider,
   ];
 
   @override
@@ -118,11 +113,11 @@ class TitleHeightFamily extends Family<double> {
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    appbarTextStyleProvider,
-    ...?appbarTextStyleProvider.allTransitiveDependencies,
-    screenWidthProvider,
-    ...?screenWidthProvider.allTransitiveDependencies
-  };
+        appbarTextStyleProvider,
+        ...?appbarTextStyleProvider.allTransitiveDependencies,
+        screenWidthProvider,
+        ...?screenWidthProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -135,24 +130,19 @@ class TitleHeightFamily extends Family<double> {
 /// See also [titleHeight].
 class TitleHeightProvider extends AutoDisposeProvider<double> {
   /// See also [titleHeight].
-  TitleHeightProvider(
-    String text,
-  ) : this._internal(
-          (ref) => titleHeight(
-            ref as TitleHeightRef,
-            text,
-          ),
-          from: titleHeightProvider,
-          name: r'titleHeightProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$titleHeightHash,
-          dependencies: TitleHeightFamily._dependencies,
-          allTransitiveDependencies:
-              TitleHeightFamily._allTransitiveDependencies,
-          text: text,
-        );
+  TitleHeightProvider(String text)
+    : this._internal(
+        (ref) => titleHeight(ref as TitleHeightRef, text),
+        from: titleHeightProvider,
+        name: r'titleHeightProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$titleHeightHash,
+        dependencies: TitleHeightFamily._dependencies,
+        allTransitiveDependencies: TitleHeightFamily._allTransitiveDependencies,
+        text: text,
+      );
 
   TitleHeightProvider._internal(
     super._createNotifier, {
@@ -167,9 +157,7 @@ class TitleHeightProvider extends AutoDisposeProvider<double> {
   final String text;
 
   @override
-  Override overrideWith(
-    double Function(TitleHeightRef provider) create,
-  ) {
+  Override overrideWith(double Function(TitleHeightRef provider) create) {
     return ProviderOverride(
       origin: this,
       override: TitleHeightProvider._internal(
@@ -225,19 +213,20 @@ String _$extentPrecalculationPolicyHash() =>
 @ProviderFor(extentPrecalculationPolicy)
 final extentPrecalculationPolicyProvider =
     AutoDisposeProvider<ExtentPrecalculationPolicy>.internal(
-  extentPrecalculationPolicy,
-  name: r'extentPrecalculationPolicyProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$extentPrecalculationPolicyHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      extentPrecalculationPolicy,
+      name: r'extentPrecalculationPolicyProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$extentPrecalculationPolicyHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef ExtentPrecalculationPolicyRef
-    = AutoDisposeProviderRef<ExtentPrecalculationPolicy>;
+typedef ExtentPrecalculationPolicyRef =
+    AutoDisposeProviderRef<ExtentPrecalculationPolicy>;
 String _$reqListDataHash() => r'9648b8f2f547931bd0b0ed69a299bf5f5b8d37ec';
 
 /// See also [reqListData].
@@ -251,28 +240,19 @@ class ReqListDataFamily
   const ReqListDataFamily();
 
   /// See also [reqListData].
-  ReqListDataProvider call(
-    int page,
-    LastId lastId,
-  ) {
-    return ReqListDataProvider(
-      page,
-      lastId,
-    );
+  ReqListDataProvider call(int page, LastId lastId) {
+    return ReqListDataProvider(page, lastId);
   }
 
   @override
   ReqListDataProvider getProviderOverride(
     covariant ReqListDataProvider provider,
   ) {
-    return call(
-      provider.page,
-      provider.lastId,
-    );
+    return call(provider.page, provider.lastId);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    mainItemProvider
+    mainItemProvider,
   ];
 
   @override
@@ -280,9 +260,9 @@ class ReqListDataFamily
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    mainItemProvider,
-    ...?mainItemProvider.allTransitiveDependencies
-  };
+        mainItemProvider,
+        ...?mainItemProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -296,27 +276,20 @@ class ReqListDataFamily
 class ReqListDataProvider
     extends AutoDisposeFutureProvider<Either<Failure, List<ListItem>>> {
   /// See also [reqListData].
-  ReqListDataProvider(
-    int page,
-    LastId lastId,
-  ) : this._internal(
-          (ref) => reqListData(
-            ref as ReqListDataRef,
-            page,
-            lastId,
-          ),
-          from: reqListDataProvider,
-          name: r'reqListDataProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$reqListDataHash,
-          dependencies: ReqListDataFamily._dependencies,
-          allTransitiveDependencies:
-              ReqListDataFamily._allTransitiveDependencies,
-          page: page,
-          lastId: lastId,
-        );
+  ReqListDataProvider(int page, LastId lastId)
+    : this._internal(
+        (ref) => reqListData(ref as ReqListDataRef, page, lastId),
+        from: reqListDataProvider,
+        name: r'reqListDataProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$reqListDataHash,
+        dependencies: ReqListDataFamily._dependencies,
+        allTransitiveDependencies: ReqListDataFamily._allTransitiveDependencies,
+        page: page,
+        lastId: lastId,
+      );
 
   ReqListDataProvider._internal(
     super._createNotifier, {
@@ -335,7 +308,7 @@ class ReqListDataProvider
   @override
   Override overrideWith(
     FutureOr<Either<Failure, List<ListItem>>> Function(ReqListDataRef provider)
-        create,
+    create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -354,7 +327,7 @@ class ReqListDataProvider
 
   @override
   AutoDisposeFutureProviderElement<Either<Failure, List<ListItem>>>
-      createElement() {
+  createElement() {
     return _ReqListDataProviderElement(this);
   }
 
@@ -419,28 +392,29 @@ String _$listStateNotifierHash() => r'1308fa076bfd1e2ec14c2321b84318de93644460';
 @ProviderFor(ListStateNotifier)
 final listStateNotifierProvider =
     AutoDisposeNotifierProvider<ListStateNotifier, ListState>.internal(
-  ListStateNotifier.new,
-  name: r'listStateNotifierProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$listStateNotifierHash,
-  dependencies: <ProviderOrFamily>{
-    mainItemProvider,
-    reqListDataProvider,
-    sortTypeNotifierProvider,
-    _initialPageProvider
-  },
-  allTransitiveDependencies: <ProviderOrFamily>{
-    mainItemProvider,
-    ...?mainItemProvider.allTransitiveDependencies,
-    reqListDataProvider,
-    ...?reqListDataProvider.allTransitiveDependencies,
-    sortTypeNotifierProvider,
-    ...?sortTypeNotifierProvider.allTransitiveDependencies,
-    _initialPageProvider,
-    ...?_initialPageProvider.allTransitiveDependencies
-  },
-);
+      ListStateNotifier.new,
+      name: r'listStateNotifierProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$listStateNotifierHash,
+      dependencies: <ProviderOrFamily>{
+        mainItemProvider,
+        reqListDataProvider,
+        sortTypeNotifierProvider,
+        _initialPageProvider,
+      },
+      allTransitiveDependencies: <ProviderOrFamily>{
+        mainItemProvider,
+        ...?mainItemProvider.allTransitiveDependencies,
+        reqListDataProvider,
+        ...?reqListDataProvider.allTransitiveDependencies,
+        sortTypeNotifierProvider,
+        ...?sortTypeNotifierProvider.allTransitiveDependencies,
+        _initialPageProvider,
+        ...?_initialPageProvider.allTransitiveDependencies,
+      },
+    );
 
 typedef _$ListStateNotifier = AutoDisposeNotifier<ListState>;
 String _$sortTypeNotifierHash() => r'19fe9c4b29d4d6b3d4c1c845099428124cb94554';
@@ -449,14 +423,15 @@ String _$sortTypeNotifierHash() => r'19fe9c4b29d4d6b3d4c1c845099428124cb94554';
 @ProviderFor(SortTypeNotifier)
 final sortTypeNotifierProvider =
     AutoDisposeNotifierProvider<SortTypeNotifier, SortType>.internal(
-  SortTypeNotifier.new,
-  name: r'sortTypeNotifierProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$sortTypeNotifierHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      SortTypeNotifier.new,
+      name: r'sortTypeNotifierProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$sortTypeNotifierHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$SortTypeNotifier = AutoDisposeNotifier<SortType>;
 // ignore_for_file: type=lint
