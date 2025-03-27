@@ -20,7 +20,8 @@ part 'list_providers.g.dart';
 
 @riverpod
 String listSmallTitle(Ref ref) => ref.watch(
-    currentSiteTypeNotifierProvider.select((siteType) => siteType.title));
+  currentSiteTypeNotifierProvider.select((siteType) => siteType.title),
+);
 
 @Riverpod(dependencies: [mainItem])
 String listTitle(Ref ref) =>
@@ -56,12 +57,19 @@ ExtentPrecalculationPolicy extentPrecalculationPolicy(Ref ref) =>
 
 @Riverpod(dependencies: [mainItem])
 Future<Either<Failure, List<ListItem>>> reqListData(
-    Ref ref, int page, LastId lastId) async {
+  Ref ref,
+  int page,
+  LastId lastId,
+) async {
   final MainItem mainItem = ref.watch(mainItemProvider);
   final SortType sortType = ref.watch(sortTypeNotifierProvider);
 
   final GetListParams params = GetListParams(
-      mainItem: mainItem, page: page, lastId: lastId, sortType: sortType);
+    mainItem: mainItem,
+    page: page,
+    lastId: lastId,
+    sortType: sortType,
+  );
 
   return await ref.read(getListProvider)(params);
 }
@@ -73,7 +81,14 @@ int _initialPage(Ref ref) {
   return page;
 }
 
-@Riverpod(dependencies: [mainItem, reqListData, SortTypeNotifier, _initialPage])
+@Riverpod(
+  dependencies: [
+    mainItem,
+    reqListData,
+    SortTypeNotifier,
+    _initialPage,
+  ],
+)
 class ListStateNotifier extends _$ListStateNotifier {
   @override
   ListState build() {
@@ -90,45 +105,29 @@ class ListStateNotifier extends _$ListStateNotifier {
     state = state.copyWith(isLoading: true, error: null);
 
     try {
-      final Either<Failure, List<ListItem>> result = await ref
-          .read(reqListDataProvider(state.currentPage, state.lastId).future);
+      final Either<Failure, List<ListItem>> result = await ref.read(
+        reqListDataProvider(state.currentPage, state.lastId).future,
+      );
 
       result.fold(
         (Failure failure) {
-          state = state.copyWith(
-            isLoading: false,
-            error: failure.message,
-          );
+          state = state.copyWith(isLoading: false, error: failure.message);
         },
         (List<ListItem> newItems) {
           final bool hasReachedMax = _checkIfReachedMax(newItems.isEmpty);
 
-          // final List<ListItem> mergedItems = [
-          //   ...state.items,
-          //   ...newItems,
-          // ];
-          // final List<ListItem> uniqueItems = mergedItems.toSet().toList();
-
-          // final items = state.items.toList();
-          // final List<ListItem> filteredItems = newItems.where((newItem) {
-          //   final result =  !items.any((existingItem) {
-          //     debugPrint('newItem.id=${newItem.id}, existingItem.id=${existingItem.id}');
-          //     return existingItem.id == newItem.id;
-          //   });
-          //   debugPrint('result=${newItem.id}, $result');
-          //   return result;
-          // }).toList();
-          //
-          // debugPrint('filteredItems=${filteredItems.length}');
-
           state = state.copyWith(
-            items: [...state.items, ...newItems],
             isLoading: false,
+            items: state.items + newItems,
             currentPage:
                 hasReachedMax ? state.currentPage : state.currentPage + 1,
-            lastId: newItems.isEmpty
-                ? state.lastId
-                : LastId(intId: newItems.last.id, stringId: newItems.last.url),
+            lastId:
+                newItems.isEmpty
+                    ? state.lastId
+                    : LastId(
+                      intId: newItems.last.id,
+                      stringId: newItems.last.url,
+                    ),
             hasReachedMax: _checkIfReachedMax(newItems.isEmpty),
           );
         },
@@ -160,6 +159,44 @@ class ListStateNotifier extends _$ListStateNotifier {
 
     state = state.copyWith(items: updatedItems);
   }
+}
+
+@Riverpod(dependencies: [ListStateNotifier])
+ListItem? getListItem(Ref ref, int index) {
+  final item = ref.watch(
+    listStateNotifierProvider.select((state) {
+      try {
+        return state.items[index];
+      } catch (e) {
+        return null;
+      }
+    }),
+  );
+  return item;
+}
+
+@Riverpod(dependencies: [ListStateNotifier])
+int getListCount(Ref ref) {
+  final count = ref.watch(
+    listStateNotifierProvider.select((state) => state.items.length),
+  );
+  return count;
+}
+
+@Riverpod(dependencies: [ListStateNotifier])
+String? getListError(Ref ref) {
+  final error = ref.watch(
+    listStateNotifierProvider.select((state) => state.error),
+  );
+  return error;
+}
+
+@Riverpod(dependencies: [ListStateNotifier])
+bool hasReachedMax(Ref ref) {
+  final hasReachedMax = ref.watch(
+    listStateNotifierProvider.select((state) => state.hasReachedMax),
+  );
+  return hasReachedMax;
 }
 
 @riverpod

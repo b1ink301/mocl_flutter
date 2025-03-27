@@ -386,7 +386,189 @@ final _initialPageProvider = AutoDisposeProvider<int>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef _InitialPageRef = AutoDisposeProviderRef<int>;
-String _$listStateNotifierHash() => r'1308fa076bfd1e2ec14c2321b84318de93644460';
+String _$getListItemHash() => r'416539217b05ea882a775193c05af73a390301ed';
+
+/// See also [getListItem].
+@ProviderFor(getListItem)
+const getListItemProvider = GetListItemFamily();
+
+/// See also [getListItem].
+class GetListItemFamily extends Family<ListItem?> {
+  /// See also [getListItem].
+  const GetListItemFamily();
+
+  /// See also [getListItem].
+  GetListItemProvider call(int index) {
+    return GetListItemProvider(index);
+  }
+
+  @override
+  GetListItemProvider getProviderOverride(
+    covariant GetListItemProvider provider,
+  ) {
+    return call(provider.index);
+  }
+
+  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
+    listStateNotifierProvider,
+  ];
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
+      <ProviderOrFamily>{
+        listStateNotifierProvider,
+        ...?listStateNotifierProvider.allTransitiveDependencies,
+      };
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'getListItemProvider';
+}
+
+/// See also [getListItem].
+class GetListItemProvider extends AutoDisposeProvider<ListItem?> {
+  /// See also [getListItem].
+  GetListItemProvider(int index)
+    : this._internal(
+        (ref) => getListItem(ref as GetListItemRef, index),
+        from: getListItemProvider,
+        name: r'getListItemProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$getListItemHash,
+        dependencies: GetListItemFamily._dependencies,
+        allTransitiveDependencies: GetListItemFamily._allTransitiveDependencies,
+        index: index,
+      );
+
+  GetListItemProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.index,
+  }) : super.internal();
+
+  final int index;
+
+  @override
+  Override overrideWith(ListItem? Function(GetListItemRef provider) create) {
+    return ProviderOverride(
+      origin: this,
+      override: GetListItemProvider._internal(
+        (ref) => create(ref as GetListItemRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        index: index,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<ListItem?> createElement() {
+    return _GetListItemProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is GetListItemProvider && other.index == index;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, index.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin GetListItemRef on AutoDisposeProviderRef<ListItem?> {
+  /// The parameter `index` of this provider.
+  int get index;
+}
+
+class _GetListItemProviderElement extends AutoDisposeProviderElement<ListItem?>
+    with GetListItemRef {
+  _GetListItemProviderElement(super.provider);
+
+  @override
+  int get index => (origin as GetListItemProvider).index;
+}
+
+String _$getListCountHash() => r'a4088264b4ebfc948214b0dd0731eb1330f2e041';
+
+/// See also [getListCount].
+@ProviderFor(getListCount)
+final getListCountProvider = AutoDisposeProvider<int>.internal(
+  getListCount,
+  name: r'getListCountProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$getListCountHash,
+  dependencies: <ProviderOrFamily>[listStateNotifierProvider],
+  allTransitiveDependencies: <ProviderOrFamily>{
+    listStateNotifierProvider,
+    ...?listStateNotifierProvider.allTransitiveDependencies,
+  },
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef GetListCountRef = AutoDisposeProviderRef<int>;
+String _$getListErrorHash() => r'b9bbed5015d4e1c720c8cd248d90beb98b2c2416';
+
+/// See also [getListError].
+@ProviderFor(getListError)
+final getListErrorProvider = AutoDisposeProvider<String?>.internal(
+  getListError,
+  name: r'getListErrorProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$getListErrorHash,
+  dependencies: <ProviderOrFamily>[listStateNotifierProvider],
+  allTransitiveDependencies: <ProviderOrFamily>{
+    listStateNotifierProvider,
+    ...?listStateNotifierProvider.allTransitiveDependencies,
+  },
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef GetListErrorRef = AutoDisposeProviderRef<String?>;
+String _$hasReachedMaxHash() => r'a2fcb50f080608d98473689c061f9d1dddb18220';
+
+/// See also [hasReachedMax].
+@ProviderFor(hasReachedMax)
+final hasReachedMaxProvider = AutoDisposeProvider<bool>.internal(
+  hasReachedMax,
+  name: r'hasReachedMaxProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$hasReachedMaxHash,
+  dependencies: <ProviderOrFamily>[listStateNotifierProvider],
+  allTransitiveDependencies: <ProviderOrFamily>{
+    listStateNotifierProvider,
+    ...?listStateNotifierProvider.allTransitiveDependencies,
+  },
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef HasReachedMaxRef = AutoDisposeProviderRef<bool>;
+String _$listStateNotifierHash() => r'9bee8b94bf68a5b4ec3b320e55cd09d2b05053ff';
 
 /// See also [ListStateNotifier].
 @ProviderFor(ListStateNotifier)

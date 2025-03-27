@@ -5,7 +5,6 @@ import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
-import 'package:mocl_flutter/features/mocl/presentation/models/mocl_list_item_info.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_providers.dart';
 import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_routes.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
@@ -72,7 +71,7 @@ class _TitleView extends StatelessWidget {
   @override
   Widget build(BuildContext context) => PlatformText(
     title,
-    maxLines: 1,
+    maxLines: 3,
     overflow: TextOverflow.ellipsis,
     style: MoclTextStyles.of(context).title(isRead),
   );

@@ -96,7 +96,6 @@ abstract class BaseApi with BaseAction {
             .map((cookie) => '${cookie.name}=${cookie.value}')
             .join('; ');
 
-        log('[_buildInterceptorCookie] ${options.headers['Cookie']}');
         return handler.next(options);
       },
     );
