@@ -3,14 +3,12 @@ import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_providers.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_state.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/widget/list_cupertino_app_bar.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/widget/list_material_app_bar.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/widget/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/cached_item_builder.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
-import 'package:super_sliver_list/super_sliver_list.dart';
 
 class MoclListView extends ConsumerStatefulWidget {
   const MoclListView({super.key});
@@ -29,26 +27,24 @@ class MoclListViewState extends ConsumerState<MoclListView> {
       onNotification: (ScrollNotification notification) {
         if (notification is ScrollEndNotification) {
           if (notification.metrics.pixels >=
-              notification.metrics.maxScrollExtent * 0.9) {
+              notification.metrics.maxScrollExtent * 0.98) {
             ref.read(listStateNotifierProvider.notifier).loadMore();
           }
         }
         return false;
       },
       child: const CustomScrollView(
+        key: ValueKey('List-CustomScrollView'),
         physics: ClampingScrollPhysics(),
-        cacheExtent: 150,
-        slivers: <Widget>[
-          _ListAppBar(key: ValueKey('_ListAppBar')),
-          _ListBody(key: ValueKey('_ListBody')),
-        ],
+        cacheExtent: 0,
+        slivers: <Widget>[_ListAppBar(), _ListBody()],
       ),
     ),
   );
 }
 
 class _ListAppBar extends StatelessWidget {
-  const _ListAppBar({super.key});
+  const _ListAppBar();
 
   @override
   Widget build(BuildContext context) => PlatformWidget(
@@ -58,41 +54,43 @@ class _ListAppBar extends StatelessWidget {
 }
 
 class _ListBody extends ConsumerWidget {
-  const _ListBody({super.key});
+  const _ListBody();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final ListState state = ref.watch(listStateNotifierProvider);
+    return _buildSliverList(ref);
+  }
 
+  Widget _buildSliverList(WidgetRef ref) {
+    final int listCount = ref.watch(getListCountProvider);
     return SliverList.separated(
-      key: ValueKey('_ListBody-SliverList'),
-      // layoutKeptAliveChildren: true,
-      // extentPrecalculationPolicy: ref.watch(extentPrecalculationPolicyProvider),
-      // extentEstimation: (int? index, double crossAxisExtent) => 76.0,
-      itemCount: state.items.length + 1,
+      addAutomaticKeepAlives: false,
+      itemCount: listCount + 1,
       itemBuilder: (BuildContext context, int index) {
-        if (state.items.length == index) {
-          if (state.error != null) {
+        if (listCount == index) {
+          final error = ref.watch(getListErrorProvider);
+          final hasReachedMax = ref.watch(hasReachedMaxProvider);
+          if (error != null) {
             return _buildError(
-              state.error!,
+              error,
               () => ref.read(listStateNotifierProvider.notifier).retry(),
             );
-          } else if (state.hasReachedMax) {
+          } else if (hasReachedMax) {
             return const SizedBox.shrink();
           } else {
             return const Column(children: [LoadingWidget(), DividerWidget()]);
           }
         }
-        final ListItem item = state.items[index];
+        final ListItem? item = ref.watch(getListItemProvider(index));
+        if (item == null) {
+          return null;
+        }
         return CachedItemBuilder(
           key: item.key,
           builder: () => MoclListItem(item: item, index: index),
         );
       },
-      separatorBuilder:
-          (_, _) => const DividerWidget(
-            key: ValueKey('_ListBody-SliverList-DividerWidget'),
-          ),
+      separatorBuilder: (_, _) => const DividerWidget(),
     );
   }
 
@@ -106,9 +104,9 @@ class _ListBody extends ConsumerWidget {
           maxLines: 4,
           overflow: TextOverflow.ellipsis,
         ),
-        const SizedBox(height: 8),
-        PlatformElevatedButton(onPressed: onRetry, child: PlatformText('재시도')),
         const SizedBox(height: 16),
+        PlatformElevatedButton(onPressed: onRetry, child: PlatformText('재시도')),
+        const SizedBox(height: 8),
         const DividerWidget(indent: 0, endIndent: 0),
       ],
     ),

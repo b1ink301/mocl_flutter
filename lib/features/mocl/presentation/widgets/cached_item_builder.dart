@@ -9,7 +9,8 @@ class CachedItemBuilder extends StatefulWidget {
   State<CachedItemBuilder> createState() => _CachedItemBuilderState();
 }
 
-class _CachedItemBuilderState extends State<CachedItemBuilder> {
+class _CachedItemBuilderState extends State<CachedItemBuilder>
+    with AutomaticKeepAliveClientMixin {
   late Widget _cachedWidget;
 
   @override
@@ -19,5 +20,11 @@ class _CachedItemBuilderState extends State<CachedItemBuilder> {
   }
 
   @override
-  Widget build(BuildContext context) => _cachedWidget;
+  Widget build(BuildContext context) {
+    super.build(context);
+    return _cachedWidget;
+  }
+
+  @override
+  bool get wantKeepAlive => true;
 }
