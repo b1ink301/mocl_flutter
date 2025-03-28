@@ -38,6 +38,10 @@ flutter run --release --flavor dev -t lib/main_dev.dart
 flutter build [appbundle|apk|ios|ipa] --flavor [dev|prd] -t lib/[main_dev|main_prd].dart
 ```
 
+```shell
+flutter clean
+```
+
 ## Build Apk
 
 * 인증서는 android의 gradle.properties에 정의
