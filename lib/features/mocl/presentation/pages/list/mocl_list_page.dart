@@ -15,27 +15,24 @@ import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/lis
 class MoclListPage extends ConsumerWidget {
   const MoclListPage({super.key});
 
-  static Widget init(
-    BuildContext context,
-    MainItem item,
-  ) =>
+  static Widget init(BuildContext context, MainItem item) =>
       AnnotatedRegion<SystemUiOverlayStyle>(
         value: Theme.of(context).appBarTheme.systemOverlayStyle!,
         child: ProviderScope(
           overrides: [
-            screenWidthProvider
-                .overrideWithValue(MediaQuery.of(context).size.width),
-            appbarTextStyleProvider.overrideWithValue(Platform.isIOS
-                ? CupertinoTheme.of(context)
-                    .textTheme
-                    .navLargeTitleTextStyle
-                    .copyWith(height: 1.3)
-                : Theme.of(context).textTheme.labelMedium!),
+            screenWidthProvider.overrideWithValue(
+              MediaQuery.of(context).size.width,
+            ),
+            appbarTextStyleProvider.overrideWithValue(
+              Platform.isIOS
+                  ? CupertinoTheme.of(
+                    context,
+                  ).textTheme.navLargeTitleTextStyle.copyWith(height: 1.3)
+                  : Theme.of(context).textTheme.labelMedium!,
+            ),
             mainItemProvider.overrideWithValue(item),
           ],
-          child: const MoclListPage(
-            key: ValueKey('MoclListPage'),
-          ),
+          child: const MoclListPage(),
         ),
       );
 
@@ -43,23 +40,18 @@ class MoclListPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final child = PlatformScaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: const SafeArea(
-        key: ValueKey('MoclListPage-SafeArea'),
-        left: false,
-        right: false,
-        child: MoclListView(),
-      ),
+      body: const SafeArea(left: false, right: false, child: MoclListView()),
     );
 
     return Platform.isMacOS
         ? Listener(
-            onPointerDown: (event) {
-              if (event.buttons == kSecondaryMouseButton) {
-                GoRouter.of(context).pop();
-              }
-            },
-            child: child,
-          )
+          onPointerDown: (event) {
+            if (event.buttons == kSecondaryMouseButton) {
+              GoRouter.of(context).pop();
+            }
+          },
+          child: child,
+        )
         : child;
   }
 }

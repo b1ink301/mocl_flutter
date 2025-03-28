@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
@@ -14,7 +15,8 @@ import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/use_case_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:super_sliver_list/super_sliver_list.dart';
+
+import '../../../../domain/entities/mocl_user_info.dart';
 
 part 'list_providers.g.dart';
 
@@ -46,21 +48,12 @@ double titleHeight(Ref ref, String text) {
   return max(49, textPainter.height) + 27;
 }
 
-class _CustomExtentPrecalculationPolicy extends ExtentPrecalculationPolicy {
-  @override
-  bool shouldPrecalculateExtents(ExtentPrecalculationContext context) => true;
-}
-
-@riverpod
-ExtentPrecalculationPolicy extentPrecalculationPolicy(Ref ref) =>
-    _CustomExtentPrecalculationPolicy();
-
 @Riverpod(dependencies: [mainItem])
 Future<Either<Failure, List<ListItem>>> reqListData(
   Ref ref,
   int page,
   LastId lastId,
-) async {
+) {
   final MainItem mainItem = ref.watch(mainItemProvider);
   final SortType sortType = ref.watch(sortTypeNotifierProvider);
 
@@ -70,8 +63,7 @@ Future<Either<Failure, List<ListItem>>> reqListData(
     lastId: lastId,
     sortType: sortType,
   );
-
-  return await ref.read(getListProvider)(params);
+  return ref.read(getListProvider)(params);
 }
 
 @riverpod
@@ -81,14 +73,7 @@ int _initialPage(Ref ref) {
   return page;
 }
 
-@Riverpod(
-  dependencies: [
-    mainItem,
-    reqListData,
-    SortTypeNotifier,
-    _initialPage,
-  ],
-)
+@Riverpod(dependencies: [mainItem, reqListData, SortTypeNotifier, _initialPage])
 class ListStateNotifier extends _$ListStateNotifier {
   @override
   ListState build() {
@@ -108,6 +93,13 @@ class ListStateNotifier extends _$ListStateNotifier {
       final Either<Failure, List<ListItem>> result = await ref.read(
         reqListDataProvider(state.currentPage, state.lastId).future,
       );
+
+      // final items = List.generate(20, (idx) {
+      //   final index = idx + state.currentPage * 20;
+      //   return ListItem.empty().copyWith(title: 'title=$index', info: 'info=$index', userInfo: UserInfo(id: index.toString(), nickImage: '', nickName: ''));
+      // });
+      //
+      // final result = Either<Failure, List<ListItem>>.right(items);
 
       result.fold(
         (Failure failure) {
@@ -133,6 +125,7 @@ class ListStateNotifier extends _$ListStateNotifier {
         },
       );
     } catch (e) {
+      debugPrint('error: $e');
       final String error = e is Failure ? e.message : e.toString();
       state = state.copyWith(isLoading: false, error: error);
     }
@@ -173,30 +166,6 @@ ListItem? getListItem(Ref ref, int index) {
     }),
   );
   return item;
-}
-
-@Riverpod(dependencies: [ListStateNotifier])
-int getListCount(Ref ref) {
-  final count = ref.watch(
-    listStateNotifierProvider.select((state) => state.items.length),
-  );
-  return count;
-}
-
-@Riverpod(dependencies: [ListStateNotifier])
-String? getListError(Ref ref) {
-  final error = ref.watch(
-    listStateNotifierProvider.select((state) => state.error),
-  );
-  return error;
-}
-
-@Riverpod(dependencies: [ListStateNotifier])
-bool hasReachedMax(Ref ref) {
-  final hasReachedMax = ref.watch(
-    listStateNotifierProvider.select((state) => state.hasReachedMax),
-  );
-  return hasReachedMax;
 }
 
 @riverpod

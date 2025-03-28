@@ -1,3 +1,4 @@
+import 'package:easy_debounce/easy_throttle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -6,10 +7,8 @@ import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/lis
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/widget/list_cupertino_app_bar.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/widget/list_material_app_bar.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/widget/mocl_list_item.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/cached_item_builder.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
-import 'package:super_sliver_list/super_sliver_list.dart';
 
 class MoclListView extends ConsumerStatefulWidget {
   const MoclListView({super.key});
@@ -26,19 +25,20 @@ class MoclListViewState extends ConsumerState<MoclListView> {
         () async => ref.read(listStateNotifierProvider.notifier).refresh(),
     child: NotificationListener<ScrollNotification>(
       onNotification: (ScrollNotification notification) {
-        if (notification is ScrollEndNotification) {
-          if (notification.metrics.pixels >=
-              notification.metrics.maxScrollExtent * 0.8) {
-            ref.read(listStateNotifierProvider.notifier).loadMore();
-            return true;
-          }
+        if (notification is ScrollEndNotification &&
+            notification.metrics.extentAfter < 100) {
+          EasyThrottle.throttle(
+            'list-fetch-throttle',
+            const Duration(milliseconds: 1000),
+            ref.read(listStateNotifierProvider.notifier).loadMore,
+          );
+          return true;
         }
         return false;
       },
       child: const CustomScrollView(
-        key: ValueKey('List-CustomScrollView'),
         physics: ClampingScrollPhysics(),
-        cacheExtent: 100,
+        cacheExtent: 0,
         slivers: <Widget>[_ListAppBar(), _ListBody()],
       ),
     ),
@@ -46,7 +46,7 @@ class MoclListViewState extends ConsumerState<MoclListView> {
 }
 
 class _ListAppBar extends StatelessWidget {
-  const _ListAppBar();
+  const _ListAppBar({super.key});
 
   @override
   Widget build(BuildContext context) => PlatformWidget(
@@ -56,47 +56,48 @@ class _ListAppBar extends StatelessWidget {
 }
 
 class _ListBody extends ConsumerWidget {
-  const _ListBody();
+  const _ListBody({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => _buildSliverList(ref);
-
-  Widget _buildSliverList(WidgetRef ref) {
-    final int listCount = ref.watch(getListCountProvider);
-
-    return SuperSliverList.separated(
-      layoutKeptAliveChildren: false,
-      addAutomaticKeepAlives: false,
-      extentPrecalculationPolicy: ref.watch(extentPrecalculationPolicyProvider),
-      extentEstimation: (int? index, double crossAxisExtent) => 76.0,
-      itemCount: listCount + 1,
-      itemBuilder: (BuildContext context, int index) {
-        if (listCount == index) {
-          final String? error = ref.watch(getListErrorProvider);
-          final bool hasReachedMax = ref.watch(hasReachedMaxProvider);
-          if (error != null) {
-            return _buildError(
-              error,
-              () => ref.read(listStateNotifierProvider.notifier).retry(),
-            );
-          } else if (hasReachedMax) {
-            return const SizedBox.shrink();
-          } else {
-            return const Column(children: [LoadingWidget(), DividerWidget()]);
-          }
-        }
-        final ListItem? item = ref.watch(getListItemProvider(index));
-        if (item == null) {
-          return null;
-        }
-        return CachedItemBuilder(
-          key: item.key,
-          builder: () => MoclListItem(item: item, index: index),
-        );
-      },
-      separatorBuilder:
-          (BuildContext context, int index) => const DividerWidget(),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final (count, hasReachedMax, error) = ref.watch(
+      listStateNotifierProvider.select(
+        (state) => (state.items.length, state.hasReachedMax, state.error),
+      ),
     );
+
+    return SliverList.separated(
+      addRepaintBoundaries: false,
+      addSemanticIndexes: false,
+      addAutomaticKeepAlives: false,
+      itemCount: count + 1,
+      itemBuilder: (_, index) {
+        if (count == index) {
+          return _buildFooter(
+            error,
+            hasReachedMax,
+            ref.read(listStateNotifierProvider.notifier).retry,
+          );
+        } else {
+          final item = ref.watch(getListItemProvider(index));
+          if (item == null) return null;
+          return RepaintBoundary(
+            child: MoclListItem(key: item.key, item: item, index: index),
+          );
+        }
+      },
+      separatorBuilder: (_, _) => const DividerWidget(),
+    );
+  }
+
+  Widget _buildFooter(String? error, bool hasReachedMax, VoidCallback retry) {
+    if (error != null) {
+      return _buildError(error, retry);
+    } else if (hasReachedMax) {
+      return const SizedBox.shrink();
+    } else {
+      return const Column(children: [LoadingWidget(), DividerWidget()]);
+    }
   }
 
   Widget _buildError(String errorMessage, VoidCallback onRetry) => Padding(

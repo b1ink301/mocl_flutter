@@ -206,28 +206,7 @@ class _TitleHeightProviderElement extends AutoDisposeProviderElement<double>
   String get text => (origin as TitleHeightProvider).text;
 }
 
-String _$extentPrecalculationPolicyHash() =>
-    r'97fe21e21592c66ee79750d0632c56bc6f68bc39';
-
-/// See also [extentPrecalculationPolicy].
-@ProviderFor(extentPrecalculationPolicy)
-final extentPrecalculationPolicyProvider =
-    AutoDisposeProvider<ExtentPrecalculationPolicy>.internal(
-      extentPrecalculationPolicy,
-      name: r'extentPrecalculationPolicyProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$extentPrecalculationPolicyHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef ExtentPrecalculationPolicyRef =
-    AutoDisposeProviderRef<ExtentPrecalculationPolicy>;
-String _$reqListDataHash() => r'9648b8f2f547931bd0b0ed69a299bf5f5b8d37ec';
+String _$reqListDataHash() => r'90ba31cf6786534af3c36578deb698519d8461f7';
 
 /// See also [reqListData].
 @ProviderFor(reqListData)
@@ -509,66 +488,7 @@ class _GetListItemProviderElement extends AutoDisposeProviderElement<ListItem?>
   int get index => (origin as GetListItemProvider).index;
 }
 
-String _$getListCountHash() => r'a4088264b4ebfc948214b0dd0731eb1330f2e041';
-
-/// See also [getListCount].
-@ProviderFor(getListCount)
-final getListCountProvider = AutoDisposeProvider<int>.internal(
-  getListCount,
-  name: r'getListCountProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$getListCountHash,
-  dependencies: <ProviderOrFamily>[listStateNotifierProvider],
-  allTransitiveDependencies: <ProviderOrFamily>{
-    listStateNotifierProvider,
-    ...?listStateNotifierProvider.allTransitiveDependencies,
-  },
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef GetListCountRef = AutoDisposeProviderRef<int>;
-String _$getListErrorHash() => r'b9bbed5015d4e1c720c8cd248d90beb98b2c2416';
-
-/// See also [getListError].
-@ProviderFor(getListError)
-final getListErrorProvider = AutoDisposeProvider<String?>.internal(
-  getListError,
-  name: r'getListErrorProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$getListErrorHash,
-  dependencies: <ProviderOrFamily>[listStateNotifierProvider],
-  allTransitiveDependencies: <ProviderOrFamily>{
-    listStateNotifierProvider,
-    ...?listStateNotifierProvider.allTransitiveDependencies,
-  },
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef GetListErrorRef = AutoDisposeProviderRef<String?>;
-String _$hasReachedMaxHash() => r'a2fcb50f080608d98473689c061f9d1dddb18220';
-
-/// See also [hasReachedMax].
-@ProviderFor(hasReachedMax)
-final hasReachedMaxProvider = AutoDisposeProvider<bool>.internal(
-  hasReachedMax,
-  name: r'hasReachedMaxProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$hasReachedMaxHash,
-  dependencies: <ProviderOrFamily>[listStateNotifierProvider],
-  allTransitiveDependencies: <ProviderOrFamily>{
-    listStateNotifierProvider,
-    ...?listStateNotifierProvider.allTransitiveDependencies,
-  },
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef HasReachedMaxRef = AutoDisposeProviderRef<bool>;
-String _$listStateNotifierHash() => r'9bee8b94bf68a5b4ec3b320e55cd09d2b05053ff';
+String _$listStateNotifierHash() => r'bc126764c68236c8db1f45ca8cbe195a58747595';
 
 /// See also [ListStateNotifier].
 @ProviderFor(ListStateNotifier)
