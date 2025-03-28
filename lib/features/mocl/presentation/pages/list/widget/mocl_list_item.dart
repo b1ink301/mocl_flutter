@@ -93,31 +93,29 @@ class _BottomView extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => Column(
-    children: [
-      const SizedBox(height: 8),
-      SizedBox(
-        height: 20,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            Expanded(
-              child: Row(
-                children: [
-                  if (nickImage.isNotEmpty) NickImageWidget(url: nickImage),
-                  Flexible(child: _InfoText(info: info, isRead: isRead)),
-                ],
-              ),
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(top: 8.0),
+    child: SizedBox(
+      height: 20,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          Expanded(
+            child: Row(
+              children: [
+                if (nickImage.isNotEmpty) NickImageWidget(url: nickImage),
+                Flexible(child: _InfoText(info: info, isRead: isRead)),
+              ],
             ),
-            if (reply.isNotEmpty && reply != '0')
-              RoundTextWidget(
-                text: reply,
-                textStyle: MoclTextStyles.of(context).badge(isRead),
-              ),
-          ],
-        ),
+          ),
+          if (reply.isNotEmpty && reply != '0')
+            RoundTextWidget(
+              text: reply,
+              textStyle: MoclTextStyles.of(context).badge(isRead),
+            ),
+        ],
       ),
-    ],
+    ),
   );
 }
 

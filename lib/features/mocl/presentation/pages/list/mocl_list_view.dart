@@ -9,6 +9,7 @@ import 'package:mocl_flutter/features/mocl/presentation/pages/list/widget/mocl_l
 import 'package:mocl_flutter/features/mocl/presentation/widgets/cached_item_builder.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
+import 'package:super_sliver_list/super_sliver_list.dart';
 
 class MoclListView extends ConsumerStatefulWidget {
   const MoclListView({super.key});
@@ -27,8 +28,9 @@ class MoclListViewState extends ConsumerState<MoclListView> {
       onNotification: (ScrollNotification notification) {
         if (notification is ScrollEndNotification) {
           if (notification.metrics.pixels >=
-              notification.metrics.maxScrollExtent * 0.98) {
+              notification.metrics.maxScrollExtent * 0.8) {
             ref.read(listStateNotifierProvider.notifier).loadMore();
+            return true;
           }
         }
         return false;
@@ -36,7 +38,7 @@ class MoclListViewState extends ConsumerState<MoclListView> {
       child: const CustomScrollView(
         key: ValueKey('List-CustomScrollView'),
         physics: ClampingScrollPhysics(),
-        cacheExtent: 0,
+        cacheExtent: 100,
         slivers: <Widget>[_ListAppBar(), _ListBody()],
       ),
     ),
@@ -57,19 +59,21 @@ class _ListBody extends ConsumerWidget {
   const _ListBody();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return _buildSliverList(ref);
-  }
+  Widget build(BuildContext context, WidgetRef ref) => _buildSliverList(ref);
 
   Widget _buildSliverList(WidgetRef ref) {
     final int listCount = ref.watch(getListCountProvider);
-    return SliverList.separated(
+
+    return SuperSliverList.separated(
+      layoutKeptAliveChildren: false,
       addAutomaticKeepAlives: false,
+      extentPrecalculationPolicy: ref.watch(extentPrecalculationPolicyProvider),
+      extentEstimation: (int? index, double crossAxisExtent) => 76.0,
       itemCount: listCount + 1,
       itemBuilder: (BuildContext context, int index) {
         if (listCount == index) {
-          final error = ref.watch(getListErrorProvider);
-          final hasReachedMax = ref.watch(hasReachedMaxProvider);
+          final String? error = ref.watch(getListErrorProvider);
+          final bool hasReachedMax = ref.watch(hasReachedMaxProvider);
           if (error != null) {
             return _buildError(
               error,
@@ -90,7 +94,8 @@ class _ListBody extends ConsumerWidget {
           builder: () => MoclListItem(item: item, index: index),
         );
       },
-      separatorBuilder: (_, _) => const DividerWidget(),
+      separatorBuilder:
+          (BuildContext context, int index) => const DividerWidget(),
     );
   }
 
