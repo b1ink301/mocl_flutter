@@ -30,7 +30,7 @@ class RoundTextWidget extends StatelessWidget {
         borderColor ?? effectiveTextStyle.color ?? const Color(0xFF000000);
 
     return Container(
-      key: ValueKey(text),
+      key: ValueKey("RoundTextWidget-$text"),
       padding: padding,
       decoration: BoxDecoration(
         color: backgroundColor,

@@ -397,7 +397,6 @@ class ClienParser implements BaseParser {
         message.responsePort.send(ReadStatusResponse(statuses));
       } else if (message is List<ListItem>) {
         completer.complete(message);
-        receivePort.close();
       }
     });
 
@@ -416,8 +415,9 @@ class ClienParser implements BaseParser {
 
       return Right(await completer.future);
     } catch (e) {
-      receivePort.close();
       return Left(GetListFailure(message: e.toString()));
+    } finally {
+      receivePort.close();
     }
   }
 
@@ -482,15 +482,6 @@ class ClienParser implements BaseParser {
               ?.text
               .trim() ??
           '';
-      final nickImage =
-          isShowNickImage
-              ? element
-                      .querySelector(
-                        'div.list_infomation > div.list_author > span.list_nickname > span.nickimg > img',
-                      )
-                      ?.attributes['src'] ??
-                  ''
-              : '';
 
       final hit =
           element
@@ -506,20 +497,16 @@ class ClienParser implements BaseParser {
               ?.text
               .trim() ??
           '';
-
+      final author = element.querySelector(
+        'div.list_infomation > div.list_author',
+      );
+      final nickImg = author?.querySelector('span.nickimg > img');
       final nickName =
-          element
-              .querySelector(
-                'div.list_infomation > div.list_author > span.list_nickname > span.nickname',
-              )
-              ?.text
-              .trim() ??
-          element
-              .querySelector(
-                'div.list_infomation > div.list_author > span.list_nickname > span.nickimg > img',
-              )
-              ?.attributes['alt'] ??
+          author?.querySelector('span.nickname')?.text.trim() ??
+          nickImg?.attributes['alt'] ??
           '';
+      final nickImage = isShowNickImage ? nickImg?.attributes['src'] ?? '' : '';
+
       final hasImage =
           element.querySelector('div.list_title > span.fa-picture-o') != null;
 
@@ -599,7 +586,9 @@ class ClienParser implements BaseParser {
     LastId lastId,
   ) {
     final String sort = sortType.toQuery(siteType);
-    return '$url?category=0&po=$page$sort';
+    return board == "recommend"
+        ? url
+        : 'https://m.clien.net/service/api/board/under/list?category=0&boardSn=0&po=$page$sort&boardCd=$board';
   }
 
   @override

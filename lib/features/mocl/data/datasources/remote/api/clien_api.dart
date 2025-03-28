@@ -20,7 +20,7 @@ class ClienApi extends BaseApi {
   Future<Either<Failure, Details>> detail(
     ListItem item,
     BaseParser parser,
-  ) async => await withSyncCookie(parser.baseUrl, () async {
+  ) => withSyncCookie(parser.baseUrl, () async {
     final String url = parser.urlByDetail(item.url, item.board, item.id);
     final Map<String, String> headers = {'User-Agent': userAgent};
     final Response response = await get(url, headers: headers);
@@ -42,7 +42,7 @@ class ClienApi extends BaseApi {
     SortType sortType,
     BaseParser parser,
     Future<List<int>> Function(SiteType, List<int>) isReads,
-  ) async => await withSyncCookie<List<ListItem>>(item.url, () async {
+  ) => withSyncCookie<List<ListItem>>(item.url, () async {
     final String url = parser.urlByList(
       item.url,
       item.board,

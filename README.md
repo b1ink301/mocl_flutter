@@ -22,6 +22,10 @@ flutter run --flavor prd -t lib/main_prd.dart
 flutter run --release --flavor prd -t lib/main_prd.dart
 ```
 
+```shell
+flutter run --profile --flavor prd -t lib/main_prd.dart
+```
+
 ### dev
 
 ```shell

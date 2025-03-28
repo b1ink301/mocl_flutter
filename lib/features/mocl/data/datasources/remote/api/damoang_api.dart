@@ -17,11 +17,8 @@ class DamoangApi extends BaseApi {
   const DamoangApi(super.dio, super.userAgent);
 
   @override
-  Future<Either<Failure, Details>> detail(
-    ListItem item,
-    BaseParser parser,
-  ) async =>
-      await withSyncCookie(parser.baseUrl, () async {
+  Future<Either<Failure, Details>> detail(ListItem item, BaseParser parser) =>
+      withSyncCookie(parser.baseUrl, () async {
         final String url = parser.urlByDetail(item.url, item.board, item.id);
         final Map<String, String> headers = {'User-Agent': userAgent};
 
@@ -30,9 +27,10 @@ class DamoangApi extends BaseApi {
         return response.statusCode == 200
             ? parser.detail(response)
             : Left(
-                GetDetailFailure(
-                    message: 'response.statusCode = ${response.statusCode}'),
-              );
+              GetDetailFailure(
+                message: 'response.statusCode = ${response.statusCode}',
+              ),
+            );
       });
 
   @override
@@ -43,23 +41,27 @@ class DamoangApi extends BaseApi {
     SortType sortType,
     BaseParser parser,
     Future<List<int>> Function(SiteType, List<int>) isReads,
-  ) async =>
-      await withSyncCookie<List<ListItem>>(parser.baseUrl, () async {
-        final String url =
-            parser.urlByList(item.url, item.board, page, sortType, lastId);
-        final String host = Uri.parse(parser.baseUrl).host;
-        final Map<String, String> headers = {
-          'Host': host,
-          'User-Agent': userAgent
-        };
-        final Response response = await get(url, headers: headers);
-        log('[getList] $url, $headers response = ${response.statusCode}');
+  ) => withSyncCookie<List<ListItem>>(parser.baseUrl, () async {
+    final String url = parser.urlByList(
+      item.url,
+      item.board,
+      page,
+      sortType,
+      lastId,
+    );
+    final String host = Uri.parse(parser.baseUrl).host;
+    final Map<String, String> headers = {'Host': host, 'User-Agent': userAgent};
+    final Response response = await get(url, headers: headers);
+    log('[getList] $url, $headers response = ${response.statusCode}');
 
-        return response.statusCode == 200
-            ? parser.list(response, lastId, item.text, isReads)
-            : Left(GetListFailure(
-                message: 'response.statusCode = ${response.statusCode}'));
-      });
+    return response.statusCode == 200
+        ? parser.list(response, lastId, item.text, isReads)
+        : Left(
+          GetListFailure(
+            message: 'response.statusCode = ${response.statusCode}',
+          ),
+        );
+  });
 
   @override
   Future<Either<Failure, List<MainItem>>> main(BaseParser parser) {
@@ -75,29 +77,31 @@ class DamoangApi extends BaseApi {
     String keyword,
     BaseParser parser,
     Future<List<int>> Function(SiteType, List<int>) isReads,
-  ) =>
-      withSyncCookie<List<ListItem>>(parser.baseUrl, () async {
-        final String url =
-            parser.urlBySearchList(item.url, item.board, page, keyword, lastId);
-        final String host = Uri.parse(parser.baseUrl).host;
-        final Map<String, String> headers = {
-          'Host': host,
-          'Referer': item.url,
-          'User-Agent': userAgent
-        };
-        final Response response = await get(url, headers: headers);
-        log('[getList] $url, $headers response = ${response.statusCode}');
+  ) => withSyncCookie<List<ListItem>>(parser.baseUrl, () async {
+    final String url = parser.urlBySearchList(
+      item.url,
+      item.board,
+      page,
+      keyword,
+      lastId,
+    );
+    final String host = Uri.parse(parser.baseUrl).host;
+    final Map<String, String> headers = {
+      'Host': host,
+      'Referer': item.url,
+      'User-Agent': userAgent,
+    };
+    final Response response = await get(url, headers: headers);
+    log('[getList] $url, $headers response = ${response.statusCode}');
 
-        return response.statusCode == 200
-            ? parser.list(
-                response,
-                lastId,
-                item.text,
-                isReads,
-              )
-            : Left(GetListFailure(
-                message: 'response.statusCode = ${response.statusCode}'));
-      });
+    return response.statusCode == 200
+        ? parser.list(response, lastId, item.text, isReads)
+        : Left(
+          GetListFailure(
+            message: 'response.statusCode = ${response.statusCode}',
+          ),
+        );
+  });
 
   @override
   Future<Either<Failure, List<CommentItem>>> comments(

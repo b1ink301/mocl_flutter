@@ -11,6 +11,15 @@ import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widge
 import 'package:mocl_flutter/features/mocl/presentation/widgets/round_text_widget.dart';
 
 class MoclListItem extends ConsumerWidget {
+  static const _iosPadding = EdgeInsets.only(
+    left: 16,
+    right: 12,
+    top: 10,
+    bottom: 10,
+  );
+
+  static const _aosPadding = EdgeInsets.only(left: 16, right: 12);
+
   final ListItem item;
   final int index;
 
@@ -21,24 +30,15 @@ class MoclListItem extends ConsumerWidget {
     material:
         (_, _) => MaterialListTileData(
           minVerticalPadding: 10,
-          contentPadding: const EdgeInsets.only(left: 16, right: 12),
+          contentPadding: _aosPadding,
         ),
-    cupertino:
-        (_, _) => CupertinoListTileData(
-          padding: const EdgeInsets.only(
-            left: 16,
-            right: 12,
-            top: 10,
-            bottom: 10,
-          ),
-        ),
-    onTap: () => _handleItemTap(context, ref),
+    cupertino: (_, _) => CupertinoListTileData(padding: _iosPadding),
+    onTap: () => _handleItemTap(context, item, ref),
     title: _TitleView(title: item.title, isRead: item.isRead),
     subtitle:
         item.userInfo.id.isEmpty
             ? null
             : _BottomView(
-              id: item.userInfo.id,
               reply: item.reply,
               nickImage: item.userInfo.nickImage,
               info: item.info,
@@ -46,7 +46,7 @@ class MoclListItem extends ConsumerWidget {
             ),
   );
 
-  void _handleItemTap(BuildContext context, WidgetRef ref) {
+  void _handleItemTap(BuildContext context, ListItem item, WidgetRef ref) {
     try {
       GoRouter.of(context).push(Routes.detail, extra: item).then((_) {
         if (context.mounted) {
@@ -78,14 +78,12 @@ class _TitleView extends StatelessWidget {
 }
 
 class _BottomView extends StatelessWidget {
-  final String id;
   final String reply;
   final String nickImage;
   final String info;
   final bool isRead;
 
   const _BottomView({
-    required this.id,
     required this.reply,
     required this.nickImage,
     required this.info,

@@ -17,11 +17,8 @@ class NaverCafeApi extends BaseApi {
   const NaverCafeApi(super.dio, super.userAgent);
 
   @override
-  Future<Either<Failure, Details>> detail(
-    ListItem item,
-    BaseParser parser,
-  ) async =>
-      await withSyncCookie(parser.baseUrl, () async {
+  Future<Either<Failure, Details>> detail(ListItem item, BaseParser parser) =>
+      withSyncCookie(parser.baseUrl, () async {
         final String url = parser.urlByDetail(item.url, item.board, item.id);
         final Map<String, String> headers = {'User-Agent': userAgent};
         final Future<Response> commentFuture = get(
@@ -34,8 +31,10 @@ class NaverCafeApi extends BaseApi {
           headers: headers,
           responseType: ResponseType.json,
         );
-        final List<Response> responses =
-            await Future.wait([detailFuture, commentFuture]);
+        final List<Response> responses = await Future.wait([
+          detailFuture,
+          commentFuture,
+        ]);
 
         if (responses.first.statusCode != 200 ||
             responses.last.statusCode != 200) {
@@ -44,7 +43,9 @@ class NaverCafeApi extends BaseApi {
 
         final List data = responses.map((response) => response.data).toList();
         final Response<List> result = Response<List<dynamic>>(
-            data: data, requestOptions: RequestOptions());
+          data: data,
+          requestOptions: RequestOptions(),
+        );
 
         return parser.detail(result);
       });
@@ -57,23 +58,27 @@ class NaverCafeApi extends BaseApi {
     SortType sortType,
     BaseParser parser,
     Future<List<int>> Function(SiteType, List<int>) isReads,
-  ) async =>
-      await withSyncCookie<List<ListItem>>(parser.baseUrl, () async {
-        final String url =
-            parser.urlByList(item.url, item.board, page, sortType, lastId);
-        final String host = Uri.parse(parser.baseUrl).host;
-        final Map<String, String> headers = {
-          'Host': host,
-          'User-Agent': userAgent
-        };
-        final Response response = await get(url, headers: headers);
-        log('[getList] $url, $headers response = ${response.statusCode}');
+  ) => withSyncCookie<List<ListItem>>(parser.baseUrl, () async {
+    final String url = parser.urlByList(
+      item.url,
+      item.board,
+      page,
+      sortType,
+      lastId,
+    );
+    final String host = Uri.parse(parser.baseUrl).host;
+    final Map<String, String> headers = {'Host': host, 'User-Agent': userAgent};
+    final Response response = await get(url, headers: headers);
+    log('[getList] $url, $headers response = ${response.statusCode}');
 
-        return response.statusCode == 200
-            ? parser.list(response, lastId, item.text, isReads)
-            : Left(GetListFailure(
-                message: 'response.statusCode = ${response.statusCode}'));
-      });
+    return response.statusCode == 200
+        ? parser.list(response, lastId, item.text, isReads)
+        : Left(
+          GetListFailure(
+            message: 'response.statusCode = ${response.statusCode}',
+          ),
+        );
+  });
 
   @override
   Future<Either<Failure, List<ListItem>>> searchList(
@@ -84,33 +89,35 @@ class NaverCafeApi extends BaseApi {
     String keyword,
     BaseParser parser,
     Future<List<int>> Function(SiteType, List<int>) isReads,
-  ) async =>
-      withSyncCookie<List<ListItem>>(parser.baseUrl, () async {
-        final String url =
-            parser.urlBySearchList(item.url, item.board, page, keyword, lastId);
-        final String host = Uri.parse(parser.baseUrl).host;
-        final Map<String, String> headers = {
-          'Host': host,
-          'Referer': item.url,
-          'User-Agent': userAgent
-        };
-        final Response response = await get(url, headers: headers);
-        log('[searchList] $url, $headers response = ${response.statusCode}');
+  ) => withSyncCookie<List<ListItem>>(parser.baseUrl, () async {
+    final String url = parser.urlBySearchList(
+      item.url,
+      item.board,
+      page,
+      keyword,
+      lastId,
+    );
+    final String host = Uri.parse(parser.baseUrl).host;
+    final Map<String, String> headers = {
+      'Host': host,
+      'Referer': item.url,
+      'User-Agent': userAgent,
+    };
+    final Response response = await get(url, headers: headers);
+    log('[searchList] $url, $headers response = ${response.statusCode}');
 
-        return response.statusCode == 200
-            ? parser.list(
-                response,
-                lastId,
-                item.text,
-                isReads,
-              )
-            : Left(GetListFailure(
-                message: 'response.statusCode = ${response.statusCode}'));
-      });
+    return response.statusCode == 200
+        ? parser.list(response, lastId, item.text, isReads)
+        : Left(
+          GetListFailure(
+            message: 'response.statusCode = ${response.statusCode}',
+          ),
+        );
+  });
 
   @override
-  Future<Either<Failure, List<MainItem>>> main(BaseParser parser) async =>
-      await withSyncCookie(parser.baseUrl, () async {
+  Future<Either<Failure, List<MainItem>>> main(BaseParser parser) =>
+      withSyncCookie(parser.baseUrl, () async {
         final String url = parser.urlByMain();
         final Map<String, String> headers = {'User-Agent': userAgent};
         final Response response = await get(url, headers: headers);
@@ -118,9 +125,10 @@ class NaverCafeApi extends BaseApi {
         return response.statusCode == 200
             ? parser.main(response)
             : Left(
-                GetMainFailure(
-                    message: 'response.statusCode = ${response.statusCode}'),
-              );
+              GetMainFailure(
+                message: 'response.statusCode = ${response.statusCode}',
+              ),
+            );
       });
 
   @override
