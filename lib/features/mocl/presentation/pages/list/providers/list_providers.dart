@@ -1,6 +1,5 @@
 import 'dart:math';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
@@ -15,8 +14,6 @@ import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/use_case_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import '../../../../domain/entities/mocl_user_info.dart';
 
 part 'list_providers.g.dart';
 
@@ -51,12 +48,11 @@ double titleHeight(Ref ref, String text) {
 @Riverpod(dependencies: [mainItem])
 Future<Either<Failure, List<ListItem>>> reqListData(
   Ref ref,
+  MainItem mainItem,
+  SortType sortType,
   int page,
   LastId lastId,
 ) {
-  final MainItem mainItem = ref.watch(mainItemProvider);
-  final SortType sortType = ref.watch(sortTypeNotifierProvider);
-
   final GetListParams params = GetListParams(
     mainItem: mainItem,
     page: page,
@@ -66,73 +62,75 @@ Future<Either<Failure, List<ListItem>>> reqListData(
   return ref.read(getListProvider)(params);
 }
 
-@riverpod
-int _initialPage(Ref ref) {
-  final SiteType siteType = ref.watch(currentSiteTypeNotifierProvider);
-  final int page = siteType == SiteType.clien ? 0 : 1;
-  return page;
-}
-
-@Riverpod(dependencies: [mainItem, reqListData, SortTypeNotifier, _initialPage])
+@Riverpod(dependencies: [mainItem, reqListData, SortTypeNotifier])
 class ListStateNotifier extends _$ListStateNotifier {
   @override
-  ListState build() {
-    _initialize();
-    return ListState.initial(ref.watch(_initialPageProvider));
-  }
+  Future<ListState> build() async => ListState.initial(_initialPage());
 
-  // TODO: AsyncValue 로 변경해도.. 맘에 안든다.. 개선 필요함.
-  void _initialize() => Future.microtask(() => loadMore());
+  void initialize() => loadMore();
 
   Future<void> loadMore() async {
-    if (state.isLoading || state.hasReachedMax) return;
-
-    state = state.copyWith(isLoading: true, error: null);
-
-    try {
-      final Either<Failure, List<ListItem>> result = await ref.read(
-        reqListDataProvider(state.currentPage, state.lastId).future,
-      );
-
-      // final items = List.generate(20, (idx) {
-      //   final index = idx + state.currentPage * 20;
-      //   return ListItem.empty().copyWith(title: 'title=$index', info: 'info=$index', userInfo: UserInfo(id: index.toString(), nickImage: '', nickName: ''));
-      // });
-      //
-      // final result = Either<Failure, List<ListItem>>.right(items);
-
-      result.fold(
-        (Failure failure) {
-          state = state.copyWith(isLoading: false, error: failure.message);
-        },
-        (List<ListItem> newItems) {
-          final bool hasReachedMax = _checkIfReachedMax(newItems.isEmpty);
-
-          state = state.copyWith(
-            isLoading: false,
-            items: state.items + newItems,
-            currentPage:
-                hasReachedMax ? state.currentPage : state.currentPage + 1,
-            lastId:
-                newItems.isEmpty
-                    ? state.lastId
-                    : LastId(
-                      intId: newItems.last.id,
-                      stringId: newItems.last.url,
-                    ),
-            hasReachedMax: _checkIfReachedMax(newItems.isEmpty),
-          );
-        },
-      );
-    } catch (e) {
-      debugPrint('error: $e');
-      final String error = e is Failure ? e.message : e.toString();
-      state = state.copyWith(isLoading: false, error: error);
+    if (state.hasValue &&
+        (state.value?.isLoading == true ||
+            state.value?.hasReachedMax == true)) {
+      return;
     }
+
+    // state = AsyncData<ListState>(
+    //   state.value?.copyWith(isLoading: true) ??
+    //       ListState.empty().copyWith(isLoading: true),
+    // );
+
+    final MainItem mainItem = ref.read(mainItemProvider);
+    final SortType sortType = ref.read(sortTypeNotifierProvider);
+    final Either<Failure, List<ListItem>> result = await ref.read(
+      reqListDataProvider(
+        mainItem,
+        sortType,
+        state.value?.currentPage ?? _initialPage(),
+        state.value?.lastId ?? const LastId(),
+      ).future,
+    );
+
+    debugPrint('[loadMore] state=${state.runtimeType}');
+
+    result.fold(
+      (Failure failure) {
+        state = AsyncData(
+          state.requireValue.copyWith(error: failure.message, isLoading: false),
+        );
+      },
+      (List<ListItem> newItems) {
+        final bool hasReachedMax = _checkIfReachedMax(
+          mainItem,
+          newItems.isEmpty,
+        );
+
+        state = AsyncData<ListState>(
+          state.requireValue.copyWith(
+            isLoading: false,
+            items: state.requireValue.items + newItems,
+            currentPage:
+                hasReachedMax
+                    ? state.requireValue.currentPage
+                    : state.requireValue.currentPage + 1,
+            lastId:
+                state.valueOrNull?.lastId ??
+                LastId(intId: newItems.last.id, stringId: newItems.last.url),
+            hasReachedMax: hasReachedMax,
+          ),
+        );
+      },
+    );
   }
 
-  bool _checkIfReachedMax(bool isEmpty) {
-    final MainItem mainItem = ref.read(mainItemProvider);
+  int _initialPage() {
+    final siteType = ref.read(currentSiteTypeNotifierProvider);
+    final int page = siteType == SiteType.clien ? 0 : 1;
+    return page;
+  }
+
+  bool _checkIfReachedMax(MainItem mainItem, bool isEmpty) {
     // if (isEmpty) return true;
 
     // if (mainItem.siteType == SiteType.reddit) return true;
@@ -142,15 +140,23 @@ class ListStateNotifier extends _$ListStateNotifier {
 
   void retry() => loadMore();
 
-  void refresh() => ref.invalidateSelf();
+  void refresh() {
+    ref.invalidateSelf();
+    initialize();
+  }
 
   void markAsRead(int index) {
-    if (index < 0 || index >= state.items.length) return;
+    if (state.hasValue && index < 0 ||
+        index >= state.requireValue.items.length) {
+      return;
+    }
 
-    final List<ListItem> updatedItems = [...state.items];
-    updatedItems[index] = state.items[index].copyWith(isRead: true);
+    final List<ListItem> updatedItems = [...state.value!.items];
+    updatedItems[index] = state.requireValue.items[index].copyWith(
+      isRead: true,
+    );
 
-    state = state.copyWith(items: updatedItems);
+    state = AsyncData(state.requireValue.copyWith(items: updatedItems));
   }
 }
 
@@ -159,7 +165,7 @@ ListItem? getListItem(Ref ref, int index) {
   final item = ref.watch(
     listStateNotifierProvider.select((state) {
       try {
-        return state.items[index];
+        return state.valueOrNull?.items[index];
       } catch (e) {
         return null;
       }
@@ -168,7 +174,7 @@ ListItem? getListItem(Ref ref, int index) {
   return item;
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class SortTypeNotifier extends _$SortTypeNotifier {
   @override
   SortType build() => SortType.recent;

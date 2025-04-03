@@ -41,9 +41,9 @@
         <meta-data
             android:name="io.flutter.embedding.android.AssetsPath"
             android:value="assets" />
-        <meta-data
-            android:name="io.flutter.embedding.android.EnableSurfaceControl"
-            android:value="false" />
+<!--        <meta-data-->
+<!--            android:name="io.flutter.embedding.android.EnableSurfaceControl"-->
+<!--            android:value="false" />-->
 <!--        <meta-data-->
 <!--            android:name="io.flutter.embedding.android.EnableImpeller"-->
 <!--            android:value="false" />-->

@@ -36,7 +36,7 @@ class MoclListItem extends ConsumerWidget {
     onTap: () => _handleItemTap(context, item, ref),
     title: _TitleView(title: item.title, isRead: item.isRead),
     subtitle:
-        item.userInfo.id.isEmpty
+        item.info.isEmpty
             ? null
             : _BottomView(
               reply: item.reply,

@@ -18,7 +18,7 @@ import 'features/mocl/presentation/app_widget.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  SentryWidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   unawaited(_firebase());
   final SharedPreferences sharedPreferences =

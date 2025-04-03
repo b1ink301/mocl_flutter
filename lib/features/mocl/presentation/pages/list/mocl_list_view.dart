@@ -43,6 +43,15 @@ class MoclListViewState extends ConsumerState<MoclListView> {
       ),
     ),
   );
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback(
+      (_) => ref.read(listStateNotifierProvider.notifier).initialize(),
+    );
+  }
 }
 
 class _ListAppBar extends StatelessWidget {
@@ -62,13 +71,21 @@ class _ListBody extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final (count, hasReachedMax, error) = ref.watch(
       listStateNotifierProvider.select(
-        (state) => (state.items.length, state.hasReachedMax, state.error),
+        (value) => value.when(
+          data: (state) => (state.items.length, state.hasReachedMax, state.error),
+          loading: () => (0, false, null),
+          error: (err, stack) => (0, false, err.toString()),
+        ),
       ),
     );
 
+    debugPrint(
+      '[_ListBody] count=$count, hasReachedMax=$hasReachedMax, error=$error',
+    );
+
     return SliverList.separated(
-      addRepaintBoundaries: false,
-      addSemanticIndexes: false,
+      // addRepaintBoundaries: false,
+      // addSemanticIndexes: false,
       addAutomaticKeepAlives: false,
       itemCount: count + 1,
       itemBuilder: (_, index) {
@@ -81,9 +98,7 @@ class _ListBody extends ConsumerWidget {
         } else {
           final item = ref.watch(getListItemProvider(index));
           if (item == null) return null;
-          return RepaintBoundary(
-            child: MoclListItem(key: item.key, item: item, index: index),
-          );
+          return MoclListItem(key: item.key, item: item, index: index);
         }
       },
       separatorBuilder: (_, _) => const DividerWidget(),
