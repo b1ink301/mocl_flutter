@@ -206,7 +206,7 @@ class _TitleHeightProviderElement extends AutoDisposeProviderElement<double>
   String get text => (origin as TitleHeightProvider).text;
 }
 
-String _$reqListDataHash() => r'90ba31cf6786534af3c36578deb698519d8461f7';
+String _$reqListDataHash() => r'764566d49278bc1cfed67831f7d982da6a7e6764';
 
 /// See also [reqListData].
 @ProviderFor(reqListData)
@@ -219,15 +219,25 @@ class ReqListDataFamily
   const ReqListDataFamily();
 
   /// See also [reqListData].
-  ReqListDataProvider call(int page, LastId lastId) {
-    return ReqListDataProvider(page, lastId);
+  ReqListDataProvider call(
+    MainItem mainItem,
+    SortType sortType,
+    int page,
+    LastId lastId,
+  ) {
+    return ReqListDataProvider(mainItem, sortType, page, lastId);
   }
 
   @override
   ReqListDataProvider getProviderOverride(
     covariant ReqListDataProvider provider,
   ) {
-    return call(provider.page, provider.lastId);
+    return call(
+      provider.mainItem,
+      provider.sortType,
+      provider.page,
+      provider.lastId,
+    );
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
@@ -255,9 +265,19 @@ class ReqListDataFamily
 class ReqListDataProvider
     extends AutoDisposeFutureProvider<Either<Failure, List<ListItem>>> {
   /// See also [reqListData].
-  ReqListDataProvider(int page, LastId lastId)
-    : this._internal(
-        (ref) => reqListData(ref as ReqListDataRef, page, lastId),
+  ReqListDataProvider(
+    MainItem mainItem,
+    SortType sortType,
+    int page,
+    LastId lastId,
+  ) : this._internal(
+        (ref) => reqListData(
+          ref as ReqListDataRef,
+          mainItem,
+          sortType,
+          page,
+          lastId,
+        ),
         from: reqListDataProvider,
         name: r'reqListDataProvider',
         debugGetCreateSourceHash:
@@ -266,6 +286,8 @@ class ReqListDataProvider
                 : _$reqListDataHash,
         dependencies: ReqListDataFamily._dependencies,
         allTransitiveDependencies: ReqListDataFamily._allTransitiveDependencies,
+        mainItem: mainItem,
+        sortType: sortType,
         page: page,
         lastId: lastId,
       );
@@ -277,10 +299,14 @@ class ReqListDataProvider
     required super.allTransitiveDependencies,
     required super.debugGetCreateSourceHash,
     required super.from,
+    required this.mainItem,
+    required this.sortType,
     required this.page,
     required this.lastId,
   }) : super.internal();
 
+  final MainItem mainItem;
+  final SortType sortType;
   final int page;
   final LastId lastId;
 
@@ -298,6 +324,8 @@ class ReqListDataProvider
         dependencies: null,
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
+        mainItem: mainItem,
+        sortType: sortType,
         page: page,
         lastId: lastId,
       ),
@@ -313,6 +341,8 @@ class ReqListDataProvider
   @override
   bool operator ==(Object other) {
     return other is ReqListDataProvider &&
+        other.mainItem == mainItem &&
+        other.sortType == sortType &&
         other.page == page &&
         other.lastId == lastId;
   }
@@ -320,6 +350,8 @@ class ReqListDataProvider
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, mainItem.hashCode);
+    hash = _SystemHash.combine(hash, sortType.hashCode);
     hash = _SystemHash.combine(hash, page.hashCode);
     hash = _SystemHash.combine(hash, lastId.hashCode);
 
@@ -331,6 +363,12 @@ class ReqListDataProvider
 // ignore: unused_element
 mixin ReqListDataRef
     on AutoDisposeFutureProviderRef<Either<Failure, List<ListItem>>> {
+  /// The parameter `mainItem` of this provider.
+  MainItem get mainItem;
+
+  /// The parameter `sortType` of this provider.
+  SortType get sortType;
+
   /// The parameter `page` of this provider.
   int get page;
 
@@ -344,28 +382,16 @@ class _ReqListDataProviderElement
   _ReqListDataProviderElement(super.provider);
 
   @override
+  MainItem get mainItem => (origin as ReqListDataProvider).mainItem;
+  @override
+  SortType get sortType => (origin as ReqListDataProvider).sortType;
+  @override
   int get page => (origin as ReqListDataProvider).page;
   @override
   LastId get lastId => (origin as ReqListDataProvider).lastId;
 }
 
-String _$initialPageHash() => r'2677bd42115edf23acbcc6771d6620253659e1bc';
-
-/// See also [_initialPage].
-@ProviderFor(_initialPage)
-final _initialPageProvider = AutoDisposeProvider<int>.internal(
-  _initialPage,
-  name: r'_initialPageProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$initialPageHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef _InitialPageRef = AutoDisposeProviderRef<int>;
-String _$getListItemHash() => r'416539217b05ea882a775193c05af73a390301ed';
+String _$getListItemHash() => r'c96a741b6958c4763cf054184ecae4ca9b01f294';
 
 /// See also [getListItem].
 @ProviderFor(getListItem)
@@ -488,24 +514,23 @@ class _GetListItemProviderElement extends AutoDisposeProviderElement<ListItem?>
   int get index => (origin as GetListItemProvider).index;
 }
 
-String _$listStateNotifierHash() => r'bc126764c68236c8db1f45ca8cbe195a58747595';
+String _$listStateNotifierHash() => r'754749bb69db558f7eb8b8e1fab413a917f81866';
 
 /// See also [ListStateNotifier].
 @ProviderFor(ListStateNotifier)
 final listStateNotifierProvider =
-    AutoDisposeNotifierProvider<ListStateNotifier, ListState>.internal(
+    AutoDisposeAsyncNotifierProvider<ListStateNotifier, ListState>.internal(
       ListStateNotifier.new,
       name: r'listStateNotifierProvider',
       debugGetCreateSourceHash:
           const bool.fromEnvironment('dart.vm.product')
               ? null
               : _$listStateNotifierHash,
-      dependencies: <ProviderOrFamily>{
+      dependencies: <ProviderOrFamily>[
         mainItemProvider,
         reqListDataProvider,
         sortTypeNotifierProvider,
-        _initialPageProvider,
-      },
+      ],
       allTransitiveDependencies: <ProviderOrFamily>{
         mainItemProvider,
         ...?mainItemProvider.allTransitiveDependencies,
@@ -513,18 +538,16 @@ final listStateNotifierProvider =
         ...?reqListDataProvider.allTransitiveDependencies,
         sortTypeNotifierProvider,
         ...?sortTypeNotifierProvider.allTransitiveDependencies,
-        _initialPageProvider,
-        ...?_initialPageProvider.allTransitiveDependencies,
       },
     );
 
-typedef _$ListStateNotifier = AutoDisposeNotifier<ListState>;
-String _$sortTypeNotifierHash() => r'19fe9c4b29d4d6b3d4c1c845099428124cb94554';
+typedef _$ListStateNotifier = AutoDisposeAsyncNotifier<ListState>;
+String _$sortTypeNotifierHash() => r'234f694cb017377563596b5bcaffc6bba5587609';
 
 /// See also [SortTypeNotifier].
 @ProviderFor(SortTypeNotifier)
 final sortTypeNotifierProvider =
-    AutoDisposeNotifierProvider<SortTypeNotifier, SortType>.internal(
+    NotifierProvider<SortTypeNotifier, SortType>.internal(
       SortTypeNotifier.new,
       name: r'sortTypeNotifierProvider',
       debugGetCreateSourceHash:
@@ -535,6 +558,6 @@ final sortTypeNotifierProvider =
       allTransitiveDependencies: null,
     );
 
-typedef _$SortTypeNotifier = AutoDisposeNotifier<SortType>;
+typedef _$SortTypeNotifier = Notifier<SortType>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
