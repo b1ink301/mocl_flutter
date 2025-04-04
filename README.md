@@ -22,5 +22,10 @@ $ dart run build_runner build --delete-conflicting-outputs
 $ flutter run --profile --cache-sksl --purge-persistent-cache --no-enable-impeller (Press M)
 $ flutter build appbundle --bundle-sksl-path flutter_01.sksl.json 
 $ flutter config --jdk-dir "/usr/local/Cellar/openjdk@17/17.0.13/libexec/openjdk.jdk/Contents/Home"
+$ dart pub cache clean
 
 $ dart run flutter_native_splash:create --path=./flutter_native_splash.yaml
+
+$ ~/fvm/versions/3.24.5/bin/flutter run --profile --cache-sksl --purge-persistent-cache
+
+~/fvm/versions/3.24.5/bin/flutter build appbundle --bundle-sksl-path flutter_02.sksl.json 

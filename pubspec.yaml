@@ -62,7 +62,7 @@ dependencies:
   url_launcher: ^6.3.1
 
   # swipe back
-  swipeable_page_route: ^0.4.6
+  swipeable_page_route: ^0.4.4
 
   # splash
   flutter_native_splash: ^2.4.4
@@ -115,12 +115,16 @@ dependencies:
 
   super_sliver_list: ^0.4.1
 
+dependency_overrides:
+#  flutter_color_models: '1.2.1'
+#  color_models: '1.2.1'
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^5.0.0
-  build_runner: ^2.4.14
+  build_runner: ^2.4.9
   json_serializable: ^6.9.0
   mockito: ^5.4.4
   freezed: ^2.5.7

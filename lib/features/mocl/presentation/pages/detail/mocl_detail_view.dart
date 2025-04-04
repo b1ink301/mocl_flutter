@@ -175,9 +175,9 @@ class _DetailContent extends StatelessWidget {
   }
 
   String _getHexColor(Color color) {
-    final red = (color.r * 255).toInt().toRadixString(16).padLeft(2, '0');
-    final green = (color.g * 255).toInt().toRadixString(16).padLeft(2, '0');
-    final blue = (color.b * 255).toInt().toRadixString(16).padLeft(2, '0');
+    final red = (color.red * 255).toInt().toRadixString(16).padLeft(2, '0');
+    final green = (color.green * 255).toInt().toRadixString(16).padLeft(2, '0');
+    final blue = (color.blue * 255).toInt().toRadixString(16).padLeft(2, '0');
     // final alpha = (color.a * 255).toInt().toRadixString(16).padLeft(2, '0');
     return '#$red$green$blue'.toUpperCase();
   }

@@ -75,9 +75,7 @@ class MainDataBloc extends Bloc<MainDataEvent, MainDataState> {
     );
   }
 
-  void refresh(SiteType siteType) {
-    add(GetListEvent(siteType: siteType));
-  }
+  void refresh(SiteType siteType) => add(GetListEvent(siteType: siteType));
 
   Future<void> addMainList({
     required SiteType siteType,
