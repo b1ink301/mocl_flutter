@@ -20,8 +20,8 @@ class MoclListView extends StatelessWidget {
             delegate: SliverChildBuilderDelegate(
               (context, index) {
                 if (index == bloc.listCount) {
-                  return Column(
-                    children: [const LoadingWidget(), const DividerWidget()],
+                  return const Column(
+                    children: [LoadingWidget(), DividerWidget()],
                   );
                 }
                 final item = bloc.getItem(index);

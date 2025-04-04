@@ -43,7 +43,7 @@ class MoclListPage extends StatelessWidget {
           child: NotificationListener<ScrollNotification>(
             onNotification: (ScrollNotification scrollInfo) {
               if (scrollInfo is ScrollEndNotification) {
-                if (context.mounted && scrollInfo.metrics.extentAfter < 800) {
+                if (context.mounted && scrollInfo.metrics.extentAfter < 100) {
                   context.read<ListPageCubit>().fetchPage();
                 }
               }

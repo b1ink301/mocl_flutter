@@ -15,22 +15,22 @@ class MoclListItem extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      minVerticalPadding: 10,
-      minTileHeight: 24,
-      contentPadding: const EdgeInsets.only(left: 16, right: 12),
-      onTap: onTap,
-      title: TitleView(
-        title: item.title,
-        isRead: item.isRead,
-      ),
-      subtitle: BottomView(
-        item: item,
-        isRead: item.isRead,
-      ),
-    );
-  }
+  Widget build(BuildContext context) => ListTile(
+        minVerticalPadding: 10,
+        minTileHeight: 24,
+        contentPadding: const EdgeInsets.only(left: 16, right: 12),
+        onTap: onTap,
+        title: TitleView(
+          title: item.title,
+          isRead: item.isRead,
+        ),
+        subtitle: item.info.isEmpty
+            ? null
+            : BottomView(
+                item: item,
+                isRead: item.isRead,
+              ),
+      );
 }
 
 class TitleView extends StatelessWidget {
@@ -67,10 +67,6 @@ class BottomView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (item.userInfo.id.isEmpty) {
-      return const SizedBox.shrink();
-    }
-
     final reply = item.reply;
     final nickImage = item.userInfo.nickImage;
     final hasReply = reply.isNotEmpty && reply != '0';
@@ -100,9 +96,7 @@ class BottomView extends StatelessWidget {
               ),
               if (hasReply)
                 RoundTextWidget(
-                  text: reply,
-                  textStyle: textStyles.badge(isRead)
-                ),
+                    text: reply, textStyle: textStyles.badge(isRead)),
             ],
           ),
         ),
@@ -146,9 +140,6 @@ class ReplyBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textStyles = MoclTextStyles.of(context);
-    return RoundTextWidget(
-      text: reply,
-      textStyle: textStyles.badge(isRead)
-    );
+    return RoundTextWidget(text: reply, textStyle: textStyles.badge(isRead));
   }
 }
