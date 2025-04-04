@@ -13,7 +13,6 @@ class DrawerWidget extends StatelessWidget {
   Widget build(BuildContext context) => SafeArea(
         left: false,
         right: false,
-        bottom: false,
         child: Drawer(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           child: Column(
@@ -68,7 +67,6 @@ class DrawerWidget extends StatelessWidget {
                   orElse: () => const SizedBox.shrink(),
                 ),
               ),
-              SizedBox(height: kBottomNavigationBarHeight)
             ],
           ),
         ),
