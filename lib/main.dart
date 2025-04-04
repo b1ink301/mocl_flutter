@@ -15,13 +15,6 @@ import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    systemNavigationBarContrastEnforced: false,
-    systemNavigationBarColor: Colors.transparent,
-    systemStatusBarContrastEnforced: false,
-  ));
-
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   await configureDependencies();
   unawaited(_firebase());

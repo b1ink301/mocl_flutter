@@ -45,11 +45,13 @@ class MoclListPage extends StatelessWidget {
               if (scrollInfo is ScrollEndNotification) {
                 if (context.mounted && scrollInfo.metrics.extentAfter < 100) {
                   context.read<ListPageCubit>().fetchPage();
+                  return true;
                 }
               }
-              return true;
+              return false;
             },
             child: const CustomScrollView(
+              cacheExtent: 0,
               slivers: <Widget>[
                 _ListAppbar(),
                 MoclListView(),

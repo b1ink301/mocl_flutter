@@ -16,49 +16,14 @@ final _privateConstructorUsedError = UnsupportedError(
 
 /// @nodoc
 mixin _$ListPageState {
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() loading,
-    required TResult Function() loaded,
-    required TResult Function(String message) failed,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? loading,
-    TResult? Function()? loaded,
-    TResult? Function(String message)? failed,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? loading,
-    TResult Function()? loaded,
-    TResult Function(String message)? failed,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(LoadingList value) loading,
-    required TResult Function(LoadedList value) loaded,
-    required TResult Function(FailedList value) failed,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(LoadingList value)? loading,
-    TResult? Function(LoadedList value)? loaded,
-    TResult? Function(FailedList value)? failed,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(LoadingList value)? loading,
-    TResult Function(LoadedList value)? loaded,
-    TResult Function(FailedList value)? failed,
-    required TResult orElse(),
-  }) =>
+  bool get isLoading => throw _privateConstructorUsedError;
+  int get count => throw _privateConstructorUsedError;
+  String? get error => throw _privateConstructorUsedError;
+
+  /// Create a copy of ListPageState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $ListPageStateCopyWith<ListPageState> get copyWith =>
       throw _privateConstructorUsedError;
 }
 
@@ -67,6 +32,8 @@ abstract class $ListPageStateCopyWith<$Res> {
   factory $ListPageStateCopyWith(
           ListPageState value, $Res Function(ListPageState) then) =
       _$ListPageStateCopyWithImpl<$Res, ListPageState>;
+  @useResult
+  $Res call({bool isLoading, int count, String? error});
 }
 
 /// @nodoc
@@ -81,245 +48,47 @@ class _$ListPageStateCopyWithImpl<$Res, $Val extends ListPageState>
 
   /// Create a copy of ListPageState
   /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? isLoading = null,
+    Object? count = null,
+    Object? error = freezed,
+  }) {
+    return _then(_value.copyWith(
+      isLoading: null == isLoading
+          ? _value.isLoading
+          : isLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      count: null == count
+          ? _value.count
+          : count // ignore: cast_nullable_to_non_nullable
+              as int,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ) as $Val);
+  }
 }
 
 /// @nodoc
-abstract class _$$LoadingListImplCopyWith<$Res> {
-  factory _$$LoadingListImplCopyWith(
-          _$LoadingListImpl value, $Res Function(_$LoadingListImpl) then) =
-      __$$LoadingListImplCopyWithImpl<$Res>;
-}
-
-/// @nodoc
-class __$$LoadingListImplCopyWithImpl<$Res>
-    extends _$ListPageStateCopyWithImpl<$Res, _$LoadingListImpl>
-    implements _$$LoadingListImplCopyWith<$Res> {
-  __$$LoadingListImplCopyWithImpl(
-      _$LoadingListImpl _value, $Res Function(_$LoadingListImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of ListPageState
-  /// with the given fields replaced by the non-null parameter values.
-}
-
-/// @nodoc
-
-class _$LoadingListImpl implements LoadingList {
-  const _$LoadingListImpl();
-
+abstract class _$$ListPageStateImplCopyWith<$Res>
+    implements $ListPageStateCopyWith<$Res> {
+  factory _$$ListPageStateImplCopyWith(
+          _$ListPageStateImpl value, $Res Function(_$ListPageStateImpl) then) =
+      __$$ListPageStateImplCopyWithImpl<$Res>;
   @override
-  String toString() {
-    return 'ListPageState.loading()';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$LoadingListImpl);
-  }
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() loading,
-    required TResult Function() loaded,
-    required TResult Function(String message) failed,
-  }) {
-    return loading();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? loading,
-    TResult? Function()? loaded,
-    TResult? Function(String message)? failed,
-  }) {
-    return loading?.call();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? loading,
-    TResult Function()? loaded,
-    TResult Function(String message)? failed,
-    required TResult orElse(),
-  }) {
-    if (loading != null) {
-      return loading();
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(LoadingList value) loading,
-    required TResult Function(LoadedList value) loaded,
-    required TResult Function(FailedList value) failed,
-  }) {
-    return loading(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(LoadingList value)? loading,
-    TResult? Function(LoadedList value)? loaded,
-    TResult? Function(FailedList value)? failed,
-  }) {
-    return loading?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(LoadingList value)? loading,
-    TResult Function(LoadedList value)? loaded,
-    TResult Function(FailedList value)? failed,
-    required TResult orElse(),
-  }) {
-    if (loading != null) {
-      return loading(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class LoadingList implements ListPageState {
-  const factory LoadingList() = _$LoadingListImpl;
-}
-
-/// @nodoc
-abstract class _$$LoadedListImplCopyWith<$Res> {
-  factory _$$LoadedListImplCopyWith(
-          _$LoadedListImpl value, $Res Function(_$LoadedListImpl) then) =
-      __$$LoadedListImplCopyWithImpl<$Res>;
-}
-
-/// @nodoc
-class __$$LoadedListImplCopyWithImpl<$Res>
-    extends _$ListPageStateCopyWithImpl<$Res, _$LoadedListImpl>
-    implements _$$LoadedListImplCopyWith<$Res> {
-  __$$LoadedListImplCopyWithImpl(
-      _$LoadedListImpl _value, $Res Function(_$LoadedListImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of ListPageState
-  /// with the given fields replaced by the non-null parameter values.
-}
-
-/// @nodoc
-
-class _$LoadedListImpl implements LoadedList {
-  const _$LoadedListImpl();
-
-  @override
-  String toString() {
-    return 'ListPageState.loaded()';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$LoadedListImpl);
-  }
-
-  @override
-  int get hashCode => runtimeType.hashCode;
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() loading,
-    required TResult Function() loaded,
-    required TResult Function(String message) failed,
-  }) {
-    return loaded();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? loading,
-    TResult? Function()? loaded,
-    TResult? Function(String message)? failed,
-  }) {
-    return loaded?.call();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? loading,
-    TResult Function()? loaded,
-    TResult Function(String message)? failed,
-    required TResult orElse(),
-  }) {
-    if (loaded != null) {
-      return loaded();
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(LoadingList value) loading,
-    required TResult Function(LoadedList value) loaded,
-    required TResult Function(FailedList value) failed,
-  }) {
-    return loaded(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(LoadingList value)? loading,
-    TResult? Function(LoadedList value)? loaded,
-    TResult? Function(FailedList value)? failed,
-  }) {
-    return loaded?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(LoadingList value)? loading,
-    TResult Function(LoadedList value)? loaded,
-    TResult Function(FailedList value)? failed,
-    required TResult orElse(),
-  }) {
-    if (loaded != null) {
-      return loaded(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class LoadedList implements ListPageState {
-  const factory LoadedList() = _$LoadedListImpl;
-}
-
-/// @nodoc
-abstract class _$$FailedListImplCopyWith<$Res> {
-  factory _$$FailedListImplCopyWith(
-          _$FailedListImpl value, $Res Function(_$FailedListImpl) then) =
-      __$$FailedListImplCopyWithImpl<$Res>;
   @useResult
-  $Res call({String message});
+  $Res call({bool isLoading, int count, String? error});
 }
 
 /// @nodoc
-class __$$FailedListImplCopyWithImpl<$Res>
-    extends _$ListPageStateCopyWithImpl<$Res, _$FailedListImpl>
-    implements _$$FailedListImplCopyWith<$Res> {
-  __$$FailedListImplCopyWithImpl(
-      _$FailedListImpl _value, $Res Function(_$FailedListImpl) _then)
+class __$$ListPageStateImplCopyWithImpl<$Res>
+    extends _$ListPageStateCopyWithImpl<$Res, _$ListPageStateImpl>
+    implements _$$ListPageStateImplCopyWith<$Res> {
+  __$$ListPageStateImplCopyWithImpl(
+      _$ListPageStateImpl _value, $Res Function(_$ListPageStateImpl) _then)
       : super(_value, _then);
 
   /// Create a copy of ListPageState
@@ -327,126 +96,87 @@ class __$$FailedListImplCopyWithImpl<$Res>
   @pragma('vm:prefer-inline')
   @override
   $Res call({
-    Object? message = null,
+    Object? isLoading = null,
+    Object? count = null,
+    Object? error = freezed,
   }) {
-    return _then(_$FailedListImpl(
-      null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String,
+    return _then(_$ListPageStateImpl(
+      isLoading: null == isLoading
+          ? _value.isLoading
+          : isLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      count: null == count
+          ? _value.count
+          : count // ignore: cast_nullable_to_non_nullable
+              as int,
+      error: freezed == error
+          ? _value.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
     ));
   }
 }
 
 /// @nodoc
 
-class _$FailedListImpl implements FailedList {
-  const _$FailedListImpl(this.message);
+class _$ListPageStateImpl implements _ListPageState {
+  const _$ListPageStateImpl(
+      {this.isLoading = false, this.count = 0, this.error});
 
   @override
-  final String message;
+  @JsonKey()
+  final bool isLoading;
+  @override
+  @JsonKey()
+  final int count;
+  @override
+  final String? error;
 
   @override
   String toString() {
-    return 'ListPageState.failed(message: $message)';
+    return 'ListPageState(isLoading: $isLoading, count: $count, error: $error)';
   }
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$FailedListImpl &&
-            (identical(other.message, message) || other.message == message));
+            other is _$ListPageStateImpl &&
+            (identical(other.isLoading, isLoading) ||
+                other.isLoading == isLoading) &&
+            (identical(other.count, count) || other.count == count) &&
+            (identical(other.error, error) || other.error == error));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, message);
+  int get hashCode => Object.hash(runtimeType, isLoading, count, error);
 
   /// Create a copy of ListPageState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$FailedListImplCopyWith<_$FailedListImpl> get copyWith =>
-      __$$FailedListImplCopyWithImpl<_$FailedListImpl>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() loading,
-    required TResult Function() loaded,
-    required TResult Function(String message) failed,
-  }) {
-    return failed(message);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? loading,
-    TResult? Function()? loaded,
-    TResult? Function(String message)? failed,
-  }) {
-    return failed?.call(message);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? loading,
-    TResult Function()? loaded,
-    TResult Function(String message)? failed,
-    required TResult orElse(),
-  }) {
-    if (failed != null) {
-      return failed(message);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(LoadingList value) loading,
-    required TResult Function(LoadedList value) loaded,
-    required TResult Function(FailedList value) failed,
-  }) {
-    return failed(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(LoadingList value)? loading,
-    TResult? Function(LoadedList value)? loaded,
-    TResult? Function(FailedList value)? failed,
-  }) {
-    return failed?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(LoadingList value)? loading,
-    TResult Function(LoadedList value)? loaded,
-    TResult Function(FailedList value)? failed,
-    required TResult orElse(),
-  }) {
-    if (failed != null) {
-      return failed(this);
-    }
-    return orElse();
-  }
+  _$$ListPageStateImplCopyWith<_$ListPageStateImpl> get copyWith =>
+      __$$ListPageStateImplCopyWithImpl<_$ListPageStateImpl>(this, _$identity);
 }
 
-abstract class FailedList implements ListPageState {
-  const factory FailedList(final String message) = _$FailedListImpl;
+abstract class _ListPageState implements ListPageState {
+  const factory _ListPageState(
+      {final bool isLoading,
+      final int count,
+      final String? error}) = _$ListPageStateImpl;
 
-  String get message;
+  @override
+  bool get isLoading;
+  @override
+  int get count;
+  @override
+  String? get error;
 
   /// Create a copy of ListPageState
   /// with the given fields replaced by the non-null parameter values.
+  @override
   @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$FailedListImplCopyWith<_$FailedListImpl> get copyWith =>
+  _$$ListPageStateImplCopyWith<_$ListPageStateImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }

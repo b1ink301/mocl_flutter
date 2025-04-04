@@ -15,7 +15,6 @@ import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.da
 import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 
 part 'list_page_cubit.freezed.dart';
-
 part 'list_page_state.dart';
 
 @injectable
@@ -27,8 +26,6 @@ class ListPageCubit extends Cubit<ListPageState> {
   final List<ListItem> _list = [];
 
   List<ListItem> get list => List.unmodifiable(_list);
-
-  int get listCount => _list.length;
 
   ListItem getItem(int index) => _list.elementAt(index);
 
@@ -43,7 +40,7 @@ class ListPageCubit extends Cubit<ListPageState> {
     this._getList,
     this._readableFlag,
     @factoryParam this._mainItem,
-  ) : super(const LoadingList()) {
+  ) : super(const ListPageState(isLoading: true)) {
     _initPage();
     fetchPage();
   }
@@ -62,28 +59,24 @@ class ListPageCubit extends Cubit<ListPageState> {
     _lastId = -1;
     _list.clear();
     _initPage();
-    _hasReachedMax = false;
     await fetchPage();
   }
 
-  void onTap(BuildContext context, ListItem item) {
+  void onTap(BuildContext context, int index) {
+    final item = _list[index];
     final extra = [_mainItem.siteType, item];
     _readableFlag.id = -1;
     GoRouter.of(context).push(Routes.detail, extra: extra).then((_) {
       if (_readableFlag.id == item.id && !item.isRead) {
-        _updateItemReadStatus(item.id);
+        _updateItemReadStatus(index);
       }
     });
   }
 
-  void _updateItemReadStatus(int itemId) async {
-    final index = _list.indexWhere((item) => item.id == itemId);
-    if (index != -1) {
-      emit(const LoadingList());
-      final updatedItem = _list[index].copyWith(isRead: true);
-      _list[index] = updatedItem;
-      emit(const LoadedList());
-    }
+  void _updateItemReadStatus(int index) {
+    emit(state.copyWith(isLoading: true));
+    _list[index] = _list[index].copyWith(isRead: true);
+    emit(state.copyWith(isLoading: false));
   }
 
   Future<void> fetchPage() async {
@@ -91,33 +84,28 @@ class ListPageCubit extends Cubit<ListPageState> {
       return;
     }
     _isLoading = true;
-    emit(const LoadingList());
+    // emit(state.copyWith(isLoading: true));
     try {
-      final params = GetListParams(
-        mainItem: _mainItem,
-        page: _page,
-        lastId: _lastId,
-      );
+      final params =
+          GetListParams(mainItem: _mainItem, page: _page, lastId: _lastId);
       final Result<List<ListItem>> result = await _getList(params);
-
       result.whenOrNull(
         success: (data) {
           if (data is List<ListItem>) {
             if (data.isNotEmpty) {
               _lastId = data.last.id;
               _list.addAll(data);
-              // _preloadNextPageImages(data);
             }
             _page++;
-            emit(const LoadedList());
+            emit(state.copyWith(count: _list.length, isLoading: false));
           }
         },
         failure: (failure) {
-          emit(FailedList(failure.message));
+          emit(state.copyWith(error: failure.message, isLoading: false));
         },
       );
     } catch (e) {
-      emit(FailedList(e.toString()));
+      emit(state.copyWith(error: e.toString(), isLoading: false));
     } finally {
       _isLoading = false;
     }
