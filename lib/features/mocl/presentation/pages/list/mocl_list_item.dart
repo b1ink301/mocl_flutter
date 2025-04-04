@@ -68,7 +68,7 @@ class BottomView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final reply = item.reply;
-    final nickImage = item.userInfo.nickImage;
+    // final nickImage = item.userInfo.nickImage;
     final hasReply = reply.isNotEmpty && reply != '0';
     final textStyles = MoclTextStyles.of(context);
 
@@ -83,8 +83,8 @@ class BottomView extends StatelessWidget {
               Expanded(
                 child: Row(
                   children: [
-                    if (nickImage.isNotEmpty && nickImage.startsWith('http'))
-                      NickImageWidget(url: nickImage),
+                    // if (nickImage.isNotEmpty && nickImage.startsWith('http'))
+                    //   NickImageWidget(url: nickImage),
                     Flexible(
                       child: InfoText(
                         info: item.info,
