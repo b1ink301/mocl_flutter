@@ -121,15 +121,6 @@ class MainPage extends StatelessWidget {
   Widget _buildDrawer(BuildContext context) =>
       DrawerWidget(onChangeSite: (siteType) {
         if (siteType == SiteType.settings) {
-          // Fluttertoast.showToast(
-          //     msg: "준비 중입니다.",
-          //     toastLength: Toast.LENGTH_LONG,
-          //     gravity: ToastGravity.BOTTOM,
-          //     timeInSecForIosWeb: 2,
-          //     backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-          //     textColor: Colors.white,
-          //     fontSize: 16.0
-          // );
           context.push(Routes.settings);
         } else {
           context.read<SiteTypeBloc>().setSiteType(siteType);
