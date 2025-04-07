@@ -2,17 +2,29 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:html/parser.dart';
+import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_ext.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_parser.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-class ClienParser extends BaseParser {
+@lazySingleton
+class ClienParser implements BaseParser {
+  final bool isShowNickImage;
+
+  const ClienParser(this.isShowNickImage);
+
   @override
   SiteType get siteType => SiteType.clien;
 
@@ -20,10 +32,8 @@ class ClienParser extends BaseParser {
   String get baseUrl => 'https://m.clien.net';
 
   @override
-  Future<Result> comment(Response response) {
-    // TODO: implement comment
-    throw UnimplementedError();
-  }
+  Future<Result<List<MainItem>>> main(Response response) =>
+      throw UnimplementedError('main');
 
   static DateTime parseDateTime(String dateTimeString) {
     final times = dateTimeString.split(' ');
@@ -83,24 +93,32 @@ class ClienParser extends BaseParser {
   Future<Result<Details>> detail(Response response) async {
     final responseData = response.data;
     final resultPort = ReceivePort();
-    await Isolate.spawn(_detailIsolate, [responseData, resultPort.sendPort]);
+    await Isolate.spawn(_detailIsolate, [
+      responseData,
+      isShowNickImage,
+      resultPort.sendPort,
+    ]);
     return await resultPort.first as Result<Details>;
   }
 
   static void _detailIsolate(List<dynamic> args) {
     final responseData = args[0] as String;
-    final sendPort = args[1] as SendPort;
+    final isShowNickImage = args[1] as bool;
+    final sendPort = args[2] as SendPort;
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
     final document = parse(responseData);
     var index = 0;
-    final container =
-        document.querySelector('body > div.nav_container > div.content_view');
+    final container = document.querySelector(
+      'body > div.nav_container > div.content_view',
+    );
+    // document.querySelector('body > div.nav_container > div.nav_body > div.nav_content > div.content_view');
 
     final csrf = document
             .querySelector(
-                "body > nav.navigation > div.dropdown-menu > form > input[name=_csrf]")
+              "body > nav.navigation > div.dropdown-menu > form > input[name=_csrf]",
+            )
             ?.attributes['value'] ??
         '';
     final title = container
@@ -108,8 +126,9 @@ class ClienParser extends BaseParser {
             ?.text
             .trim() ??
         '';
-    final timeElement = container
-        ?.querySelector("div.post_information > div.post_time > div.post_date");
+    final timeElement = container?.querySelector(
+      "div.post_information > div.post_time > div.post_date",
+    );
 
     // debugPrint('timeElement = ${timeElement?.outerHtml}');
     timeElement?.querySelectorAll('.fa').forEach((element) => element.remove());
@@ -119,43 +138,91 @@ class ClienParser extends BaseParser {
     time = times.join('|');
 
     final bodyHtmlElement = container?.querySelector(
-        "div.post_view > div.post_content > article > div.post_article");
+      "div.post_view > div.post_content > article > div.post_article",
+    );
     bodyHtmlElement
         ?.querySelectorAll('input, button')
         .forEach((element) => element.remove());
+    final linkHtml = container
+            ?.querySelector("div.post_view > div.attached_link > div.link_list")
+            ?.innerHtml ??
+        '';
+
+    final marketHtmlElement = container?.querySelector(
+      "div.post_view > div.market_product",
+    );
+
+    marketHtmlElement
+        ?.querySelectorAll('div.product_address')
+        .forEach((element) => element.remove());
+
+    final recentsElement = container?.querySelector("div.writer_board");
+
+    debugPrint('recentsElement=${recentsElement?.innerHtml}');
+
+    final recentsWritersElement = container?.querySelector("div.writer_menu");
+
+    debugPrint('recentsWritersElement=${recentsWritersElement?.innerHtml}');
+
     final bodyHtml = bodyHtmlElement?.innerHtml ?? '';
     final viewCountElement = container?.querySelector(
-        "div.post_information > div.post_time > div.view_count");
+      "div.post_information > div.post_time > div.view_count",
+    );
     viewCountElement
         ?.querySelectorAll('.fa')
         .forEach((element) => element.remove());
     final viewCount = viewCountElement?.text.trim() ?? '';
 
-    final authorIpElement = container
-        ?.querySelector("div.post_view > div.post_information > div.author_ip");
+    final authorIpElement = container?.querySelector(
+      "div.post_view > div.post_information > div.author_ip",
+    );
     authorIpElement
         ?.querySelectorAll('.fa')
         .forEach((element) => element.remove());
-    // var authorIp = authorIpElement?.text.trim() ?? '';
+
     final user = container
             ?.querySelector(
-                "div.post_view > div.post_contact > span.contact_note > div.post_memo > div.memo_box > button.button_input")
+              "div.post_view > div.post_contact > span.contact_note > div.post_memo > div.memo_box > button.button_input",
+            )
             ?.attributes['onclick'] ??
         '';
-    final nickName = container
-            ?.querySelector(
-                "div.post_view > div.post_contact > span.contact_name > span.nickname")
-            ?.text
-            .trim() ??
-        '';
-    final nickImage = container
-            ?.querySelector(
-                "div.post_view > div.post_contact > span.contact_name > span.nickimg > img")
-            ?.attributes['src'] ??
-        '';
+    var nickName = '';
+    var nickImage = '';
+    if (isShowNickImage) {
+      nickName = container
+              ?.querySelector(
+                "div.post_view > div.post_contact > span.contact_name > span.nickname",
+              )
+              ?.text
+              .trim() ??
+          '';
+      nickImage = container
+              ?.querySelector(
+                "div.post_view > div.post_contact > span.contact_name > span.nickimg > img",
+              )
+              ?.attributes['src'] ??
+          '';
+    } else {
+      nickName = container
+              ?.querySelector(
+                "div.post_view > div.post_contact > span.contact_name > span.nickname",
+              )
+              ?.text
+              .trim() ??
+          '';
+      if (nickName.isEmpty) {
+        nickName = container
+                ?.querySelector(
+                  "div.post_view > div.post_contact > span.contact_name > span.nickimg > img",
+                )
+                ?.attributes['alt'] ??
+            '';
+      }
+    }
     final likeCount = container
             ?.querySelector(
-                "div.post_button > div.symph_area > button.symph_count > strong")
+              "div.post_button > div.symph_area > button.symph_count > strong",
+            )
             ?.text
             .trim() ??
         '';
@@ -171,69 +238,73 @@ class ClienParser extends BaseParser {
 
     final comments = container
             ?.querySelectorAll(
-                "div.post_comment > div.comment > div.comment_row")
+              "div.post_comment > div.comment > div.comment_row",
+            )
             .map((element) {
               if (element.innerHtml == "<span>삭제 되었습니다.</span>") {
                 return null;
               }
               final id = element.attributes['data-author-id'] ?? '';
-              // var sn =
-              //     int.tryParse(element.attributes['data-comment-sn'] ?? '-1') ??
-              //         -1;
               final isReply = element.classes.contains('re');
-              final nickName = element
-                      .querySelector(
-                          "div.comment_info > div.post_contact > span.contact_name > span.nickname")
-                      ?.text
-                      .trim() ??
-                  '';
-              // var ip = element
-              //         .querySelector(
-              //             "div.comment_info > div.comment_info_area > div.comment_ip > span.ip_address")
-              //         ?.text
-              //         .trim() ??
-              //     '';
+
               final timeElement = element.querySelector(
-                  "div.comment_info > div.comment_info_area > div.comment_time");
+                "div.comment_info > div.comment_info_area > div.comment_time",
+              );
               timeElement?.querySelector("span.timestamp")?.remove();
               final time = timeElement?.text.trim() ?? '';
-              final nickImage = element
-                      .querySelector(
-                          "div.comment_info > div.post_contact > span.contact_name > span.nickimg > img")
-                      ?.attributes['src'] ??
-                  '';
+
+              var nickName = '';
+              var nickImage = '';
+
+              if (isShowNickImage) {
+                nickName = element
+                        .querySelector(
+                          "div.comment_info > div.post_contact > span.contact_name > span.nickname",
+                        )
+                        ?.text
+                        .trim() ??
+                    '';
+                nickImage = element
+                        .querySelector(
+                          "div.comment_info > div.post_contact > span.contact_name > span.nickimg > img",
+                        )
+                        ?.attributes['src'] ??
+                    '';
+              } else {
+                nickName = element
+                        .querySelector(
+                          "div.comment_info > div.post_contact > span.contact_name > span.nickname",
+                        )
+                        ?.text
+                        .trim() ??
+                    '';
+                if (nickName.isEmpty) {
+                  nickName = element
+                          .querySelector(
+                            "div.comment_info > div.post_contact > span.contact_name > span.nickimg > img",
+                          )
+                          ?.attributes['alt'] ??
+                      '';
+                }
+              }
+
               final likeCount = element
                       .querySelector(
-                          "div.comment_content_symph > button > strong")
+                        "div.comment_content_symph > button > strong",
+                      )
                       ?.text
                       .trim() ??
                   '';
-              // var bodyElement = element
-              //     .querySelector("div.comment_content > div.comment_view");
-
               final bodyElements = element.querySelectorAll(
-                  "div.comment_content, div.comment-img, div.comment-video");
+                "div.comment_content, div.comment-img, div.comment-video",
+              );
               for (final tmp in bodyElements) {
                 tmp
                     .querySelectorAll('input, span.name, button')
                     .forEach((element) => element.remove());
               }
 
-              // bodyElement
-              //     ?.querySelectorAll('input, span.name, button')
-              //     .forEach((element) => element.remove());
-
-              var body = bodyElements.map((item) => item.innerHtml).join();
-              // var body = bodyElement?.outerHtml ?? '';
-              // var video = element
-              //         .querySelector("div.comment-video > video > source")
-              //         ?.attributes['src'] ??
-              //     '';
-              // var img = element
-              //         .querySelector("div.comment-img > img")
-              //         ?.attributes['src'] ??
-              //     '';
-
+              final body = bodyElements.map((item) => item.innerHtml).join();
               var parsedTime = '';
               try {
                 var dateTime = parseDateTime(time);
@@ -265,6 +336,22 @@ class ClienParser extends BaseParser {
             .toList() ??
         [];
 
+    var marketHtml = marketHtmlElement?.innerHtml ?? '';
+    var newBodyHtml = '';
+    if (marketHtml.isNotEmpty) {
+      marketHtml = marketHtml.replaceAll(
+        '</span>',
+        '&nbsp;&nbsp;&nbsp;</span>',
+      );
+      newBodyHtml = '$marketHtml</br>$bodyHtml';
+    }
+    if (linkHtml.isNotEmpty) {
+      newBodyHtml += '$bodyHtml</br>$linkHtml';
+    }
+    if (newBodyHtml.isEmpty) {
+      newBodyHtml = bodyHtml;
+    }
+
     final detail = Details(
       title: title,
       viewCount: viewCount,
@@ -272,53 +359,52 @@ class ClienParser extends BaseParser {
       csrf: csrf,
       time: time,
       info: info,
-      userInfo: UserInfo(
-        id: user,
-        nickName: nickName,
-        nickImage: nickImage,
-      ),
+      userInfo: UserInfo(id: user, nickName: nickName, nickImage: nickImage),
       comments: comments,
-      bodyHtml: bodyHtml,
+      bodyHtml: newBodyHtml,
     );
 
-    sendPort.send(Result<Details>.success(detail));
+    final result = Result.success(detail);
+    sendPort.send(result);
   }
 
   @override
   Future<Result<List<ListItem>>> list(
     Response response,
-    int lastId,
+    LastId lastId,
     String boardTitle,
-    Future<Map<int, bool>> Function(SiteType, List<int>) isReads,
+    Future<List<int>> Function(SiteType, List<int>) isReads,
   ) async {
     final receivePort = ReceivePort();
-    final completer = Completer<Result<List<ListItem>>>();
+    final completer = Completer<List<ListItem>>();
 
     receivePort.listen((message) async {
       if (message is ReadStatusRequest) {
         final statuses = await isReads(siteType, message.ids);
         message.responsePort.send(ReadStatusResponse(statuses));
       } else if (message is List<ListItem>) {
-        completer.complete(Result.success(message));
-        receivePort.close();
+        completer.complete(message);
       }
     });
 
     try {
       await Isolate.spawn(
-          _parseListInIsolate,
-          IsolateMessage<String>(
-            receivePort.sendPort,
-            response.data,
-            lastId,
-            boardTitle,
-            baseUrl,
-          ));
+        _parseListInIsolate,
+        IsolateMessage<String>(
+          receivePort.sendPort,
+          response.data,
+          lastId.intId,
+          boardTitle,
+          baseUrl,
+          isShowNickImage,
+        ),
+      );
 
-      return await completer.future;
+      return Result.success(await completer.future);
     } catch (e) {
-      receivePort.close();
       return Result.failure(GetListFailure(message: e.toString()));
+    } finally {
+      receivePort.close();
     }
   }
 
@@ -328,6 +414,7 @@ class ClienParser extends BaseParser {
     final lastId = message.lastId;
     final boardTitle = message.boardTitle;
     final baseUrl = message.baseUrl;
+    final isShowNickImage = message.isShowNickImage;
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
@@ -343,7 +430,7 @@ class ClienParser extends BaseParser {
 
       final userId = element.attributes['data-author-id']?.trim() ?? '';
       final tmpUrl = element.attributes['href']?.trim() ?? '';
-      final url = BaseParser.covertUrl(baseUrl, tmpUrl);
+      final url = tmpUrl.toUrl(baseUrl);
 
       final reply = element.attributes['data-comment-count']?.trim() ?? '';
 
@@ -358,7 +445,8 @@ class ClienParser extends BaseParser {
 
       final category = element
               .querySelector(
-                  'div.list_infomation > div.list_number > span.category')
+                'div.list_infomation > div.list_number > span.category',
+              )
               ?.text
               .trim() ??
           '';
@@ -366,24 +454,23 @@ class ClienParser extends BaseParser {
 
       final title = element
               .querySelector(
-                  'div.list_title > div.list_subject > span[data-role=list-title-text]')
+                'div.list_title > div.list_subject > span[data-role=list-title-text]',
+              )
               ?.text
               .trim() ??
           '';
       final time = element
               .querySelector(
-                  'div.list_infomation > div.list_number > div.list_time > span')
+                'div.list_infomation > div.list_number > div.list_time > span',
+              )
               ?.text
               .trim() ??
           '';
-      final nickImage = element
-              .querySelector(
-                  'div.list_infomation > div.list_author > span.nickimg > img')
-              ?.attributes['src'] ??
-          '';
+
       final hit = element
               .querySelector(
-                  'div.list_infomation > div.list_number > div.list_hit > span')
+                'div.list_infomation > div.list_number > div.list_hit > span',
+              )
               ?.text
               .trim() ??
           '';
@@ -392,18 +479,21 @@ class ClienParser extends BaseParser {
               ?.text
               .trim() ??
           '';
-      final nickName = element
-              .querySelector(
-                  'div.list_infomation > div.list_author > span.nickname')
-              ?.text
-              .trim() ??
+      final author = element.querySelector(
+        'div.list_infomation > div.list_author',
+      );
+      final nickImg = author?.querySelector('span.nickimg > img');
+      final nickName = author?.querySelector('span.nickname')?.text.trim() ??
+          nickImg?.attributes['alt'] ??
           '';
+      final nickImage = isShowNickImage ? nickImg?.attributes['src'] ?? '' : '';
+
       final hasImage =
           element.querySelector('div.list_title > span.fa-picture-o') != null;
 
       var parsedTime = '';
       try {
-        var dateTime = parseDateTime(time);
+        final dateTime = parseDateTime(time);
         parsedTime = timeago.format(dateTime, locale: 'ko');
       } catch (e) {
         parsedTime = time;
@@ -441,24 +531,66 @@ class ClienParser extends BaseParser {
     readStatusPort.close();
 
     final resultList = parsedItems
-        .map((item) => ListItem(
-              id: item['id'],
-              title: item['title'],
-              reply: item['reply'],
-              category: item['category'],
-              time: item['time'],
-              info: item['info'],
-              url: item['url'],
-              board: item['board'],
-              boardTitle: item['boardTitle'],
-              like: item['like'],
-              hit: item['hit'],
-              userInfo: item['userInfo'],
-              hasImage: item['hasImage'],
-              isRead: readStatusResponse.statuses[item['id']] ?? false,
-            ))
+        .map(
+          (item) => ListItem(
+            id: item['id'],
+            title: item['title'],
+            reply: item['reply'],
+            category: item['category'],
+            time: item['time'],
+            info: item['info'],
+            url: item['url'],
+            board: item['board'],
+            boardTitle: item['boardTitle'],
+            like: item['like'],
+            hit: item['hit'],
+            userInfo: item['userInfo'],
+            hasImage: item['hasImage'],
+            isRead: readStatusResponse.statuses.contains(item['id']),
+          ),
+        )
         .toList();
 
     replyPort.send(resultList);
   }
+
+  @override
+  String urlByDetail(String url, String board, int id) => url;
+
+  @override
+  String urlByList(
+    String url,
+    String board,
+    int page,
+    SortType sortType,
+    LastId lastId,
+  ) {
+    final String sort = sortType.toQuery(siteType);
+    return board == "recommend"
+        ? url
+        : 'https://m.clien.net/service/api/board/under/list?category=0&boardSn=0&po=$page$sort&boardCd=$board';
+  }
+
+  @override
+  String urlBySearchList(
+    String url,
+    String board,
+    int page,
+    String keyword,
+    LastId lastId,
+  ) {
+    final String searchUrl = url.replaceFirst('board', 'search/board');
+    return '$searchUrl?sk=title&sv=$keyword&po=$page';
+  }
+
+  @override
+  String urlByMain() => throw UnimplementedError('urlByMain');
+
+  @override
+  Future<Result<List<CommentItem>>> comments(Response response) =>
+      throw UnimplementedError();
+
+  @override
+  String urlByComments(String url, String board, int id, int page) =>
+      throw UnimplementedError();
 }

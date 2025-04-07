@@ -4,10 +4,11 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:injectable/injectable.dart';
 
 @LazySingleton(as: SettingsRepository)
-class SettingsRepositoryImpl extends SettingsRepository {
+class SettingsRepositoryImpl implements SettingsRepository {
   final SharedPreferences _prefs;
 
-  SettingsRepositoryImpl({required SharedPreferences prefs}) : _prefs = prefs;
+  const SettingsRepositoryImpl({required SharedPreferences prefs})
+      : _prefs = prefs;
 
   @override
   SiteType getSiteType() {

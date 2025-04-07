@@ -2,37 +2,69 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
 
 abstract class BaseParser {
-  late final SiteType siteType;
-  late final String baseUrl;
+  abstract final SiteType siteType;
+  abstract final String baseUrl;
 
-  Result<List<MainItem>> main(
-    Response response,
+  const BaseParser();
+
+  String urlByMain() => throw UnimplementedError('urlByMain');
+
+  String urlByList(
+    String url,
+    String board,
+    int page,
+    SortType sortType,
+    LastId lastId,
   ) =>
-      Result.success(const []);
+      throw UnimplementedError('urlByList');
+
+  String urlBySearchList(
+    String url,
+    String board,
+    int page,
+    String keyword,
+    LastId lastId,
+  ) =>
+      throw UnimplementedError('urlBySearchList');
+
+  String urlByDetail(
+    String url,
+    String board,
+    int id,
+  ) =>
+      throw UnimplementedError('urlByDetail');
+
+  String urlByComments(
+    String url,
+    String board,
+    int id,
+    int page,
+  ) =>
+      throw UnimplementedError('urlByComments');
+
+  Future<Result<List<MainItem>>> main(Response response) =>
+      throw UnimplementedError('main');
 
   Future<Result<List<ListItem>>> list(
     Response response,
-    int lastId,
+    LastId lastId,
     String boardTitle,
-    Future<Map<int, bool>> Function(SiteType, List<int>) isReads,
+    Future<List<int>> Function(SiteType, List<int>) isReads,
   );
 
   Future<Result<Details>> detail(Response response);
 
-  Future<Result> comment(Response response);
-
-  static String covertUrl(
-    String baseUrl,
-    String path,
-  ) =>
-      path.isNotEmpty && !path.startsWith("http") ? '$baseUrl$path' : path;
+  Future<Result<List<CommentItem>>> comments(Response response);
 
   static String parserInfo(
     String nickName,
@@ -67,13 +99,15 @@ class IsolateMessage<T> {
   final int lastId;
   final String boardTitle;
   final String baseUrl;
+  final bool isShowNickImage;
 
-  IsolateMessage(
+  const IsolateMessage(
     this.replyPort,
     this.responseData,
     this.lastId,
     this.boardTitle,
     this.baseUrl,
+    this.isShowNickImage,
   );
 }
 
@@ -81,11 +115,11 @@ class ReadStatusRequest {
   final List<int> ids;
   final SendPort responsePort;
 
-  ReadStatusRequest(this.ids, this.responsePort);
+  const ReadStatusRequest(this.ids, this.responsePort);
 }
 
 class ReadStatusResponse {
-  final Map<int, bool> statuses;
+  final List<int> statuses;
 
-  ReadStatusResponse(this.statuses);
+  const ReadStatusResponse(this.statuses);
 }

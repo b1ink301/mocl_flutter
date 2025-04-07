@@ -1,5 +1,5 @@
+import 'package:mocl_flutter/features/mocl/data/datasources/local/entities/main_item_data.dart';
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
-import 'package:mocl_flutter/features/mocl/data/db/entities/main_item_data.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 

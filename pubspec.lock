@@ -366,14 +366,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.1.1"
-  easy_infinite_pagination:
+  easy_debounce:
     dependency: "direct main"
     description:
-      name: easy_infinite_pagination
-      sha256: b3d0c12ae8163c56eb3f3e77834809be1537ed9169e0f6fb60657418b63d41ea
+      name: easy_debounce
+      sha256: f082609cfb8f37defb9e37fc28bc978c6712dedf08d4c5a26f820fa10165a236
       url: "https://pub.dev"
     source: hosted
-    version: "0.0.6"
+    version: "2.0.3"
   equatable:
     dependency: "direct main"
     description:
@@ -741,6 +741,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.15.5"
+  html_unescape:
+    dependency: "direct main"
+    description:
+      name: html_unescape
+      sha256: "15362d7a18f19d7b742ef8dcb811f5fd2a2df98db9f80ea393c075189e0b61e3"
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.0.0"
   http:
     dependency: transitive
     description:
@@ -833,26 +841,18 @@ packages:
     dependency: transitive
     description:
       name: just_audio_platform_interface
-      sha256: "271b93b484c6f494ecd72a107fffbdb26b425f170c665b9777a0a24a726f2f24"
+      sha256: "4cd94536af0219fa306205a58e78d67e02b0555283c1c094ee41e402a14a5c4a"
       url: "https://pub.dev"
     source: hosted
-    version: "4.4.0"
+    version: "4.5.0"
   just_audio_web:
     dependency: transitive
     description:
       name: just_audio_web
-      sha256: "58915be64509a7683c44bf11cd1a23c15a48de104927bee116e3c63c8eeea0d4"
+      sha256: "8c7e779892e180cbc9ffb5a3c52f6e90e1cbbf4a63694cc450972a7edbd2bb6d"
       url: "https://pub.dev"
     source: hosted
-    version: "0.4.14"
-  launcher_name:
-    dependency: "direct main"
-    description:
-      name: launcher_name
-      sha256: "5fc9a8b8de9e255d5f21effc33632b5620771c9b2310d459a7710b725353b305"
-      url: "https://pub.dev"
-    source: hosted
-    version: "1.0.2"
+    version: "0.4.15"
   leak_tracker:
     dependency: transitive
     description:
@@ -1181,6 +1181,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.28.0"
+  sembast:
+    dependency: "direct main"
+    description:
+      name: sembast
+      sha256: "6cf9acde19bd88dba9ea8090d3e50725cdc70fc7cf1c117c26e79c257884b04b"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.8.2"
   sentry:
     dependency: transitive
     description:

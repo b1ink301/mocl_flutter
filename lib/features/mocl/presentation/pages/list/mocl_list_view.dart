@@ -19,6 +19,8 @@ class MoclListView extends StatelessWidget {
           if (index == state.count) {
             if (state.error != null) {
               return _buildError(state.error!, cubit.fetchPage);
+            } else if (state.hasReachedMax) {
+              return const SizedBox.shrink();
             } else {
               return const Column(
                 children: [LoadingWidget(), DividerWidget()],

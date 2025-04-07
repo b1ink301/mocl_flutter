@@ -31,5 +31,7 @@ const _$SiteTypeEnumMap = {
   SiteType.damoang: 'damoang',
   SiteType.meeco: 'meeco',
   SiteType.naverCafe: 'naverCafe',
+  SiteType.reddit: 'reddit',
+  SiteType.theqoo: 'theqoo',
   SiteType.settings: 'settings',
 };
