@@ -5,8 +5,6 @@ part 'mocl_result.freezed.dart';
 
 @freezed
 sealed class Result<T> with _$Result {
-  const factory Result.initial() = ResultInitial;
-
   const factory Result.loading() = ResultLoading;
 
   const factory Result.success(T data) = ResultSuccess;

@@ -87,7 +87,6 @@ class MainPage extends StatelessWidget {
         drawerEdgeDragWidth: MediaQuery.of(context).size.width,
         drawerEnableOpenDragGesture: true,
         drawer: _buildDrawer(context),
-        appBar: buildDummyAppbar(context),
         body: BlocListener<MainDataBloc, MainDataState>(
           listener: (BuildContext context, MainDataState state) async {
             if (state is StateRequireLogin) {

@@ -7,10 +7,10 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/repositories/main_repository.dart';
 
 @injectable
-class SetMainList extends UseCase<Future<void>, SetMainParams> {
+class SetMainList implements UseCase<Future<void>, SetMainParams> {
   final MainRepository mainRepository;
 
-  SetMainList({required this.mainRepository});
+  const SetMainList({required this.mainRepository});
 
   @override
   Future<Result> call(SetMainParams params) => mainRepository.setMainList(

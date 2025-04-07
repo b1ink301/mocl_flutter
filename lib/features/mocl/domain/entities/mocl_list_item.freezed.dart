@@ -282,7 +282,7 @@ class __$$ListItemImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$ListItemImpl implements _ListItem {
+class _$ListItemImpl with DiagnosticableTreeMixin implements _ListItem {
   const _$ListItemImpl(
       {required this.id,
       required this.title,
@@ -329,8 +329,29 @@ class _$ListItemImpl implements _ListItem {
   final bool isRead;
 
   @override
-  String toString() {
+  String toString({DiagnosticLevel minLevel = DiagnosticLevel.info}) {
     return 'ListItem(id: $id, title: $title, reply: $reply, category: $category, time: $time, url: $url, info: $info, board: $board, boardTitle: $boardTitle, like: $like, hit: $hit, userInfo: $userInfo, hasImage: $hasImage, isRead: $isRead)';
+  }
+
+  @override
+  void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+    super.debugFillProperties(properties);
+    properties
+      ..add(DiagnosticsProperty('type', 'ListItem'))
+      ..add(DiagnosticsProperty('id', id))
+      ..add(DiagnosticsProperty('title', title))
+      ..add(DiagnosticsProperty('reply', reply))
+      ..add(DiagnosticsProperty('category', category))
+      ..add(DiagnosticsProperty('time', time))
+      ..add(DiagnosticsProperty('url', url))
+      ..add(DiagnosticsProperty('info', info))
+      ..add(DiagnosticsProperty('board', board))
+      ..add(DiagnosticsProperty('boardTitle', boardTitle))
+      ..add(DiagnosticsProperty('like', like))
+      ..add(DiagnosticsProperty('hit', hit))
+      ..add(DiagnosticsProperty('userInfo', userInfo))
+      ..add(DiagnosticsProperty('hasImage', hasImage))
+      ..add(DiagnosticsProperty('isRead', isRead));
   }
 
   @override

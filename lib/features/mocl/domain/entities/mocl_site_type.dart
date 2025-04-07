@@ -3,22 +3,19 @@ enum SiteType {
   damoang,
   meeco,
   naverCafe,
+  reddit,
+  theqoo,
   settings,
 }
 
 extension SiteTypeExtension on SiteType {
-  String get title {
-    switch (this) {
-      case SiteType.clien:
-        return '클리앙';
-      case SiteType.damoang:
-        return '다모앙';
-      case SiteType.settings:
-        return '설정';
-      case SiteType.meeco:
-        return '미코';
-      case SiteType.naverCafe:
-        return '네이버카페';
-    }
-  }
+  String get title => switch (this) {
+        SiteType.clien => '클리앙',
+        SiteType.damoang => '다모앙',
+        SiteType.settings => '설정',
+        SiteType.meeco => '미코',
+        SiteType.naverCafe => '네이버카페',
+        SiteType.reddit => '레딧',
+        SiteType.theqoo => '더쿠',
+      };
 }

@@ -29,3 +29,8 @@ $ dart run flutter_native_splash:create --path=./flutter_native_splash.yaml
 $ ~/fvm/versions/3.24.5/bin/flutter run --profile --cache-sksl --purge-persistent-cache
 
 ~/fvm/versions/3.24.5/bin/flutter build appbundle --bundle-sksl-path flutter_02.sksl.json
+
+~/fvm/versions/3.24.5/bin/dart run build_runner build --delete-conflicting-outputs 
+
+~/fvm/versions/3.24.5/bin/flutter run  
+~/fvm/versions/3.24.5/bin/flutter pub get  

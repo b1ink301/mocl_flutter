@@ -2,18 +2,26 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:html/parser.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_ext.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_parser.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-class MeecoParser extends BaseParser {
+class MeecoParser implements BaseParser {
+  final bool isShowNickImage;
+
+  const MeecoParser(this.isShowNickImage);
+
   @override
   SiteType get siteType => SiteType.meeco;
 
@@ -21,26 +29,25 @@ class MeecoParser extends BaseParser {
   String get baseUrl => 'https://meeco.kr';
 
   @override
-  Future<Result> comment(Response response) {
-    // TODO: implement comment
-    throw UnimplementedError();
-  }
+  Future<Result<List<MainItem>>> main(Response response) =>
+      throw UnimplementedError('main');
 
   @override
   Future<Result<Details>> detail(Response response) async {
     final responseData = response.data;
     final resultPort = ReceivePort();
 
-    await Isolate.spawn(
-        _detailIsolate, [baseUrl, responseData, resultPort.sendPort]);
+    await Isolate.spawn(_detailIsolate,
+        [baseUrl, responseData, resultPort.sendPort, isShowNickImage]);
 
-    return await resultPort.first as Result<Details>;
+    return await resultPort.first;
   }
 
   static void _detailIsolate(List<dynamic> args) {
     final baseUrl = args[0] as String;
     final responseData = args[1] as String;
     final sendPort = args[2] as SendPort;
+    final isShowNickImage = args[3] as bool;
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
@@ -53,12 +60,17 @@ class MeecoParser extends BaseParser {
     final infoElement =
         container?.querySelector('header.atc_hd > div.atc_info');
 
+    final nickName =
+        container?.querySelector('span.nickname > a > span')?.text.trim() ??
+            infoElement?.querySelector('span.nickname')?.text.trim() ??
+            '';
+
     final tmpUrl =
         infoElement?.querySelector('span.pf > img.pf_img')?.attributes['src'] ??
             '';
-    final nickImage = BaseParser.covertUrl(baseUrl, tmpUrl);
-    final nickName =
-        infoElement?.querySelector('span.nickname')?.text.trim() ?? '';
+    final nickImage = isShowNickImage ? tmpUrl.toUrl(baseUrl) : '';
+    // final nickName =
+    //     infoElement?.querySelector('span.nickname')?.text.trim() ?? '';
 
     final bodyHtml = container?.querySelector('div.atc_body');
     bodyHtml
@@ -72,7 +84,7 @@ class MeecoParser extends BaseParser {
     final likeCount = '';
 
     var index = 0;
-    final comments = container
+    final List<CommentItem> comments = container
             ?.querySelectorAll(
                 'div.cmt > div.cmt_list_parent > div.cmt_list > article')
             .map((element) {
@@ -82,9 +94,8 @@ class MeecoParser extends BaseParser {
               final profileElement = headerElement
                   ?.querySelector('div.pf_wrap > span.pf > img.pf_img');
 
-              debugPrint('headerElement=${headerElement?.innerHtml}');
               final tmpUrl = profileElement?.attributes['src']?.trim() ?? '';
-              final nickImage = BaseParser.covertUrl(baseUrl, tmpUrl);
+              final nickImage = isShowNickImage ? tmpUrl.toUrl(baseUrl) : '';
               final nickName = profileElement?.attributes['alt'] ?? '익명';
               final time =
                   element.querySelector('span.date')?.text.trim() ?? '';
@@ -175,25 +186,26 @@ class MeecoParser extends BaseParser {
       bodyHtml: bodyHtml?.innerHtml ?? '',
     );
 
-    sendPort.send(Result.success(detail));
+    final result = Result.success(detail);
+    sendPort.send(result);
   }
 
   @override
   Future<Result<List<ListItem>>> list(
     Response response,
-    int lastId,
+    LastId lastId,
     String boardTitle,
-    Future<Map<int, bool>> Function(SiteType, List<int>) isReads,
+    Future<List<int>> Function(SiteType, List<int>) isReads,
   ) async {
     final receivePort = ReceivePort();
-    final completer = Completer<Result<List<ListItem>>>();
+    final completer = Completer<List<ListItem>>();
 
     receivePort.listen((message) async {
       if (message is ReadStatusRequest) {
         final statuses = await isReads(siteType, message.ids);
         message.responsePort.send(ReadStatusResponse(statuses));
       } else if (message is List<ListItem>) {
-        completer.complete(Result.success(message));
+        completer.complete(message);
         receivePort.close();
       }
     });
@@ -204,12 +216,13 @@ class MeecoParser extends BaseParser {
           IsolateMessage<String>(
             receivePort.sendPort,
             response.data,
-            lastId,
+            lastId.intId,
             boardTitle,
             baseUrl,
+            isShowNickImage,
           ));
 
-      return await completer.future;
+      return Result.success(await completer.future);
     } catch (e) {
       receivePort.close();
       return Result.failure(GetListFailure(message: e.toString()));
@@ -222,6 +235,7 @@ class MeecoParser extends BaseParser {
     final lastId = message.lastId;
     final boardTitle = message.boardTitle;
     final baseUrl = message.baseUrl;
+    // final isShowNickImage = message.isShowNickImage;
 
     final parsedItems = <Map<String, dynamic>>[];
     final ids = <int>[];
@@ -248,7 +262,7 @@ class MeecoParser extends BaseParser {
       final infoElement = element.querySelector('a.list_link');
       final title = infoElement?.attributes['title']?.trim() ?? '';
       final tmpUrl = infoElement?.attributes['href']?.trim() ?? '';
-      final url = BaseParser.covertUrl(baseUrl, tmpUrl);
+      final url = tmpUrl.toUrl(baseUrl);
 
       final uri = Uri.tryParse(url);
       if (uri == null) continue;
@@ -336,7 +350,7 @@ class MeecoParser extends BaseParser {
               hit: item['hit'],
               userInfo: item['userInfo'],
               hasImage: item['hasImage'],
-              isRead: readStatusResponse.statuses[item['id']] ?? false,
+              isRead: readStatusResponse.statuses.contains(item['id']),
             ))
         .toList();
 
@@ -395,4 +409,43 @@ class MeecoParser extends BaseParser {
       throw Exception('Error parsing $dateTimeString');
     }
   }
+
+  @override
+  String urlByDetail(
+    String url,
+    String board,
+    int id,
+  ) =>
+      url;
+
+  @override
+  String urlByList(
+    String url,
+    String board,
+    int page,
+    SortType sortType,
+    LastId lastId,
+  ) =>
+      '$url?page=$page${sortType.toQuery(siteType)}';
+
+  @override
+  String urlBySearchList(
+    String url,
+    String board,
+    int page,
+    String keyword,
+    LastId lastId,
+  ) =>
+      throw UnimplementedError('urlBySearchList');
+
+  @override
+  String urlByMain() => throw UnimplementedError('urlByMain');
+
+  @override
+  Future<Result<List<CommentItem>>> comments(Response response) =>
+      throw UnimplementedError();
+
+  @override
+  String urlByComments(String url, String board, int id, int page) =>
+      throw UnimplementedError();
 }

@@ -14,7 +14,6 @@ class MainView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final textStyle = Theme.of(context).textTheme.bodyMedium;
-
     return BlocBuilder<MainDataBloc, MainDataState>(
       builder: (context, state) => state.map(
         initial: (_) => _buildLoadingView(),

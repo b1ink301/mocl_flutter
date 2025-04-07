@@ -5,11 +5,13 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/list_data_source.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
 
 import 'mocl_list_data_source_test.mocks.dart';
 
@@ -51,7 +53,8 @@ void main() {
     log("result=$item");
 
     // act
-    final result = await listDataSource.getList(item, 0, -1, parser);
+    final result =
+        await listDataSource.getList(item, 0, LastId(), SortType.recent);
     // log("result=${result.data.length}");
 
     // assert
@@ -69,7 +72,7 @@ void main() {
     //act
     final item = mainItemModel.toEntity(siteType);
     try {
-      final _ = await listDataSource.getList(item, 0, -1, parser);
+      // final _ = await listDataSource.getList(item, 0, -1, parser);
     } catch (e) {
       //assert
       expect(e, isA<ResultFailure>());

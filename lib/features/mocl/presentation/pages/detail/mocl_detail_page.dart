@@ -45,14 +45,11 @@ class DetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final child = Scaffold(
-      appBar: buildDummyAppbar(context),
       body: SafeArea(
         left: false,
         right: false,
         child: RefreshIndicator(
-          onRefresh: () async {
-            context.read<DetailViewBloc>().refresh();
-          },
+          onRefresh: () async => context.read<DetailViewBloc>().refresh(),
           child: const CustomScrollView(
             slivers: [
               DetailAppBar(),

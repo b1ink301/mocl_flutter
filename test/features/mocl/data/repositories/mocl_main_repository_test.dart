@@ -2,10 +2,8 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/api_client.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/clien_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/parser_factory.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/parser/parser_factory.dart';
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/mocl/data/repositories/mocl_main_repository_impl.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
@@ -29,13 +27,11 @@ void main() {
     // final prefs = await SharedPreferences.getInstance();
 
     parserFactory = MockParserFactory();
-    when(parserFactory.createParser()).thenReturn(ClienParser());
+    // when(parserFactory.createParser()).thenReturn(ClienParser());
 
     mockMainDataSource = MockMainDataSource();
     moclRepository = MainRepositoryImpl(
       dataSource: mockMainDataSource,
-      apiClient: ApiClient(),
-      parserFactory: parserFactory,
     );
   });
 
@@ -74,8 +70,8 @@ void main() {
       });
 
       // arrange
-      when(mockMainDataSource.get(siteType))
-          .thenAnswer((_) => Future.value(<MainItem>[]));
+      // when(mockMainDataSource.get(siteType))
+      //     .thenAnswer((_) => Future.value(<MainItem>[]));
 
       // act
       final result = await moclRepository.getMainList(siteType: siteType);
@@ -88,8 +84,8 @@ void main() {
 
     test('메인 목록이 있을 때', () async {
       // arrange
-      when(mockMainDataSource.get(siteType))
-          .thenAnswer((_) async => <MainItem>[mainItem]);
+      // when(mockMainDataSource.get(siteType))
+      //     .thenAnswer((_) async => <MainItem>[mainItem]);
 
       // act
       var result = await moclRepository.getMainList(siteType: siteType);

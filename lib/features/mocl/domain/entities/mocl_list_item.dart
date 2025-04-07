@@ -1,6 +1,6 @@
 import 'dart:core';
 
-import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'mocl_user_info.dart';
@@ -45,5 +45,5 @@ class ListItem with _$ListItem {
 }
 
 extension ListItemExtension on ListItem {
-  ValueKey get key => ValueKey(Object.hash(id, isRead));
+  ValueKey get key => ValueKey([id, isRead]);
 }

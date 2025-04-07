@@ -6,10 +6,10 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/repositories/main_repository.dart';
 
 @injectable
-class GetMainList extends UseCase<Future<Result<List<MainItem>>>, SiteType> {
+class GetMainList implements UseCase<Future<Result<List<MainItem>>>, SiteType> {
   final MainRepository mainRepository;
 
-  GetMainList({required this.mainRepository});
+  const GetMainList({required this.mainRepository});
 
   @override
   Future<Result<List<MainItem>>> call(

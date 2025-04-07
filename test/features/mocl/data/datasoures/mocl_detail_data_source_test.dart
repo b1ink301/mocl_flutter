@@ -3,7 +3,7 @@ import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/detail_data_source.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
@@ -46,11 +46,11 @@ void main() async {
     provideDummyBuilder<Result<Details>>(
         (_, __) => ResultSuccess(Details.empty()));
 
-    when(detailDataSource.getDetail(any, any))
+    when(detailDataSource.getDetail(any))
         .thenAnswer((_) => Future.value(ResultSuccess(Details.empty())));
 
     // act
-    Result result = await detailDataSource.getDetail(item, parser);
+    Result result = await detailDataSource.getDetail(item);
 
     // assert
     expect(result, isA<ResultSuccess>());
@@ -61,11 +61,11 @@ void main() async {
     provideDummyBuilder<Result<Details>>(
         (_, __) => ResultSuccess(Details.empty()));
 
-    when(detailDataSource.getDetail(any, any)).thenAnswer(
+    when(detailDataSource.getDetail(any)).thenAnswer(
         (_) => Future.value(ResultFailure(GetDetailFailure(message: '---'))));
 
     // act
-    Result result = await detailDataSource.getDetail(item, parser);
+    Result result = await detailDataSource.getDetail(item);
 
     // assert
     expect(result, isA<ResultFailure>());

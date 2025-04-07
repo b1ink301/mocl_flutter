@@ -4,16 +4,21 @@ import 'dart:isolate';
 import 'package:dio/dio.dart';
 import 'package:html/parser.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_parser.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-class NaverCafeParser extends BaseParser {
+class NaverCafeParser implements BaseParser {
+  const NaverCafeParser();
+
   @override
   SiteType get siteType => SiteType.naverCafe;
 
@@ -21,7 +26,7 @@ class NaverCafeParser extends BaseParser {
   String get baseUrl => 'https://m.cafe.naver.com';
 
   @override
-  Result<List<MainItem>> main(Response response) {
+  Future<Result<List<MainItem>>> main(Response response) async {
     final Map<String, dynamic> json = response.data['message'];
     final String status = json['status'];
     if (status != '200') {
@@ -36,10 +41,10 @@ class NaverCafeParser extends BaseParser {
     } else {
       final List<dynamic> cafes = json['result']['cafes'];
       var orderBy = 0;
-      final data = cafes.map((cafe) {
+      final List<MainItem> data = cafes.map((cafe) {
         Map<String, dynamic> json = {
           'siteType': siteType.name,
-          'orderBy': orderBy,
+          'orderBy': orderBy++,
           'url': cafe['cafeId'].toString(),
           'board': cafe['cafeUrl'],
           'text': cafe['mobileCafeName'],
@@ -55,12 +60,6 @@ class NaverCafeParser extends BaseParser {
   }
 
   @override
-  Future<Result> comment(Response response) {
-    // TODO: implement comment
-    throw UnimplementedError();
-  }
-
-  @override
   Future<Result<Details>> detail(Response response) async {
     final responseData = response.data;
     final resultPort = ReceivePort();
@@ -68,7 +67,7 @@ class NaverCafeParser extends BaseParser {
       _detailIsolate,
       [responseData, resultPort.sendPort],
     );
-    return await resultPort.first as Result<Details>;
+    return await resultPort.first;
   }
 
   static void _detailIsolate(List<dynamic> args) {
@@ -80,12 +79,12 @@ class NaverCafeParser extends BaseParser {
     final detail = responseData.first['result'];
     final article = detail['article'];
 
-    final bodyHtml = article['contentHtml'] ?? '';
+    final bodyHtml = article['contentHtml'].toString();
     final writer = article['writer'];
-    final title = article['subject'] ?? '';
+    final title = article['subject'].toString().trim();
     // final id = writer['id'] ?? '';
-    final nickName = writer['nick'] ?? '';
-    final nickImage = writer['image']['url'] ?? '';
+    final nickName = writer['nick'].toString();
+    final nickImage = writer['image']['url'].toString();
     final time = article['writeDate'] ?? 0;
     final viewCount = (article['readCount'] ?? 0).toString();
     // final commentCount = writer['commentCount'];
@@ -97,12 +96,12 @@ class NaverCafeParser extends BaseParser {
 
     final commentItems = comments
         .map((comment) {
-          final id = comment['id'] ?? 'id';
+          final id = comment['id'] ?? -1;
           final writer = comment['writer'];
-          var body = comment['content'] ?? '';
-          final userId = writer['id'];
+          var body = comment['content'].toString();
+          final userId = writer['memberKey'].toString();
           final nickImage = ''; //writer['image']['url'] ?? '';
-          final nickName = writer['nick'] ?? '';
+          final nickName = writer['nick'].toString();
           final isReply = comment['isRef'];
           final time = comment['updateDate'] ?? 0;
           final likeCount = '0';
@@ -173,25 +172,26 @@ class NaverCafeParser extends BaseParser {
       bodyHtml: bodyHtml,
     );
 
-    sendPort.send(Result.success(details));
+    final result = Result.success(details);
+    sendPort.send(result);
   }
 
   @override
   Future<Result<List<ListItem>>> list(
     Response response,
-    int lastId,
+    LastId lastId,
     String boardTitle,
-    Future<Map<int, bool>> Function(SiteType, List<int>) isReads,
+    Future<List<int>> Function(SiteType, List<int>) isReads,
   ) async {
     final receivePort = ReceivePort();
-    final completer = Completer<Result<List<ListItem>>>();
+    final completer = Completer<List<ListItem>>();
 
     receivePort.listen((message) async {
       if (message is ReadStatusRequest) {
         final statuses = await isReads(siteType, message.ids);
         message.responsePort.send(ReadStatusResponse(statuses));
       } else if (message is List<ListItem>) {
-        completer.complete(Result.success(message));
+        completer.complete(message);
         receivePort.close();
       }
     });
@@ -208,13 +208,14 @@ class NaverCafeParser extends BaseParser {
         IsolateMessage<Map<String, dynamic>>(
           receivePort.sendPort,
           message['result'],
-          lastId,
+          lastId.intId,
           boardTitle,
           baseUrl,
+          false,
         ),
       );
 
-      return await completer.future;
+      return Result.success(await completer.future);
     } catch (e) {
       receivePort.close();
       return Result.failure(GetListFailure(message: e.toString()));
@@ -236,28 +237,22 @@ class NaverCafeParser extends BaseParser {
 
     final List<dynamic> articleList = responseData['articleList'];
 
-    for (final article in articleList) {
-      final String type = article['type'];
-      if (type == 'AD') {
-        continue;
-      }
-
-      final Map<String, dynamic> item = article['item'];
-      final int id = item['articleId'] ?? -1;
+    for (final Map<String, dynamic> article in articleList) {
+      final int id = article['articleId'] ?? -1;
 
       if (id <= 0 || lastId > 0 && id >= lastId) continue;
 
-      final int board = item['cafeId'] ?? -2;
-      final String nickName = item['writerNickname'] ?? '-';
-      final String category = item['menuName'] ?? '-';
-      final String title = item['subject'] ?? '-';
-      final String nickImage = item['profileImage'] ?? '-';
-      final int hit = item['readCount'] ?? 0;
-      final int like = item['likeItCount'] ?? 0;
-      final int commentCount = item['commentCount'] ?? 0;
-      final int time = item['writeDateTimestamp'] ?? 0;
-      final String userId = item['memberKey'] ?? '-';
-      final bool hasImage = item['attachImage'] as bool? ?? false;
+      final int board = article['cafeId'] ?? -2;
+      final String nickName = article['writerNickname'].toString();
+      final String category = article['menuName'].toString();
+      final String title = article['subject'].toString();
+      final String nickImage = article['profileImage'].toString();
+      final int hit = article['readCount'] ?? 0;
+      final int like = article['likeItCount'] ?? 0;
+      final int commentCount = article['commentCount'] ?? 0;
+      final int time = article['writeDateTimestamp'] ?? 0;
+      final String userId = article['memberKey'].toString();
+      final bool hasImage = article['attachImage'] as bool? ?? false;
       final dateTime = DateTime.fromMillisecondsSinceEpoch(time);
       final parsedTime = timeago.format(dateTime, locale: 'ko');
       final info = BaseParser.parserInfo(nickName, parsedTime, hit.toString());
@@ -306,7 +301,7 @@ class NaverCafeParser extends BaseParser {
               hit: item['hit'],
               userInfo: item['userInfo'],
               hasImage: item['hasImage'],
-              isRead: readStatusResponse.statuses[item['id']] ?? false,
+              isRead: readStatusResponse.statuses.contains(item['id']),
             ))
         .toList();
 
@@ -357,4 +352,54 @@ class NaverCafeParser extends BaseParser {
       throw Exception('Error parsing $dateTimeString');
     }
   }
+
+  @override
+  String urlByDetail(
+    String url,
+    String board,
+    int id,
+  ) =>
+      'https://apis.naver.com/cafe-web/cafe-articleapi/v3/cafes/$board/articles/$id';
+
+  // 'https://apis.naver.com/cafe-web/cafe-articleapi/v2/cafes/$board/articles/$id'; //?query=&useCafeId=true&requestFrom=A
+
+  @override
+  String urlByList(
+    String url,
+    String board,
+    int page,
+    SortType sortType,
+    LastId lastId,
+  ) {
+    // final String sort = sortType.toQuery(siteType);
+    return "https://apis.naver.com/cafe-web/cafe2/ArticleListV2dot1.json?"
+        "search.clubid=$url"
+        "&search.queryType=lastArticle"
+        "&search.perPage=20"
+        "&ad=false"
+        "&uuid=6dd62de1-7279-49f0-b009-6ccc554ac679"
+        "&search.page=$page";
+  }
+
+  @override
+  String urlBySearchList(
+    String url,
+    String board,
+    int page,
+    String keyword,
+    LastId lastId,
+  ) =>
+      throw UnimplementedError('urlBySearchList');
+
+  @override
+  String urlByMain() =>
+      'https://apis.naver.com/cafe-home-web/cafe-home/v1/cafes/join?perPage=100';
+
+  @override
+  Future<Result<List<CommentItem>>> comments(Response response) =>
+      throw UnimplementedError();
+
+  @override
+  String urlByComments(String url, String board, int id, int page) =>
+      throw UnimplementedError();
 }

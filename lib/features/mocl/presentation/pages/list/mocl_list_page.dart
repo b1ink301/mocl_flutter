@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:easy_debounce/easy_throttle.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -10,7 +11,6 @@ import 'package:mocl_flutter/features/mocl/presentation/injection.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/bloc/list_page_cubit.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_list_view.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/appbar_dual_text_widget.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/dummy_appbar.dart';
 
 class MoclListPage extends StatelessWidget {
   const MoclListPage({super.key});
@@ -33,8 +33,7 @@ class MoclListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final child = Scaffold(
-      appBar: buildDummyAppbar(context),
+    final Scaffold child = Scaffold(
       body: SafeArea(
         left: false,
         right: false,
@@ -44,7 +43,11 @@ class MoclListPage extends StatelessWidget {
             onNotification: (ScrollNotification scrollInfo) {
               if (scrollInfo is ScrollEndNotification) {
                 if (context.mounted && scrollInfo.metrics.extentAfter < 100) {
-                  context.read<ListPageCubit>().fetchPage();
+                  EasyThrottle.throttle(
+                    'list-fetch-throttle',
+                    const Duration(milliseconds: 1000),
+                    context.read<ListPageCubit>().fetchPage,
+                  );
                   return true;
                 }
               }
@@ -80,9 +83,9 @@ class _ListAppbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bloc = context.read<ListPageCubit>();
-    final smallTitle = bloc.smallTitle;
-    final title = bloc.title;
+    final ListPageCubit bloc = context.read<ListPageCubit>();
+    final String smallTitle = bloc.smallTitle;
+    final String title = bloc.title;
 
     return AppbarDualTextWidget(
       smallTitle: smallTitle,

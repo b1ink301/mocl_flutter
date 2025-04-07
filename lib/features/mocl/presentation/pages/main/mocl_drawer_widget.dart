@@ -36,7 +36,7 @@ class DrawerWidget extends StatelessWidget {
                       ListTile(
                         title: Text(siteType.title),
                         titleTextStyle: Theme.of(context).textTheme.bodyMedium,
-                        onTap: () async {
+                        onTap: () {
                           if (context.mounted) {
                             Navigator.of(context).pop();
                             onChangeSite(siteType);

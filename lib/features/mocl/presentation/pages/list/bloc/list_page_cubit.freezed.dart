@@ -17,6 +17,7 @@ final _privateConstructorUsedError = UnsupportedError(
 /// @nodoc
 mixin _$ListPageState {
   bool get isLoading => throw _privateConstructorUsedError;
+  bool get hasReachedMax => throw _privateConstructorUsedError;
   int get count => throw _privateConstructorUsedError;
   String? get error => throw _privateConstructorUsedError;
 
@@ -33,7 +34,7 @@ abstract class $ListPageStateCopyWith<$Res> {
           ListPageState value, $Res Function(ListPageState) then) =
       _$ListPageStateCopyWithImpl<$Res, ListPageState>;
   @useResult
-  $Res call({bool isLoading, int count, String? error});
+  $Res call({bool isLoading, bool hasReachedMax, int count, String? error});
 }
 
 /// @nodoc
@@ -52,6 +53,7 @@ class _$ListPageStateCopyWithImpl<$Res, $Val extends ListPageState>
   @override
   $Res call({
     Object? isLoading = null,
+    Object? hasReachedMax = null,
     Object? count = null,
     Object? error = freezed,
   }) {
@@ -59,6 +61,10 @@ class _$ListPageStateCopyWithImpl<$Res, $Val extends ListPageState>
       isLoading: null == isLoading
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      hasReachedMax: null == hasReachedMax
+          ? _value.hasReachedMax
+          : hasReachedMax // ignore: cast_nullable_to_non_nullable
               as bool,
       count: null == count
           ? _value.count
@@ -80,7 +86,7 @@ abstract class _$$ListPageStateImplCopyWith<$Res>
       __$$ListPageStateImplCopyWithImpl<$Res>;
   @override
   @useResult
-  $Res call({bool isLoading, int count, String? error});
+  $Res call({bool isLoading, bool hasReachedMax, int count, String? error});
 }
 
 /// @nodoc
@@ -97,6 +103,7 @@ class __$$ListPageStateImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? isLoading = null,
+    Object? hasReachedMax = null,
     Object? count = null,
     Object? error = freezed,
   }) {
@@ -104,6 +111,10 @@ class __$$ListPageStateImplCopyWithImpl<$Res>
       isLoading: null == isLoading
           ? _value.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      hasReachedMax: null == hasReachedMax
+          ? _value.hasReachedMax
+          : hasReachedMax // ignore: cast_nullable_to_non_nullable
               as bool,
       count: null == count
           ? _value.count
@@ -121,11 +132,17 @@ class __$$ListPageStateImplCopyWithImpl<$Res>
 
 class _$ListPageStateImpl implements _ListPageState {
   const _$ListPageStateImpl(
-      {this.isLoading = false, this.count = 0, this.error});
+      {this.isLoading = false,
+      this.hasReachedMax = false,
+      this.count = 0,
+      this.error});
 
   @override
   @JsonKey()
   final bool isLoading;
+  @override
+  @JsonKey()
+  final bool hasReachedMax;
   @override
   @JsonKey()
   final int count;
@@ -134,7 +151,7 @@ class _$ListPageStateImpl implements _ListPageState {
 
   @override
   String toString() {
-    return 'ListPageState(isLoading: $isLoading, count: $count, error: $error)';
+    return 'ListPageState(isLoading: $isLoading, hasReachedMax: $hasReachedMax, count: $count, error: $error)';
   }
 
   @override
@@ -144,12 +161,15 @@ class _$ListPageStateImpl implements _ListPageState {
             other is _$ListPageStateImpl &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
+            (identical(other.hasReachedMax, hasReachedMax) ||
+                other.hasReachedMax == hasReachedMax) &&
             (identical(other.count, count) || other.count == count) &&
             (identical(other.error, error) || other.error == error));
   }
 
   @override
-  int get hashCode => Object.hash(runtimeType, isLoading, count, error);
+  int get hashCode =>
+      Object.hash(runtimeType, isLoading, hasReachedMax, count, error);
 
   /// Create a copy of ListPageState
   /// with the given fields replaced by the non-null parameter values.
@@ -163,11 +183,14 @@ class _$ListPageStateImpl implements _ListPageState {
 abstract class _ListPageState implements ListPageState {
   const factory _ListPageState(
       {final bool isLoading,
+      final bool hasReachedMax,
       final int count,
       final String? error}) = _$ListPageStateImpl;
 
   @override
   bool get isLoading;
+  @override
+  bool get hasReachedMax;
   @override
   int get count;
   @override

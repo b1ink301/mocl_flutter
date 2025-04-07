@@ -81,7 +81,7 @@ dependencies:
   async: ^2.11.0
 
   # infinite pagination
-  easy_infinite_pagination: ^0.0.6
+#  easy_infinite_pagination: ^0.0.6
 #  flutter_isolate: ^2.0.4
 
   # share
@@ -97,9 +97,6 @@ dependencies:
   # like crashlytics..
   sentry_flutter: ^8.14.1
 
-  # change app name
-  launcher_name: ^1.0.2
-
   # sliver tools
   sliver_tools: ^0.2.12
 
@@ -113,16 +110,23 @@ dependencies:
 
   dartx: ^1.2.0
 
-dependency_overrides:
+  easy_debounce: ^2.0.3
+
+#dependency_overrides:
 #  flutter_color_models: '1.2.1'
 #  color_models: '1.2.1'
+
+  # nosql
+  sembast: ^3.8.2
+
+  html_unescape: ^2.0.0
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
 
   flutter_lints: ^5.0.0
-  build_runner: ^2.4.9
+  build_runner: ^2.4.13
   json_serializable: ^6.9.0
   mockito: ^5.4.4
   freezed: ^2.5.7
@@ -140,6 +144,5 @@ flutter:
     - assets/clien/
     - assets/meeco/
     - assets/navercafe/
-
-launcher_name:
-  default: "Mocl"
+    - assets/reddit/
+    - assets/theqoo/

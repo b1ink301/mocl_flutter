@@ -5,23 +5,22 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/local_database.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/local/entities/main_item_data.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/local/local_database.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart';
-import 'package:mocl_flutter/features/mocl/data/db/app_database.dart';
-import 'package:mocl_flutter/features/mocl/data/db/entities/main_item_data.dart';
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
 import '../../../../fixtures/fixture_reader.dart';
 import './mocl_local_data_source_test.mocks.dart';
 
-@GenerateMocks([MainDataSource])
+@GenerateMocks([LocalDatabase, MainDataSource])
 void main() {
   const SiteType siteType = SiteType.damoang;
   late MockMainDataSource mainDataSource;
-  late LocalDatabase localDatabase;
-  late final AppDatabase appDatabase;
+  late MockLocalDatabase localDatabase;
   late final List<dynamic> mainListJson;
 
   setUpAll(() async {
@@ -35,9 +34,7 @@ void main() {
             (MethodCall methodCall) async {
       return './';
     });
-    appDatabase = await $FloorAppDatabase.databaseBuilder('mocl.db').build();
-    localDatabase = LocalDatabase(database: appDatabase);
-    // mainDataSource = MainDataSourceImpl(localDatabase: localDatabase);
+    localDatabase = MockLocalDatabase();
     mainDataSource = MockMainDataSource();
 
     mainListJson = json.decode(fixture('damoang_board_link.json'));
@@ -47,7 +44,7 @@ void main() {
 
   test('DB에 메인 목록이 없다.', () async {
     when(mainDataSource.get(siteType))
-        .thenAnswer((_) => Future.value(List.empty()));
+        .thenAnswer((_) => Future.value(ResultSuccess(List.empty())));
     verifyZeroInteractions(mainDataSource);
     final result = await mainDataSource.get(siteType);
     expect(result, equals(List<MainItemModel>.empty()));
@@ -96,7 +93,7 @@ void main() {
   });
 
   test('DB에서 메인 목록을 조회 한다.', () async {
-    final result = await localDatabase.getMainItems(siteType);
+    final result = await localDatabase.getMainData(siteType);
     log("result=$result");
     expect(result, isA<List<MainItemData>>());
   });

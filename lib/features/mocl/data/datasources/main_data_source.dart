@@ -1,15 +1,17 @@
-import 'package:flutter/foundation.dart';
 import 'package:injectable/injectable.dart';
+import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/util/read_json_from_assets.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/local_database.dart';
-import 'package:mocl_flutter/features/mocl/data/db/entities/main_item_data.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/local/entities/main_item_data.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/local/local_database.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/parser/parser_factory.dart';
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/mocl/data/models/model_mapper.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
 abstract class MainDataSource {
-  Future<List<MainItem>> get(SiteType siteType);
+  Future<Result<List<MainItem>>> get(SiteType siteType);
 
   Future<List<int>> set(SiteType siteType, List<MainItem> list);
 
@@ -21,19 +23,31 @@ abstract class MainDataSource {
 }
 
 @LazySingleton(as: MainDataSource)
-class MainDataSourceImpl extends MainDataSource {
+class MainDataSourceImpl implements MainDataSource {
   final LocalDatabase localDatabase;
+  final ParserFactory parserFactory;
 
-  MainDataSourceImpl({required this.localDatabase});
+  const MainDataSourceImpl(
+      {required this.localDatabase, required this.parserFactory});
 
   @override
-  Future<List<MainItem>> get(
-    SiteType siteType,
-  ) async {
-    var result = await localDatabase.getMainItems(siteType);
-    return result.map((item) {
-      return item.toMainItemModel().toEntity(siteType);
-    }).toList();
+  Future<Result<List<MainItem>>> get(SiteType siteType) async {
+    if (siteType == SiteType.naverCafe) {
+      final (parser, api) = parserFactory.buildParser();
+      return api.main(parser);
+    } else {
+      try {
+        final List<MainItemData> result =
+            await localDatabase.getMainData(siteType);
+        final list = result
+            .map((MainItemData item) =>
+                item.toMainItemModel().toEntity(siteType))
+            .toList();
+        return ResultSuccess(list);
+      } catch (e) {
+        return ResultFailure(GetMainFailure(message: e.toString()));
+      }
+    }
   }
 
   @override
@@ -41,26 +55,21 @@ class MainDataSourceImpl extends MainDataSource {
     SiteType siteType,
     List<MainItem> list,
   ) async {
-    var entities = list.map((item) {
-      var data = MainItemMapper.fromEntityToModel(item);
+    final entities = list.map((item) {
+      final MainItemModel data = MainItemMapper.fromEntityToModel(item);
       return MainItemMapper.fromModelToEntity(data);
     }).toList();
     await localDatabase.deleteAll(siteType);
-    return localDatabase.setMainItems(siteType, entities);
+    return localDatabase.setMainData(siteType, entities);
   }
 
   @override
   Future<List<MainItemModel>> getAllFromJson(
     SiteType siteType,
   ) async {
-    try {
-      final jsonPath = '${siteType.name.toLowerCase()}/board_link.json';
-      final decodedData = await readJsonFromAssets<List<dynamic>>(jsonPath);
-      return decodedData.map((item) => MainItemModel.fromJson(item)).toList();
-    } on Exception catch (e) {
-      debugPrint("getAllFromJson - ${e.toString()}");
-      return List.empty();
-    }
+    final String jsonPath = '${siteType.name.toLowerCase()}/board_link.json';
+    final List decodedData = await readJsonFromAssets<List<dynamic>>(jsonPath);
+    return decodedData.map((item) => MainItemModel.fromJson(item)).toList();
   }
 
   @override
@@ -69,8 +78,8 @@ class MainDataSourceImpl extends MainDataSource {
 
   @override
   Future<bool> hasItem(SiteType siteType, MainItem item) {
-    var data = MainItemMapper.fromEntityToModel(item);
-    var entity = MainItemMapper.fromModelToEntity(data);
+    final MainItemModel data = MainItemMapper.fromEntityToModel(item);
+    final MainItemData entity = MainItemMapper.fromModelToEntity(data);
     return localDatabase.hasItem(siteType, entity);
   }
 }

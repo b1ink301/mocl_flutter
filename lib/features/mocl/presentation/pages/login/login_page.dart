@@ -18,7 +18,7 @@ class LoginPage extends StatelessWidget {
   PreferredSizeWidget _buildAppBar(
     BuildContext context,
   ) {
-    var backgroundColor = Theme.of(context).appBarTheme.backgroundColor;
+    final backgroundColor = Theme.of(context).appBarTheme.backgroundColor;
     return AppBar(
       title: MessageWidget(
         message: '로그인',

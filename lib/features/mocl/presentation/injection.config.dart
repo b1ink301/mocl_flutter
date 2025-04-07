@@ -8,18 +8,20 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
+import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
+import 'package:sembast/sembast.dart' as _i310;
+import 'package:sembast/sembast_io.dart' as _i156;
 import 'package:shared_preferences/shared_preferences.dart' as _i460;
 
-import '../data/datasources/api_client.dart' as _i875;
 import '../data/datasources/detail_data_source.dart' as _i694;
 import '../data/datasources/list_data_source.dart' as _i715;
-import '../data/datasources/local_database.dart' as _i231;
+import '../data/datasources/local/local_database.dart' as _i510;
 import '../data/datasources/main_data_source.dart' as _i958;
-import '../data/datasources/parser/base_parser.dart' as _i394;
-import '../data/datasources/parser/parser_factory.dart' as _i63;
-import '../data/db/app_database.dart' as _i724;
+import '../data/datasources/remote/parser/clien_parser.dart' as _i446;
+import '../data/datasources/remote/parser/damoang_parser.dart' as _i468;
+import '../data/datasources/remote/parser/parser_factory.dart' as _i924;
 import '../data/repositories/mocl_detail_repository_impl.dart' as _i205;
 import '../data/repositories/mocl_list_repository_impl.dart' as _i1014;
 import '../data/repositories/mocl_main_repository_impl.dart' as _i555;
@@ -64,88 +66,65 @@ extension GetItInjectableX on _i174.GetIt {
       environment,
       environmentFilter,
     );
-    final parserModule = _$ParserModule();
     final registerModule = _$RegisterModule();
-    gh.factory<Map<_i891.SiteType, _i394.BaseParser>>(
-        () => parserModule.parsers);
     gh.factory<_i237.ClearDataCubit>(() => _i237.ClearDataCubit());
     gh.factory<_i29.SettingsBloc>(() => _i29.SettingsBloc());
     gh.factory<_i830.GetVersionCubit>(() => _i830.GetVersionCubit());
     gh.factory<_i149.DetailViewUtil>(() => _i149.DetailViewUtil());
     gh.factory<_i63.GetHeightCubit>(() => _i63.GetHeightCubit());
-    await gh.singletonAsync<_i724.AppDatabase>(
-      () => registerModule.appDatabase,
+    await gh.singletonAsync<_i156.Database>(
+      () => registerModule.database,
       preResolve: true,
     );
     await gh.singletonAsync<_i460.SharedPreferences>(
       () => registerModule.prefs,
       preResolve: true,
     );
-    gh.lazySingleton<_i875.ApiClient>(() => _i875.ApiClient()..init());
+    gh.singleton<_i361.Dio>(() => registerModule.dio);
     gh.lazySingleton<_i64.ReadableFlag>(() => _i64.ReadableFlag());
-    gh.lazySingleton<_i694.DetailDataSource>(
-        () => _i694.DetailDataSourceImpl(apiClient: gh<_i875.ApiClient>()));
+    gh.lazySingleton<_i446.ClienParser>(() => _i446.ClienParser(gh<bool>()));
+    gh.lazySingleton<_i468.DamoangParser>(
+        () => _i468.DamoangParser(gh<bool>()));
+    gh.factory<_i510.LocalDatabase>(
+        () => _i510.LocalDatabase(database: gh<_i310.Database>()));
     gh.lazySingleton<_i977.SettingsRepository>(() =>
         _i1051.SettingsRepositoryImpl(prefs: gh<_i460.SharedPreferences>()));
-    gh.singleton<_i231.LocalDatabase>(
-      () => _i231.LocalDatabase(database: gh<_i724.AppDatabase>()),
-      dispose: _i231.disposeDataSource,
-    );
+    gh.singleton<_i924.ParserFactory>(() => _i924.ParserFactory(
+          dio: gh<_i361.Dio>(),
+          settingsRepository: gh<_i977.SettingsRepository>(),
+        ));
     gh.factory<_i17.GetSiteType>(() =>
         _i17.GetSiteType(settingsRepository: gh<_i977.SettingsRepository>()));
     gh.factory<_i913.SetSiteType>(() =>
         _i913.SetSiteType(settingsRepository: gh<_i977.SettingsRepository>()));
-    gh.factory<_i63.ParserFactory>(() => _i63.ParserFactory(
-          parsers: gh<Map<_i891.SiteType, _i394.BaseParser>>(),
-          settingsRepository: gh<_i977.SettingsRepository>(),
-        ));
-    gh.lazySingleton<_i958.MainDataSource>(() =>
-        _i958.MainDataSourceImpl(localDatabase: gh<_i231.LocalDatabase>()));
-    gh.factory<_i564.DetailRepository>(() => _i205.DetailRepositoryImpl(
-          dataSource: gh<_i694.DetailDataSource>(),
-          parserFactory: gh<_i63.ParserFactory>(),
-        ));
-    gh.lazySingleton<_i715.ListDataSource>(() => _i715.ListDataSourceImpl(
-          localDatabase: gh<_i231.LocalDatabase>(),
-          apiClient: gh<_i875.ApiClient>(),
-        ));
-    gh.factory<_i480.ListRepository>(() => _i1014.ListRepositoryImpl(
-          dataSource: gh<_i715.ListDataSource>(),
-          parserFactory: gh<_i63.ParserFactory>(),
-        ));
+    gh.lazySingleton<_i694.DetailDataSource>(() =>
+        _i694.DetailDataSourceImpl(parserFactory: gh<_i924.ParserFactory>()));
+    gh.factory<_i564.DetailRepository>(() =>
+        _i205.DetailRepositoryImpl(dataSource: gh<_i694.DetailDataSource>()));
     gh.singleton<_i1067.SiteTypeBloc>(() => _i1067.SiteTypeBloc(
           getSiteType: gh<_i17.GetSiteType>(),
           setSiteType: gh<_i913.SetSiteType>(),
         ));
-    gh.lazySingleton<_i534.MainRepository>(() => _i555.MainRepositoryImpl(
-          dataSource: gh<_i958.MainDataSource>(),
-          apiClient: gh<_i875.ApiClient>(),
-          parserFactory: gh<_i63.ParserFactory>(),
+    gh.lazySingleton<_i958.MainDataSource>(() => _i958.MainDataSourceImpl(
+          localDatabase: gh<_i510.LocalDatabase>(),
+          parserFactory: gh<_i924.ParserFactory>(),
         ));
-    gh.factory<_i673.GetMainList>(
-        () => _i673.GetMainList(mainRepository: gh<_i534.MainRepository>()));
-    gh.factory<_i688.SetMainList>(
-        () => _i688.SetMainList(mainRepository: gh<_i534.MainRepository>()));
-    gh.factory<_i307.GetMainListFromJson>(() =>
-        _i307.GetMainListFromJson(mainRepository: gh<_i534.MainRepository>()));
+    gh.lazySingleton<_i715.ListDataSource>(() => _i715.ListDataSourceImpl(
+          localDatabase: gh<_i510.LocalDatabase>(),
+          parserFactory: gh<_i924.ParserFactory>(),
+        ));
     gh.factory<_i132.GetDetail>(
         () => _i132.GetDetail(detailRepository: gh<_i564.DetailRepository>()));
-    gh.lazySingleton<_i413.MainDataBloc>(() => _i413.MainDataBloc(
-          getMainList: gh<_i673.GetMainList>(),
-          setMainList: gh<_i688.SetMainList>(),
-          getSiteType: gh<_i17.GetSiteType>(),
-          setSiteType: gh<_i913.SetSiteType>(),
-        ));
+    gh.factory<_i480.ListRepository>(() =>
+        _i1014.ListRepositoryImpl(dataSource: gh<_i715.ListDataSource>()));
     gh.factory<_i716.GetList>(
         () => _i716.GetList(listRepository: gh<_i480.ListRepository>()));
     gh.factory<_i902.SetReadFlag>(
         () => _i902.SetReadFlag(listRepository: gh<_i480.ListRepository>()));
     gh.factory<_i145.GetReadFlag>(
         () => _i145.GetReadFlag(listRepository: gh<_i480.ListRepository>()));
-    gh.factory<_i61.MainDataJsonBloc>(() => _i61.MainDataJsonBloc(
-          getMainListFromJson: gh<_i307.GetMainListFromJson>(),
-          setMainList: gh<_i688.SetMainList>(),
-        ));
+    gh.lazySingleton<_i534.MainRepository>(
+        () => _i555.MainRepositoryImpl(dataSource: gh<_i958.MainDataSource>()));
     gh.factoryParam<_i588.ListPageCubit, _i975.MainItem, dynamic>((
       _mainItem,
       _,
@@ -166,10 +145,24 @@ extension GetItInjectableX on _i174.GetIt {
           _listItem,
           _siteType,
         ));
+    gh.factory<_i673.GetMainList>(
+        () => _i673.GetMainList(mainRepository: gh<_i534.MainRepository>()));
+    gh.factory<_i688.SetMainList>(
+        () => _i688.SetMainList(mainRepository: gh<_i534.MainRepository>()));
+    gh.factory<_i307.GetMainListFromJson>(() =>
+        _i307.GetMainListFromJson(mainRepository: gh<_i534.MainRepository>()));
+    gh.lazySingleton<_i413.MainDataBloc>(() => _i413.MainDataBloc(
+          getMainList: gh<_i673.GetMainList>(),
+          setMainList: gh<_i688.SetMainList>(),
+          getSiteType: gh<_i17.GetSiteType>(),
+          setSiteType: gh<_i913.SetSiteType>(),
+        ));
+    gh.factory<_i61.MainDataJsonBloc>(() => _i61.MainDataJsonBloc(
+          getMainListFromJson: gh<_i307.GetMainListFromJson>(),
+          setMainList: gh<_i688.SetMainList>(),
+        ));
     return this;
   }
 }
-
-class _$ParserModule extends _i464.ParserModule {}
 
 class _$RegisterModule extends _i464.RegisterModule {}
