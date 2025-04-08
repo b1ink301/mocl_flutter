@@ -21,9 +21,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 @lazySingleton
 class ClienParser implements BaseParser {
-  final bool isShowNickImage;
-
-  const ClienParser(this.isShowNickImage);
+  const ClienParser();
 
   @override
   SiteType get siteType => SiteType.clien;
@@ -95,7 +93,7 @@ class ClienParser implements BaseParser {
     final resultPort = ReceivePort();
     await Isolate.spawn(_detailIsolate, [
       responseData,
-      isShowNickImage,
+      false,
       resultPort.sendPort,
     ]);
     return await resultPort.first as Result<Details>;
@@ -396,7 +394,7 @@ class ClienParser implements BaseParser {
           lastId.intId,
           boardTitle,
           baseUrl,
-          isShowNickImage,
+          false,
         ),
       );
 

@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:dio/dio.dart';
-import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_api.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_parser.dart';
@@ -54,7 +53,7 @@ class ClienApi extends BaseApi {
     final String host = Uri.parse(parser.baseUrl).host;
     final Map<String, String> headers = {'Host': host, 'User-Agent': userAgent};
     final Response response = await get(url, headers: headers);
-    log('[getList] $url, $headers response = ${response.statusCode}');
+    log('[getList] $url, $headers response = ${response.statusCode}, parser=${parser.runtimeType}');
 
     return response.statusCode == 200
         ? parser.list(response, lastId, item.text, isReads)

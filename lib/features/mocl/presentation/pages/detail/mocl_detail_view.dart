@@ -102,9 +102,9 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
                 Expanded(
                   child: Row(
                     children: [
-                      if (detail.userInfo.nickImage.isNotEmpty &&
-                          detail.userInfo.nickImage.startsWith('http'))
-                        NickImageWidget(url: detail.userInfo.nickImage),
+                      // if (detail.userInfo.nickImage.isNotEmpty &&
+                      //     detail.userInfo.nickImage.startsWith('http'))
+                      //   NickImageWidget(url: detail.userInfo.nickImage),
                       Flexible(
                         child: Text(detail.info, style: bodySmall),
                       ),
@@ -326,22 +326,20 @@ class _CommentList extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: EdgeInsets.zero,
-      separatorBuilder: (_, __) => const Divider(),
-      shrinkWrap: true,
-      physics: const ClampingScrollPhysics(),
-      itemCount: comments.length,
-      itemBuilder: (_, index) => _CommentItem(
-        comment: comments[index],
-        bodySmall: bodySmall,
-        bodyMedium: bodyMedium,
-        hexColor: hexColor,
-        openUrl: openUrl,
-      ),
-    );
-  }
+  Widget build(BuildContext context) => ListView.separated(
+        padding: EdgeInsets.zero,
+        separatorBuilder: (_, __) => const Divider(),
+        shrinkWrap: true,
+        physics: const ClampingScrollPhysics(),
+        itemCount: comments.length,
+        itemBuilder: (_, index) => _CommentItem(
+          comment: comments[index],
+          bodySmall: bodySmall,
+          bodyMedium: bodyMedium,
+          hexColor: hexColor,
+          openUrl: openUrl,
+        ),
+      );
 }
 
 class _CommentItem extends StatelessWidget {
@@ -361,7 +359,7 @@ class _CommentItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userInfo = comment.userInfo;
+    // final userInfo = comment.userInfo;
     final left = comment.isReply ? 16.0 : 0.0;
 
     final likeView = comment.likeCount.isNotEmpty && comment.likeCount != '0'
@@ -380,8 +378,8 @@ class _CommentItem extends StatelessWidget {
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (userInfo.nickImage.isNotEmpty)
-            NickImageWidget(url: userInfo.nickImage),
+          // if (userInfo.nickImage.isNotEmpty)
+          //   NickImageWidget(url: userInfo.nickImage),
           Text(comment.info, style: bodySmall),
           ...likeView,
         ],

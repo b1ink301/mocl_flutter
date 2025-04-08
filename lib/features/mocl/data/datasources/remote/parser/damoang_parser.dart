@@ -113,13 +113,17 @@ class DamoangParser implements BaseParser {
       'section[id=bo_v_info] > div.d-flex > div.me-auto > span.d-inline-block > span.sv_wrap > a.sv_member',
     );
 
-    final nickName = memberElement?.text.trim() ?? '';
+    print('memberElement=${memberElement?.innerHtml}');
+
+    final nickName = memberElement?.querySelector('span.sv_name')?.text.trim() ?? '';
     final nickImage = isShowNickImage
         ? memberElement
-                ?.querySelector('span.profile_img > img')
+                ?.querySelector('img.mb-photo')
                 ?.attributes['src'] ??
             ''
         : '';
+
+    print('nickName=$nickName, nickImage=$nickImage');
 
     var index = 0;
     final comments = container
@@ -132,7 +136,7 @@ class DamoangParser implements BaseParser {
               final url = nickElement?.attributes['href'] ?? '';
               final uri = Uri.parse(url);
               final id = uri.queryParameters['mb_id'] ?? '-1';
-              final nickName = nickElement?.text.trim() ?? '';
+              final nickName = nickElement?.querySelector('span.sv_name')?.text.trim() ?? '';
               final isReply = element.querySelector(
                     'div.comment-list-wrap > header > div > div.me-2 > i.bi',
                   ) !=
