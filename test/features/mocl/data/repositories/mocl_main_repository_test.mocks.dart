@@ -3,29 +3,28 @@
 // Do not manually edit this file.
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'dart:async' as _i7;
+import 'dart:async' as _i5;
 
-import 'package:dio/dio.dart' as _i2;
 import 'package:mockito/mockito.dart' as _i1;
-import 'package:mockito/src/dummies.dart' as _i11;
+import 'package:mockito/src/dummies.dart' as _i9;
 import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart'
-    as _i6;
-import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_api.dart'
-    as _i5;
-import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_parser.dart'
     as _i4;
-import 'package:mocl_flutter/features/mocl/data/datasources/remote/parser/parser_factory.dart'
-    as _i13;
-import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart'
-    as _i12;
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart'
-    as _i9;
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart'
-    as _i8;
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart'
-    as _i10;
-import 'package:mocl_flutter/features/mocl/domain/repositories/settings_repository.dart'
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_api.dart'
     as _i3;
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_parser.dart'
+    as _i2;
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/parser/parser_factory.dart'
+    as _i12;
+import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart'
+    as _i10;
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart'
+    as _i7;
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart'
+    as _i6;
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart'
+    as _i8;
+import 'package:mocl_flutter/features/mocl/domain/repositories/settings_repository.dart'
+    as _i11;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
@@ -40,8 +39,8 @@ import 'package:mocl_flutter/features/mocl/domain/repositories/settings_reposito
 // ignore_for_file: camel_case_types
 // ignore_for_file: subtype_of_sealed_class
 
-class _FakeDio_0 extends _i1.SmartFake implements _i2.Dio {
-  _FakeDio_0(
+class _FakeBaseParser_0 extends _i1.SmartFake implements _i2.BaseParser {
+  _FakeBaseParser_0(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -50,29 +49,8 @@ class _FakeDio_0 extends _i1.SmartFake implements _i2.Dio {
         );
 }
 
-class _FakeSettingsRepository_1 extends _i1.SmartFake
-    implements _i3.SettingsRepository {
-  _FakeSettingsRepository_1(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeBaseParser_2 extends _i1.SmartFake implements _i4.BaseParser {
-  _FakeBaseParser_2(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
-}
-
-class _FakeBaseApi_3 extends _i1.SmartFake implements _i5.BaseApi {
-  _FakeBaseApi_3(
+class _FakeBaseApi_1 extends _i1.SmartFake implements _i3.BaseApi {
+  _FakeBaseApi_1(
     Object parent,
     Invocation parentInvocation,
   ) : super(
@@ -84,32 +62,32 @@ class _FakeBaseApi_3 extends _i1.SmartFake implements _i5.BaseApi {
 /// A class which mocks [MainDataSource].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockMainDataSource extends _i1.Mock implements _i6.MainDataSource {
+class MockMainDataSource extends _i1.Mock implements _i4.MainDataSource {
   MockMainDataSource() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i7.Future<_i8.Result<List<_i9.MainItem>>> get(_i10.SiteType? siteType) =>
+  _i5.Future<_i6.Result<List<_i7.MainItem>>> get(_i8.SiteType? siteType) =>
       (super.noSuchMethod(
         Invocation.method(
           #get,
           [siteType],
         ),
-        returnValue: _i7.Future<_i8.Result<List<_i9.MainItem>>>.value(
-            _i11.dummyValue<_i8.Result<List<_i9.MainItem>>>(
+        returnValue: _i5.Future<_i6.Result<List<_i7.MainItem>>>.value(
+            _i9.dummyValue<_i6.Result<List<_i7.MainItem>>>(
           this,
           Invocation.method(
             #get,
             [siteType],
           ),
         )),
-      ) as _i7.Future<_i8.Result<List<_i9.MainItem>>>);
+      ) as _i5.Future<_i6.Result<List<_i7.MainItem>>>);
 
   @override
-  _i7.Future<List<int>> set(
-    _i10.SiteType? siteType,
-    List<_i9.MainItem>? list,
+  _i5.Future<List<int>> set(
+    _i8.SiteType? siteType,
+    List<_i7.MainItem>? list,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -119,35 +97,34 @@ class MockMainDataSource extends _i1.Mock implements _i6.MainDataSource {
             list,
           ],
         ),
-        returnValue: _i7.Future<List<int>>.value(<int>[]),
-      ) as _i7.Future<List<int>>);
+        returnValue: _i5.Future<List<int>>.value(<int>[]),
+      ) as _i5.Future<List<int>>);
 
   @override
-  _i7.Future<List<_i12.MainItemModel>> getAllFromJson(
-          _i10.SiteType? siteType) =>
+  _i5.Future<List<_i10.MainItemModel>> getAllFromJson(_i8.SiteType? siteType) =>
       (super.noSuchMethod(
         Invocation.method(
           #getAllFromJson,
           [siteType],
         ),
         returnValue:
-            _i7.Future<List<_i12.MainItemModel>>.value(<_i12.MainItemModel>[]),
-      ) as _i7.Future<List<_i12.MainItemModel>>);
+            _i5.Future<List<_i10.MainItemModel>>.value(<_i10.MainItemModel>[]),
+      ) as _i5.Future<List<_i10.MainItemModel>>);
 
   @override
-  _i7.Future<void> deleteAll(_i10.SiteType? siteType) => (super.noSuchMethod(
+  _i5.Future<void> deleteAll(_i8.SiteType? siteType) => (super.noSuchMethod(
         Invocation.method(
           #deleteAll,
           [siteType],
         ),
-        returnValue: _i7.Future<void>.value(),
-        returnValueForMissingStub: _i7.Future<void>.value(),
-      ) as _i7.Future<void>);
+        returnValue: _i5.Future<void>.value(),
+        returnValueForMissingStub: _i5.Future<void>.value(),
+      ) as _i5.Future<void>);
 
   @override
-  _i7.Future<bool> hasItem(
-    _i10.SiteType? siteType,
-    _i9.MainItem? item,
+  _i5.Future<bool> hasItem(
+    _i8.SiteType? siteType,
+    _i7.MainItem? item,
   ) =>
       (super.noSuchMethod(
         Invocation.method(
@@ -157,30 +134,30 @@ class MockMainDataSource extends _i1.Mock implements _i6.MainDataSource {
             item,
           ],
         ),
-        returnValue: _i7.Future<bool>.value(false),
-      ) as _i7.Future<bool>);
+        returnValue: _i5.Future<bool>.value(false),
+      ) as _i5.Future<bool>);
 }
 
 /// A class which mocks [SettingsRepository].
 ///
 /// See the documentation for Mockito's code generation for more information.
 class MockSettingsRepository extends _i1.Mock
-    implements _i3.SettingsRepository {
+    implements _i11.SettingsRepository {
   MockSettingsRepository() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i10.SiteType getSiteType() => (super.noSuchMethod(
+  _i8.SiteType getSiteType() => (super.noSuchMethod(
         Invocation.method(
           #getSiteType,
           [],
         ),
-        returnValue: _i10.SiteType.clien,
-      ) as _i10.SiteType);
+        returnValue: _i8.SiteType.clien,
+      ) as _i8.SiteType);
 
   @override
-  void setSiteType(_i10.SiteType? siteType) => super.noSuchMethod(
+  void setSiteType(_i8.SiteType? siteType) => super.noSuchMethod(
         Invocation.method(
           #setSiteType,
           [siteType],
@@ -192,51 +169,26 @@ class MockSettingsRepository extends _i1.Mock
 /// A class which mocks [ParserFactory].
 ///
 /// See the documentation for Mockito's code generation for more information.
-class MockParserFactory extends _i1.Mock implements _i13.ParserFactory {
+class MockParserFactory extends _i1.Mock implements _i12.ParserFactory {
   MockParserFactory() {
     _i1.throwOnMissingStub(this);
   }
 
   @override
-  _i2.Dio get dio => (super.noSuchMethod(
-        Invocation.getter(#dio),
-        returnValue: _FakeDio_0(
-          this,
-          Invocation.getter(#dio),
-        ),
-      ) as _i2.Dio);
-
-  @override
-  Map<_i10.SiteType, (_i4.BaseParser, _i5.BaseApi)> get parsers =>
-      (super.noSuchMethod(
-        Invocation.getter(#parsers),
-        returnValue: <_i10.SiteType, (_i4.BaseParser, _i5.BaseApi)>{},
-      ) as Map<_i10.SiteType, (_i4.BaseParser, _i5.BaseApi)>);
-
-  @override
-  _i3.SettingsRepository get settingsRepository => (super.noSuchMethod(
-        Invocation.getter(#settingsRepository),
-        returnValue: _FakeSettingsRepository_1(
-          this,
-          Invocation.getter(#settingsRepository),
-        ),
-      ) as _i3.SettingsRepository);
-
-  @override
-  (_i4.BaseParser, _i5.BaseApi) buildParser() => (super.noSuchMethod(
+  (_i2.BaseParser, _i3.BaseApi) buildParser() => (super.noSuchMethod(
         Invocation.method(
           #buildParser,
           [],
         ),
         returnValue: (
-          _FakeBaseParser_2(
+          _FakeBaseParser_0(
             this,
             Invocation.method(
               #buildParser,
               [],
             ),
           ),
-          _FakeBaseApi_3(
+          _FakeBaseApi_1(
             this,
             Invocation.method(
               #buildParser,
@@ -244,5 +196,5 @@ class MockParserFactory extends _i1.Mock implements _i13.ParserFactory {
             ),
           )
         ),
-      ) as (_i4.BaseParser, _i5.BaseApi));
+      ) as (_i2.BaseParser, _i3.BaseApi));
 }

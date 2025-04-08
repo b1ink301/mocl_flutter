@@ -13,16 +13,18 @@ class MainView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textStyle = Theme.of(context).textTheme.bodyMedium;
+    final TextStyle? textStyle = Theme.of(context).textTheme.bodyMedium;
     return BlocBuilder<MainDataBloc, MainDataState>(
-      builder: (context, state) => state.map(
+      builder: (BuildContext context, MainDataState state) => state.map(
         initial: (_) => _buildLoadingView(),
         loading: (_) => _buildLoadingView(),
-        success: (state) => state.data.isEmpty
+        success: (StateSuccess state) => state.data.isEmpty
             ? _buildEmptyView(textStyle)
             : _buildListView(context, state.data, textStyle),
-        failure: (state) => _buildErrorView(context, state.message),
-        requireLogin: (state) => _buildErrorView(context, state.message),
+        failure: (StateFailure state) =>
+            _buildErrorView(context, state.message),
+        requireLogin: (StateRequireLogin state) =>
+            _buildErrorView(context, state.message),
       ),
     );
   }
@@ -47,7 +49,7 @@ class MainView extends StatelessWidget {
   ) =>
       SliverList.separated(
         itemCount: items.length,
-        itemBuilder: (context, index) =>
+        itemBuilder: (BuildContext context, int index) =>
             _buildListItem(context, items[index], textStyle),
         separatorBuilder: (_, __) => const DividerWidget(),
       );

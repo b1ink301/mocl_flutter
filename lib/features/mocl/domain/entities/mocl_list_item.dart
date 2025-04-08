@@ -7,7 +7,7 @@ import 'mocl_user_info.dart';
 
 part 'mocl_list_item.freezed.dart';
 
-@freezed
+@Freezed(equal: true)
 class ListItem with _$ListItem {
   const factory ListItem({
     required int id,
@@ -42,6 +42,17 @@ class ListItem with _$ListItem {
         hasImage: false,
         isRead: false,
       );
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      (other.runtimeType == runtimeType &&
+          other is _$ListItemImpl &&
+          (identical(other.id, id) || other.id == id) &&
+          (identical(other.isRead, isRead) || other.isRead == isRead));
+
+  @override
+  int get hashCode => Object.hash(runtimeType, id, isRead);
 }
 
 extension ListItemExtension on ListItem {

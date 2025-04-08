@@ -58,9 +58,7 @@ class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
           _readableFlag.id = _listItem.id;
           emit(DetailSuccess(data));
         },
-        failure: (failure) {
-          emit(DetailFailed(failure.message));
-        },
+        failure: (failure) => emit(DetailFailed(failure.message)),
       );
     } catch (e) {
       emit(DetailFailed(e.toString()));
@@ -69,7 +67,7 @@ class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
 
   Future<void> _markAsRead() async {
     if (!_listItem.isRead) {
-      final params =
+      final SetReadFlagParams params =
           SetReadFlagParams(siteType: _siteType, boardId: _listItem.id);
       await _setReadFlag(params);
     }

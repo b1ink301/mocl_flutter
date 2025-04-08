@@ -21,9 +21,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 @lazySingleton
 class ClienParser implements BaseParser {
-  final bool isShowNickImage;
-
-  const ClienParser(this.isShowNickImage);
+  const ClienParser();
 
   @override
   SiteType get siteType => SiteType.clien;
@@ -93,11 +91,17 @@ class ClienParser implements BaseParser {
   Future<Result<Details>> detail(Response response) async {
     final responseData = response.data;
     final resultPort = ReceivePort();
-    await Isolate.spawn(_detailIsolate, [
+
+    await compute(_detailIsolate, [
       responseData,
-      isShowNickImage,
+      false,
       resultPort.sendPort,
     ]);
+    // await Isolate.spawn(_detailIsolate, [
+    //   responseData,
+    //   false,
+    //   resultPort.sendPort,
+    // ]);
     return await resultPort.first as Result<Details>;
   }
 
@@ -388,17 +392,25 @@ class ClienParser implements BaseParser {
     });
 
     try {
-      await Isolate.spawn(
-        _parseListInIsolate,
-        IsolateMessage<String>(
-          receivePort.sendPort,
-          response.data,
-          lastId.intId,
-          boardTitle,
-          baseUrl,
-          isShowNickImage,
-        ),
-      );
+      await compute(_parseListInIsolate, IsolateMessage<String>(
+        receivePort.sendPort,
+        response.data,
+        lastId.intId,
+        boardTitle,
+        baseUrl,
+        false,
+      ));
+      // await Isolate.spawn(
+      //   _parseListInIsolate,
+      //   IsolateMessage<String>(
+      //     receivePort.sendPort,
+      //     response.data,
+      //     lastId.intId,
+      //     boardTitle,
+      //     baseUrl,
+      //     false,
+      //   ),
+      // );
 
       return Result.success(await completer.future);
     } catch (e) {
@@ -409,6 +421,7 @@ class ClienParser implements BaseParser {
   }
 
   static void _parseListInIsolate(IsolateMessage<String> message) async {
+    print('_parseListInIsolate - start' );
     final replyPort = message.replyPort;
     final responseData = message.responseData;
     final lastId = message.lastId;
@@ -552,6 +565,7 @@ class ClienParser implements BaseParser {
         .toList();
 
     replyPort.send(resultList);
+    print('_parseListInIsolate - end ${resultList.length}' );
   }
 
   @override

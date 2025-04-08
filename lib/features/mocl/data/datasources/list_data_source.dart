@@ -1,8 +1,6 @@
 import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/local/local_database.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/remote/parser/parser_factory.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_api.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_parser.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
@@ -45,14 +43,12 @@ abstract class ListDataSource {
 @LazySingleton(as: ListDataSource)
 class ListDataSourceImpl implements ListDataSource {
   final LocalDatabase localDatabase;
-  final BaseApi apiClient;
-  final BaseParser parser;
+  final ParserFactory parserFactory;
 
-  ListDataSourceImpl({
+  const ListDataSourceImpl({
     required this.localDatabase,
-    required ParserFactory parserFactory,
-  })  : parser = parserFactory.buildParser().$1,
-        apiClient = parserFactory.buildParser().$2;
+    required this.parserFactory,
+  });
 
   @override
   Future<Result<List<ListItem>>> getList(
@@ -60,8 +56,10 @@ class ListDataSourceImpl implements ListDataSource {
     int page,
     LastId lastId,
     SortType sortType,
-  ) =>
-      apiClient.list(item, page, lastId, sortType, parser, isReadFlags);
+  ) {
+    final (parser, api) = parserFactory.buildParser();
+    return api.list(item, page, lastId, sortType, parser, isReadFlags);
+  }
 
   @override
   Future<Result<List<ListItem>>> getSearchList(
@@ -70,9 +68,11 @@ class ListDataSourceImpl implements ListDataSource {
     LastId lastId,
     SortType sortType,
     String keyword,
-  ) =>
-      apiClient.searchList(
-          item, page, lastId, sortType, keyword, parser, isReadFlags);
+  ) {
+    final (parser, api) = parserFactory.buildParser();
+    return api.searchList(
+        item, page, lastId, sortType, keyword, parser, isReadFlags);
+  }
 
   @override
   Future<int> setReadFlag(

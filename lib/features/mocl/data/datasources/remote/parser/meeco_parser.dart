@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
+import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_ext.dart';
@@ -186,7 +187,7 @@ class MeecoParser implements BaseParser {
       bodyHtml: bodyHtml?.innerHtml ?? '',
     );
 
-    final result = Result.success(detail);
+    final Result<Details> result = Result.success(detail);
     sendPort.send(result);
   }
 
@@ -197,8 +198,8 @@ class MeecoParser implements BaseParser {
     String boardTitle,
     Future<List<int>> Function(SiteType, List<int>) isReads,
   ) async {
-    final receivePort = ReceivePort();
-    final completer = Completer<List<ListItem>>();
+    final ReceivePort receivePort = ReceivePort();
+    final Completer<List<ListItem>> completer = Completer<List<ListItem>>();
 
     receivePort.listen((message) async {
       if (message is ReadStatusRequest) {
@@ -230,28 +231,32 @@ class MeecoParser implements BaseParser {
   }
 
   static void _parseListInIsolate(IsolateMessage<String> message) async {
-    final replyPort = message.replyPort;
-    final responseData = message.responseData;
-    final lastId = message.lastId;
-    final boardTitle = message.boardTitle;
-    final baseUrl = message.baseUrl;
+    final SendPort replyPort = message.replyPort;
+    final String responseData = message.responseData;
+    final int lastId = message.lastId;
+    final String boardTitle = message.boardTitle;
+    final String baseUrl = message.baseUrl;
     // final isShowNickImage = message.isShowNickImage;
 
-    final parsedItems = <Map<String, dynamic>>[];
-    final ids = <int>[];
+    print('_parseListInIsolate=${boardTitle}');
+
+    final List<Map<String, dynamic>> parsedItems = <Map<String, dynamic>>[];
+    final List<int> ids = <int>[];
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
-    final document = parse(responseData).body;
+    final Element? document = parse(responseData).body;
     if (document == null) {
+      replyPort.send(
+          const Result.failure(GetListFailure(message: 'document is null')));
       return;
     }
 
-    final elementList = document.querySelectorAll(
+    final List<Element> elementList = document.querySelectorAll(
         'div.wrap > section[id=container] > div > section.ctt > section.neon_board > div[id=list_swipe_area] > div.list_ctt > div.list_document > div.list_d > ul > li');
 
-    for (final element in elementList) {
-      final category = element
+    for (final Element element in elementList) {
+      final String category = element
               .querySelector('span.hot_text, span.notice_text')
               ?.text
               .trim() ??
@@ -330,13 +335,13 @@ class MeecoParser implements BaseParser {
       ids.add(id);
     }
 
-    final readStatusPort = ReceivePort();
+    final ReceivePort readStatusPort = ReceivePort();
     replyPort.send(ReadStatusRequest(ids, readStatusPort.sendPort));
-    final readStatusResponse = await readStatusPort.first as ReadStatusResponse;
+    final ReadStatusResponse readStatusResponse = await readStatusPort.first as ReadStatusResponse;
     readStatusPort.close();
 
-    final resultList = parsedItems
-        .map((item) => ListItem(
+    final List<ListItem> resultList = parsedItems
+        .map((Map<String, dynamic> item) => ListItem(
               id: item['id'],
               title: item['title'],
               reply: item['reply'],
@@ -353,6 +358,8 @@ class MeecoParser implements BaseParser {
               isRead: readStatusResponse.statuses.contains(item['id']),
             ))
         .toList();
+
+    print('resultList=${resultList.length}');
 
     replyPort.send(resultList);
   }

@@ -1,9 +1,9 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:mocl_flutter/core/util/utilities.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/presentation/injection.dart';
@@ -12,7 +12,6 @@ import 'package:mocl_flutter/features/mocl/presentation/pages/detail/detail_view
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 class DetailView extends StatelessWidget {
@@ -47,26 +46,27 @@ class _DetailView extends StatelessWidget {
   const _DetailView({required this.detail});
 
   @override
-  Widget build(BuildContext context) => MultiSliver(
-        children: [
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: _HeaderSectionDelegate(detail: detail),
-          ),
-          SliverPadding(
-            padding: const EdgeInsets.fromLTRB(16, 0, 8, 0),
-            sliver: SliverToBoxAdapter(
+  Widget build(BuildContext context) => SliverPadding(
+        padding: const EdgeInsets.only(left: 16, right: 8),
+        sliver: MultiSliver(
+          children: [
+            SliverPersistentHeader(
+              pinned: true,
+              delegate: _HeaderSectionDelegate(detail: detail),
+            ),
+            DividerWidget(indent: 0, endIndent: 0),
+            SliverToBoxAdapter(
               child: _DetailContent(detail: detail),
             ),
-          ),
-        ],
+          ],
+        ),
       );
 }
 
 class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
   final Details detail;
 
-  _HeaderSectionDelegate({required this.detail});
+  const _HeaderSectionDelegate({required this.detail});
 
   List<Widget>? _buildLikeView(BuildContext context, TextStyle bodySmall) =>
       detail.likeCount.isNotEmpty && detail.likeCount != '0'
@@ -85,52 +85,44 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    final bodySmall = Theme.of(context).textTheme.bodySmall!;
-    final backgroundColor = Theme.of(context).scaffoldBackgroundColor;
-    final likeView = _buildLikeView(context, bodySmall);
+    final TextStyle bodySmall = Theme.of(context).textTheme.bodySmall!;
+    final Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
+    final List<Widget>? likeView = _buildLikeView(context, bodySmall);
 
     return Container(
+      alignment: AlignmentDirectional.centerStart,
+      height: 45,
       color: backgroundColor,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Padding(
-            padding: const EdgeInsets.fromLTRB(16, 12, 8, 12),
+          Expanded(
             child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Expanded(
-                  child: Row(
-                    children: [
-                      if (detail.userInfo.nickImage.isNotEmpty &&
-                          detail.userInfo.nickImage.startsWith('http'))
-                        NickImageWidget(url: detail.userInfo.nickImage),
-                      Flexible(
-                        child: Text(detail.info, style: bodySmall),
-                      ),
-                    ],
-                  ),
+                // if (detail.userInfo.nickImage.isNotEmpty &&
+                //     detail.userInfo.nickImage.startsWith('http'))
+                //   NickImageWidget(url: detail.userInfo.nickImage),
+                Flexible(
+                  child: Text(detail.info, style: bodySmall),
                 ),
-                if (likeView != null) ...likeView,
               ],
             ),
           ),
-          const DividerWidget(),
+          if (likeView != null) ...likeView,
         ],
       ),
     );
   }
 
   @override
-  double get maxExtent => Platform.isIOS ? 44 : 45;
+  double get maxExtent => 45;
 
   @override
-  double get minExtent => Platform.isIOS ? 44 : 45;
+  double get minExtent => 45;
 
   @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) {
-    return false;
-  }
+  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
+      false;
 }
 
 class _DetailContent extends StatelessWidget {
@@ -140,12 +132,12 @@ class _DetailContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final hexColor = _getHexColor(theme.indicatorColor);
-    final bodySmall = theme.textTheme.bodySmall;
-    final bodyMedium = theme.textTheme.bodyMedium;
-    final bloc = context.read<DetailViewBloc>();
-    final util = getIt<DetailViewUtil>();
+    final ThemeData theme = Theme.of(context);
+    final String hexColor = theme.indicatorColor.stringHexColor;
+    final TextStyle? bodySmall = theme.textTheme.bodySmall;
+    final TextStyle? bodyMedium = theme.textTheme.bodyMedium;
+    final DetailViewBloc bloc = context.read<DetailViewBloc>();
+    final DetailViewUtil util = getIt<DetailViewUtil>();
 
     return Column(
       mainAxisAlignment: MainAxisAlignment.start,
@@ -173,14 +165,6 @@ class _DetailContent extends StatelessWidget {
         const Divider(),
       ],
     );
-  }
-
-  String _getHexColor(Color color) {
-    final red = (color.red * 255).toInt().toRadixString(16).padLeft(2, '0');
-    final green = (color.green * 255).toInt().toRadixString(16).padLeft(2, '0');
-    final blue = (color.blue * 255).toInt().toRadixString(16).padLeft(2, '0');
-    // final alpha = (color.a * 255).toInt().toRadixString(16).padLeft(2, '0');
-    return '#$red$green$blue'.toUpperCase();
   }
 }
 
@@ -326,22 +310,20 @@ class _CommentList extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return ListView.separated(
-      padding: EdgeInsets.zero,
-      separatorBuilder: (_, __) => const Divider(),
-      shrinkWrap: true,
-      physics: const ClampingScrollPhysics(),
-      itemCount: comments.length,
-      itemBuilder: (_, index) => _CommentItem(
-        comment: comments[index],
-        bodySmall: bodySmall,
-        bodyMedium: bodyMedium,
-        hexColor: hexColor,
-        openUrl: openUrl,
-      ),
-    );
-  }
+  Widget build(BuildContext context) => ListView.separated(
+        padding: EdgeInsets.zero,
+        separatorBuilder: (_, __) => const Divider(),
+        shrinkWrap: true,
+        physics: const ClampingScrollPhysics(),
+        itemCount: comments.length,
+        itemBuilder: (_, index) => _CommentItem(
+          comment: comments[index],
+          bodySmall: bodySmall,
+          bodyMedium: bodyMedium,
+          hexColor: hexColor,
+          openUrl: openUrl,
+        ),
+      );
 }
 
 class _CommentItem extends StatelessWidget {
@@ -361,7 +343,7 @@ class _CommentItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final userInfo = comment.userInfo;
+    // final userInfo = comment.userInfo;
     final left = comment.isReply ? 16.0 : 0.0;
 
     final likeView = comment.likeCount.isNotEmpty && comment.likeCount != '0'
@@ -380,8 +362,8 @@ class _CommentItem extends StatelessWidget {
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (userInfo.nickImage.isNotEmpty)
-            NickImageWidget(url: userInfo.nickImage),
+          // if (userInfo.nickImage.isNotEmpty)
+          //   NickImageWidget(url: userInfo.nickImage),
           Text(comment.info, style: bodySmall),
           ...likeView,
         ],

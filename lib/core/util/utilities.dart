@@ -13,3 +13,7 @@ extension ColorFromSring on String {
     }
   }
 }
+
+extension ColorExtension on Color {
+  String get stringHexColor => '#${value.toRadixString(16).padLeft(8, '0').substring(2).toUpperCase()}';
+}

@@ -1,10 +1,8 @@
-import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_api.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_parser.dart';
+import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/remote/parser/parser_factory.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
-import 'package:injectable/injectable.dart';
 
 abstract class DetailDataSource {
   Future<Result<Details>> getDetail(
@@ -13,18 +11,18 @@ abstract class DetailDataSource {
 }
 
 @LazySingleton(as: DetailDataSource)
-class DetailDataSourceImpl extends DetailDataSource {
-  final BaseApi api;
-  final BaseParser parser;
+class DetailDataSourceImpl implements DetailDataSource {
+  final ParserFactory parserFactory;
 
-  DetailDataSourceImpl({
-    required ParserFactory parserFactory,
-  })  : parser = parserFactory.buildParser().$1,
-        api = parserFactory.buildParser().$2;
+  const DetailDataSourceImpl({
+    required this.parserFactory,
+  });
 
   @override
   Future<Result<Details>> getDetail(
     ListItem item,
-  ) =>
-      api.detail(item, parser);
+  ) {
+    final (parser, api) = parserFactory.buildParser();
+    return api.detail(item, parser);
+  }
 }
