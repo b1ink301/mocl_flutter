@@ -18,22 +18,24 @@ part 'mocl_routes.dart';
 class AppPages {
   AppPages._();
 
-  static const initial = Routes.main;
+  static const String initial = Routes.main;
 
-  static final router = GoRouter(
+  static final GoRouter router = GoRouter(
     initialLocation: initial,
     routes: <RouteBase>[
       GoRoute(
           path: Routes.main,
           pageBuilder: (BuildContext context, GoRouterState state) =>
-              SwipeablePage(builder: (context) => MainPage.withBloc(context)),
+              SwipeablePage(
+                  builder: (BuildContext context) =>
+                      MainPage.withBloc(context)),
           routes: [
             GoRoute(
                 path: Routes.setMainDlg,
                 pageBuilder: (BuildContext context, GoRouterState state) =>
                     CupertinoModalPopupPage(
                       builder: (BuildContext context) {
-                        final siteType =
+                        final SiteType siteType =
                             GoRouterState.of(context).extra as SiteType;
                         return AddListDialog.withBloc(context, siteType);
                       },
@@ -42,8 +44,8 @@ class AppPages {
       GoRoute(
         path: Routes.list,
         pageBuilder: (BuildContext context, GoRouterState state) =>
-            SwipeablePage(builder: (context) {
-          final item = GoRouterState.of(context).extra as MainItem;
+            SwipeablePage(builder: (BuildContext context) {
+          final MainItem item = GoRouterState.of(context).extra as MainItem;
           return MoclListPage.withBloc(context, item);
         }),
       ),
@@ -51,11 +53,11 @@ class AppPages {
           path: Routes.detail,
           pageBuilder: (BuildContext context, GoRouterState state) =>
               SwipeablePage(
-                builder: (context) {
-                  final extra =
+                builder: (BuildContext context) {
+                  final List extra =
                       GoRouterState.of(context).extra as List<dynamic>;
-                  final siteType = extra[0] as SiteType;
-                  final item = extra[1] as ListItem;
+                  final SiteType siteType = extra[0] as SiteType;
+                  final ListItem item = extra[1] as ListItem;
                   return DetailPage.withBloc(context, siteType, item);
                 },
               ),
@@ -76,7 +78,9 @@ class AppPages {
       GoRoute(
         path: Routes.settings,
         pageBuilder: (BuildContext context, GoRouterState state) =>
-            SwipeablePage(builder: (context) => SettingsPage.withBloc(context)),
+            SwipeablePage(
+                builder: (BuildContext context) =>
+                    SettingsPage.withBloc(context)),
       ),
       GoRoute(
         path: Routes.login,

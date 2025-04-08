@@ -33,7 +33,7 @@ class SettingsView extends StatelessWidget {
               builder: (context, state) => state.maybeMap(
                 loading: (state) => _buildLoadingView(),
                 orElse: () => InkWell(
-                  onTap: () => {context.read<ClearDataCubit>().clearData()},
+                  onTap: () => context.read<ClearDataCubit>().clearData(),
                   child: Container(
                     width: double.infinity,
                     height: 58,

@@ -11,11 +11,21 @@ class MoclListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final cubit = context.read<ListPageCubit>();
+    final ListPageCubit cubit = context.read<ListPageCubit>();
     return BlocBuilder<ListPageCubit, ListPageState>(
-      builder: (context, state) => SliverList.separated(
-        separatorBuilder: (context, index) => const DividerWidget(),
-        itemBuilder: (context, index) {
+      // buildWhen: (previous, current) =>
+      //     previous.error != current.error ||
+      //     previous.count != current.count ||
+      //     previous.isLoading != current.isLoading ||
+      //     previous.hasReachedMax != current.hasReachedMax,
+      builder: (BuildContext context, ListPageState state) =>
+          SliverList.separated(
+        addAutomaticKeepAlives: false,
+        addRepaintBoundaries: false,
+        addSemanticIndexes: false,
+        separatorBuilder: (BuildContext context, int index) =>
+            const DividerWidget(),
+        itemBuilder: (BuildContext context, int index) {
           if (index == state.count) {
             if (state.error != null) {
               return _buildError(state.error!, cubit.fetchPage);
@@ -27,7 +37,7 @@ class MoclListView extends StatelessWidget {
               );
             }
           } else {
-            final item = cubit.getItem(index);
+            final ListItem item = cubit.getItem(index);
             return MoclListItem(
               key: item.key,
               item: item,
@@ -40,26 +50,24 @@ class MoclListView extends StatelessWidget {
     );
   }
 
-  Widget _buildError(String errorMessage, VoidCallback onRetry) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.error,
-              color: Colors.red,
-              size: 64.0,
-            ),
-            const SizedBox(height: 16.0),
-            Text(errorMessage),
-            const SizedBox(height: 16.0),
-            ElevatedButton(onPressed: onRetry, child: const Text('재시도')),
-          ],
+  Widget _buildError(String errorMessage, VoidCallback onRetry) => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.error,
+                color: Colors.red,
+                size: 64.0,
+              ),
+              const SizedBox(height: 16.0),
+              Text(errorMessage),
+              const SizedBox(height: 16.0),
+              ElevatedButton(onPressed: onRetry, child: const Text('재시도')),
+            ],
+          ),
         ),
-      ),
-    );
-  }
+      );
 }

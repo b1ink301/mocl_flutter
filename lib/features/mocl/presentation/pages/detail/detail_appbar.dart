@@ -14,10 +14,10 @@ class DetailAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       BlocBuilder<GetHeightCubit, GetHeightState>(
-        builder: (context, state) => state.maybeWhen(
+        builder: (BuildContext context, GetHeightState state) => state.maybeWhen(
           orElse: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
-          success: (height) {
-            final bloc = context.read<DetailViewBloc>();
+          success: (double height) {
+            final DetailViewBloc bloc = context.read<DetailViewBloc>();
             return AppbarDualTextWidget(
               title: bloc.title,
               smallTitle: bloc.smallTitle,
@@ -33,23 +33,23 @@ class DetailAppBar extends StatelessWidget {
         PopupMenuButton<int>(
           icon: const Icon(Icons.more_vert),
           onSelected: (int value) {
-            var detailViewBloc = context.read<DetailViewBloc>();
+            final DetailViewBloc detailViewBloc = context.read<DetailViewBloc>();
             switch (value) {
               case 0:
                 detailViewBloc.refresh();
                 break;
               case 1:
-                final url = detailViewBloc.itemUrl;
+                final String url = detailViewBloc.itemUrl;
                 getIt<DetailViewUtil>().openBrowserByUrl(url);
                 break;
               case 2:
-                final url = detailViewBloc.itemUrl;
+                final String url = detailViewBloc.itemUrl;
                 getIt<DetailViewUtil>().shareUrl(url);
                 break;
             }
           },
           itemBuilder: (BuildContext context) {
-            final textStyle = Theme.of(context).textTheme.headlineSmall;
+            final TextStyle? textStyle = Theme.of(context).textTheme.headlineSmall;
             return [
               PopupMenuItem(
                 value: 0,

@@ -53,7 +53,7 @@ class RedditApi extends BaseApi {
           'User-Agent': userAgent
         };
         final Response response = await get(url, headers: headers);
-        log('[getList] $url, $headers response = ${response.statusCode}');
+        log('[getList] $url, $headers response = ${response.statusCode}, parser=${parser.runtimeType}');
 
         return response.statusCode == 200
             ? parser.list(response, lastId, item.text, isReads)

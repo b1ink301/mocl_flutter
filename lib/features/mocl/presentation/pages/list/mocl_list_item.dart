@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/round_text_widget.dart';
 
 class MoclListItem extends StatelessWidget {
