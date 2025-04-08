@@ -40,13 +40,14 @@ class MainPage extends StatelessWidget {
   Widget _buildAppBar(
     BuildContext context,
   ) {
-    final siteType = context.watch<SiteTypeBloc>();
-    final backgroundColor = Theme.of(context).appBarTheme.backgroundColor;
+    final SiteTypeBloc siteType = context.watch<SiteTypeBloc>();
+    final Color? backgroundColor = Theme.of(context).appBarTheme.backgroundColor;
 
     return SliverAppBar(
       title: _buildTitle(context, siteType.title),
       flexibleSpace: Container(color: backgroundColor),
       backgroundColor: backgroundColor,
+      scrolledUnderElevation: 0,
       titleSpacing: 0,
       floating: true,
       pinned: false,
@@ -56,7 +57,7 @@ class MainPage extends StatelessWidget {
           ? null
           : [
               Builder(
-                  builder: (context) => IconButton(
+                  builder: (BuildContext context) => IconButton(
                         onPressed: () =>
                             _handleAddButton(context, siteType.state),
                         icon: const Icon(Icons.add),
@@ -66,7 +67,7 @@ class MainPage extends StatelessWidget {
   }
 
   void _handleAddButton(BuildContext context, SiteType siteType) async {
-    final result = await context.push<List<MainItem>>(
+    final List<MainItem>? result = await context.push<List<MainItem>>(
       Routes.setMainDlgFull,
       extra: siteType,
     );

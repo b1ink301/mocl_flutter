@@ -14,6 +14,9 @@ class MoclListView extends StatelessWidget {
     final cubit = context.read<ListPageCubit>();
     return BlocBuilder<ListPageCubit, ListPageState>(
       builder: (context, state) => SliverList.separated(
+        addAutomaticKeepAlives: false,
+        addRepaintBoundaries: false,
+        addSemanticIndexes: false,
         separatorBuilder: (context, index) => const DividerWidget(),
         itemBuilder: (context, index) {
           if (index == state.count) {
@@ -28,10 +31,12 @@ class MoclListView extends StatelessWidget {
             }
           } else {
             final item = cubit.getItem(index);
-            return MoclListItem(
-              key: item.key,
-              item: item,
-              onTap: () => cubit.onTap(context, index),
+            return RepaintBoundary(
+              child: MoclListItem(
+                key: item.key,
+                item: item,
+                onTap: () => cubit.onTap(context, index),
+              ),
             );
           }
         },
@@ -40,26 +45,24 @@ class MoclListView extends StatelessWidget {
     );
   }
 
-  Widget _buildError(String errorMessage, VoidCallback onRetry) {
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.all(32.0),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const Icon(
-              Icons.error,
-              color: Colors.red,
-              size: 64.0,
-            ),
-            const SizedBox(height: 16.0),
-            Text(errorMessage),
-            const SizedBox(height: 16.0),
-            ElevatedButton(onPressed: onRetry, child: const Text('재시도')),
-          ],
+  Widget _buildError(String errorMessage, VoidCallback onRetry) => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(32.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.error,
+                color: Colors.red,
+                size: 64.0,
+              ),
+              const SizedBox(height: 16.0),
+              Text(errorMessage),
+              const SizedBox(height: 16.0),
+              ElevatedButton(onPressed: onRetry, child: const Text('재시도')),
+            ],
+          ),
         ),
-      ),
-    );
-  }
+      );
 }

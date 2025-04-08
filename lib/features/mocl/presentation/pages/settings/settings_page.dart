@@ -15,29 +15,25 @@ class SettingsPage extends StatelessWidget {
 
   static Widget withBloc(
     BuildContext context,
-  ) {
-    SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-      statusBarColor:
-          Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor,
-    ));
-    return MultiBlocProvider(
-      providers: [
-        BlocProvider(create: (_) {
-          return getIt<GetVersionCubit>()..getVersion();
-        }),
-        BlocProvider(create: (_) => getIt<ClearDataCubit>()),
-      ],
-      child: const SettingsPage(),
-    );
-  }
+  ) =>
+      MultiBlocProvider(
+        providers: [
+          BlocProvider(create: (_) => getIt<GetVersionCubit>()..getVersion()),
+          BlocProvider(create: (_) => getIt<ClearDataCubit>()),
+        ],
+        child: AnnotatedRegion<SystemUiOverlayStyle>(
+            value: Theme.of(context).appBarTheme.systemOverlayStyle!,
+            child: const SettingsPage()),
+      );
 
   Widget _buildAppBar(
     BuildContext context,
   ) {
-    var backgroundColor = Theme.of(context).appBarTheme.backgroundColor;
+    final backgroundColor = Theme.of(context).appBarTheme.backgroundColor;
     return SliverAppBar(
       title: _buildTitle(context, SiteType.settings.title),
-      flexibleSpace: Container(color: backgroundColor),
+      // flexibleSpace: Container(color: backgroundColor),
+      scrolledUnderElevation: 0,
       backgroundColor: backgroundColor,
       titleSpacing: 0,
       pinned: true,
@@ -52,25 +48,24 @@ class SettingsPage extends StatelessWidget {
       );
 
   @override
-  Widget build(BuildContext context) {
-    var statusBarColor =
-        Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor;
-
-    return Scaffold(
-      appBar: Platform.isIOS
-          ? AppBar(
-              toolbarHeight: 0,
-              flexibleSpace: Container(color: statusBarColor),
-            )
-          : null,
-      body: SafeArea(
-        child: CustomScrollView(
-          slivers: <Widget>[
-            _buildAppBar(context),
-            const SettingsView(),
-          ],
+  Widget build(BuildContext context) => Scaffold(
+        appBar: Platform.isIOS
+            ? AppBar(
+                toolbarHeight: 0,
+                flexibleSpace: Container(
+                    color: Theme.of(context)
+                        .appBarTheme
+                        .systemOverlayStyle
+                        ?.statusBarColor),
+              )
+            : null,
+        body: SafeArea(
+          child: CustomScrollView(
+            slivers: <Widget>[
+              _buildAppBar(context),
+              const SettingsView(),
+            ],
+          ),
         ),
-      ),
-    );
-  }
+      );
 }

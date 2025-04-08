@@ -33,12 +33,13 @@ class MoclListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ListPageCubit bloc = context.read<ListPageCubit>();
     final Scaffold child = Scaffold(
       body: SafeArea(
         left: false,
         right: false,
         child: RefreshIndicator(
-          onRefresh: context.read<ListPageCubit>().refresh,
+          onRefresh: bloc.refresh,
           child: NotificationListener<ScrollNotification>(
             onNotification: (ScrollNotification scrollInfo) {
               if (scrollInfo is ScrollEndNotification) {
@@ -46,7 +47,7 @@ class MoclListPage extends StatelessWidget {
                   EasyThrottle.throttle(
                     'list-fetch-throttle',
                     const Duration(milliseconds: 1000),
-                    context.read<ListPageCubit>().fetchPage,
+                    bloc.fetchPage,
                   );
                   return true;
                 }

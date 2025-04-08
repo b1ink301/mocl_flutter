@@ -60,7 +60,7 @@ void main() async {
     mainDataSource = MainDataSourceImpl(
         localDatabase: localDatabase,
         parserFactory:
-            ParserFactory(dio: Dio(), settingsRepository: settingsRepository));
+            ParserFactory({}, settingsRepository));
     settingsRepository = SettingsRepositoryImpl(prefs: prefs);
     mainRepository = MainRepositoryImpl(
       dataSource: mainDataSource,
