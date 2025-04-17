@@ -14,7 +14,7 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  SentryWidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   await configureDependencies();
   unawaited(_firebase());

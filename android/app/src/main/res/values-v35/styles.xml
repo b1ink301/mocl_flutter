@@ -3,6 +3,6 @@
 
     <style name="NormalTheme" parent="@android:style/Theme.Light.NoTitleBar">
         <item name="android:windowBackground">?android:colorBackground</item>
-<!--        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>-->
+        <item name="android:windowOptOutEdgeToEdgeEnforcement">true</item>
     </style>
 </resources>

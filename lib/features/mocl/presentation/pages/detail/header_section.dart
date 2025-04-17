@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/bloc/detail_view_bloc.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 
 class HeaderSection extends StatelessWidget {
   const HeaderSection({super.key});
