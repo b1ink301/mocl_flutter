@@ -238,8 +238,6 @@ class MeecoParser implements BaseParser {
     final String baseUrl = message.baseUrl;
     // final isShowNickImage = message.isShowNickImage;
 
-    print('_parseListInIsolate=${boardTitle}');
-
     final List<Map<String, dynamic>> parsedItems = <Map<String, dynamic>>[];
     final List<int> ids = <int>[];
 
@@ -358,8 +356,6 @@ class MeecoParser implements BaseParser {
               isRead: readStatusResponse.statuses.contains(item['id']),
             ))
         .toList();
-
-    print('resultList=${resultList.length}');
 
     replyPort.send(resultList);
   }

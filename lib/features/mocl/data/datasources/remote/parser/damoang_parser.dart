@@ -113,8 +113,6 @@ class DamoangParser implements BaseParser {
       'section[id=bo_v_info] > div.d-flex > div.me-auto > span.d-inline-block > span.sv_wrap > a.sv_member',
     );
 
-    print('memberElement=${memberElement?.innerHtml}');
-
     final nickName = memberElement?.querySelector('span.sv_name')?.text.trim() ?? '';
     final nickImage = isShowNickImage
         ? memberElement
@@ -122,8 +120,6 @@ class DamoangParser implements BaseParser {
                 ?.attributes['src'] ??
             ''
         : '';
-
-    print('nickName=$nickName, nickImage=$nickImage');
 
     var index = 0;
     final comments = container

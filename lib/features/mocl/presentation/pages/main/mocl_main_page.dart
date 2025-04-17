@@ -12,7 +12,6 @@ import 'package:mocl_flutter/features/mocl/presentation/pages/main/mocl_drawer_w
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/mocl_main_view.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/settings/bloc/get_version_cubit.dart';
 import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/dummy_appbar.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
 
 class MainPage extends StatelessWidget {

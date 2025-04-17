@@ -11,7 +11,6 @@ import 'package:mocl_flutter/features/mocl/presentation/pages/detail/bloc/detail
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/bloc/get_height_cubit.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/detail_appbar.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/mocl_detail_view.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/dummy_appbar.dart';
 
 class DetailPage extends StatelessWidget {
   const DetailPage({super.key});

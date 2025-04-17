@@ -421,7 +421,6 @@ class ClienParser implements BaseParser {
   }
 
   static void _parseListInIsolate(IsolateMessage<String> message) async {
-    print('_parseListInIsolate - start' );
     final replyPort = message.replyPort;
     final responseData = message.responseData;
     final lastId = message.lastId;
@@ -565,7 +564,6 @@ class ClienParser implements BaseParser {
         .toList();
 
     replyPort.send(resultList);
-    print('_parseListInIsolate - end ${resultList.length}' );
   }
 
   @override

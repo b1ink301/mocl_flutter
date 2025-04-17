@@ -29,7 +29,7 @@ class AddListDialog extends StatelessWidget {
   Widget build(BuildContext context) => _buildAlertDialog(context);
 
   AlertDialog _buildAlertDialog(BuildContext context) => AlertDialog(
-        backgroundColor: Theme.of(context).dialogBackgroundColor,
+        backgroundColor: DialogTheme.of(context).backgroundColor,
         title: Column(
           children: [
             const SizedBox(height: 20),
