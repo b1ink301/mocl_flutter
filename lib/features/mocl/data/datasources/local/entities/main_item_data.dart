@@ -8,7 +8,7 @@ part 'main_item_data.freezed.dart';
 part 'main_item_data.g.dart';
 
 @freezed
-class MainItemData with _$MainItemData {
+abstract class MainItemData with _$MainItemData {
   const factory MainItemData({
     required String board,
     required String text,

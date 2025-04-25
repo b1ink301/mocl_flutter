@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/bloc/list_page_cubit.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_list_item.dart';
@@ -18,9 +17,9 @@ class MoclListView extends StatelessWidget {
     return BlocBuilder<ListPageCubit, ListPageState>(
       builder: (BuildContext context, ListPageState state) =>
           SliverList.separated(
-        addAutomaticKeepAlives: false,
-        addRepaintBoundaries: false,
-        addSemanticIndexes: false,
+        // addAutomaticKeepAlives: true,
+        // addRepaintBoundaries: true,
+        // addSemanticIndexes: false,
         separatorBuilder: (BuildContext context, int index) =>
             const DividerWidget(),
         itemBuilder: (BuildContext context, int index) {

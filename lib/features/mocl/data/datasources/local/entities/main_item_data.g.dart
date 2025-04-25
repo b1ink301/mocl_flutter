@@ -6,8 +6,8 @@ part of 'main_item_data.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-_$MainItemDataImpl _$$MainItemDataImplFromJson(Map<String, dynamic> json) =>
-    _$MainItemDataImpl(
+_MainItemData _$MainItemDataFromJson(Map<String, dynamic> json) =>
+    _MainItemData(
       board: json['board'] as String,
       text: json['text'] as String,
       url: json['url'] as String,
@@ -16,7 +16,7 @@ _$MainItemDataImpl _$$MainItemDataImplFromJson(Map<String, dynamic> json) =>
       type: (json['type'] as num).toInt(),
     );
 
-Map<String, dynamic> _$$MainItemDataImplToJson(_$MainItemDataImpl instance) =>
+Map<String, dynamic> _$MainItemDataToJson(_MainItemData instance) =>
     <String, dynamic>{
       'board': instance.board,
       'text': instance.text,

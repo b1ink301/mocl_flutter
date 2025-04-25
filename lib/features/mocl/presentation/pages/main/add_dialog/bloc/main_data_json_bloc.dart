@@ -6,6 +6,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_main_list_from_json.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_main_list.dart';
@@ -38,16 +39,18 @@ class MainDataJsonBloc extends Bloc<MainDataJsonEvent, MainDataJsonState> {
   ) async {
     log('[MainDataJsonBloc] event=$event');
     emit(const StateLoading());
-    var result = await getMainListFromJson.call(event.siteType);
-    result.whenOrNull(
-      success: (data) {
-        _init(data);
-        emit(StateSuccess(data));
-      },
-      failure: (failure) {
-        emit(StateFailure(failure.message));
-      },
-    );
+    final result = await getMainListFromJson.call(event.siteType);
+    switch (result) {
+      case ResultSuccess():
+        _init(result.data);
+        emit(StateSuccess(result.data));
+        break;
+      case ResultFailure():
+        emit(StateFailure(result.failure.message));
+        break;
+      default:
+        break;
+    }
   }
 
   void onChanged<T>(bool isChecked, T? item) {

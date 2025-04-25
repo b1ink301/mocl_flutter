@@ -20,23 +20,23 @@ class DetailView extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       BlocBuilder<DetailViewBloc, DetailViewState>(
-        builder: (context, state) => state.maybeMap(
-          success: (state) => _DetailView(detail: state.detail),
-          failed: (state) => SliverFillRemaining(
-            hasScrollBody: false,
-            child: Padding(
-              padding: const EdgeInsets.all(12.0),
-              child: Center(
-                child: MessageWidget(message: state.message),
+        builder: (context, state) => switch (state) {
+            DetailSuccess() => _DetailView(detail: state.detail),
+            DetailFailed() => SliverFillRemaining(
+                hasScrollBody: false,
+                child: Padding(
+                  padding: const EdgeInsets.all(12.0),
+                  child: Center(
+                    child: MessageWidget(message: state.message),
+                  ),
+                ),
               ),
-            ),
-          ),
-          orElse: () => const SliverToBoxAdapter(
-            child: Column(
-              children: [LoadingWidget(), DividerWidget()],
-            ),
-          ),
-        ),
+            _ => const SliverToBoxAdapter(
+                child: Column(
+                  children: [LoadingWidget(), DividerWidget()],
+                ),
+              )
+          },
       );
 }
 

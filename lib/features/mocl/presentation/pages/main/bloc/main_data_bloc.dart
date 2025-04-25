@@ -3,8 +3,8 @@ import 'dart:async';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:injectable/injectable.dart';
-import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_main_list.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_site_type.dart';
@@ -13,9 +13,7 @@ import 'package:mocl_flutter/features/mocl/domain/usecases/set_site_type.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/bloc/site_type_bloc.dart';
 
 part 'main_data_bloc.freezed.dart';
-
 part 'main_data_event.dart';
-
 part 'main_data_state.dart';
 
 @lazySingleton
@@ -55,24 +53,17 @@ class MainDataBloc extends Bloc<MainDataEvent, MainDataState> {
   ) async {
     emit(const StateLoading());
 
-    final result = await getMainList.call(event.siteType);
-    result.whenOrNull(
-      success: (data) {
-        // emit(StateSuccess(data.whereType<MainItem>().toList()));
-        if (data is List<MainItem>) {
-          emit(StateSuccess(data));
-        } else {
-          emit(StateFailure('Unexpected data type: ${data.runtimeType}'));
-        }
-      },
-      failure: (failure) {
-        if (failure is NotLoginFailure) {
-          emit(StateRequireLogin(failure.message));
-        } else {
-          emit(StateFailure(failure.message));
-        }
-      },
-    );
+    final Result<List<MainItem>> result = await getMainList.call(event.siteType);
+    switch (result) {
+      case ResultLoading<List<MainItem>>():
+        break;
+      case ResultSuccess<List<MainItem>>():
+        emit(StateSuccess(result.data));
+        break;
+      case ResultFailure<List<MainItem>>():
+        emit(StateFailure(result.failure.message));
+        break;
+    }
   }
 
   void refresh(SiteType siteType) => add(GetListEvent(siteType: siteType));

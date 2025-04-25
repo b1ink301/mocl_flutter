@@ -1,3 +1,4 @@
+// dart format width=80
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
@@ -9,33 +10,71 @@ part of 'mocl_details.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$Details {
-  String get title => throw _privateConstructorUsedError;
-  String get time => throw _privateConstructorUsedError;
-  String get viewCount => throw _privateConstructorUsedError;
-  String get likeCount => throw _privateConstructorUsedError;
-  String get bodyHtml => throw _privateConstructorUsedError;
-  String get csrf => throw _privateConstructorUsedError;
-  String get info => throw _privateConstructorUsedError;
-  UserInfo get userInfo => throw _privateConstructorUsedError;
-  List<CommentItem> get comments => throw _privateConstructorUsedError;
+  String get title;
+  String get time;
+  String get viewCount;
+  String get likeCount;
+  String get bodyHtml;
+  String get csrf;
+  String get info;
+  UserInfo get userInfo;
+  List<CommentItem> get comments;
 
   /// Create a copy of Details
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $DetailsCopyWith<Details> get copyWith => throw _privateConstructorUsedError;
+  @pragma('vm:prefer-inline')
+  $DetailsCopyWith<Details> get copyWith =>
+      _$DetailsCopyWithImpl<Details>(this as Details, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is Details &&
+            (identical(other.title, title) || other.title == title) &&
+            (identical(other.time, time) || other.time == time) &&
+            (identical(other.viewCount, viewCount) ||
+                other.viewCount == viewCount) &&
+            (identical(other.likeCount, likeCount) ||
+                other.likeCount == likeCount) &&
+            (identical(other.bodyHtml, bodyHtml) ||
+                other.bodyHtml == bodyHtml) &&
+            (identical(other.csrf, csrf) || other.csrf == csrf) &&
+            (identical(other.info, info) || other.info == info) &&
+            (identical(other.userInfo, userInfo) ||
+                other.userInfo == userInfo) &&
+            const DeepCollectionEquality().equals(other.comments, comments));
+  }
+
+  @override
+  int get hashCode => Object.hash(
+      runtimeType,
+      title,
+      time,
+      viewCount,
+      likeCount,
+      bodyHtml,
+      csrf,
+      info,
+      userInfo,
+      const DeepCollectionEquality().hash(comments));
+
+  @override
+  String toString() {
+    return 'Details(title: $title, time: $time, viewCount: $viewCount, likeCount: $likeCount, bodyHtml: $bodyHtml, csrf: $csrf, info: $info, userInfo: $userInfo, comments: $comments)';
+  }
 }
 
 /// @nodoc
-abstract class $DetailsCopyWith<$Res> {
-  factory $DetailsCopyWith(Details value, $Res Function(Details) then) =
-      _$DetailsCopyWithImpl<$Res, Details>;
+abstract mixin class $DetailsCopyWith<$Res> {
+  factory $DetailsCopyWith(Details value, $Res Function(Details) _then) =
+      _$DetailsCopyWithImpl;
   @useResult
   $Res call(
       {String title,
@@ -52,14 +91,11 @@ abstract class $DetailsCopyWith<$Res> {
 }
 
 /// @nodoc
-class _$DetailsCopyWithImpl<$Res, $Val extends Details>
-    implements $DetailsCopyWith<$Res> {
-  _$DetailsCopyWithImpl(this._value, this._then);
+class _$DetailsCopyWithImpl<$Res> implements $DetailsCopyWith<$Res> {
+  _$DetailsCopyWithImpl(this._self, this._then);
 
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
+  final Details _self;
+  final $Res Function(Details) _then;
 
   /// Create a copy of Details
   /// with the given fields replaced by the non-null parameter values.
@@ -76,44 +112,44 @@ class _$DetailsCopyWithImpl<$Res, $Val extends Details>
     Object? userInfo = null,
     Object? comments = null,
   }) {
-    return _then(_value.copyWith(
+    return _then(_self.copyWith(
       title: null == title
-          ? _value.title
+          ? _self.title
           : title // ignore: cast_nullable_to_non_nullable
               as String,
       time: null == time
-          ? _value.time
+          ? _self.time
           : time // ignore: cast_nullable_to_non_nullable
               as String,
       viewCount: null == viewCount
-          ? _value.viewCount
+          ? _self.viewCount
           : viewCount // ignore: cast_nullable_to_non_nullable
               as String,
       likeCount: null == likeCount
-          ? _value.likeCount
+          ? _self.likeCount
           : likeCount // ignore: cast_nullable_to_non_nullable
               as String,
       bodyHtml: null == bodyHtml
-          ? _value.bodyHtml
+          ? _self.bodyHtml
           : bodyHtml // ignore: cast_nullable_to_non_nullable
               as String,
       csrf: null == csrf
-          ? _value.csrf
+          ? _self.csrf
           : csrf // ignore: cast_nullable_to_non_nullable
               as String,
       info: null == info
-          ? _value.info
+          ? _self.info
           : info // ignore: cast_nullable_to_non_nullable
               as String,
       userInfo: null == userInfo
-          ? _value.userInfo
+          ? _self.userInfo
           : userInfo // ignore: cast_nullable_to_non_nullable
               as UserInfo,
       comments: null == comments
-          ? _value.comments
+          ? _self.comments
           : comments // ignore: cast_nullable_to_non_nullable
               as List<CommentItem>,
-    ) as $Val);
+    ));
   }
 
   /// Create a copy of Details
@@ -121,102 +157,16 @@ class _$DetailsCopyWithImpl<$Res, $Val extends Details>
   @override
   @pragma('vm:prefer-inline')
   $UserInfoCopyWith<$Res> get userInfo {
-    return $UserInfoCopyWith<$Res>(_value.userInfo, (value) {
-      return _then(_value.copyWith(userInfo: value) as $Val);
+    return $UserInfoCopyWith<$Res>(_self.userInfo, (value) {
+      return _then(_self.copyWith(userInfo: value));
     });
   }
 }
 
 /// @nodoc
-abstract class _$$DetailsImplCopyWith<$Res> implements $DetailsCopyWith<$Res> {
-  factory _$$DetailsImplCopyWith(
-          _$DetailsImpl value, $Res Function(_$DetailsImpl) then) =
-      __$$DetailsImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call(
-      {String title,
-      String time,
-      String viewCount,
-      String likeCount,
-      String bodyHtml,
-      String csrf,
-      String info,
-      UserInfo userInfo,
-      List<CommentItem> comments});
 
-  @override
-  $UserInfoCopyWith<$Res> get userInfo;
-}
-
-/// @nodoc
-class __$$DetailsImplCopyWithImpl<$Res>
-    extends _$DetailsCopyWithImpl<$Res, _$DetailsImpl>
-    implements _$$DetailsImplCopyWith<$Res> {
-  __$$DetailsImplCopyWithImpl(
-      _$DetailsImpl _value, $Res Function(_$DetailsImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of Details
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? title = null,
-    Object? time = null,
-    Object? viewCount = null,
-    Object? likeCount = null,
-    Object? bodyHtml = null,
-    Object? csrf = null,
-    Object? info = null,
-    Object? userInfo = null,
-    Object? comments = null,
-  }) {
-    return _then(_$DetailsImpl(
-      title: null == title
-          ? _value.title
-          : title // ignore: cast_nullable_to_non_nullable
-              as String,
-      time: null == time
-          ? _value.time
-          : time // ignore: cast_nullable_to_non_nullable
-              as String,
-      viewCount: null == viewCount
-          ? _value.viewCount
-          : viewCount // ignore: cast_nullable_to_non_nullable
-              as String,
-      likeCount: null == likeCount
-          ? _value.likeCount
-          : likeCount // ignore: cast_nullable_to_non_nullable
-              as String,
-      bodyHtml: null == bodyHtml
-          ? _value.bodyHtml
-          : bodyHtml // ignore: cast_nullable_to_non_nullable
-              as String,
-      csrf: null == csrf
-          ? _value.csrf
-          : csrf // ignore: cast_nullable_to_non_nullable
-              as String,
-      info: null == info
-          ? _value.info
-          : info // ignore: cast_nullable_to_non_nullable
-              as String,
-      userInfo: null == userInfo
-          ? _value.userInfo
-          : userInfo // ignore: cast_nullable_to_non_nullable
-              as UserInfo,
-      comments: null == comments
-          ? _value._comments
-          : comments // ignore: cast_nullable_to_non_nullable
-              as List<CommentItem>,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _$DetailsImpl implements _Details {
-  const _$DetailsImpl(
+class _Details implements Details {
+  const _Details(
       {required this.title,
       required this.time,
       required this.viewCount,
@@ -252,16 +202,19 @@ class _$DetailsImpl implements _Details {
     return EqualUnmodifiableListView(_comments);
   }
 
+  /// Create a copy of Details
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'Details(title: $title, time: $time, viewCount: $viewCount, likeCount: $likeCount, bodyHtml: $bodyHtml, csrf: $csrf, info: $info, userInfo: $userInfo, comments: $comments)';
-  }
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$DetailsCopyWith<_Details> get copyWith =>
+      __$DetailsCopyWithImpl<_Details>(this, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$DetailsImpl &&
+            other is _Details &&
             (identical(other.title, title) || other.title == title) &&
             (identical(other.time, time) || other.time == time) &&
             (identical(other.viewCount, viewCount) ||
@@ -290,50 +243,104 @@ class _$DetailsImpl implements _Details {
       userInfo,
       const DeepCollectionEquality().hash(_comments));
 
+  @override
+  String toString() {
+    return 'Details(title: $title, time: $time, viewCount: $viewCount, likeCount: $likeCount, bodyHtml: $bodyHtml, csrf: $csrf, info: $info, userInfo: $userInfo, comments: $comments)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$DetailsCopyWith<$Res> implements $DetailsCopyWith<$Res> {
+  factory _$DetailsCopyWith(_Details value, $Res Function(_Details) _then) =
+      __$DetailsCopyWithImpl;
+  @override
+  @useResult
+  $Res call(
+      {String title,
+      String time,
+      String viewCount,
+      String likeCount,
+      String bodyHtml,
+      String csrf,
+      String info,
+      UserInfo userInfo,
+      List<CommentItem> comments});
+
+  @override
+  $UserInfoCopyWith<$Res> get userInfo;
+}
+
+/// @nodoc
+class __$DetailsCopyWithImpl<$Res> implements _$DetailsCopyWith<$Res> {
+  __$DetailsCopyWithImpl(this._self, this._then);
+
+  final _Details _self;
+  final $Res Function(_Details) _then;
+
   /// Create a copy of Details
   /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$DetailsImplCopyWith<_$DetailsImpl> get copyWith =>
-      __$$DetailsImplCopyWithImpl<_$DetailsImpl>(this, _$identity);
-}
-
-abstract class _Details implements Details {
-  const factory _Details(
-      {required final String title,
-      required final String time,
-      required final String viewCount,
-      required final String likeCount,
-      required final String bodyHtml,
-      required final String csrf,
-      required final String info,
-      required final UserInfo userInfo,
-      required final List<CommentItem> comments}) = _$DetailsImpl;
-
-  @override
-  String get title;
-  @override
-  String get time;
-  @override
-  String get viewCount;
-  @override
-  String get likeCount;
-  @override
-  String get bodyHtml;
-  @override
-  String get csrf;
-  @override
-  String get info;
-  @override
-  UserInfo get userInfo;
-  @override
-  List<CommentItem> get comments;
+  $Res call({
+    Object? title = null,
+    Object? time = null,
+    Object? viewCount = null,
+    Object? likeCount = null,
+    Object? bodyHtml = null,
+    Object? csrf = null,
+    Object? info = null,
+    Object? userInfo = null,
+    Object? comments = null,
+  }) {
+    return _then(_Details(
+      title: null == title
+          ? _self.title
+          : title // ignore: cast_nullable_to_non_nullable
+              as String,
+      time: null == time
+          ? _self.time
+          : time // ignore: cast_nullable_to_non_nullable
+              as String,
+      viewCount: null == viewCount
+          ? _self.viewCount
+          : viewCount // ignore: cast_nullable_to_non_nullable
+              as String,
+      likeCount: null == likeCount
+          ? _self.likeCount
+          : likeCount // ignore: cast_nullable_to_non_nullable
+              as String,
+      bodyHtml: null == bodyHtml
+          ? _self.bodyHtml
+          : bodyHtml // ignore: cast_nullable_to_non_nullable
+              as String,
+      csrf: null == csrf
+          ? _self.csrf
+          : csrf // ignore: cast_nullable_to_non_nullable
+              as String,
+      info: null == info
+          ? _self.info
+          : info // ignore: cast_nullable_to_non_nullable
+              as String,
+      userInfo: null == userInfo
+          ? _self.userInfo
+          : userInfo // ignore: cast_nullable_to_non_nullable
+              as UserInfo,
+      comments: null == comments
+          ? _self._comments
+          : comments // ignore: cast_nullable_to_non_nullable
+              as List<CommentItem>,
+    ));
+  }
 
   /// Create a copy of Details
   /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$DetailsImplCopyWith<_$DetailsImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @pragma('vm:prefer-inline')
+  $UserInfoCopyWith<$Res> get userInfo {
+    return $UserInfoCopyWith<$Res>(_self.userInfo, (value) {
+      return _then(_self.copyWith(userInfo: value));
+    });
+  }
 }
+
+// dart format on

@@ -15,17 +15,14 @@ class MainView extends StatelessWidget {
   Widget build(BuildContext context) {
     final TextStyle? textStyle = Theme.of(context).textTheme.bodyMedium;
     return BlocBuilder<MainDataBloc, MainDataState>(
-      builder: (BuildContext context, MainDataState state) => state.map(
-        initial: (_) => _buildLoadingView(),
-        loading: (_) => _buildLoadingView(),
-        success: (StateSuccess state) => state.data.isEmpty
+      builder: (BuildContext context, MainDataState state) => switch (state) {
+        StateSuccess() => state.data.isEmpty
             ? _buildEmptyView(textStyle)
             : _buildListView(context, state.data, textStyle),
-        failure: (StateFailure state) =>
-            _buildErrorView(context, state.message),
-        requireLogin: (StateRequireLogin state) =>
-            _buildErrorView(context, state.message),
-      ),
+        StateFailure() => _buildErrorView(context, state.message),
+        StateRequireLogin() => _buildErrorView(context, state.message),
+        _ => _buildLoadingView()
+      },
     );
   }
 

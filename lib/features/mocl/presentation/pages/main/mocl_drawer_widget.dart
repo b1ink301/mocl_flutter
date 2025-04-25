@@ -65,13 +65,17 @@ class DrawerWidget extends StatelessWidget {
                 ),
               ),
               BlocBuilder<GetVersionCubit, GetVersionState>(
-                builder: (BuildContext context, GetVersionState state) => state.maybeMap(
-                  success: (state) => ListTile(
-                    title: Text(state.version, textAlign: TextAlign.center),
-                    titleTextStyle: Theme.of(context).textTheme.bodySmall,
-                  ),
-                  orElse: () => const SizedBox.shrink(),
-                ),
+                builder: (BuildContext context, GetVersionState state) {
+                  switch (state) {
+                    case SuccessGetVersionState():
+                      return ListTile(
+                        title: Text(state.version, textAlign: TextAlign.center),
+                        titleTextStyle: Theme.of(context).textTheme.bodySmall,
+                      );
+                    default:
+                      return const SizedBox.shrink();
+                  }
+                },
               ),
             ],
           ),

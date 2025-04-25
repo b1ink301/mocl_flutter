@@ -14,39 +14,39 @@ class SettingsView extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
             BlocBuilder<GetVersionCubit, GetVersionState>(
-              builder: (context, state) => state.maybeMap(
-                success: (state) => Padding(
-                  padding: const EdgeInsets.symmetric(vertical: 16.0),
-                  child: Text(
-                    state.version,
-                    style: TextStyle(
-                      fontSize: 17,
-                      color: Theme.of(context).indicatorColor,
+              builder: (context, state) => switch (state) {
+                SuccessGetVersionState() => Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 16.0),
+                    child: Text(
+                      state.version,
+                      style: TextStyle(
+                        fontSize: 17,
+                        color: Theme.of(context).indicatorColor,
+                      ),
                     ),
                   ),
-                ),
-                orElse: () => _buildLoadingView(),
-              ),
+                _ => _buildLoadingView()
+              },
             ),
             const DividerWidget(),
             BlocBuilder<ClearDataCubit, ClearDataState>(
-              builder: (context, state) => state.maybeMap(
-                loading: (state) => _buildLoadingView(),
-                orElse: () => InkWell(
-                  onTap: () => context.read<ClearDataCubit>().clearData(),
-                  child: Container(
-                    width: double.infinity,
-                    height: 58,
-                    alignment: Alignment.center,
-                    child: Text(
-                      '캐시 데이터 삭제',
-                      style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).indicatorColor,
-                          ),
+              builder: (context, state) => switch (state) {
+                LoadingClearDataState() => _buildLoadingView(),
+                _ => InkWell(
+                    onTap: () => context.read<ClearDataCubit>().clearData(),
+                    child: Container(
+                      width: double.infinity,
+                      height: 58,
+                      alignment: Alignment.center,
+                      child: Text(
+                        '캐시 데이터 삭제',
+                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                              color: Theme.of(context).indicatorColor,
+                            ),
+                      ),
                     ),
-                  ),
-                ),
-              ),
+                  )
+              },
             ),
             const DividerWidget(),
           ],
