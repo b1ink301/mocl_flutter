@@ -6,6 +6,7 @@ import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_list_ite
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 
+@immutable
 class MoclListView extends StatelessWidget {
   const MoclListView({super.key});
 
@@ -13,11 +14,6 @@ class MoclListView extends StatelessWidget {
   Widget build(BuildContext context) {
     final ListPageCubit cubit = context.read<ListPageCubit>();
     return BlocBuilder<ListPageCubit, ListPageState>(
-      // buildWhen: (previous, current) =>
-      //     previous.error != current.error ||
-      //     previous.count != current.count ||
-      //     previous.isLoading != current.isLoading ||
-      //     previous.hasReachedMax != current.hasReachedMax,
       builder: (BuildContext context, ListPageState state) =>
           SliverList.separated(
         addAutomaticKeepAlives: false,
@@ -38,10 +34,11 @@ class MoclListView extends StatelessWidget {
             }
           } else {
             final ListItem item = cubit.getItem(index);
-            return MoclListItem(
+            return ListItemProvider(
               key: item.key,
-              item: item,
+              model: item,
               onTap: () => cubit.onTap(context, index),
+              child: const MoclListItem(),
             );
           }
         },

@@ -16,7 +16,6 @@ import 'package:mocl_flutter/features/mocl/presentation/pages/list/readable_flag
 import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
 
 part 'list_page_cubit.freezed.dart';
-
 part 'list_page_state.dart';
 
 @injectable
@@ -93,6 +92,8 @@ class ListPageCubit extends Cubit<ListPageState> {
         lastId: _lastId,
         sortType: SortType.recent,
       );
+
+      // final Result<List<ListItem>> result = await compute(_getList.call, params);
       final Result<List<ListItem>> result = await _getList(params);
       result.whenOrNull(
         success: (data) {

@@ -16,7 +16,9 @@ class DetailViewUtil {
 
   Future<void> shareUrl(String url) async {
     final Uri uri = Uri.parse(url);
-    await Share.shareUri(uri);
+    final params = ShareParams(uri: uri);
+    final result = await SharePlus.instance.share(params);
+    debugPrint('shareUrl result=$result');
   }
 
   FutureOr<bool> openUrl(BuildContext context, String url) async {

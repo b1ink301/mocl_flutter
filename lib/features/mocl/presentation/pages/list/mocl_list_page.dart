@@ -12,6 +12,7 @@ import 'package:mocl_flutter/features/mocl/presentation/pages/list/bloc/list_pag
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_list_view.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/appbar_dual_text_widget.dart';
 
+@immutable
 class MoclListPage extends StatelessWidget {
   const MoclListPage({super.key});
 
@@ -79,6 +80,7 @@ class MoclListPage extends StatelessWidget {
   }
 }
 
+@immutable
 class _ListAppbar extends StatelessWidget {
   const _ListAppbar();
 
