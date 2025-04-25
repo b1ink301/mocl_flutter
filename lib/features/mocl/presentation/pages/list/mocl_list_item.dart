@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/round_text_widget.dart';
 
 @immutable
-class ListItemProvider extends InheritedWidget {
-  final ListItem model;
+class ReadableListItemProvider extends InheritedWidget {
+  final ReadableListItem model;
   final VoidCallback onTap;
 
-  const ListItemProvider({
+  const ReadableListItemProvider({
     super.key,
     required super.child,
     required this.model,
     required this.onTap,
   });
 
-  static ListItemProvider of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<ListItemProvider>()!;
+  static ReadableListItemProvider of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<ReadableListItemProvider>()!;
 
   @override
   bool updateShouldNotify(covariant InheritedWidget oldWidget) => false;
@@ -30,18 +30,15 @@ class MoclListItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ListItemProvider provider = ListItemProvider.of(context);
-    final ListItem item = provider.model;
-
-    return RepaintBoundary(
-      child: ListTile(
-        minVerticalPadding: 10,
-        minTileHeight: 24,
-        contentPadding: const EdgeInsets.only(left: 16, right: 12),
-        onTap: provider.onTap,
-        title: const TitleView(),
-        subtitle: item.info.isEmpty ? null : const BottomView(),
-      ),
+    final ReadableListItemProvider provider =
+        ReadableListItemProvider.of(context);
+    return ListTile(
+      minVerticalPadding: 10,
+      minTileHeight: 24,
+      contentPadding: const EdgeInsets.only(left: 16, right: 12),
+      onTap: provider.onTap,
+      title: const TitleView(),
+      subtitle: const BottomView(),
     );
   }
 }
@@ -54,14 +51,16 @@ class TitleView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ListItem item = ListItemProvider.of(context).model;
-    final TextStyle textStyle = MoclTextStyles.of(context).title(item.isRead);
-
-    return Text(
-      item.title,
-      maxLines: 3,
-      overflow: TextOverflow.ellipsis,
-      style: textStyle,
+    final ReadableListItem model = ReadableListItemProvider.of(context).model;
+    debugPrint('TitleView: ${model.item.title}');
+    return ValueListenableBuilder(
+      valueListenable: model.isRead,
+      builder: (BuildContext context, bool isRead, Widget? child) => Text(
+        model.item.title,
+        maxLines: 3,
+        overflow: TextOverflow.ellipsis,
+        style: MoclTextStyles.of(context).title(isRead),
+      ),
     );
   }
 }
@@ -108,15 +107,19 @@ class InfoText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ListItem item = ListItemProvider.of(context).model;
-    final TextStyle textStyle =
-        MoclTextStyles.of(context).smallTitle(item.isRead);
+    final ReadableListItem model = ReadableListItemProvider.of(context).model;
+    final String info = model.item.info;
 
-    return Text(
-      item.info,
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-      style: textStyle,
+    return ValueListenableBuilder(
+      valueListenable: model.isRead,
+      builder: (BuildContext context, bool isRead, Widget? child) {
+        return Text(
+          info,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: MoclTextStyles.of(context).smallTitle(isRead),
+        );
+      },
     );
   }
 }
@@ -129,12 +132,18 @@ class ReplyBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ListItem item = ListItemProvider.of(context).model;
-    final TextStyle textStyle = MoclTextStyles.of(context).badge(item.isRead);
-    final bool hasReply = item.reply.isNotEmpty && item.reply != '0';
+    final ReadableListItem model = ReadableListItemProvider.of(context).model;
+    final String reply = model.item.reply;
+    final bool hasReply = reply.isNotEmpty && reply != '0';
 
     return hasReply
-        ? SizedBox.shrink()
-        : RoundTextWidget(text: item.reply, textStyle: textStyle);
+        ? const SizedBox.shrink()
+        : ValueListenableBuilder(
+            valueListenable: model.isRead,
+            builder: (BuildContext context, bool isRead, Widget? child) {
+              return RoundTextWidget(
+                  text: reply,
+                  textStyle: MoclTextStyles.of(context).badge(isRead));
+            });
   }
 }

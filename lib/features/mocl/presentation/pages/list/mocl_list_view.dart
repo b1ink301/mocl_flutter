@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/bloc/list_page_cubit.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_list_item.dart';
+import 'package:mocl_flutter/features/mocl/presentation/widgets/cached_item_builder.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 
@@ -33,12 +35,14 @@ class MoclListView extends StatelessWidget {
               );
             }
           } else {
-            final ListItem item = cubit.getItem(index);
-            return ListItemProvider(
-              key: item.key,
-              model: item,
-              onTap: () => cubit.onTap(context, index),
-              child: const MoclListItem(),
+            final ReadableListItem item = cubit.getItem(index);
+            return CachedItemBuilder(
+              builder: () => ReadableListItemProvider(
+                key: item.key,
+                model: item,
+                onTap: () => cubit.onTap(context, index),
+                child: const MoclListItem(),
+              ),
             );
           }
         },

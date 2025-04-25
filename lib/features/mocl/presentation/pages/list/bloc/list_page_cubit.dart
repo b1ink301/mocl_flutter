@@ -12,10 +12,12 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_list.dart';
+import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/readable_flag.dart';
 import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
 
 part 'list_page_cubit.freezed.dart';
+
 part 'list_page_state.dart';
 
 @injectable
@@ -24,11 +26,11 @@ class ListPageCubit extends Cubit<ListPageState> {
   final MainItem _mainItem;
   final ReadableFlag _readableFlag;
 
-  final List<ListItem> _list = [];
+  final List<ReadableListItem> _list = [];
 
   // List<ListItem> get list => List.unmodifiable(_list);
 
-  ListItem getItem(int index) => _list.elementAt(index);
+  ReadableListItem getItem(int index) => _list.elementAt(index);
 
   LastId _lastId = LastId.empty();
   int _page = 1;
@@ -59,7 +61,7 @@ class ListPageCubit extends Cubit<ListPageState> {
   }
 
   void onTap(BuildContext context, int index) {
-    final ListItem item = _list[index];
+    final ListItem item = _list[index].item;
     final List<Object> extra = [_mainItem.siteType, item];
     _readableFlag.id = -1;
 
@@ -74,9 +76,7 @@ class ListPageCubit extends Cubit<ListPageState> {
   }
 
   void _updateItemReadStatus(int index) {
-    emit(state.copyWith(isLoading: true));
-    _list[index] = _list[index].copyWith(isRead: true);
-    emit(state.copyWith(isLoading: false));
+    _list[index].markAsRead();
   }
 
   Future<void> fetchPage() async {
@@ -98,8 +98,11 @@ class ListPageCubit extends Cubit<ListPageState> {
       result.whenOrNull(
         success: (data) {
           if (data is List<ListItem>) {
-            if (data.isNotEmpty) {
-              _list.addAll(data);
+            final list =
+                data.whereType<ListItem>().map(_toReadableListItem).toList();
+
+            if (list.isNotEmpty) {
+              _list.addAll(list);
               _lastId = LastId(intId: data.last.id);
             }
             final bool hasReachedMax = _mainItem.siteType == SiteType.clien &&
@@ -124,5 +127,12 @@ class ListPageCubit extends Cubit<ListPageState> {
     } finally {
       _isLoading = false;
     }
+  }
+
+  ReadableListItem _toReadableListItem(ListItem item) {
+    return ReadableListItem(
+      item: item,
+      isRead: ValueNotifier(item.isRead),
+    );
   }
 }
