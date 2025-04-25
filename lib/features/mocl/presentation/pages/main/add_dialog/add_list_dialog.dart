@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -49,15 +47,14 @@ class AddListDialog extends StatelessWidget {
           width: MediaQuery.of(context).size.width * 0.7,
           height: MediaQuery.of(context).size.height * 0.7,
           child: BlocBuilder<MainDataJsonBloc, MainDataJsonState>(
-            builder: (context, state) {
-              final bloc = context.read<MainDataJsonBloc>();
-              return state.map(
-                initial: (_) => const LoadingWidget(),
-                loading: (_) => const LoadingWidget(),
-                success: (state) =>
-                    _buildListView(context, state.data, bloc.onChanged),
-                failure: (state) => MessageWidget(message: state.message),
-              );
+            builder: (BuildContext context, MainDataJsonState state) {
+              final MainDataJsonBloc bloc = context.read<MainDataJsonBloc>();
+              return switch (state) {
+                StateSuccess() =>
+                  _buildListView(context, state.data, bloc.onChanged),
+                StateFailure() => MessageWidget(message: state.message),
+                _ => const LoadingWidget()
+              };
             },
           ),
         ),
@@ -77,7 +74,7 @@ class AddListDialog extends StatelessWidget {
             onPressed: () {
               if (context.mounted) {
                 final bloc = BlocProvider.of<MainDataJsonBloc>(context);
-                log('[onPressed] =${bloc.selectedItems.length}');
+                debugPrint('[onPressed] =${bloc.selectedItems.length}');
                 context.pop(bloc.selectedItems);
               }
             },

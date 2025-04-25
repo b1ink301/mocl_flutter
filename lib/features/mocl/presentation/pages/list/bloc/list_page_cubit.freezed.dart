@@ -1,3 +1,4 @@
+// dart format width=80
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
@@ -9,93 +10,63 @@ part of 'list_page_cubit.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$ListPageState {
-  bool get isLoading => throw _privateConstructorUsedError;
-  bool get hasReachedMax => throw _privateConstructorUsedError;
-  int get count => throw _privateConstructorUsedError;
-  String? get error => throw _privateConstructorUsedError;
+  bool get isLoading;
+  bool get hasReachedMax;
+  int get count;
+  String? get error;
 
   /// Create a copy of ListPageState
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $ListPageStateCopyWith<ListPageState> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $ListPageStateCopyWith<$Res> {
-  factory $ListPageStateCopyWith(
-          ListPageState value, $Res Function(ListPageState) then) =
-      _$ListPageStateCopyWithImpl<$Res, ListPageState>;
-  @useResult
-  $Res call({bool isLoading, bool hasReachedMax, int count, String? error});
-}
-
-/// @nodoc
-class _$ListPageStateCopyWithImpl<$Res, $Val extends ListPageState>
-    implements $ListPageStateCopyWith<$Res> {
-  _$ListPageStateCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of ListPageState
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
+  $ListPageStateCopyWith<ListPageState> get copyWith =>
+      _$ListPageStateCopyWithImpl<ListPageState>(
+          this as ListPageState, _$identity);
+
   @override
-  $Res call({
-    Object? isLoading = null,
-    Object? hasReachedMax = null,
-    Object? count = null,
-    Object? error = freezed,
-  }) {
-    return _then(_value.copyWith(
-      isLoading: null == isLoading
-          ? _value.isLoading
-          : isLoading // ignore: cast_nullable_to_non_nullable
-              as bool,
-      hasReachedMax: null == hasReachedMax
-          ? _value.hasReachedMax
-          : hasReachedMax // ignore: cast_nullable_to_non_nullable
-              as bool,
-      count: null == count
-          ? _value.count
-          : count // ignore: cast_nullable_to_non_nullable
-              as int,
-      error: freezed == error
-          ? _value.error
-          : error // ignore: cast_nullable_to_non_nullable
-              as String?,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is ListPageState &&
+            (identical(other.isLoading, isLoading) ||
+                other.isLoading == isLoading) &&
+            (identical(other.hasReachedMax, hasReachedMax) ||
+                other.hasReachedMax == hasReachedMax) &&
+            (identical(other.count, count) || other.count == count) &&
+            (identical(other.error, error) || other.error == error));
+  }
+
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, isLoading, hasReachedMax, count, error);
+
+  @override
+  String toString() {
+    return 'ListPageState(isLoading: $isLoading, hasReachedMax: $hasReachedMax, count: $count, error: $error)';
   }
 }
 
 /// @nodoc
-abstract class _$$ListPageStateImplCopyWith<$Res>
-    implements $ListPageStateCopyWith<$Res> {
-  factory _$$ListPageStateImplCopyWith(
-          _$ListPageStateImpl value, $Res Function(_$ListPageStateImpl) then) =
-      __$$ListPageStateImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $ListPageStateCopyWith<$Res> {
+  factory $ListPageStateCopyWith(
+          ListPageState value, $Res Function(ListPageState) _then) =
+      _$ListPageStateCopyWithImpl;
   @useResult
   $Res call({bool isLoading, bool hasReachedMax, int count, String? error});
 }
 
 /// @nodoc
-class __$$ListPageStateImplCopyWithImpl<$Res>
-    extends _$ListPageStateCopyWithImpl<$Res, _$ListPageStateImpl>
-    implements _$$ListPageStateImplCopyWith<$Res> {
-  __$$ListPageStateImplCopyWithImpl(
-      _$ListPageStateImpl _value, $Res Function(_$ListPageStateImpl) _then)
-      : super(_value, _then);
+class _$ListPageStateCopyWithImpl<$Res>
+    implements $ListPageStateCopyWith<$Res> {
+  _$ListPageStateCopyWithImpl(this._self, this._then);
+
+  final ListPageState _self;
+  final $Res Function(ListPageState) _then;
 
   /// Create a copy of ListPageState
   /// with the given fields replaced by the non-null parameter values.
@@ -107,21 +78,21 @@ class __$$ListPageStateImplCopyWithImpl<$Res>
     Object? count = null,
     Object? error = freezed,
   }) {
-    return _then(_$ListPageStateImpl(
+    return _then(_self.copyWith(
       isLoading: null == isLoading
-          ? _value.isLoading
+          ? _self.isLoading
           : isLoading // ignore: cast_nullable_to_non_nullable
               as bool,
       hasReachedMax: null == hasReachedMax
-          ? _value.hasReachedMax
+          ? _self.hasReachedMax
           : hasReachedMax // ignore: cast_nullable_to_non_nullable
               as bool,
       count: null == count
-          ? _value.count
+          ? _self.count
           : count // ignore: cast_nullable_to_non_nullable
               as int,
       error: freezed == error
-          ? _value.error
+          ? _self.error
           : error // ignore: cast_nullable_to_non_nullable
               as String?,
     ));
@@ -130,8 +101,8 @@ class __$$ListPageStateImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$ListPageStateImpl implements _ListPageState {
-  const _$ListPageStateImpl(
+class _ListPageState implements ListPageState {
+  const _ListPageState(
       {this.isLoading = false,
       this.hasReachedMax = false,
       this.count = 0,
@@ -149,16 +120,19 @@ class _$ListPageStateImpl implements _ListPageState {
   @override
   final String? error;
 
+  /// Create a copy of ListPageState
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'ListPageState(isLoading: $isLoading, hasReachedMax: $hasReachedMax, count: $count, error: $error)';
-  }
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  _$ListPageStateCopyWith<_ListPageState> get copyWith =>
+      __$ListPageStateCopyWithImpl<_ListPageState>(this, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$ListPageStateImpl &&
+            other is _ListPageState &&
             (identical(other.isLoading, isLoading) ||
                 other.isLoading == isLoading) &&
             (identical(other.hasReachedMax, hasReachedMax) ||
@@ -171,35 +145,60 @@ class _$ListPageStateImpl implements _ListPageState {
   int get hashCode =>
       Object.hash(runtimeType, isLoading, hasReachedMax, count, error);
 
+  @override
+  String toString() {
+    return 'ListPageState(isLoading: $isLoading, hasReachedMax: $hasReachedMax, count: $count, error: $error)';
+  }
+}
+
+/// @nodoc
+abstract mixin class _$ListPageStateCopyWith<$Res>
+    implements $ListPageStateCopyWith<$Res> {
+  factory _$ListPageStateCopyWith(
+          _ListPageState value, $Res Function(_ListPageState) _then) =
+      __$ListPageStateCopyWithImpl;
+  @override
+  @useResult
+  $Res call({bool isLoading, bool hasReachedMax, int count, String? error});
+}
+
+/// @nodoc
+class __$ListPageStateCopyWithImpl<$Res>
+    implements _$ListPageStateCopyWith<$Res> {
+  __$ListPageStateCopyWithImpl(this._self, this._then);
+
+  final _ListPageState _self;
+  final $Res Function(_ListPageState) _then;
+
   /// Create a copy of ListPageState
   /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
   @pragma('vm:prefer-inline')
-  _$$ListPageStateImplCopyWith<_$ListPageStateImpl> get copyWith =>
-      __$$ListPageStateImplCopyWithImpl<_$ListPageStateImpl>(this, _$identity);
+  $Res call({
+    Object? isLoading = null,
+    Object? hasReachedMax = null,
+    Object? count = null,
+    Object? error = freezed,
+  }) {
+    return _then(_ListPageState(
+      isLoading: null == isLoading
+          ? _self.isLoading
+          : isLoading // ignore: cast_nullable_to_non_nullable
+              as bool,
+      hasReachedMax: null == hasReachedMax
+          ? _self.hasReachedMax
+          : hasReachedMax // ignore: cast_nullable_to_non_nullable
+              as bool,
+      count: null == count
+          ? _self.count
+          : count // ignore: cast_nullable_to_non_nullable
+              as int,
+      error: freezed == error
+          ? _self.error
+          : error // ignore: cast_nullable_to_non_nullable
+              as String?,
+    ));
+  }
 }
 
-abstract class _ListPageState implements ListPageState {
-  const factory _ListPageState(
-      {final bool isLoading,
-      final bool hasReachedMax,
-      final int count,
-      final String? error}) = _$ListPageStateImpl;
-
-  @override
-  bool get isLoading;
-  @override
-  bool get hasReachedMax;
-  @override
-  int get count;
-  @override
-  String? get error;
-
-  /// Create a copy of ListPageState
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$ListPageStateImplCopyWith<_$ListPageStateImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
+// dart format on

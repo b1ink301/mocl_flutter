@@ -1,7 +1,7 @@
 part of 'list_page_cubit.dart';
 
 @freezed
-class ListPageState with _$ListPageState {
+abstract class ListPageState with _$ListPageState {
   const factory ListPageState({
     @Default(false) bool isLoading,
     @Default(false) bool hasReachedMax,

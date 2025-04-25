@@ -1,3 +1,4 @@
+// dart format width=80
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
@@ -9,148 +10,26 @@ part of 'main_data_json_bloc.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$MainDataJsonEvent {
-  SiteType get siteType => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(SiteType siteType) getList,
-    required TResult Function(SiteType siteType, List<MainItem> list) addList,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(SiteType siteType)? getList,
-    TResult? Function(SiteType siteType, List<MainItem> list)? addList,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(SiteType siteType)? getList,
-    TResult Function(SiteType siteType, List<MainItem> list)? addList,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(GetListEvent value) getList,
-    required TResult Function(AddListEvent value) addList,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(GetListEvent value)? getList,
-    TResult? Function(AddListEvent value)? addList,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(GetListEvent value)? getList,
-    TResult Function(AddListEvent value)? addList,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+  SiteType get siteType;
 
   /// Create a copy of MainDataJsonEvent
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
   $MainDataJsonEventCopyWith<MainDataJsonEvent> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $MainDataJsonEventCopyWith<$Res> {
-  factory $MainDataJsonEventCopyWith(
-          MainDataJsonEvent value, $Res Function(MainDataJsonEvent) then) =
-      _$MainDataJsonEventCopyWithImpl<$Res, MainDataJsonEvent>;
-  @useResult
-  $Res call({SiteType siteType});
-}
-
-/// @nodoc
-class _$MainDataJsonEventCopyWithImpl<$Res, $Val extends MainDataJsonEvent>
-    implements $MainDataJsonEventCopyWith<$Res> {
-  _$MainDataJsonEventCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of MainDataJsonEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? siteType = null,
-  }) {
-    return _then(_value.copyWith(
-      siteType: null == siteType
-          ? _value.siteType
-          : siteType // ignore: cast_nullable_to_non_nullable
-              as SiteType,
-    ) as $Val);
-  }
-}
-
-/// @nodoc
-abstract class _$$GetListEventImplCopyWith<$Res>
-    implements $MainDataJsonEventCopyWith<$Res> {
-  factory _$$GetListEventImplCopyWith(
-          _$GetListEventImpl value, $Res Function(_$GetListEventImpl) then) =
-      __$$GetListEventImplCopyWithImpl<$Res>;
-  @override
-  @useResult
-  $Res call({SiteType siteType});
-}
-
-/// @nodoc
-class __$$GetListEventImplCopyWithImpl<$Res>
-    extends _$MainDataJsonEventCopyWithImpl<$Res, _$GetListEventImpl>
-    implements _$$GetListEventImplCopyWith<$Res> {
-  __$$GetListEventImplCopyWithImpl(
-      _$GetListEventImpl _value, $Res Function(_$GetListEventImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of MainDataJsonEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? siteType = null,
-  }) {
-    return _then(_$GetListEventImpl(
-      siteType: null == siteType
-          ? _value.siteType
-          : siteType // ignore: cast_nullable_to_non_nullable
-              as SiteType,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _$GetListEventImpl implements GetListEvent {
-  const _$GetListEventImpl({required this.siteType});
-
-  @override
-  final SiteType siteType;
-
-  @override
-  String toString() {
-    return 'MainDataJsonEvent.getList(siteType: $siteType)';
-  }
+      _$MainDataJsonEventCopyWithImpl<MainDataJsonEvent>(
+          this as MainDataJsonEvent, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$GetListEventImpl &&
+            other is MainDataJsonEvent &&
             (identical(other.siteType, siteType) ||
                 other.siteType == siteType));
   }
@@ -158,110 +37,28 @@ class _$GetListEventImpl implements GetListEvent {
   @override
   int get hashCode => Object.hash(runtimeType, siteType);
 
-  /// Create a copy of MainDataJsonEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  @pragma('vm:prefer-inline')
-  _$$GetListEventImplCopyWith<_$GetListEventImpl> get copyWith =>
-      __$$GetListEventImplCopyWithImpl<_$GetListEventImpl>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(SiteType siteType) getList,
-    required TResult Function(SiteType siteType, List<MainItem> list) addList,
-  }) {
-    return getList(siteType);
+  String toString() {
+    return 'MainDataJsonEvent(siteType: $siteType)';
   }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(SiteType siteType)? getList,
-    TResult? Function(SiteType siteType, List<MainItem> list)? addList,
-  }) {
-    return getList?.call(siteType);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(SiteType siteType)? getList,
-    TResult Function(SiteType siteType, List<MainItem> list)? addList,
-    required TResult orElse(),
-  }) {
-    if (getList != null) {
-      return getList(siteType);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(GetListEvent value) getList,
-    required TResult Function(AddListEvent value) addList,
-  }) {
-    return getList(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(GetListEvent value)? getList,
-    TResult? Function(AddListEvent value)? addList,
-  }) {
-    return getList?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(GetListEvent value)? getList,
-    TResult Function(AddListEvent value)? addList,
-    required TResult orElse(),
-  }) {
-    if (getList != null) {
-      return getList(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class GetListEvent implements MainDataJsonEvent {
-  const factory GetListEvent({required final SiteType siteType}) =
-      _$GetListEventImpl;
-
-  @override
-  SiteType get siteType;
-
-  /// Create a copy of MainDataJsonEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$GetListEventImplCopyWith<_$GetListEventImpl> get copyWith =>
-      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$AddListEventImplCopyWith<$Res>
-    implements $MainDataJsonEventCopyWith<$Res> {
-  factory _$$AddListEventImplCopyWith(
-          _$AddListEventImpl value, $Res Function(_$AddListEventImpl) then) =
-      __$$AddListEventImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $MainDataJsonEventCopyWith<$Res> {
+  factory $MainDataJsonEventCopyWith(
+          MainDataJsonEvent value, $Res Function(MainDataJsonEvent) _then) =
+      _$MainDataJsonEventCopyWithImpl;
   @useResult
-  $Res call({SiteType siteType, List<MainItem> list});
+  $Res call({SiteType siteType});
 }
 
 /// @nodoc
-class __$$AddListEventImplCopyWithImpl<$Res>
-    extends _$MainDataJsonEventCopyWithImpl<$Res, _$AddListEventImpl>
-    implements _$$AddListEventImplCopyWith<$Res> {
-  __$$AddListEventImplCopyWithImpl(
-      _$AddListEventImpl _value, $Res Function(_$AddListEventImpl) _then)
-      : super(_value, _then);
+class _$MainDataJsonEventCopyWithImpl<$Res>
+    implements $MainDataJsonEventCopyWith<$Res> {
+  _$MainDataJsonEventCopyWithImpl(this._self, this._then);
+
+  final MainDataJsonEvent _self;
+  final $Res Function(MainDataJsonEvent) _then;
 
   /// Create a copy of MainDataJsonEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -269,48 +66,113 @@ class __$$AddListEventImplCopyWithImpl<$Res>
   @override
   $Res call({
     Object? siteType = null,
-    Object? list = null,
   }) {
-    return _then(_$AddListEventImpl(
+    return _then(_self.copyWith(
       siteType: null == siteType
-          ? _value.siteType
+          ? _self.siteType
           : siteType // ignore: cast_nullable_to_non_nullable
               as SiteType,
-      list: null == list
-          ? _value._list
-          : list // ignore: cast_nullable_to_non_nullable
-              as List<MainItem>,
     ));
   }
 }
 
 /// @nodoc
 
-class _$AddListEventImpl implements AddListEvent {
-  const _$AddListEventImpl(
+class GetListEvent implements MainDataJsonEvent {
+  const GetListEvent({required this.siteType});
+
+  @override
+  final SiteType siteType;
+
+  /// Create a copy of MainDataJsonEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $GetListEventCopyWith<GetListEvent> get copyWith =>
+      _$GetListEventCopyWithImpl<GetListEvent>(this, _$identity);
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is GetListEvent &&
+            (identical(other.siteType, siteType) ||
+                other.siteType == siteType));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, siteType);
+
+  @override
+  String toString() {
+    return 'MainDataJsonEvent.getList(siteType: $siteType)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $GetListEventCopyWith<$Res>
+    implements $MainDataJsonEventCopyWith<$Res> {
+  factory $GetListEventCopyWith(
+          GetListEvent value, $Res Function(GetListEvent) _then) =
+      _$GetListEventCopyWithImpl;
+  @override
+  @useResult
+  $Res call({SiteType siteType});
+}
+
+/// @nodoc
+class _$GetListEventCopyWithImpl<$Res> implements $GetListEventCopyWith<$Res> {
+  _$GetListEventCopyWithImpl(this._self, this._then);
+
+  final GetListEvent _self;
+  final $Res Function(GetListEvent) _then;
+
+  /// Create a copy of MainDataJsonEvent
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? siteType = null,
+  }) {
+    return _then(GetListEvent(
+      siteType: null == siteType
+          ? _self.siteType
+          : siteType // ignore: cast_nullable_to_non_nullable
+              as SiteType,
+    ));
+  }
+}
+
+/// @nodoc
+
+class AddListEvent implements MainDataJsonEvent {
+  const AddListEvent(
       {required this.siteType, required final List<MainItem> list})
       : _list = list;
 
   @override
   final SiteType siteType;
   final List<MainItem> _list;
-  @override
   List<MainItem> get list {
     if (_list is EqualUnmodifiableListView) return _list;
     // ignore: implicit_dynamic_type
     return EqualUnmodifiableListView(_list);
   }
 
+  /// Create a copy of MainDataJsonEvent
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'MainDataJsonEvent.addList(siteType: $siteType, list: $list)';
-  }
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $AddListEventCopyWith<AddListEvent> get copyWith =>
+      _$AddListEventCopyWithImpl<AddListEvent>(this, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$AddListEventImpl &&
+            other is AddListEvent &&
             (identical(other.siteType, siteType) ||
                 other.siteType == siteType) &&
             const DeepCollectionEquality().equals(other._list, _list));
@@ -320,430 +182,177 @@ class _$AddListEventImpl implements AddListEvent {
   int get hashCode => Object.hash(
       runtimeType, siteType, const DeepCollectionEquality().hash(_list));
 
-  /// Create a copy of MainDataJsonEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  @pragma('vm:prefer-inline')
-  _$$AddListEventImplCopyWith<_$AddListEventImpl> get copyWith =>
-      __$$AddListEventImplCopyWithImpl<_$AddListEventImpl>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(SiteType siteType) getList,
-    required TResult Function(SiteType siteType, List<MainItem> list) addList,
-  }) {
-    return addList(siteType, list);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(SiteType siteType)? getList,
-    TResult? Function(SiteType siteType, List<MainItem> list)? addList,
-  }) {
-    return addList?.call(siteType, list);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(SiteType siteType)? getList,
-    TResult Function(SiteType siteType, List<MainItem> list)? addList,
-    required TResult orElse(),
-  }) {
-    if (addList != null) {
-      return addList(siteType, list);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(GetListEvent value) getList,
-    required TResult Function(AddListEvent value) addList,
-  }) {
-    return addList(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(GetListEvent value)? getList,
-    TResult? Function(AddListEvent value)? addList,
-  }) {
-    return addList?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(GetListEvent value)? getList,
-    TResult Function(AddListEvent value)? addList,
-    required TResult orElse(),
-  }) {
-    if (addList != null) {
-      return addList(this);
-    }
-    return orElse();
+  String toString() {
+    return 'MainDataJsonEvent.addList(siteType: $siteType, list: $list)';
   }
 }
 
-abstract class AddListEvent implements MainDataJsonEvent {
-  const factory AddListEvent(
-      {required final SiteType siteType,
-      required final List<MainItem> list}) = _$AddListEventImpl;
-
+/// @nodoc
+abstract mixin class $AddListEventCopyWith<$Res>
+    implements $MainDataJsonEventCopyWith<$Res> {
+  factory $AddListEventCopyWith(
+          AddListEvent value, $Res Function(AddListEvent) _then) =
+      _$AddListEventCopyWithImpl;
   @override
-  SiteType get siteType;
-  List<MainItem> get list;
+  @useResult
+  $Res call({SiteType siteType, List<MainItem> list});
+}
+
+/// @nodoc
+class _$AddListEventCopyWithImpl<$Res> implements $AddListEventCopyWith<$Res> {
+  _$AddListEventCopyWithImpl(this._self, this._then);
+
+  final AddListEvent _self;
+  final $Res Function(AddListEvent) _then;
 
   /// Create a copy of MainDataJsonEvent
   /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$AddListEventImplCopyWith<_$AddListEventImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? siteType = null,
+    Object? list = null,
+  }) {
+    return _then(AddListEvent(
+      siteType: null == siteType
+          ? _self.siteType
+          : siteType // ignore: cast_nullable_to_non_nullable
+              as SiteType,
+      list: null == list
+          ? _self._list
+          : list // ignore: cast_nullable_to_non_nullable
+              as List<MainItem>,
+    ));
+  }
 }
 
 /// @nodoc
 mixin _$MainDataJsonState {
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() initial,
-    required TResult Function() loading,
-    required TResult Function(List<MainItem> data) success,
-    required TResult Function(String message) failure,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
-    TResult? Function()? loading,
-    TResult? Function(List<MainItem> data)? success,
-    TResult? Function(String message)? failure,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
-    TResult Function()? loading,
-    TResult Function(List<MainItem> data)? success,
-    TResult Function(String message)? failure,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(StateInitial value) initial,
-    required TResult Function(StateLoading value) loading,
-    required TResult Function(StateSuccess value) success,
-    required TResult Function(StateFailure value) failure,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(StateInitial value)? initial,
-    TResult? Function(StateLoading value)? loading,
-    TResult? Function(StateSuccess value)? success,
-    TResult? Function(StateFailure value)? failure,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(StateInitial value)? initial,
-    TResult Function(StateLoading value)? loading,
-    TResult Function(StateSuccess value)? success,
-    TResult Function(StateFailure value)? failure,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is MainDataJsonState);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  String toString() {
+    return 'MainDataJsonState()';
+  }
 }
 
 /// @nodoc
-abstract class $MainDataJsonStateCopyWith<$Res> {
-  factory $MainDataJsonStateCopyWith(
-          MainDataJsonState value, $Res Function(MainDataJsonState) then) =
-      _$MainDataJsonStateCopyWithImpl<$Res, MainDataJsonState>;
-}
-
-/// @nodoc
-class _$MainDataJsonStateCopyWithImpl<$Res, $Val extends MainDataJsonState>
-    implements $MainDataJsonStateCopyWith<$Res> {
-  _$MainDataJsonStateCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of MainDataJsonState
-  /// with the given fields replaced by the non-null parameter values.
-}
-
-/// @nodoc
-abstract class _$$StateInitialImplCopyWith<$Res> {
-  factory _$$StateInitialImplCopyWith(
-          _$StateInitialImpl value, $Res Function(_$StateInitialImpl) then) =
-      __$$StateInitialImplCopyWithImpl<$Res>;
-}
-
-/// @nodoc
-class __$$StateInitialImplCopyWithImpl<$Res>
-    extends _$MainDataJsonStateCopyWithImpl<$Res, _$StateInitialImpl>
-    implements _$$StateInitialImplCopyWith<$Res> {
-  __$$StateInitialImplCopyWithImpl(
-      _$StateInitialImpl _value, $Res Function(_$StateInitialImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of MainDataJsonState
-  /// with the given fields replaced by the non-null parameter values.
+class $MainDataJsonStateCopyWith<$Res> {
+  $MainDataJsonStateCopyWith(
+      MainDataJsonState _, $Res Function(MainDataJsonState) __);
 }
 
 /// @nodoc
 
-class _$StateInitialImpl implements StateInitial {
-  const _$StateInitialImpl();
+class StateInitial implements MainDataJsonState {
+  const StateInitial();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is StateInitial);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
 
   @override
   String toString() {
     return 'MainDataJsonState.initial()';
   }
+}
+
+/// @nodoc
+
+class StateLoading implements MainDataJsonState {
+  const StateLoading();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$StateInitialImpl);
+        (other.runtimeType == runtimeType && other is StateLoading);
   }
 
   @override
   int get hashCode => runtimeType.hashCode;
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() initial,
-    required TResult Function() loading,
-    required TResult Function(List<MainItem> data) success,
-    required TResult Function(String message) failure,
-  }) {
-    return initial();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
-    TResult? Function()? loading,
-    TResult? Function(List<MainItem> data)? success,
-    TResult? Function(String message)? failure,
-  }) {
-    return initial?.call();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
-    TResult Function()? loading,
-    TResult Function(List<MainItem> data)? success,
-    TResult Function(String message)? failure,
-    required TResult orElse(),
-  }) {
-    if (initial != null) {
-      return initial();
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(StateInitial value) initial,
-    required TResult Function(StateLoading value) loading,
-    required TResult Function(StateSuccess value) success,
-    required TResult Function(StateFailure value) failure,
-  }) {
-    return initial(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(StateInitial value)? initial,
-    TResult? Function(StateLoading value)? loading,
-    TResult? Function(StateSuccess value)? success,
-    TResult? Function(StateFailure value)? failure,
-  }) {
-    return initial?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(StateInitial value)? initial,
-    TResult Function(StateLoading value)? loading,
-    TResult Function(StateSuccess value)? success,
-    TResult Function(StateFailure value)? failure,
-    required TResult orElse(),
-  }) {
-    if (initial != null) {
-      return initial(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class StateInitial implements MainDataJsonState {
-  const factory StateInitial() = _$StateInitialImpl;
-}
-
-/// @nodoc
-abstract class _$$StateLoadingImplCopyWith<$Res> {
-  factory _$$StateLoadingImplCopyWith(
-          _$StateLoadingImpl value, $Res Function(_$StateLoadingImpl) then) =
-      __$$StateLoadingImplCopyWithImpl<$Res>;
-}
-
-/// @nodoc
-class __$$StateLoadingImplCopyWithImpl<$Res>
-    extends _$MainDataJsonStateCopyWithImpl<$Res, _$StateLoadingImpl>
-    implements _$$StateLoadingImplCopyWith<$Res> {
-  __$$StateLoadingImplCopyWithImpl(
-      _$StateLoadingImpl _value, $Res Function(_$StateLoadingImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of MainDataJsonState
-  /// with the given fields replaced by the non-null parameter values.
-}
-
-/// @nodoc
-
-class _$StateLoadingImpl implements StateLoading {
-  const _$StateLoadingImpl();
 
   @override
   String toString() {
     return 'MainDataJsonState.loading()';
   }
+}
+
+/// @nodoc
+
+class StateSuccess implements MainDataJsonState {
+  const StateSuccess(final List<MainItem> data) : _data = data;
+
+  final List<MainItem> _data;
+  List<MainItem> get data {
+    if (_data is EqualUnmodifiableListView) return _data;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_data);
+  }
+
+  /// Create a copy of MainDataJsonState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $StateSuccessCopyWith<StateSuccess> get copyWith =>
+      _$StateSuccessCopyWithImpl<StateSuccess>(this, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$StateLoadingImpl);
+        (other.runtimeType == runtimeType &&
+            other is StateSuccess &&
+            const DeepCollectionEquality().equals(other._data, _data));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_data));
 
   @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() initial,
-    required TResult Function() loading,
-    required TResult Function(List<MainItem> data) success,
-    required TResult Function(String message) failure,
-  }) {
-    return loading();
+  String toString() {
+    return 'MainDataJsonState.success(data: $data)';
   }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
-    TResult? Function()? loading,
-    TResult? Function(List<MainItem> data)? success,
-    TResult? Function(String message)? failure,
-  }) {
-    return loading?.call();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
-    TResult Function()? loading,
-    TResult Function(List<MainItem> data)? success,
-    TResult Function(String message)? failure,
-    required TResult orElse(),
-  }) {
-    if (loading != null) {
-      return loading();
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(StateInitial value) initial,
-    required TResult Function(StateLoading value) loading,
-    required TResult Function(StateSuccess value) success,
-    required TResult Function(StateFailure value) failure,
-  }) {
-    return loading(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(StateInitial value)? initial,
-    TResult? Function(StateLoading value)? loading,
-    TResult? Function(StateSuccess value)? success,
-    TResult? Function(StateFailure value)? failure,
-  }) {
-    return loading?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(StateInitial value)? initial,
-    TResult Function(StateLoading value)? loading,
-    TResult Function(StateSuccess value)? success,
-    TResult Function(StateFailure value)? failure,
-    required TResult orElse(),
-  }) {
-    if (loading != null) {
-      return loading(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class StateLoading implements MainDataJsonState {
-  const factory StateLoading() = _$StateLoadingImpl;
 }
 
 /// @nodoc
-abstract class _$$StateSuccessImplCopyWith<$Res> {
-  factory _$$StateSuccessImplCopyWith(
-          _$StateSuccessImpl value, $Res Function(_$StateSuccessImpl) then) =
-      __$$StateSuccessImplCopyWithImpl<$Res>;
+abstract mixin class $StateSuccessCopyWith<$Res>
+    implements $MainDataJsonStateCopyWith<$Res> {
+  factory $StateSuccessCopyWith(
+          StateSuccess value, $Res Function(StateSuccess) _then) =
+      _$StateSuccessCopyWithImpl;
   @useResult
   $Res call({List<MainItem> data});
 }
 
 /// @nodoc
-class __$$StateSuccessImplCopyWithImpl<$Res>
-    extends _$MainDataJsonStateCopyWithImpl<$Res, _$StateSuccessImpl>
-    implements _$$StateSuccessImplCopyWith<$Res> {
-  __$$StateSuccessImplCopyWithImpl(
-      _$StateSuccessImpl _value, $Res Function(_$StateSuccessImpl) _then)
-      : super(_value, _then);
+class _$StateSuccessCopyWithImpl<$Res> implements $StateSuccessCopyWith<$Res> {
+  _$StateSuccessCopyWithImpl(this._self, this._then);
+
+  final StateSuccess _self;
+  final $Res Function(StateSuccess) _then;
 
   /// Create a copy of MainDataJsonState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
-  @override
   $Res call({
     Object? data = null,
   }) {
-    return _then(_$StateSuccessImpl(
+    return _then(StateSuccess(
       null == data
-          ? _value._data
+          ? _self._data
           : data // ignore: cast_nullable_to_non_nullable
               as List<MainItem>,
     ));
@@ -752,277 +361,65 @@ class __$$StateSuccessImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$StateSuccessImpl implements StateSuccess {
-  const _$StateSuccessImpl(final List<MainItem> data) : _data = data;
+class StateFailure implements MainDataJsonState {
+  const StateFailure(this.message);
 
-  final List<MainItem> _data;
-  @override
-  List<MainItem> get data {
-    if (_data is EqualUnmodifiableListView) return _data;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_data);
-  }
-
-  @override
-  String toString() {
-    return 'MainDataJsonState.success(data: $data)';
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$StateSuccessImpl &&
-            const DeepCollectionEquality().equals(other._data, _data));
-  }
-
-  @override
-  int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(_data));
-
-  /// Create a copy of MainDataJsonState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$StateSuccessImplCopyWith<_$StateSuccessImpl> get copyWith =>
-      __$$StateSuccessImplCopyWithImpl<_$StateSuccessImpl>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() initial,
-    required TResult Function() loading,
-    required TResult Function(List<MainItem> data) success,
-    required TResult Function(String message) failure,
-  }) {
-    return success(data);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
-    TResult? Function()? loading,
-    TResult? Function(List<MainItem> data)? success,
-    TResult? Function(String message)? failure,
-  }) {
-    return success?.call(data);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
-    TResult Function()? loading,
-    TResult Function(List<MainItem> data)? success,
-    TResult Function(String message)? failure,
-    required TResult orElse(),
-  }) {
-    if (success != null) {
-      return success(data);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(StateInitial value) initial,
-    required TResult Function(StateLoading value) loading,
-    required TResult Function(StateSuccess value) success,
-    required TResult Function(StateFailure value) failure,
-  }) {
-    return success(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(StateInitial value)? initial,
-    TResult? Function(StateLoading value)? loading,
-    TResult? Function(StateSuccess value)? success,
-    TResult? Function(StateFailure value)? failure,
-  }) {
-    return success?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(StateInitial value)? initial,
-    TResult Function(StateLoading value)? loading,
-    TResult Function(StateSuccess value)? success,
-    TResult Function(StateFailure value)? failure,
-    required TResult orElse(),
-  }) {
-    if (success != null) {
-      return success(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class StateSuccess implements MainDataJsonState {
-  const factory StateSuccess(final List<MainItem> data) = _$StateSuccessImpl;
-
-  List<MainItem> get data;
-
-  /// Create a copy of MainDataJsonState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$StateSuccessImplCopyWith<_$StateSuccessImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class _$$StateFailureImplCopyWith<$Res> {
-  factory _$$StateFailureImplCopyWith(
-          _$StateFailureImpl value, $Res Function(_$StateFailureImpl) then) =
-      __$$StateFailureImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({String message});
-}
-
-/// @nodoc
-class __$$StateFailureImplCopyWithImpl<$Res>
-    extends _$MainDataJsonStateCopyWithImpl<$Res, _$StateFailureImpl>
-    implements _$$StateFailureImplCopyWith<$Res> {
-  __$$StateFailureImplCopyWithImpl(
-      _$StateFailureImpl _value, $Res Function(_$StateFailureImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of MainDataJsonState
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? message = null,
-  }) {
-    return _then(_$StateFailureImpl(
-      null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _$StateFailureImpl implements StateFailure {
-  const _$StateFailureImpl(this.message);
-
-  @override
   final String message;
 
-  @override
-  String toString() {
-    return 'MainDataJsonState.failure(message: $message)';
-  }
+  /// Create a copy of MainDataJsonState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $StateFailureCopyWith<StateFailure> get copyWith =>
+      _$StateFailureCopyWithImpl<StateFailure>(this, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$StateFailureImpl &&
+            other is StateFailure &&
             (identical(other.message, message) || other.message == message));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, message);
 
+  @override
+  String toString() {
+    return 'MainDataJsonState.failure(message: $message)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $StateFailureCopyWith<$Res>
+    implements $MainDataJsonStateCopyWith<$Res> {
+  factory $StateFailureCopyWith(
+          StateFailure value, $Res Function(StateFailure) _then) =
+      _$StateFailureCopyWithImpl;
+  @useResult
+  $Res call({String message});
+}
+
+/// @nodoc
+class _$StateFailureCopyWithImpl<$Res> implements $StateFailureCopyWith<$Res> {
+  _$StateFailureCopyWithImpl(this._self, this._then);
+
+  final StateFailure _self;
+  final $Res Function(StateFailure) _then;
+
   /// Create a copy of MainDataJsonState
   /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
   @pragma('vm:prefer-inline')
-  _$$StateFailureImplCopyWith<_$StateFailureImpl> get copyWith =>
-      __$$StateFailureImplCopyWithImpl<_$StateFailureImpl>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() initial,
-    required TResult Function() loading,
-    required TResult Function(List<MainItem> data) success,
-    required TResult Function(String message) failure,
+  $Res call({
+    Object? message = null,
   }) {
-    return failure(message);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
-    TResult? Function()? loading,
-    TResult? Function(List<MainItem> data)? success,
-    TResult? Function(String message)? failure,
-  }) {
-    return failure?.call(message);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
-    TResult Function()? loading,
-    TResult Function(List<MainItem> data)? success,
-    TResult Function(String message)? failure,
-    required TResult orElse(),
-  }) {
-    if (failure != null) {
-      return failure(message);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(StateInitial value) initial,
-    required TResult Function(StateLoading value) loading,
-    required TResult Function(StateSuccess value) success,
-    required TResult Function(StateFailure value) failure,
-  }) {
-    return failure(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(StateInitial value)? initial,
-    TResult? Function(StateLoading value)? loading,
-    TResult? Function(StateSuccess value)? success,
-    TResult? Function(StateFailure value)? failure,
-  }) {
-    return failure?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(StateInitial value)? initial,
-    TResult Function(StateLoading value)? loading,
-    TResult Function(StateSuccess value)? success,
-    TResult Function(StateFailure value)? failure,
-    required TResult orElse(),
-  }) {
-    if (failure != null) {
-      return failure(this);
-    }
-    return orElse();
+    return _then(StateFailure(
+      null == message
+          ? _self.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
   }
 }
 
-abstract class StateFailure implements MainDataJsonState {
-  const factory StateFailure(final String message) = _$StateFailureImpl;
-
-  String get message;
-
-  /// Create a copy of MainDataJsonState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$StateFailureImplCopyWith<_$StateFailureImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
+// dart format on

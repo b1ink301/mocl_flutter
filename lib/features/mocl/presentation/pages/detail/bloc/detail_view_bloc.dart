@@ -52,14 +52,18 @@ class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
     try {
       emit(const DetailLoading());
       final Result result = await _getDetail(_listItem);
-      result.whenOrNull(
-        success: (data) {
+      switch (result) {
+        case ResultLoading():
+          break;
+        case ResultSuccess():
           _markAsRead();
           _readableFlag.id = _listItem.id;
-          emit(DetailSuccess(data));
-        },
-        failure: (failure) => emit(DetailFailed(failure.message)),
-      );
+          emit(DetailSuccess(result.data));
+          break;
+        case ResultFailure():
+          emit(DetailFailed(result.failure.message));
+          break;
+      }
     } catch (e) {
       emit(DetailFailed(e.toString()));
     }

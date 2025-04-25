@@ -14,26 +14,29 @@ class DetailAppBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       BlocBuilder<GetHeightCubit, GetHeightState>(
-        builder: (BuildContext context, GetHeightState state) => state.maybeWhen(
-          orElse: () => const SliverToBoxAdapter(child: SizedBox.shrink()),
-          success: (double height) {
-            final DetailViewBloc bloc = context.read<DetailViewBloc>();
-            return AppbarDualTextWidget(
-              title: bloc.title,
-              smallTitle: bloc.smallTitle,
-              automaticallyImplyLeading: Platform.isMacOS,
-              toolbarHeight: height,
-              actions: _buildPopupMenuButton(context),
-            );
-          },
-        ),
+        builder: (BuildContext context, GetHeightState state) {
+          switch (state) {
+            case SuccessGetHeightState():
+              final DetailViewBloc bloc = context.read<DetailViewBloc>();
+              return AppbarDualTextWidget(
+                title: bloc.title,
+                smallTitle: bloc.smallTitle,
+                automaticallyImplyLeading: Platform.isMacOS,
+                toolbarHeight: state.height,
+                actions: _buildPopupMenuButton(context),
+              );
+            default:
+              return const SliverToBoxAdapter(child: SizedBox.shrink());
+          }
+        },
       );
 
   List<Widget> _buildPopupMenuButton(BuildContext context) => [
         PopupMenuButton<int>(
           icon: const Icon(Icons.more_vert),
           onSelected: (int value) {
-            final DetailViewBloc detailViewBloc = context.read<DetailViewBloc>();
+            final DetailViewBloc detailViewBloc =
+                context.read<DetailViewBloc>();
             switch (value) {
               case 0:
                 detailViewBloc.refresh();
@@ -49,7 +52,8 @@ class DetailAppBar extends StatelessWidget {
             }
           },
           itemBuilder: (BuildContext context) {
-            final TextStyle? textStyle = Theme.of(context).textTheme.headlineSmall;
+            final TextStyle? textStyle =
+                Theme.of(context).textTheme.headlineSmall;
             return [
               PopupMenuItem(
                 value: 0,

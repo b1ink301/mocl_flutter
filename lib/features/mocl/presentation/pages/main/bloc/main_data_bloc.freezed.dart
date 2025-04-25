@@ -1,3 +1,4 @@
+// dart format width=80
 // coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint
@@ -9,107 +10,55 @@ part of 'main_data_bloc.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// dart format off
 T _$identity<T>(T value) => value;
-
-final _privateConstructorUsedError = UnsupportedError(
-    'It seems like you constructed your class using `MyClass._()`. This constructor is only meant to be used by freezed and you are not supposed to need it nor use it.\nPlease check the documentation here for more information: https://github.com/rrousselGit/freezed#adding-getters-and-methods-to-our-models');
 
 /// @nodoc
 mixin _$MainDataEvent {
-  SiteType get siteType => throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(SiteType siteType) getList,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(SiteType siteType)? getList,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(SiteType siteType)? getList,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(GetListEvent value) getList,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(GetListEvent value)? getList,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(GetListEvent value)? getList,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+  SiteType get siteType;
 
   /// Create a copy of MainDataEvent
   /// with the given fields replaced by the non-null parameter values.
   @JsonKey(includeFromJson: false, includeToJson: false)
-  $MainDataEventCopyWith<MainDataEvent> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class $MainDataEventCopyWith<$Res> {
-  factory $MainDataEventCopyWith(
-          MainDataEvent value, $Res Function(MainDataEvent) then) =
-      _$MainDataEventCopyWithImpl<$Res, MainDataEvent>;
-  @useResult
-  $Res call({SiteType siteType});
-}
-
-/// @nodoc
-class _$MainDataEventCopyWithImpl<$Res, $Val extends MainDataEvent>
-    implements $MainDataEventCopyWith<$Res> {
-  _$MainDataEventCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of MainDataEvent
-  /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
+  $MainDataEventCopyWith<MainDataEvent> get copyWith =>
+      _$MainDataEventCopyWithImpl<MainDataEvent>(
+          this as MainDataEvent, _$identity);
+
   @override
-  $Res call({
-    Object? siteType = null,
-  }) {
-    return _then(_value.copyWith(
-      siteType: null == siteType
-          ? _value.siteType
-          : siteType // ignore: cast_nullable_to_non_nullable
-              as SiteType,
-    ) as $Val);
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is MainDataEvent &&
+            (identical(other.siteType, siteType) ||
+                other.siteType == siteType));
+  }
+
+  @override
+  int get hashCode => Object.hash(runtimeType, siteType);
+
+  @override
+  String toString() {
+    return 'MainDataEvent(siteType: $siteType)';
   }
 }
 
 /// @nodoc
-abstract class _$$GetListEventImplCopyWith<$Res>
-    implements $MainDataEventCopyWith<$Res> {
-  factory _$$GetListEventImplCopyWith(
-          _$GetListEventImpl value, $Res Function(_$GetListEventImpl) then) =
-      __$$GetListEventImplCopyWithImpl<$Res>;
-  @override
+abstract mixin class $MainDataEventCopyWith<$Res> {
+  factory $MainDataEventCopyWith(
+          MainDataEvent value, $Res Function(MainDataEvent) _then) =
+      _$MainDataEventCopyWithImpl;
   @useResult
   $Res call({SiteType siteType});
 }
 
 /// @nodoc
-class __$$GetListEventImplCopyWithImpl<$Res>
-    extends _$MainDataEventCopyWithImpl<$Res, _$GetListEventImpl>
-    implements _$$GetListEventImplCopyWith<$Res> {
-  __$$GetListEventImplCopyWithImpl(
-      _$GetListEventImpl _value, $Res Function(_$GetListEventImpl) _then)
-      : super(_value, _then);
+class _$MainDataEventCopyWithImpl<$Res>
+    implements $MainDataEventCopyWith<$Res> {
+  _$MainDataEventCopyWithImpl(this._self, this._then);
+
+  final MainDataEvent _self;
+  final $Res Function(MainDataEvent) _then;
 
   /// Create a copy of MainDataEvent
   /// with the given fields replaced by the non-null parameter values.
@@ -118,9 +67,9 @@ class __$$GetListEventImplCopyWithImpl<$Res>
   $Res call({
     Object? siteType = null,
   }) {
-    return _then(_$GetListEventImpl(
+    return _then(_self.copyWith(
       siteType: null == siteType
-          ? _value.siteType
+          ? _self.siteType
           : siteType // ignore: cast_nullable_to_non_nullable
               as SiteType,
     ));
@@ -129,22 +78,25 @@ class __$$GetListEventImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$GetListEventImpl implements GetListEvent {
-  const _$GetListEventImpl({required this.siteType});
+class GetListEvent implements MainDataEvent {
+  const GetListEvent({required this.siteType});
 
   @override
   final SiteType siteType;
 
+  /// Create a copy of MainDataEvent
+  /// with the given fields replaced by the non-null parameter values.
   @override
-  String toString() {
-    return 'MainDataEvent.getList(siteType: $siteType)';
-  }
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $GetListEventCopyWith<GetListEvent> get copyWith =>
+      _$GetListEventCopyWithImpl<GetListEvent>(this, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$GetListEventImpl &&
+            other is GetListEvent &&
             (identical(other.siteType, siteType) ||
                 other.siteType == siteType));
   }
@@ -152,440 +104,171 @@ class _$GetListEventImpl implements GetListEvent {
   @override
   int get hashCode => Object.hash(runtimeType, siteType);
 
-  /// Create a copy of MainDataEvent
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
   @override
-  @pragma('vm:prefer-inline')
-  _$$GetListEventImplCopyWith<_$GetListEventImpl> get copyWith =>
-      __$$GetListEventImplCopyWithImpl<_$GetListEventImpl>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function(SiteType siteType) getList,
-  }) {
-    return getList(siteType);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function(SiteType siteType)? getList,
-  }) {
-    return getList?.call(siteType);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function(SiteType siteType)? getList,
-    required TResult orElse(),
-  }) {
-    if (getList != null) {
-      return getList(siteType);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(GetListEvent value) getList,
-  }) {
-    return getList(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(GetListEvent value)? getList,
-  }) {
-    return getList?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(GetListEvent value)? getList,
-    required TResult orElse(),
-  }) {
-    if (getList != null) {
-      return getList(this);
-    }
-    return orElse();
+  String toString() {
+    return 'MainDataEvent.getList(siteType: $siteType)';
   }
 }
 
-abstract class GetListEvent implements MainDataEvent {
-  const factory GetListEvent({required final SiteType siteType}) =
-      _$GetListEventImpl;
-
+/// @nodoc
+abstract mixin class $GetListEventCopyWith<$Res>
+    implements $MainDataEventCopyWith<$Res> {
+  factory $GetListEventCopyWith(
+          GetListEvent value, $Res Function(GetListEvent) _then) =
+      _$GetListEventCopyWithImpl;
   @override
-  SiteType get siteType;
+  @useResult
+  $Res call({SiteType siteType});
+}
+
+/// @nodoc
+class _$GetListEventCopyWithImpl<$Res> implements $GetListEventCopyWith<$Res> {
+  _$GetListEventCopyWithImpl(this._self, this._then);
+
+  final GetListEvent _self;
+  final $Res Function(GetListEvent) _then;
 
   /// Create a copy of MainDataEvent
   /// with the given fields replaced by the non-null parameter values.
   @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$GetListEventImplCopyWith<_$GetListEventImpl> get copyWith =>
-      throw _privateConstructorUsedError;
+  @pragma('vm:prefer-inline')
+  $Res call({
+    Object? siteType = null,
+  }) {
+    return _then(GetListEvent(
+      siteType: null == siteType
+          ? _self.siteType
+          : siteType // ignore: cast_nullable_to_non_nullable
+              as SiteType,
+    ));
+  }
 }
 
 /// @nodoc
 mixin _$MainDataState {
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() initial,
-    required TResult Function() loading,
-    required TResult Function(List<MainItem> data) success,
-    required TResult Function(String message) failure,
-    required TResult Function(String message) requireLogin,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
-    TResult? Function()? loading,
-    TResult? Function(List<MainItem> data)? success,
-    TResult? Function(String message)? failure,
-    TResult? Function(String message)? requireLogin,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
-    TResult Function()? loading,
-    TResult Function(List<MainItem> data)? success,
-    TResult Function(String message)? failure,
-    TResult Function(String message)? requireLogin,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(StateInitial value) initial,
-    required TResult Function(StateLoading value) loading,
-    required TResult Function(StateSuccess value) success,
-    required TResult Function(StateFailure value) failure,
-    required TResult Function(StateRequireLogin value) requireLogin,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(StateInitial value)? initial,
-    TResult? Function(StateLoading value)? loading,
-    TResult? Function(StateSuccess value)? success,
-    TResult? Function(StateFailure value)? failure,
-    TResult? Function(StateRequireLogin value)? requireLogin,
-  }) =>
-      throw _privateConstructorUsedError;
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(StateInitial value)? initial,
-    TResult Function(StateLoading value)? loading,
-    TResult Function(StateSuccess value)? success,
-    TResult Function(StateFailure value)? failure,
-    TResult Function(StateRequireLogin value)? requireLogin,
-    required TResult orElse(),
-  }) =>
-      throw _privateConstructorUsedError;
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is MainDataState);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
+
+  @override
+  String toString() {
+    return 'MainDataState()';
+  }
 }
 
 /// @nodoc
-abstract class $MainDataStateCopyWith<$Res> {
-  factory $MainDataStateCopyWith(
-          MainDataState value, $Res Function(MainDataState) then) =
-      _$MainDataStateCopyWithImpl<$Res, MainDataState>;
-}
-
-/// @nodoc
-class _$MainDataStateCopyWithImpl<$Res, $Val extends MainDataState>
-    implements $MainDataStateCopyWith<$Res> {
-  _$MainDataStateCopyWithImpl(this._value, this._then);
-
-  // ignore: unused_field
-  final $Val _value;
-  // ignore: unused_field
-  final $Res Function($Val) _then;
-
-  /// Create a copy of MainDataState
-  /// with the given fields replaced by the non-null parameter values.
-}
-
-/// @nodoc
-abstract class _$$StateInitialImplCopyWith<$Res> {
-  factory _$$StateInitialImplCopyWith(
-          _$StateInitialImpl value, $Res Function(_$StateInitialImpl) then) =
-      __$$StateInitialImplCopyWithImpl<$Res>;
-}
-
-/// @nodoc
-class __$$StateInitialImplCopyWithImpl<$Res>
-    extends _$MainDataStateCopyWithImpl<$Res, _$StateInitialImpl>
-    implements _$$StateInitialImplCopyWith<$Res> {
-  __$$StateInitialImplCopyWithImpl(
-      _$StateInitialImpl _value, $Res Function(_$StateInitialImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of MainDataState
-  /// with the given fields replaced by the non-null parameter values.
+class $MainDataStateCopyWith<$Res> {
+  $MainDataStateCopyWith(MainDataState _, $Res Function(MainDataState) __);
 }
 
 /// @nodoc
 
-class _$StateInitialImpl implements StateInitial {
-  const _$StateInitialImpl();
+class StateInitial implements MainDataState {
+  const StateInitial();
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType && other is StateInitial);
+  }
+
+  @override
+  int get hashCode => runtimeType.hashCode;
 
   @override
   String toString() {
     return 'MainDataState.initial()';
   }
+}
+
+/// @nodoc
+
+class StateLoading implements MainDataState {
+  const StateLoading();
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$StateInitialImpl);
+        (other.runtimeType == runtimeType && other is StateLoading);
   }
 
   @override
   int get hashCode => runtimeType.hashCode;
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() initial,
-    required TResult Function() loading,
-    required TResult Function(List<MainItem> data) success,
-    required TResult Function(String message) failure,
-    required TResult Function(String message) requireLogin,
-  }) {
-    return initial();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
-    TResult? Function()? loading,
-    TResult? Function(List<MainItem> data)? success,
-    TResult? Function(String message)? failure,
-    TResult? Function(String message)? requireLogin,
-  }) {
-    return initial?.call();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
-    TResult Function()? loading,
-    TResult Function(List<MainItem> data)? success,
-    TResult Function(String message)? failure,
-    TResult Function(String message)? requireLogin,
-    required TResult orElse(),
-  }) {
-    if (initial != null) {
-      return initial();
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(StateInitial value) initial,
-    required TResult Function(StateLoading value) loading,
-    required TResult Function(StateSuccess value) success,
-    required TResult Function(StateFailure value) failure,
-    required TResult Function(StateRequireLogin value) requireLogin,
-  }) {
-    return initial(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(StateInitial value)? initial,
-    TResult? Function(StateLoading value)? loading,
-    TResult? Function(StateSuccess value)? success,
-    TResult? Function(StateFailure value)? failure,
-    TResult? Function(StateRequireLogin value)? requireLogin,
-  }) {
-    return initial?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(StateInitial value)? initial,
-    TResult Function(StateLoading value)? loading,
-    TResult Function(StateSuccess value)? success,
-    TResult Function(StateFailure value)? failure,
-    TResult Function(StateRequireLogin value)? requireLogin,
-    required TResult orElse(),
-  }) {
-    if (initial != null) {
-      return initial(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class StateInitial implements MainDataState {
-  const factory StateInitial() = _$StateInitialImpl;
-}
-
-/// @nodoc
-abstract class _$$StateLoadingImplCopyWith<$Res> {
-  factory _$$StateLoadingImplCopyWith(
-          _$StateLoadingImpl value, $Res Function(_$StateLoadingImpl) then) =
-      __$$StateLoadingImplCopyWithImpl<$Res>;
-}
-
-/// @nodoc
-class __$$StateLoadingImplCopyWithImpl<$Res>
-    extends _$MainDataStateCopyWithImpl<$Res, _$StateLoadingImpl>
-    implements _$$StateLoadingImplCopyWith<$Res> {
-  __$$StateLoadingImplCopyWithImpl(
-      _$StateLoadingImpl _value, $Res Function(_$StateLoadingImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of MainDataState
-  /// with the given fields replaced by the non-null parameter values.
-}
-
-/// @nodoc
-
-class _$StateLoadingImpl implements StateLoading {
-  const _$StateLoadingImpl();
 
   @override
   String toString() {
     return 'MainDataState.loading()';
   }
+}
+
+/// @nodoc
+
+class StateSuccess implements MainDataState {
+  const StateSuccess(final List<MainItem> data) : _data = data;
+
+  final List<MainItem> _data;
+  List<MainItem> get data {
+    if (_data is EqualUnmodifiableListView) return _data;
+    // ignore: implicit_dynamic_type
+    return EqualUnmodifiableListView(_data);
+  }
+
+  /// Create a copy of MainDataState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $StateSuccessCopyWith<StateSuccess> get copyWith =>
+      _$StateSuccessCopyWithImpl<StateSuccess>(this, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is _$StateLoadingImpl);
+        (other.runtimeType == runtimeType &&
+            other is StateSuccess &&
+            const DeepCollectionEquality().equals(other._data, _data));
   }
 
   @override
-  int get hashCode => runtimeType.hashCode;
+  int get hashCode =>
+      Object.hash(runtimeType, const DeepCollectionEquality().hash(_data));
 
   @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() initial,
-    required TResult Function() loading,
-    required TResult Function(List<MainItem> data) success,
-    required TResult Function(String message) failure,
-    required TResult Function(String message) requireLogin,
-  }) {
-    return loading();
+  String toString() {
+    return 'MainDataState.success(data: $data)';
   }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
-    TResult? Function()? loading,
-    TResult? Function(List<MainItem> data)? success,
-    TResult? Function(String message)? failure,
-    TResult? Function(String message)? requireLogin,
-  }) {
-    return loading?.call();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
-    TResult Function()? loading,
-    TResult Function(List<MainItem> data)? success,
-    TResult Function(String message)? failure,
-    TResult Function(String message)? requireLogin,
-    required TResult orElse(),
-  }) {
-    if (loading != null) {
-      return loading();
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(StateInitial value) initial,
-    required TResult Function(StateLoading value) loading,
-    required TResult Function(StateSuccess value) success,
-    required TResult Function(StateFailure value) failure,
-    required TResult Function(StateRequireLogin value) requireLogin,
-  }) {
-    return loading(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(StateInitial value)? initial,
-    TResult? Function(StateLoading value)? loading,
-    TResult? Function(StateSuccess value)? success,
-    TResult? Function(StateFailure value)? failure,
-    TResult? Function(StateRequireLogin value)? requireLogin,
-  }) {
-    return loading?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(StateInitial value)? initial,
-    TResult Function(StateLoading value)? loading,
-    TResult Function(StateSuccess value)? success,
-    TResult Function(StateFailure value)? failure,
-    TResult Function(StateRequireLogin value)? requireLogin,
-    required TResult orElse(),
-  }) {
-    if (loading != null) {
-      return loading(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class StateLoading implements MainDataState {
-  const factory StateLoading() = _$StateLoadingImpl;
 }
 
 /// @nodoc
-abstract class _$$StateSuccessImplCopyWith<$Res> {
-  factory _$$StateSuccessImplCopyWith(
-          _$StateSuccessImpl value, $Res Function(_$StateSuccessImpl) then) =
-      __$$StateSuccessImplCopyWithImpl<$Res>;
+abstract mixin class $StateSuccessCopyWith<$Res>
+    implements $MainDataStateCopyWith<$Res> {
+  factory $StateSuccessCopyWith(
+          StateSuccess value, $Res Function(StateSuccess) _then) =
+      _$StateSuccessCopyWithImpl;
   @useResult
   $Res call({List<MainItem> data});
 }
 
 /// @nodoc
-class __$$StateSuccessImplCopyWithImpl<$Res>
-    extends _$MainDataStateCopyWithImpl<$Res, _$StateSuccessImpl>
-    implements _$$StateSuccessImplCopyWith<$Res> {
-  __$$StateSuccessImplCopyWithImpl(
-      _$StateSuccessImpl _value, $Res Function(_$StateSuccessImpl) _then)
-      : super(_value, _then);
+class _$StateSuccessCopyWithImpl<$Res> implements $StateSuccessCopyWith<$Res> {
+  _$StateSuccessCopyWithImpl(this._self, this._then);
+
+  final StateSuccess _self;
+  final $Res Function(StateSuccess) _then;
 
   /// Create a copy of MainDataState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
-  @override
   $Res call({
     Object? data = null,
   }) {
-    return _then(_$StateSuccessImpl(
+    return _then(StateSuccess(
       null == data
-          ? _value._data
+          ? _self._data
           : data // ignore: cast_nullable_to_non_nullable
               as List<MainItem>,
     ));
@@ -594,320 +277,61 @@ class __$$StateSuccessImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$StateSuccessImpl implements StateSuccess {
-  const _$StateSuccessImpl(final List<MainItem> data) : _data = data;
+class StateFailure implements MainDataState {
+  const StateFailure(this.message);
 
-  final List<MainItem> _data;
-  @override
-  List<MainItem> get data {
-    if (_data is EqualUnmodifiableListView) return _data;
-    // ignore: implicit_dynamic_type
-    return EqualUnmodifiableListView(_data);
-  }
+  final String message;
 
-  @override
-  String toString() {
-    return 'MainDataState.success(data: $data)';
-  }
+  /// Create a copy of MainDataState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $StateFailureCopyWith<StateFailure> get copyWith =>
+      _$StateFailureCopyWithImpl<StateFailure>(this, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$StateSuccessImpl &&
-            const DeepCollectionEquality().equals(other._data, _data));
+            other is StateFailure &&
+            (identical(other.message, message) || other.message == message));
   }
 
   @override
-  int get hashCode =>
-      Object.hash(runtimeType, const DeepCollectionEquality().hash(_data));
-
-  /// Create a copy of MainDataState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$StateSuccessImplCopyWith<_$StateSuccessImpl> get copyWith =>
-      __$$StateSuccessImplCopyWithImpl<_$StateSuccessImpl>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() initial,
-    required TResult Function() loading,
-    required TResult Function(List<MainItem> data) success,
-    required TResult Function(String message) failure,
-    required TResult Function(String message) requireLogin,
-  }) {
-    return success(data);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
-    TResult? Function()? loading,
-    TResult? Function(List<MainItem> data)? success,
-    TResult? Function(String message)? failure,
-    TResult? Function(String message)? requireLogin,
-  }) {
-    return success?.call(data);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
-    TResult Function()? loading,
-    TResult Function(List<MainItem> data)? success,
-    TResult Function(String message)? failure,
-    TResult Function(String message)? requireLogin,
-    required TResult orElse(),
-  }) {
-    if (success != null) {
-      return success(data);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(StateInitial value) initial,
-    required TResult Function(StateLoading value) loading,
-    required TResult Function(StateSuccess value) success,
-    required TResult Function(StateFailure value) failure,
-    required TResult Function(StateRequireLogin value) requireLogin,
-  }) {
-    return success(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(StateInitial value)? initial,
-    TResult? Function(StateLoading value)? loading,
-    TResult? Function(StateSuccess value)? success,
-    TResult? Function(StateFailure value)? failure,
-    TResult? Function(StateRequireLogin value)? requireLogin,
-  }) {
-    return success?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(StateInitial value)? initial,
-    TResult Function(StateLoading value)? loading,
-    TResult Function(StateSuccess value)? success,
-    TResult Function(StateFailure value)? failure,
-    TResult Function(StateRequireLogin value)? requireLogin,
-    required TResult orElse(),
-  }) {
-    if (success != null) {
-      return success(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class StateSuccess implements MainDataState {
-  const factory StateSuccess(final List<MainItem> data) = _$StateSuccessImpl;
-
-  List<MainItem> get data;
-
-  /// Create a copy of MainDataState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$StateSuccessImplCopyWith<_$StateSuccessImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
-
-/// @nodoc
-abstract class _$$StateFailureImplCopyWith<$Res> {
-  factory _$$StateFailureImplCopyWith(
-          _$StateFailureImpl value, $Res Function(_$StateFailureImpl) then) =
-      __$$StateFailureImplCopyWithImpl<$Res>;
-  @useResult
-  $Res call({String message});
-}
-
-/// @nodoc
-class __$$StateFailureImplCopyWithImpl<$Res>
-    extends _$MainDataStateCopyWithImpl<$Res, _$StateFailureImpl>
-    implements _$$StateFailureImplCopyWith<$Res> {
-  __$$StateFailureImplCopyWithImpl(
-      _$StateFailureImpl _value, $Res Function(_$StateFailureImpl) _then)
-      : super(_value, _then);
-
-  /// Create a copy of MainDataState
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? message = null,
-  }) {
-    return _then(_$StateFailureImpl(
-      null == message
-          ? _value.message
-          : message // ignore: cast_nullable_to_non_nullable
-              as String,
-    ));
-  }
-}
-
-/// @nodoc
-
-class _$StateFailureImpl implements StateFailure {
-  const _$StateFailureImpl(this.message);
-
-  @override
-  final String message;
+  int get hashCode => Object.hash(runtimeType, message);
 
   @override
   String toString() {
     return 'MainDataState.failure(message: $message)';
   }
-
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _$StateFailureImpl &&
-            (identical(other.message, message) || other.message == message));
-  }
-
-  @override
-  int get hashCode => Object.hash(runtimeType, message);
-
-  /// Create a copy of MainDataState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
-  @pragma('vm:prefer-inline')
-  _$$StateFailureImplCopyWith<_$StateFailureImpl> get copyWith =>
-      __$$StateFailureImplCopyWithImpl<_$StateFailureImpl>(this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() initial,
-    required TResult Function() loading,
-    required TResult Function(List<MainItem> data) success,
-    required TResult Function(String message) failure,
-    required TResult Function(String message) requireLogin,
-  }) {
-    return failure(message);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
-    TResult? Function()? loading,
-    TResult? Function(List<MainItem> data)? success,
-    TResult? Function(String message)? failure,
-    TResult? Function(String message)? requireLogin,
-  }) {
-    return failure?.call(message);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
-    TResult Function()? loading,
-    TResult Function(List<MainItem> data)? success,
-    TResult Function(String message)? failure,
-    TResult Function(String message)? requireLogin,
-    required TResult orElse(),
-  }) {
-    if (failure != null) {
-      return failure(message);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(StateInitial value) initial,
-    required TResult Function(StateLoading value) loading,
-    required TResult Function(StateSuccess value) success,
-    required TResult Function(StateFailure value) failure,
-    required TResult Function(StateRequireLogin value) requireLogin,
-  }) {
-    return failure(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(StateInitial value)? initial,
-    TResult? Function(StateLoading value)? loading,
-    TResult? Function(StateSuccess value)? success,
-    TResult? Function(StateFailure value)? failure,
-    TResult? Function(StateRequireLogin value)? requireLogin,
-  }) {
-    return failure?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(StateInitial value)? initial,
-    TResult Function(StateLoading value)? loading,
-    TResult Function(StateSuccess value)? success,
-    TResult Function(StateFailure value)? failure,
-    TResult Function(StateRequireLogin value)? requireLogin,
-    required TResult orElse(),
-  }) {
-    if (failure != null) {
-      return failure(this);
-    }
-    return orElse();
-  }
-}
-
-abstract class StateFailure implements MainDataState {
-  const factory StateFailure(final String message) = _$StateFailureImpl;
-
-  String get message;
-
-  /// Create a copy of MainDataState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$StateFailureImplCopyWith<_$StateFailureImpl> get copyWith =>
-      throw _privateConstructorUsedError;
 }
 
 /// @nodoc
-abstract class _$$StateRequireLoginImplCopyWith<$Res> {
-  factory _$$StateRequireLoginImplCopyWith(_$StateRequireLoginImpl value,
-          $Res Function(_$StateRequireLoginImpl) then) =
-      __$$StateRequireLoginImplCopyWithImpl<$Res>;
+abstract mixin class $StateFailureCopyWith<$Res>
+    implements $MainDataStateCopyWith<$Res> {
+  factory $StateFailureCopyWith(
+          StateFailure value, $Res Function(StateFailure) _then) =
+      _$StateFailureCopyWithImpl;
   @useResult
   $Res call({String message});
 }
 
 /// @nodoc
-class __$$StateRequireLoginImplCopyWithImpl<$Res>
-    extends _$MainDataStateCopyWithImpl<$Res, _$StateRequireLoginImpl>
-    implements _$$StateRequireLoginImplCopyWith<$Res> {
-  __$$StateRequireLoginImplCopyWithImpl(_$StateRequireLoginImpl _value,
-      $Res Function(_$StateRequireLoginImpl) _then)
-      : super(_value, _then);
+class _$StateFailureCopyWithImpl<$Res> implements $StateFailureCopyWith<$Res> {
+  _$StateFailureCopyWithImpl(this._self, this._then);
+
+  final StateFailure _self;
+  final $Res Function(StateFailure) _then;
 
   /// Create a copy of MainDataState
   /// with the given fields replaced by the non-null parameter values.
   @pragma('vm:prefer-inline')
-  @override
   $Res call({
     Object? message = null,
   }) {
-    return _then(_$StateRequireLoginImpl(
+    return _then(StateFailure(
       null == message
-          ? _value.message
+          ? _self.message
           : message // ignore: cast_nullable_to_non_nullable
               as String,
     ));
@@ -916,127 +340,66 @@ class __$$StateRequireLoginImplCopyWithImpl<$Res>
 
 /// @nodoc
 
-class _$StateRequireLoginImpl implements StateRequireLogin {
-  const _$StateRequireLoginImpl(this.message);
+class StateRequireLogin implements MainDataState {
+  const StateRequireLogin(this.message);
 
-  @override
   final String message;
 
-  @override
-  String toString() {
-    return 'MainDataState.requireLogin(message: $message)';
-  }
+  /// Create a copy of MainDataState
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @pragma('vm:prefer-inline')
+  $StateRequireLoginCopyWith<StateRequireLogin> get copyWith =>
+      _$StateRequireLoginCopyWithImpl<StateRequireLogin>(this, _$identity);
 
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
         (other.runtimeType == runtimeType &&
-            other is _$StateRequireLoginImpl &&
+            other is StateRequireLogin &&
             (identical(other.message, message) || other.message == message));
   }
 
   @override
   int get hashCode => Object.hash(runtimeType, message);
 
+  @override
+  String toString() {
+    return 'MainDataState.requireLogin(message: $message)';
+  }
+}
+
+/// @nodoc
+abstract mixin class $StateRequireLoginCopyWith<$Res>
+    implements $MainDataStateCopyWith<$Res> {
+  factory $StateRequireLoginCopyWith(
+          StateRequireLogin value, $Res Function(StateRequireLogin) _then) =
+      _$StateRequireLoginCopyWithImpl;
+  @useResult
+  $Res call({String message});
+}
+
+/// @nodoc
+class _$StateRequireLoginCopyWithImpl<$Res>
+    implements $StateRequireLoginCopyWith<$Res> {
+  _$StateRequireLoginCopyWithImpl(this._self, this._then);
+
+  final StateRequireLogin _self;
+  final $Res Function(StateRequireLogin) _then;
+
   /// Create a copy of MainDataState
   /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @override
   @pragma('vm:prefer-inline')
-  _$$StateRequireLoginImplCopyWith<_$StateRequireLoginImpl> get copyWith =>
-      __$$StateRequireLoginImplCopyWithImpl<_$StateRequireLoginImpl>(
-          this, _$identity);
-
-  @override
-  @optionalTypeArgs
-  TResult when<TResult extends Object?>({
-    required TResult Function() initial,
-    required TResult Function() loading,
-    required TResult Function(List<MainItem> data) success,
-    required TResult Function(String message) failure,
-    required TResult Function(String message) requireLogin,
+  $Res call({
+    Object? message = null,
   }) {
-    return requireLogin(message);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? whenOrNull<TResult extends Object?>({
-    TResult? Function()? initial,
-    TResult? Function()? loading,
-    TResult? Function(List<MainItem> data)? success,
-    TResult? Function(String message)? failure,
-    TResult? Function(String message)? requireLogin,
-  }) {
-    return requireLogin?.call(message);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeWhen<TResult extends Object?>({
-    TResult Function()? initial,
-    TResult Function()? loading,
-    TResult Function(List<MainItem> data)? success,
-    TResult Function(String message)? failure,
-    TResult Function(String message)? requireLogin,
-    required TResult orElse(),
-  }) {
-    if (requireLogin != null) {
-      return requireLogin(message);
-    }
-    return orElse();
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult map<TResult extends Object?>({
-    required TResult Function(StateInitial value) initial,
-    required TResult Function(StateLoading value) loading,
-    required TResult Function(StateSuccess value) success,
-    required TResult Function(StateFailure value) failure,
-    required TResult Function(StateRequireLogin value) requireLogin,
-  }) {
-    return requireLogin(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult? mapOrNull<TResult extends Object?>({
-    TResult? Function(StateInitial value)? initial,
-    TResult? Function(StateLoading value)? loading,
-    TResult? Function(StateSuccess value)? success,
-    TResult? Function(StateFailure value)? failure,
-    TResult? Function(StateRequireLogin value)? requireLogin,
-  }) {
-    return requireLogin?.call(this);
-  }
-
-  @override
-  @optionalTypeArgs
-  TResult maybeMap<TResult extends Object?>({
-    TResult Function(StateInitial value)? initial,
-    TResult Function(StateLoading value)? loading,
-    TResult Function(StateSuccess value)? success,
-    TResult Function(StateFailure value)? failure,
-    TResult Function(StateRequireLogin value)? requireLogin,
-    required TResult orElse(),
-  }) {
-    if (requireLogin != null) {
-      return requireLogin(this);
-    }
-    return orElse();
+    return _then(StateRequireLogin(
+      null == message
+          ? _self.message
+          : message // ignore: cast_nullable_to_non_nullable
+              as String,
+    ));
   }
 }
 
-abstract class StateRequireLogin implements MainDataState {
-  const factory StateRequireLogin(final String message) =
-      _$StateRequireLoginImpl;
-
-  String get message;
-
-  /// Create a copy of MainDataState
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  _$$StateRequireLoginImplCopyWith<_$StateRequireLoginImpl> get copyWith =>
-      throw _privateConstructorUsedError;
-}
+// dart format on

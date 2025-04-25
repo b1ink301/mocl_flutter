@@ -7,7 +7,7 @@ part 'main_item_model.freezed.dart';
 part 'main_item_model.g.dart';
 
 @freezed
-class MainItemModel with _$MainItemModel {
+abstract class MainItemModel with _$MainItemModel {
   const factory MainItemModel({
     @JsonKey(name: 'no')
     required int orderBy,

@@ -28,8 +28,6 @@ class ListPageCubit extends Cubit<ListPageState> {
 
   final List<ReadableListItem> _list = [];
 
-  // List<ListItem> get list => List.unmodifiable(_list);
-
   ReadableListItem getItem(int index) => _list.elementAt(index);
 
   LastId _lastId = LastId.empty();
@@ -70,13 +68,9 @@ class ListPageCubit extends Cubit<ListPageState> {
         return;
       }
       if (_readableFlag.id == item.id && !item.isRead) {
-        _updateItemReadStatus(index);
+        _list[index].markAsRead();
       }
     });
-  }
-
-  void _updateItemReadStatus(int index) {
-    _list[index].markAsRead();
   }
 
   Future<void> fetchPage() async {
@@ -93,35 +87,35 @@ class ListPageCubit extends Cubit<ListPageState> {
         sortType: SortType.recent,
       );
 
-      // final Result<List<ListItem>> result = await compute(_getList.call, params);
       final Result<List<ListItem>> result = await _getList(params);
-      result.whenOrNull(
-        success: (data) {
-          if (data is List<ListItem>) {
-            final list =
-                data.whereType<ListItem>().map(_toReadableListItem).toList();
+      switch (result) {
+        case ResultSuccess<List<ListItem>>():
+          final List<ReadableListItem> list = result.data
+              .whereType<ListItem>()
+              .map(_toReadableListItem)
+              .toList();
 
-            if (list.isNotEmpty) {
-              _list.addAll(list);
-              _lastId = LastId(intId: data.last.id);
-            }
-            final bool hasReachedMax = _mainItem.siteType == SiteType.clien &&
-                _mainItem.board == 'recommend';
-            _page++;
-
-            emit(state.copyWith(
-              count: _list.length,
-              isLoading: false,
-              hasReachedMax: hasReachedMax,
-            ));
-          } else {
-            emit(state.copyWith(
-                error: 'data is not List<ListItem>', isLoading: false));
+          if (list.isNotEmpty) {
+            _list.addAll(list);
+            _lastId = LastId(intId: result.data.last.id);
           }
-        },
-        failure: (failure) =>
-            emit(state.copyWith(error: failure.message, isLoading: false)),
-      );
+          final bool hasReachedMax = _mainItem.siteType == SiteType.clien &&
+              _mainItem.board == 'recommend';
+          _page++;
+
+          emit(state.copyWith(
+            count: _list.length,
+            isLoading: false,
+            hasReachedMax: hasReachedMax,
+          ));
+          break;
+        case ResultFailure<List<ListItem>>():
+          emit(state.copyWith(error: result.failure.message, isLoading: false));
+          break;
+
+        default:
+          break;
+      }
     } catch (e) {
       emit(state.copyWith(error: e.toString(), isLoading: false));
     } finally {
@@ -129,10 +123,8 @@ class ListPageCubit extends Cubit<ListPageState> {
     }
   }
 
-  ReadableListItem _toReadableListItem(ListItem item) {
-    return ReadableListItem(
-      item: item,
-      isRead: ValueNotifier(item.isRead),
-    );
-  }
+  ReadableListItem _toReadableListItem(ListItem item) => ReadableListItem(
+        item: item,
+        isRead: ValueNotifier(item.isRead),
+      );
 }
