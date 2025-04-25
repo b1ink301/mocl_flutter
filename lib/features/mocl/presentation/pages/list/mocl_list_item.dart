@@ -3,142 +3,138 @@ import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/round_text_widget.dart';
 
-class MoclListItem extends StatelessWidget {
-  final ListItem item;
+@immutable
+class ListItemProvider extends InheritedWidget {
+  final ListItem model;
   final VoidCallback onTap;
 
-  const MoclListItem({
-    required this.item,
+  const ListItemProvider({
+    super.key,
+    required super.child,
+    required this.model,
     required this.onTap,
+  });
+
+  static ListItemProvider of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<ListItemProvider>()!;
+
+  @override
+  bool updateShouldNotify(covariant InheritedWidget oldWidget) => false;
+}
+
+@immutable
+class MoclListItem extends StatelessWidget {
+  const MoclListItem({
     super.key,
   });
 
   @override
-  Widget build(BuildContext context) => ListTile(
+  Widget build(BuildContext context) {
+    final ListItemProvider provider = ListItemProvider.of(context);
+    final ListItem item = provider.model;
+
+    return RepaintBoundary(
+      child: ListTile(
         minVerticalPadding: 10,
         minTileHeight: 24,
         contentPadding: const EdgeInsets.only(left: 16, right: 12),
-        onTap: onTap,
-        title: TitleView(
-          title: item.title,
-          isRead: item.isRead,
-        ),
-        subtitle: item.info.isEmpty
-            ? null
-            : BottomView(
-                item: item,
-                isRead: item.isRead,
-              ),
+        onTap: provider.onTap,
+        title: const TitleView(),
+        subtitle: item.info.isEmpty ? null : const BottomView(),
+      ),
+    );
+  }
+}
+
+@immutable
+class TitleView extends StatelessWidget {
+  const TitleView({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final ListItem item = ListItemProvider.of(context).model;
+    final TextStyle textStyle = MoclTextStyles.of(context).title(item.isRead);
+
+    return Text(
+      item.title,
+      maxLines: 3,
+      overflow: TextOverflow.ellipsis,
+      style: textStyle,
+    );
+  }
+}
+
+@immutable
+class BottomView extends StatelessWidget {
+  const BottomView({
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) => const Column(
+        children: [
+          SizedBox(height: 8),
+          SizedBox(
+            height: 20,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Expanded(
+                  child: Row(
+                    children: [
+                      // if (nickImage.isNotEmpty && nickImage.startsWith('http'))
+                      //   NickImageWidget(url: nickImage),
+                      Flexible(
+                        child: InfoText(),
+                      ),
+                    ],
+                  ),
+                ),
+                ReplyBadge(),
+              ],
+            ),
+          ),
+        ],
       );
 }
 
-class TitleView extends StatelessWidget {
-  final String title;
-  final bool isRead;
-
-  const TitleView({
-    super.key,
-    required this.title,
-    required this.isRead,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final textStyles = MoclTextStyles.of(context);
-    return Text(
-      title,
-      maxLines: 3,
-      overflow: TextOverflow.ellipsis,
-      style: textStyles.title(isRead),
-    );
-  }
-}
-
-class BottomView extends StatelessWidget {
-  final ListItem item;
-  final bool isRead;
-
-  const BottomView({
-    super.key,
-    required this.item,
-    required this.isRead,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final reply = item.reply;
-    // final nickImage = item.userInfo.nickImage;
-    final hasReply = reply.isNotEmpty && reply != '0';
-    final textStyles = MoclTextStyles.of(context);
-
-    return Column(
-      children: [
-        const SizedBox(height: 8),
-        SizedBox(
-          height: 20,
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Expanded(
-                child: Row(
-                  children: [
-                    // if (nickImage.isNotEmpty && nickImage.startsWith('http'))
-                    //   NickImageWidget(url: nickImage),
-                    Flexible(
-                      child: InfoText(
-                        info: item.info,
-                        isRead: isRead,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              if (hasReply)
-                RoundTextWidget(
-                    text: reply, textStyle: textStyles.badge(isRead)),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-}
-
+@immutable
 class InfoText extends StatelessWidget {
-  final String info;
-  final bool isRead;
-
   const InfoText({
     super.key,
-    required this.info,
-    required this.isRead,
   });
 
   @override
   Widget build(BuildContext context) {
-    final textStyles = MoclTextStyles.of(context);
+    final ListItem item = ListItemProvider.of(context).model;
+    final TextStyle textStyle =
+        MoclTextStyles.of(context).smallTitle(item.isRead);
+
     return Text(
-      info,
+      item.info,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-      style: textStyles.smallTitle(isRead),
+      style: textStyle,
     );
   }
 }
 
+@immutable
 class ReplyBadge extends StatelessWidget {
-  final String reply;
-  final bool isRead;
-
   const ReplyBadge({
     super.key,
-    required this.reply,
-    required this.isRead,
   });
 
   @override
   Widget build(BuildContext context) {
-    final textStyles = MoclTextStyles.of(context);
-    return RoundTextWidget(text: reply, textStyle: textStyles.badge(isRead));
+    final ListItem item = ListItemProvider.of(context).model;
+    final TextStyle textStyle = MoclTextStyles.of(context).badge(item.isRead);
+    final bool hasReply = item.reply.isNotEmpty && item.reply != '0';
+
+    return hasReply
+        ? SizedBox.shrink()
+        : RoundTextWidget(text: item.reply, textStyle: textStyle);
   }
 }
