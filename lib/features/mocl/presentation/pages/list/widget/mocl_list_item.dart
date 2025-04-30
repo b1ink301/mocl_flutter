@@ -20,10 +20,7 @@ class MoclListItem extends ConsumerWidget {
 
   static const _aosPadding = EdgeInsets.only(left: 16, right: 12);
 
-  final ListItem item;
-  final int index;
-
-  const MoclListItem({super.key, required this.item, required this.index});
+  const MoclListItem({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => PlatformListTile(
@@ -33,25 +30,23 @@ class MoclListItem extends ConsumerWidget {
           contentPadding: _aosPadding,
         ),
     cupertino: (_, _) => CupertinoListTileData(padding: _iosPadding),
-    onTap: () => _handleItemTap(context, item, ref),
-    title: _TitleView(title: item.title, isRead: item.isRead),
-    subtitle:
-        item.info.isEmpty
-            ? null
-            : _BottomView(
-              reply: item.reply,
-              nickImage: item.userInfo.nickImage,
-              info: item.info,
-              isRead: item.isRead,
-            ),
+    onTap: () => _handleItemTap(context, ref),
+    title: const _TitleView(),
+    subtitle: const _BottomView(),
   );
 
-  void _handleItemTap(BuildContext context, ListItem item, WidgetRef ref) {
+  void _handleItemTap(BuildContext context, WidgetRef ref) {
+    final item = ref.watch(listItemProvider);
+    if (item == null) {
+      return;
+    }
+
     try {
       GoRouter.of(context).push(Routes.detail, extra: item).then((_) {
         if (context.mounted) {
           final readId = ref.read(readableStateNotifierProvider);
           if (readId == item.id && !item.isRead) {
+            final index = ref.watch(listItemIndexProvider);
             ref.read(listStateNotifierProvider.notifier).markAsRead(index);
           }
         }
@@ -62,72 +57,104 @@ class MoclListItem extends ConsumerWidget {
   }
 }
 
-class _TitleView extends StatelessWidget {
-  final String title;
-  final bool isRead;
-
-  const _TitleView({required this.title, required this.isRead});
+class _TitleView extends ConsumerWidget {
+  const _TitleView();
 
   @override
-  Widget build(BuildContext context) => PlatformText(
-    title,
-    maxLines: 3,
-    overflow: TextOverflow.ellipsis,
-    style: MoclTextStyles.of(context).title(isRead),
-  );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final (title, isRead) = ref.watch(
+      listItemProvider.select(
+        (ListItem? item) => (item?.title ?? "", item?.isRead ?? false),
+      ),
+    );
+    return PlatformText(
+      title,
+      maxLines: 3,
+      overflow: TextOverflow.ellipsis,
+      style: MoclTextStyles.of(context).title(isRead),
+    );
+  }
 }
 
 class _BottomView extends StatelessWidget {
-  final String reply;
-  final String nickImage;
-  final String info;
-  final bool isRead;
-
-  const _BottomView({
-    required this.reply,
-    required this.nickImage,
-    required this.info,
-    required this.isRead,
-  });
+  const _BottomView();
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(top: 8.0),
+  Widget build(BuildContext context) => const Padding(
+    padding: EdgeInsets.only(top: 8.0),
     child: SizedBox(
       height: 20,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
-            child: Row(
-              children: [
-                if (nickImage.isNotEmpty) NickImageWidget(url: nickImage),
-                Flexible(child: _InfoText(info: info, isRead: isRead)),
-              ],
-            ),
+            child: Row(children: [_NickImage(), Flexible(child: _InfoText())]),
           ),
-          if (reply.isNotEmpty && reply != '0')
-            RoundTextWidget(
-              text: reply,
-              textStyle: MoclTextStyles.of(context).badge(isRead),
-            ),
+          _ReplyText(),
         ],
       ),
     ),
   );
 }
 
-class _InfoText extends StatelessWidget {
-  final String info;
-  final bool isRead;
-
-  const _InfoText({required this.info, required this.isRead});
+class _ReplyText extends ConsumerWidget {
+  const _ReplyText();
 
   @override
-  Widget build(BuildContext context) => PlatformText(
-    info,
-    maxLines: 1,
-    overflow: TextOverflow.ellipsis,
-    style: MoclTextStyles.of(context).smallTitle(isRead),
-  );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final (reply, isRead) = ref.watch(
+      listItemProvider.select(
+        (ListItem? item) => (item?.reply ?? "", item?.isRead ?? false),
+      ),
+    );
+
+    if (reply.isNotEmpty && reply != '0') {
+      return SizedBox.shrink();
+    }
+    return RoundTextWidget(
+      text: reply,
+      textStyle: MoclTextStyles.of(context).badge(isRead),
+    );
+  }
+}
+
+class _NickImage extends ConsumerWidget {
+  const _NickImage();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final url = ref.watch(
+      listItemProvider.select(
+        (ListItem? item) => item?.userInfo.nickImage ?? "",
+      ),
+    );
+
+    if (url.isEmpty) {
+      return SizedBox.shrink();
+    }
+    return NickImageWidget(url: url);
+  }
+}
+
+class _InfoText extends ConsumerWidget {
+  const _InfoText();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final (info, isRead) = ref.watch(
+      listItemProvider.select(
+        (ListItem? item) => (item?.info ?? "", item?.isRead ?? false),
+      ),
+    );
+
+    if (info.isEmpty) {
+      return SizedBox.shrink();
+    }
+    return PlatformText(
+      info,
+      maxLines: 1,
+      overflow: TextOverflow.ellipsis,
+      style: MoclTextStyles.of(context).smallTitle(isRead),
+    );
+  }
 }

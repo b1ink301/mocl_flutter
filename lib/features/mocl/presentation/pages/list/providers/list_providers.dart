@@ -181,3 +181,12 @@ class SortTypeNotifier extends _$SortTypeNotifier {
 
   void changeSortType(SortType sortType) => state = sortType;
 }
+
+@Riverpod(dependencies: [listItemIndex, getListItem])
+ListItem? listItem(Ref ref) {
+  final index = ref.watch(listItemIndexProvider);
+  return ref.watch(getListItemProvider(index));
+}
+
+@riverpod
+int listItemIndex(Ref ref) => throw UnimplementedError();
