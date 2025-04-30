@@ -22,6 +22,10 @@ flutter run --flavor prd -t lib/main_prd.dart
 flutter run --release --flavor prd -t lib/main_prd.dart
 ```
 
+```shell
+flutter run --profile --flavor prd -t lib/main_prd.dart
+```
+
 ### dev
 
 ```shell
@@ -36,6 +40,10 @@ flutter run --release --flavor dev -t lib/main_dev.dart
 
 ```shell
 flutter build [appbundle|apk|ios|ipa] --flavor [dev|prd] -t lib/[main_dev|main_prd].dart
+```
+
+```shell
+flutter clean
 ```
 
 ## Build Apk

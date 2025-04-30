@@ -92,68 +92,78 @@ void showToast(Ref ref, String message, BuildContext context) {
 
 @Riverpod(keepAlive: true)
 GoRouter appRouter(Ref ref) => GoRouter(
-      initialLocation: Routes.main,
-      routes: <RouteBase>[
+  initialLocation: Routes.main,
+  routes: <RouteBase>[
+    GoRoute(
+      path: Routes.main,
+      pageBuilder:
+          (BuildContext context, GoRouterState state) => SwipeablePage(
+            builder: (BuildContext context) {
+              final width = MediaQuery.of(context).size.width;
+              return MainPage.init(context, width);
+            },
+          ),
+      routes: [
         GoRoute(
-            path: Routes.main,
-            pageBuilder: (BuildContext context, GoRouterState state) =>
-                SwipeablePage(
-                    builder: (BuildContext context) => MainPage.init(context)),
-            routes: [
-              GoRoute(
-                  path: Routes.setMainDlg,
-                  pageBuilder: (BuildContext context, GoRouterState state) =>
-                      CupertinoModalPopupPage(
-                        builder: (BuildContext context) =>
-                            AddListDialog.init(context),
-                      )),
-            ]),
-        GoRoute(
-          path: Routes.list,
-          pageBuilder: (BuildContext context, GoRouterState state) =>
-              SwipeablePage(builder: (BuildContext context) {
-            final MainItem item = GoRouterState.of(context).extra as MainItem;
-            return MoclListPage.init(context, item);
-          }),
+          path: Routes.setMainDlg,
+          pageBuilder:
+              (BuildContext context, GoRouterState state) =>
+                  CupertinoModalPopupPage(
+                    builder:
+                        (BuildContext context) => AddListDialog.init(context),
+                  ),
         ),
-        GoRoute(
-            path: Routes.detail,
-            pageBuilder: (BuildContext context, GoRouterState state) =>
-                SwipeablePage(
-                  builder: (BuildContext context) {
-                    final ListItem item =
-                        GoRouterState.of(context).extra as ListItem;
-                    return DetailPage.init(context, item);
-                  },
-                ),
-            routes: [
-              GoRoute(
-                  path: Routes.viewPhotoDlg,
-                  pageBuilder: (BuildContext context, GoRouterState state) =>
-                      CupertinoModalPopupPage(
-                        builder: (BuildContext context) {
-                          final url = GoRouterState.of(context).extra as String;
-                          return PhotoViewDialog(
-                            imageProvider: NetworkImage(url),
-                            filterQuality: FilterQuality.high,
-                          );
-                        },
-                      )),
-            ]),
-        GoRoute(
-          path: Routes.settings,
-          pageBuilder: (BuildContext context, GoRouterState state) =>
-              SwipeablePage(
-                  builder: (BuildContext context) =>
-                      SettingsPage.init(context)),
-        ),
-        GoRoute(
-          path: Routes.login,
-          builder: (BuildContext context, GoRouterState state) =>
-              const LoginPage(),
-        )
       ],
-    );
+    ),
+    GoRoute(
+      path: Routes.list,
+      pageBuilder:
+          (BuildContext context, GoRouterState state) => SwipeablePage(
+            builder: (BuildContext context) {
+              final MainItem item = GoRouterState.of(context).extra as MainItem;
+              return MoclListPage.init(context, item);
+            },
+          ),
+    ),
+    GoRoute(
+      path: Routes.detail,
+      pageBuilder:
+          (BuildContext context, GoRouterState state) => SwipeablePage(
+            builder: (BuildContext context) {
+              final ListItem item = GoRouterState.of(context).extra as ListItem;
+              return DetailPage.init(context, item);
+            },
+          ),
+      routes: [
+        GoRoute(
+          path: Routes.viewPhotoDlg,
+          pageBuilder:
+              (BuildContext context, GoRouterState state) =>
+                  CupertinoModalPopupPage(
+                    builder: (BuildContext context) {
+                      final url = GoRouterState.of(context).extra as String;
+                      return PhotoViewDialog(
+                        imageProvider: NetworkImage(url),
+                        filterQuality: FilterQuality.high,
+                      );
+                    },
+                  ),
+        ),
+      ],
+    ),
+    GoRoute(
+      path: Routes.settings,
+      pageBuilder:
+          (BuildContext context, GoRouterState state) => SwipeablePage(
+            builder: (BuildContext context) => SettingsPage.init(context),
+          ),
+    ),
+    GoRoute(
+      path: Routes.login,
+      builder: (BuildContext context, GoRouterState state) => const LoginPage(),
+    ),
+  ],
+);
 
 @riverpod
 Future<bool> openBrowserByUrl(Ref ref, String url) async {
@@ -164,7 +174,8 @@ Future<bool> openBrowserByUrl(Ref ref, String url) async {
 @riverpod
 Future<bool> shareUrl(Ref ref, String url) async {
   final Uri uri = Uri.parse(url);
-  final ShareResult result = await Share.shareUri(uri);
+  final ShareParams params = ShareParams(uri: uri);
+  final ShareResult result = await SharePlus.instance.share(params);
   return result.status == ShareResultStatus.success;
 }
 

@@ -22,7 +22,7 @@ final urlRequestProvider = AutoDisposeProvider<URLRequest>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef UrlRequestRef = AutoDisposeProviderRef<URLRequest>;
-String _$hasLoginHash() => r'acfa9f69d10e1f1360ddade55034aa4128d85af9';
+String _$hasLoginHash() => r'723405ea143bc5fff3c7f977672e39de4f4b0e3b';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -55,24 +55,13 @@ class HasLoginFamily extends Family<AsyncValue<bool>> {
   const HasLoginFamily();
 
   /// See also [hasLogin].
-  HasLoginProvider call(
-    CookieManager cookieManager,
-    WebUri uri,
-  ) {
-    return HasLoginProvider(
-      cookieManager,
-      uri,
-    );
+  HasLoginProvider call(CookieManager cookieManager, String url) {
+    return HasLoginProvider(cookieManager, url);
   }
 
   @override
-  HasLoginProvider getProviderOverride(
-    covariant HasLoginProvider provider,
-  ) {
-    return call(
-      provider.cookieManager,
-      provider.uri,
-    );
+  HasLoginProvider getProviderOverride(covariant HasLoginProvider provider) {
+    return call(provider.cookieManager, provider.url);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -93,26 +82,20 @@ class HasLoginFamily extends Family<AsyncValue<bool>> {
 /// See also [hasLogin].
 class HasLoginProvider extends AutoDisposeFutureProvider<bool> {
   /// See also [hasLogin].
-  HasLoginProvider(
-    CookieManager cookieManager,
-    WebUri uri,
-  ) : this._internal(
-          (ref) => hasLogin(
-            ref as HasLoginRef,
-            cookieManager,
-            uri,
-          ),
-          from: hasLoginProvider,
-          name: r'hasLoginProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$hasLoginHash,
-          dependencies: HasLoginFamily._dependencies,
-          allTransitiveDependencies: HasLoginFamily._allTransitiveDependencies,
-          cookieManager: cookieManager,
-          uri: uri,
-        );
+  HasLoginProvider(CookieManager cookieManager, String url)
+    : this._internal(
+        (ref) => hasLogin(ref as HasLoginRef, cookieManager, url),
+        from: hasLoginProvider,
+        name: r'hasLoginProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$hasLoginHash,
+        dependencies: HasLoginFamily._dependencies,
+        allTransitiveDependencies: HasLoginFamily._allTransitiveDependencies,
+        cookieManager: cookieManager,
+        url: url,
+      );
 
   HasLoginProvider._internal(
     super._createNotifier, {
@@ -122,16 +105,14 @@ class HasLoginProvider extends AutoDisposeFutureProvider<bool> {
     required super.debugGetCreateSourceHash,
     required super.from,
     required this.cookieManager,
-    required this.uri,
+    required this.url,
   }) : super.internal();
 
   final CookieManager cookieManager;
-  final WebUri uri;
+  final String url;
 
   @override
-  Override overrideWith(
-    FutureOr<bool> Function(HasLoginRef provider) create,
-  ) {
+  Override overrideWith(FutureOr<bool> Function(HasLoginRef provider) create) {
     return ProviderOverride(
       origin: this,
       override: HasLoginProvider._internal(
@@ -142,7 +123,7 @@ class HasLoginProvider extends AutoDisposeFutureProvider<bool> {
         allTransitiveDependencies: null,
         debugGetCreateSourceHash: null,
         cookieManager: cookieManager,
-        uri: uri,
+        url: url,
       ),
     );
   }
@@ -156,14 +137,14 @@ class HasLoginProvider extends AutoDisposeFutureProvider<bool> {
   bool operator ==(Object other) {
     return other is HasLoginProvider &&
         other.cookieManager == cookieManager &&
-        other.uri == uri;
+        other.url == url;
   }
 
   @override
   int get hashCode {
     var hash = _SystemHash.combine(0, runtimeType.hashCode);
     hash = _SystemHash.combine(hash, cookieManager.hashCode);
-    hash = _SystemHash.combine(hash, uri.hashCode);
+    hash = _SystemHash.combine(hash, url.hashCode);
 
     return _SystemHash.finish(hash);
   }
@@ -175,8 +156,8 @@ mixin HasLoginRef on AutoDisposeFutureProviderRef<bool> {
   /// The parameter `cookieManager` of this provider.
   CookieManager get cookieManager;
 
-  /// The parameter `uri` of this provider.
-  WebUri get uri;
+  /// The parameter `url` of this provider.
+  String get url;
 }
 
 class _HasLoginProviderElement extends AutoDisposeFutureProviderElement<bool>
@@ -186,7 +167,8 @@ class _HasLoginProviderElement extends AutoDisposeFutureProviderElement<bool>
   @override
   CookieManager get cookieManager => (origin as HasLoginProvider).cookieManager;
   @override
-  WebUri get uri => (origin as HasLoginProvider).uri;
+  String get url => (origin as HasLoginProvider).url;
 }
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

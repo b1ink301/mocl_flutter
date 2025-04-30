@@ -22,4 +22,12 @@ abstract class ListState with _$ListState {
         hasReachedMax: false,
         lastId: LastId.empty(),
       );
+
+  factory ListState.empty() => ListState(
+    items: const [],
+    isLoading: false,
+    currentPage: 0,
+    hasReachedMax: false,
+    lastId: LastId.empty(),
+  );
 }

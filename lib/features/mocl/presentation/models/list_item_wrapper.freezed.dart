@@ -12,49 +12,47 @@ part of 'list_item_wrapper.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
-
 /// @nodoc
 mixin _$ListItemWrapper {
-  ListItem get item;
-  double get height;
 
-  /// Create a copy of ListItemWrapper
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
-  $ListItemWrapperCopyWith<ListItemWrapper> get copyWith =>
-      _$ListItemWrapperCopyWithImpl<ListItemWrapper>(
-          this as ListItemWrapper, _$identity);
+ ListItem get item; double get height;
+/// Create a copy of ListItemWrapper
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$ListItemWrapperCopyWith<ListItemWrapper> get copyWith => _$ListItemWrapperCopyWithImpl<ListItemWrapper>(this as ListItemWrapper, _$identity);
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is ListItemWrapper &&
-            (identical(other.item, item) || other.item == item) &&
-            (identical(other.height, height) || other.height == height));
-  }
 
-  @override
-  int get hashCode => Object.hash(runtimeType, item, height);
 
-  @override
-  String toString() {
-    return 'ListItemWrapper(item: $item, height: $height)';
-  }
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ListItemWrapper&&(identical(other.item, item) || other.item == item)&&(identical(other.height, height) || other.height == height));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,item,height);
+
+@override
+String toString() {
+  return 'ListItemWrapper(item: $item, height: $height)';
+}
+
+
 }
 
 /// @nodoc
-abstract mixin class $ListItemWrapperCopyWith<$Res> {
-  factory $ListItemWrapperCopyWith(
-          ListItemWrapper value, $Res Function(ListItemWrapper) _then) =
-      _$ListItemWrapperCopyWithImpl;
-  @useResult
-  $Res call({ListItem item, double height});
+abstract mixin class $ListItemWrapperCopyWith<$Res>  {
+  factory $ListItemWrapperCopyWith(ListItemWrapper value, $Res Function(ListItemWrapper) _then) = _$ListItemWrapperCopyWithImpl;
+@useResult
+$Res call({
+ ListItem item, double height
+});
 
-  $ListItemCopyWith<$Res> get item;
+
+$ListItemCopyWith<$Res> get item;
+
 }
-
 /// @nodoc
 class _$ListItemWrapperCopyWithImpl<$Res>
     implements $ListItemWrapperCopyWith<$Res> {
@@ -63,87 +61,75 @@ class _$ListItemWrapperCopyWithImpl<$Res>
   final ListItemWrapper _self;
   final $Res Function(ListItemWrapper) _then;
 
-  /// Create a copy of ListItemWrapper
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? item = null,
-    Object? height = null,
-  }) {
-    return _then(_self.copyWith(
-      item: null == item
-          ? _self.item
-          : item // ignore: cast_nullable_to_non_nullable
-              as ListItem,
-      height: null == height
-          ? _self.height
-          : height // ignore: cast_nullable_to_non_nullable
-              as double,
-    ));
-  }
-
-  /// Create a copy of ListItemWrapper
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $ListItemCopyWith<$Res> get item {
-    return $ListItemCopyWith<$Res>(_self.item, (value) {
-      return _then(_self.copyWith(item: value));
-    });
-  }
+/// Create a copy of ListItemWrapper
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? item = null,Object? height = null,}) {
+  return _then(_self.copyWith(
+item: null == item ? _self.item : item // ignore: cast_nullable_to_non_nullable
+as ListItem,height: null == height ? _self.height : height // ignore: cast_nullable_to_non_nullable
+as double,
+  ));
+}
+/// Create a copy of ListItemWrapper
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ListItemCopyWith<$Res> get item {
+  
+  return $ListItemCopyWith<$Res>(_self.item, (value) {
+    return _then(_self.copyWith(item: value));
+  });
+}
 }
 
+
 /// @nodoc
+
 
 class _ListItemWrapper implements ListItemWrapper {
-  _ListItemWrapper({required this.item, required this.height});
+   _ListItemWrapper({required this.item, required this.height});
+  
 
-  @override
-  final ListItem item;
-  @override
-  final double height;
+@override final  ListItem item;
+@override final  double height;
 
-  /// Create a copy of ListItemWrapper
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
-  _$ListItemWrapperCopyWith<_ListItemWrapper> get copyWith =>
-      __$ListItemWrapperCopyWithImpl<_ListItemWrapper>(this, _$identity);
+/// Create a copy of ListItemWrapper
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$ListItemWrapperCopyWith<_ListItemWrapper> get copyWith => __$ListItemWrapperCopyWithImpl<_ListItemWrapper>(this, _$identity);
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _ListItemWrapper &&
-            (identical(other.item, item) || other.item == item) &&
-            (identical(other.height, height) || other.height == height));
-  }
 
-  @override
-  int get hashCode => Object.hash(runtimeType, item, height);
 
-  @override
-  String toString() {
-    return 'ListItemWrapper(item: $item, height: $height)';
-  }
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ListItemWrapper&&(identical(other.item, item) || other.item == item)&&(identical(other.height, height) || other.height == height));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,item,height);
+
+@override
+String toString() {
+  return 'ListItemWrapper(item: $item, height: $height)';
+}
+
+
 }
 
 /// @nodoc
-abstract mixin class _$ListItemWrapperCopyWith<$Res>
-    implements $ListItemWrapperCopyWith<$Res> {
-  factory _$ListItemWrapperCopyWith(
-          _ListItemWrapper value, $Res Function(_ListItemWrapper) _then) =
-      __$ListItemWrapperCopyWithImpl;
-  @override
-  @useResult
-  $Res call({ListItem item, double height});
+abstract mixin class _$ListItemWrapperCopyWith<$Res> implements $ListItemWrapperCopyWith<$Res> {
+  factory _$ListItemWrapperCopyWith(_ListItemWrapper value, $Res Function(_ListItemWrapper) _then) = __$ListItemWrapperCopyWithImpl;
+@override @useResult
+$Res call({
+ ListItem item, double height
+});
 
-  @override
-  $ListItemCopyWith<$Res> get item;
+
+@override $ListItemCopyWith<$Res> get item;
+
 }
-
 /// @nodoc
 class __$ListItemWrapperCopyWithImpl<$Res>
     implements _$ListItemWrapperCopyWith<$Res> {
@@ -152,35 +138,26 @@ class __$ListItemWrapperCopyWithImpl<$Res>
   final _ListItemWrapper _self;
   final $Res Function(_ListItemWrapper) _then;
 
-  /// Create a copy of ListItemWrapper
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $Res call({
-    Object? item = null,
-    Object? height = null,
-  }) {
-    return _then(_ListItemWrapper(
-      item: null == item
-          ? _self.item
-          : item // ignore: cast_nullable_to_non_nullable
-              as ListItem,
-      height: null == height
-          ? _self.height
-          : height // ignore: cast_nullable_to_non_nullable
-              as double,
-    ));
-  }
+/// Create a copy of ListItemWrapper
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? item = null,Object? height = null,}) {
+  return _then(_ListItemWrapper(
+item: null == item ? _self.item : item // ignore: cast_nullable_to_non_nullable
+as ListItem,height: null == height ? _self.height : height // ignore: cast_nullable_to_non_nullable
+as double,
+  ));
+}
 
-  /// Create a copy of ListItemWrapper
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $ListItemCopyWith<$Res> get item {
-    return $ListItemCopyWith<$Res>(_self.item, (value) {
-      return _then(_self.copyWith(item: value));
-    });
-  }
+/// Create a copy of ListItemWrapper
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$ListItemCopyWith<$Res> get item {
+  
+  return $ListItemCopyWith<$Res>(_self.item, (value) {
+    return _then(_self.copyWith(item: value));
+  });
+}
 }
 
 // dart format on
