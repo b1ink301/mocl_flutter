@@ -15,7 +15,7 @@ class LoginPage extends ConsumerWidget {
     final siteType = ref.watch(currentSiteTypeNotifierProvider);
     return PlatformScaffold(
       appBar: PlatformAppBar(
-          material: (_, __) => MaterialAppBarData(
+          material: (_, _) => MaterialAppBarData(
                 title: PlatformText('로그인', style: style),
                 flexibleSpace: Container(color: backgroundColor),
                 backgroundColor: backgroundColor,
@@ -23,7 +23,7 @@ class LoginPage extends ConsumerWidget {
                 centerTitle: false,
                 toolbarHeight: 64,
               ),
-          cupertino: (_, __) => CupertinoNavigationBarData(
+          cupertino: (_, _) => CupertinoNavigationBarData(
                 title: PlatformText('로그인'),
                 previousPageTitle: siteType.title,
                 backgroundColor: backgroundColor,

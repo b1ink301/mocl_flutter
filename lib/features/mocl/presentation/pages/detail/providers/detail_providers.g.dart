@@ -55,21 +55,15 @@ class _MarkAsReadFamily extends Family<AsyncValue<int>> {
   const _MarkAsReadFamily();
 
   /// See also [_markAsRead].
-  _MarkAsReadProvider call(
-    ListItem listItem,
-  ) {
-    return _MarkAsReadProvider(
-      listItem,
-    );
+  _MarkAsReadProvider call(ListItem listItem) {
+    return _MarkAsReadProvider(listItem);
   }
 
   @override
   _MarkAsReadProvider getProviderOverride(
     covariant _MarkAsReadProvider provider,
   ) {
-    return call(
-      provider.listItem,
-    );
+    return call(provider.listItem);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -90,24 +84,19 @@ class _MarkAsReadFamily extends Family<AsyncValue<int>> {
 /// See also [_markAsRead].
 class _MarkAsReadProvider extends AutoDisposeFutureProvider<int> {
   /// See also [_markAsRead].
-  _MarkAsReadProvider(
-    ListItem listItem,
-  ) : this._internal(
-          (ref) => _markAsRead(
-            ref as _MarkAsReadRef,
-            listItem,
-          ),
-          from: _markAsReadProvider,
-          name: r'_markAsReadProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$markAsReadHash,
-          dependencies: _MarkAsReadFamily._dependencies,
-          allTransitiveDependencies:
-              _MarkAsReadFamily._allTransitiveDependencies,
-          listItem: listItem,
-        );
+  _MarkAsReadProvider(ListItem listItem)
+    : this._internal(
+        (ref) => _markAsRead(ref as _MarkAsReadRef, listItem),
+        from: _markAsReadProvider,
+        name: r'_markAsReadProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$markAsReadHash,
+        dependencies: _MarkAsReadFamily._dependencies,
+        allTransitiveDependencies: _MarkAsReadFamily._allTransitiveDependencies,
+        listItem: listItem,
+      );
 
   _MarkAsReadProvider._internal(
     super._createNotifier, {
@@ -180,15 +169,16 @@ String _$detailSmallTitleHash() => r'9bc30084263914d4fcba17904ecc6e1f8f20d2b5';
 final detailSmallTitleProvider = AutoDisposeProvider<String>.internal(
   detailSmallTitle,
   name: r'detailSmallTitleProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$detailSmallTitleHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$detailSmallTitleHash,
   dependencies: <ProviderOrFamily>[listItemProvider, detailTitleProvider],
   allTransitiveDependencies: <ProviderOrFamily>{
     listItemProvider,
     ...?listItemProvider.allTransitiveDependencies,
     detailTitleProvider,
-    ...?detailTitleProvider.allTransitiveDependencies
+    ...?detailTitleProvider.allTransitiveDependencies,
   },
 );
 
@@ -207,7 +197,7 @@ final detailTitleProvider = AutoDisposeProvider<String>.internal(
   dependencies: <ProviderOrFamily>[listItemProvider],
   allTransitiveDependencies: <ProviderOrFamily>{
     listItemProvider,
-    ...?listItemProvider.allTransitiveDependencies
+    ...?listItemProvider.allTransitiveDependencies,
   },
 );
 
@@ -225,13 +215,13 @@ final detailUrlProvider = AutoDisposeProvider<String>.internal(
       const bool.fromEnvironment('dart.vm.product') ? null : _$detailUrlHash,
   dependencies: <ProviderOrFamily>[
     listItemProvider,
-    currentSiteTypeNotifierProvider
+    currentSiteTypeNotifierProvider,
   ],
   allTransitiveDependencies: <ProviderOrFamily>{
     listItemProvider,
     ...?listItemProvider.allTransitiveDependencies,
     currentSiteTypeNotifierProvider,
-    ...?currentSiteTypeNotifierProvider.allTransitiveDependencies
+    ...?currentSiteTypeNotifierProvider.allTransitiveDependencies,
   },
 );
 
@@ -251,26 +241,20 @@ class DetailAppbarHeightFamily extends Family<double> {
   const DetailAppbarHeightFamily();
 
   /// See also [detailAppbarHeight].
-  DetailAppbarHeightProvider call(
-    String text,
-  ) {
-    return DetailAppbarHeightProvider(
-      text,
-    );
+  DetailAppbarHeightProvider call(String text) {
+    return DetailAppbarHeightProvider(text);
   }
 
   @override
   DetailAppbarHeightProvider getProviderOverride(
     covariant DetailAppbarHeightProvider provider,
   ) {
-    return call(
-      provider.text,
-    );
+    return call(provider.text);
   }
 
   static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
     appbarTextStyleProvider,
-    screenWidthProvider
+    screenWidthProvider,
   ];
 
   @override
@@ -278,11 +262,11 @@ class DetailAppbarHeightFamily extends Family<double> {
 
   static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
       <ProviderOrFamily>{
-    appbarTextStyleProvider,
-    ...?appbarTextStyleProvider.allTransitiveDependencies,
-    screenWidthProvider,
-    ...?screenWidthProvider.allTransitiveDependencies
-  };
+        appbarTextStyleProvider,
+        ...?appbarTextStyleProvider.allTransitiveDependencies,
+        screenWidthProvider,
+        ...?screenWidthProvider.allTransitiveDependencies,
+      };
 
   @override
   Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
@@ -295,24 +279,20 @@ class DetailAppbarHeightFamily extends Family<double> {
 /// See also [detailAppbarHeight].
 class DetailAppbarHeightProvider extends AutoDisposeProvider<double> {
   /// See also [detailAppbarHeight].
-  DetailAppbarHeightProvider(
-    String text,
-  ) : this._internal(
-          (ref) => detailAppbarHeight(
-            ref as DetailAppbarHeightRef,
-            text,
-          ),
-          from: detailAppbarHeightProvider,
-          name: r'detailAppbarHeightProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$detailAppbarHeightHash,
-          dependencies: DetailAppbarHeightFamily._dependencies,
-          allTransitiveDependencies:
-              DetailAppbarHeightFamily._allTransitiveDependencies,
-          text: text,
-        );
+  DetailAppbarHeightProvider(String text)
+    : this._internal(
+        (ref) => detailAppbarHeight(ref as DetailAppbarHeightRef, text),
+        from: detailAppbarHeightProvider,
+        name: r'detailAppbarHeightProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$detailAppbarHeightHash,
+        dependencies: DetailAppbarHeightFamily._dependencies,
+        allTransitiveDependencies:
+            DetailAppbarHeightFamily._allTransitiveDependencies,
+        text: text,
+      );
 
   DetailAppbarHeightProvider._internal(
     super._createNotifier, {
@@ -371,7 +351,8 @@ mixin DetailAppbarHeightRef on AutoDisposeProviderRef<double> {
 }
 
 class _DetailAppbarHeightProviderElement
-    extends AutoDisposeProviderElement<double> with DetailAppbarHeightRef {
+    extends AutoDisposeProviderElement<double>
+    with DetailAppbarHeightRef {
   _DetailAppbarHeightProviderElement(super.provider);
 
   @override
@@ -384,17 +365,18 @@ String _$detailsNotifierHash() => r'26526494740868f369979d642d6859a09e145e40';
 @ProviderFor(DetailsNotifier)
 final detailsNotifierProvider =
     AutoDisposeAsyncNotifierProvider<DetailsNotifier, Details>.internal(
-  DetailsNotifier.new,
-  name: r'detailsNotifierProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$detailsNotifierHash,
-  dependencies: <ProviderOrFamily>[listItemProvider],
-  allTransitiveDependencies: <ProviderOrFamily>{
-    listItemProvider,
-    ...?listItemProvider.allTransitiveDependencies
-  },
-);
+      DetailsNotifier.new,
+      name: r'detailsNotifierProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$detailsNotifierHash,
+      dependencies: <ProviderOrFamily>[listItemProvider],
+      allTransitiveDependencies: <ProviderOrFamily>{
+        listItemProvider,
+        ...?listItemProvider.allTransitiveDependencies,
+      },
+    );
 
 typedef _$DetailsNotifier = AutoDisposeAsyncNotifier<Details>;
 String _$detailTitleNotifierHash() =>
@@ -404,19 +386,20 @@ String _$detailTitleNotifierHash() =>
 @ProviderFor(DetailTitleNotifier)
 final detailTitleNotifierProvider =
     AutoDisposeNotifierProvider<DetailTitleNotifier, String>.internal(
-  DetailTitleNotifier.new,
-  name: r'detailTitleNotifierProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$detailTitleNotifierHash,
-  dependencies: <ProviderOrFamily>[listItemProvider, detailTitleProvider],
-  allTransitiveDependencies: <ProviderOrFamily>{
-    listItemProvider,
-    ...?listItemProvider.allTransitiveDependencies,
-    detailTitleProvider,
-    ...?detailTitleProvider.allTransitiveDependencies
-  },
-);
+      DetailTitleNotifier.new,
+      name: r'detailTitleNotifierProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$detailTitleNotifierHash,
+      dependencies: <ProviderOrFamily>[listItemProvider, detailTitleProvider],
+      allTransitiveDependencies: <ProviderOrFamily>{
+        listItemProvider,
+        ...?listItemProvider.allTransitiveDependencies,
+        detailTitleProvider,
+        ...?detailTitleProvider.allTransitiveDependencies,
+      },
+    );
 
 typedef _$DetailTitleNotifier = AutoDisposeNotifier<String>;
 // ignore_for_file: type=lint

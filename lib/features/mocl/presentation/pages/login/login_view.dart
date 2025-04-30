@@ -70,7 +70,7 @@ class LoginView extends ConsumerWidget {
         }
 
         final bool hasLogin =
-            await ref.read(hasLoginProvider(cookieManager, url).future);
+            await ref.read(hasLoginProvider(cookieManager, url.toString()).future);
 
         debugPrint('hasLogin=$hasLogin, uri=$url');
 

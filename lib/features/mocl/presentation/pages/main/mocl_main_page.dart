@@ -17,48 +17,47 @@ import 'package:mocl_flutter/src/generated/i18n/app_localizations.dart';
 class MainPage extends ConsumerWidget {
   const MainPage({super.key});
 
-  static Widget init(BuildContext context) => ProviderScope(
-        overrides: [
-          screenWidthProvider
-              .overrideWithValue(MediaQuery.of(context).size.width)
-        ],
-        child: AnnotatedRegion<SystemUiOverlayStyle>(
-          value: Theme.of(context).appBarTheme.systemOverlayStyle!,
-          child: const MainPage(),
-        ),
-      );
+  static Widget init(BuildContext context, double width) => ProviderScope(
+    overrides: [screenWidthProvider.overrideWithValue(width)],
+    child: AnnotatedRegion<SystemUiOverlayStyle>(
+      value: Theme.of(context).appBarTheme.systemOverlayStyle!,
+      child: const MainPage(),
+    ),
+  );
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final GlobalKey<ScaffoldState> scaffoldState =
-        ref.watch(mainScaffoldStateProvider);
-
+    final GlobalKey<ScaffoldState> scaffoldState = ref.watch(
+      mainScaffoldStateProvider,
+    );
     return PopScope(
-        canPop: false,
-        onPopInvokedWithResult: (bool didPop, _) {
-          if (didPop) {
-            return;
-          }
-          if (scaffoldState.currentState?.isDrawerOpen == true) {
-            scaffoldState.currentState?.closeDrawer();
-          } else {
-            SystemNavigator.pop();
-          }
-        },
-        child: PlatformScaffold(
-          body: PlatformWidget(
-            material: (_, __) => const MainView(),
-            cupertino: (_, __) => const _MainCupertinoView(),
-          ),
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          material: (_, __) => MaterialScaffoldData(
-            widgetKey: scaffoldState,
-            drawer: const DrawerWidget(),
-            drawerEdgeDragWidth: ref.watch(screenWidthProvider),
-            drawerEnableOpenDragGesture: true,
-          ),
-          cupertino: (_, __) => CupertinoPageScaffoldData(),
-        ));
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, _) {
+        if (didPop) {
+          return;
+        }
+        if (scaffoldState.currentState?.isDrawerOpen == true) {
+          scaffoldState.currentState?.closeDrawer();
+        } else {
+          SystemNavigator.pop();
+        }
+      },
+      child: PlatformScaffold(
+        body: PlatformWidget(
+          material: (_, _) => const MainView(),
+          cupertino: (_, _) => const _MainCupertinoView(),
+        ),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        material:
+            (_, _) => MaterialScaffoldData(
+              widgetKey: scaffoldState,
+              drawer: const DrawerWidget(),
+              drawerEdgeDragWidth: ref.watch(screenWidthProvider),
+              drawerEnableOpenDragGesture: true,
+            ),
+        // cupertino: (_, _) => CupertinoPageScaffoldData(),
+      ),
+    );
   }
 }
 
@@ -77,9 +76,7 @@ class _MainCupertinoView extends ConsumerWidget {
     if (Platform.isIOS) {
       return Stack(
         children: [
-          const CupertinoTabTransitionBuilder(
-            child: MainView(),
-          ),
+          const CupertinoTabTransitionBuilder(child: MainView()),
           if (isSidebarExpanded)
             GestureDetector(
               onTap: sidebarClose,
@@ -93,12 +90,14 @@ class _MainCupertinoView extends ConsumerWidget {
             child: CupertinoSidebar(
               maxWidth: 240,
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              selectedIndex: SiteType.values
-                  .indexOf(ref.watch(currentSiteTypeNotifierProvider)),
+              selectedIndex: SiteType.values.indexOf(
+                ref.watch(currentSiteTypeNotifierProvider),
+              ),
               onDestinationSelected: (index) {
-                final siteType = SiteType.values
-                    .where((s) => s != SiteType.settings)
-                    .toList()[index];
+                final siteType =
+                    SiteType.values
+                        .where((s) => s != SiteType.settings)
+                        .toList()[index];
                 changeSiteType(siteType);
                 sidebarClose();
               },
@@ -108,21 +107,28 @@ class _MainCupertinoView extends ConsumerWidget {
               children: [
                 SidebarSection(
                   label: PlatformText(AppLocalizations.of(context)!.site),
-                  children: SiteType.values
-                      .where((s) => s != SiteType.settings)
-                      .map(
-                        (s) => SidebarDestination(label: PlatformText(s.title)),
-                      )
-                      .toList(),
+                  children:
+                      SiteType.values
+                          .where((s) => s != SiteType.settings)
+                          .map(
+                            (s) => SidebarDestination(
+                              label: PlatformText(s.title),
+                            ),
+                          )
+                          .toList(),
                 ),
-                SidebarSection(label: PlatformText('설정'), children: [
-                  SidebarDestination(
+                SidebarSection(
+                  label: PlatformText('설정'),
+                  children: [
+                    SidebarDestination(
                       label: PlatformText(SiteType.settings.title),
                       onTap: () {
                         context.push(Routes.settings);
                         sidebarClose();
-                      }),
-                ]),
+                      },
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
@@ -136,12 +142,14 @@ class _MainCupertinoView extends ConsumerWidget {
             child: CupertinoSidebar(
               maxWidth: 250,
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              selectedIndex: SiteType.values
-                  .indexOf(ref.watch(currentSiteTypeNotifierProvider)),
+              selectedIndex: SiteType.values.indexOf(
+                ref.watch(currentSiteTypeNotifierProvider),
+              ),
               onDestinationSelected: (index) {
-                final siteType = SiteType.values
-                    .where((s) => s != SiteType.settings)
-                    .toList()[index];
+                final siteType =
+                    SiteType.values
+                        .where((s) => s != SiteType.settings)
+                        .toList()[index];
                 changeSiteType(siteType);
                 // sidebarClose();
               },
@@ -151,28 +159,34 @@ class _MainCupertinoView extends ConsumerWidget {
               children: [
                 SidebarSection(
                   label: PlatformText(AppLocalizations.of(context)!.site),
-                  children: SiteType.values
-                      .where((s) => s != SiteType.settings)
-                      .map(
-                        (s) => SidebarDestination(label: PlatformText(s.title)),
-                      )
-                      .toList(),
+                  children:
+                      SiteType.values
+                          .where((s) => s != SiteType.settings)
+                          .map(
+                            (s) => SidebarDestination(
+                              label: PlatformText(s.title),
+                            ),
+                          )
+                          .toList(),
                 ),
-                SidebarSection(label: PlatformText('설정'), children: [
-                  SidebarDestination(
+                SidebarSection(
+                  label: PlatformText('설정'),
+                  children: [
+                    SidebarDestination(
                       label: PlatformText(SiteType.settings.title),
                       onTap: () {
                         context.push(Routes.settings);
                         // sidebarClose();
-                      }),
-                ]),
+                      },
+                    ),
+                  ],
+                ),
               ],
             ),
           ),
           Expanded(
-              child: const CupertinoTabTransitionBuilder(
-            child: MainView(),
-          )),
+            child: const CupertinoTabTransitionBuilder(child: MainView()),
+          ),
         ],
       );
     }

@@ -211,6 +211,7 @@ class NaverCafeParser implements BaseParser {
           lastId.intId,
           boardTitle,
           baseUrl,
+          false,
         ),
       );
 

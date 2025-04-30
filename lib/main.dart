@@ -18,31 +18,12 @@ import 'features/mocl/presentation/app_widget.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
-
-  SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-    systemNavigationBarContrastEnforced: false,
-    systemNavigationBarColor: Colors.transparent,
-    systemStatusBarContrastEnforced: false,
-  ));
-
+  SentryWidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   unawaited(_firebase());
-
   final SharedPreferences sharedPreferences =
       await SharedPreferences.getInstance();
-
   final Database database = await _database();
-
-  // runApp(
-  //   ProviderScope(
-  //     overrides: [
-  //       sharedPreferencesProvider.overrideWithValue(sharedPreferences),
-  //       appDatabaseProvider.overrideWithValue(database),
-  //     ],
-  //     child: const AppWidget(),
-  //   ),
-  // );
 
   await SentryFlutter.init(
     (options) {
@@ -51,15 +32,16 @@ Future<void> main() async {
       options.tracesSampleRate = 1.0;
       options.profilesSampleRate = 1.0;
     },
-    appRunner: () => runApp(
-      ProviderScope(
-        overrides: [
-          sharedPreferencesProvider.overrideWithValue(sharedPreferences),
-          appDatabaseProvider.overrideWithValue(database),
-        ],
-        child: const AppWidget(),
-      ),
-    ),
+    appRunner:
+        () => runApp(
+          ProviderScope(
+            overrides: [
+              sharedPreferencesProvider.overrideWithValue(sharedPreferences),
+              appDatabaseProvider.overrideWithValue(database),
+            ],
+            child: const AppWidget(),
+          ),
+        ),
   );
 }
 

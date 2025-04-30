@@ -10,24 +10,31 @@ class AppWidget extends ConsumerWidget {
   const AppWidget({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => PlatformProvider(
+  Widget build(BuildContext context, WidgetRef ref) =>
+      PlatformProvider(
         settings: PlatformSettingsData(
           iosUsesMaterialWidgets: true,
           iosUseZeroPaddingForAppbarPlatformIcon: true,
         ),
-        builder: (context) => PlatformTheme(
-          themeMode: ThemeMode.system,
-          materialLightTheme: MoclTheme.lightTheme,
-          materialDarkTheme: MoclTheme.darkTheme,
-          cupertinoLightTheme: MoclTheme.lightCupertinoTheme,
-          cupertinoDarkTheme: MoclTheme.dartCupertinoTheme,
-          matchCupertinoSystemChromeBrightness: true,
-          builder: (context) => PlatformApp.router(
-            localizationsDelegates: AppLocalizations.localizationsDelegates,
-            supportedLocales: AppLocalizations.supportedLocales,
-            scrollBehavior: CustomScrollBehavior(),
-            routerConfig: ref.watch(appRouterProvider),
-          ),
-        ),
+        builder:
+            (context) =>
+            PlatformTheme(
+              themeMode: ThemeMode.system,
+              materialLightTheme: MoclTheme.lightTheme,
+              materialDarkTheme: MoclTheme.darkTheme,
+              cupertinoLightTheme: MoclTheme.lightCupertinoTheme,
+              cupertinoDarkTheme: MoclTheme.dartCupertinoTheme,
+              matchCupertinoSystemChromeBrightness: true,
+              builder:
+                  (context) =>
+                  PlatformApp.router(
+                    localizationsDelegates:
+                    AppLocalizations.localizationsDelegates,
+                    supportedLocales: AppLocalizations.supportedLocales,
+                    scrollBehavior: CustomScrollBehavior(),
+                    routerConfig: ref.watch(appRouterProvider),
+                  ),
+            ),
       );
 }
+
