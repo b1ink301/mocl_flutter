@@ -56,7 +56,7 @@ class MoclListPage extends StatelessWidget {
               return false;
             },
             child: const CustomScrollView(
-              // cacheExtent: 0,
+              cacheExtent: 500,
               slivers: <Widget>[
                 _ListAppbar(),
                 MoclListView(),

@@ -1,3 +1,4 @@
+import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
@@ -31,6 +32,8 @@ class DrawerWidget extends StatelessWidget {
                   shrinkWrap: true,
                   padding: EdgeInsets.zero,
                   children: SiteType.values
+                      .filterNot(
+                          (SiteType siteType) => siteType == SiteType.theqoo)
                       .map(
                         (SiteType siteType) => Column(
                           children: [
@@ -53,11 +56,10 @@ class DrawerWidget extends StatelessWidget {
                                   : null,
                             ),
                             const Divider(
-                              height: 1,
-                              thickness: 1,
-                              indent: 12,
-                              endIndent: 8,
-                            ),
+                                height: 1,
+                                thickness: 1,
+                                indent: 12,
+                                endIndent: 8),
                           ],
                         ),
                       )
@@ -65,16 +67,13 @@ class DrawerWidget extends StatelessWidget {
                 ),
               ),
               BlocBuilder<GetVersionCubit, GetVersionState>(
-                builder: (BuildContext context, GetVersionState state) {
-                  switch (state) {
-                    case SuccessGetVersionState():
-                      return ListTile(
-                        title: Text(state.version, textAlign: TextAlign.center),
-                        titleTextStyle: Theme.of(context).textTheme.bodySmall,
-                      );
-                    default:
-                      return const SizedBox.shrink();
-                  }
+                builder: (BuildContext context, GetVersionState state) =>
+                    switch (state) {
+                  SuccessGetVersionState() => ListTile(
+                      title: Text(state.version, textAlign: TextAlign.center),
+                      titleTextStyle: Theme.of(context).textTheme.bodySmall,
+                    ),
+                  _ => const SizedBox.shrink()
                 },
               ),
             ],

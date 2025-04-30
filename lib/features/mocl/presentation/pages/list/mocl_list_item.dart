@@ -52,7 +52,6 @@ class TitleView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ReadableListItem model = ReadableListItemProvider.of(context).model;
-    debugPrint('TitleView: ${model.item.title}');
     return ValueListenableBuilder(
       valueListenable: model.isRead,
       builder: (BuildContext context, bool isRead, Widget? child) => Text(
@@ -136,14 +135,15 @@ class ReplyBadge extends StatelessWidget {
     final String reply = model.item.reply;
     final bool hasReply = reply.isNotEmpty && reply != '0';
 
-    return hasReply
+    return !hasReply
         ? const SizedBox.shrink()
         : ValueListenableBuilder(
             valueListenable: model.isRead,
-            builder: (BuildContext context, bool isRead, Widget? child) {
-              return RoundTextWidget(
-                  text: reply,
-                  textStyle: MoclTextStyles.of(context).badge(isRead));
-            });
+            builder: (BuildContext context, bool isRead, Widget? child) =>
+                RoundTextWidget(
+              text: reply,
+              textStyle: MoclTextStyles.of(context).badge(isRead),
+            ),
+          );
   }
 }

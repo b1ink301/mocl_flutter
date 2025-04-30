@@ -17,9 +17,9 @@ class MoclListView extends StatelessWidget {
     return BlocBuilder<ListPageCubit, ListPageState>(
       builder: (BuildContext context, ListPageState state) =>
           SliverList.separated(
-        // addAutomaticKeepAlives: true,
-        // addRepaintBoundaries: true,
-        // addSemanticIndexes: false,
+        addAutomaticKeepAlives: false,
+        addRepaintBoundaries: true,
+        addSemanticIndexes: false,
         separatorBuilder: (BuildContext context, int index) =>
             const DividerWidget(),
         itemBuilder: (BuildContext context, int index) {
