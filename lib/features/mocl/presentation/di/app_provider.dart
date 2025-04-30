@@ -174,7 +174,8 @@ Future<bool> openBrowserByUrl(Ref ref, String url) async {
 @riverpod
 Future<bool> shareUrl(Ref ref, String url) async {
   final Uri uri = Uri.parse(url);
-  final ShareResult result = await Share.shareUri(uri);
+  final ShareParams params = ShareParams(uri: uri);
+  final ShareResult result = await SharePlus.instance.share(params);
   return result.status == ShareResultStatus.success;
 }
 

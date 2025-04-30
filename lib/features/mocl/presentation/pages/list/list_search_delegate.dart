@@ -25,36 +25,35 @@ class ListSearchDelegate extends SearchDelegate {
       inputDecorationTheme: InputDecorationTheme(
         hintStyle: theme.textTheme.labelMedium,
       ),
-      textTheme: TextTheme(
-        titleLarge: theme.textTheme.labelLarge,
-      ),
+      textTheme: TextTheme(titleLarge: theme.textTheme.labelLarge),
     );
   }
 
   @override
   List<Widget>? buildActions(BuildContext context) => [
-      PlatformIconButton(
-        icon: const Icon(Icons.clear),
-        onPressed: () {
-          query = ''; // 검색어 초기화
-        },
-      ),
-    ];
+    PlatformIconButton(
+      icon: const Icon(Icons.clear),
+      onPressed: () {
+        query = ''; // 검색어 초기화
+      },
+    ),
+  ];
 
   @override
   Widget? buildLeading(BuildContext context) => PlatformIconButton(
-      icon: const Icon(Icons.arrow_back),
-      onPressed: () {
-        close(context, ''); // 검색 종료
-      },
-    );
+    icon: const Icon(Icons.arrow_back),
+    onPressed: () {
+      close(context, ''); // 검색 종료
+    },
+  );
 
   @override
   Widget buildResults(BuildContext context) {
     final String searchText = query.trim();
-    return ProviderScope(overrides: [
-      mainItemProvider.overrideWithValue(item),
-    ], child: SearchResultView(searchText: searchText));
+    return ProviderScope(
+      overrides: [mainItemProvider.overrideWithValue(item)],
+      child: SearchResultView(searchText: searchText),
+    );
   }
 
   @override
@@ -66,10 +65,7 @@ class ListSearchDelegate extends SearchDelegate {
 class SearchResultView extends ConsumerStatefulWidget {
   final String searchText;
 
-  const SearchResultView({
-    super.key,
-    required this.searchText,
-  });
+  const SearchResultView({super.key, required this.searchText});
 
   @override
   SearchResultViewState createState() => SearchResultViewState();
@@ -86,30 +82,30 @@ class SearchResultViewState extends ConsumerState<SearchResultView> {
 
   @override
   Widget build(BuildContext context) {
-    final resultAsync = ref.watch(reqSearchListDataProvider);
+    final AsyncValue<Either<Failure, List<ListItem>>> resultAsync = ref.watch(reqSearchListDataProvider);
     return resultAsync.when(
-      data: (Either<Failure, List<ListItem>> data) => data.fold(
-          (Failure f) => PlatformText(
-                f.message,
-                style: const TextStyle(color: Colors.black),
-              ),
-          (List<ListItem> items) => ListView.separated(
-                itemBuilder: (BuildContext context, int index) {
-                  final ListItem item = items[index];
-                  return MoclListItem(
-                    key: item.key,
-                    item: item,
-                    index: index,
-                  );
-                },
-                separatorBuilder: (BuildContext context, int index) =>
-                    const DividerWidget(),
-                itemCount: items.length,
-              )),
-      error: (e, s) => PlatformText(
-        e.toString(),
-        style: const TextStyle(color: Colors.black),
-      ),
+      data:
+          (Either<Failure, List<ListItem>> data) => data.fold(
+            (Failure f) => PlatformText(
+              f.message,
+              style: const TextStyle(color: Colors.black),
+            ),
+            (List<ListItem> items) => ListView.separated(
+              itemBuilder:
+                  (BuildContext context, int index) => ProviderScope(
+                    overrides: [listItemIndexProvider.overrideWithValue(index)],
+                    child: const MoclListItem(),
+                  ),
+              separatorBuilder:
+                  (BuildContext context, int index) => const DividerWidget(),
+              itemCount: items.length,
+            ),
+          ),
+      error:
+          (e, s) => PlatformText(
+            e.toString(),
+            style: const TextStyle(color: Colors.black),
+          ),
       loading: () => const LoadingWidget(),
     );
   }

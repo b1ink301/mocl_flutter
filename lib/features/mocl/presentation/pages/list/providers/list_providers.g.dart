@@ -514,7 +514,46 @@ class _GetListItemProviderElement extends AutoDisposeProviderElement<ListItem?>
   int get index => (origin as GetListItemProvider).index;
 }
 
-String _$listStateNotifierHash() => r'754749bb69db558f7eb8b8e1fab413a917f81866';
+String _$listItemHash() => r'cfa14f06c2d46a8696f395988a6e6969451ef49d';
+
+/// See also [listItem].
+@ProviderFor(listItem)
+final listItemProvider = AutoDisposeProvider<ListItem?>.internal(
+  listItem,
+  name: r'listItemProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product') ? null : _$listItemHash,
+  dependencies: <ProviderOrFamily>[listItemIndexProvider, getListItemProvider],
+  allTransitiveDependencies: <ProviderOrFamily>{
+    listItemIndexProvider,
+    ...?listItemIndexProvider.allTransitiveDependencies,
+    getListItemProvider,
+    ...?getListItemProvider.allTransitiveDependencies,
+  },
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ListItemRef = AutoDisposeProviderRef<ListItem?>;
+String _$listItemIndexHash() => r'70b52c3cc678f4bd8e917a5b7a17378665040e04';
+
+/// See also [listItemIndex].
+@ProviderFor(listItemIndex)
+final listItemIndexProvider = AutoDisposeProvider<int>.internal(
+  listItemIndex,
+  name: r'listItemIndexProvider',
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$listItemIndexHash,
+  dependencies: null,
+  allTransitiveDependencies: null,
+);
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef ListItemIndexRef = AutoDisposeProviderRef<int>;
+String _$listStateNotifierHash() => r'25247ceda091e87f760cc29763baf242ea9618cd';
 
 /// See also [ListStateNotifier].
 @ProviderFor(ListStateNotifier)

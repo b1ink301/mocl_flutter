@@ -62,7 +62,7 @@ class MainPage extends ConsumerWidget {
 }
 
 class _MainCupertinoView extends ConsumerWidget {
-  const _MainCupertinoView({super.key});
+  const _MainCupertinoView();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

@@ -56,8 +56,9 @@ URLRequest urlRequest(Ref ref) {
 Future<bool> hasLogin(
   Ref ref,
   CookieManager cookieManager,
-  WebUri uri,
+  String url,
 ) async {
+  final uri = WebUri(url);
   final List<Cookie> cookies = await cookieManager.getCookies(url: uri);
 
   for (final Cookie cookie in cookies) {

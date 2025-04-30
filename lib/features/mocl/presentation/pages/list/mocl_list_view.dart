@@ -2,7 +2,6 @@ import 'package:easy_debounce/easy_throttle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_providers.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/widget/list_cupertino_app_bar.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/widget/list_material_app_bar.dart';
@@ -38,7 +37,7 @@ class MoclListViewState extends ConsumerState<MoclListView> {
       },
       child: const CustomScrollView(
         physics: ClampingScrollPhysics(),
-        cacheExtent: 0,
+        cacheExtent: 300,
         slivers: <Widget>[_ListAppBar(), _ListBody()],
       ),
     ),
@@ -55,7 +54,7 @@ class MoclListViewState extends ConsumerState<MoclListView> {
 }
 
 class _ListAppBar extends StatelessWidget {
-  const _ListAppBar({super.key});
+  const _ListAppBar();
 
   @override
   Widget build(BuildContext context) => PlatformWidget(
@@ -65,14 +64,15 @@ class _ListAppBar extends StatelessWidget {
 }
 
 class _ListBody extends ConsumerWidget {
-  const _ListBody({super.key});
+  const _ListBody();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final (count, hasReachedMax, error) = ref.watch(
       listStateNotifierProvider.select(
         (value) => value.when(
-          data: (state) => (state.items.length, state.hasReachedMax, state.error),
+          data:
+              (state) => (state.items.length, state.hasReachedMax, state.error),
           loading: () => (0, false, null),
           error: (err, stack) => (0, false, err.toString()),
         ),
@@ -85,7 +85,7 @@ class _ListBody extends ConsumerWidget {
 
     return SliverList.separated(
       // addRepaintBoundaries: false,
-      // addSemanticIndexes: false,
+      addSemanticIndexes: false,
       addAutomaticKeepAlives: false,
       itemCount: count + 1,
       itemBuilder: (_, index) {
@@ -96,9 +96,10 @@ class _ListBody extends ConsumerWidget {
             ref.read(listStateNotifierProvider.notifier).retry,
           );
         } else {
-          final item = ref.watch(getListItemProvider(index));
-          if (item == null) return null;
-          return MoclListItem(key: item.key, item: item, index: index);
+          return ProviderScope(
+            overrides: [listItemIndexProvider.overrideWithValue(index)],
+            child: const MoclListItem(),
+          );
         }
       },
       separatorBuilder: (_, _) => const DividerWidget(),

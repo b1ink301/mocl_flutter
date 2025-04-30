@@ -41,7 +41,7 @@ class MainViewState extends ConsumerState<MainView> {
 }
 
 class _MainBody extends ConsumerWidget {
-  const _MainBody({super.key});
+  const _MainBody();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -138,7 +138,7 @@ class _MainBody extends ConsumerWidget {
 }
 
 class _MainAppBar extends ConsumerWidget {
-  const _MainAppBar({super.key});
+  const _MainAppBar();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => SliverAppBar(
@@ -182,7 +182,7 @@ class _MainAppBar extends ConsumerWidget {
 }
 
 class _MainNavigationBar extends ConsumerWidget {
-  const _MainNavigationBar({super.key});
+  const _MainNavigationBar();
 
   @override
   Widget build(

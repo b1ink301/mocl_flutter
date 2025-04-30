@@ -243,13 +243,13 @@ class TheQoo extends BaseParser {
 
       final nickName = '';
       final hasImage = false;
-      var parsedTime = '';
-      try {
-        final dateTime = parseDateTime(time);
-        parsedTime = timeago.format(dateTime, locale: 'ko');
-      } catch (e) {
-        parsedTime = time;
-      }
+      // var parsedTime = '';
+      // try {
+      //   final dateTime = parseDateTime(time);
+      //   parsedTime = timeago.format(dateTime, locale: 'ko');
+      // } catch (e) {
+      //   parsedTime = time;
+      // }
 
       final info = '$hit 읽음';
 
