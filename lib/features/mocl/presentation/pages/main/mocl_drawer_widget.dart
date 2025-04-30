@@ -14,7 +14,6 @@ class DrawerWidget extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) => SafeArea(
         left: false,
         right: false,
-        bottom: false,
         child: Drawer(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           child: Column(
@@ -41,7 +40,6 @@ class DrawerWidget extends ConsumerWidget {
                 ),
               ),
               const AppVersionWidget(),
-              SizedBox(height: MediaQuery.of(context).padding.bottom)
             ],
           ),
         ),

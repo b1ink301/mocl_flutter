@@ -1,5 +1,4 @@
 import 'dart:async';
-import 'dart:developer';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
@@ -93,10 +92,10 @@ class RedditParser implements BaseParser {
   static CommentItem? _parseComment(
       dynamic element, HtmlUnescape htmlUnescape) {
     final item = element['data'];
+
     if (item == null) {
       return null;
     }
-    log('element=$item');
 
     final bodyHtml = item['body_html'].toString();
     final id = item['id'].toString();
@@ -112,9 +111,13 @@ class RedditParser implements BaseParser {
     final parsedTime = timeago.format(date, locale: 'ko');
     final info = BaseParser.parserInfo(nickName, parsedTime, viewCount);
 
+    // if (replies != '') {
+    //   debugPrint('replies=$replies');
+    // }
+
     return CommentItem(
       id: id.hashCode,
-      isReply: replies is List,
+      isReply: replies != '',
       bodyHtml: htmlUnescape.convert(bodyHtml),
       likeCount: likeCount,
       mediaHtml: '',
@@ -158,6 +161,7 @@ class RedditParser implements BaseParser {
           -1,
           boardTitle,
           baseUrl,
+          false,
         ),
       );
 

@@ -2,6 +2,7 @@ import 'dart:core';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_comment_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_recents.dart';
 
 import 'mocl_user_info.dart';
 
@@ -19,19 +20,19 @@ abstract class Details with _$Details {
     required String info,
     required UserInfo userInfo,
     required List<CommentItem> comments,
+    @Default(null) Recents? recents,
     dynamic extraData,
   }) = _Details;
 
   factory Details.empty() => const Details(
-        title: '',
-        time: '',
-        viewCount: '',
-        likeCount: '',
-        bodyHtml: '',
-        csrf: '',
-        info: '',
-        userInfo:
-            UserInfo(id: 'id', nickName: 'nickName', nickImage: 'nickImage'),
-        comments: [],
-      );
+    title: '',
+    time: '',
+    viewCount: '',
+    likeCount: '',
+    bodyHtml: '',
+    csrf: '',
+    info: '',
+    userInfo: UserInfo(id: 'id', nickName: 'nickName', nickImage: 'nickImage'),
+    comments: [],
+  );
 }

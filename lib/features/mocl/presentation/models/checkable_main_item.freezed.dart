@@ -12,51 +12,47 @@ part of 'checkable_main_item.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
-
 /// @nodoc
 mixin _$CheckableMainItem {
-  MainItem get mainItem;
-  bool get isChecked;
 
-  /// Create a copy of CheckableMainItem
-  /// with the given fields replaced by the non-null parameter values.
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
-  $CheckableMainItemCopyWith<CheckableMainItem> get copyWith =>
-      _$CheckableMainItemCopyWithImpl<CheckableMainItem>(
-          this as CheckableMainItem, _$identity);
+ MainItem get mainItem; bool get isChecked;
+/// Create a copy of CheckableMainItem
+/// with the given fields replaced by the non-null parameter values.
+@JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+$CheckableMainItemCopyWith<CheckableMainItem> get copyWith => _$CheckableMainItemCopyWithImpl<CheckableMainItem>(this as CheckableMainItem, _$identity);
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is CheckableMainItem &&
-            (identical(other.mainItem, mainItem) ||
-                other.mainItem == mainItem) &&
-            (identical(other.isChecked, isChecked) ||
-                other.isChecked == isChecked));
-  }
 
-  @override
-  int get hashCode => Object.hash(runtimeType, mainItem, isChecked);
 
-  @override
-  String toString() {
-    return 'CheckableMainItem(mainItem: $mainItem, isChecked: $isChecked)';
-  }
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CheckableMainItem&&(identical(other.mainItem, mainItem) || other.mainItem == mainItem)&&(identical(other.isChecked, isChecked) || other.isChecked == isChecked));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,mainItem,isChecked);
+
+@override
+String toString() {
+  return 'CheckableMainItem(mainItem: $mainItem, isChecked: $isChecked)';
+}
+
+
 }
 
 /// @nodoc
-abstract mixin class $CheckableMainItemCopyWith<$Res> {
-  factory $CheckableMainItemCopyWith(
-          CheckableMainItem value, $Res Function(CheckableMainItem) _then) =
-      _$CheckableMainItemCopyWithImpl;
-  @useResult
-  $Res call({MainItem mainItem, bool isChecked});
+abstract mixin class $CheckableMainItemCopyWith<$Res>  {
+  factory $CheckableMainItemCopyWith(CheckableMainItem value, $Res Function(CheckableMainItem) _then) = _$CheckableMainItemCopyWithImpl;
+@useResult
+$Res call({
+ MainItem mainItem, bool isChecked
+});
 
-  $MainItemCopyWith<$Res> get mainItem;
+
+$MainItemCopyWith<$Res> get mainItem;
+
 }
-
 /// @nodoc
 class _$CheckableMainItemCopyWithImpl<$Res>
     implements $CheckableMainItemCopyWith<$Res> {
@@ -65,89 +61,75 @@ class _$CheckableMainItemCopyWithImpl<$Res>
   final CheckableMainItem _self;
   final $Res Function(CheckableMainItem) _then;
 
-  /// Create a copy of CheckableMainItem
-  /// with the given fields replaced by the non-null parameter values.
-  @pragma('vm:prefer-inline')
-  @override
-  $Res call({
-    Object? mainItem = null,
-    Object? isChecked = null,
-  }) {
-    return _then(_self.copyWith(
-      mainItem: null == mainItem
-          ? _self.mainItem
-          : mainItem // ignore: cast_nullable_to_non_nullable
-              as MainItem,
-      isChecked: null == isChecked
-          ? _self.isChecked
-          : isChecked // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ));
-  }
-
-  /// Create a copy of CheckableMainItem
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $MainItemCopyWith<$Res> get mainItem {
-    return $MainItemCopyWith<$Res>(_self.mainItem, (value) {
-      return _then(_self.copyWith(mainItem: value));
-    });
-  }
+/// Create a copy of CheckableMainItem
+/// with the given fields replaced by the non-null parameter values.
+@pragma('vm:prefer-inline') @override $Res call({Object? mainItem = null,Object? isChecked = null,}) {
+  return _then(_self.copyWith(
+mainItem: null == mainItem ? _self.mainItem : mainItem // ignore: cast_nullable_to_non_nullable
+as MainItem,isChecked: null == isChecked ? _self.isChecked : isChecked // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
+/// Create a copy of CheckableMainItem
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$MainItemCopyWith<$Res> get mainItem {
+  
+  return $MainItemCopyWith<$Res>(_self.mainItem, (value) {
+    return _then(_self.copyWith(mainItem: value));
+  });
+}
 }
 
+
 /// @nodoc
+
 
 class _CheckableMainItem implements CheckableMainItem {
-  _CheckableMainItem({required this.mainItem, required this.isChecked});
+   _CheckableMainItem({required this.mainItem, required this.isChecked});
+  
 
-  @override
-  final MainItem mainItem;
-  @override
-  final bool isChecked;
+@override final  MainItem mainItem;
+@override final  bool isChecked;
 
-  /// Create a copy of CheckableMainItem
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @JsonKey(includeFromJson: false, includeToJson: false)
-  @pragma('vm:prefer-inline')
-  _$CheckableMainItemCopyWith<_CheckableMainItem> get copyWith =>
-      __$CheckableMainItemCopyWithImpl<_CheckableMainItem>(this, _$identity);
+/// Create a copy of CheckableMainItem
+/// with the given fields replaced by the non-null parameter values.
+@override @JsonKey(includeFromJson: false, includeToJson: false)
+@pragma('vm:prefer-inline')
+_$CheckableMainItemCopyWith<_CheckableMainItem> get copyWith => __$CheckableMainItemCopyWithImpl<_CheckableMainItem>(this, _$identity);
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType &&
-            other is _CheckableMainItem &&
-            (identical(other.mainItem, mainItem) ||
-                other.mainItem == mainItem) &&
-            (identical(other.isChecked, isChecked) ||
-                other.isChecked == isChecked));
-  }
 
-  @override
-  int get hashCode => Object.hash(runtimeType, mainItem, isChecked);
 
-  @override
-  String toString() {
-    return 'CheckableMainItem(mainItem: $mainItem, isChecked: $isChecked)';
-  }
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CheckableMainItem&&(identical(other.mainItem, mainItem) || other.mainItem == mainItem)&&(identical(other.isChecked, isChecked) || other.isChecked == isChecked));
+}
+
+
+@override
+int get hashCode => Object.hash(runtimeType,mainItem,isChecked);
+
+@override
+String toString() {
+  return 'CheckableMainItem(mainItem: $mainItem, isChecked: $isChecked)';
+}
+
+
 }
 
 /// @nodoc
-abstract mixin class _$CheckableMainItemCopyWith<$Res>
-    implements $CheckableMainItemCopyWith<$Res> {
-  factory _$CheckableMainItemCopyWith(
-          _CheckableMainItem value, $Res Function(_CheckableMainItem) _then) =
-      __$CheckableMainItemCopyWithImpl;
-  @override
-  @useResult
-  $Res call({MainItem mainItem, bool isChecked});
+abstract mixin class _$CheckableMainItemCopyWith<$Res> implements $CheckableMainItemCopyWith<$Res> {
+  factory _$CheckableMainItemCopyWith(_CheckableMainItem value, $Res Function(_CheckableMainItem) _then) = __$CheckableMainItemCopyWithImpl;
+@override @useResult
+$Res call({
+ MainItem mainItem, bool isChecked
+});
 
-  @override
-  $MainItemCopyWith<$Res> get mainItem;
+
+@override $MainItemCopyWith<$Res> get mainItem;
+
 }
-
 /// @nodoc
 class __$CheckableMainItemCopyWithImpl<$Res>
     implements _$CheckableMainItemCopyWith<$Res> {
@@ -156,35 +138,26 @@ class __$CheckableMainItemCopyWithImpl<$Res>
   final _CheckableMainItem _self;
   final $Res Function(_CheckableMainItem) _then;
 
-  /// Create a copy of CheckableMainItem
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $Res call({
-    Object? mainItem = null,
-    Object? isChecked = null,
-  }) {
-    return _then(_CheckableMainItem(
-      mainItem: null == mainItem
-          ? _self.mainItem
-          : mainItem // ignore: cast_nullable_to_non_nullable
-              as MainItem,
-      isChecked: null == isChecked
-          ? _self.isChecked
-          : isChecked // ignore: cast_nullable_to_non_nullable
-              as bool,
-    ));
-  }
+/// Create a copy of CheckableMainItem
+/// with the given fields replaced by the non-null parameter values.
+@override @pragma('vm:prefer-inline') $Res call({Object? mainItem = null,Object? isChecked = null,}) {
+  return _then(_CheckableMainItem(
+mainItem: null == mainItem ? _self.mainItem : mainItem // ignore: cast_nullable_to_non_nullable
+as MainItem,isChecked: null == isChecked ? _self.isChecked : isChecked // ignore: cast_nullable_to_non_nullable
+as bool,
+  ));
+}
 
-  /// Create a copy of CheckableMainItem
-  /// with the given fields replaced by the non-null parameter values.
-  @override
-  @pragma('vm:prefer-inline')
-  $MainItemCopyWith<$Res> get mainItem {
-    return $MainItemCopyWith<$Res>(_self.mainItem, (value) {
-      return _then(_self.copyWith(mainItem: value));
-    });
-  }
+/// Create a copy of CheckableMainItem
+/// with the given fields replaced by the non-null parameter values.
+@override
+@pragma('vm:prefer-inline')
+$MainItemCopyWith<$Res> get mainItem {
+  
+  return $MainItemCopyWith<$Res>(_self.mainItem, (value) {
+    return _then(_self.copyWith(mainItem: value));
+  });
+}
 }
 
 // dart format on

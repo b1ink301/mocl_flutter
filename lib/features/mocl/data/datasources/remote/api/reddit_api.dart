@@ -20,8 +20,8 @@ class RedditApi extends BaseApi {
   Future<Either<Failure, Details>> detail(
     ListItem item,
     BaseParser parser,
-  ) async =>
-      await withSyncCookie(parser.baseUrl, () async {
+  )  =>
+      withSyncCookie(parser.baseUrl, () async {
         final String url = parser.urlByDetail(item.url, item.board, item.id);
         final Map<String, String> headers = {'User-Agent': userAgent};
 
@@ -43,8 +43,8 @@ class RedditApi extends BaseApi {
     SortType sortType,
     BaseParser parser,
     Future<List<int>> Function(SiteType, List<int>) isReads,
-  ) async =>
-      await withSyncCookie<List<ListItem>>(parser.baseUrl, () async {
+  )  =>
+      withSyncCookie<List<ListItem>>(parser.baseUrl, () async {
         final String url =
             parser.urlByList(item.url, item.board, page, sortType, lastId);
         final String host = Uri.parse(parser.baseUrl).host;

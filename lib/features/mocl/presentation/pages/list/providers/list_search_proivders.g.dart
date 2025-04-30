@@ -12,38 +12,43 @@ String _$reqSearchListDataHash() => r'61b6d7ec5c1715a2d8031fc327a271e85db2af8f';
 @ProviderFor(reqSearchListData)
 final reqSearchListDataProvider =
     AutoDisposeFutureProvider<Either<Failure, List<ListItem>>>.internal(
-  reqSearchListData,
-  name: r'reqSearchListDataProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$reqSearchListDataHash,
-  dependencies: <ProviderOrFamily>[mainItemProvider, keywordNotifierProvider],
-  allTransitiveDependencies: <ProviderOrFamily>{
-    mainItemProvider,
-    ...?mainItemProvider.allTransitiveDependencies,
-    keywordNotifierProvider,
-    ...?keywordNotifierProvider.allTransitiveDependencies
-  },
-);
+      reqSearchListData,
+      name: r'reqSearchListDataProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$reqSearchListDataHash,
+      dependencies: <ProviderOrFamily>[
+        mainItemProvider,
+        keywordNotifierProvider,
+      ],
+      allTransitiveDependencies: <ProviderOrFamily>{
+        mainItemProvider,
+        ...?mainItemProvider.allTransitiveDependencies,
+        keywordNotifierProvider,
+        ...?keywordNotifierProvider.allTransitiveDependencies,
+      },
+    );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
-typedef ReqSearchListDataRef
-    = AutoDisposeFutureProviderRef<Either<Failure, List<ListItem>>>;
+typedef ReqSearchListDataRef =
+    AutoDisposeFutureProviderRef<Either<Failure, List<ListItem>>>;
 String _$keywordNotifierHash() => r'71b08ed24030b6db2641eadccaee061fba69673f';
 
 /// See also [KeywordNotifier].
 @ProviderFor(KeywordNotifier)
 final keywordNotifierProvider =
     AutoDisposeNotifierProvider<KeywordNotifier, String>.internal(
-  KeywordNotifier.new,
-  name: r'keywordNotifierProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$keywordNotifierHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      KeywordNotifier.new,
+      name: r'keywordNotifierProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$keywordNotifierHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$KeywordNotifier = AutoDisposeNotifier<String>;
 // ignore_for_file: type=lint

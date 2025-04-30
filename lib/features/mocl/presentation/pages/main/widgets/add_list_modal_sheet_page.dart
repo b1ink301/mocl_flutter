@@ -12,13 +12,13 @@ class AddListModalSheetPage extends SliverWoltModalSheetPage {
 
   AddListModalSheetPage({required this.context})
       : super(
-          topBarTitle: Text('게시판 선택'),
+          topBarTitle: const Text('게시판 선택'),
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           surfaceTintColor: Theme.of(context).scaffoldBackgroundColor,
-          navBarHeight: 64,
-          enableDrag: false,
+          navBarHeight: 62,
+          enableDrag: true,
           isTopBarLayerAlwaysVisible: true,
-          leadingNavBarWidget: Consumer(
+          trailingNavBarWidget: Consumer(
             builder: (context, ref, child) => IconButton(
               padding: const EdgeInsets.all(10),
               icon: const Icon(Icons.check),
@@ -30,7 +30,7 @@ class AddListModalSheetPage extends SliverWoltModalSheetPage {
               },
             ),
           ),
-          trailingNavBarWidget: IconButton(
+          leadingNavBarWidget: IconButton(
             padding: const EdgeInsets.all(10),
             icon: const Icon(Icons.close),
             onPressed: Navigator.of(context).pop,
@@ -38,10 +38,9 @@ class AddListModalSheetPage extends SliverWoltModalSheetPage {
           hasSabGradient: false,
           mainContentSliversBuilder: (context) => [
             Consumer(
-              builder: (context, ref, child) {
+              builder: (context, ref, _) {
                 final state = ref.watch(addListDlgNotifierProvider);
                 final notifier = ref.read(addListDlgNotifierProvider.notifier);
-
                 return state.maybeWhen(
                     data: (data) => SliverList.separated(
                           itemCount: data.length,
