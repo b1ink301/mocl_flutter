@@ -100,6 +100,7 @@ class IsolateMessage<T> {
   final int lastId;
   final String boardTitle;
   final String baseUrl;
+  final bool isShowNickImage;
 
   const IsolateMessage(
     this.replyPort,
@@ -107,6 +108,7 @@ class IsolateMessage<T> {
     this.lastId,
     this.boardTitle,
     this.baseUrl,
+    this.isShowNickImage,
   );
 }
 

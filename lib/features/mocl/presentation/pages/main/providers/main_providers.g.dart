@@ -29,9 +29,10 @@ String _$showAddButtonHash() => r'28c94100bcb60029d83ccecdb2c155c02bdd73f9';
 final showAddButtonProvider = AutoDisposeProvider<bool>.internal(
   showAddButton,
   name: r'showAddButtonProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$showAddButtonHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$showAddButtonHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -72,21 +73,15 @@ class IsCurrentSiteTypeFamily extends Family<bool> {
   const IsCurrentSiteTypeFamily();
 
   /// See also [isCurrentSiteType].
-  IsCurrentSiteTypeProvider call(
-    SiteType siteType,
-  ) {
-    return IsCurrentSiteTypeProvider(
-      siteType,
-    );
+  IsCurrentSiteTypeProvider call(SiteType siteType) {
+    return IsCurrentSiteTypeProvider(siteType);
   }
 
   @override
   IsCurrentSiteTypeProvider getProviderOverride(
     covariant IsCurrentSiteTypeProvider provider,
   ) {
-    return call(
-      provider.siteType,
-    );
+    return call(provider.siteType);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -107,24 +102,20 @@ class IsCurrentSiteTypeFamily extends Family<bool> {
 /// See also [isCurrentSiteType].
 class IsCurrentSiteTypeProvider extends AutoDisposeProvider<bool> {
   /// See also [isCurrentSiteType].
-  IsCurrentSiteTypeProvider(
-    SiteType siteType,
-  ) : this._internal(
-          (ref) => isCurrentSiteType(
-            ref as IsCurrentSiteTypeRef,
-            siteType,
-          ),
-          from: isCurrentSiteTypeProvider,
-          name: r'isCurrentSiteTypeProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$isCurrentSiteTypeHash,
-          dependencies: IsCurrentSiteTypeFamily._dependencies,
-          allTransitiveDependencies:
-              IsCurrentSiteTypeFamily._allTransitiveDependencies,
-          siteType: siteType,
-        );
+  IsCurrentSiteTypeProvider(SiteType siteType)
+    : this._internal(
+        (ref) => isCurrentSiteType(ref as IsCurrentSiteTypeRef, siteType),
+        from: isCurrentSiteTypeProvider,
+        name: r'isCurrentSiteTypeProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$isCurrentSiteTypeHash,
+        dependencies: IsCurrentSiteTypeFamily._dependencies,
+        allTransitiveDependencies:
+            IsCurrentSiteTypeFamily._allTransitiveDependencies,
+        siteType: siteType,
+      );
 
   IsCurrentSiteTypeProvider._internal(
     super._createNotifier, {
@@ -139,9 +130,7 @@ class IsCurrentSiteTypeProvider extends AutoDisposeProvider<bool> {
   final SiteType siteType;
 
   @override
-  Override overrideWith(
-    bool Function(IsCurrentSiteTypeRef provider) create,
-  ) {
+  Override overrideWith(bool Function(IsCurrentSiteTypeRef provider) create) {
     return ProviderOverride(
       origin: this,
       override: IsCurrentSiteTypeProvider._internal(
@@ -203,21 +192,15 @@ class SetMainItemsFamily
   const SetMainItemsFamily();
 
   /// See also [setMainItems].
-  SetMainItemsProvider call(
-    List<MainItem> list,
-  ) {
-    return SetMainItemsProvider(
-      list,
-    );
+  SetMainItemsProvider call(List<MainItem> list) {
+    return SetMainItemsProvider(list);
   }
 
   @override
   SetMainItemsProvider getProviderOverride(
     covariant SetMainItemsProvider provider,
   ) {
-    return call(
-      provider.list,
-    );
+    return call(provider.list);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -239,24 +222,20 @@ class SetMainItemsFamily
 class SetMainItemsProvider
     extends AutoDisposeFutureProvider<Either<Failure, List<int>>> {
   /// See also [setMainItems].
-  SetMainItemsProvider(
-    List<MainItem> list,
-  ) : this._internal(
-          (ref) => setMainItems(
-            ref as SetMainItemsRef,
-            list,
-          ),
-          from: setMainItemsProvider,
-          name: r'setMainItemsProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$setMainItemsHash,
-          dependencies: SetMainItemsFamily._dependencies,
-          allTransitiveDependencies:
-              SetMainItemsFamily._allTransitiveDependencies,
-          list: list,
-        );
+  SetMainItemsProvider(List<MainItem> list)
+    : this._internal(
+        (ref) => setMainItems(ref as SetMainItemsRef, list),
+        from: setMainItemsProvider,
+        name: r'setMainItemsProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$setMainItemsHash,
+        dependencies: SetMainItemsFamily._dependencies,
+        allTransitiveDependencies:
+            SetMainItemsFamily._allTransitiveDependencies,
+        list: list,
+      );
 
   SetMainItemsProvider._internal(
     super._createNotifier, {
@@ -273,7 +252,7 @@ class SetMainItemsProvider
   @override
   Override overrideWith(
     FutureOr<Either<Failure, List<int>>> Function(SetMainItemsRef provider)
-        create,
+    create,
   ) {
     return ProviderOverride(
       origin: this,
@@ -337,21 +316,15 @@ class HandleAddButtonFamily extends Family<AsyncValue<void>> {
   const HandleAddButtonFamily();
 
   /// See also [handleAddButton].
-  HandleAddButtonProvider call(
-    BuildContext context,
-  ) {
-    return HandleAddButtonProvider(
-      context,
-    );
+  HandleAddButtonProvider call(BuildContext context) {
+    return HandleAddButtonProvider(context);
   }
 
   @override
   HandleAddButtonProvider getProviderOverride(
     covariant HandleAddButtonProvider provider,
   ) {
-    return call(
-      provider.context,
-    );
+    return call(provider.context);
   }
 
   static const Iterable<ProviderOrFamily>? _dependencies = null;
@@ -372,24 +345,20 @@ class HandleAddButtonFamily extends Family<AsyncValue<void>> {
 /// See also [handleAddButton].
 class HandleAddButtonProvider extends AutoDisposeFutureProvider<void> {
   /// See also [handleAddButton].
-  HandleAddButtonProvider(
-    BuildContext context,
-  ) : this._internal(
-          (ref) => handleAddButton(
-            ref as HandleAddButtonRef,
-            context,
-          ),
-          from: handleAddButtonProvider,
-          name: r'handleAddButtonProvider',
-          debugGetCreateSourceHash:
-              const bool.fromEnvironment('dart.vm.product')
-                  ? null
-                  : _$handleAddButtonHash,
-          dependencies: HandleAddButtonFamily._dependencies,
-          allTransitiveDependencies:
-              HandleAddButtonFamily._allTransitiveDependencies,
-          context: context,
-        );
+  HandleAddButtonProvider(BuildContext context)
+    : this._internal(
+        (ref) => handleAddButton(ref as HandleAddButtonRef, context),
+        from: handleAddButtonProvider,
+        name: r'handleAddButtonProvider',
+        debugGetCreateSourceHash:
+            const bool.fromEnvironment('dart.vm.product')
+                ? null
+                : _$handleAddButtonHash,
+        dependencies: HandleAddButtonFamily._dependencies,
+        allTransitiveDependencies:
+            HandleAddButtonFamily._allTransitiveDependencies,
+        context: context,
+      );
 
   HandleAddButtonProvider._internal(
     super._createNotifier, {
@@ -448,7 +417,8 @@ mixin HandleAddButtonRef on AutoDisposeFutureProviderRef<void> {
 }
 
 class _HandleAddButtonProviderElement
-    extends AutoDisposeFutureProviderElement<void> with HandleAddButtonRef {
+    extends AutoDisposeFutureProviderElement<void>
+    with HandleAddButtonRef {
   _HandleAddButtonProviderElement(super.provider);
 
   @override
@@ -462,9 +432,10 @@ String _$mainScaffoldStateHash() => r'e08ed879718fe9af8a42c31c3df1fbd7c053b5eb';
 final mainScaffoldStateProvider = Provider<GlobalKey<ScaffoldState>>.internal(
   mainScaffoldState,
   name: r'mainScaffoldStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$mainScaffoldStateHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$mainScaffoldStateHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -477,12 +448,15 @@ String _$mainItemsNotifierHash() => r'86b23ee300f094255bb5993053eb02c3638f2421';
 /// See also [MainItemsNotifier].
 @ProviderFor(MainItemsNotifier)
 final mainItemsNotifierProvider = AutoDisposeAsyncNotifierProvider<
-    MainItemsNotifier, List<MainItem>>.internal(
+  MainItemsNotifier,
+  List<MainItem>
+>.internal(
   MainItemsNotifier.new,
   name: r'mainItemsNotifierProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$mainItemsNotifierHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$mainItemsNotifierHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -495,14 +469,15 @@ String _$mainSidebarNotifierHash() =>
 @ProviderFor(MainSidebarNotifier)
 final mainSidebarNotifierProvider =
     AutoDisposeNotifierProvider<MainSidebarNotifier, bool>.internal(
-  MainSidebarNotifier.new,
-  name: r'mainSidebarNotifierProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$mainSidebarNotifierHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      MainSidebarNotifier.new,
+      name: r'mainSidebarNotifierProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$mainSidebarNotifierHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$MainSidebarNotifier = AutoDisposeNotifier<bool>;
 // ignore_for_file: type=lint

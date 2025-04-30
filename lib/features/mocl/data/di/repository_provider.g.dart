@@ -13,14 +13,15 @@ String _$settingsRepositoryHash() =>
 @ProviderFor(settingsRepository)
 final settingsRepositoryProvider =
     AutoDisposeProvider<SettingsRepository>.internal(
-  settingsRepository,
-  name: r'settingsRepositoryProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$settingsRepositoryHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      settingsRepository,
+      name: r'settingsRepositoryProvider',
+      debugGetCreateSourceHash:
+          const bool.fromEnvironment('dart.vm.product')
+              ? null
+              : _$settingsRepositoryHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
@@ -32,9 +33,10 @@ String _$mainRepositoryHash() => r'4cbeeadea8ef84d66fb7bed83993a8ac0e14717f';
 final mainRepositoryProvider = AutoDisposeProvider<MainRepository>.internal(
   mainRepository,
   name: r'mainRepositoryProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$mainRepositoryHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$mainRepositoryHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -49,9 +51,10 @@ String _$listRepositoryHash() => r'1d731b55b3c58e4d45356a3e9d6cbdc87e35c60b';
 final listRepositoryProvider = AutoDisposeProvider<ListRepository>.internal(
   listRepository,
   name: r'listRepositoryProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$listRepositoryHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$listRepositoryHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -66,9 +69,10 @@ String _$detailRepositoryHash() => r'0a6fdd773b401202ab988f5bb36e7879e8f0902a';
 final detailRepositoryProvider = AutoDisposeProvider<DetailRepository>.internal(
   detailRepository,
   name: r'detailRepositoryProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$detailRepositoryHash,
+  debugGetCreateSourceHash:
+      const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$detailRepositoryHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );

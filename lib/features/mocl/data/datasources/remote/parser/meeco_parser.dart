@@ -18,7 +18,9 @@ import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class MeecoParser implements BaseParser {
-  const MeecoParser();
+  final bool isShowNickImage;
+
+  const MeecoParser(this.isShowNickImage);
 
   @override
   SiteType get siteType => SiteType.meeco;
@@ -35,8 +37,8 @@ class MeecoParser implements BaseParser {
     final responseData = response.data;
     final resultPort = ReceivePort();
 
-    await Isolate.spawn(
-        _detailIsolate, [baseUrl, responseData, resultPort.sendPort]);
+    await Isolate.spawn(_detailIsolate,
+        [baseUrl, responseData, resultPort.sendPort, isShowNickImage]);
 
     return await resultPort.first as Either<Failure, Details>;
   }
@@ -45,6 +47,7 @@ class MeecoParser implements BaseParser {
     final baseUrl = args[0] as String;
     final responseData = args[1] as String;
     final sendPort = args[2] as SendPort;
+    final isShowNickImage = args[3] as bool;
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
@@ -65,7 +68,7 @@ class MeecoParser implements BaseParser {
     final tmpUrl =
         infoElement?.querySelector('span.pf > img.pf_img')?.attributes['src'] ??
             '';
-    final nickImage = tmpUrl.toUrl(baseUrl);
+    final nickImage = isShowNickImage ? tmpUrl.toUrl(baseUrl) : '';
     // final nickName =
     //     infoElement?.querySelector('span.nickname')?.text.trim() ?? '';
 
@@ -92,7 +95,7 @@ class MeecoParser implements BaseParser {
                   ?.querySelector('div.pf_wrap > span.pf > img.pf_img');
 
               final tmpUrl = profileElement?.attributes['src']?.trim() ?? '';
-              final nickImage = tmpUrl.toUrl(baseUrl);
+              final nickImage = isShowNickImage ? tmpUrl.toUrl(baseUrl) : '';
               final nickName = profileElement?.attributes['alt'] ?? '익명';
               final time =
                   element.querySelector('span.date')?.text.trim() ?? '';
@@ -216,6 +219,7 @@ class MeecoParser implements BaseParser {
             lastId.intId,
             boardTitle,
             baseUrl,
+            isShowNickImage,
           ));
 
       return Right(await completer.future);
@@ -231,6 +235,7 @@ class MeecoParser implements BaseParser {
     final lastId = message.lastId;
     final boardTitle = message.boardTitle;
     final baseUrl = message.baseUrl;
+    // final isShowNickImage = message.isShowNickImage;
 
     final parsedItems = <Map<String, dynamic>>[];
     final ids = <int>[];

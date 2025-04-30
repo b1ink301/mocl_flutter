@@ -25,7 +25,7 @@ class SettingsPage extends StatelessWidget {
         Theme.of(context).appBarTheme.backgroundColor;
     return PlatformSliverAppBar(
       backgroundColor: backgroundColor,
-      material: (_, __) => MaterialSliverAppBarData(
+      material: (_, _) => MaterialSliverAppBarData(
         flexibleSpace: Container(color: backgroundColor),
         titleSpacing: 0,
         pinned: true,
@@ -33,7 +33,7 @@ class SettingsPage extends StatelessWidget {
         toolbarHeight: 64,
         title: _buildTitle(context, SiteType.settings.title),
       ),
-      cupertino: (_, __) => CupertinoSliverAppBarData(
+      cupertino: (_, _) => CupertinoSliverAppBarData(
         heroTag: 'settings-appbar',
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         title: PlatformText(SiteType.settings.title),
@@ -60,8 +60,8 @@ class SettingsPage extends StatelessWidget {
           ],
         ),
       ),
-      material: (context, platform) => MaterialScaffoldData(),
-      cupertino: (context, platform) => CupertinoPageScaffoldData(),
+      material: (_, _) => MaterialScaffoldData(),
+      cupertino: (_, _) => CupertinoPageScaffoldData(),
     );
 
     return Platform.isMacOS

@@ -22,14 +22,14 @@ class AddListDialog extends ConsumerWidget {
     final Size size = MediaQuery.of(context).size;
 
     return PlatformAlertDialog(
-      material: (_, __) => MaterialAlertDialogData(
+      material: (_, _) => MaterialAlertDialogData(
         elevation: 8,
         title: _buildTitle(context),
         titlePadding: EdgeInsets.zero,
         contentPadding:
             const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       ),
-      cupertino: (_, __) => CupertinoAlertDialogData(
+      cupertino: (_, _) => CupertinoAlertDialogData(
         title: PlatformText('게시판 선택'),
       ),
       content: _buildContent(context, state, size),
@@ -75,7 +75,7 @@ class AddListDialog extends ConsumerWidget {
           return ListView.separated(
             padding: EdgeInsets.zero,
             itemCount: items.length,
-            separatorBuilder: (_, __) =>
+            separatorBuilder: (_, _) =>
                 const DividerWidget(indent: 0, endIndent: 0),
             itemBuilder: (context, index) {
               final CheckableMainItem item = items[index];
