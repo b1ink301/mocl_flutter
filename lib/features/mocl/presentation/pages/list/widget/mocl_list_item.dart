@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_providers.dart';
-import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_routes.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/round_text_widget.dart';
 
@@ -30,31 +27,10 @@ class MoclListItem extends ConsumerWidget {
           contentPadding: _aosPadding,
         ),
     cupertino: (_, _) => CupertinoListTileData(padding: _iosPadding),
-    onTap: () => _handleItemTap(context, ref),
+    onTap: () => ref.read(listItemTapProvider(context)),
     title: const _TitleView(),
     subtitle: const _BottomView(),
   );
-
-  void _handleItemTap(BuildContext context, WidgetRef ref) {
-    final item = ref.watch(listItemProvider);
-    if (item == null) {
-      return;
-    }
-
-    try {
-      GoRouter.of(context).push(Routes.detail, extra: item).then((_) {
-        if (context.mounted) {
-          final readId = ref.read(readableStateNotifierProvider);
-          if (readId == item.id && !item.isRead) {
-            final index = ref.watch(listItemIndexProvider);
-            ref.read(listStateNotifierProvider.notifier).markAsRead(index);
-          }
-        }
-      });
-    } catch (e) {
-      debugPrint('_handleItemTap = $e');
-    }
-  }
 }
 
 class _TitleView extends ConsumerWidget {
@@ -67,9 +43,10 @@ class _TitleView extends ConsumerWidget {
         (ListItem? item) => (item?.title ?? "", item?.isRead ?? false),
       ),
     );
+
     return PlatformText(
       title,
-      maxLines: 3,
+      maxLines: 1,
       overflow: TextOverflow.ellipsis,
       style: MoclTextStyles.of(context).title(isRead),
     );
@@ -108,8 +85,8 @@ class _ReplyText extends ConsumerWidget {
       ),
     );
 
-    if (reply.isNotEmpty && reply != '0') {
-      return SizedBox.shrink();
+    if (reply.isEmpty || reply == '0') {
+      return const SizedBox.shrink();
     }
     return RoundTextWidget(
       text: reply,
@@ -130,7 +107,7 @@ class _NickImage extends ConsumerWidget {
     );
 
     if (url.isEmpty) {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
     return NickImageWidget(url: url);
   }
@@ -148,7 +125,7 @@ class _InfoText extends ConsumerWidget {
     );
 
     if (info.isEmpty) {
-      return SizedBox.shrink();
+      return const SizedBox.shrink();
     }
     return PlatformText(
       info,
