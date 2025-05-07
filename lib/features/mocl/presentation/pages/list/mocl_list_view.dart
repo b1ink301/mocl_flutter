@@ -37,7 +37,7 @@ class MoclListViewState extends ConsumerState<MoclListView> {
       },
       child: const CustomScrollView(
         physics: ClampingScrollPhysics(),
-        cacheExtent: 300,
+        cacheExtent: 500,
         slivers: <Widget>[_ListAppBar(), _ListBody()],
       ),
     ),
@@ -88,20 +88,18 @@ class _ListBody extends ConsumerWidget {
       addSemanticIndexes: false,
       addAutomaticKeepAlives: false,
       itemCount: count + 1,
-      itemBuilder: (_, index) {
-        if (count == index) {
-          return _buildFooter(
-            error,
-            hasReachedMax,
-            ref.read(listStateNotifierProvider.notifier).retry,
-          );
-        } else {
-          return ProviderScope(
-            overrides: [listItemIndexProvider.overrideWithValue(index)],
-            child: const MoclListItem(),
-          );
-        }
-      },
+      itemBuilder:
+          (_, int index) =>
+              count == index
+                  ? _buildFooter(
+                    error,
+                    hasReachedMax,
+                    ref.read(listStateNotifierProvider.notifier).retry,
+                  )
+                  : ProviderScope(
+                    overrides: [listItemIndexProvider.overrideWithValue(index)],
+                    child: const MoclListItem(),
+                  ),
       separatorBuilder: (_, _) => const DividerWidget(),
     );
   }

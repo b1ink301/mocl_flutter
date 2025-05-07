@@ -151,7 +151,6 @@ class _MainCupertinoView extends ConsumerWidget {
                         .where((s) => s != SiteType.settings)
                         .toList()[index];
                 changeSiteType(siteType);
-                // sidebarClose();
               },
               navigationBar: SidebarNavigationBar(
                 title: PlatformText(AppLocalizations.of(context)!.menu),
@@ -174,10 +173,7 @@ class _MainCupertinoView extends ConsumerWidget {
                   children: [
                     SidebarDestination(
                       label: PlatformText(SiteType.settings.title),
-                      onTap: () {
-                        context.push(Routes.settings);
-                        // sidebarClose();
-                      },
+                      onTap: () => context.push(Routes.settings),
                     ),
                   ],
                 ),

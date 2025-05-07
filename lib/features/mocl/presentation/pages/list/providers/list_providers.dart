@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
@@ -13,6 +14,7 @@ import 'package:mocl_flutter/features/mocl/domain/usecases/get_list.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/use_case_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_state.dart';
+import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_routes.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'list_providers.g.dart';
@@ -114,12 +116,15 @@ class ListStateNotifier extends _$ListStateNotifier {
                 hasReachedMax
                     ? state.requireValue.currentPage
                     : state.requireValue.currentPage + 1,
-            lastId:
-                state.valueOrNull?.lastId ??
-                LastId(intId: newItems.last.id, stringId: newItems.last.url),
+            lastId: LastId(
+              intId: newItems.last.id,
+              stringId: newItems.last.url,
+            ),
             hasReachedMax: hasReachedMax,
           ),
         );
+
+        debugPrint('[loadMore] lastId=${state.value?.lastId}');
       },
     );
   }
@@ -141,7 +146,8 @@ class ListStateNotifier extends _$ListStateNotifier {
   void retry() => loadMore();
 
   void refresh() {
-    ref.invalidateSelf();
+    state = AsyncData(ListState.initial(_initialPage()));
+    // ref.invalidateSelf();
     initialize();
   }
 
@@ -157,6 +163,28 @@ class ListStateNotifier extends _$ListStateNotifier {
     );
 
     state = AsyncData(state.requireValue.copyWith(items: updatedItems));
+  }
+}
+
+@Riverpod(dependencies: [listItem, ReadableStateNotifier, listItemIndex])
+void listItemTap(Ref ref, BuildContext context) {
+  final item = ref.read(listItemProvider);
+  if (item == null) {
+    return;
+  }
+
+  try {
+    GoRouter.of(context).push(Routes.detail, extra: item).then((_) {
+      if (context.mounted) {
+        final readId = ref.read(readableStateNotifierProvider);
+        if (readId == item.id && !item.isRead) {
+          final index = ref.read(listItemIndexProvider);
+          ref.read(listStateNotifierProvider.notifier).markAsRead(index);
+        }
+      }
+    });
+  } catch (e) {
+    debugPrint('_handleItemTap = $e');
   }
 }
 

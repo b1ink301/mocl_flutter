@@ -325,7 +325,7 @@ class _OpenBrowserByUrlProviderElement
   String get url => (origin as OpenBrowserByUrlProvider).url;
 }
 
-String _$shareUrlHash() => r'53ee6be8cda84c6ac68994490517e17ac423ab93';
+String _$shareUrlHash() => r'ca62d08b9c54745db177a4ae0f5b11c82a472e18';
 
 /// See also [shareUrl].
 @ProviderFor(shareUrl)
