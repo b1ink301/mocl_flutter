@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:go_router/go_router.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:injectable/injectable.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
@@ -16,73 +16,57 @@ import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_ite
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/readable_flag.dart';
 import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
 
-part 'list_page_cubit.freezed.dart';
-
-part 'list_page_state.dart';
-
 @injectable
-class ListPageCubit extends Cubit<ListPageState> {
+class ListPagingCubit extends Cubit<PagingState<int, ReadableListItem>> {
   final GetList _getList;
   final MainItem _mainItem;
   final ReadableFlag _readableFlag;
 
-  final List<ReadableListItem> _list = [];
-
-  ReadableListItem getItem(int index) => _list.elementAt(index);
-
   LastId _lastId = LastId.empty();
-  int _page = 1;
-  bool _isLoading = false;
 
-  ListPageCubit(
+  ListPagingCubit(
     this._getList,
     this._readableFlag,
     @factoryParam this._mainItem,
-  ) : super(const ListPageState(isLoading: true)) {
-    _initPage();
-    fetchPage();
-  }
+  ) : super(PagingState());
 
   String get smallTitle => _mainItem.siteType.title;
 
   String get title => _mainItem.text;
 
-  _initPage() {
-    _page = _mainItem.siteType == SiteType.clien ? 0 : 1;
-  }
+  int _initPage() => _mainItem.siteType == SiteType.clien ? 0 : 1;
 
   Future<void> refresh() async {
     _lastId = LastId.empty();
-    _list.clear();
-    _initPage();
-    await fetchPage();
+    emit(PagingState());
   }
 
-  void onTap(BuildContext context, int index) {
-    final ListItem item = _list[index].item;
-    final List<Object> extra = [_mainItem.siteType, item];
+  void onTap(BuildContext context, ReadableListItem model) {
+    final List<Object> extra = [_mainItem.siteType, model.item];
     _readableFlag.id = -1;
 
     GoRouter.of(context).push(Routes.detail, extra: extra).then((_) {
       if (!context.mounted) {
         return;
       }
-      if (_readableFlag.id == item.id && !item.isRead) {
-        _list[index].markAsRead();
+      if (_readableFlag.id == model.item.id && model.isUnread) {
+        model.markAsRead();
       }
     });
   }
 
   Future<void> fetchPage() async {
-    if (_isLoading || state.hasReachedMax) {
+    if (state.isLoading || !state.hasNextPage) {
       return;
     }
-    _isLoading = true;
-    // emit(state.copyWith(isLoading: true));
+    emit(state.copyWith(isLoading: true, error: null));
+
     try {
+      final page = state.keys?.last ?? _initPage();
+
       final GetListParams params = GetListParams(
         mainItem: _mainItem,
-        page: _page,
+        page: page,
         lastId: _lastId,
         sortType: SortType.recent,
       );
@@ -90,27 +74,30 @@ class ListPageCubit extends Cubit<ListPageState> {
       final Result<List<ListItem>> result = await _getList(params);
       switch (result) {
         case ResultSuccess<List<ListItem>>():
-          final List<ReadableListItem> list = result.data
+          final List<ReadableListItem> newItems = result.data
               .whereType<ListItem>()
               .map(_toReadableListItem)
               .toList();
 
-          if (list.isNotEmpty) {
-            _list.addAll(list);
+          if (newItems.isNotEmpty) {
             _lastId = LastId(intId: result.data.last.id);
           }
+
           final bool hasReachedMax = _mainItem.siteType == SiteType.clien &&
               _mainItem.board == 'recommend';
-          _page++;
 
           emit(state.copyWith(
-            count: _list.length,
+            pages: [...?state.pages, newItems],
+            keys: [...?state.keys, (page + 1)],
+            hasNextPage: !hasReachedMax,
             isLoading: false,
-            hasReachedMax: hasReachedMax,
           ));
           break;
         case ResultFailure<List<ListItem>>():
-          emit(state.copyWith(error: result.failure.message, isLoading: false));
+          emit(state.copyWith(
+            error: result.failure.message,
+            isLoading: false,
+          ));
           break;
 
         default:
@@ -118,8 +105,6 @@ class ListPageCubit extends Cubit<ListPageState> {
       }
     } catch (e) {
       emit(state.copyWith(error: e.toString(), isLoading: false));
-    } finally {
-      _isLoading = false;
     }
   }
 
