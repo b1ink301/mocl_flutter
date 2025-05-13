@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:easy_debounce/easy_throttle.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -8,7 +7,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/injection.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/list/bloc/list_page_cubit.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/list/bloc/list_paging_cubit.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_list_view.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/appbar_dual_text_widget.dart';
 
@@ -23,7 +22,7 @@ class MoclListPage extends StatelessWidget {
       MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) => getIt<ListPageCubit>(param1: item),
+            create: (context) => getIt<ListPagingCubit>(param1: item),
           ),
         ],
         child: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -34,34 +33,17 @@ class MoclListPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ListPageCubit bloc = context.read<ListPageCubit>();
     final Scaffold child = Scaffold(
       body: SafeArea(
         left: false,
         right: false,
         child: RefreshIndicator(
-          onRefresh: bloc.refresh,
-          child: NotificationListener<ScrollNotification>(
-            onNotification: (ScrollNotification scrollInfo) {
-              if (scrollInfo is ScrollEndNotification) {
-                if (context.mounted && scrollInfo.metrics.extentAfter < 100) {
-                  EasyThrottle.throttle(
-                    'list-fetch-throttle',
-                    const Duration(milliseconds: 1000),
-                    bloc.fetchPage,
-                  );
-                  return true;
-                }
-              }
-              return false;
-            },
-            child: const CustomScrollView(
-              cacheExtent: 500,
-              slivers: <Widget>[
-                _ListAppbar(),
-                MoclListView(),
-              ],
-            ),
+          onRefresh: context.read<ListPagingCubit>().refresh,
+          child: const CustomScrollView(
+            slivers: <Widget>[
+              _ListAppbar(),
+              MoclListView(),
+            ],
           ),
         ),
       ),
@@ -86,7 +68,7 @@ class _ListAppbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ListPageCubit bloc = context.read<ListPageCubit>();
+    final ListPagingCubit bloc = context.read<ListPagingCubit>();
     final String smallTitle = bloc.smallTitle;
     final String title = bloc.title;
 

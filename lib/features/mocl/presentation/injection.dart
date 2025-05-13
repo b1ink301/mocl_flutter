@@ -75,9 +75,6 @@ abstract class RegisterModule {
   @preResolve
   @singleton
   Future<SharedPreferences> get prefs => SharedPreferences.getInstance();
-
-  @singleton
-  Dio get dio => Dio();
 }
 
 @InjectableInit(

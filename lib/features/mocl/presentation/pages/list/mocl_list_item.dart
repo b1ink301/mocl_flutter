@@ -4,146 +4,72 @@ import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_ite
 import 'package:mocl_flutter/features/mocl/presentation/widgets/round_text_widget.dart';
 
 @immutable
-class ReadableListItemProvider extends InheritedWidget {
+class MoclListItem extends StatelessWidget {
+  const MoclListItem({super.key, required this.model, required this.onTap});
+
   final ReadableListItem model;
   final VoidCallback onTap;
 
-  const ReadableListItemProvider({
-    super.key,
-    required super.child,
-    required this.model,
-    required this.onTap,
-  });
-
-  static ReadableListItemProvider of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<ReadableListItemProvider>()!;
-
   @override
-  bool updateShouldNotify(covariant InheritedWidget oldWidget) => false;
-}
-
-@immutable
-class MoclListItem extends StatelessWidget {
-  const MoclListItem({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final ReadableListItemProvider provider =
-        ReadableListItemProvider.of(context);
-    return ListTile(
-      minVerticalPadding: 10,
-      minTileHeight: 24,
-      contentPadding: const EdgeInsets.only(left: 16, right: 12),
-      onTap: provider.onTap,
-      title: const TitleView(),
-      subtitle: const BottomView(),
-    );
-  }
-}
-
-@immutable
-class TitleView extends StatelessWidget {
-  const TitleView({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final ReadableListItem model = ReadableListItemProvider.of(context).model;
-    return ValueListenableBuilder(
+  Widget build(BuildContext context) => InkWell(
+    onTap: onTap,
+    child: ValueListenableBuilder(
       valueListenable: model.isRead,
-      builder: (BuildContext context, bool isRead, Widget? child) => Text(
-        model.item.title,
-        maxLines: 3,
-        overflow: TextOverflow.ellipsis,
-        style: MoclTextStyles.of(context).title(isRead),
-      ),
-    );
-  }
-}
-
-@immutable
-class BottomView extends StatelessWidget {
-  const BottomView({
-    super.key,
-  });
-
-  @override
-  Widget build(BuildContext context) => const Column(
-        children: [
-          SizedBox(height: 8),
-          SizedBox(
-            height: 20,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Expanded(
-                  child: Row(
-                    children: [
-                      // if (nickImage.isNotEmpty && nickImage.startsWith('http'))
-                      //   NickImageWidget(url: nickImage),
-                      Flexible(
-                        child: InfoText(),
-                      ),
-                    ],
-                  ),
-                ),
-                ReplyBadge(),
-              ],
-            ),
+      builder:
+          (_, isRead, _) => Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisAlignment: MainAxisAlignment.start,
+            children: [
+              const SizedBox(height: 8),
+              Text(
+                model.item.title,
+                maxLines: 3,
+                overflow: TextOverflow.ellipsis,
+                style: MoclTextStyles.of(context).title(isRead),
+              ),
+              const SizedBox(height: 10),
+              _BottomWidget(
+                reply: model.item.reply,
+                info: model.item.info,
+                isRead: isRead,
+              ),
+              const SizedBox(height: 8),
+            ],
           ),
-        ],
-      );
+    ),
+  );
 }
 
-@immutable
-class InfoText extends StatelessWidget {
-  const InfoText({
-    super.key,
+class _BottomWidget extends StatelessWidget {
+  const _BottomWidget({
+    required this.info,
+    required this.reply,
+    required this.isRead,
   });
 
-  @override
-  Widget build(BuildContext context) {
-    final ReadableListItem model = ReadableListItemProvider.of(context).model;
-    final String info = model.item.info;
-
-    return ValueListenableBuilder(
-      valueListenable: model.isRead,
-      builder: (BuildContext context, bool isRead, Widget? child) {
-        return Text(
-          info,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: MoclTextStyles.of(context).smallTitle(isRead),
-        );
-      },
-    );
-  }
-}
-
-@immutable
-class ReplyBadge extends StatelessWidget {
-  const ReplyBadge({
-    super.key,
-  });
+  final String info;
+  final String reply;
+  final bool isRead;
 
   @override
-  Widget build(BuildContext context) {
-    final ReadableListItem model = ReadableListItemProvider.of(context).model;
-    final String reply = model.item.reply;
-    final bool hasReply = reply.isNotEmpty && reply != '0';
-
-    return !hasReply
-        ? const SizedBox.shrink()
-        : ValueListenableBuilder(
-            valueListenable: model.isRead,
-            builder: (BuildContext context, bool isRead, Widget? child) =>
-                RoundTextWidget(
-              text: reply,
-              textStyle: MoclTextStyles.of(context).badge(isRead),
-            ),
-          );
-  }
+  Widget build(BuildContext context) => SizedBox(
+    height: 20,
+    child: Row(
+      children: [
+        Expanded(
+          child: Text(
+            info,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: MoclTextStyles.of(context).smallTitle(isRead),
+          ),
+        ),
+        if (reply.isNotEmpty && reply != '0')
+          RoundTextWidget(
+            text: reply,
+            textStyle: MoclTextStyles.of(context).badge(isRead),
+          ),
+      ],
+    ),
+  );
 }

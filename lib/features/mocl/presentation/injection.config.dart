@@ -9,7 +9,6 @@
 // coverage:ignore-file
 
 // ignore_for_file: no_leading_underscores_for_library_prefixes
-import 'package:dio/dio.dart' as _i361;
 import 'package:get_it/get_it.dart' as _i174;
 import 'package:injectable/injectable.dart' as _i526;
 import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_api.dart'
@@ -51,7 +50,7 @@ import 'injection.dart' as _i464;
 import 'pages/detail/bloc/detail_view_bloc.dart' as _i83;
 import 'pages/detail/bloc/get_height_cubit.dart' as _i63;
 import 'pages/detail/detail_view_util.dart' as _i149;
-import 'pages/list/bloc/list_page_cubit.dart' as _i588;
+import 'pages/list/bloc/list_paging_cubit.dart' as _i1015;
 import 'pages/list/readable_flag.dart' as _i64;
 import 'pages/main/add_dialog/bloc/main_data_json_bloc.dart' as _i61;
 import 'pages/main/bloc/main_data_bloc.dart' as _i413;
@@ -88,7 +87,6 @@ extension GetItInjectableX on _i174.GetIt {
       () => registerModule.prefs,
       preResolve: true,
     );
-    gh.singleton<_i361.Dio>(() => registerModule.dio);
     gh.lazySingleton<_i446.ClienParser>(() => const _i446.ClienParser());
     gh.lazySingleton<_i64.ReadableFlag>(() => _i64.ReadableFlag());
     gh.lazySingleton<_i468.DamoangParser>(
@@ -131,11 +129,11 @@ extension GetItInjectableX on _i174.GetIt {
         _i205.DetailRepositoryImpl(dataSource: gh<_i694.DetailDataSource>()));
     gh.lazySingleton<_i534.MainRepository>(
         () => _i555.MainRepositoryImpl(dataSource: gh<_i958.MainDataSource>()));
-    gh.factoryParam<_i588.ListPageCubit, _i975.MainItem, dynamic>((
+    gh.factoryParam<_i1015.ListPagingCubit, _i975.MainItem, dynamic>((
       _mainItem,
       _,
     ) =>
-        _i588.ListPageCubit(
+        _i1015.ListPagingCubit(
           gh<_i716.GetList>(),
           gh<_i64.ReadableFlag>(),
           _mainItem,
