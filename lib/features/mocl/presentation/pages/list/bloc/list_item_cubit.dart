@@ -12,7 +12,5 @@ class ListItemCubit extends Cubit<ListItem> {
 
   bool isUnread() => !state.isRead;
 
-  void toggleReadStatus() {
-    emit(state.copyWith(isRead: !state.isRead));
-  }
+  void toggleReadStatus() => emit(state.copyWith(isRead: !state.isRead));
 }

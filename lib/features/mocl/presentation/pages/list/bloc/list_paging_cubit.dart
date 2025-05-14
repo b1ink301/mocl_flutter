@@ -69,6 +69,7 @@ class ListPagingCubit extends Cubit<PagingState<int, ListItemCubit>> {
             ),
           );
           break;
+
         case ResultFailure<List<ListItem>>():
           emit(state.copyWith(error: result.failure.message, isLoading: false));
           break;
