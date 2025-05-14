@@ -15,15 +15,15 @@ class DetailViewUtil {
   }
 
   Future<void> shareUrl(String url) async {
-    final Uri uri = Uri.parse(url);
+    final Uri? uri = Uri.tryParse(url);
     final params = ShareParams(uri: uri);
     final result = await SharePlus.instance.share(params);
     debugPrint('shareUrl result=$result');
   }
 
   FutureOr<bool> openUrl(BuildContext context, String url) async {
-    final uri = Uri.parse(url);
-    final last = uri.pathSegments.lastOrNull;
+    final uri = Uri.tryParse(url);
+    final last = uri?.pathSegments.lastOrNull;
     debugPrint('_onTapUrl url=$url, last=$last');
 
     if (last != null && _isImageUrl(last)) {
@@ -42,7 +42,7 @@ class DetailViewUtil {
       '.gif',
       '.bmp',
       '.webp',
-      '.tiff'
+      '.tiff',
     ];
     return imageExtensions.any((ext) => url.toLowerCase().endsWith(ext));
   }

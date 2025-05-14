@@ -12,87 +12,130 @@ part of 'clear_data_cubit.dart';
 
 // dart format off
 T _$identity<T>(T value) => value;
-
 /// @nodoc
 mixin _$ClearDataState {
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is ClearDataState);
-  }
 
-  @override
-  int get hashCode => runtimeType.hashCode;
 
-  @override
-  String toString() {
-    return 'ClearDataState()';
-  }
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ClearDataState);
+}
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'ClearDataState()';
+}
+
+
 }
 
 /// @nodoc
-class $ClearDataStateCopyWith<$Res> {
-  $ClearDataStateCopyWith(ClearDataState _, $Res Function(ClearDataState) __);
+class $ClearDataStateCopyWith<$Res>  {
+$ClearDataStateCopyWith(ClearDataState _, $Res Function(ClearDataState) __);
 }
 
+
 /// @nodoc
+
 
 class InitialClearDataState implements ClearDataState {
   const InitialClearDataState();
+  
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is InitialClearDataState);
-  }
 
-  @override
-  int get hashCode => runtimeType.hashCode;
 
-  @override
-  String toString() {
-    return 'ClearDataState.initial()';
-  }
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is InitialClearDataState);
 }
 
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'ClearDataState.initial()';
+}
+
+
+}
+
+
+
+
 /// @nodoc
+
 
 class LoadingClearDataState implements ClearDataState {
   const LoadingClearDataState();
+  
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is LoadingClearDataState);
-  }
 
-  @override
-  int get hashCode => runtimeType.hashCode;
 
-  @override
-  String toString() {
-    return 'ClearDataState.loading()';
-  }
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LoadingClearDataState);
 }
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'ClearDataState.loading()';
+}
+
+
+}
+
+
+
 
 /// @nodoc
 
+
 class SuccessClearDataState implements ClearDataState {
   const SuccessClearDataState();
+  
 
-  @override
-  bool operator ==(Object other) {
-    return identical(this, other) ||
-        (other.runtimeType == runtimeType && other is SuccessClearDataState);
-  }
 
-  @override
-  int get hashCode => runtimeType.hashCode;
 
-  @override
-  String toString() {
-    return 'ClearDataState.success()';
-  }
+
+
+
+@override
+bool operator ==(Object other) {
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is SuccessClearDataState);
 }
+
+
+@override
+int get hashCode => runtimeType.hashCode;
+
+@override
+String toString() {
+  return 'ClearDataState.success()';
+}
+
+
+}
+
+
+
 
 // dart format on

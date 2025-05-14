@@ -54,19 +54,15 @@ class MockDetailDataSource extends _i1.Mock implements _i2.DetailDataSource {
   @override
   _i3.Future<_i4.Result<_i5.Details>> getDetail(_i6.ListItem? item) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getDetail,
-          [item],
-        ),
-        returnValue: _i3.Future<_i4.Result<_i5.Details>>.value(
-            _i7.dummyValue<_i4.Result<_i5.Details>>(
-          this,
-          Invocation.method(
-            #getDetail,
-            [item],
-          ),
-        )),
-      ) as _i3.Future<_i4.Result<_i5.Details>>);
+            Invocation.method(#getDetail, [item]),
+            returnValue: _i3.Future<_i4.Result<_i5.Details>>.value(
+              _i7.dummyValue<_i4.Result<_i5.Details>>(
+                this,
+                Invocation.method(#getDetail, [item]),
+              ),
+            ),
+          )
+          as _i3.Future<_i4.Result<_i5.Details>>);
 }
 
 /// A class which mocks [BaseParser].
@@ -78,34 +74,34 @@ class MockBaseParser extends _i1.Mock implements _i8.BaseParser {
   }
 
   @override
-  _i9.SiteType get siteType => (super.noSuchMethod(
-        Invocation.getter(#siteType),
-        returnValue: _i9.SiteType.clien,
-      ) as _i9.SiteType);
+  _i9.SiteType get siteType =>
+      (super.noSuchMethod(
+            Invocation.getter(#siteType),
+            returnValue: _i9.SiteType.clien,
+          )
+          as _i9.SiteType);
 
   @override
-  String get baseUrl => (super.noSuchMethod(
-        Invocation.getter(#baseUrl),
-        returnValue: _i7.dummyValue<String>(
-          this,
-          Invocation.getter(#baseUrl),
-        ),
-      ) as String);
+  String get baseUrl =>
+      (super.noSuchMethod(
+            Invocation.getter(#baseUrl),
+            returnValue: _i7.dummyValue<String>(
+              this,
+              Invocation.getter(#baseUrl),
+            ),
+          )
+          as String);
 
   @override
-  String urlByMain() => (super.noSuchMethod(
-        Invocation.method(
-          #urlByMain,
-          [],
-        ),
-        returnValue: _i7.dummyValue<String>(
-          this,
-          Invocation.method(
-            #urlByMain,
-            [],
-          ),
-        ),
-      ) as String);
+  String urlByMain() =>
+      (super.noSuchMethod(
+            Invocation.method(#urlByMain, []),
+            returnValue: _i7.dummyValue<String>(
+              this,
+              Invocation.method(#urlByMain, []),
+            ),
+          )
+          as String);
 
   @override
   String urlByList(
@@ -116,30 +112,19 @@ class MockBaseParser extends _i1.Mock implements _i8.BaseParser {
     _i11.LastId? lastId,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #urlByList,
-          [
-            url,
-            board,
-            page,
-            sortType,
-            lastId,
-          ],
-        ),
-        returnValue: _i7.dummyValue<String>(
-          this,
-          Invocation.method(
-            #urlByList,
-            [
-              url,
-              board,
-              page,
-              sortType,
-              lastId,
-            ],
-          ),
-        ),
-      ) as String);
+            Invocation.method(#urlByList, [url, board, page, sortType, lastId]),
+            returnValue: _i7.dummyValue<String>(
+              this,
+              Invocation.method(#urlByList, [
+                url,
+                board,
+                page,
+                sortType,
+                lastId,
+              ]),
+            ),
+          )
+          as String);
 
   @override
   String urlBySearchList(
@@ -150,176 +135,113 @@ class MockBaseParser extends _i1.Mock implements _i8.BaseParser {
     _i11.LastId? lastId,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #urlBySearchList,
-          [
-            url,
-            board,
-            page,
-            keyword,
-            lastId,
-          ],
-        ),
-        returnValue: _i7.dummyValue<String>(
-          this,
-          Invocation.method(
-            #urlBySearchList,
-            [
+            Invocation.method(#urlBySearchList, [
               url,
               board,
               page,
               keyword,
               lastId,
-            ],
-          ),
-        ),
-      ) as String);
+            ]),
+            returnValue: _i7.dummyValue<String>(
+              this,
+              Invocation.method(#urlBySearchList, [
+                url,
+                board,
+                page,
+                keyword,
+                lastId,
+              ]),
+            ),
+          )
+          as String);
 
   @override
-  String urlByDetail(
-    String? url,
-    String? board,
-    int? id,
-  ) =>
+  String urlByDetail(String? url, String? board, int? id) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #urlByDetail,
-          [
-            url,
-            board,
-            id,
-          ],
-        ),
-        returnValue: _i7.dummyValue<String>(
-          this,
-          Invocation.method(
-            #urlByDetail,
-            [
-              url,
-              board,
-              id,
-            ],
-          ),
-        ),
-      ) as String);
+            Invocation.method(#urlByDetail, [url, board, id]),
+            returnValue: _i7.dummyValue<String>(
+              this,
+              Invocation.method(#urlByDetail, [url, board, id]),
+            ),
+          )
+          as String);
 
   @override
-  String urlByComments(
-    String? url,
-    String? board,
-    int? id,
-    int? page,
-  ) =>
+  String urlByComments(String? url, String? board, int? id, int? page) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #urlByComments,
-          [
-            url,
-            board,
-            id,
-            page,
-          ],
-        ),
-        returnValue: _i7.dummyValue<String>(
-          this,
-          Invocation.method(
-            #urlByComments,
-            [
-              url,
-              board,
-              id,
-              page,
-            ],
-          ),
-        ),
-      ) as String);
+            Invocation.method(#urlByComments, [url, board, id, page]),
+            returnValue: _i7.dummyValue<String>(
+              this,
+              Invocation.method(#urlByComments, [url, board, id, page]),
+            ),
+          )
+          as String);
 
   @override
   _i3.Future<_i4.Result<List<_i12.MainItem>>> main(
-          _i13.Response<dynamic>? response) =>
+    _i13.Response<dynamic>? response,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #main,
-          [response],
-        ),
-        returnValue: _i3.Future<_i4.Result<List<_i12.MainItem>>>.value(
-            _i7.dummyValue<_i4.Result<List<_i12.MainItem>>>(
-          this,
-          Invocation.method(
-            #main,
-            [response],
-          ),
-        )),
-      ) as _i3.Future<_i4.Result<List<_i12.MainItem>>>);
+            Invocation.method(#main, [response]),
+            returnValue: _i3.Future<_i4.Result<List<_i12.MainItem>>>.value(
+              _i7.dummyValue<_i4.Result<List<_i12.MainItem>>>(
+                this,
+                Invocation.method(#main, [response]),
+              ),
+            ),
+          )
+          as _i3.Future<_i4.Result<List<_i12.MainItem>>>);
 
   @override
   _i3.Future<_i4.Result<List<_i6.ListItem>>> list(
     _i13.Response<dynamic>? response,
     _i11.LastId? lastId,
     String? boardTitle,
-    _i3.Future<List<int>> Function(
-      _i9.SiteType,
-      List<int>,
-    )? isReads,
+    _i3.Future<List<int>> Function(_i9.SiteType, List<int>)? isReads,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #list,
-          [
-            response,
-            lastId,
-            boardTitle,
-            isReads,
-          ],
-        ),
-        returnValue: _i3.Future<_i4.Result<List<_i6.ListItem>>>.value(
-            _i7.dummyValue<_i4.Result<List<_i6.ListItem>>>(
-          this,
-          Invocation.method(
-            #list,
-            [
-              response,
-              lastId,
-              boardTitle,
-              isReads,
-            ],
-          ),
-        )),
-      ) as _i3.Future<_i4.Result<List<_i6.ListItem>>>);
+            Invocation.method(#list, [response, lastId, boardTitle, isReads]),
+            returnValue: _i3.Future<_i4.Result<List<_i6.ListItem>>>.value(
+              _i7.dummyValue<_i4.Result<List<_i6.ListItem>>>(
+                this,
+                Invocation.method(#list, [
+                  response,
+                  lastId,
+                  boardTitle,
+                  isReads,
+                ]),
+              ),
+            ),
+          )
+          as _i3.Future<_i4.Result<List<_i6.ListItem>>>);
 
   @override
   _i3.Future<_i4.Result<_i5.Details>> detail(
-          _i13.Response<dynamic>? response) =>
+    _i13.Response<dynamic>? response,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #detail,
-          [response],
-        ),
-        returnValue: _i3.Future<_i4.Result<_i5.Details>>.value(
-            _i7.dummyValue<_i4.Result<_i5.Details>>(
-          this,
-          Invocation.method(
-            #detail,
-            [response],
-          ),
-        )),
-      ) as _i3.Future<_i4.Result<_i5.Details>>);
+            Invocation.method(#detail, [response]),
+            returnValue: _i3.Future<_i4.Result<_i5.Details>>.value(
+              _i7.dummyValue<_i4.Result<_i5.Details>>(
+                this,
+                Invocation.method(#detail, [response]),
+              ),
+            ),
+          )
+          as _i3.Future<_i4.Result<_i5.Details>>);
 
   @override
   _i3.Future<_i4.Result<List<_i14.CommentItem>>> comments(
-          _i13.Response<dynamic>? response) =>
+    _i13.Response<dynamic>? response,
+  ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #comments,
-          [response],
-        ),
-        returnValue: _i3.Future<_i4.Result<List<_i14.CommentItem>>>.value(
-            _i7.dummyValue<_i4.Result<List<_i14.CommentItem>>>(
-          this,
-          Invocation.method(
-            #comments,
-            [response],
-          ),
-        )),
-      ) as _i3.Future<_i4.Result<List<_i14.CommentItem>>>);
+            Invocation.method(#comments, [response]),
+            returnValue: _i3.Future<_i4.Result<List<_i14.CommentItem>>>.value(
+              _i7.dummyValue<_i4.Result<List<_i14.CommentItem>>>(
+                this,
+                Invocation.method(#comments, [response]),
+              ),
+            ),
+          )
+          as _i3.Future<_i4.Result<List<_i14.CommentItem>>>);
 }

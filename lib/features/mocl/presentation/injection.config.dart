@@ -60,16 +60,12 @@ import 'pages/settings/bloc/get_version_cubit.dart' as _i830;
 import 'pages/settings/bloc/settings_bloc.dart' as _i29;
 
 extension GetItInjectableX on _i174.GetIt {
-// initializes the registration of main-scope dependencies inside of GetIt
+  // initializes the registration of main-scope dependencies inside of GetIt
   Future<_i174.GetIt> init({
     String? environment,
     _i526.EnvironmentFilter? environmentFilter,
   }) async {
-    final gh = _i526.GetItHelper(
-      this,
-      environment,
-      environmentFilter,
-    );
+    final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final parserModule = _$ParserModule();
     final registerModule = _$RegisterModule();
     gh.factory<_i237.ClearDataCubit>(() => _i237.ClearDataCubit());
@@ -78,7 +74,8 @@ extension GetItInjectableX on _i174.GetIt {
     gh.factory<_i149.DetailViewUtil>(() => _i149.DetailViewUtil());
     gh.factory<_i63.GetHeightCubit>(() => _i63.GetHeightCubit());
     gh.singleton<Map<_i891.SiteType, (_i296.BaseParser, _i559.BaseApi)>>(
-        () => parserModule.parsers);
+      () => parserModule.parsers,
+    );
     await gh.singletonAsync<_i156.Database>(
       () => registerModule.database,
       preResolve: true,
@@ -90,83 +87,108 @@ extension GetItInjectableX on _i174.GetIt {
     gh.lazySingleton<_i446.ClienParser>(() => const _i446.ClienParser());
     gh.lazySingleton<_i64.ReadableFlag>(() => _i64.ReadableFlag());
     gh.lazySingleton<_i468.DamoangParser>(
-        () => _i468.DamoangParser(gh<bool>()));
+      () => _i468.DamoangParser(gh<bool>()),
+    );
     gh.factory<_i510.LocalDatabase>(
-        () => _i510.LocalDatabase(database: gh<_i310.Database>()));
-    gh.lazySingleton<_i977.SettingsRepository>(() =>
-        _i1051.SettingsRepositoryImpl(prefs: gh<_i460.SharedPreferences>()));
-    gh.factory<_i17.GetSiteType>(() =>
-        _i17.GetSiteType(settingsRepository: gh<_i977.SettingsRepository>()));
-    gh.factory<_i913.SetSiteType>(() =>
-        _i913.SetSiteType(settingsRepository: gh<_i977.SettingsRepository>()));
-    gh.factory<_i924.ParserFactory>(() => _i924.ParserFactory(
-          gh<Map<_i891.SiteType, (_i296.BaseParser, _i559.BaseApi)>>(),
-          gh<_i977.SettingsRepository>(),
-        ));
-    gh.singleton<_i1067.SiteTypeBloc>(() => _i1067.SiteTypeBloc(
-          getSiteType: gh<_i17.GetSiteType>(),
-          setSiteType: gh<_i913.SetSiteType>(),
-        ));
-    gh.lazySingleton<_i958.MainDataSource>(() => _i958.MainDataSourceImpl(
-          localDatabase: gh<_i510.LocalDatabase>(),
-          parserFactory: gh<_i924.ParserFactory>(),
-        ));
-    gh.lazySingleton<_i715.ListDataSource>(() => _i715.ListDataSourceImpl(
-          localDatabase: gh<_i510.LocalDatabase>(),
-          parserFactory: gh<_i924.ParserFactory>(),
-        ));
-    gh.lazySingleton<_i694.DetailDataSource>(() =>
-        _i694.DetailDataSourceImpl(parserFactory: gh<_i924.ParserFactory>()));
-    gh.factory<_i480.ListRepository>(() =>
-        _i1014.ListRepositoryImpl(dataSource: gh<_i715.ListDataSource>()));
+      () => _i510.LocalDatabase(database: gh<_i310.Database>()),
+    );
+    gh.lazySingleton<_i977.SettingsRepository>(
+      () => _i1051.SettingsRepositoryImpl(prefs: gh<_i460.SharedPreferences>()),
+    );
+    gh.factory<_i17.GetSiteType>(
+      () =>
+          _i17.GetSiteType(settingsRepository: gh<_i977.SettingsRepository>()),
+    );
+    gh.factory<_i913.SetSiteType>(
+      () =>
+          _i913.SetSiteType(settingsRepository: gh<_i977.SettingsRepository>()),
+    );
+    gh.factory<_i924.ParserFactory>(
+      () => _i924.ParserFactory(
+        gh<Map<_i891.SiteType, (_i296.BaseParser, _i559.BaseApi)>>(),
+        gh<_i977.SettingsRepository>(),
+      ),
+    );
+    gh.singleton<_i1067.SiteTypeBloc>(
+      () => _i1067.SiteTypeBloc(
+        getSiteType: gh<_i17.GetSiteType>(),
+        setSiteType: gh<_i913.SetSiteType>(),
+      ),
+    );
+    gh.lazySingleton<_i958.MainDataSource>(
+      () => _i958.MainDataSourceImpl(
+        localDatabase: gh<_i510.LocalDatabase>(),
+        parserFactory: gh<_i924.ParserFactory>(),
+      ),
+    );
+    gh.lazySingleton<_i715.ListDataSource>(
+      () => _i715.ListDataSourceImpl(
+        localDatabase: gh<_i510.LocalDatabase>(),
+        parserFactory: gh<_i924.ParserFactory>(),
+      ),
+    );
+    gh.lazySingleton<_i694.DetailDataSource>(
+      () =>
+          _i694.DetailDataSourceImpl(parserFactory: gh<_i924.ParserFactory>()),
+    );
+    gh.factory<_i480.ListRepository>(
+      () => _i1014.ListRepositoryImpl(dataSource: gh<_i715.ListDataSource>()),
+    );
     gh.factory<_i716.GetList>(
-        () => _i716.GetList(listRepository: gh<_i480.ListRepository>()));
+      () => _i716.GetList(listRepository: gh<_i480.ListRepository>()),
+    );
     gh.factory<_i902.SetReadFlag>(
-        () => _i902.SetReadFlag(listRepository: gh<_i480.ListRepository>()));
+      () => _i902.SetReadFlag(listRepository: gh<_i480.ListRepository>()),
+    );
     gh.factory<_i145.GetReadFlag>(
-        () => _i145.GetReadFlag(listRepository: gh<_i480.ListRepository>()));
-    gh.factory<_i564.DetailRepository>(() =>
-        _i205.DetailRepositoryImpl(dataSource: gh<_i694.DetailDataSource>()));
+      () => _i145.GetReadFlag(listRepository: gh<_i480.ListRepository>()),
+    );
+    gh.factoryParam<_i1015.ListPagingCubit, _i975.MainItem, dynamic>(
+      (_mainItem, _) => _i1015.ListPagingCubit(gh<_i716.GetList>(), _mainItem),
+    );
+    gh.factory<_i564.DetailRepository>(
+      () =>
+          _i205.DetailRepositoryImpl(dataSource: gh<_i694.DetailDataSource>()),
+    );
     gh.lazySingleton<_i534.MainRepository>(
-        () => _i555.MainRepositoryImpl(dataSource: gh<_i958.MainDataSource>()));
-    gh.factoryParam<_i1015.ListPagingCubit, _i975.MainItem, dynamic>((
-      _mainItem,
-      _,
-    ) =>
-        _i1015.ListPagingCubit(
-          gh<_i716.GetList>(),
-          gh<_i64.ReadableFlag>(),
-          _mainItem,
-        ));
+      () => _i555.MainRepositoryImpl(dataSource: gh<_i958.MainDataSource>()),
+    );
     gh.factory<_i673.GetMainList>(
-        () => _i673.GetMainList(mainRepository: gh<_i534.MainRepository>()));
+      () => _i673.GetMainList(mainRepository: gh<_i534.MainRepository>()),
+    );
     gh.factory<_i688.SetMainList>(
-        () => _i688.SetMainList(mainRepository: gh<_i534.MainRepository>()));
-    gh.factory<_i307.GetMainListFromJson>(() =>
-        _i307.GetMainListFromJson(mainRepository: gh<_i534.MainRepository>()));
+      () => _i688.SetMainList(mainRepository: gh<_i534.MainRepository>()),
+    );
+    gh.factory<_i307.GetMainListFromJson>(
+      () =>
+          _i307.GetMainListFromJson(mainRepository: gh<_i534.MainRepository>()),
+    );
     gh.factory<_i132.GetDetail>(
-        () => _i132.GetDetail(detailRepository: gh<_i564.DetailRepository>()));
-    gh.lazySingleton<_i413.MainDataBloc>(() => _i413.MainDataBloc(
-          getMainList: gh<_i673.GetMainList>(),
-          setMainList: gh<_i688.SetMainList>(),
-          getSiteType: gh<_i17.GetSiteType>(),
-          setSiteType: gh<_i913.SetSiteType>(),
-        ));
-    gh.factory<_i61.MainDataJsonBloc>(() => _i61.MainDataJsonBloc(
-          getMainListFromJson: gh<_i307.GetMainListFromJson>(),
-          setMainList: gh<_i688.SetMainList>(),
-        ));
-    gh.factoryParam<_i83.DetailViewBloc, _i853.ListItem, _i891.SiteType>((
-      _listItem,
-      _siteType,
-    ) =>
-        _i83.DetailViewBloc(
-          gh<_i132.GetDetail>(),
-          gh<_i902.SetReadFlag>(),
-          gh<_i64.ReadableFlag>(),
-          _listItem,
-          _siteType,
-        ));
+      () => _i132.GetDetail(detailRepository: gh<_i564.DetailRepository>()),
+    );
+    gh.lazySingleton<_i413.MainDataBloc>(
+      () => _i413.MainDataBloc(
+        getMainList: gh<_i673.GetMainList>(),
+        setMainList: gh<_i688.SetMainList>(),
+        getSiteType: gh<_i17.GetSiteType>(),
+        setSiteType: gh<_i913.SetSiteType>(),
+      ),
+    );
+    gh.factory<_i61.MainDataJsonBloc>(
+      () => _i61.MainDataJsonBloc(
+        getMainListFromJson: gh<_i307.GetMainListFromJson>(),
+        setMainList: gh<_i688.SetMainList>(),
+      ),
+    );
+    gh.factoryParam<_i83.DetailViewBloc, _i853.ListItem, _i891.SiteType>(
+      (_listItem, _siteType) => _i83.DetailViewBloc(
+        gh<_i132.GetDetail>(),
+        gh<_i902.SetReadFlag>(),
+        gh<_i64.ReadableFlag>(),
+        _listItem,
+        _siteType,
+      ),
+    );
     return this;
   }
 }

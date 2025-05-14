@@ -92,11 +92,7 @@ class ClienParser implements BaseParser {
     final responseData = response.data;
     final resultPort = ReceivePort();
 
-    await compute(_detailIsolate, [
-      responseData,
-      false,
-      resultPort.sendPort,
-    ]);
+    await compute(_detailIsolate, [responseData, false, resultPort.sendPort]);
     // await Isolate.spawn(_detailIsolate, [
     //   responseData,
     //   false,
@@ -119,13 +115,15 @@ class ClienParser implements BaseParser {
     );
     // document.querySelector('body > div.nav_container > div.nav_body > div.nav_content > div.content_view');
 
-    final csrf = document
+    final csrf =
+        document
             .querySelector(
               "body > nav.navigation > div.dropdown-menu > form > input[name=_csrf]",
             )
             ?.attributes['value'] ??
         '';
-    final title = container
+    final title =
+        container
             ?.querySelector("div.post_title > div.post_subject > span")
             ?.text
             .trim() ??
@@ -147,9 +145,11 @@ class ClienParser implements BaseParser {
     bodyHtmlElement
         ?.querySelectorAll('input, button')
         .forEach((element) => element.remove());
-    final linkHtml = container
+    final linkHtml =
+        container
             ?.querySelector("div.post_view > div.attached_link > div.link_list")
-            ?.innerHtml ??
+            ?.innerHtml
+            .trim() ??
         '';
 
     final marketHtmlElement = container?.querySelector(
@@ -168,7 +168,7 @@ class ClienParser implements BaseParser {
 
     debugPrint('recentsWritersElement=${recentsWritersElement?.innerHtml}');
 
-    final bodyHtml = bodyHtmlElement?.innerHtml ?? '';
+    final bodyHtml = bodyHtmlElement?.innerHtml.trim() ?? '';
     final viewCountElement = container?.querySelector(
       "div.post_information > div.post_time > div.view_count",
     );
@@ -184,7 +184,8 @@ class ClienParser implements BaseParser {
         ?.querySelectorAll('.fa')
         .forEach((element) => element.remove());
 
-    final user = container
+    final user =
+        container
             ?.querySelector(
               "div.post_view > div.post_contact > span.contact_note > div.post_memo > div.memo_box > button.button_input",
             )
@@ -193,21 +194,24 @@ class ClienParser implements BaseParser {
     var nickName = '';
     var nickImage = '';
     if (isShowNickImage) {
-      nickName = container
+      nickName =
+          container
               ?.querySelector(
                 "div.post_view > div.post_contact > span.contact_name > span.nickname",
               )
               ?.text
               .trim() ??
           '';
-      nickImage = container
+      nickImage =
+          container
               ?.querySelector(
                 "div.post_view > div.post_contact > span.contact_name > span.nickimg > img",
               )
               ?.attributes['src'] ??
           '';
     } else {
-      nickName = container
+      nickName =
+          container
               ?.querySelector(
                 "div.post_view > div.post_contact > span.contact_name > span.nickname",
               )
@@ -215,7 +219,8 @@ class ClienParser implements BaseParser {
               .trim() ??
           '';
       if (nickName.isEmpty) {
-        nickName = container
+        nickName =
+            container
                 ?.querySelector(
                   "div.post_view > div.post_contact > span.contact_name > span.nickimg > img",
                 )
@@ -223,7 +228,8 @@ class ClienParser implements BaseParser {
             '';
       }
     }
-    final likeCount = container
+    final likeCount =
+        container
             ?.querySelector(
               "div.post_button > div.symph_area > button.symph_count > strong",
             )
@@ -240,7 +246,8 @@ class ClienParser implements BaseParser {
     }
     final info = BaseParser.parserInfo(nickName, parsedTime, viewCount);
 
-    final comments = container
+    final comments =
+        container
             ?.querySelectorAll(
               "div.post_comment > div.comment > div.comment_row",
             )
@@ -261,21 +268,24 @@ class ClienParser implements BaseParser {
               var nickImage = '';
 
               if (isShowNickImage) {
-                nickName = element
+                nickName =
+                    element
                         .querySelector(
                           "div.comment_info > div.post_contact > span.contact_name > span.nickname",
                         )
                         ?.text
                         .trim() ??
                     '';
-                nickImage = element
+                nickImage =
+                    element
                         .querySelector(
                           "div.comment_info > div.post_contact > span.contact_name > span.nickimg > img",
                         )
                         ?.attributes['src'] ??
                     '';
               } else {
-                nickName = element
+                nickName =
+                    element
                         .querySelector(
                           "div.comment_info > div.post_contact > span.contact_name > span.nickname",
                         )
@@ -283,7 +293,8 @@ class ClienParser implements BaseParser {
                         .trim() ??
                     '';
                 if (nickName.isEmpty) {
-                  nickName = element
+                  nickName =
+                      element
                           .querySelector(
                             "div.comment_info > div.post_contact > span.contact_name > span.nickimg > img",
                           )
@@ -292,7 +303,8 @@ class ClienParser implements BaseParser {
                 }
               }
 
-              final likeCount = element
+              final likeCount =
+                  element
                       .querySelector(
                         "div.comment_content_symph > button > strong",
                       )
@@ -308,7 +320,11 @@ class ClienParser implements BaseParser {
                     .forEach((element) => element.remove());
               }
 
-              final body = bodyElements.map((item) => item.innerHtml).join();
+              final body =
+                  bodyElements
+                      .map((item) => item.innerHtml.trim())
+                      .join()
+                      .trim();
               var parsedTime = '';
               try {
                 var dateTime = parseDateTime(time);
@@ -340,7 +356,7 @@ class ClienParser implements BaseParser {
             .toList() ??
         [];
 
-    var marketHtml = marketHtmlElement?.innerHtml ?? '';
+    var marketHtml = marketHtmlElement?.innerHtml.trim() ?? '';
     var newBodyHtml = '';
     if (marketHtml.isNotEmpty) {
       marketHtml = marketHtml.replaceAll(
@@ -392,14 +408,17 @@ class ClienParser implements BaseParser {
     });
 
     try {
-      await compute(_parseListInIsolate, IsolateMessage<String>(
-        receivePort.sendPort,
-        response.data,
-        lastId.intId,
-        boardTitle,
-        baseUrl,
-        false,
-      ));
+      await compute(
+        _parseListInIsolate,
+        IsolateMessage<String>(
+          receivePort.sendPort,
+          response.data,
+          lastId.intId,
+          boardTitle,
+          baseUrl,
+          false,
+        ),
+      );
       // await Isolate.spawn(
       //   _parseListInIsolate,
       //   IsolateMessage<String>(
@@ -455,7 +474,8 @@ class ClienParser implements BaseParser {
         continue;
       }
 
-      final category = element
+      final category =
+          element
               .querySelector(
                 'div.list_infomation > div.list_number > span.category',
               )
@@ -464,14 +484,16 @@ class ClienParser implements BaseParser {
           '';
       if (category == '공지') continue;
 
-      final title = element
+      final title =
+          element
               .querySelector(
                 'div.list_title > div.list_subject > span[data-role=list-title-text]',
               )
               ?.text
               .trim() ??
           '';
-      final time = element
+      final time =
+          element
               .querySelector(
                 'div.list_infomation > div.list_number > div.list_time > span',
               )
@@ -479,14 +501,16 @@ class ClienParser implements BaseParser {
               .trim() ??
           '';
 
-      final hit = element
+      final hit =
+          element
               .querySelector(
                 'div.list_infomation > div.list_number > div.list_hit > span',
               )
               ?.text
               .trim() ??
           '';
-      final like = element
+      final like =
+          element
               .querySelector('div.list_title > div.list_symph > span')
               ?.text
               .trim() ??
@@ -495,7 +519,8 @@ class ClienParser implements BaseParser {
         'div.list_infomation > div.list_author',
       );
       final nickImg = author?.querySelector('span.nickimg > img');
-      final nickName = author?.querySelector('span.nickname')?.text.trim() ??
+      final nickName =
+          author?.querySelector('span.nickname')?.text.trim() ??
           nickImg?.attributes['alt'] ??
           '';
       final nickImage = isShowNickImage ? nickImg?.attributes['src'] ?? '' : '';
@@ -542,26 +567,27 @@ class ClienParser implements BaseParser {
     final readStatusResponse = await readStatusPort.first as ReadStatusResponse;
     readStatusPort.close();
 
-    final resultList = parsedItems
-        .map(
-          (item) => ListItem(
-            id: item['id'],
-            title: item['title'],
-            reply: item['reply'],
-            category: item['category'],
-            time: item['time'],
-            info: item['info'],
-            url: item['url'],
-            board: item['board'],
-            boardTitle: item['boardTitle'],
-            like: item['like'],
-            hit: item['hit'],
-            userInfo: item['userInfo'],
-            hasImage: item['hasImage'],
-            isRead: readStatusResponse.statuses.contains(item['id']),
-          ),
-        )
-        .toList();
+    final resultList =
+        parsedItems
+            .map(
+              (item) => ListItem(
+                id: item['id'],
+                title: item['title'],
+                reply: item['reply'],
+                category: item['category'],
+                time: item['time'],
+                info: item['info'],
+                url: item['url'],
+                board: item['board'],
+                boardTitle: item['boardTitle'],
+                like: item['like'],
+                hit: item['hit'],
+                userInfo: item['userInfo'],
+                hasImage: item['hasImage'],
+                isRead: readStatusResponse.statuses.contains(item['id']),
+              ),
+            )
+            .toList();
 
     replyPort.send(resultList);
   }

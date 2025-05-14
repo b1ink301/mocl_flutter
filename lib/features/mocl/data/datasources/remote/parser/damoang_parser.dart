@@ -59,7 +59,7 @@ class DamoangParser implements BaseParser {
     final container = document.querySelector('article[id=bo_v]');
     final title =
         container?.querySelector('header > h1[id=bo_v_title]')?.text.trim() ??
-            '';
+        '';
     final timeElement = container?.querySelector(
       'section[id=bo_v_info] > div.d-flex > div:last-child',
     ); //:first-child, div:nth-child(2)
@@ -82,7 +82,8 @@ class DamoangParser implements BaseParser {
           .forEach((e) => e.remove()),
     );
 
-    final linkHtml = container
+    final linkHtml =
+        container
             ?.querySelector('section[id=bo_v_atc] > section[id=bo_v_data]')
             ?.innerHtml ??
         '';
@@ -113,16 +114,17 @@ class DamoangParser implements BaseParser {
       'section[id=bo_v_info] > div.d-flex > div.me-auto > span.d-inline-block > span.sv_wrap > a.sv_member',
     );
 
-    final nickName = memberElement?.querySelector('span.sv_name')?.text.trim() ?? '';
-    final nickImage = isShowNickImage
-        ? memberElement
-                ?.querySelector('img.mb-photo')
-                ?.attributes['src'] ??
-            ''
-        : '';
+    final nickName =
+        memberElement?.querySelector('span.sv_name')?.text.trim() ?? '';
+    final nickImage =
+        isShowNickImage
+            ? memberElement?.querySelector('img.mb-photo')?.attributes['src'] ??
+                ''
+            : '';
 
     var index = 0;
-    final comments = container
+    final comments =
+        container
             ?.querySelectorAll('div[id=viewcomment] > section > article')
             .map((element) {
               final nickElement = element.querySelector(
@@ -132,8 +134,10 @@ class DamoangParser implements BaseParser {
               final url = nickElement?.attributes['href'] ?? '';
               final uri = Uri.parse(url);
               final id = uri.queryParameters['mb_id'] ?? '-1';
-              final nickName = nickElement?.querySelector('span.sv_name')?.text.trim() ?? '';
-              final isReply = element.querySelector(
+              final nickName =
+                  nickElement?.querySelector('span.sv_name')?.text.trim() ?? '';
+              final isReply =
+                  element.querySelector(
                     'div.comment-list-wrap > header > div > div.me-2 > i.bi',
                   ) !=
                   null;
@@ -148,15 +152,17 @@ class DamoangParser implements BaseParser {
               timeElement?.querySelector("span.visually-hidden")?.remove();
               final time = timeElement?.text.trim() ?? '';
 
-              final nickImage = isShowNickImage
-                  ? nickElement
-                          ?.querySelector('span.profile_img > img.mb-photo')
-                          ?.attributes['src']
-                          ?.trim() ??
-                      ''
-                  : '';
+              final nickImage =
+                  isShowNickImage
+                      ? nickElement
+                              ?.querySelector('span.profile_img > img.mb-photo')
+                              ?.attributes['src']
+                              ?.trim() ??
+                          ''
+                      : '';
 
-              final likeCount = element
+              final likeCount =
+                  element
                       .querySelector(
                         'div.comment-content > div.d-flex > div:last-child > button:last-child > span:first-child',
                       )
@@ -179,11 +185,15 @@ class DamoangParser implements BaseParser {
                 parsedTime = time;
               }
               final info = '$nickName ・ $parsedTime';
+              final bodyHtml = body?.innerHtml.trim() ?? '';
+              final newBodyHtml = bodyHtml
+                  .replaceAll('<noscript>', '')
+                  .replaceAll('</noscript>', '');
 
               return CommentItem(
                 id: index++,
                 isReply: isReply,
-                bodyHtml: body?.innerHtml ?? '',
+                bodyHtml: newBodyHtml,
                 likeCount: likeCount,
                 mediaHtml: '',
                 isVideo: false,
@@ -213,6 +223,10 @@ class DamoangParser implements BaseParser {
     // debugPrint('bodyHtml=${bodyHtml?.innerHtml}');
 
     var newBodyHtml = bodyHtml?.innerHtml ?? '';
+    newBodyHtml = newBodyHtml
+        .replaceAll('<noscript>', '')
+        .replaceAll('</noscript>', '');
+
     if (linkHtml.isNotEmpty) {
       newBodyHtml += '</br>$linkHtml';
     }
@@ -317,7 +331,8 @@ class DamoangParser implements BaseParser {
         continue;
       }
 
-      final metaElement = infoElement?.querySelector(
+      final metaElement =
+          infoElement?.querySelector(
             'div.da-list-meta > div.d-flex > div.wr-name > span.sv_wrap > a.sv_member',
           ) ??
           infoElement?.querySelector(
@@ -326,7 +341,8 @@ class DamoangParser implements BaseParser {
       final profile = metaElement?.attributes['href'] ?? '';
       final userId = Uri.parse(profile).queryParameters['mb_id'] ?? '';
 
-      final reply = infoElement
+      final reply =
+          infoElement
               ?.querySelectorAll("div.d-flex > div.d-inline-flex > a")
               .map((a) => a.querySelector('span.count-plus')?.text.trim())
               .firstWhere(
@@ -363,18 +379,19 @@ class DamoangParser implements BaseParser {
         parsedTime = time;
       }
 
-      final nickImage = isShowNickImage
-          ? metaElement
-                  ?.querySelector("span.profile_img > img.mb-photo")
-                  ?.attributes["src"]
-                  ?.trim() ??
-              ''
-          : '';
+      final nickImage =
+          isShowNickImage
+              ? metaElement
+                      ?.querySelector("span.profile_img > img.mb-photo")
+                      ?.attributes["src"]
+                      ?.trim() ??
+                  ''
+              : '';
 
       final nickName =
           metaElement?.querySelector("span.sv_name")?.text.trim() ??
-              metaElement?.querySelector("span.sv_member")?.text.trim() ??
-              '';
+          metaElement?.querySelector("span.sv_member")?.text.trim() ??
+          '';
 
       final hitElement = infoElement?.querySelector(
         "div > div.d-flex > div.wr-num.order-4",
@@ -390,7 +407,8 @@ class DamoangParser implements BaseParser {
           .forEach((ele) => ele.remove());
       final like = likeElement?.text.trim() ?? '';
 
-      final hasImage = infoElement
+      final hasImage =
+          infoElement
               ?.querySelector("div.d-flex > div > span.na-icon")
               ?.hasContent() ??
           false;
@@ -426,26 +444,27 @@ class DamoangParser implements BaseParser {
     final readStatusResponse = await readStatusPort.first as ReadStatusResponse;
     readStatusPort.close();
 
-    final resultList = parsedItems
-        .map(
-          (item) => ListItem(
-            id: item['id'],
-            title: item['title'],
-            reply: item['reply'],
-            category: item['category'],
-            time: item['time'],
-            url: item['url'],
-            info: item['info'],
-            board: item['board'],
-            boardTitle: item['boardTitle'],
-            like: item['like'],
-            hit: item['hit'],
-            userInfo: item['userInfo'],
-            hasImage: item['hasImage'],
-            isRead: readStatusResponse.statuses.contains(item['id']),
-          ),
-        )
-        .toList();
+    final resultList =
+        parsedItems
+            .map(
+              (item) => ListItem(
+                id: item['id'],
+                title: item['title'],
+                reply: item['reply'],
+                category: item['category'],
+                time: item['time'],
+                url: item['url'],
+                info: item['info'],
+                board: item['board'],
+                boardTitle: item['boardTitle'],
+                like: item['like'],
+                hit: item['hit'],
+                userInfo: item['userInfo'],
+                hasImage: item['hasImage'],
+                isRead: readStatusResponse.statuses.contains(item['id']),
+              ),
+            )
+            .toList();
 
     replyPort.send(resultList);
   }
@@ -505,8 +524,7 @@ class DamoangParser implements BaseParser {
     int page,
     SortType sortType,
     LastId lastId,
-  ) =>
-      '$url?page=$page${sortType.toQuery(siteType)}';
+  ) => '$url?page=$page${sortType.toQuery(siteType)}';
 
   @override
   String urlBySearchList(
@@ -515,8 +533,7 @@ class DamoangParser implements BaseParser {
     int page,
     String keyword,
     LastId lastId,
-  ) =>
-      '$url?page=$page&sfl=wr_subject&sop=and&stx=$keyword';
+  ) => '$url?page=$page&sfl=wr_subject&sop=and&stx=$keyword';
 
   @override
   String urlByMain() => throw UnimplementedError('urlByMain');

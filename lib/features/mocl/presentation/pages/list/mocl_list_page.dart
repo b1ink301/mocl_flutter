@@ -15,10 +15,7 @@ import 'package:mocl_flutter/features/mocl/presentation/widgets/appbar_dual_text
 class MoclListPage extends StatelessWidget {
   const MoclListPage({super.key});
 
-  static Widget withBloc(
-    BuildContext context,
-    MainItem item,
-  ) =>
+  static Widget withBloc(BuildContext context, MainItem item) =>
       MultiBlocProvider(
         providers: [
           BlocProvider(
@@ -38,12 +35,9 @@ class MoclListPage extends StatelessWidget {
         left: false,
         right: false,
         child: RefreshIndicator(
-          onRefresh: context.read<ListPagingCubit>().refresh,
+          onRefresh: () => Future.sync(context.read<ListPagingCubit>().refresh),
           child: const CustomScrollView(
-            slivers: <Widget>[
-              _ListAppbar(),
-              MoclListView(),
-            ],
+            slivers: <Widget>[_ListAppbar(), MoclListView()],
           ),
         ),
       ),
@@ -51,13 +45,13 @@ class MoclListPage extends StatelessWidget {
 
     return Platform.isMacOS
         ? Listener(
-            onPointerDown: (event) {
-              if (event.buttons == kSecondaryMouseButton) {
-                GoRouter.of(context).pop();
-              }
-            },
-            child: child,
-          )
+          onPointerDown: (event) {
+            if (event.buttons == kSecondaryMouseButton) {
+              GoRouter.of(context).pop();
+            }
+          },
+          child: child,
+        )
         : child;
   }
 }
@@ -77,10 +71,7 @@ class _ListAppbar extends StatelessWidget {
       title: title,
       automaticallyImplyLeading: Platform.isMacOS,
       actions: [
-        IconButton(
-          onPressed: bloc.refresh,
-          icon: const Icon(Icons.refresh),
-        )
+        IconButton(onPressed: bloc.refresh, icon: const Icon(Icons.refresh)),
       ],
     );
   }

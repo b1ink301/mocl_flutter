@@ -41,23 +41,13 @@ import 'package:mocl_flutter/features/mocl/domain/repositories/settings_reposito
 // ignore_for_file: subtype_of_sealed_class
 
 class _FakeBaseParser_0 extends _i1.SmartFake implements _i2.BaseParser {
-  _FakeBaseParser_0(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeBaseParser_0(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 class _FakeBaseApi_1 extends _i1.SmartFake implements _i3.BaseApi {
-  _FakeBaseApi_1(
-    Object parent,
-    Invocation parentInvocation,
-  ) : super(
-          parent,
-          parentInvocation,
-        );
+  _FakeBaseApi_1(Object parent, Invocation parentInvocation)
+    : super(parent, parentInvocation);
 }
 
 /// A class which mocks [MainDataSource].
@@ -71,72 +61,50 @@ class MockMainDataSource extends _i1.Mock implements _i4.MainDataSource {
   @override
   _i5.Future<_i6.Result<List<_i7.MainItem>>> get(_i8.SiteType? siteType) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #get,
-          [siteType],
-        ),
-        returnValue: _i5.Future<_i6.Result<List<_i7.MainItem>>>.value(
-            _i9.dummyValue<_i6.Result<List<_i7.MainItem>>>(
-          this,
-          Invocation.method(
-            #get,
-            [siteType],
-          ),
-        )),
-      ) as _i5.Future<_i6.Result<List<_i7.MainItem>>>);
+            Invocation.method(#get, [siteType]),
+            returnValue: _i5.Future<_i6.Result<List<_i7.MainItem>>>.value(
+              _i9.dummyValue<_i6.Result<List<_i7.MainItem>>>(
+                this,
+                Invocation.method(#get, [siteType]),
+              ),
+            ),
+          )
+          as _i5.Future<_i6.Result<List<_i7.MainItem>>>);
 
   @override
-  _i5.Future<List<int>> set(
-    _i8.SiteType? siteType,
-    List<_i7.MainItem>? list,
-  ) =>
+  _i5.Future<List<int>> set(_i8.SiteType? siteType, List<_i7.MainItem>? list) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #set,
-          [
-            siteType,
-            list,
-          ],
-        ),
-        returnValue: _i5.Future<List<int>>.value(<int>[]),
-      ) as _i5.Future<List<int>>);
+            Invocation.method(#set, [siteType, list]),
+            returnValue: _i5.Future<List<int>>.value(<int>[]),
+          )
+          as _i5.Future<List<int>>);
 
   @override
   _i5.Future<List<_i10.MainItemModel>> getAllFromJson(_i8.SiteType? siteType) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getAllFromJson,
-          [siteType],
-        ),
-        returnValue:
-            _i5.Future<List<_i10.MainItemModel>>.value(<_i10.MainItemModel>[]),
-      ) as _i5.Future<List<_i10.MainItemModel>>);
+            Invocation.method(#getAllFromJson, [siteType]),
+            returnValue: _i5.Future<List<_i10.MainItemModel>>.value(
+              <_i10.MainItemModel>[],
+            ),
+          )
+          as _i5.Future<List<_i10.MainItemModel>>);
 
   @override
-  _i5.Future<void> deleteAll(_i8.SiteType? siteType) => (super.noSuchMethod(
-        Invocation.method(
-          #deleteAll,
-          [siteType],
-        ),
-        returnValue: _i5.Future<void>.value(),
-        returnValueForMissingStub: _i5.Future<void>.value(),
-      ) as _i5.Future<void>);
-
-  @override
-  _i5.Future<bool> hasItem(
-    _i8.SiteType? siteType,
-    _i7.MainItem? item,
-  ) =>
+  _i5.Future<void> deleteAll(_i8.SiteType? siteType) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #hasItem,
-          [
-            siteType,
-            item,
-          ],
-        ),
-        returnValue: _i5.Future<bool>.value(false),
-      ) as _i5.Future<bool>);
+            Invocation.method(#deleteAll, [siteType]),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
+
+  @override
+  _i5.Future<bool> hasItem(_i8.SiteType? siteType, _i7.MainItem? item) =>
+      (super.noSuchMethod(
+            Invocation.method(#hasItem, [siteType, item]),
+            returnValue: _i5.Future<bool>.value(false),
+          )
+          as _i5.Future<bool>);
 }
 
 /// A class which mocks [SettingsRepository].
@@ -149,22 +117,18 @@ class MockSettingsRepository extends _i1.Mock
   }
 
   @override
-  _i8.SiteType getSiteType() => (super.noSuchMethod(
-        Invocation.method(
-          #getSiteType,
-          [],
-        ),
-        returnValue: _i8.SiteType.clien,
-      ) as _i8.SiteType);
+  _i8.SiteType getSiteType() =>
+      (super.noSuchMethod(
+            Invocation.method(#getSiteType, []),
+            returnValue: _i8.SiteType.clien,
+          )
+          as _i8.SiteType);
 
   @override
   void setSiteType(_i8.SiteType? siteType) => super.noSuchMethod(
-        Invocation.method(
-          #setSiteType,
-          [siteType],
-        ),
-        returnValueForMissingStub: null,
-      );
+    Invocation.method(#setSiteType, [siteType]),
+    returnValueForMissingStub: null,
+  );
 }
 
 /// A class which mocks [ParserFactory].
@@ -176,26 +140,13 @@ class MockParserFactory extends _i1.Mock implements _i12.ParserFactory {
   }
 
   @override
-  (_i2.BaseParser, _i3.BaseApi) buildParser() => (super.noSuchMethod(
-        Invocation.method(
-          #buildParser,
-          [],
-        ),
-        returnValue: (
-          _FakeBaseParser_0(
-            this,
-            Invocation.method(
-              #buildParser,
-              [],
-            ),
-          ),
-          _FakeBaseApi_1(
-            this,
-            Invocation.method(
-              #buildParser,
-              [],
+  (_i2.BaseParser, _i3.BaseApi) buildParser() =>
+      (super.noSuchMethod(
+            Invocation.method(#buildParser, []),
+            returnValue: (
+              _FakeBaseParser_0(this, Invocation.method(#buildParser, [])),
+              _FakeBaseApi_1(this, Invocation.method(#buildParser, [])),
             ),
           )
-        ),
-      ) as (_i2.BaseParser, _i3.BaseApi));
+          as (_i2.BaseParser, _i3.BaseApi));
 }
