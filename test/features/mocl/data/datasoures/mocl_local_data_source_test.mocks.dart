@@ -47,13 +47,12 @@ class MockLocalDatabase extends _i1.Mock implements _i2.LocalDatabase {
   @override
   _i3.Future<List<_i4.MainItemData>> getMainData(_i5.SiteType? siteType) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getMainData,
-          [siteType],
-        ),
-        returnValue:
-            _i3.Future<List<_i4.MainItemData>>.value(<_i4.MainItemData>[]),
-      ) as _i3.Future<List<_i4.MainItemData>>);
+            Invocation.method(#getMainData, [siteType]),
+            returnValue: _i3.Future<List<_i4.MainItemData>>.value(
+              <_i4.MainItemData>[],
+            ),
+          )
+          as _i3.Future<List<_i4.MainItemData>>);
 
   @override
   _i3.Future<List<int>> setMainData(
@@ -61,99 +60,60 @@ class MockLocalDatabase extends _i1.Mock implements _i2.LocalDatabase {
     List<_i4.MainItemData>? entities,
   ) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setMainData,
-          [
-            siteType,
-            entities,
-          ],
-        ),
-        returnValue: _i3.Future<List<int>>.value(<int>[]),
-      ) as _i3.Future<List<int>>);
+            Invocation.method(#setMainData, [siteType, entities]),
+            returnValue: _i3.Future<List<int>>.value(<int>[]),
+          )
+          as _i3.Future<List<int>>);
 
   @override
-  _i3.Future<void> deleteAll(_i5.SiteType? siteType) => (super.noSuchMethod(
-        Invocation.method(
-          #deleteAll,
-          [siteType],
-        ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
-
-  @override
-  _i3.Future<bool> hasItem(
-    _i5.SiteType? siteType,
-    _i4.MainItemData? entity,
-  ) =>
+  _i3.Future<void> deleteAll(_i5.SiteType? siteType) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #hasItem,
-          [
-            siteType,
-            entity,
-          ],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+            Invocation.method(#deleteAll, [siteType]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 
   @override
-  _i3.Future<bool> isRead(
-    _i5.SiteType? siteType,
-    int? id,
-  ) =>
+  _i3.Future<bool> hasItem(_i5.SiteType? siteType, _i4.MainItemData? entity) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #isRead,
-          [
-            siteType,
-            id,
-          ],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+            Invocation.method(#hasItem, [siteType, entity]),
+            returnValue: _i3.Future<bool>.value(false),
+          )
+          as _i3.Future<bool>);
 
   @override
-  _i3.FutureOr<List<int>> isReads(
-    _i5.SiteType? siteType,
-    List<int>? ids,
-  ) =>
+  _i3.Future<bool> isRead(_i5.SiteType? siteType, int? id) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #isReads,
-          [
-            siteType,
-            ids,
-          ],
-        ),
-        returnValue: _i3.Future<List<int>>.value(<int>[]),
-      ) as _i3.FutureOr<List<int>>);
+            Invocation.method(#isRead, [siteType, id]),
+            returnValue: _i3.Future<bool>.value(false),
+          )
+          as _i3.Future<bool>);
 
   @override
-  _i3.Future<int> setRead(
-    _i5.SiteType? siteType,
-    int? id,
-  ) =>
+  _i3.FutureOr<List<int>> isReads(_i5.SiteType? siteType, List<int>? ids) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setRead,
-          [
-            siteType,
-            id,
-          ],
-        ),
-        returnValue: _i3.Future<int>.value(0),
-      ) as _i3.Future<int>);
+            Invocation.method(#isReads, [siteType, ids]),
+            returnValue: _i3.Future<List<int>>.value(<int>[]),
+          )
+          as _i3.FutureOr<List<int>>);
 
   @override
-  _i3.Future<void> dispose() => (super.noSuchMethod(
-        Invocation.method(
-          #dispose,
-          [],
-        ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
+  _i3.Future<int> setRead(_i5.SiteType? siteType, int? id) =>
+      (super.noSuchMethod(
+            Invocation.method(#setRead, [siteType, id]),
+            returnValue: _i3.Future<int>.value(0),
+          )
+          as _i3.Future<int>);
+
+  @override
+  _i3.Future<void> dispose() =>
+      (super.noSuchMethod(
+            Invocation.method(#dispose, []),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
 }
 
 /// A class which mocks [MainDataSource].
@@ -167,70 +127,48 @@ class MockMainDataSource extends _i1.Mock implements _i6.MainDataSource {
   @override
   _i3.Future<_i7.Result<List<_i8.MainItem>>> get(_i5.SiteType? siteType) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #get,
-          [siteType],
-        ),
-        returnValue: _i3.Future<_i7.Result<List<_i8.MainItem>>>.value(
-            _i9.dummyValue<_i7.Result<List<_i8.MainItem>>>(
-          this,
-          Invocation.method(
-            #get,
-            [siteType],
-          ),
-        )),
-      ) as _i3.Future<_i7.Result<List<_i8.MainItem>>>);
+            Invocation.method(#get, [siteType]),
+            returnValue: _i3.Future<_i7.Result<List<_i8.MainItem>>>.value(
+              _i9.dummyValue<_i7.Result<List<_i8.MainItem>>>(
+                this,
+                Invocation.method(#get, [siteType]),
+              ),
+            ),
+          )
+          as _i3.Future<_i7.Result<List<_i8.MainItem>>>);
 
   @override
-  _i3.Future<List<int>> set(
-    _i5.SiteType? siteType,
-    List<_i8.MainItem>? list,
-  ) =>
+  _i3.Future<List<int>> set(_i5.SiteType? siteType, List<_i8.MainItem>? list) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #set,
-          [
-            siteType,
-            list,
-          ],
-        ),
-        returnValue: _i3.Future<List<int>>.value(<int>[]),
-      ) as _i3.Future<List<int>>);
+            Invocation.method(#set, [siteType, list]),
+            returnValue: _i3.Future<List<int>>.value(<int>[]),
+          )
+          as _i3.Future<List<int>>);
 
   @override
   _i3.Future<List<_i10.MainItemModel>> getAllFromJson(_i5.SiteType? siteType) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getAllFromJson,
-          [siteType],
-        ),
-        returnValue:
-            _i3.Future<List<_i10.MainItemModel>>.value(<_i10.MainItemModel>[]),
-      ) as _i3.Future<List<_i10.MainItemModel>>);
+            Invocation.method(#getAllFromJson, [siteType]),
+            returnValue: _i3.Future<List<_i10.MainItemModel>>.value(
+              <_i10.MainItemModel>[],
+            ),
+          )
+          as _i3.Future<List<_i10.MainItemModel>>);
 
   @override
-  _i3.Future<void> deleteAll(_i5.SiteType? siteType) => (super.noSuchMethod(
-        Invocation.method(
-          #deleteAll,
-          [siteType],
-        ),
-        returnValue: _i3.Future<void>.value(),
-        returnValueForMissingStub: _i3.Future<void>.value(),
-      ) as _i3.Future<void>);
-
-  @override
-  _i3.Future<bool> hasItem(
-    _i5.SiteType? siteType,
-    _i8.MainItem? item,
-  ) =>
+  _i3.Future<void> deleteAll(_i5.SiteType? siteType) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #hasItem,
-          [
-            siteType,
-            item,
-          ],
-        ),
-        returnValue: _i3.Future<bool>.value(false),
-      ) as _i3.Future<bool>);
+            Invocation.method(#deleteAll, [siteType]),
+            returnValue: _i3.Future<void>.value(),
+            returnValueForMissingStub: _i3.Future<void>.value(),
+          )
+          as _i3.Future<void>);
+
+  @override
+  _i3.Future<bool> hasItem(_i5.SiteType? siteType, _i8.MainItem? item) =>
+      (super.noSuchMethod(
+            Invocation.method(#hasItem, [siteType, item]),
+            returnValue: _i3.Future<bool>.value(false),
+          )
+          as _i3.Future<bool>);
 }

@@ -17,30 +17,27 @@ import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.d
 class MainPage extends StatelessWidget {
   const MainPage({super.key});
 
-  static Widget withBloc(
-    BuildContext context,
-  ) =>
-      MultiBlocProvider(
-        providers: [
-          BlocProvider(create: (_) => getIt<MainDataJsonBloc>()),
-          BlocProvider(
-            create: (_) {
-              final siteTypeBloc = context.read<SiteTypeBloc>();
-              return getIt<MainDataBloc>()..initialize(siteTypeBloc);
-            },
-          ),
-          BlocProvider(create: (_) => getIt<GetVersionCubit>()..getVersion()),
-        ],
-        child: AnnotatedRegion<SystemUiOverlayStyle>(
-            value: Theme.of(context).appBarTheme.systemOverlayStyle!,
-            child: const MainPage()),
-      );
+  static Widget withBloc(BuildContext context) => MultiBlocProvider(
+    providers: [
+      BlocProvider(create: (_) => getIt<MainDataJsonBloc>()),
+      BlocProvider(
+        create: (_) {
+          final siteTypeBloc = context.read<SiteTypeBloc>();
+          return getIt<MainDataBloc>()..initialize(siteTypeBloc);
+        },
+      ),
+      BlocProvider(create: (_) => getIt<GetVersionCubit>()..getVersion()),
+    ],
+    child: AnnotatedRegion<SystemUiOverlayStyle>(
+      value: Theme.of(context).appBarTheme.systemOverlayStyle!,
+      child: const MainPage(),
+    ),
+  );
 
-  Widget _buildAppBar(
-    BuildContext context,
-  ) {
+  Widget _buildAppBar(BuildContext context) {
     final SiteTypeBloc siteType = context.watch<SiteTypeBloc>();
-    final Color? backgroundColor = Theme.of(context).appBarTheme.backgroundColor;
+    final Color? backgroundColor =
+        Theme.of(context).appBarTheme.backgroundColor;
 
     return SliverAppBar(
       title: _buildTitle(context, siteType.title),
@@ -52,16 +49,19 @@ class MainPage extends StatelessWidget {
       pinned: false,
       centerTitle: false,
       toolbarHeight: 64,
-      actions: SiteType.naverCafe == siteType.state
-          ? null
-          : [
-              Builder(
-                  builder: (BuildContext context) => IconButton(
-                        onPressed: () =>
-                            _handleAddButton(context, siteType.state),
+      actions:
+          SiteType.naverCafe == siteType.state
+              ? null
+              : [
+                Builder(
+                  builder:
+                      (BuildContext context) => IconButton(
+                        onPressed:
+                            () => _handleAddButton(context, siteType.state),
                         icon: const Icon(Icons.add),
-                      ))
-            ],
+                      ),
+                ),
+              ],
     );
   }
 
@@ -71,58 +71,56 @@ class MainPage extends StatelessWidget {
       extra: siteType,
     );
     if (context.mounted && result != null) {
-      context
-          .read<MainDataBloc>()
-          .addMainList(siteType: siteType, list: result);
+      context.read<MainDataBloc>().addMainList(
+        siteType: siteType,
+        list: result,
+      );
     }
   }
 
   Widget _buildTitle(BuildContext context, String title) => MessageWidget(
-        message: title,
-        textStyle: Theme.of(context).textTheme.labelMedium,
-      );
+    message: title,
+    textStyle: Theme.of(context).textTheme.labelMedium,
+  );
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        drawerEdgeDragWidth: MediaQuery.of(context).size.width,
-        drawerEnableOpenDragGesture: true,
-        drawer: _buildDrawer(context),
-        body: BlocListener<MainDataBloc, MainDataState>(
-          listener: (BuildContext context, MainDataState state) async {
-            if (state is StateRequireLogin) {
-              final result = await context.push<bool>(Routes.login) ?? false;
-              if (context.mounted && result) {
-                final siteType = context.read<SiteTypeBloc>().state;
-                context.read<MainDataBloc>().refresh(siteType);
-              }
-            }
+    drawerEdgeDragWidth: MediaQuery.of(context).size.width,
+    drawerEnableOpenDragGesture: true,
+    drawer: _buildDrawer(context),
+    body: BlocListener<MainDataBloc, MainDataState>(
+      listener: (BuildContext context, MainDataState state) async {
+        if (state is StateRequireLogin) {
+          final result = await context.push<bool>(Routes.login) ?? false;
+          if (context.mounted && result) {
+            final siteType = context.read<SiteTypeBloc>().state;
+            context.read<MainDataBloc>().refresh(siteType);
+          }
+        }
+      },
+      child: SafeArea(
+        left: false,
+        right: false,
+        child: RefreshIndicator(
+          onRefresh: () async {
+            final siteTypeBloc = context.read<SiteTypeBloc>();
+            context.read<MainDataBloc>().refresh(siteTypeBloc.state);
           },
-          child: SafeArea(
-            left: false,
-            right: false,
-            child: RefreshIndicator(
-              onRefresh: () async {
-                final siteTypeBloc = context.read<SiteTypeBloc>();
-                context.read<MainDataBloc>().refresh(siteTypeBloc.state);
-              },
-              child: CustomScrollView(
-                // cacheExtent: 0,
-                slivers: <Widget>[
-                  _buildAppBar(context),
-                  const MainView(),
-                ],
-              ),
-            ),
+          child: CustomScrollView(
+            slivers: <Widget>[_buildAppBar(context), const MainView()],
           ),
         ),
-      );
+      ),
+    ),
+  );
 
-  Widget _buildDrawer(BuildContext context) =>
-      DrawerWidget(onChangeSite: (siteType) {
-        if (siteType == SiteType.settings) {
-          context.push(Routes.settings);
-        } else {
-          context.read<SiteTypeBloc>().setSiteType(siteType);
-        }
-      });
+  Widget _buildDrawer(BuildContext context) => DrawerWidget(
+    onChangeSite: (siteType) {
+      if (siteType == SiteType.settings) {
+        context.push(Routes.settings);
+      } else {
+        context.read<SiteTypeBloc>().setSiteType(siteType);
+      }
+    },
+  );
 }

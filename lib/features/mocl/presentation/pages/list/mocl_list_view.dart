@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
-import 'package:mocl_flutter/features/mocl/presentation/models/readable_list_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/list/bloc/list_item_cubit.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/bloc/list_paging_cubit.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/cached_item_builder.dart';
@@ -14,16 +15,16 @@ class MoclListView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) =>
-      BlocBuilder<ListPagingCubit, PagingState<int, ReadableListItem>>(
+      BlocBuilder<ListPagingCubit, PagingState<int, ListItemCubit>>(
         bloc: context.read<ListPagingCubit>(),
         builder:
             (context, state) => SliverPadding(
               padding: const EdgeInsets.only(left: 15, right: 8),
-              sliver: PagedSliverList<int, ReadableListItem>.separated(
+              sliver: PagedSliverList<int, ListItemCubit>.separated(
                 state: state,
                 shrinkWrapFirstPageIndicators: true,
                 fetchNextPage: context.read<ListPagingCubit>().fetchPage,
-                builderDelegate: PagedChildBuilderDelegate<ReadableListItem>(
+                builderDelegate: PagedChildBuilderDelegate<ListItemCubit>(
                   firstPageProgressIndicatorBuilder:
                       (_) => const Column(
                         children: [
@@ -33,22 +34,17 @@ class MoclListView extends StatelessWidget {
                       ),
                   newPageProgressIndicatorBuilder: (_) => const LoadingWidget(),
                   itemBuilder:
-                      (_, model, _) => CachedItemBuilder(
+                      (_, cubit, _) => CachedItemBuilder(
                         builder:
-                            () => MoclListItem(
-                              key: model.key,
-                              model: model,
-                              onTap:
-                                  () => context.read<ListPagingCubit>().onTap(
-                                    context,
-                                    model,
-                                  ),
+                            () => BlocProvider.value(
+                              key: cubit.state.key,
+                              value: cubit,
+                              child: const MoclListItem(),
                             ),
                       ),
                 ),
                 separatorBuilder:
-                    (_, _) =>
-                        const DividerWidget(indent: 0, endIndent: 0),
+                    (_, _) => const DividerWidget(indent: 0, endIndent: 0),
               ),
             ),
       );

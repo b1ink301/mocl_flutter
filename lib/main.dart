@@ -14,26 +14,29 @@ import 'package:sentry_flutter/sentry_flutter.dart';
 import 'firebase_options.dart';
 
 Future<void> main() async {
-  SentryWidgetsFlutterBinding.ensureInitialized();
+  WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   await configureDependencies();
   unawaited(_firebase());
-  await SentryFlutter.init(
-    (options) {
-      options.dsn =
-          'https://6dfe8c0776dd308db231083174773363@o4507983399813120.ingest.us.sentry.io/4507983631876096';
-      // Set tracesSampleRate to 1.0 to capture 100% of transactions for tracing.
-      // We recommend adjusting this value in production.
-      options.tracesSampleRate = 1.0;
-      // The sampling rate for profiling is relative to tracesSampleRate
-      // Setting to 1.0 will profile 100% of sampled transactions:
-      options.profilesSampleRate = 1.0;
-    },
-    appRunner: () => runApp(
-      BlocProvider(
-        create: (_) => getIt<SiteTypeBloc>(),
-        child: const AppWidget(),
-      ),
+  // await SentryFlutter.init(
+  //   (options) {
+  //     options.dsn =
+  //         'https://6dfe8c0776dd308db231083174773363@o4507983399813120.ingest.us.sentry.io/4507983631876096';
+  //     options.tracesSampleRate = 1.0;
+  //     options.profilesSampleRate = 1.0;
+  //   },
+  //   appRunner: () => runApp(
+  //     BlocProvider(
+  //       create: (_) => getIt<SiteTypeBloc>(),
+  //       child: const AppWidget(),
+  //     ),
+  //   ),
+  // );
+
+  runApp(
+    BlocProvider(
+      create: (_) => getIt<SiteTypeBloc>(),
+      child: const AppWidget(),
     ),
   );
 }

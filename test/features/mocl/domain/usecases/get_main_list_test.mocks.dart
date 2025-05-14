@@ -39,56 +39,46 @@ class MockMainRepository extends _i1.Mock implements _i2.MainRepository {
   }
 
   @override
-  _i3.Stream<_i4.Result<List<_i5.MainItem>>> getMainListStream(
-          {required _i6.SiteType? siteType}) =>
+  _i3.Stream<_i4.Result<List<_i5.MainItem>>> getMainListStream({
+    required _i6.SiteType? siteType,
+  }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getMainListStream,
-          [],
-          {#siteType: siteType},
-        ),
-        returnValue: _i3.Stream<_i4.Result<List<_i5.MainItem>>>.empty(),
-      ) as _i3.Stream<_i4.Result<List<_i5.MainItem>>>);
+            Invocation.method(#getMainListStream, [], {#siteType: siteType}),
+            returnValue: _i3.Stream<_i4.Result<List<_i5.MainItem>>>.empty(),
+          )
+          as _i3.Stream<_i4.Result<List<_i5.MainItem>>>);
 
   @override
-  _i3.Future<_i4.Result<List<_i5.MainItem>>> getMainList(
-          {required _i6.SiteType? siteType}) =>
+  _i3.Future<_i4.Result<List<_i5.MainItem>>> getMainList({
+    required _i6.SiteType? siteType,
+  }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getMainList,
-          [],
-          {#siteType: siteType},
-        ),
-        returnValue: _i3.Future<_i4.Result<List<_i5.MainItem>>>.value(
-            _i7.dummyValue<_i4.Result<List<_i5.MainItem>>>(
-          this,
-          Invocation.method(
-            #getMainList,
-            [],
-            {#siteType: siteType},
-          ),
-        )),
-      ) as _i3.Future<_i4.Result<List<_i5.MainItem>>>);
+            Invocation.method(#getMainList, [], {#siteType: siteType}),
+            returnValue: _i3.Future<_i4.Result<List<_i5.MainItem>>>.value(
+              _i7.dummyValue<_i4.Result<List<_i5.MainItem>>>(
+                this,
+                Invocation.method(#getMainList, [], {#siteType: siteType}),
+              ),
+            ),
+          )
+          as _i3.Future<_i4.Result<List<_i5.MainItem>>>);
 
   @override
-  _i3.Future<_i4.Result<List<_i5.MainItem>>> getMainListFromJson(
-          {required _i6.SiteType? siteType}) =>
+  _i3.Future<_i4.Result<List<_i5.MainItem>>> getMainListFromJson({
+    required _i6.SiteType? siteType,
+  }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #getMainListFromJson,
-          [],
-          {#siteType: siteType},
-        ),
-        returnValue: _i3.Future<_i4.Result<List<_i5.MainItem>>>.value(
-            _i7.dummyValue<_i4.Result<List<_i5.MainItem>>>(
-          this,
-          Invocation.method(
-            #getMainListFromJson,
-            [],
-            {#siteType: siteType},
-          ),
-        )),
-      ) as _i3.Future<_i4.Result<List<_i5.MainItem>>>);
+            Invocation.method(#getMainListFromJson, [], {#siteType: siteType}),
+            returnValue: _i3.Future<_i4.Result<List<_i5.MainItem>>>.value(
+              _i7.dummyValue<_i4.Result<List<_i5.MainItem>>>(
+                this,
+                Invocation.method(#getMainListFromJson, [], {
+                  #siteType: siteType,
+                }),
+              ),
+            ),
+          )
+          as _i3.Future<_i4.Result<List<_i5.MainItem>>>);
 
   @override
   _i3.Future<_i4.Result<List<int>>> setMainList({
@@ -96,25 +86,19 @@ class MockMainRepository extends _i1.Mock implements _i2.MainRepository {
     required List<_i5.MainItem>? list,
   }) =>
       (super.noSuchMethod(
-        Invocation.method(
-          #setMainList,
-          [],
-          {
-            #siteType: siteType,
-            #list: list,
-          },
-        ),
-        returnValue: _i3.Future<_i4.Result<List<int>>>.value(
-            _i7.dummyValue<_i4.Result<List<int>>>(
-          this,
-          Invocation.method(
-            #setMainList,
-            [],
-            {
+            Invocation.method(#setMainList, [], {
               #siteType: siteType,
               #list: list,
-            },
-          ),
-        )),
-      ) as _i3.Future<_i4.Result<List<int>>>);
+            }),
+            returnValue: _i3.Future<_i4.Result<List<int>>>.value(
+              _i7.dummyValue<_i4.Result<List<int>>>(
+                this,
+                Invocation.method(#setMainList, [], {
+                  #siteType: siteType,
+                  #list: list,
+                }),
+              ),
+            ),
+          )
+          as _i3.Future<_i4.Result<List<int>>>);
 }

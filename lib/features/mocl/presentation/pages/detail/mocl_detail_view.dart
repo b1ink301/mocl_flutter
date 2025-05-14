@@ -20,23 +20,20 @@ class DetailView extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       BlocBuilder<DetailViewBloc, DetailViewState>(
-        builder: (context, state) => switch (state) {
-            DetailSuccess() => _DetailView(detail: state.detail),
-            DetailFailed() => SliverFillRemaining(
+        builder:
+            (context, state) => switch (state) {
+              DetailSuccess() => _DetailView(detail: state.detail),
+              DetailFailed() => SliverFillRemaining(
                 hasScrollBody: false,
                 child: Padding(
                   padding: const EdgeInsets.all(12.0),
-                  child: Center(
-                    child: MessageWidget(message: state.message),
-                  ),
+                  child: Center(child: MessageWidget(message: state.message)),
                 ),
               ),
-            _ => const SliverToBoxAdapter(
-                child: Column(
-                  children: [LoadingWidget(), DividerWidget()],
-                ),
-              )
-          },
+              _ => const SliverToBoxAdapter(
+                child: Column(children: [LoadingWidget(), DividerWidget()]),
+              ),
+            },
       );
 }
 
@@ -47,20 +44,17 @@ class _DetailView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SliverPadding(
-        padding: const EdgeInsets.only(left: 16, right: 8),
-        sliver: MultiSliver(
-          children: [
-            SliverPersistentHeader(
-              pinned: true,
-              delegate: _HeaderSectionDelegate(detail: detail),
-            ),
-            DividerWidget(indent: 0, endIndent: 0),
-            SliverToBoxAdapter(
-              child: _DetailContent(detail: detail),
-            ),
-          ],
+    padding: const EdgeInsets.only(left: 15, right: 8),
+    sliver: MultiSliver(
+      children: [
+        SliverPersistentHeader(
+          pinned: true,
+          delegate: _HeaderSectionDelegate(detail: detail),
         ),
-      );
+        SliverToBoxAdapter(child: _DetailContent(detail: detail)),
+      ],
+    ),
+  );
 }
 
 class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
@@ -71,12 +65,12 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
   List<Widget>? _buildLikeView(BuildContext context, TextStyle bodySmall) =>
       detail.likeCount.isNotEmpty && detail.likeCount != '0'
           ? [
-              const SizedBox(width: 10),
-              Icon(Icons.favorite_outline, color: bodySmall.color, size: 17),
-              const SizedBox(width: 4),
-              Text(detail.likeCount, style: bodySmall),
-              const SizedBox(width: 10),
-            ]
+            const SizedBox(width: 10),
+            Icon(Icons.favorite_outline, color: bodySmall.color, size: 17),
+            const SizedBox(width: 4),
+            Text(detail.likeCount, style: bodySmall),
+            const SizedBox(width: 10),
+          ]
           : null;
 
   @override
@@ -89,36 +83,31 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
     final Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
     final List<Widget>? likeView = _buildLikeView(context, bodySmall);
 
-    return Container(
-      alignment: AlignmentDirectional.centerStart,
-      height: 45,
-      color: backgroundColor,
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Expanded(
-            child: Row(
-              children: [
-                // if (detail.userInfo.nickImage.isNotEmpty &&
-                //     detail.userInfo.nickImage.startsWith('http'))
-                //   NickImageWidget(url: detail.userInfo.nickImage),
-                Flexible(
-                  child: Text(detail.info, style: bodySmall),
-                ),
-              ],
-            ),
+    return Column(
+      children: [
+        Container(
+          alignment: AlignmentDirectional.centerStart,
+          height: 45,
+          color: backgroundColor,
+          child: Row(
+            children: [
+              Expanded(
+                child: Text(detail.info, style: bodySmall),
+              ),
+              if (likeView != null) ...likeView,
+            ],
           ),
-          if (likeView != null) ...likeView,
-        ],
-      ),
+        ),
+        const DividerWidget(indent: 0, endIndent: 0),
+      ],
     );
   }
 
   @override
-  double get maxExtent => 45;
+  double get maxExtent => 46;
 
   @override
-  double get minExtent => 45;
+  double get minExtent => 46;
 
   @override
   bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
@@ -183,50 +172,50 @@ class _Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => HtmlWidget(
-        detail.bodyHtml,
-        onLoadingBuilder: (_, __, ___) => const LoadingWidget(),
-        customStylesBuilder: (element) {
-          if (element.localName == 'a') {
-            return {'color': hexColor, 'text-decoration': 'underline'};
-          }
-          // else if (element.localName == 'div') {
-          //   if (element.innerHtml.startsWith("https://")) {
-          //     return {'color': hexColor, 'text-decoration': 'underline'};
-          //   }
-          // }
-          return null;
-        },
-        // customWidgetBuilder: (element) {
-        //     debugPrint('element.innerHtml=${element.innerHtml}');
-        //
-        //   if (element.localName == 'a' ||
-        //       element.localName == 'div' &&
-        //           element.innerHtml.startsWith("https://")) {
-        //
-        //     return GestureDetector(
-        //       onTap: () => onTapUrl?.call(element.innerHtml),
-        //       child: Text(
-        //         element.innerHtml,
-        //         style: bodyMedium?.copyWith(
-        //           color: Theme.of(context).indicatorColor,
-        //           decoration: TextDecoration.underline,
-        //         ),
-        //       ),
-        //     );
-        //   }
-        //
-        //   return HtmlWidget(
-        //     element.innerHtml,
-        //     textStyle: bodyMedium,
-        //     onTapUrl: onTapUrl,
-        //     onTapImage: (data) => onTapUrl?.call(data.sources.first.url),
-        //   );
-        // },
-        textStyle: bodyMedium,
-        renderMode: RenderMode.column,
-        onTapUrl: onTapUrl,
-        onTapImage: (data) => onTapUrl?.call(data.sources.first.url),
-      );
+    detail.bodyHtml,
+    onLoadingBuilder: (_, __, ___) => const LoadingWidget(),
+    customStylesBuilder: (element) {
+      if (element.localName == 'a') {
+        return {'color': hexColor, 'text-decoration': 'underline'};
+      }
+      // else if (element.localName == 'div') {
+      //   if (element.innerHtml.startsWith("https://")) {
+      //     return {'color': hexColor, 'text-decoration': 'underline'};
+      //   }
+      // }
+      return null;
+    },
+    // customWidgetBuilder: (element) {
+    //     debugPrint('element.innerHtml=${element.innerHtml}');
+    //
+    //   if (element.localName == 'a' ||
+    //       element.localName == 'div' &&
+    //           element.innerHtml.startsWith("https://")) {
+    //
+    //     return GestureDetector(
+    //       onTap: () => onTapUrl?.call(element.innerHtml),
+    //       child: Text(
+    //         element.innerHtml,
+    //         style: bodyMedium?.copyWith(
+    //           color: Theme.of(context).indicatorColor,
+    //           decoration: TextDecoration.underline,
+    //         ),
+    //       ),
+    //     );
+    //   }
+    //
+    //   return HtmlWidget(
+    //     element.innerHtml,
+    //     textStyle: bodyMedium,
+    //     onTapUrl: onTapUrl,
+    //     onTapImage: (data) => onTapUrl?.call(data.sources.first.url),
+    //   );
+    // },
+    textStyle: bodyMedium,
+    renderMode: RenderMode.column,
+    onTapUrl: onTapUrl,
+    onTapImage: (data) => onTapUrl?.call(data.sources.first.url),
+  );
 }
 
 class _Comments extends StatelessWidget {
@@ -245,53 +234,43 @@ class _Comments extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Column(
-      children: [
-        const SizedBox(height: 10),
-        const Divider(),
-        _CommentHeader(
-          commentCount: comments.length,
-          bodyMedium: bodyMedium,
-        ),
-        const Divider(),
-        _CommentList(
-          comments: comments,
-          bodySmall: bodySmall,
-          bodyMedium: bodyMedium,
-          hexColor: hexColor,
-          openUrl: openUrl,
-        )
-      ],
-    );
-  }
+  Widget build(BuildContext context) => Column(
+    children: [
+      const SizedBox(height: 10),
+      const Divider(),
+      _CommentHeader(commentCount: comments.length, bodyMedium: bodyMedium),
+      const Divider(),
+      _CommentList(
+        comments: comments,
+        bodySmall: bodySmall,
+        bodyMedium: bodyMedium,
+        hexColor: hexColor,
+        openUrl: openUrl,
+      ),
+    ],
+  );
 }
 
 class _CommentHeader extends StatelessWidget {
   final int commentCount;
   final TextStyle? bodyMedium;
 
-  const _CommentHeader({
-    required this.commentCount,
-    required this.bodyMedium,
-  });
+  const _CommentHeader({required this.commentCount, required this.bodyMedium});
 
   @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 42,
-      child: Align(
-        alignment: Alignment.centerLeft,
-        child: Text(
-          '댓글 ($commentCount)',
-          style: bodyMedium?.copyWith(
-            color: Theme.of(context).indicatorColor,
-            fontSize: 15,
-          ),
+  Widget build(BuildContext context) => SizedBox(
+    height: 42,
+    child: Align(
+      alignment: Alignment.centerLeft,
+      child: Text(
+        '댓글 ($commentCount)',
+        style: bodyMedium?.copyWith(
+          color: Theme.of(context).indicatorColor,
+          fontSize: 15,
         ),
       ),
-    );
-  }
+    ),
+  );
 }
 
 class _CommentList extends StatelessWidget {
@@ -311,19 +290,20 @@ class _CommentList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => ListView.separated(
-        padding: EdgeInsets.zero,
-        separatorBuilder: (_, __) => const Divider(),
-        shrinkWrap: true,
-        physics: const ClampingScrollPhysics(),
-        itemCount: comments.length,
-        itemBuilder: (_, index) => _CommentItem(
+    padding: EdgeInsets.zero,
+    separatorBuilder: (_, __) => const Divider(),
+    shrinkWrap: true,
+    physics: const ClampingScrollPhysics(),
+    itemCount: comments.length,
+    itemBuilder:
+        (_, index) => _CommentItem(
           comment: comments[index],
           bodySmall: bodySmall,
           bodyMedium: bodyMedium,
           hexColor: hexColor,
           openUrl: openUrl,
         ),
-      );
+  );
 }
 
 class _CommentItem extends StatelessWidget {
@@ -346,24 +326,23 @@ class _CommentItem extends StatelessWidget {
     // final userInfo = comment.userInfo;
     final left = comment.isReply ? 16.0 : 0.0;
 
-    final likeView = comment.likeCount.isNotEmpty && comment.likeCount != '0'
-        ? [
-            const Spacer(),
-            Icon(Icons.favorite_outline, color: bodySmall!.color, size: 17),
-            const SizedBox(width: 4),
-            Text(comment.likeCount, style: bodySmall),
-            const SizedBox(width: 4),
-          ]
-        : [];
+    final likeView =
+        comment.likeCount.isNotEmpty && comment.likeCount != '0'
+            ? [
+              const Spacer(),
+              Icon(Icons.favorite_outline, color: bodySmall!.color, size: 17),
+              const SizedBox(width: 4),
+              Text(comment.likeCount, style: bodySmall),
+              const SizedBox(width: 4),
+            ]
+            : [];
 
     return ListTile(
-      key: Key(comment.id.toString()),
+      key: ValueKey(comment.id),
       contentPadding: EdgeInsets.only(left: left, top: 4, bottom: 4),
       title: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          // if (userInfo.nickImage.isNotEmpty)
-          //   NickImageWidget(url: userInfo.nickImage),
           Text(comment.info, style: bodySmall),
           ...likeView,
         ],
@@ -372,12 +351,8 @@ class _CommentItem extends StatelessWidget {
         padding: const EdgeInsets.only(top: 8.0),
         child: HtmlWidget(
           comment.bodyHtml,
-          onLoadingBuilder: (
-            context,
-            element,
-            progress,
-          ) =>
-              const LoadingWidget(),
+          onLoadingBuilder:
+              (context, element, progress) => const LoadingWidget(),
           textStyle: bodyMedium,
           customStylesBuilder: (element) {
             if (element.localName == 'a') {
@@ -397,26 +372,19 @@ class _RefreshButton extends StatelessWidget {
   final VoidCallback onRefresh;
   final TextStyle? bodyMedium;
 
-  const _RefreshButton({
-    required this.onRefresh,
-    required this.bodyMedium,
-  });
+  const _RefreshButton({required this.onRefresh, required this.bodyMedium});
 
   @override
-  Widget build(BuildContext context) {
-    return InkWell(
-      onTap: onRefresh,
-      child: Container(
-        width: double.infinity,
-        height: 58,
-        alignment: Alignment.center,
-        child: Text(
-          '새로고침',
-          style: bodyMedium?.copyWith(
-            color: Theme.of(context).indicatorColor,
-          ),
-        ),
+  Widget build(BuildContext context) => InkWell(
+    onTap: onRefresh,
+    child: Container(
+      width: double.infinity,
+      height: 58,
+      alignment: Alignment.center,
+      child: Text(
+        '새로고침',
+        style: bodyMedium?.copyWith(color: Theme.of(context).indicatorColor),
       ),
-    );
-  }
+    ),
+  );
 }
