@@ -8,7 +8,7 @@ class LoadingWidget extends StatelessWidget {
         padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 16),
         child: Center(
             child: CircularProgressIndicator(
-          color: Theme.of(context).indicatorColor,
+          color: Theme.of(context).highlightColor,
         )),
       );
 }
