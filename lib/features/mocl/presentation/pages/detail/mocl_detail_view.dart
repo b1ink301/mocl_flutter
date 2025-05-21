@@ -91,9 +91,7 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
           color: backgroundColor,
           child: Row(
             children: [
-              Expanded(
-                child: Text(detail.info, style: bodySmall),
-              ),
+              Expanded(child: Text(detail.info, style: bodySmall)),
               if (likeView != null) ...likeView,
             ],
           ),
@@ -122,7 +120,7 @@ class _DetailContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final String hexColor = theme.indicatorColor.stringHexColor;
+    final String hexColor = theme.highlightColor.stringHexColor;
     final TextStyle? bodySmall = theme.textTheme.bodySmall;
     final TextStyle? bodyMedium = theme.textTheme.bodyMedium;
     final DetailViewBloc bloc = context.read<DetailViewBloc>();
@@ -174,6 +172,10 @@ class _Body extends StatelessWidget {
   Widget build(BuildContext context) => HtmlWidget(
     detail.bodyHtml,
     onLoadingBuilder: (_, __, ___) => const LoadingWidget(),
+    // onErrorBuilder: (context, element, error) {
+    //   debugPrint('element.innerHtml=${element.innerHtml}');
+    //   return HtmlWidget(element.innerHtml);
+    // },
     customStylesBuilder: (element) {
       if (element.localName == 'a') {
         return {'color': hexColor, 'text-decoration': 'underline'};
@@ -265,7 +267,7 @@ class _CommentHeader extends StatelessWidget {
       child: Text(
         '댓글 ($commentCount)',
         style: bodyMedium?.copyWith(
-          color: Theme.of(context).indicatorColor,
+          color: Theme.of(context).highlightColor,
           fontSize: 15,
         ),
       ),
@@ -342,10 +344,7 @@ class _CommentItem extends StatelessWidget {
       contentPadding: EdgeInsets.only(left: left, top: 4, bottom: 4),
       title: Row(
         mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(comment.info, style: bodySmall),
-          ...likeView,
-        ],
+        children: [Text(comment.info, style: bodySmall), ...likeView],
       ),
       subtitle: Padding(
         padding: const EdgeInsets.only(top: 8.0),
@@ -383,7 +382,7 @@ class _RefreshButton extends StatelessWidget {
       alignment: Alignment.center,
       child: Text(
         '새로고침',
-        style: bodyMedium?.copyWith(color: Theme.of(context).indicatorColor),
+        style: bodyMedium?.copyWith(color: Theme.of(context).highlightColor),
       ),
     ),
   );
