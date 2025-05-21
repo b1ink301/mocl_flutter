@@ -35,7 +35,7 @@ class MoclListPage extends StatelessWidget {
         left: false,
         right: false,
         child: RefreshIndicator(
-          onRefresh: () => Future.sync(context.read<ListPagingCubit>().refresh),
+          onRefresh: context.read<ListPagingCubit>().refresh,
           child: const CustomScrollView(
             slivers: <Widget>[_ListAppbar(), MoclListView()],
           ),

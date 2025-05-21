@@ -1,3 +1,4 @@
+import 'package:dartx/dartx.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:go_router/go_router.dart';
@@ -13,102 +14,96 @@ import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.d
 class AddListDialog extends StatelessWidget {
   const AddListDialog({super.key});
 
-  static Widget withBloc(
-    BuildContext context,
-    SiteType siteType,
-  ) =>
+  static Widget withBloc(BuildContext context, SiteType siteType) =>
       BlocProvider(
         child: const AddListDialog(),
-        create: (BuildContext context) =>
-            getIt<MainDataJsonBloc>()..add(GetListEvent(siteType: siteType)),
+        create:
+            (BuildContext context) =>
+                getIt<MainDataJsonBloc>()
+                  ..add(GetListEvent(siteType: siteType)),
       );
 
   @override
   Widget build(BuildContext context) => _buildAlertDialog(context);
 
   AlertDialog _buildAlertDialog(BuildContext context) => AlertDialog(
-        backgroundColor: DialogTheme.of(context).backgroundColor,
-        title: Column(
-          children: [
-            const SizedBox(height: 20),
-            Text(
-              '게시판 선택',
-              style: Theme.of(context).textTheme.headlineMedium,
+    backgroundColor: DialogTheme.of(context).backgroundColor,
+    title: Column(
+      children: [
+        const SizedBox(height: 20),
+        Text('게시판 선택', style: Theme.of(context).textTheme.headlineMedium),
+        const SizedBox(height: 20),
+        const DividerWidget(thickness: 1, indent: 16, endIndent: 16),
+      ],
+    ),
+    elevation: 8,
+    contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+    titlePadding: EdgeInsets.zero,
+    content: SizedBox(
+      width: MediaQuery.of(context).size.width * 0.7,
+      height: MediaQuery.of(context).size.height * 0.7,
+      child: BlocBuilder<MainDataJsonBloc, MainDataJsonState>(
+        builder: (BuildContext context, MainDataJsonState state) {
+          final MainDataJsonBloc bloc = context.read<MainDataJsonBloc>();
+          return switch (state) {
+            StateSuccess() => _buildListView(
+              context,
+              state.data,
+              bloc.onChanged,
             ),
-            const SizedBox(height: 20),
-            const DividerWidget(thickness: 1, indent: 16, endIndent: 16),
-          ],
-        ),
-        elevation: 8,
-        contentPadding:
-            const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
-        titlePadding: EdgeInsets.zero,
-        content: SizedBox(
-          width: MediaQuery.of(context).size.width * 0.7,
-          height: MediaQuery.of(context).size.height * 0.7,
-          child: BlocBuilder<MainDataJsonBloc, MainDataJsonState>(
-            builder: (BuildContext context, MainDataJsonState state) {
-              final MainDataJsonBloc bloc = context.read<MainDataJsonBloc>();
-              return switch (state) {
-                StateSuccess() =>
-                  _buildListView(context, state.data, bloc.onChanged),
-                StateFailure() => MessageWidget(message: state.message),
-                _ => const LoadingWidget()
-              };
-            },
+            StateFailure() => MessageWidget(message: state.message),
+            _ => const LoadingWidget(),
+          };
+        },
+      ),
+    ),
+    actions: [
+      TextButton(
+        onPressed: () {
+          if (context.mounted) {
+            context.pop();
+          }
+        },
+        child: Text('취소', style: Theme.of(context).textTheme.headlineMedium),
+      ),
+      TextButton(
+        onPressed: () {
+          if (context.mounted) {
+            final bloc = BlocProvider.of<MainDataJsonBloc>(context);
+            debugPrint('[onPressed] =${bloc.selectedItems.length}');
+            context.pop(bloc.selectedItems.sortedBy((item) => item.orderBy));
+          }
+        },
+        child: Text(
+          '적용',
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+            color: Theme.of(context).highlightColor,
           ),
         ),
-        actions: [
-          TextButton(
-            onPressed: () {
-              if (context.mounted) {
-                context.pop();
-              }
-            },
-            child: Text(
-              '취소',
-              style: Theme.of(context).textTheme.headlineMedium,
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              if (context.mounted) {
-                final bloc = BlocProvider.of<MainDataJsonBloc>(context);
-                debugPrint('[onPressed] =${bloc.selectedItems.length}');
-                context.pop(bloc.selectedItems);
-              }
-            },
-            child: Text(
-              '적용',
-              style: Theme.of(context)
-                  .textTheme
-                  .headlineMedium
-                  ?.copyWith(color: Theme.of(context).indicatorColor),
-            ),
-          ),
-        ],
-      );
+      ),
+    ],
+  );
 
   Widget _buildListView(
     BuildContext context,
     List<MainItem> data,
     void Function<T>(bool, T?)? onChanged,
-  ) =>
-      ListView.separated(
-        padding: EdgeInsets.zero,
-        itemCount: data.length,
-        itemBuilder: (context, index) {
-          final item = data[index];
-          final bloc = context.read<MainDataJsonBloc>();
-          return CheckBoxListTitleWidget<MainItem>(
-            text: item.text,
-            object: item,
-            isChecked: bloc.hasItem(item),
-            textStyle: Theme.of(context).textTheme.bodyMedium,
-            onChanged: onChanged,
-          );
-        },
-        separatorBuilder: (BuildContext context, int index) =>
-            const DividerWidget(indent: 0, endIndent: 0),
+  ) => ListView.separated(
+    padding: EdgeInsets.zero,
+    itemCount: data.length,
+    itemBuilder: (context, index) {
+      final item = data[index];
+      final bloc = context.read<MainDataJsonBloc>();
+      return CheckBoxListTitleWidget<MainItem>(
+        text: item.text,
+        object: item,
+        isChecked: bloc.hasItem(item),
+        textStyle: Theme.of(context).textTheme.bodyMedium,
+        onChanged: onChanged,
       );
+    },
+    separatorBuilder:
+        (BuildContext context, int index) =>
+            const DividerWidget(indent: 0, endIndent: 0),
+  );
 }
