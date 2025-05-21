@@ -21,7 +21,7 @@ class SettingsView extends StatelessWidget {
                       state.version,
                       style: TextStyle(
                         fontSize: 17,
-                        color: Theme.of(context).indicatorColor,
+                        color: Theme.of(context).highlightColor,
                       ),
                     ),
                   ),
@@ -41,7 +41,7 @@ class SettingsView extends StatelessWidget {
                       child: Text(
                         '캐시 데이터 삭제',
                         style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).indicatorColor,
+                              color: Theme.of(context).highlightColor,
                             ),
                       ),
                     ),
@@ -61,7 +61,7 @@ class SettingsView extends StatelessWidget {
           message,
           style: TextStyle(
             fontSize: 16,
-            color: Theme.of(context).indicatorColor,
+            color: Theme.of(context).highlightColor,
           ),
         ),
       );

@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_core/firebase_core.dart' show Firebase;
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -9,29 +9,13 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:mocl_flutter/features/mocl/presentation/app_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/injection.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/bloc/site_type_bloc.dart';
-import 'package:sentry_flutter/sentry_flutter.dart';
-
-import 'firebase_options.dart';
+import 'package:mocl_flutter/firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   await configureDependencies();
   unawaited(_firebase());
-  // await SentryFlutter.init(
-  //   (options) {
-  //     options.dsn =
-  //         'https://6dfe8c0776dd308db231083174773363@o4507983399813120.ingest.us.sentry.io/4507983631876096';
-  //     options.tracesSampleRate = 1.0;
-  //     options.profilesSampleRate = 1.0;
-  //   },
-  //   appRunner: () => runApp(
-  //     BlocProvider(
-  //       create: (_) => getIt<SiteTypeBloc>(),
-  //       child: const AppWidget(),
-  //     ),
-  //   ),
-  // );
 
   runApp(
     BlocProvider(
