@@ -19,7 +19,7 @@ class MoclListView extends ConsumerStatefulWidget {
 class MoclListViewState extends ConsumerState<MoclListView> {
   @override
   Widget build(BuildContext context) => RefreshIndicator.adaptive(
-    color: Theme.of(context).indicatorColor,
+    color: Theme.of(context).highlightColor,
     onRefresh:
         () async => ref.read(listStateNotifierProvider.notifier).refresh(),
     child: NotificationListener<ScrollNotification>(

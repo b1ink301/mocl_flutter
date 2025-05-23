@@ -24,7 +24,7 @@ class MainViewState extends ConsumerState<MainView> {
     left: false,
     right: false,
     child: RefreshIndicator.adaptive(
-      color: Theme.of(context).indicatorColor,
+      color: Theme.of(context).highlightColor,
       onRefresh:
           () async => ref.read(mainItemsNotifierProvider.notifier).refresh(),
       child: CustomScrollView(
@@ -126,7 +126,7 @@ class _MainBody extends ConsumerWidget {
     sliver: SliverToBoxAdapter(
       child: PlatformText(
         message,
-        style: TextStyle(fontSize: 16, color: Theme.of(context).indicatorColor),
+        style: TextStyle(fontSize: 16, color: Theme.of(context).highlightColor),
       ),
     ),
   );
@@ -197,7 +197,7 @@ class _MainNavigationBar extends ConsumerWidget {
       onPressed: () => ref.read(mainSidebarNotifierProvider.notifier).toggle(),
       icon: Icon(
         size: 24,
-        color: Theme.of(context).indicatorColor,
+        color: Theme.of(context).highlightColor,
         context.platformIcon(
           material: Icons.menu,
           cupertino: CupertinoIcons.sidebar_left,
@@ -209,7 +209,7 @@ class _MainNavigationBar extends ConsumerWidget {
             ? null
             : PlatformPopupMenu(
               icon: Icon(
-                color: Theme.of(context).indicatorColor,
+                color: Theme.of(context).highlightColor,
                 size: 24,
                 context.platformIcon(
                   material: Icons.more_vert_rounded,

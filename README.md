@@ -70,7 +70,7 @@ flutter build apk --flavor dev -t lib/main_dev.dart
 
 * XCode로 ios 프로젝트를 열어서, 인증서 세팅을 해줘야한다.
 
-### cocopod 설정
+### cocoapod 설정
 
 ```shell
 cd ios

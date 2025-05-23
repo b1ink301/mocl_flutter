@@ -56,7 +56,7 @@ class _DetailView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ThemeData theme = Theme.of(context);
-    final String hexColor = theme.indicatorColor.stringHexColor;
+    final String hexColor = theme.highlightColor.stringHexColor;
     final TextStyle? bodySmall = theme.textTheme.bodySmall;
     final TextStyle? bodyMedium = theme.textTheme.bodyMedium;
 
@@ -246,7 +246,7 @@ class _CommentHeader extends StatelessWidget {
         child: PlatformText(
           '댓글 ($commentCount)',
           style: bodyMedium?.copyWith(
-            color: Theme.of(context).indicatorColor,
+            color: Theme.of(context).highlightColor,
             fontSize: 15,
           ),
         ),
@@ -384,7 +384,7 @@ class _RefreshButton extends StatelessWidget {
         alignment: Alignment.center,
         child: PlatformText(
           '새로고침',
-          style: bodyMedium?.copyWith(color: Theme.of(context).indicatorColor),
+          style: bodyMedium?.copyWith(color: Theme.of(context).highlightColor),
         ),
       ),
     ),

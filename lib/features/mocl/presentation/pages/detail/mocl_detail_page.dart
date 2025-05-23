@@ -51,7 +51,7 @@ class DetailPage extends ConsumerWidget {
         left: false,
         right: false,
         child: RefreshIndicator.adaptive(
-          color: Theme.of(context).indicatorColor,
+          color: Theme.of(context).highlightColor,
           onRefresh: () async =>
               ref.read(detailsNotifierProvider.notifier).refresh(),
           child: const CustomScrollView(
