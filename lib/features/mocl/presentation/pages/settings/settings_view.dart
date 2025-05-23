@@ -20,7 +20,7 @@ class SettingsView extends ConsumerWidget {
                         version,
                         style: TextStyle(
                           fontSize: 17,
-                          color: Theme.of(context).indicatorColor,
+                          color: Theme.of(context).focusColor,
                         ),
                       ),
                     )),
@@ -39,7 +39,7 @@ class SettingsView extends ConsumerWidget {
                           '캐시 데이터 삭제 ($data)',
                           style:
                               Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Theme.of(context).indicatorColor,
+                                    color: Theme.of(context).focusColor,
                                   ),
                         ),
                       ),
@@ -53,7 +53,7 @@ class SettingsView extends ConsumerWidget {
         padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
         child: Center(
             child: CircularProgressIndicator(
-          color: Theme.of(context).indicatorColor,
+          color: Theme.of(context).focusColor,
         )),
       );
 }

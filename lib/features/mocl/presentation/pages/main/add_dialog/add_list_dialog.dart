@@ -111,7 +111,7 @@ class AddListDialog extends ConsumerWidget {
               child: PlatformText(
                 '적용',
                 style: theme.textTheme.headlineMedium?.copyWith(
-                  color: theme.indicatorColor,
+                  color: theme.focusColor,
                 ),
               ),
             );

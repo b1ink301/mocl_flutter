@@ -11,10 +11,10 @@ class LoadingWidget extends StatelessWidget {
       child: Center(
         child: PlatformCircularProgressIndicator(
           material: (context, _) => MaterialProgressIndicatorData(
-            color: Theme.of(context).indicatorColor,
+            color: Theme.of(context).focusColor,
           ),
           cupertino: (context, _) => CupertinoProgressIndicatorData(
-            color: Theme.of(context).indicatorColor,
+            color: Theme.of(context).focusColor,
           ),
         ),
       ));
