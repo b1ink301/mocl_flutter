@@ -64,7 +64,7 @@ class ReadableStateNotifier extends _$ReadableStateNotifier {
 @Riverpod(keepAlive: true)
 Future<String> getAppVersion(Ref ref) async {
   final PackageInfo info = await PackageInfo.fromPlatform();
-  final String version = 'v${info.version}-${info.buildNumber}';
+  final String version = '${info.version}-${info.buildNumber}';
   return version;
 }
 

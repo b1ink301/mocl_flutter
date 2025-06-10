@@ -20,8 +20,9 @@ class MainItemsNotifier extends _$MainItemsNotifier {
   Future<List<MainItem>> build() async {
     state = const AsyncValue.loading();
     final SiteType siteType = ref.watch(currentSiteTypeNotifierProvider);
-    final Either<Failure, List<MainItem>> result =
-        await ref.read(getMainListProvider)(siteType);
+    final Either<Failure, List<MainItem>> result = await ref.read(
+      getMainListProvider,
+    )(siteType);
     return result.getOrElse((Failure failure) => throw failure);
   }
 
@@ -31,7 +32,8 @@ class MainItemsNotifier extends _$MainItemsNotifier {
 @riverpod
 String mainTitle(Ref ref) {
   final String title = ref.watch(
-      currentSiteTypeNotifierProvider.select((siteType) => siteType.title));
+    currentSiteTypeNotifierProvider.select((siteType) => siteType.title),
+  );
   return title;
 }
 
@@ -49,7 +51,9 @@ bool isCurrentSiteType(Ref ref, SiteType siteType) {
 
 @riverpod
 Future<Either<Failure, List<int>>> setMainItems(
-    Ref ref, List<MainItem> list) async {
+  Ref ref,
+  List<MainItem> list,
+) async {
   final SiteType siteType = ref.watch(currentSiteTypeNotifierProvider);
   final SetMainParams params = SetMainParams(siteType: siteType, list: list);
   final SetMainList setList = ref.read(setMainListProvider);
@@ -82,8 +86,9 @@ Future<void> handleAddButton(Ref ref, BuildContext context) async {
   // }
 
   if (!context.mounted || result == null) return;
-  final Either<Failure, List<int>> state =
-      await ref.read(setMainItemsProvider(result).future);
+  final Either<Failure, List<int>> state = await ref.read(
+    setMainItemsProvider(result).future,
+  );
   state.fold(
     (failure) => ref.read(showToastProvider(failure.message, context)),
     (data) => ref.read(mainItemsNotifierProvider.notifier).refresh(),

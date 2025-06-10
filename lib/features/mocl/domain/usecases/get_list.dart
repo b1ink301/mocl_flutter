@@ -15,9 +15,7 @@ class GetList
   const GetList({required this.listRepository});
 
   @override
-  Future<Either<Failure, List<ListItem>>> call(
-    GetListParams params,
-  ) =>
+  Future<Either<Failure, List<ListItem>>> call(GetListParams params) =>
       listRepository.getList(
         item: params.mainItem,
         page: params.page,

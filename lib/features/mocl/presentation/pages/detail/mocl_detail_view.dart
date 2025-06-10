@@ -105,8 +105,7 @@ class _DetailView extends ConsumerWidget {
           ...comments,
           const _DividerWidget(),
           _RefreshButton(
-            onRefresh:
-                () => ref.read(detailsNotifierProvider.notifier).refresh(),
+            onRefresh: ref.read(detailsNotifierProvider.notifier).refresh,
             bodyMedium: bodyMedium,
           ),
           const _DividerWidget(),
@@ -213,21 +212,19 @@ class _Body extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => SliverToBoxAdapter(
-    child: HtmlWidget(
-      detail.bodyHtml,
-      onLoadingBuilder: (_, _, _) => const LoadingWidget(),
-      customStylesBuilder: (element) {
-        if (element.localName == 'a') {
-          return {'color': hexColor, 'text-decoration': 'underline'};
-        }
-        return null;
-      },
-      textStyle: bodyMedium,
-      renderMode: RenderMode.column,
-      onTapUrl: (url) => onTapUrl(url),
-      onTapImage: (data) => onTapUrl(data.sources.first.url),
-    ),
+  Widget build(BuildContext context) => HtmlWidget(
+    detail.bodyHtml,
+    onLoadingBuilder: (_, _, _) => const LoadingWidget(),
+    customStylesBuilder: (element) {
+      if (element.localName == 'a') {
+        return {'color': hexColor, 'text-decoration': 'underline'};
+      }
+      return null;
+    },
+    textStyle: bodyMedium,
+    renderMode: RenderMode.sliverList,
+    onTapUrl: (url) => onTapUrl(url),
+    onTapImage: (data) => onTapUrl(data.sources.first.url),
   );
 }
 

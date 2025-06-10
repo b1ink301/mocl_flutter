@@ -26,8 +26,7 @@ abstract class BaseParser {
     int page,
     SortType sortType,
     LastId lastId,
-  ) =>
-      throw UnimplementedError('urlByList');
+  ) => throw UnimplementedError('urlByList');
 
   String urlBySearchList(
     String url,
@@ -35,22 +34,12 @@ abstract class BaseParser {
     int page,
     String keyword,
     LastId lastId,
-  ) =>
-      throw UnimplementedError('urlBySearchList');
+  ) => throw UnimplementedError('urlBySearchList');
 
-  String urlByDetail(
-    String url,
-    String board,
-    int id,
-  ) =>
+  String urlByDetail(String url, String board, int id) =>
       throw UnimplementedError('urlByDetail');
 
-  String urlByComments(
-    String url,
-    String board,
-    int id,
-    int page,
-  ) =>
+  String urlByComments(String url, String board, int id, int page) =>
       throw UnimplementedError('urlByComments');
 
   Future<Either<Failure, List<MainItem>>> main(Response response) =>
@@ -68,12 +57,13 @@ abstract class BaseParser {
   Future<Either<Failure, List<CommentItem>>> comments(Response response);
 
   static String parserInfo(
+    bool isShowNickImage,
     String nickName,
     String parsedTime,
     String viewCount,
   ) {
     var info = '';
-    if (nickName.isNotEmpty) {
+    if (!isShowNickImage && nickName.isNotEmpty) {
       info = nickName;
     }
     if (parsedTime.isNotEmpty) {

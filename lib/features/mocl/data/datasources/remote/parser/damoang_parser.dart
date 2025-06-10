@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:html/parser.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
@@ -113,13 +114,12 @@ class DamoangParser implements BaseParser {
     );
 
     final nickName = memberElement?.text.trim() ?? '';
-    final nickImage =
-        isShowNickImage
-            ? memberElement
-                    ?.querySelector('span.profile_img > img')
-                    ?.attributes['src'] ??
-                ''
-            : '';
+    final nickImage = isShowNickImage
+        ? memberElement
+                  ?.querySelector('span.profile_img > img')
+                  ?.attributes['src'] ??
+              ''
+        : '';
 
     var index = 0;
     final comments =
@@ -150,14 +150,13 @@ class DamoangParser implements BaseParser {
               timeElement?.querySelector("span.visually-hidden")?.remove();
               final time = timeElement?.text.trim() ?? '';
 
-              final nickImage =
-                  isShowNickImage
-                      ? nickElement
-                              ?.querySelector('span.profile_img > img.mb-photo')
-                              ?.attributes['src']
-                              ?.trim() ??
-                          ''
-                      : '';
+              final nickImage = isShowNickImage
+                  ? nickElement
+                            ?.querySelector('span.profile_img > img.mb-photo')
+                            ?.attributes['src']
+                            ?.trim() ??
+                        ''
+                  : '';
 
               final likeCount =
                   element
@@ -212,7 +211,12 @@ class DamoangParser implements BaseParser {
     } catch (e) {
       parsedTime = time;
     }
-    final info = BaseParser.parserInfo(nickName, parsedTime, viewCount);
+    final info = BaseParser.parserInfo(
+      nickImage.isNotEmpty,
+      nickName,
+      parsedTime,
+      viewCount,
+    );
 
     // debugPrint('bodyHtml=${bodyHtml?.innerHtml}');
 
@@ -317,6 +321,7 @@ class DamoangParser implements BaseParser {
       final idString = uri.pathSegments.lastOrNull ?? '-1';
       final id = int.tryParse(idString) ?? -1;
       if (id <= 0 || lastId > 0 && id >= lastId) {
+        debugPrint('[SKIP] id=$id, lastId=$lastId');
         continue;
       }
 
@@ -368,14 +373,13 @@ class DamoangParser implements BaseParser {
         parsedTime = time;
       }
 
-      final nickImage =
-          isShowNickImage
-              ? metaElement
-                      ?.querySelector("span.profile_img > img.mb-photo")
-                      ?.attributes["src"]
-                      ?.trim() ??
-                  ''
-              : '';
+      final nickImage = isShowNickImage
+          ? metaElement
+                    ?.querySelector("span.profile_img > img.mb-photo")
+                    ?.attributes["src"]
+                    ?.trim() ??
+                ''
+          : '';
 
       final nickName =
           metaElement?.querySelector("span.sv_name")?.text.trim() ??
@@ -402,7 +406,12 @@ class DamoangParser implements BaseParser {
               ?.hasContent() ??
           false;
 
-      final info = BaseParser.parserInfo(nickName, parsedTime, hit);
+      final info = BaseParser.parserInfo(
+        nickImage.isNotEmpty,
+        nickName,
+        parsedTime,
+        hit,
+      );
 
       final parsedItem = {
         'id': id,
@@ -433,27 +442,26 @@ class DamoangParser implements BaseParser {
     final readStatusResponse = await readStatusPort.first as ReadStatusResponse;
     readStatusPort.close();
 
-    final resultList =
-        parsedItems
-            .map(
-              (item) => ListItem(
-                id: item['id'],
-                title: item['title'],
-                reply: item['reply'],
-                category: item['category'],
-                time: item['time'],
-                url: item['url'],
-                info: item['info'],
-                board: item['board'],
-                boardTitle: item['boardTitle'],
-                like: item['like'],
-                hit: item['hit'],
-                userInfo: item['userInfo'],
-                hasImage: item['hasImage'],
-                isRead: readStatusResponse.statuses.contains(item['id']),
-              ),
-            )
-            .toList();
+    final resultList = parsedItems
+        .map(
+          (item) => ListItem(
+            id: item['id'],
+            title: item['title'],
+            reply: item['reply'],
+            category: item['category'],
+            time: item['time'],
+            url: item['url'],
+            info: item['info'],
+            board: item['board'],
+            boardTitle: item['boardTitle'],
+            like: item['like'],
+            hit: item['hit'],
+            userInfo: item['userInfo'],
+            hasImage: item['hasImage'],
+            isRead: readStatusResponse.statuses.contains(item['id']),
+          ),
+        )
+        .toList();
 
     replyPort.send(resultList);
   }

@@ -63,10 +63,7 @@ class NaverCafeParser implements BaseParser {
   Future<Either<Failure, Details>> detail(Response response) async {
     final responseData = response.data;
     final resultPort = ReceivePort();
-    await Isolate.spawn(
-      _detailIsolate,
-      [responseData, resultPort.sendPort],
-    );
+    await Isolate.spawn(_detailIsolate, [responseData, resultPort.sendPort]);
     return await resultPort.first as Either<Failure, Details>;
   }
 
@@ -154,7 +151,7 @@ class NaverCafeParser implements BaseParser {
     } catch (e) {
       parsedTime = time.toString();
     }
-    final info = BaseParser.parserInfo(nickName, parsedTime, viewCount);
+    final info = BaseParser.parserInfo(false, nickName, parsedTime, viewCount);
 
     final details = Details(
       title: title,
@@ -255,7 +252,7 @@ class NaverCafeParser implements BaseParser {
       final bool hasImage = article['attachImage'] as bool? ?? false;
       final dateTime = DateTime.fromMillisecondsSinceEpoch(time);
       final parsedTime = timeago.format(dateTime, locale: 'ko');
-      final info = BaseParser.parserInfo(nickName, parsedTime, hit.toString());
+      final info = BaseParser.parserInfo(false, nickName, parsedTime, hit.toString());
 
       final parsedItem = {
         'id': id,
@@ -287,22 +284,24 @@ class NaverCafeParser implements BaseParser {
     readStatusPort.close();
 
     final resultList = parsedItems
-        .map((item) => ListItem(
-              id: item['id'],
-              title: item['title'],
-              reply: item['reply'],
-              category: item['category'],
-              time: item['time'],
-              url: item['url'],
-              info: item['info'],
-              board: item['board'],
-              boardTitle: item['boardTitle'],
-              like: item['like'],
-              hit: item['hit'],
-              userInfo: item['userInfo'],
-              hasImage: item['hasImage'],
-              isRead: readStatusResponse.statuses.contains(item['id']),
-            ))
+        .map(
+          (item) => ListItem(
+            id: item['id'],
+            title: item['title'],
+            reply: item['reply'],
+            category: item['category'],
+            time: item['time'],
+            url: item['url'],
+            info: item['info'],
+            board: item['board'],
+            boardTitle: item['boardTitle'],
+            like: item['like'],
+            hit: item['hit'],
+            userInfo: item['userInfo'],
+            hasImage: item['hasImage'],
+            isRead: readStatusResponse.statuses.contains(item['id']),
+          ),
+        )
         .toList();
 
     replyPort.send(resultList);
@@ -310,7 +309,7 @@ class NaverCafeParser implements BaseParser {
 
   static DateTime parseDateTime(String dateTimeString) {
     if (dateTimeString.contains(' ')) {
-// 년.월.일 형식
+      // 년.월.일 형식
       var parts = dateTimeString.split(' ');
       var dateParts = parts[0].split('.');
       var timeParts = parts[1].split(':');
@@ -336,7 +335,7 @@ class NaverCafeParser implements BaseParser {
       }
     } else if (dateTimeString.contains(':')) {
       final now = DateTime.now();
-// 시:분 형식
+      // 시:분 형식
       var timeParts = dateTimeString.split(':');
       return DateTime(
         now.year,
@@ -354,11 +353,7 @@ class NaverCafeParser implements BaseParser {
   }
 
   @override
-  String urlByDetail(
-    String url,
-    String board,
-    int id,
-  ) =>
+  String urlByDetail(String url, String board, int id) =>
       'https://apis.naver.com/cafe-web/cafe-articleapi/v3/cafes/$board/articles/$id';
 
   // 'https://apis.naver.com/cafe-web/cafe-articleapi/v2/cafes/$board/articles/$id'; //?query=&useCafeId=true&requestFrom=A

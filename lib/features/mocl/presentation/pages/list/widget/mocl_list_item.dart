@@ -67,6 +67,7 @@ class _TitleView extends ConsumerWidget {
         (ListItem? item) => (item?.title ?? "", item?.isRead ?? false),
       ),
     );
+
     return PlatformText(
       title,
       maxLines: 3,
@@ -85,7 +86,6 @@ class _BottomView extends StatelessWidget {
     child: SizedBox(
       height: 20,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
             child: Row(children: [_NickImage(), Flexible(child: _InfoText())]),
@@ -109,12 +109,13 @@ class _ReplyText extends ConsumerWidget {
     );
 
     if (reply.isNotEmpty && reply != '0') {
+      return RoundTextWidget(
+        text: reply,
+        textStyle: MoclTextStyles.of(context).badge(isRead),
+      );
+    } else {
       return SizedBox.shrink();
     }
-    return RoundTextWidget(
-      text: reply,
-      textStyle: MoclTextStyles.of(context).badge(isRead),
-    );
   }
 }
 

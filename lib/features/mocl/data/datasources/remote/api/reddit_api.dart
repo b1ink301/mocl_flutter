@@ -17,10 +17,7 @@ class RedditApi extends BaseApi {
   const RedditApi(super.dio, super.userAgent);
 
   @override
-  Future<Either<Failure, Details>> detail(
-    ListItem item,
-    BaseParser parser,
-  )  =>
+  Future<Either<Failure, Details>> detail(ListItem item, BaseParser parser) =>
       withSyncCookie(parser.baseUrl, () async {
         final String url = parser.urlByDetail(item.url, item.board, item.id);
         final Map<String, String> headers = {'User-Agent': userAgent};
@@ -31,7 +28,8 @@ class RedditApi extends BaseApi {
             ? parser.detail(response)
             : Left(
                 GetDetailFailure(
-                    message: 'response.statusCode = ${response.statusCode}'),
+                  message: 'response.statusCode = ${response.statusCode}',
+                ),
               );
       });
 
@@ -43,23 +41,27 @@ class RedditApi extends BaseApi {
     SortType sortType,
     BaseParser parser,
     Future<List<int>> Function(SiteType, List<int>) isReads,
-  )  =>
-      withSyncCookie<List<ListItem>>(parser.baseUrl, () async {
-        final String url =
-            parser.urlByList(item.url, item.board, page, sortType, lastId);
-        final String host = Uri.parse(parser.baseUrl).host;
-        final Map<String, String> headers = {
-          'Host': host,
-          'User-Agent': userAgent
-        };
-        final Response response = await get(url, headers: headers);
-        log('[getList] $url, $headers response = ${response.statusCode}');
+  ) => withSyncCookie<List<ListItem>>(parser.baseUrl, () async {
+    final String url = parser.urlByList(
+      item.url,
+      item.board,
+      page,
+      sortType,
+      lastId,
+    );
+    final String host = Uri.parse(parser.baseUrl).host;
+    final Map<String, String> headers = {'Host': host, 'User-Agent': userAgent};
+    final Response response = await get(url, headers: headers);
+    log('[getList] $url, $headers response = ${response.statusCode}');
 
-        return response.statusCode == 200
-            ? parser.list(response, lastId, item.text, isReads)
-            : Left(GetListFailure(
-                message: 'response.statusCode = ${response.statusCode}'));
-      });
+    return response.statusCode == 200
+        ? parser.list(response, lastId, item.text, isReads)
+        : Left(
+            GetListFailure(
+              message: 'response.statusCode = ${response.statusCode}',
+            ),
+          );
+  });
 
   @override
   Future<Either<Failure, List<MainItem>>> main(BaseParser parser) =>
@@ -74,35 +76,36 @@ class RedditApi extends BaseApi {
     String keyword,
     BaseParser parser,
     Future<List<int>> Function(SiteType, List<int>) isReads,
-  ) =>
-      withSyncCookie<List<ListItem>>(parser.baseUrl, () async {
-        final String url =
-            parser.urlBySearchList(item.url, item.board, page, keyword, lastId);
-        final String host = Uri.parse(parser.baseUrl).host;
-        final Map<String, String> headers = {
-          'Host': host,
-          'Referer': item.url,
-          'User-Agent': userAgent
-        };
-        final Response response = await get(url, headers: headers);
-        log('[searchList] $url, $headers response = ${response.statusCode}');
+  ) => withSyncCookie<List<ListItem>>(parser.baseUrl, () async {
+    final String url = parser.urlBySearchList(
+      item.url,
+      item.board,
+      page,
+      keyword,
+      lastId,
+    );
+    final String host = Uri.parse(parser.baseUrl).host;
+    final Map<String, String> headers = {
+      'Host': host,
+      'Referer': item.url,
+      'User-Agent': userAgent,
+    };
+    final Response response = await get(url, headers: headers);
+    log('[searchList] $url, $headers response = ${response.statusCode}');
 
-        return response.statusCode == 200
-            ? parser.list(
-                response,
-                lastId,
-                item.text,
-                isReads,
-              )
-            : Left(GetListFailure(
-                message: 'response.statusCode = ${response.statusCode}'));
-      });
+    return response.statusCode == 200
+        ? parser.list(response, lastId, item.text, isReads)
+        : Left(
+            GetListFailure(
+              message: 'response.statusCode = ${response.statusCode}',
+            ),
+          );
+  });
 
   @override
   Future<Either<Failure, List<CommentItem>>> comments(
     ListItem item,
     BaseParser parser,
     int page,
-  ) =>
-      throw UnimplementedError();
+  ) => throw UnimplementedError();
 }

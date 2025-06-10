@@ -99,7 +99,6 @@ DetailDataSource detailDatasource(Ref ref) {
   return (const TheQoo(), baseApi);
 }
 
-// 현재 선택된 Parser를 제공하는 provider
 @riverpod
 (BaseParser, BaseApi) currentParser(Ref ref) {
   final SettingsRepository settingsRepository =

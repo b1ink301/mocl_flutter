@@ -74,10 +74,10 @@ class NaverCafeApi extends BaseApi {
     return response.statusCode == 200
         ? parser.list(response, lastId, item.text, isReads)
         : Left(
-          GetListFailure(
-            message: 'response.statusCode = ${response.statusCode}',
-          ),
-        );
+            GetListFailure(
+              message: 'response.statusCode = ${response.statusCode}',
+            ),
+          );
   });
 
   @override
@@ -109,10 +109,10 @@ class NaverCafeApi extends BaseApi {
     return response.statusCode == 200
         ? parser.list(response, lastId, item.text, isReads)
         : Left(
-          GetListFailure(
-            message: 'response.statusCode = ${response.statusCode}',
-          ),
-        );
+            GetListFailure(
+              message: 'response.statusCode = ${response.statusCode}',
+            ),
+          );
   });
 
   @override
@@ -125,10 +125,10 @@ class NaverCafeApi extends BaseApi {
         return response.statusCode == 200
             ? parser.main(response)
             : Left(
-              GetMainFailure(
-                message: 'response.statusCode = ${response.statusCode}',
-              ),
-            );
+                GetMainFailure(
+                  message: 'response.statusCode = ${response.statusCode}',
+                ),
+              );
       });
 
   @override

@@ -13,8 +13,9 @@ String _$dioHash() => r'088d5c03610503c2407a8d7429b0e9f3ee76406f';
 final dioProvider = AutoDisposeProvider<Dio>.internal(
   dio,
   name: r'dioProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$dioHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$dioHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -29,8 +30,9 @@ String _$cookieJarHash() => r'faac22de9751ccb26d253ff2ac40f660f01b425c';
 final cookieJarProvider = AutoDisposeProvider<CookieJar>.internal(
   cookieJar,
   name: r'cookieJarProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$cookieJarHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$cookieJarHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -45,10 +47,9 @@ String _$theQooApiClientHash() => r'40d23b310e0c900ff4b974cf8862674ebbf2fa30';
 final theQooApiClientProvider = AutoDisposeProvider<BaseApi>.internal(
   theQooApiClient,
   name: r'theQooApiClientProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$theQooApiClientHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$theQooApiClientHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -63,10 +64,9 @@ String _$clienApiClientHash() => r'69e9a26c04d4586719c1d033537496c6deca13dd';
 final clienApiClientProvider = AutoDisposeProvider<BaseApi>.internal(
   clienApiClient,
   name: r'clienApiClientProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$clienApiClientHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$clienApiClientHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -81,10 +81,9 @@ String _$damoangApiClientHash() => r'9f9a1416fb9d3d2075c7f50f6e2b31cee94722f8';
 final damoangApiClientProvider = AutoDisposeProvider<BaseApi>.internal(
   damoangApiClient,
   name: r'damoangApiClientProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$damoangApiClientHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$damoangApiClientHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -100,10 +99,9 @@ String _$naverCafeApiClientHash() =>
 final naverCafeApiClientProvider = AutoDisposeProvider<BaseApi>.internal(
   naverCafeApiClient,
   name: r'naverCafeApiClientProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$naverCafeApiClientHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$naverCafeApiClientHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -118,10 +116,9 @@ String _$redditApiClientHash() => r'5bde1814ef36148bc3234c729b9814a760080332';
 final redditApiClientProvider = AutoDisposeProvider<BaseApi>.internal(
   redditApiClient,
   name: r'redditApiClientProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$redditApiClientHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$redditApiClientHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -136,10 +133,9 @@ String _$meecoApiClientHash() => r'70b0f3b891f308fb00fbad934dbf4b3cee9997ad';
 final meecoApiClientProvider = AutoDisposeProvider<BaseApi>.internal(
   meecoApiClient,
   name: r'meecoApiClientProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$meecoApiClientHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$meecoApiClientHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );

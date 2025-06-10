@@ -6,17 +6,16 @@ part of 'app_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$getAppVersionHash() => r'c4281fce8377945fd7409c9eca1fb5f423da0eff';
+String _$getAppVersionHash() => r'1a8aa3b2a8533b27f91dcf846a37fb098b0673b8';
 
 /// See also [getAppVersion].
 @ProviderFor(getAppVersion)
 final getAppVersionProvider = FutureProvider<String>.internal(
   getAppVersion,
   name: r'getAppVersionProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$getAppVersionHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$getAppVersionHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -31,8 +30,9 @@ String _$clearDataHash() => r'b0a541fc4f6aa6a9fbb014c67f22badd76ecc31c';
 final clearDataProvider = AutoDisposeFutureProvider<void>.internal(
   clearData,
   name: r'clearDataProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$clearDataHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$clearDataHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -105,10 +105,9 @@ class ShowToastProvider extends AutoDisposeProvider<void> {
         (ref) => showToast(ref as ShowToastRef, message, context),
         from: showToastProvider,
         name: r'showToastProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$showToastHash,
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$showToastHash,
         dependencies: ShowToastFamily._dependencies,
         allTransitiveDependencies: ShowToastFamily._allTransitiveDependencies,
         message: message,
@@ -195,8 +194,9 @@ String _$appRouterHash() => r'fff3f2857065d9454c5cd1625db3b5e6377fe411';
 final appRouterProvider = Provider<GoRouter>.internal(
   appRouter,
   name: r'appRouterProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$appRouterHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$appRouterHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -250,10 +250,9 @@ class OpenBrowserByUrlProvider extends AutoDisposeFutureProvider<bool> {
         (ref) => openBrowserByUrl(ref as OpenBrowserByUrlRef, url),
         from: openBrowserByUrlProvider,
         name: r'openBrowserByUrlProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$openBrowserByUrlHash,
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$openBrowserByUrlHash,
         dependencies: OpenBrowserByUrlFamily._dependencies,
         allTransitiveDependencies:
             OpenBrowserByUrlFamily._allTransitiveDependencies,
@@ -325,7 +324,7 @@ class _OpenBrowserByUrlProviderElement
   String get url => (origin as OpenBrowserByUrlProvider).url;
 }
 
-String _$shareUrlHash() => r'53ee6be8cda84c6ac68994490517e17ac423ab93';
+String _$shareUrlHash() => r'ca62d08b9c54745db177a4ae0f5b11c82a472e18';
 
 /// See also [shareUrl].
 @ProviderFor(shareUrl)
@@ -369,10 +368,9 @@ class ShareUrlProvider extends AutoDisposeFutureProvider<bool> {
         (ref) => shareUrl(ref as ShareUrlRef, url),
         from: shareUrlProvider,
         name: r'shareUrlProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$shareUrlHash,
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$shareUrlHash,
         dependencies: ShareUrlFamily._dependencies,
         allTransitiveDependencies: ShareUrlFamily._allTransitiveDependencies,
         url: url,
@@ -490,10 +488,9 @@ class OpenUrlProvider extends AutoDisposeFutureProvider<bool> {
         (ref) => openUrl(ref as OpenUrlRef, context, url),
         from: openUrlProvider,
         name: r'openUrlProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$openUrlHash,
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$openUrlHash,
         dependencies: OpenUrlFamily._dependencies,
         allTransitiveDependencies: OpenUrlFamily._allTransitiveDependencies,
         context: context,
@@ -619,10 +616,9 @@ class _IsImageUrlProvider extends AutoDisposeProvider<bool> {
         (ref) => _isImageUrl(ref as _IsImageUrlRef, url),
         from: _isImageUrlProvider,
         name: r'_isImageUrlProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$isImageUrlHash,
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$isImageUrlHash,
         dependencies: _IsImageUrlFamily._dependencies,
         allTransitiveDependencies: _IsImageUrlFamily._allTransitiveDependencies,
         url: url,
@@ -697,10 +693,9 @@ String _$appbarTextStyleHash() => r'831bec677d811438105caedd0b3152db2db72e02';
 final appbarTextStyleProvider = AutoDisposeProvider<TextStyle>.internal(
   appbarTextStyle,
   name: r'appbarTextStyleProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$appbarTextStyleHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$appbarTextStyleHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -715,8 +710,9 @@ String _$screenWidthHash() => r'f9429b6bf80fa9cf2ffb37cba2678dbfcafd523e';
 final screenWidthProvider = Provider<double>.internal(
   screenWidth,
   name: r'screenWidthProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$screenWidthHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$screenWidthHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -733,10 +729,9 @@ final currentSiteTypeNotifierProvider =
     NotifierProvider<CurrentSiteTypeNotifier, SiteType>.internal(
       CurrentSiteTypeNotifier.new,
       name: r'currentSiteTypeNotifierProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$currentSiteTypeNotifierHash,
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$currentSiteTypeNotifierHash,
       dependencies: null,
       allTransitiveDependencies: null,
     );
@@ -751,10 +746,9 @@ final readableStateNotifierProvider =
     NotifierProvider<ReadableStateNotifier, int>.internal(
       ReadableStateNotifier.new,
       name: r'readableStateNotifierProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$readableStateNotifierHash,
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$readableStateNotifierHash,
       dependencies: null,
       allTransitiveDependencies: null,
     );

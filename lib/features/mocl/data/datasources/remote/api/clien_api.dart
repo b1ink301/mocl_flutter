@@ -17,22 +17,20 @@ class ClienApi extends BaseApi {
   const ClienApi(super.dio, super.userAgent);
 
   @override
-  Future<Either<Failure, Details>> detail(
-    ListItem item,
-    BaseParser parser,
-  ) => withSyncCookie(parser.baseUrl, () async {
-    final String url = parser.urlByDetail(item.url, item.board, item.id);
-    final Map<String, String> headers = {'User-Agent': userAgent};
-    final Response response = await get(url, headers: headers);
-    log('[detail] $url, $headers response = ${response.statusCode}');
-    return response.statusCode == 200
-        ? parser.detail(response)
-        : Left(
-          GetDetailFailure(
-            message: 'response.statusCode = ${response.statusCode}',
-          ),
-        );
-  });
+  Future<Either<Failure, Details>> detail(ListItem item, BaseParser parser) =>
+      withSyncCookie(parser.baseUrl, () async {
+        final String url = parser.urlByDetail(item.url, item.board, item.id);
+        final Map<String, String> headers = {'User-Agent': userAgent};
+        final Response response = await get(url, headers: headers);
+        log('[detail] $url, $headers response = ${response.statusCode}');
+        return response.statusCode == 200
+            ? parser.detail(response)
+            : Left(
+                GetDetailFailure(
+                  message: 'response.statusCode = ${response.statusCode}',
+                ),
+              );
+      });
 
   @override
   Future<Either<Failure, List<ListItem>>> list(
@@ -52,16 +50,18 @@ class ClienApi extends BaseApi {
     );
     final String host = Uri.parse(parser.baseUrl).host;
     final Map<String, String> headers = {'Host': host, 'User-Agent': userAgent};
+
+    log('[getList] url=$url, headers=$headers');
     final Response response = await get(url, headers: headers);
-    log('[getList] $url, $headers response = ${response.statusCode}');
+    log('[getList] response = ${response.statusCode}');
 
     return response.statusCode == 200
         ? parser.list(response, lastId, item.text, isReads)
         : Left(
-          GetListFailure(
-            message: 'response.statusCode = ${response.statusCode}',
-          ),
-        );
+            GetListFailure(
+              message: 'response.statusCode = ${response.statusCode}',
+            ),
+          );
   });
 
   @override
@@ -97,10 +97,10 @@ class ClienApi extends BaseApi {
     return response.statusCode == 200
         ? parser.list(response, lastId, item.text, isReads)
         : Left(
-          GetListFailure(
-            message: 'response.statusCode = ${response.statusCode}',
-          ),
-        );
+            GetListFailure(
+              message: 'response.statusCode = ${response.statusCode}',
+            ),
+          );
   });
 
   @override

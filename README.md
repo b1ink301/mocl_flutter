@@ -59,7 +59,7 @@ flutter build apk --flavor prd -t lib/main_prd.dart
 ```shell
 flutter build appbundle --flavor prd -t lib/main_prd.dart 
 ```
-
+ 
 ### dev
 
 ```shell
