@@ -4,47 +4,47 @@ import 'package:mocl_flutter/features/mocl/domain/usecases/get_detail.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_list.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_main_list.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_main_list_from_json.dart';
+import 'package:mocl_flutter/features/mocl/domain/usecases/get_search_list.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/get_site_type.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_main_list.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_read_flag.dart';
 import 'package:mocl_flutter/features/mocl/domain/usecases/set_site_type.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final getMainListProvider = Provider((ref) {
-  final mainRepository = ref.watch(mainRepositoryProvider);
-  return GetMainList(mainRepository: mainRepository);
-});
+part 'use_case_provider.g.dart';
 
-final getMainListFromJsonProvider = Provider((ref) {
-  final mainRepository = ref.watch(mainRepositoryProvider);
-  return GetMainListFromJson(mainRepository: mainRepository);
-});
+@riverpod
+GetMainList getMainList(Ref ref) =>
+    GetMainList(mainRepository: ref.watch(mainRepositoryProvider));
 
-final getSiteTypeProvider = Provider((ref) {
-  final settingsRepository = ref.watch(settingsRepositoryProvider);
-  return GetSiteType(settingsRepository: settingsRepository);
-});
+@riverpod
+GetMainListFromJson getMainListFromJson(Ref ref) =>
+    GetMainListFromJson(mainRepository: ref.watch(mainRepositoryProvider));
 
-final setSiteTypeProvider = Provider((ref) {
-  final settingsRepository = ref.watch(settingsRepositoryProvider);
-  return SetSiteType(settingsRepository: settingsRepository);
-});
+@riverpod
+GetSiteType getSiteType(Ref ref) =>
+    GetSiteType(settingsRepository: ref.watch(settingsRepositoryProvider));
 
-final setMainListProvider = Provider((ref) {
-  final mainRepository = ref.watch(mainRepositoryProvider);
-  return SetMainList(mainRepository: mainRepository);
-});
+@riverpod
+SetSiteType setSiteType(Ref ref) =>
+    SetSiteType(settingsRepository: ref.watch(settingsRepositoryProvider));
 
-final getListProvider = Provider((ref) {
-  final listRepository = ref.watch(listRepositoryProvider);
-  return GetList(listRepository: listRepository);
-});
+@riverpod
+SetMainList setMainList(Ref ref) =>
+    SetMainList(mainRepository: ref.watch(mainRepositoryProvider));
 
-final getDetailProvider = Provider((ref) {
-  final detailRepository = ref.watch(detailRepositoryProvider);
-  return GetDetail(detailRepository: detailRepository);
-});
+@riverpod
+GetList getList(Ref ref) =>
+    GetList(listRepository: ref.watch(listRepositoryProvider));
 
-final setReadProvider = Provider((ref) {
-  final listRepository = ref.watch(listRepositoryProvider);
-  return SetReadFlag(listRepository: listRepository);
-});
+@riverpod
+GetSearchList getSearchList(Ref ref) =>
+    GetSearchList(listRepository: ref.watch(listRepositoryProvider));
+
+@riverpod
+GetDetail getDetail(Ref ref) =>
+    GetDetail(detailRepository: ref.watch(detailRepositoryProvider));
+
+@riverpod
+SetReadFlag setRead(Ref ref) =>
+    SetReadFlag(listRepository: ref.watch(listRepositoryProvider));

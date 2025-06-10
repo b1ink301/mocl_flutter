@@ -4,17 +4,16 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
 part 'main_item_model.freezed.dart';
+
 part 'main_item_model.g.dart';
 
 @freezed
-class MainItemModel with _$MainItemModel {
+abstract class MainItemModel with _$MainItemModel {
   const factory MainItemModel({
-    @JsonKey(name: 'no')
-    required int orderBy,
+    @JsonKey(name: 'no') required int orderBy,
     required String board,
     required int type,
-    @JsonKey(name: 'title')
-    required String text,
+    @JsonKey(name: 'title') required String text,
     required String url,
     SiteType? siteType,
   }) = _MainItemData;
@@ -27,8 +26,6 @@ class MainItemModel with _$MainItemModel {
 }
 
 extension MainItemDataExtention on MainItemModel {
-  MainItem toEntity(SiteType siteType) => MainItemMapper.toEntity(
-        this,
-        siteType,
-      );
+  MainItem toEntity(SiteType siteType) =>
+      MainItemMapper.toEntity(this, siteType);
 }

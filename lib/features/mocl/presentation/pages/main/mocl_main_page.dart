@@ -1,57 +1,190 @@
+import 'dart:io';
+
+import 'package:cupertino_sidebar/cupertino_sidebar.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mocl_flutter/features/mocl/presentation/base/base_stateless_view.dart';
-import 'package:mocl_flutter/features/mocl/presentation/di/view_model_provider.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/main/main_view_model.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/mocl_drawer_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/mocl_main_view.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
+import 'package:mocl_flutter/features/mocl/presentation/pages/main/providers/main_providers.dart';
+import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_routes.dart';
+import 'package:mocl_flutter/src/generated/i18n/app_localizations.dart';
 
-class MainPage extends BaseStatelessView<MainViewModel> {
+class MainPage extends ConsumerWidget {
   const MainPage({super.key});
 
-  AppBar _buildAppBar(
-    BuildContext context,
-    String title,
-    void Function(BuildContext context) handleAddButton,
-  ) =>
-      AppBar(
-        title: _buildTitle(context, title),
-        titleSpacing: 0,
-        centerTitle: false,
-        toolbarHeight: 64,
-        actions: [
-          IconButton(
-            onPressed: () => handleAddButton(context),
-            icon: const Icon(Icons.add),
-          )
+  static Widget init(BuildContext context, double width) => ProviderScope(
+    overrides: [screenWidthProvider.overrideWithValue(width)],
+    child: AnnotatedRegion<SystemUiOverlayStyle>(
+      value: Theme.of(context).appBarTheme.systemOverlayStyle!,
+      child: const MainPage(),
+    ),
+  );
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final GlobalKey<ScaffoldState> scaffoldState = ref.watch(
+      mainScaffoldStateProvider,
+    );
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, _) {
+        if (didPop) {
+          return;
+        }
+        if (scaffoldState.currentState?.isDrawerOpen == true) {
+          scaffoldState.currentState?.closeDrawer();
+        } else {
+          SystemNavigator.pop();
+        }
+      },
+      child: PlatformScaffold(
+        body: PlatformWidget(
+          material: (_, _) => const MainView(),
+          cupertino: (_, _) => const _MainCupertinoView(),
+        ),
+        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+        material:
+            (_, _) => MaterialScaffoldData(
+              widgetKey: scaffoldState,
+              drawer: const DrawerWidget(),
+              drawerEdgeDragWidth: ref.watch(screenWidthProvider),
+              drawerEnableOpenDragGesture: true,
+            ),
+        // cupertino: (_, _) => CupertinoPageScaffoldData(),
+      ),
+    );
+  }
+}
+
+class _MainCupertinoView extends ConsumerWidget {
+  const _MainCupertinoView();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isSidebarExpanded = ref.watch(mainSidebarNotifierProvider);
+    final sidebarClose = ref.read(mainSidebarNotifierProvider.notifier).close;
+
+    changeSiteType(SiteType siteType) => ref
+        .read(currentSiteTypeNotifierProvider.notifier)
+        .changeSiteType(siteType);
+
+    if (Platform.isIOS) {
+      return Stack(
+        children: [
+          const CupertinoTabTransitionBuilder(child: MainView()),
+          if (isSidebarExpanded)
+            GestureDetector(
+              onTap: sidebarClose,
+              behavior: HitTestBehavior.opaque, // 뒤쪽 터치 이벤트 캔슬
+              child: Container(
+                color: Colors.black38, // 투명한 레이어
+              ),
+            ),
+          CupertinoSidebarCollapsible(
+            isExpanded: isSidebarExpanded,
+            child: CupertinoSidebar(
+              maxWidth: 240,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              selectedIndex: SiteType.values.indexOf(
+                ref.watch(currentSiteTypeNotifierProvider),
+              ),
+              onDestinationSelected: (index) {
+                final siteType =
+                    SiteType.values
+                        .where((s) => s != SiteType.settings)
+                        .toList()[index];
+                changeSiteType(siteType);
+                sidebarClose();
+              },
+              navigationBar: SidebarNavigationBar(
+                title: PlatformText(AppLocalizations.of(context)!.menu),
+              ),
+              children: [
+                SidebarSection(
+                  label: PlatformText(AppLocalizations.of(context)!.site),
+                  children:
+                      SiteType.values
+                          .where((s) => s != SiteType.settings)
+                          .map(
+                            (s) => SidebarDestination(
+                              label: PlatformText(s.title),
+                            ),
+                          )
+                          .toList(),
+                ),
+                SidebarSection(
+                  label: PlatformText('설정'),
+                  children: [
+                    SidebarDestination(
+                      label: PlatformText(SiteType.settings.title),
+                      onTap: () {
+                        context.push(Routes.settings);
+                        sidebarClose();
+                      },
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
         ],
       );
-
-  Widget _buildTitle(BuildContext context, String title) => MessageWidget(
-        message: title,
-        textStyle: Theme.of(context).textTheme.labelMedium,
-      );
-
-  @override
-  Widget build(BuildContext context) => Consumer(
-        builder: (context, ref, child) {
-          final appBarTitle =
-              ref.watch(viewModelProvider.select((vm) => vm.appBarTitle()));
-          final viewModel = ref.read(viewModelProvider.notifier);
-          return Scaffold(
-            drawer: DrawerWidget(
-              onChangeSite: (siteType) => viewModel.changeSiteType(siteType),
+    } else {
+      return Row(
+        children: [
+          CupertinoSidebarCollapsible(
+            isExpanded: isSidebarExpanded,
+            child: CupertinoSidebar(
+              maxWidth: 250,
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              selectedIndex: SiteType.values.indexOf(
+                ref.watch(currentSiteTypeNotifierProvider),
+              ),
+              onDestinationSelected: (index) {
+                final siteType =
+                    SiteType.values
+                        .where((s) => s != SiteType.settings)
+                        .toList()[index];
+                changeSiteType(siteType);
+              },
+              navigationBar: SidebarNavigationBar(
+                title: PlatformText(AppLocalizations.of(context)!.menu),
+              ),
+              children: [
+                SidebarSection(
+                  label: PlatformText(AppLocalizations.of(context)!.site),
+                  children:
+                      SiteType.values
+                          .where((s) => s != SiteType.settings)
+                          .map(
+                            (s) => SidebarDestination(
+                              label: PlatformText(s.title),
+                            ),
+                          )
+                          .toList(),
+                ),
+                SidebarSection(
+                  label: PlatformText('설정'),
+                  children: [
+                    SidebarDestination(
+                      label: PlatformText(SiteType.settings.title),
+                      onTap: () => context.push(Routes.settings),
+                    ),
+                  ],
+                ),
+              ],
             ),
-            appBar:
-                _buildAppBar(context, appBarTitle, viewModel.showSetListDlg),
-            body: const MainView(),
-          );
-        },
+          ),
+          Expanded(
+            child: const CupertinoTabTransitionBuilder(child: MainView()),
+          ),
+        ],
       );
-
-  // @override
-  @override
-  AutoDisposeChangeNotifierProvider<MainViewModel> get viewModelProvider =>
-      mainViewModelProvider;
+    }
+  }
 }

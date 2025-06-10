@@ -1,27 +1,21 @@
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/base_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/api_client.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_api.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_parser.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 
-import '../../domain/entities/mocl_result.dart';
-
 abstract class DetailDataSource {
-  Future<Result> getDetail(
-    ListItem item,
-    BaseParser parser,
-  );
+  Future<Either<Failure, Details>> getDetail(ListItem item);
 }
 
-class DetailDataSourceImpl extends DetailDataSource {
-  final ApiClient apiClient;
+class DetailDataSourceImpl implements DetailDataSource {
+  final BaseApi apiClient;
+  final BaseParser parser;
 
-  DetailDataSourceImpl({
-    required this.apiClient,
-  });
+  const DetailDataSourceImpl({required this.apiClient, required this.parser});
 
   @override
-  Future<Result> getDetail(
-    ListItem item,
-    BaseParser parser,
-  ) =>
-      apiClient.getDetail(item, parser);
+  Future<Either<Failure, Details>> getDetail(ListItem item) =>
+      apiClient.detail(item, parser);
 }

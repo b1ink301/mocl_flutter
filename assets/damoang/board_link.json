@@ -6,10 +6,9 @@
   {"board":"new","title":"새로운 소식","type":0,"url":"https://damoang.net/new","no":5},
   {"board":"tutorial","title":"사용기","type":0,"url":"https://damoang.net/tutorial","no":6},
   {"board":"lecture","title":"강좌/팁","type":0,"url":"https://damoang.net/lecture","no":7},
-  {"board":"economy","title":"알뜰구매","type":0,"url":"https://damoang.net/economy","no":9},
+  {"board":"economy","title":"알뜰구매","type":0,"url":"https://damoang.net/economy","no":8},
   {"board":"governance","title":"거버넌스","type":0,"url":"https://damoang.net/governance","no":10},
   {"board":"truthroom","title":"진실의 방으로","type":0,"url":"https://damoang.net/truthroom","no":11},
-  {"board":"angmap","title":"앙지도","type":0,"url":"https://damoang.net/angmap","no":12},
   {"board":"ai","title":"AI당","type":1,"url":"https://damoang.net/ai","no":30},
   {"board":"ott","title":"OTT당","type":1,"url":"https://damoang.net/ott","no":31},
   {"board":"vr","title":"VR당","type":1,"url":"https://damoang.net/vr","no":32},
@@ -21,5 +20,14 @@
   {"board":"server","title":"서버당","type":1,"url":"https://damoang.net/server","no":39},
   {"board":"android","title":"안드로이드당","type":1,"url":"https://damoang.net/android","no":40},
   {"board":"applemoang","title":"애플모앙","type":1,"url":"https://damoang.net/applemoang","no":41},
-  {"board":"space","title":"우주본당","type":1,"url":"https://damoang.net/space","no":42}
+  {"board":"space","title":"우주본당","type":1,"url":"https://damoang.net/space","no":42},
+  {"board":"ai","title":"AI당","type":1,"url":"https://damoang.net/ai","no":43},
+  {"board":"diablo","title":"디아블로당","type":1,"url":"https://damoang.net/diablo","no":44},
+  {"board":"homebuilding","title":"집짓는당","type":1,"url":"https://damoang.net/homebuilding","no":45},
+  {"board":"hardware","title":"하드웨어","type":1,"url":"https://damoang.net/hardware","no":46},
+  {"board":"angmap","title":"앙지도","type":1,"url":"https://damoang.net/angmap","no":50},
+  {"board":"expert","title":"전문가","type":1,"url":"https://damoang.net/expert","no":51},
+  {"board":"recipe","title":"레시피","type":1,"url":"https://damoang.net/recipe","no":52},
+  {"board":"music","title":"앙뮤직","type":1,"url":"https://damoang.net/music","no":53},
+  {"board":"angtt","title":"다모앙 평점","type":1,"url":"https://damoang.net/angtt","no":54}
 ]

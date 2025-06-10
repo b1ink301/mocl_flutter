@@ -1,58 +1,52 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mocl_flutter/features/mocl/data/db/app_database.dart';
-import 'package:mocl_flutter/features/mocl/data/di/datasource_provider.dart';
-import 'package:mocl_flutter/features/mocl/presentation/common/mocl_custom_scroll_behavior.dart';
-import 'package:mocl_flutter/features/mocl/presentation/mocl_theme.dart';
-import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_app_pages.dart';
-import 'package:mocl_flutter/firebase_options.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:sembast/sembast_io.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import 'features/mocl/data/di/datasource_provider.dart';
+import 'features/mocl/presentation/app_widget.dart';
+import 'firebase_options.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-
-  if (Platform.isAndroid) {
-    await Firebase.initializeApp(
-      options: DefaultFirebaseOptions.currentPlatform,
-    );
-    const fatalError = true;
-    PlatformDispatcher.instance.onError = (error, stack) {
-      if (fatalError) {
-        FirebaseCrashlytics.instance.recordError(error, stack, fatal: true);
-      } else {
-        FirebaseCrashlytics.instance.recordError(error, stack);
-      }
-      return true;
-    };
-  }
-  final sharedPreferences = await SharedPreferences.getInstance();
-  final appDatabase =
-      await $FloorAppDatabase.databaseBuilder('mocl.db').build();
+  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+  unawaited(_firebase());
+  final SharedPreferences sharedPreferences =
+      await SharedPreferences.getInstance();
+  final Database database = await _database();
 
   runApp(
     ProviderScope(
       overrides: [
         sharedPreferencesProvider.overrideWithValue(sharedPreferences),
-        appDatabaseProvider.overrideWithValue(appDatabase),
+        appDatabaseProvider.overrideWithValue(database),
       ],
-      child: const MoclApp(),
+      child: const AppWidget(),
     ),
   );
 }
 
-class MoclApp extends StatelessWidget {
-  const MoclApp({super.key});
+Future<Database> _database() async {
+  final Directory dir = await getApplicationDocumentsDirectory();
+  await dir.create(recursive: true);
+  final String dbPath = join(dir.path, 'mocl-sembast.db');
+  final Database database = await databaseFactoryIo.openDatabase(dbPath);
+  return database;
+}
 
-  @override
-  Widget build(BuildContext context) => MaterialApp.router(
-        scrollBehavior: CustomScrollBehavior(),
-        theme: MoclTheme.lightTheme,
-        darkTheme: MoclTheme.darkTheme,
-        routerConfig: AppPages.router,
-      );
+Future<void> _firebase() async {
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  PlatformDispatcher.instance.onError = (error, stack) {
+    FirebaseCrashlytics.instance.recordError(error, stack);
+    return true;
+  };
 }

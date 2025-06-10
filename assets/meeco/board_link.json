@@ -1,0 +1,14 @@
+[
+  {"board":"free","title":"자유 게시판","type":0,"url":"https://meeco.kr/free","no":1},
+  {"board":"humor","title":"유머 게시판","type":0,"url":"https://meeco.kr/humor","no":2},
+  {"board":"anonymous","title":"익명 게시판","type":0,"url":"https://meeco.kr/anonymous","no":3},
+  {"board":"nsfw","title":"후방주의","type":0,"url":"https://meeco.kr/nsfw","no":4},
+  {"board":"news","title":"IT 소식","type":0,"url":"https://meeco.kr/news","no":11},
+  {"board":"mini","title":"미니기기/음향 게시판","type":0,"url":"https://meeco.kr/mini","no":12},
+  {"board":"Review","title":"리뷰 게시판","type":0,"url":"https://meeco.kr/Review","no":13},
+  {"board":"big","title":"대형기기","type":0,"url":"https://meeco.kr/big","no":14},
+  {"board":"AI","title":"AI/로봇 게시판","type":0,"url":"https://meeco.kr/AI","no":15},
+  {"board":"Price","title":"특가 게시판","type":0,"url":"https://meeco.kr/Price","no":20},
+  {"board":"market","title":"장터 게시판","type":0,"url":"https://meeco.kr/market","no":21},
+  {"board":"notice","title":"공지사항","type":1,"url":"https://meeco.kr/notice","no":22}
+]

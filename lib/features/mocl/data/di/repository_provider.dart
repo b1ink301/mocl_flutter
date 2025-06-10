@@ -8,27 +8,22 @@ import 'package:mocl_flutter/features/mocl/domain/repositories/detail_repository
 import 'package:mocl_flutter/features/mocl/domain/repositories/list_repository.dart';
 import 'package:mocl_flutter/features/mocl/domain/repositories/main_repository.dart';
 import 'package:mocl_flutter/features/mocl/domain/repositories/settings_repository.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-final settingsRepositoryProvider = Provider<SettingsRepository>((ref) {
-  final prefs = ref.watch(sharedPreferencesProvider);
-  return SettingsRepositoryImpl(prefs: prefs);
-});
+part 'repository_provider.g.dart';
 
-final mainRepositoryProvider = Provider<MainRepository>((ref) {
-  final datasource = ref.watch(mainDatasourceProvider);
-  return MainRepositoryImpl(dataSource: datasource);
-});
+@riverpod
+SettingsRepository settingsRepository(Ref ref) =>
+    SettingsRepositoryImpl(prefs: ref.watch(sharedPreferencesProvider));
 
-final listRepositoryProvider = Provider<ListRepository>((ref) {
-  final datasource = ref.watch(listDatasourceProvider);
-  final parserFactory = ref.watch(parserFactoryProvider);
-  return ListRepositoryImpl(
-      dataSource: datasource, parserFactory: parserFactory);
-});
+@riverpod
+MainRepository mainRepository(Ref ref) =>
+    MainRepositoryImpl(dataSource: ref.watch(mainDatasourceProvider));
 
-final detailRepositoryProvider = Provider<DetailRepository>((ref) {
-  final datasource = ref.watch(detailDatasourceProvider);
-  final parserFactory = ref.watch(parserFactoryProvider);
-  return DetailRepositoryImpl(
-      dataSource: datasource, parserFactory: parserFactory);
-});
+@riverpod
+ListRepository listRepository(Ref ref) =>
+    ListRepositoryImpl(dataSource: ref.watch(listDatasourceProvider));
+
+@riverpod
+DetailRepository detailRepository(Ref ref) =>
+    DetailRepositoryImpl(dataSource: ref.watch(detailDatasourceProvider));
