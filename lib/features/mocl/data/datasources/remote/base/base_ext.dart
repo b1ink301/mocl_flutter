@@ -28,7 +28,7 @@ extension SortTypeExtension on SortType {
       case SiteType.reddit:
         return switch (this) {
           SortType.recent => 'new',
-          SortType.recommend => 'hot'
+          SortType.recommend => 'hot',
         };
       case SiteType.theqoo:
         return '';

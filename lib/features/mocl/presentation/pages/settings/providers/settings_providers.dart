@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:mocl_flutter/features/mocl/data/di/repository_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -20,4 +21,19 @@ class SizeCacheDirNotifier extends _$SizeCacheDirNotifier {
 
   Future<String> _getSizeCacheDir() async =>
       await NickImageWidget.getSizeCacheDir();
+}
+
+@riverpod
+class ShowNickImageNotifier extends _$ShowNickImageNotifier {
+  @override
+  bool build() {
+    final settings = ref.watch(settingsRepositoryProvider);
+    return settings.isShowNickImage();
+  }
+
+  void toggle() {
+    final settings = ref.read(settingsRepositoryProvider);
+    state = !state;
+    settings.setShowNickImage(state);
+  }
 }

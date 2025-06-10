@@ -12,8 +12,6 @@ class GetMainList
   const GetMainList({required this.mainRepository});
 
   @override
-  Future<Either<Failure, List<MainItem>>> call(
-    SiteType params,
-  ) =>
+  Future<Either<Failure, List<MainItem>>> call(SiteType params) =>
       mainRepository.getMainList(siteType: params);
 }

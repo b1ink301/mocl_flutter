@@ -8,8 +8,5 @@ class SetSiteType implements UseCase<void, SiteType> {
   const SetSiteType({required this.settingsRepository});
 
   @override
-  void call(
-    SiteType params,
-  ) =>
-      settingsRepository.setSiteType(params);
+  void call(SiteType params) => settingsRepository.setSiteType(params);
 }

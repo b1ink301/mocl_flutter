@@ -13,10 +13,9 @@ String _$listSmallTitleHash() => r'afb276d55425a9e7f1bf477590ddc03e0236bea3';
 final listSmallTitleProvider = AutoDisposeProvider<String>.internal(
   listSmallTitle,
   name: r'listSmallTitleProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$listSmallTitleHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$listSmallTitleHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -31,8 +30,9 @@ String _$listTitleHash() => r'334015293ab03a204a6f3c31553fea624aaf7120';
 final listTitleProvider = AutoDisposeProvider<String>.internal(
   listTitle,
   name: r'listTitleProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$listTitleHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$listTitleHash,
   dependencies: <ProviderOrFamily>[mainItemProvider],
   allTransitiveDependencies: <ProviderOrFamily>{
     mainItemProvider,
@@ -50,8 +50,9 @@ String _$mainItemHash() => r'bfd8c4675d74a8ec6b735008aa9f59eee3c014e6';
 final mainItemProvider = AutoDisposeProvider<MainItem>.internal(
   mainItem,
   name: r'mainItemProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$mainItemHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$mainItemHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -135,10 +136,9 @@ class TitleHeightProvider extends AutoDisposeProvider<double> {
         (ref) => titleHeight(ref as TitleHeightRef, text),
         from: titleHeightProvider,
         name: r'titleHeightProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$titleHeightHash,
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$titleHeightHash,
         dependencies: TitleHeightFamily._dependencies,
         allTransitiveDependencies: TitleHeightFamily._allTransitiveDependencies,
         text: text,
@@ -280,10 +280,9 @@ class ReqListDataProvider
         ),
         from: reqListDataProvider,
         name: r'reqListDataProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$reqListDataHash,
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$reqListDataHash,
         dependencies: ReqListDataFamily._dependencies,
         allTransitiveDependencies: ReqListDataFamily._allTransitiveDependencies,
         mainItem: mainItem,
@@ -443,10 +442,9 @@ class GetListItemProvider extends AutoDisposeProvider<ListItem?> {
         (ref) => getListItem(ref as GetListItemRef, index),
         from: getListItemProvider,
         name: r'getListItemProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$getListItemHash,
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$getListItemHash,
         dependencies: GetListItemFamily._dependencies,
         allTransitiveDependencies: GetListItemFamily._allTransitiveDependencies,
         index: index,
@@ -521,8 +519,9 @@ String _$listItemHash() => r'cfa14f06c2d46a8696f395988a6e6969451ef49d';
 final listItemProvider = AutoDisposeProvider<ListItem?>.internal(
   listItem,
   name: r'listItemProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$listItemHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$listItemHash,
   dependencies: <ProviderOrFamily>[listItemIndexProvider, getListItemProvider],
   allTransitiveDependencies: <ProviderOrFamily>{
     listItemIndexProvider,
@@ -542,10 +541,9 @@ String _$listItemIndexHash() => r'70b52c3cc678f4bd8e917a5b7a17378665040e04';
 final listItemIndexProvider = AutoDisposeProvider<int>.internal(
   listItemIndex,
   name: r'listItemIndexProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$listItemIndexHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$listItemIndexHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -553,7 +551,7 @@ final listItemIndexProvider = AutoDisposeProvider<int>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ListItemIndexRef = AutoDisposeProviderRef<int>;
-String _$listStateNotifierHash() => r'25247ceda091e87f760cc29763baf242ea9618cd';
+String _$listStateNotifierHash() => r'52cdaf136fcb71332ca46242a1f84d7b555570e9';
 
 /// See also [ListStateNotifier].
 @ProviderFor(ListStateNotifier)
@@ -561,10 +559,9 @@ final listStateNotifierProvider =
     AutoDisposeAsyncNotifierProvider<ListStateNotifier, ListState>.internal(
       ListStateNotifier.new,
       name: r'listStateNotifierProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$listStateNotifierHash,
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$listStateNotifierHash,
       dependencies: <ProviderOrFamily>[
         mainItemProvider,
         reqListDataProvider,
@@ -589,10 +586,9 @@ final sortTypeNotifierProvider =
     NotifierProvider<SortTypeNotifier, SortType>.internal(
       SortTypeNotifier.new,
       name: r'sortTypeNotifierProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$sortTypeNotifierHash,
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$sortTypeNotifierHash,
       dependencies: null,
       allTransitiveDependencies: null,
     );

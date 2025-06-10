@@ -14,10 +14,9 @@ final reqSearchListDataProvider =
     AutoDisposeFutureProvider<Either<Failure, List<ListItem>>>.internal(
       reqSearchListData,
       name: r'reqSearchListDataProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$reqSearchListDataHash,
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$reqSearchListDataHash,
       dependencies: <ProviderOrFamily>[
         mainItemProvider,
         keywordNotifierProvider,
@@ -42,10 +41,9 @@ final keywordNotifierProvider =
     AutoDisposeNotifierProvider<KeywordNotifier, String>.internal(
       KeywordNotifier.new,
       name: r'keywordNotifierProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$keywordNotifierHash,
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$keywordNotifierHash,
       dependencies: null,
       allTransitiveDependencies: null,
     );

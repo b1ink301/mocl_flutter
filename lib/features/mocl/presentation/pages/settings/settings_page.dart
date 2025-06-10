@@ -12,17 +12,16 @@ import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.d
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
-  static Widget init(
-    BuildContext context,
-  ) =>
+  static Widget init(BuildContext context) =>
       AnnotatedRegion<SystemUiOverlayStyle>(
         value: Theme.of(context).appBarTheme.systemOverlayStyle!,
         child: const SettingsPage(),
       );
 
   Widget _buildAppBar(BuildContext context) {
-    final Color? backgroundColor =
-        Theme.of(context).appBarTheme.backgroundColor;
+    final Color? backgroundColor = Theme.of(
+      context,
+    ).appBarTheme.backgroundColor;
     return PlatformSliverAppBar(
       backgroundColor: backgroundColor,
       material: (_, _) => MaterialSliverAppBarData(
@@ -43,21 +42,18 @@ class SettingsPage extends StatelessWidget {
   }
 
   Widget _buildTitle(BuildContext context, String title) => MessageWidget(
-        message: title,
-        textStyle: isCupertino(context)
-            ? null
-            : Theme.of(context).textTheme.labelMedium,
-      );
+    message: title,
+    textStyle: isCupertino(context)
+        ? null
+        : Theme.of(context).textTheme.labelMedium,
+  );
 
   @override
   Widget build(BuildContext context) {
     final child = PlatformScaffold(
       body: SafeArea(
         child: CustomScrollView(
-          slivers: <Widget>[
-            _buildAppBar(context),
-            const SettingsView(),
-          ],
+          slivers: <Widget>[_buildAppBar(context), const SettingsView()],
         ),
       ),
       material: (_, _) => MaterialScaffoldData(),

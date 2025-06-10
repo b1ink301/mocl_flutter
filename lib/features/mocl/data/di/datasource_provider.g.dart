@@ -13,8 +13,9 @@ String _$appDatabaseHash() => r'337a2efcc40cfdba8a9cddb8e65c137e060ccbac';
 final appDatabaseProvider = AutoDisposeProvider<Database>.internal(
   appDatabase,
   name: r'appDatabaseProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$appDatabaseHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$appDatabaseHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -30,10 +31,9 @@ final sharedPreferencesProvider =
     AutoDisposeProvider<SharedPreferences>.internal(
       sharedPreferences,
       name: r'sharedPreferencesProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$sharedPreferencesHash,
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$sharedPreferencesHash,
       dependencies: null,
       allTransitiveDependencies: null,
     );
@@ -48,10 +48,9 @@ String _$localDatabaseHash() => r'f553251e91d46b94f90cf62f331b18fcdb8d3690';
 final localDatabaseProvider = AutoDisposeProvider<LocalDatabase>.internal(
   localDatabase,
   name: r'localDatabaseProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$localDatabaseHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$localDatabaseHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -66,10 +65,9 @@ String _$mainDatasourceHash() => r'9b27f07587919fae29b30659c37c0b130624fe33';
 final mainDatasourceProvider = AutoDisposeProvider<MainDataSource>.internal(
   mainDatasource,
   name: r'mainDatasourceProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$mainDatasourceHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$mainDatasourceHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -84,10 +82,9 @@ String _$listDatasourceHash() => r'a27ab280c35535a8f2a62e640ed4de6671b77332';
 final listDatasourceProvider = AutoDisposeProvider<ListDataSource>.internal(
   listDatasource,
   name: r'listDatasourceProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$listDatasourceHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$listDatasourceHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -102,10 +99,9 @@ String _$detailDatasourceHash() => r'6b99a4b9d8d63e1c902884a501243e3d041194e1';
 final detailDatasourceProvider = AutoDisposeProvider<DetailDataSource>.internal(
   detailDatasource,
   name: r'detailDatasourceProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$detailDatasourceHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$detailDatasourceHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -120,8 +116,9 @@ String _$clienParserHash() => r'1d2accc05d821d5aebf99799c624c898e1e2564f';
 final clienParserProvider = AutoDisposeProvider<(BaseParser, BaseApi)>.internal(
   clienParser,
   name: r'clienParserProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$clienParserHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$clienParserHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -137,10 +134,9 @@ final damoangParserProvider =
     AutoDisposeProvider<(BaseParser, BaseApi)>.internal(
       damoangParser,
       name: r'damoangParserProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$damoangParserHash,
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$damoangParserHash,
       dependencies: null,
       allTransitiveDependencies: null,
     );
@@ -155,8 +151,9 @@ String _$meecoParserHash() => r'32e5757f9698eec13fc506f1b1390539783c48fd';
 final meecoParserProvider = AutoDisposeProvider<(BaseParser, BaseApi)>.internal(
   meecoParser,
   name: r'meecoParserProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$meecoParserHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$meecoParserHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -172,10 +169,9 @@ final naverCafeParserProvider =
     AutoDisposeProvider<(BaseParser, BaseApi)>.internal(
       naverCafeParser,
       name: r'naverCafeParserProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$naverCafeParserHash,
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$naverCafeParserHash,
       dependencies: null,
       allTransitiveDependencies: null,
     );
@@ -191,10 +187,9 @@ final redditParserProvider =
     AutoDisposeProvider<(BaseParser, BaseApi)>.internal(
       redditParser,
       name: r'redditParserProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$redditParserHash,
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$redditParserHash,
       dependencies: null,
       allTransitiveDependencies: null,
     );
@@ -210,10 +205,9 @@ final theqooParserProvider =
     AutoDisposeProvider<(BaseParser, BaseApi)>.internal(
       theqooParser,
       name: r'theqooParserProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$theqooParserHash,
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$theqooParserHash,
       dependencies: null,
       allTransitiveDependencies: null,
     );
@@ -229,10 +223,9 @@ final currentParserProvider =
     AutoDisposeProvider<(BaseParser, BaseApi)>.internal(
       currentParser,
       name: r'currentParserProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$currentParserHash,
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$currentParserHash,
       dependencies: null,
       allTransitiveDependencies: null,
     );

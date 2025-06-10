@@ -110,13 +110,13 @@ class ListStateNotifier extends _$ListStateNotifier {
           state.requireValue.copyWith(
             isLoading: false,
             items: state.requireValue.items + newItems,
-            currentPage:
-                hasReachedMax
-                    ? state.requireValue.currentPage
-                    : state.requireValue.currentPage + 1,
-            lastId:
-                state.valueOrNull?.lastId ??
-                LastId(intId: newItems.last.id, stringId: newItems.last.url),
+            currentPage: hasReachedMax
+                ? state.requireValue.currentPage
+                : state.requireValue.currentPage + 1,
+            lastId: LastId(
+              intId: newItems.lastOrNull?.id ?? -1,
+              stringId: newItems.lastOrNull?.url ?? '',
+            ),
             hasReachedMax: hasReachedMax,
           ),
         );

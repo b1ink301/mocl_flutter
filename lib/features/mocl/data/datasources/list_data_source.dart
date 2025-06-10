@@ -26,20 +26,11 @@ abstract class ListDataSource {
     String keyword,
   );
 
-  Future<int> setReadFlag(
-    SiteType siteType,
-    int id,
-  );
+  Future<int> setReadFlag(SiteType siteType, int id);
 
-  Future<bool> isReadFlag(
-    SiteType siteType,
-    int boardId,
-  );
+  Future<bool> isReadFlag(SiteType siteType, int boardId);
 
-  Future<List<int>> isReadFlags(
-    SiteType siteType,
-    List<int> boardIds,
-  );
+  Future<List<int>> isReadFlags(SiteType siteType, List<int> boardIds);
 }
 
 class ListDataSourceImpl implements ListDataSource {
@@ -59,8 +50,7 @@ class ListDataSourceImpl implements ListDataSource {
     int page,
     LastId lastId,
     SortType sortType,
-  ) =>
-      apiClient.list(item, page, lastId, sortType, parser, isReadFlags);
+  ) => apiClient.list(item, page, lastId, sortType, parser, isReadFlags);
 
   @override
   Future<Either<Failure, List<ListItem>>> getSearchList(
@@ -69,28 +59,25 @@ class ListDataSourceImpl implements ListDataSource {
     LastId lastId,
     SortType sortType,
     String keyword,
-  ) =>
-      apiClient.searchList(
-          item, page, lastId, sortType, keyword, parser, isReadFlags);
+  ) => apiClient.searchList(
+    item,
+    page,
+    lastId,
+    sortType,
+    keyword,
+    parser,
+    isReadFlags,
+  );
 
   @override
-  Future<int> setReadFlag(
-    SiteType siteType,
-    int id,
-  ) async =>
+  Future<int> setReadFlag(SiteType siteType, int id) async =>
       localDatabase.setRead(siteType, id);
 
   @override
-  Future<bool> isReadFlag(
-    SiteType siteType,
-    int boardId,
-  ) async =>
+  Future<bool> isReadFlag(SiteType siteType, int boardId) async =>
       localDatabase.isRead(siteType, boardId);
 
   @override
-  Future<List<int>> isReadFlags(
-    SiteType siteType,
-    List<int> boardIds,
-  ) async =>
+  Future<List<int>> isReadFlags(SiteType siteType, List<int> boardIds) async =>
       localDatabase.isReads(siteType, boardIds);
 }

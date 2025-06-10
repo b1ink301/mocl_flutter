@@ -13,8 +13,9 @@ String _$mainTitleHash() => r'0f4a5b000762f1f7f5786eca779b0668c124eb7c';
 final mainTitleProvider = AutoDisposeProvider<String>.internal(
   mainTitle,
   name: r'mainTitleProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$mainTitleHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$mainTitleHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -29,10 +30,9 @@ String _$showAddButtonHash() => r'28c94100bcb60029d83ccecdb2c155c02bdd73f9';
 final showAddButtonProvider = AutoDisposeProvider<bool>.internal(
   showAddButton,
   name: r'showAddButtonProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$showAddButtonHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$showAddButtonHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -107,10 +107,9 @@ class IsCurrentSiteTypeProvider extends AutoDisposeProvider<bool> {
         (ref) => isCurrentSiteType(ref as IsCurrentSiteTypeRef, siteType),
         from: isCurrentSiteTypeProvider,
         name: r'isCurrentSiteTypeProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$isCurrentSiteTypeHash,
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$isCurrentSiteTypeHash,
         dependencies: IsCurrentSiteTypeFamily._dependencies,
         allTransitiveDependencies:
             IsCurrentSiteTypeFamily._allTransitiveDependencies,
@@ -227,10 +226,9 @@ class SetMainItemsProvider
         (ref) => setMainItems(ref as SetMainItemsRef, list),
         from: setMainItemsProvider,
         name: r'setMainItemsProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$setMainItemsHash,
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$setMainItemsHash,
         dependencies: SetMainItemsFamily._dependencies,
         allTransitiveDependencies:
             SetMainItemsFamily._allTransitiveDependencies,
@@ -350,10 +348,9 @@ class HandleAddButtonProvider extends AutoDisposeFutureProvider<void> {
         (ref) => handleAddButton(ref as HandleAddButtonRef, context),
         from: handleAddButtonProvider,
         name: r'handleAddButtonProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$handleAddButtonHash,
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$handleAddButtonHash,
         dependencies: HandleAddButtonFamily._dependencies,
         allTransitiveDependencies:
             HandleAddButtonFamily._allTransitiveDependencies,
@@ -432,10 +429,9 @@ String _$mainScaffoldStateHash() => r'e08ed879718fe9af8a42c31c3df1fbd7c053b5eb';
 final mainScaffoldStateProvider = Provider<GlobalKey<ScaffoldState>>.internal(
   mainScaffoldState,
   name: r'mainScaffoldStateProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$mainScaffoldStateHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$mainScaffoldStateHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -447,19 +443,19 @@ String _$mainItemsNotifierHash() => r'86b23ee300f094255bb5993053eb02c3638f2421';
 
 /// See also [MainItemsNotifier].
 @ProviderFor(MainItemsNotifier)
-final mainItemsNotifierProvider = AutoDisposeAsyncNotifierProvider<
-  MainItemsNotifier,
-  List<MainItem>
->.internal(
-  MainItemsNotifier.new,
-  name: r'mainItemsNotifierProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
+final mainItemsNotifierProvider =
+    AutoDisposeAsyncNotifierProvider<
+      MainItemsNotifier,
+      List<MainItem>
+    >.internal(
+      MainItemsNotifier.new,
+      name: r'mainItemsNotifierProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
           ? null
           : _$mainItemsNotifierHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$MainItemsNotifier = AutoDisposeAsyncNotifier<List<MainItem>>;
 String _$mainSidebarNotifierHash() =>
@@ -471,10 +467,9 @@ final mainSidebarNotifierProvider =
     AutoDisposeNotifierProvider<MainSidebarNotifier, bool>.internal(
       MainSidebarNotifier.new,
       name: r'mainSidebarNotifierProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$mainSidebarNotifierHash,
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$mainSidebarNotifierHash,
       dependencies: null,
       allTransitiveDependencies: null,
     );

@@ -6,15 +6,16 @@ part of 'detail_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$listItemHash() => r'a2e72c9bd39a20673f38f5ed884a74494e31738b';
+String _$listItemHash() => r'5979621f5fb9d6c055c046d194e6282673cf181e';
 
 /// See also [listItem].
 @ProviderFor(listItem)
 final listItemProvider = AutoDisposeProvider<ListItem>.internal(
   listItem,
   name: r'listItemProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$listItemHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$listItemHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -89,10 +90,9 @@ class _MarkAsReadProvider extends AutoDisposeFutureProvider<int> {
         (ref) => _markAsRead(ref as _MarkAsReadRef, listItem),
         from: _markAsReadProvider,
         name: r'_markAsReadProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$markAsReadHash,
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$markAsReadHash,
         dependencies: _MarkAsReadFamily._dependencies,
         allTransitiveDependencies: _MarkAsReadFamily._allTransitiveDependencies,
         listItem: listItem,
@@ -169,10 +169,9 @@ String _$detailSmallTitleHash() => r'9bc30084263914d4fcba17904ecc6e1f8f20d2b5';
 final detailSmallTitleProvider = AutoDisposeProvider<String>.internal(
   detailSmallTitle,
   name: r'detailSmallTitleProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$detailSmallTitleHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$detailSmallTitleHash,
   dependencies: <ProviderOrFamily>[listItemProvider, detailTitleProvider],
   allTransitiveDependencies: <ProviderOrFamily>{
     listItemProvider,
@@ -192,8 +191,9 @@ String _$detailTitleHash() => r'ccdd0e6b61dab49331f7aacf0fd2a63a978f88b5';
 final detailTitleProvider = AutoDisposeProvider<String>.internal(
   detailTitle,
   name: r'detailTitleProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$detailTitleHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$detailTitleHash,
   dependencies: <ProviderOrFamily>[listItemProvider],
   allTransitiveDependencies: <ProviderOrFamily>{
     listItemProvider,
@@ -211,8 +211,9 @@ String _$detailUrlHash() => r'f90c3c2d94844fcde8f28210cee4e8e44eeeb4fc';
 final detailUrlProvider = AutoDisposeProvider<String>.internal(
   detailUrl,
   name: r'detailUrlProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$detailUrlHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$detailUrlHash,
   dependencies: <ProviderOrFamily>[
     listItemProvider,
     currentSiteTypeNotifierProvider,
@@ -284,10 +285,9 @@ class DetailAppbarHeightProvider extends AutoDisposeProvider<double> {
         (ref) => detailAppbarHeight(ref as DetailAppbarHeightRef, text),
         from: detailAppbarHeightProvider,
         name: r'detailAppbarHeightProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$detailAppbarHeightHash,
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$detailAppbarHeightHash,
         dependencies: DetailAppbarHeightFamily._dependencies,
         allTransitiveDependencies:
             DetailAppbarHeightFamily._allTransitiveDependencies,
@@ -367,10 +367,9 @@ final detailsNotifierProvider =
     AutoDisposeAsyncNotifierProvider<DetailsNotifier, Details>.internal(
       DetailsNotifier.new,
       name: r'detailsNotifierProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$detailsNotifierHash,
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$detailsNotifierHash,
       dependencies: <ProviderOrFamily>[listItemProvider],
       allTransitiveDependencies: <ProviderOrFamily>{
         listItemProvider,
@@ -388,10 +387,9 @@ final detailTitleNotifierProvider =
     AutoDisposeNotifierProvider<DetailTitleNotifier, String>.internal(
       DetailTitleNotifier.new,
       name: r'detailTitleNotifierProvider',
-      debugGetCreateSourceHash:
-          const bool.fromEnvironment('dart.vm.product')
-              ? null
-              : _$detailTitleNotifierHash,
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$detailTitleNotifierHash,
       dependencies: <ProviderOrFamily>[listItemProvider, detailTitleProvider],
       allTransitiveDependencies: <ProviderOrFamily>{
         listItemProvider,

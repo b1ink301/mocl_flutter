@@ -13,8 +13,9 @@ String _$urlRequestHash() => r'309fca7c9d71708450c0a653780faab23ac1216c';
 final urlRequestProvider = AutoDisposeProvider<URLRequest>.internal(
   urlRequest,
   name: r'urlRequestProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product') ? null : _$urlRequestHash,
+  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+      ? null
+      : _$urlRequestHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
@@ -87,10 +88,9 @@ class HasLoginProvider extends AutoDisposeFutureProvider<bool> {
         (ref) => hasLogin(ref as HasLoginRef, cookieManager, url),
         from: hasLoginProvider,
         name: r'hasLoginProvider',
-        debugGetCreateSourceHash:
-            const bool.fromEnvironment('dart.vm.product')
-                ? null
-                : _$hasLoginHash,
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$hasLoginHash,
         dependencies: HasLoginFamily._dependencies,
         allTransitiveDependencies: HasLoginFamily._allTransitiveDependencies,
         cookieManager: cookieManager,

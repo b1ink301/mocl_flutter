@@ -18,7 +18,6 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-
 class TheQoo extends BaseParser {
   const TheQoo();
 
@@ -54,12 +53,14 @@ class TheQoo extends BaseParser {
 
     final document = parse(responseData.first);
     final container = document.querySelector(
-        'html > body > div[id=container] > div.content > section > article');
+      'html > body > div[id=container] > div.content > section > article',
+    );
 
     final title =
         container?.querySelector('div.title-wrap > h3')?.text.trim() ?? '';
-    final infoElement =
-    container?.querySelector('div.title-wrap > div.under-title');
+    final infoElement = container?.querySelector(
+      'div.title-wrap > div.under-title',
+    );
     final nickName = infoElement?.querySelector('span.name')?.text.trim() ?? '';
     final time = infoElement?.querySelector('span.date')?.text.trim() ?? '';
     var viewCount = infoElement?.querySelector('span.hit')?.text.trim() ?? '';
@@ -121,23 +122,24 @@ class TheQoo extends BaseParser {
     } catch (e) {
       parsedTime = time;
     }
-    final info = BaseParser.parserInfo(nickName, parsedTime, viewCount);
+    final info = BaseParser.parserInfo(false, nickName, parsedTime, viewCount);
 
     final detail = Details(
-        title: title,
-        viewCount: viewCount,
-        likeCount: likeCount,
-        csrf: '',
-        time: time,
-        info: info,
-        userInfo: UserInfo(
-          id: nickName,
-          nickName: nickName,
-          nickImage: nickImage,
-        ),
-        comments: comments,
-        bodyHtml: bodyHtml?.innerHtml ?? '',
-        extraData: {'nowCommentPage': nowCommentPage});
+      title: title,
+      viewCount: viewCount,
+      likeCount: likeCount,
+      csrf: '',
+      time: time,
+      info: info,
+      userInfo: UserInfo(
+        id: nickName,
+        nickName: nickName,
+        nickImage: nickImage,
+      ),
+      comments: comments,
+      bodyHtml: bodyHtml?.innerHtml ?? '',
+      extraData: {'nowCommentPage': nowCommentPage},
+    );
 
     final result = Right<Failure, Details>(detail);
     sendPort.send(result);
@@ -145,11 +147,11 @@ class TheQoo extends BaseParser {
 
   @override
   Future<Either<Failure, List<ListItem>>> list(
-      Response response,
-      LastId lastId,
-      String boardTitle,
-      Future<List<int>> Function(SiteType, List<int>) isReads,
-      ) async {
+    Response response,
+    LastId lastId,
+    String boardTitle,
+    Future<List<int>> Function(SiteType, List<int>) isReads,
+  ) async {
     final receivePort = ReceivePort();
     final completer = Completer<List<ListItem>>();
 
@@ -165,15 +167,16 @@ class TheQoo extends BaseParser {
 
     try {
       await Isolate.spawn(
-          _parseListInIsolate,
-          IsolateMessage<String>(
-            receivePort.sendPort,
-            response.data,
-            lastId.intId,
-            boardTitle,
-            baseUrl,
-            false
-          ));
+        _parseListInIsolate,
+        IsolateMessage<String>(
+          receivePort.sendPort,
+          response.data,
+          lastId.intId,
+          boardTitle,
+          baseUrl,
+          false,
+        ),
+      );
 
       return Right(await completer.future);
     } catch (e) {
@@ -196,7 +199,8 @@ class TheQoo extends BaseParser {
 
     final document = parse(responseData);
     final elementList = document.querySelectorAll(
-        "div[id=container] > div.content > section.flatBoard > div.m-list > ul.list > li");
+      "div[id=container] > div.content > section.flatBoard > div.m-list > ul.list > li",
+    );
 
     for (final element in elementList) {
       final tmpUrl = element.querySelector('a.list-link')?.attributes['href'];
@@ -212,33 +216,37 @@ class TheQoo extends BaseParser {
 
       final board = pathList[1];
       final reply = element.querySelector('a.reply')?.text.trim() ?? '';
-      final category = element
-          .querySelector('ul.list-element > li:last-child')
-          ?.text
-          .trim() ??
+      final category =
+          element
+              .querySelector('ul.list-element > li:last-child')
+              ?.text
+              .trim() ??
           '';
       if (category == '공지') continue;
 
-      final title = element
-          .querySelector('ul.list-element > li.title > span.title_span')
-          ?.text
-          .trim() ??
+      final title =
+          element
+              .querySelector('ul.list-element > li.title > span.title_span')
+              ?.text
+              .trim() ??
           '';
       final time =
           element.querySelector('ul.list-element > li.date')?.text.trim() ?? '';
       final nickImage = '';
 
-      final hit = element
-          .querySelector('ul.list-element > li.hit')
-          ?.text
-          .trim()
-          .split(' ')
-          .lastOrNull ??
+      final hit =
+          element
+              .querySelector('ul.list-element > li.hit')
+              ?.text
+              .trim()
+              .split(' ')
+              .lastOrNull ??
           '';
-      final like = element
-          .querySelector('div.list_title > div.list_symph > span')
-          ?.text
-          .trim() ??
+      final like =
+          element
+              .querySelector('div.list_title > div.list_symph > span')
+              ?.text
+              .trim() ??
           '';
 
       final nickName = '';
@@ -283,22 +291,24 @@ class TheQoo extends BaseParser {
     readStatusPort.close();
 
     final resultList = parsedItems
-        .map((item) => ListItem(
-      id: item['id'],
-      title: item['title'],
-      reply: item['reply'],
-      category: item['category'],
-      time: item['time'],
-      info: item['info'],
-      url: item['url'],
-      board: item['board'],
-      boardTitle: item['boardTitle'],
-      like: item['like'],
-      hit: item['hit'],
-      userInfo: item['userInfo'],
-      hasImage: item['hasImage'],
-      isRead: readStatusResponse.statuses.contains(item['id']),
-    ))
+        .map(
+          (item) => ListItem(
+            id: item['id'],
+            title: item['title'],
+            reply: item['reply'],
+            category: item['category'],
+            time: item['time'],
+            info: item['info'],
+            url: item['url'],
+            board: item['board'],
+            boardTitle: item['boardTitle'],
+            like: item['like'],
+            hit: item['hit'],
+            userInfo: item['userInfo'],
+            hasImage: item['hasImage'],
+            isRead: readStatusResponse.statuses.contains(item['id']),
+          ),
+        )
         .toList();
 
     replyPort.send(resultList);
@@ -309,7 +319,8 @@ class TheQoo extends BaseParser {
     final responseData = response.data;
     final document = parse(responseData);
     final container = document.querySelector(
-        'html > body > div[id=container] > div.content > div.bd > div[id=cate_index_mobile]');
+      'html > body > div[id=container] > div.content > div.bd > div[id=cate_index_mobile]',
+    );
     if (container == null) {
       return Left(GetMainFailure(message: 'Container is null'));
     }
@@ -317,22 +328,22 @@ class TheQoo extends BaseParser {
     var orderBy = 0;
     final result = data
         .map((element) {
-      final title = element.text;
-      final board = element.attributes['href'].toString().substring(1);
-      if (element.attributes['class'] != null) return null;
+          final title = element.text;
+          final board = element.attributes['href'].toString().substring(1);
+          if (element.attributes['class'] != null) return null;
 
-      // print('{\'title\'=\'$title\', \'board\'=\'$board\', \'type\'=0, \'url\'=\'$baseUrl$board\', \'no\'=$orderBy},');
+          // print('{\'title\'=\'$title\', \'board\'=\'$board\', \'type\'=0, \'url\'=\'$baseUrl$board\', \'no\'=$orderBy},');
 
-      return MainItem(
-        siteType: SiteType.damoang,
-        board: board,
-        text: title,
-        url: baseUrl + board,
-        orderBy: orderBy++,
-        hasItem: false,
-        type: 0,
-      );
-    })
+          return MainItem(
+            siteType: SiteType.damoang,
+            board: board,
+            text: title,
+            url: baseUrl + board,
+            orderBy: orderBy++,
+            hasItem: false,
+            type: 0,
+          );
+        })
         .whereType<MainItem>()
         .toList();
 
@@ -344,12 +355,12 @@ class TheQoo extends BaseParser {
 
   @override
   String urlByList(
-      String url,
-      String board,
-      int page,
-      SortType sortType,
-      LastId lastId,
-      ) {
+    String url,
+    String board,
+    int page,
+    SortType sortType,
+    LastId lastId,
+  ) {
     // final String sort = sortType.toQuery(siteType);
     return '$url&page=$page';
   }
