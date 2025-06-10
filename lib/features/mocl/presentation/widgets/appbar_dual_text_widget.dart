@@ -38,6 +38,7 @@ class AppbarDualTextWidget extends StatelessWidget {
 
   Widget _buildAppbar(BuildContext context) => SliverAppBar(
         title: _buildTitle(context),
+        scrolledUnderElevation: 0,
         flexibleSpace:
             Container(color: Theme.of(context).appBarTheme.backgroundColor),
         titleSpacing:
@@ -49,7 +50,7 @@ class AppbarDualTextWidget extends StatelessWidget {
         toolbarHeight: _toolbarHeight,
         actions: actions,
       );
-// 448 , 368
+
   @override
   Widget build(BuildContext context) => _buildAppbar(context);
 }

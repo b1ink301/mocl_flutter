@@ -13,3 +13,13 @@ extension ColorFromSring on String {
     }
   }
 }
+
+extension ColorExtension on Color {
+  String get stringHexColor {
+    final String red = (r * 255).toInt().toRadixString(16).padLeft(2, '0');
+    final String green = (g * 255).toInt().toRadixString(16).padLeft(2, '0');
+    final String blue = (b * 255).toInt().toRadixString(16).padLeft(2, '0');
+    // final alpha = (color.a * 255).toInt().toRadixString(16).padLeft(2, '0');
+    return '#$red$green$blue'.toUpperCase();
+  }
+}

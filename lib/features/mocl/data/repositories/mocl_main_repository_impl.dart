@@ -1,75 +1,75 @@
 import 'dart:core';
 
+import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart';
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/mocl/domain/repositories/main_repository.dart';
 
-import '../../domain/entities/mocl_result.dart';
-import '../../domain/entities/mocl_site_type.dart';
-import '../../domain/repositories/main_repository.dart';
-import '../datasources/main_data_source.dart';
-
-class MainRepositoryImpl extends MainRepository {
+class MainRepositoryImpl implements MainRepository {
   final MainDataSource dataSource;
 
-  MainRepositoryImpl({required this.dataSource});
+  const MainRepositoryImpl({
+    required this.dataSource,
+  });
 
   @override
-  Stream<Result> getMainListStream({
+  Stream<Either<Failure, List<MainItem>>> getMainListStream({
     required SiteType siteType,
   }) async* {
-    yield ResultLoading();
     try {
       final result = await dataSource.get(siteType);
-      yield ResultSuccess<List<MainItem>>(data: result);
+      yield Right(result);
     } on Exception catch (e) {
-      yield ResultFailure<Failure>(
-          failure: GetMainFailure(message: e.toString()));
+      yield Left(GetMainFailure(message: e.toString()));
     }
   }
 
   @override
-  Future<Result> setMainList({
+  Future<Either<Failure, List<int>>> setMainList({
     required SiteType siteType,
     required List<MainItem> list,
   }) async {
     try {
       final result = await dataSource.set(siteType, list);
-      return ResultSuccess<List<int>>(data: result);
+      return Right(result);
     } on Exception catch (e) {
-      return ResultFailure<Failure>(
-          failure: SetMainFailure(message: e.toString()));
+      return Left(SetMainFailure(message: e.toString()));
     }
   }
 
   @override
-  Future<Result> getMainListFromJson({
+  Future<Either<Failure, List<MainItem>>> getMainListFromJson({
     required SiteType siteType,
   }) async {
     try {
-      final mainData = await dataSource.getAllFromJson(siteType);
-      final result = mainData.map((data) => data.toEntity(siteType));
-      var futures = result.map((item) async {
-        var hasItem = await dataSource.hasItem(item);
+      final List<MainItemModel> mainData =
+          await dataSource.getAllFromJson(siteType);
+      final Iterable<MainItem> result =
+          mainData.map((data) => data.toEntity(siteType));
+      final List<Future<MainItem>> futures = result.map((item) async {
+        final bool hasItem = await dataSource.hasItem(siteType, item);
         return item.copyWith(hasItem: hasItem);
       }).toList();
 
-      var list = await Future.wait(futures);
-      return ResultSuccess<List<MainItem>>(data: list);
+      final List<MainItem> list = await Future.wait(futures);
+      return Right(list);
     } on Exception catch (e) {
-      return ResultFailure<Failure>(
-          failure: GetMainFailure(message: e.toString()));
+      return Left(GetMainFailure(message: e.toString()));
     }
   }
 
   @override
-  Future<Result> getMainList({required SiteType siteType}) async {
+  Future<Either<Failure, List<MainItem>>> getMainList({
+    required SiteType siteType,
+  }) async {
     try {
-      var result = await dataSource.get(siteType);
-      return ResultSuccess(data: result);
+      final List<MainItem> result = await dataSource.get(siteType);
+      return Right(result);
     } on Exception catch (e) {
-      return ResultFailure<Failure>(
-          failure: GetMainFailure(message: e.toString()));
+      return Left(GetMainFailure(message: e.toString()));
     }
   }
 }

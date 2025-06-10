@@ -1,20 +1,17 @@
-class UserInfo {
-  final String id;
-  final String nickName;
-  final String nickImage;
-  final String nameMemo;
-  final String ip;
-  final bool isBlock;
-  final bool isMe;
-  final bool isAuthor;
+import 'package:freezed_annotation/freezed_annotation.dart';
 
-  UserInfo({
-    required this.id,
-    required this.nickName,
-    required this.nickImage,
-  })  : nameMemo = '',
-        ip = '',
-        isBlock = false,
-        isMe = false,
-        isAuthor = false;
+part 'mocl_user_info.freezed.dart';
+
+@freezed
+abstract class UserInfo with _$UserInfo {
+  const factory UserInfo({
+    required String id,
+    required String nickName,
+    required String nickImage,
+    @Default('') String nameMemo,
+    @Default('') String ip,
+    @Default(false) bool isBlock,
+    @Default(false) bool isMe,
+    @Default(false) bool isAuthor,
+  }) = _UserInfo;
 }

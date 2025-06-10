@@ -13,13 +13,13 @@ class CupertinoModalPopupPage<T> extends Page<T> {
 
   const CupertinoModalPopupPage(
       {required this.builder,
-        this.anchorPoint,
-        this.barrierColor = kCupertinoModalBarrierColor,
-        this.barrierDismissible = true,
-        this.barrierLabel = "Dismiss",
-        this.semanticsDismissible = true,
-        this.filter,
-        super.key});
+      this.anchorPoint,
+      this.barrierColor = kCupertinoModalBarrierColor,
+      this.barrierDismissible = true,
+      this.barrierLabel = "Dismiss",
+      this.semanticsDismissible = true,
+      this.filter,
+      super.key});
 
   @override
   Route<T> createRoute(BuildContext context) => CupertinoModalPopupRoute<T>(

@@ -1,13 +1,15 @@
 import 'dart:core';
 
 import 'package:freezed_annotation/freezed_annotation.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_comment_item.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_recents.dart';
 
 import 'mocl_user_info.dart';
 
 part 'mocl_details.freezed.dart';
 
 @freezed
-class Details with _$Details {
+abstract class Details with _$Details {
   const factory Details({
     required String title,
     required String time,
@@ -15,34 +17,22 @@ class Details with _$Details {
     required String likeCount,
     required String bodyHtml,
     required String csrf,
+    required String info,
     required UserInfo userInfo,
-    required List<DetailItem> bodies,
     required List<CommentItem> comments,
+    @Default(null) Recents? recents,
+    dynamic extraData,
   }) = _Details;
-}
 
-class DetailItem {}
-
-class CommentItem {
-  final int id;
-  final String bodyHtml;
-  final String mediaHtml;
-  final bool isVideo;
-  final String time;
-  final String likeCount;
-  final UserInfo userInfo;
-  final String authorId;
-  final bool isReply;
-
-  CommentItem({
-    required this.id,
-    required this.bodyHtml,
-    required this.mediaHtml,
-    required this.isVideo,
-    required this.time,
-    required this.likeCount,
-    required this.userInfo,
-    required this.authorId,
-    required this.isReply,
-  });
+  factory Details.empty() => const Details(
+    title: '',
+    time: '',
+    viewCount: '',
+    likeCount: '',
+    bodyHtml: '',
+    csrf: '',
+    info: '',
+    userInfo: UserInfo(id: 'id', nickName: 'nickName', nickImage: 'nickImage'),
+    comments: [],
+  );
 }

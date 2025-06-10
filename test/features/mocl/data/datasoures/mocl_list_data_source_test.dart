@@ -1,26 +1,39 @@
 import 'dart:developer';
+import 'dart:io';
 
+import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/api_client.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:mockito/annotations.dart';
+import 'package:mockito/mockito.dart';
+import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/list_data_source.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/local_database.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/parser/damoang_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/db/app_database.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/local/local_database.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_api.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/remote/parser/damoang_parser.dart';
+import 'package:mocl_flutter/features/mocl/data/di/datasource_provider.dart';
 import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:sembast/sembast_io.dart';
 
-// import './mocl_local_data_source_test.mocks.dart';
+import 'mocl_list_data_source_test.mocks.dart';
 
-// @GenerateMocks([MainDataSource])
-void main() async {
+@GenerateMocks([BaseApi])
+void main() {
   const SiteType siteType = SiteType.damoang;
   late final ListDataSource listDataSource;
-  late final DamoangParser parser;
+  late final BaseParser parser;
+  late final MockBaseApi mockApiClient;
   late final LocalDatabase localDatabase;
-  late final ApiClient apiClient;
-  late final AppDatabase appDatabase;
+  late final ProviderContainer container;
 
   const mainItemModel = MainItemModel(
     orderBy: 1,
@@ -32,36 +45,68 @@ void main() async {
   );
 
   setUpAll(() async {
-    appDatabase = await $FloorAppDatabase.databaseBuilder('mocl.db').build();
-    apiClient = ApiClient.getInstance();
-    parser = DamoangParser();
-    localDatabase = LocalDatabase(database: appDatabase);
-    listDataSource = ListDataSourceImpl(
-      localDatabase: localDatabase,
-      apiClient: apiClient,
+    TestWidgetsFlutterBinding.ensureInitialized();
+
+    TestDefaultBinaryMessengerBinding.instance.defaultBinaryMessenger
+        .setMockMethodCallHandler(
+            const MethodChannel('plugins.flutter.io/path_provider'),
+            (MethodCall methodCall) async {
+      return './';
+    });
+
+    final Directory dir = await getApplicationDocumentsDirectory();
+    await dir.create(recursive: true);
+    final String dbPath = join(dir.path, 'mocl-sembast.db');
+    final Database database = await databaseFactoryIo.openDatabase(dbPath);
+    localDatabase = LocalDatabase(database: database);
+
+    parser = DamoangParser(true);
+    mockApiClient = MockBaseApi();
+    container = ProviderContainer(
+      overrides: [
+        listDatasourceProvider.overrideWithValue(ListDataSourceImpl(
+            apiClient: mockApiClient,
+            localDatabase: localDatabase,
+            parser: parser))
+      ],
     );
+
+    listDataSource = container.read(listDatasourceProvider);
   });
 
-  test('리스트 목록을 가져온다.', () async {
-    var item = mainItemModel.toEntity(siteType);
+  test('list remote datasource test. (success)', () async {
+    // arrange
+    provideDummyBuilder<Either<Failure, List<ListItem>>>(
+        (_, _) => Right(const <ListItem>[]));
+
+    when(mockApiClient.list(any, any, any, any, any, any))
+        .thenAnswer((_) async => Right(const <ListItem>[]));
+
+    final item = mainItemModel.toEntity(siteType);
     log("result=$item");
 
-    ResultSuccess<List<ListItem>> result = await listDataSource.getList(
-        item, 0, -1, parser) as ResultSuccess<List<ListItem>>;
-    log("result=${result.data.length}");
+    // act
+    final Either<Failure, List<ListItem>> result =
+        await listDataSource.getList(item, 0, LastId.empty(), SortType.recent);
+    // assert
+    expect(result.isRight(), true);
 
-    expect(result, isA<ResultSuccess<List<ListItem>>>());
+    expect(result.getRight().toNullable(), isA<List<ListItem>>());
   });
 
-  // test('리스트 목록을 가져온다. (에러)', () async {
-  //   var item = mainItemModel.toMainItem(siteType);
-  //   print("result=$item");
-  //
-  //   when(listDataSource.getList(item)).thenThrow(() => GetListFailure());
-  //
-  //   ResultFailure result = await listDataSource.getList(item) as ResultFailure;
-  //   print("result=${result.failure}");
-  //
-  //   expect(result, isA<ResultFailure>());
-  // });
+  test('list remote datasource test. (failed)', () async {
+    //arrange
+    provideDummyBuilder<Either<Failure, List<ListItem>>>(
+        (_, _) => Left(GetListFailure(message: '----')));
+
+    when(mockApiClient.list(any, any, any, any, any, any))
+        .thenAnswer((_) async => Left(GetListFailure(message: '----')));
+
+    //act
+    final MainItem item = mainItemModel.toEntity(siteType);
+    final Either<Failure, List<ListItem>> result =
+        await listDataSource.getList(item, 0, LastId.empty(), SortType.recent);
+    expect(result.isLeft(), true);
+    expect(result.getLeft().toNullable(), isA<GetListFailure>());
+  });
 }

@@ -1,29 +1,40 @@
 import 'dart:core';
 
+import 'package:fpdart/fpdart.dart';
+import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/features/mocl/data/datasources/list_data_source.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart';
+import 'package:mocl_flutter/features/mocl/domain/repositories/list_repository.dart';
 
-import '../../domain/entities/mocl_result.dart';
-import '../../domain/repositories/list_repository.dart';
-import '../datasources/list_data_source.dart';
-import '../datasources/parser/parser_factory.dart';
-
-class ListRepositoryImpl extends ListRepository {
+class ListRepositoryImpl implements ListRepository {
   final ListDataSource dataSource;
-  final ParserFactory parserFactory;
 
-  ListRepositoryImpl({
+  const ListRepositoryImpl({
     required this.dataSource,
-    required this.parserFactory,
   });
 
   @override
-  Future<Result> getList({
+  Future<Either<Failure, List<ListItem>>> getList({
     required MainItem item,
     required int page,
-    required int lastId,
-  }) => dataSource.getList(
-          item, page, lastId, parserFactory.createParser());
+    required LastId lastId,
+    required SortType sortType,
+  }) =>
+      dataSource.getList(item, page, lastId, sortType);
+
+  @override
+  Future<Either<Failure, List<ListItem>>> getSearchList({
+    required MainItem item,
+    required int page,
+    required LastId lastId,
+    required SortType sortType,
+    required String keyword,
+  }) =>
+      dataSource.getSearchList(item, page, lastId, sortType, keyword);
 
   @override
   Future<int> setReadFlag({
@@ -31,4 +42,18 @@ class ListRepositoryImpl extends ListRepository {
     required int boardId,
   }) =>
       dataSource.setReadFlag(siteType, boardId);
+
+  @override
+  Future<bool> getReadFlag({
+    required SiteType siteType,
+    required int boardId,
+  }) =>
+      dataSource.isReadFlag(siteType, boardId);
+
+  @override
+  Future<List<int>> getReadFlags({
+    required SiteType siteType,
+    required List<int> boardIds,
+  }) =>
+      dataSource.isReadFlags(siteType, boardIds);
 }
