@@ -93,7 +93,7 @@ class _DrawerSiteItem extends ConsumerWidget {
             onTap: onTap,
             trailing: ref.watch(isCurrentSiteTypeProvider(siteType))
                 ? Icon(Icons.check_outlined,
-                    color: Theme.of(context).indicatorColor)
+                    color: Theme.of(context).focusColor)
                 : null,
           ),
           const Divider(height: 1, thickness: 1, indent: 12, endIndent: 8),

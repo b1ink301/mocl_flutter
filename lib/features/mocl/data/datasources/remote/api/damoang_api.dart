@@ -27,10 +27,10 @@ class DamoangApi extends BaseApi {
         return response.statusCode == 200
             ? parser.detail(response)
             : Left(
-              GetDetailFailure(
-                message: 'response.statusCode = ${response.statusCode}',
-              ),
-            );
+                GetDetailFailure(
+                  message: 'response.statusCode = ${response.statusCode}',
+                ),
+              );
       });
 
   @override
@@ -57,10 +57,10 @@ class DamoangApi extends BaseApi {
     return response.statusCode == 200
         ? parser.list(response, lastId, item.text, isReads)
         : Left(
-          GetListFailure(
-            message: 'response.statusCode = ${response.statusCode}',
-          ),
-        );
+            GetListFailure(
+              message: 'response.statusCode = ${response.statusCode}',
+            ),
+          );
   });
 
   @override
@@ -97,10 +97,10 @@ class DamoangApi extends BaseApi {
     return response.statusCode == 200
         ? parser.list(response, lastId, item.text, isReads)
         : Left(
-          GetListFailure(
-            message: 'response.statusCode = ${response.statusCode}',
-          ),
-        );
+            GetListFailure(
+              message: 'response.statusCode = ${response.statusCode}',
+            ),
+          );
   });
 
   @override

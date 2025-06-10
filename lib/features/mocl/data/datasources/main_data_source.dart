@@ -38,12 +38,14 @@ class MainDataSourceImpl implements MainDataSource {
   @override
   Future<List<MainItem>> get(SiteType siteType) async {
     if (siteType == SiteType.naverCafe) {
-      final Either<Failure, List<MainItem>> result =
-          await apiClient.main(parser);
+      final Either<Failure, List<MainItem>> result = await apiClient.main(
+        parser,
+      );
       return result.getOrElse((Failure f) => throw f);
     } else {
-      final List<MainItemData> result =
-          await localDatabase.getMainData(siteType);
+      final List<MainItemData> result = await localDatabase.getMainData(
+        siteType,
+      );
       return result
           .map((MainItemData item) => item.toMainItemModel().toEntity(siteType))
           .toList();
@@ -51,10 +53,7 @@ class MainDataSourceImpl implements MainDataSource {
   }
 
   @override
-  Future<List<int>> set(
-    SiteType siteType,
-    List<MainItem> list,
-  ) async {
+  Future<List<int>> set(SiteType siteType, List<MainItem> list) async {
     final List<MainItemData> entities = list.map((item) {
       final MainItemModel data = MainItemMapper.fromEntityToModel(item);
       return MainItemMapper.fromModelToEntity(data);
@@ -64,13 +63,12 @@ class MainDataSourceImpl implements MainDataSource {
   }
 
   @override
-  Future<List<MainItemModel>> getAllFromJson(
-    SiteType siteType,
-  ) async {
+  Future<List<MainItemModel>> getAllFromJson(SiteType siteType) async {
     try {
       final String jsonPath = '${siteType.name.toLowerCase()}/board_link.json';
-      final List decodedData =
-          await readJsonFromAssets<List<dynamic>>(jsonPath);
+      final List decodedData = await readJsonFromAssets<List<dynamic>>(
+        jsonPath,
+      );
       return decodedData.map((item) => MainItemModel.fromJson(item)).toList();
     } on Exception catch (e) {
       debugPrint("getAllFromJson - ${e.toString()}");

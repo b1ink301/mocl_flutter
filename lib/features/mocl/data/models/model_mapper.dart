@@ -8,41 +8,41 @@ class MainItemMapper {
   MainItemMapper._();
 
   static MainItem toEntity(MainItemModel model, SiteType siteType) => MainItem(
-        siteType: siteType,
-        board: model.board,
-        type: model.type,
-        text: model.text,
-        url: model.url,
-        orderBy: model.orderBy,
-      );
+    siteType: siteType,
+    board: model.board,
+    type: model.type,
+    text: model.text,
+    url: model.url,
+    orderBy: model.orderBy,
+  );
 
   static MainItemModel toModel(MainItemData data) => MainItemModel(
-        siteType: data.siteType,
-        board: data.board,
-        type: data.type,
-        text: data.text,
-        url: data.url,
-        orderBy: data.orderBy,
-      );
+    siteType: data.siteType,
+    board: data.board,
+    type: data.type,
+    text: data.text,
+    url: data.url,
+    orderBy: data.orderBy,
+  );
 
   static MainItem fromDbToEntity(MainItemData data) =>
       data.toMainItemModel().toEntity(data.siteType);
 
   static MainItemData fromModelToEntity(MainItemModel model) => MainItemData(
-        siteType: model.siteType ?? SiteType.damoang,
-        board: model.board,
-        type: model.type,
-        text: model.text,
-        url: model.url,
-        orderBy: model.orderBy,
-      );
+    siteType: model.siteType ?? SiteType.damoang,
+    board: model.board,
+    type: model.type,
+    text: model.text,
+    url: model.url,
+    orderBy: model.orderBy,
+  );
 
   static MainItemModel fromEntityToModel(MainItem entity) => MainItemModel(
-        siteType: entity.siteType,
-        board: entity.board,
-        type: entity.type,
-        text: entity.text,
-        url: entity.url,
-        orderBy: entity.orderBy,
-      );
+    siteType: entity.siteType,
+    board: entity.board,
+    type: entity.type,
+    text: entity.text,
+    url: entity.url,
+    orderBy: entity.orderBy,
+  );
 }

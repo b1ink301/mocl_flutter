@@ -51,7 +51,7 @@ class _CheckBoxListTitleState extends State<CheckBoxListTitleWidget> {
               widget.onChanged?.call(_isChecked);
             }
           },
-          activeColor: Theme.of(context).indicatorColor,
+          activeColor: Theme.of(context).focusColor,
           checkColor: Colors.white,
           value: _isChecked,
         ),

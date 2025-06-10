@@ -18,7 +18,7 @@ class ListCupertinoAppBar extends ConsumerWidget {
         padding: const EdgeInsetsDirectional.only(start: 5, end: 10),
         trailing: PlatformPopupMenu(
           icon: Icon(
-            color: Theme.of(context).indicatorColor,
+            color: Theme.of(context).focusColor,
             size: 24,
             context.platformIcon(
               material: Icons.more_vert_rounded,

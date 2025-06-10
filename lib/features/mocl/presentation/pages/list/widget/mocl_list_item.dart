@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_providers.dart';
+import 'package:mocl_flutter/features/mocl/presentation/routes/mocl_routes.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/round_text_widget.dart';
 
@@ -27,10 +30,31 @@ class MoclListItem extends ConsumerWidget {
           contentPadding: _aosPadding,
         ),
     cupertino: (_, _) => CupertinoListTileData(padding: _iosPadding),
-    onTap: () => ref.read(listItemTapProvider(context)),
+    onTap: () => _handleItemTap(context, ref),
     title: const _TitleView(),
     subtitle: const _BottomView(),
   );
+
+  void _handleItemTap(BuildContext context, WidgetRef ref) {
+    final item = ref.watch(listItemProvider);
+    if (item == null) {
+      return;
+    }
+
+    try {
+      GoRouter.of(context).push(Routes.detail, extra: item).then((_) {
+        if (context.mounted) {
+          final readId = ref.read(readableStateNotifierProvider);
+          if (readId == item.id && !item.isRead) {
+            final index = ref.watch(listItemIndexProvider);
+            ref.read(listStateNotifierProvider.notifier).markAsRead(index);
+          }
+        }
+      });
+    } catch (e) {
+      debugPrint('_handleItemTap = $e');
+    }
+  }
 }
 
 class _TitleView extends ConsumerWidget {
@@ -46,7 +70,7 @@ class _TitleView extends ConsumerWidget {
 
     return PlatformText(
       title,
-      maxLines: 1,
+      maxLines: 3,
       overflow: TextOverflow.ellipsis,
       style: MoclTextStyles.of(context).title(isRead),
     );
@@ -62,7 +86,6 @@ class _BottomView extends StatelessWidget {
     child: SizedBox(
       height: 20,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           Expanded(
             child: Row(children: [_NickImage(), Flexible(child: _InfoText())]),
@@ -85,13 +108,14 @@ class _ReplyText extends ConsumerWidget {
       ),
     );
 
-    if (reply.isEmpty || reply == '0') {
-      return const SizedBox.shrink();
+    if (reply.isNotEmpty && reply != '0') {
+      return RoundTextWidget(
+        text: reply,
+        textStyle: MoclTextStyles.of(context).badge(isRead),
+      );
+    } else {
+      return SizedBox.shrink();
     }
-    return RoundTextWidget(
-      text: reply,
-      textStyle: MoclTextStyles.of(context).badge(isRead),
-    );
   }
 }
 
@@ -107,7 +131,7 @@ class _NickImage extends ConsumerWidget {
     );
 
     if (url.isEmpty) {
-      return const SizedBox.shrink();
+      return SizedBox.shrink();
     }
     return NickImageWidget(url: url);
   }
@@ -125,7 +149,7 @@ class _InfoText extends ConsumerWidget {
     );
 
     if (info.isEmpty) {
-      return const SizedBox.shrink();
+      return SizedBox.shrink();
     }
     return PlatformText(
       info,

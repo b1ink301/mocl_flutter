@@ -26,38 +26,32 @@ abstract class BaseApi with BaseAction {
 
   void init(cookiejar.CookieJar cookieJar) {
     _dio.httpClientAdapter = IOHttpClientAdapter(
-        createHttpClient: () =>
-            HttpClient()..badCertificateCallback = (_, __, ___) => true);
+      createHttpClient: () =>
+          HttpClient()..badCertificateCallback = (_, _, _) => true,
+    );
 
     _dio.interceptors.clear();
     _dio.interceptors.add(diocookie.CookieManager(cookieJar));
   }
 
-  Future<Response> getUri(
-    Uri uri, {
-    Map<String, String>? headers,
-  }) =>
-      _dio.getUri(
-        uri,
-        options: headers != null ? Options(headers: headers) : null,
-      );
+  Future<Response> getUri(Uri uri, {Map<String, String>? headers}) => _dio
+      .getUri(uri, options: headers != null ? Options(headers: headers) : null);
 
   Future<Response> get(
     String url, {
     Map<String, String>? headers,
     ResponseType? responseType,
     String? contentType,
-  }) =>
-      _dio.get(
-        url,
-        options: headers != null
-            ? Options(
-                headers: headers,
-                responseType: responseType,
-                contentType: contentType,
-              )
-            : null,
-      );
+  }) => _dio.get(
+    url,
+    options: headers != null
+        ? Options(
+            headers: headers,
+            responseType: responseType,
+            contentType: contentType,
+          )
+        : null,
+  );
 
   Future<Response> postUri(
     String url, {
@@ -65,26 +59,26 @@ abstract class BaseApi with BaseAction {
     Object? data,
     ResponseType? responseType,
     String? contentType,
-  }) =>
-      _dio.postUri(
-        Uri.parse(url),
-        data: data,
-        options: headers != null
-            ? Options(
-                headers: headers,
-                responseType: responseType,
-                contentType: contentType,
-              )
-            : null,
-      );
+  }) => _dio.postUri(
+    Uri.parse(url),
+    data: data,
+    options: headers != null
+        ? Options(
+            headers: headers,
+            responseType: responseType,
+            contentType: contentType,
+          )
+        : null,
+  );
 
   Future<InterceptorsWrapper> _buildInterceptorCookie(String baseUrl) async {
     final webview.CookieManager cookieManager =
         webview.CookieManager.instance();
     final webview.WebUri uri = webview.WebUri(baseUrl);
 
-    final List<webview.Cookie> cookies =
-        await cookieManager.getCookies(url: uri);
+    final List<webview.Cookie> cookies = await cookieManager.getCookies(
+      url: uri,
+    );
 
     final List<cookiejar.Cookie> dioCookies = cookies
         .map((cookie) => cookiejar.Cookie(cookie.name, cookie.value))
@@ -106,8 +100,9 @@ abstract class BaseApi with BaseAction {
     String baseUrl,
     Future<Either<Failure, T>> Function() action,
   ) async {
-    final InterceptorsWrapper interceptor =
-        await _buildInterceptorCookie(baseUrl);
+    final InterceptorsWrapper interceptor = await _buildInterceptorCookie(
+      baseUrl,
+    );
     try {
       _dio.interceptors.add(interceptor);
       return await action();

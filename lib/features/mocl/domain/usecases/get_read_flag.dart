@@ -10,23 +10,17 @@ class GetReadFlag implements UseCase<Future<bool>, GetReadFlagParams> {
 
   @override
   Future<bool> call(GetReadFlagParams params) => listRepository.getReadFlag(
-        siteType: params.siteType,
-        boardId: params.boardId,
-      );
+    siteType: params.siteType,
+    boardId: params.boardId,
+  );
 }
 
 class GetReadFlagParams extends Equatable {
   final SiteType siteType;
   final int boardId;
 
-  const GetReadFlagParams({
-    required this.siteType,
-    required this.boardId,
-  });
+  const GetReadFlagParams({required this.siteType, required this.boardId});
 
   @override
-  List<Object> get props => [
-        siteType,
-        boardId,
-      ];
+  List<Object> get props => [siteType, boardId];
 }

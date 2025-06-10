@@ -6,23 +6,16 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 
 abstract class DetailDataSource {
-  Future<Either<Failure, Details>> getDetail(
-    ListItem item,
-  );
+  Future<Either<Failure, Details>> getDetail(ListItem item);
 }
 
 class DetailDataSourceImpl implements DetailDataSource {
   final BaseApi apiClient;
   final BaseParser parser;
 
-  const DetailDataSourceImpl({
-    required this.apiClient,
-    required this.parser,
-  });
+  const DetailDataSourceImpl({required this.apiClient, required this.parser});
 
   @override
-  Future<Either<Failure, Details>> getDetail(
-    ListItem item,
-  ) =>
+  Future<Either<Failure, Details>> getDetail(ListItem item) =>
       apiClient.detail(item, parser);
 }

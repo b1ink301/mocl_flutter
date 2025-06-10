@@ -72,7 +72,7 @@ class MoclTheme {
           ),
         ),
         // listTileTheme: ListTileThemeData(),
-        indicatorColor: const Color(0xFF0E7EA3),
+        focusColor: const Color(0xFF0E7EA3),
         highlightColor: const Color(0xFFAAAAAA),
         primaryColor: const Color(0xFF595D66),
         scaffoldBackgroundColor: const Color(0xFFEAEBE6),
@@ -125,7 +125,7 @@ class MoclTheme {
           space: 1,
           thickness: 1,
         ),
-        indicatorColor: const Color(0xFFFF4081),
+        focusColor: const Color(0xFFFF4081),
         highlightColor: const Color(0xFF888888),
         textTheme: const TextTheme(
           bodyMedium: TextStyle(color: Color(0xFFEEEEEE), fontSize: 17),
