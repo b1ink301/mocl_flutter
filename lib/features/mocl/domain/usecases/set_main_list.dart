@@ -14,24 +14,15 @@ class SetMainList
 
   @override
   Future<Either<Failure, List<int>>> call(SetMainParams params) =>
-      mainRepository.setMainList(
-        siteType: params.siteType,
-        list: params.list,
-      );
+      mainRepository.setMainList(siteType: params.siteType, list: params.list);
 }
 
 class SetMainParams extends Equatable {
   final SiteType siteType;
   final List<MainItem> list;
 
-  const SetMainParams({
-    required this.siteType,
-    required this.list,
-  });
+  const SetMainParams({required this.siteType, required this.list});
 
   @override
-  List<Object> get props => [
-        siteType,
-        list,
-      ];
+  List<Object> get props => [siteType, list];
 }

@@ -19,9 +19,9 @@ class MoclListView extends ConsumerStatefulWidget {
 class MoclListViewState extends ConsumerState<MoclListView> {
   @override
   Widget build(BuildContext context) => RefreshIndicator.adaptive(
-    color: Theme.of(context).indicatorColor,
-    onRefresh:
-        () async => ref.read(listStateNotifierProvider.notifier).refresh(),
+    color: Theme.of(context).focusColor,
+    onRefresh: () async =>
+        ref.read(listStateNotifierProvider.notifier).refresh(),
     child: NotificationListener<ScrollNotification>(
       onNotification: (ScrollNotification notification) {
         if (notification is ScrollEndNotification &&
@@ -37,7 +37,7 @@ class MoclListViewState extends ConsumerState<MoclListView> {
       },
       child: const CustomScrollView(
         physics: ClampingScrollPhysics(),
-        cacheExtent: 500,
+        cacheExtent: 1000,
         slivers: <Widget>[_ListAppBar(), _ListBody()],
       ),
     ),
@@ -71,8 +71,8 @@ class _ListBody extends ConsumerWidget {
     final (count, hasReachedMax, error) = ref.watch(
       listStateNotifierProvider.select(
         (value) => value.when(
-          data:
-              (state) => (state.items.length, state.hasReachedMax, state.error),
+          data: (state) =>
+              (state.items.length, state.hasReachedMax, state.error),
           loading: () => (0, false, null),
           error: (err, stack) => (0, false, err.toString()),
         ),
@@ -88,18 +88,20 @@ class _ListBody extends ConsumerWidget {
       addSemanticIndexes: false,
       addAutomaticKeepAlives: false,
       itemCount: count + 1,
-      itemBuilder:
-          (_, int index) =>
-              count == index
-                  ? _buildFooter(
-                    error,
-                    hasReachedMax,
-                    ref.read(listStateNotifierProvider.notifier).retry,
-                  )
-                  : ProviderScope(
-                    overrides: [listItemIndexProvider.overrideWithValue(index)],
-                    child: const MoclListItem(),
-                  ),
+      itemBuilder: (_, index) {
+        if (count == index) {
+          return _buildFooter(
+            error,
+            hasReachedMax,
+            ref.read(listStateNotifierProvider.notifier).retry,
+          );
+        } else {
+          return ProviderScope(
+            overrides: [listItemIndexProvider.overrideWithValue(index)],
+            child: const MoclListItem(),
+          );
+        }
+      },
       separatorBuilder: (_, _) => const DividerWidget(),
     );
   }

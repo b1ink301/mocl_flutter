@@ -9,51 +9,68 @@ class SettingsView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => SliverToBoxAdapter(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            ref.read(getAppVersionProvider).maybeWhen(
-                orElse: () => _buildLoadingView(context),
-                data: (version) => Padding(
-                      padding: const EdgeInsets.symmetric(vertical: 16.0),
-                      child: Text(
-                        version,
-                        style: TextStyle(
-                          fontSize: 17,
-                          color: Theme.of(context).indicatorColor,
-                        ),
-                      ),
-                    )),
-            const DividerWidget(),
-            ref.watch(sizeCacheDirNotifierProvider).maybeWhen(
-                orElse: () => _buildLoadingView(context),
-                data: (data) => InkWell(
-                      onTap: () => ref
-                          .read(sizeCacheDirNotifierProvider.notifier)
-                          .clear(),
-                      child: Container(
-                        width: double.infinity,
-                        height: 58,
-                        alignment: Alignment.center,
-                        child: Text(
-                          '캐시 데이터 삭제 ($data)',
-                          style:
-                              Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                    color: Theme.of(context).indicatorColor,
-                                  ),
-                        ),
-                      ),
-                    )),
-            const DividerWidget(),
-          ],
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        ref
+            .read(getAppVersionProvider)
+            .maybeWhen(
+              orElse: () => _buildLoadingView(context),
+              data: (version) => SizedBox(
+                height: 58,
+                child: Center(
+                  child: Text(
+                    '버전 $version',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
+                ),
+              ),
+            ),
+        const DividerWidget(),
+        ref
+            .watch(sizeCacheDirNotifierProvider)
+            .maybeWhen(
+              orElse: () => _buildLoadingView(context),
+              data: (data) => InkWell(
+                onTap: () =>
+                    ref.read(sizeCacheDirNotifierProvider.notifier).clear(),
+                child: SizedBox(
+                  height: 58,
+                  child: Center(
+                    child: Text(
+                      '캐시 데이터 삭제 ($data)',
+                      style: Theme.of(context).textTheme.bodyMedium,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        const DividerWidget(),
+        SizedBox(
+          height: 58,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('닉 이미지 보기', style: Theme.of(context).textTheme.bodyMedium),
+              Checkbox(
+                value: ref.watch(showNickImageNotifierProvider),
+                activeColor: Theme.of(context).focusColor,
+                onChanged: (bool? value) => {
+                  ref.read(showNickImageNotifierProvider.notifier).toggle(),
+                },
+              ),
+            ],
+          ),
         ),
-      );
+        const DividerWidget(),
+      ],
+    ),
+  );
 
   Widget _buildLoadingView(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-        child: Center(
-            child: CircularProgressIndicator(
-          color: Theme.of(context).indicatorColor,
-        )),
-      );
+    padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+    child: Center(
+      child: CircularProgressIndicator(color: Theme.of(context).focusColor),
+    ),
+  );
 }

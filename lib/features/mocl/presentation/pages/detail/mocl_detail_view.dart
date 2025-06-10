@@ -56,7 +56,7 @@ class _DetailView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final ThemeData theme = Theme.of(context);
-    final String hexColor = theme.indicatorColor.stringHexColor;
+    final String hexColor = theme.focusColor.stringHexColor;
     final TextStyle? bodySmall = theme.textTheme.bodySmall;
     final TextStyle? bodyMedium = theme.textTheme.bodyMedium;
 
@@ -105,8 +105,7 @@ class _DetailView extends ConsumerWidget {
           ...comments,
           const _DividerWidget(),
           _RefreshButton(
-            onRefresh:
-                () => ref.read(detailsNotifierProvider.notifier).refresh(),
+            onRefresh: ref.read(detailsNotifierProvider.notifier).refresh,
             bodyMedium: bodyMedium,
           ),
           const _DividerWidget(),
@@ -213,21 +212,19 @@ class _Body extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => SliverToBoxAdapter(
-    child: HtmlWidget(
-      detail.bodyHtml,
-      onLoadingBuilder: (_, _, _) => const LoadingWidget(),
-      customStylesBuilder: (element) {
-        if (element.localName == 'a') {
-          return {'color': hexColor, 'text-decoration': 'underline'};
-        }
-        return null;
-      },
-      textStyle: bodyMedium,
-      renderMode: RenderMode.column,
-      onTapUrl: (url) => onTapUrl(url),
-      onTapImage: (data) => onTapUrl(data.sources.first.url),
-    ),
+  Widget build(BuildContext context) => HtmlWidget(
+    detail.bodyHtml,
+    onLoadingBuilder: (_, _, _) => const LoadingWidget(),
+    customStylesBuilder: (element) {
+      if (element.localName == 'a') {
+        return {'color': hexColor, 'text-decoration': 'underline'};
+      }
+      return null;
+    },
+    textStyle: bodyMedium,
+    renderMode: RenderMode.sliverList,
+    onTapUrl: (url) => onTapUrl(url),
+    onTapImage: (data) => onTapUrl(data.sources.first.url),
   );
 }
 
@@ -246,7 +243,7 @@ class _CommentHeader extends StatelessWidget {
         child: PlatformText(
           '댓글 ($commentCount)',
           style: bodyMedium?.copyWith(
-            color: Theme.of(context).indicatorColor,
+            color: Theme.of(context).focusColor,
             fontSize: 15,
           ),
         ),
@@ -384,7 +381,7 @@ class _RefreshButton extends StatelessWidget {
         alignment: Alignment.center,
         child: PlatformText(
           '새로고침',
-          style: bodyMedium?.copyWith(color: Theme.of(context).indicatorColor),
+          style: bodyMedium?.copyWith(color: Theme.of(context).focusColor),
         ),
       ),
     ),

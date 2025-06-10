@@ -10,23 +10,17 @@ class SetReadFlag implements UseCase<Future<int>, SetReadFlagParams> {
 
   @override
   Future<int> call(SetReadFlagParams params) => listRepository.setReadFlag(
-        siteType: params.siteType,
-        boardId: params.boardId,
-      );
+    siteType: params.siteType,
+    boardId: params.boardId,
+  );
 }
 
 class SetReadFlagParams extends Equatable {
   final SiteType siteType;
   final int boardId;
 
-  const SetReadFlagParams({
-    required this.siteType,
-    required this.boardId,
-  });
+  const SetReadFlagParams({required this.siteType, required this.boardId});
 
   @override
-  List<Object> get props => [
-        siteType,
-        boardId,
-      ];
+  List<Object> get props => [siteType, boardId];
 }

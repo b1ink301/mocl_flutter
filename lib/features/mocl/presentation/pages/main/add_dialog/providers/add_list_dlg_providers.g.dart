@@ -11,19 +11,19 @@ String _$addListDlgNotifierHash() =>
 
 /// See also [AddListDlgNotifier].
 @ProviderFor(AddListDlgNotifier)
-final addListDlgNotifierProvider = AutoDisposeAsyncNotifierProvider<
-  AddListDlgNotifier,
-  List<CheckableMainItem>
->.internal(
-  AddListDlgNotifier.new,
-  name: r'addListDlgNotifierProvider',
-  debugGetCreateSourceHash:
-      const bool.fromEnvironment('dart.vm.product')
+final addListDlgNotifierProvider =
+    AutoDisposeAsyncNotifierProvider<
+      AddListDlgNotifier,
+      List<CheckableMainItem>
+    >.internal(
+      AddListDlgNotifier.new,
+      name: r'addListDlgNotifierProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
           ? null
           : _$addListDlgNotifierHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
 
 typedef _$AddListDlgNotifier =
     AutoDisposeAsyncNotifier<List<CheckableMainItem>>;

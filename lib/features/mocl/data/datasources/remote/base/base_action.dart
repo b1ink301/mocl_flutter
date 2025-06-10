@@ -34,5 +34,8 @@ mixin BaseAction {
   );
 
   Future<Either<Failure, List<CommentItem>>> comments(
-      ListItem item, BaseParser parser, int page);
+    ListItem item,
+    BaseParser parser,
+    int page,
+  );
 }

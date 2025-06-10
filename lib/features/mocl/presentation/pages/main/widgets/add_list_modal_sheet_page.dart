@@ -55,7 +55,7 @@ class AddListModalSheetPage extends SliverWoltModalSheetPage {
                                   notifier.onChanged(isChecked, index);
                                 });
                           },
-                          separatorBuilder: (_, __) => DividerWidget(),
+                          separatorBuilder: (_, _) => DividerWidget(),
                         ),
                     orElse: () => SliverToBoxAdapter(child: LoadingWidget()));
               },

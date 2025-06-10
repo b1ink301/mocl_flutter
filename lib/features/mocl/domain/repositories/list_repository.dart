@@ -22,15 +22,9 @@ abstract class ListRepository {
     required String keyword,
   });
 
-  Future<int> setReadFlag({
-    required SiteType siteType,
-    required int boardId,
-  });
+  Future<int> setReadFlag({required SiteType siteType, required int boardId});
 
-  Future<bool> getReadFlag({
-    required SiteType siteType,
-    required int boardId,
-  });
+  Future<bool> getReadFlag({required SiteType siteType, required int boardId});
 
   Future<List<int>> getReadFlags({
     required SiteType siteType,

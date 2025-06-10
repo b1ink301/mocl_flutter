@@ -16,9 +16,7 @@ class GetSearchList
   const GetSearchList({required this.listRepository});
 
   @override
-  Future<Either<Failure, List<ListItem>>> call(
-    GetSearchListParams params,
-  ) =>
+  Future<Either<Failure, List<ListItem>>> call(GetSearchListParams params) =>
       listRepository.getSearchList(
         item: params.mainItem,
         page: params.page,

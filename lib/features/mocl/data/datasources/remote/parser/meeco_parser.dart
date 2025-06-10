@@ -168,7 +168,7 @@ class MeecoParser implements BaseParser {
       parsedTime = time;
     }
 
-    final info = BaseParser.parserInfo(nickName, parsedTime, viewCount);
+    final info = BaseParser.parserInfo(false, nickName, parsedTime, viewCount);
 
     final detail = Details(
       title: title,
@@ -304,7 +304,7 @@ class MeecoParser implements BaseParser {
               '';
 
       final hasImage = false;
-      final info = BaseParser.parserInfo(nickName, parsedTime, hit);
+      final info = BaseParser.parserInfo(false, nickName, parsedTime, hit);
 
       final parsedItem = {
         'id': id,
