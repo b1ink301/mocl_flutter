@@ -1,6 +1,6 @@
 # mocl_flutter
 
-A new Flutter project.
+간단한 눈팅 앱으로 Clien, Damoang, NaverCafe, Meeco, Reddit, TheKoo 사이트 제한적으로 지원합니다.
 
 ## Getting Started
 
