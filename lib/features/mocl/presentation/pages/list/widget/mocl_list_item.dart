@@ -24,11 +24,10 @@ class MoclListItem extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => PlatformListTile(
-    material:
-        (_, _) => MaterialListTileData(
-          minVerticalPadding: 10,
-          contentPadding: _aosPadding,
-        ),
+    material: (_, _) => MaterialListTileData(
+      minVerticalPadding: 10,
+      contentPadding: _aosPadding,
+    ),
     cupertino: (_, _) => CupertinoListTileData(padding: _iosPadding),
     onTap: () => _handleItemTap(context, ref),
     title: const _TitleView(),
@@ -88,7 +87,12 @@ class _BottomView extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Row(children: [_NickImage(), Flexible(child: _InfoText())]),
+            child: Row(
+              children: [
+                _NickImage(),
+                Flexible(child: _InfoText()),
+              ],
+            ),
           ),
           _ReplyText(),
         ],

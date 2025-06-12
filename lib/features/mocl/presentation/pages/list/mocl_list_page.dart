@@ -26,8 +26,8 @@ class MoclListPage extends ConsumerWidget {
             appbarTextStyleProvider.overrideWithValue(
               Platform.isIOS
                   ? CupertinoTheme.of(
-                    context,
-                  ).textTheme.navLargeTitleTextStyle.copyWith(height: 1.3)
+                      context,
+                    ).textTheme.navLargeTitleTextStyle.copyWith(height: 1.3)
                   : Theme.of(context).textTheme.labelMedium!,
             ),
             mainItemProvider.overrideWithValue(item),
@@ -40,18 +40,23 @@ class MoclListPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final child = PlatformScaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: const SafeArea(top: false,left: false, right: false, child: MoclListView()),
+      body: const SafeArea(
+        top: false,
+        left: false,
+        right: false,
+        child: MoclListView(),
+      ),
     );
 
     return Platform.isMacOS
         ? Listener(
-          onPointerDown: (event) {
-            if (event.buttons == kSecondaryMouseButton) {
-              GoRouter.of(context).pop();
-            }
-          },
-          child: child,
-        )
+            onPointerDown: (event) {
+              if (event.buttons == kSecondaryMouseButton) {
+                GoRouter.of(context).pop();
+              }
+            },
+            child: child,
+          )
         : child;
   }
 }
