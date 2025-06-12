@@ -82,30 +82,29 @@ class SearchResultViewState extends ConsumerState<SearchResultView> {
 
   @override
   Widget build(BuildContext context) {
-    final AsyncValue<Either<Failure, List<ListItem>>> resultAsync = ref.watch(reqSearchListDataProvider);
+    final AsyncValue<Either<Failure, List<ListItem>>> resultAsync = ref.watch(
+      reqSearchListDataProvider,
+    );
     return resultAsync.when(
-      data:
-          (Either<Failure, List<ListItem>> data) => data.fold(
-            (Failure f) => PlatformText(
-              f.message,
-              style: const TextStyle(color: Colors.black),
-            ),
-            (List<ListItem> items) => ListView.separated(
-              itemBuilder:
-                  (BuildContext context, int index) => ProviderScope(
-                    overrides: [listItemIndexProvider.overrideWithValue(index)],
-                    child: const MoclListItem(),
-                  ),
-              separatorBuilder:
-                  (BuildContext context, int index) => const DividerWidget(),
-              itemCount: items.length,
-            ),
+      data: (Either<Failure, List<ListItem>> data) => data.fold(
+        (Failure f) => PlatformText(
+          f.message,
+          style: const TextStyle(color: Colors.black),
+        ),
+        (List<ListItem> items) => ListView.separated(
+          itemBuilder: (BuildContext context, int index) => ProviderScope(
+            overrides: [listItemIndexProvider.overrideWithValue(index)],
+            child: const MoclListItem(),
           ),
-      error:
-          (e, s) => PlatformText(
-            e.toString(),
-            style: const TextStyle(color: Colors.black),
-          ),
+          separatorBuilder: (BuildContext context, int index) =>
+              const DividerWidget(),
+          itemCount: items.length,
+        ),
+      ),
+      error: (e, s) => PlatformText(
+        e.toString(),
+        style: const TextStyle(color: Colors.black),
+      ),
       loading: () => const LoadingWidget(),
     );
   }
