@@ -141,7 +141,8 @@ class ListStateNotifier extends _$ListStateNotifier {
   void retry() => loadMore();
 
   void refresh() {
-    ref.invalidateSelf();
+    state = AsyncData(ListState.initial(_initialPage()));
+    // ref.invalidateSelf();
     initialize();
   }
 
