@@ -27,7 +27,7 @@ abstract class BaseApi with BaseAction {
   void init(cookiejar.CookieJar cookieJar) {
     _dio.httpClientAdapter = IOHttpClientAdapter(
         createHttpClient: () =>
-            HttpClient()..badCertificateCallback = (_, __, ___) => true);
+            HttpClient()..badCertificateCallback = (_, _, _) => true);
 
     _dio.interceptors.clear();
     _dio.interceptors.add(diocookie.CookieManager(cookieJar));

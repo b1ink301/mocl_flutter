@@ -44,7 +44,7 @@ void main() async {
   test('상세 데이터를 가져온다. (성공)', () async {
     // arrange
     provideDummyBuilder<Result<Details>>(
-        (_, __) => ResultSuccess(Details.empty()));
+        (_, _) => ResultSuccess(Details.empty()));
 
     when(detailDataSource.getDetail(any))
         .thenAnswer((_) => Future.value(ResultSuccess(Details.empty())));
@@ -59,7 +59,7 @@ void main() async {
   test('상세 데이터를 가져온다. (에러)', () async {
     // arrange
     provideDummyBuilder<Result<Details>>(
-        (_, __) => ResultSuccess(Details.empty()));
+        (_, _) => ResultSuccess(Details.empty()));
 
     when(detailDataSource.getDetail(any)).thenAnswer(
         (_) => Future.value(ResultFailure(GetDetailFailure(message: '---'))));

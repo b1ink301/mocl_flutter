@@ -48,7 +48,7 @@ class MainView extends StatelessWidget {
         itemCount: items.length,
         itemBuilder: (BuildContext context, int index) =>
             _buildListItem(context, items[index], textStyle),
-        separatorBuilder: (_, __) => const DividerWidget(),
+        separatorBuilder: (_, _) => const DividerWidget(),
       );
 
   Widget _buildListItem(
