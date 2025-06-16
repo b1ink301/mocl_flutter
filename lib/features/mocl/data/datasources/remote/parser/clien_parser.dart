@@ -320,11 +320,10 @@ class ClienParser implements BaseParser {
                     .forEach((element) => element.remove());
               }
 
-              final body =
-                  bodyElements
-                      .map((item) => item.innerHtml.trim())
-                      .join()
-                      .trim();
+              final body = bodyElements
+                  .map((item) => item.innerHtml.trim())
+                  .join()
+                  .trim();
               var parsedTime = '';
               try {
                 var dateTime = parseDateTime(time);
@@ -332,8 +331,9 @@ class ClienParser implements BaseParser {
               } catch (e) {
                 parsedTime = time;
               }
-              final info =
-                  nickName.isNotEmpty ? '$nickName ・ $parsedTime' : parsedTime;
+              final info = nickName.isNotEmpty
+                  ? '$nickNameㆍ$parsedTime'
+                  : parsedTime;
 
               return CommentItem(
                 id: index++,
@@ -567,27 +567,26 @@ class ClienParser implements BaseParser {
     final readStatusResponse = await readStatusPort.first as ReadStatusResponse;
     readStatusPort.close();
 
-    final resultList =
-        parsedItems
-            .map(
-              (item) => ListItem(
-                id: item['id'],
-                title: item['title'],
-                reply: item['reply'],
-                category: item['category'],
-                time: item['time'],
-                info: item['info'],
-                url: item['url'],
-                board: item['board'],
-                boardTitle: item['boardTitle'],
-                like: item['like'],
-                hit: item['hit'],
-                userInfo: item['userInfo'],
-                hasImage: item['hasImage'],
-                isRead: readStatusResponse.statuses.contains(item['id']),
-              ),
-            )
-            .toList();
+    final resultList = parsedItems
+        .map(
+          (item) => ListItem(
+            id: item['id'],
+            title: item['title'],
+            reply: item['reply'],
+            category: item['category'],
+            time: item['time'],
+            info: item['info'],
+            url: item['url'],
+            board: item['board'],
+            boardTitle: item['boardTitle'],
+            like: item['like'],
+            hit: item['hit'],
+            userInfo: item['userInfo'],
+            hasImage: item['hasImage'],
+            isRead: readStatusResponse.statuses.contains(item['id']),
+          ),
+        )
+        .toList();
 
     replyPort.send(resultList);
   }

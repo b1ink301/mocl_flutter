@@ -44,7 +44,8 @@ class _CheckBoxListTitleState extends State<CheckBoxListTitleWidget> {
             widget.onChanged?.call(_isChecked, widget.object);
           });
         },
-        activeColor: Theme.of(context).highlightColor,
+      contentPadding: EdgeInsets.symmetric(horizontal: 10.0),
+        activeColor: Theme.of(context).focusColor,
         checkColor: Colors.white,
         isThreeLine: false,
         selected: _isChecked,

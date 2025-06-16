@@ -36,8 +36,9 @@ class MainPage extends StatelessWidget {
 
   Widget _buildAppBar(BuildContext context) {
     final SiteTypeBloc siteType = context.watch<SiteTypeBloc>();
-    final Color? backgroundColor =
-        Theme.of(context).appBarTheme.backgroundColor;
+    final Color? backgroundColor = Theme.of(
+      context,
+    ).appBarTheme.backgroundColor;
 
     return SliverAppBar(
       title: _buildTitle(context, siteType.title),
@@ -49,19 +50,16 @@ class MainPage extends StatelessWidget {
       pinned: false,
       centerTitle: false,
       toolbarHeight: 64,
-      actions:
-          SiteType.naverCafe == siteType.state
-              ? null
-              : [
-                Builder(
-                  builder:
-                      (BuildContext context) => IconButton(
-                        onPressed:
-                            () => _handleAddButton(context, siteType.state),
-                        icon: const Icon(Icons.add),
-                      ),
+      actions: SiteType.naverCafe == siteType.state
+          ? null
+          : [
+              Builder(
+                builder: (BuildContext context) => IconButton(
+                  onPressed: () => _handleAddButton(context, siteType.state),
+                  icon: const Icon(Icons.add),
                 ),
-              ],
+              ),
+            ],
     );
   }
 

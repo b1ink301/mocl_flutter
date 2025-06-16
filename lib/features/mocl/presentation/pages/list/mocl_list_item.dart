@@ -33,30 +33,30 @@ class MoclListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) => BlocBuilder<ListItemCubit, ListItem>(
     buildWhen: (previous, current) => previous.isRead != current.isRead,
-    builder:
-        (context, item) => InkWell(
-          onTap: () => _onTap(context, item),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              const SizedBox(height: 10),
-              Text(
-                item.title,
-                maxLines: 3,
-                overflow: TextOverflow.ellipsis,
-                style: MoclTextStyles.of(context).title(item.isRead),
-              ),
-              const SizedBox(height: 10),
-              _BottomWidget(
-                reply: item.reply,
-                info: item.info,
-                isRead: item.isRead,
-              ),
-              const SizedBox(height: 10),
-            ],
-          ),
+    builder: (context, item) => InkWell(
+      onTap: () => _onTap(context, item),
+      child: Padding(
+        padding: const EdgeInsets.only(left: 16, right: 8, top: 10, bottom: 10),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisAlignment: MainAxisAlignment.start,
+          spacing: 10,
+          children: [
+            Text(
+              item.title,
+              maxLines: 3,
+              overflow: TextOverflow.ellipsis,
+              style: MoclTextStyles.of(context).title(item.isRead),
+            ),
+            _BottomWidget(
+              reply: item.reply,
+              info: item.info,
+              isRead: item.isRead,
+            ),
+          ],
         ),
+      ),
+    ),
   );
 }
 

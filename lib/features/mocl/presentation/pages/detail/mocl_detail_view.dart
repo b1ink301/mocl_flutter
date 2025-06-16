@@ -20,20 +20,19 @@ class DetailView extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       BlocBuilder<DetailViewBloc, DetailViewState>(
-        builder:
-            (context, state) => switch (state) {
-              DetailSuccess() => _DetailView(detail: state.detail),
-              DetailFailed() => SliverFillRemaining(
-                hasScrollBody: false,
-                child: Padding(
-                  padding: const EdgeInsets.all(12.0),
-                  child: Center(child: MessageWidget(message: state.message)),
-                ),
-              ),
-              _ => const SliverToBoxAdapter(
-                child: Column(children: [LoadingWidget(), DividerWidget()]),
-              ),
-            },
+        builder: (context, state) => switch (state) {
+          DetailSuccess() => _DetailView(detail: state.detail),
+          DetailFailed() => SliverFillRemaining(
+            hasScrollBody: false,
+            child: Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Center(child: MessageWidget(message: state.message)),
+            ),
+          ),
+          _ => const SliverToBoxAdapter(
+            child: Column(children: [LoadingWidget(), DividerWidget()]),
+          ),
+        },
       );
 }
 
@@ -64,14 +63,14 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
 
   List<Widget>? _buildLikeView(BuildContext context, TextStyle bodySmall) =>
       detail.likeCount.isNotEmpty && detail.likeCount != '0'
-          ? [
-            const SizedBox(width: 10),
-            Icon(Icons.favorite_outline, color: bodySmall.color, size: 17),
-            const SizedBox(width: 4),
-            Text(detail.likeCount, style: bodySmall),
-            const SizedBox(width: 10),
-          ]
-          : null;
+      ? [
+          const SizedBox(width: 10),
+          Icon(Icons.favorite_outline, color: bodySmall.color, size: 17),
+          const SizedBox(width: 4),
+          Text(detail.likeCount, style: bodySmall),
+          const SizedBox(width: 10),
+        ]
+      : null;
 
   @override
   Widget build(
@@ -120,7 +119,7 @@ class _DetailContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final String hexColor = theme.highlightColor.stringHexColor;
+    final String hexColor = theme.focusColor.stringHexColor;
     final TextStyle? bodySmall = theme.textTheme.bodySmall;
     final TextStyle? bodyMedium = theme.textTheme.bodyMedium;
     final DetailViewBloc bloc = context.read<DetailViewBloc>();
@@ -171,7 +170,7 @@ class _Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) => HtmlWidget(
     detail.bodyHtml,
-    onLoadingBuilder: (_, __, ___) => const LoadingWidget(),
+    onLoadingBuilder: (_, _, _) => const LoadingWidget(),
     // onErrorBuilder: (context, element, error) {
     //   debugPrint('element.innerHtml=${element.innerHtml}');
     //   return HtmlWidget(element.innerHtml);
@@ -267,7 +266,7 @@ class _CommentHeader extends StatelessWidget {
       child: Text(
         '댓글 ($commentCount)',
         style: bodyMedium?.copyWith(
-          color: Theme.of(context).highlightColor,
+          color: Theme.of(context).focusColor,
           fontSize: 15,
         ),
       ),
@@ -293,18 +292,17 @@ class _CommentList extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ListView.separated(
     padding: EdgeInsets.zero,
-    separatorBuilder: (_, __) => const Divider(),
+    separatorBuilder: (_, _) => const Divider(),
     shrinkWrap: true,
     physics: const ClampingScrollPhysics(),
     itemCount: comments.length,
-    itemBuilder:
-        (_, index) => _CommentItem(
-          comment: comments[index],
-          bodySmall: bodySmall,
-          bodyMedium: bodyMedium,
-          hexColor: hexColor,
-          openUrl: openUrl,
-        ),
+    itemBuilder: (_, index) => _CommentItem(
+      comment: comments[index],
+      bodySmall: bodySmall,
+      bodyMedium: bodyMedium,
+      hexColor: hexColor,
+      openUrl: openUrl,
+    ),
   );
 }
 
@@ -328,30 +326,32 @@ class _CommentItem extends StatelessWidget {
     // final userInfo = comment.userInfo;
     final left = comment.isReply ? 16.0 : 0.0;
 
-    final likeView =
-        comment.likeCount.isNotEmpty && comment.likeCount != '0'
-            ? [
-              const Spacer(),
-              Icon(Icons.favorite_outline, color: bodySmall!.color, size: 17),
-              const SizedBox(width: 4),
-              Text(comment.likeCount, style: bodySmall),
-              const SizedBox(width: 4),
-            ]
-            : [];
+    final likeView = comment.likeCount.isNotEmpty && comment.likeCount != '0'
+        ? [
+            const Spacer(),
+            Icon(Icons.favorite_outline, color: bodySmall!.color, size: 17),
+            const SizedBox(width: 4),
+            Text(comment.likeCount, style: bodySmall),
+            const SizedBox(width: 4),
+          ]
+        : [];
 
     return ListTile(
       key: ValueKey(comment.id),
       contentPadding: EdgeInsets.only(left: left, top: 4, bottom: 4),
       title: Row(
         mainAxisSize: MainAxisSize.min,
-        children: [Text(comment.info, style: bodySmall), ...likeView],
+        children: [
+          Text(comment.info, style: bodySmall),
+          ...likeView,
+        ],
       ),
       subtitle: Padding(
         padding: const EdgeInsets.only(top: 8.0),
         child: HtmlWidget(
           comment.bodyHtml,
-          onLoadingBuilder:
-              (context, element, progress) => const LoadingWidget(),
+          onLoadingBuilder: (context, element, progress) =>
+              const LoadingWidget(),
           textStyle: bodyMedium,
           customStylesBuilder: (element) {
             if (element.localName == 'a') {
@@ -382,7 +382,7 @@ class _RefreshButton extends StatelessWidget {
       alignment: Alignment.center,
       child: Text(
         '새로고침',
-        style: bodyMedium?.copyWith(color: Theme.of(context).highlightColor),
+        style: bodyMedium?.copyWith(color: Theme.of(context).focusColor),
       ),
     ),
   );

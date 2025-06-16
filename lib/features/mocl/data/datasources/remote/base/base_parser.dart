@@ -25,8 +25,7 @@ abstract class BaseParser {
     int page,
     SortType sortType,
     LastId lastId,
-  ) =>
-      throw UnimplementedError('urlByList');
+  ) => throw UnimplementedError('urlByList');
 
   String urlBySearchList(
     String url,
@@ -34,22 +33,12 @@ abstract class BaseParser {
     int page,
     String keyword,
     LastId lastId,
-  ) =>
-      throw UnimplementedError('urlBySearchList');
+  ) => throw UnimplementedError('urlBySearchList');
 
-  String urlByDetail(
-    String url,
-    String board,
-    int id,
-  ) =>
+  String urlByDetail(String url, String board, int id) =>
       throw UnimplementedError('urlByDetail');
 
-  String urlByComments(
-    String url,
-    String board,
-    int id,
-    int page,
-  ) =>
+  String urlByComments(String url, String board, int id, int page) =>
       throw UnimplementedError('urlByComments');
 
   Future<Result<List<MainItem>>> main(Response response) =>
@@ -77,14 +66,14 @@ abstract class BaseParser {
     }
     if (parsedTime.isNotEmpty) {
       if (info.isNotEmpty) {
-        info += " ・ $parsedTime";
+        info += "ㆍ$parsedTime";
       } else {
         info = parsedTime;
       }
     }
     if (viewCount.isNotEmpty) {
       if (info.isNotEmpty) {
-        info += " ・ $viewCount 읽음";
+        info += "ㆍ$viewCount 읽음";
       } else {
         info = "$viewCount 읽음";
       }

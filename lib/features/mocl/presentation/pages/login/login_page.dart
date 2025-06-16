@@ -7,17 +7,11 @@ class LoginPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: _buildAppBar(context),
-        body: SafeArea(
-          left: false,
-          right: false,
-          child: const LoginView(),
-        ),
-      );
+    appBar: _buildAppBar(context),
+    body: SafeArea(left: false, right: false, child: const LoginView()),
+  );
 
-  PreferredSizeWidget _buildAppBar(
-    BuildContext context,
-  ) {
+  PreferredSizeWidget _buildAppBar(BuildContext context) {
     final backgroundColor = Theme.of(context).appBarTheme.backgroundColor;
     return AppBar(
       title: MessageWidget(

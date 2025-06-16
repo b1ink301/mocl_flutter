@@ -31,8 +31,10 @@ class DetailPage extends StatelessWidget {
                 ..add(const DetailViewEvent.details()),
         ),
         BlocProvider(
-            create: (context) => getIt<GetHeightCubit>()
-              ..getHeight(item.title, textStyle, textWidth)),
+          create: (context) =>
+              getIt<GetHeightCubit>()
+                ..getHeight(item.title, textStyle, textWidth),
+        ),
       ],
       child: AnnotatedRegion<SystemUiOverlayStyle>(
         value: Theme.of(context).appBarTheme.systemOverlayStyle!,
@@ -50,10 +52,7 @@ class DetailPage extends StatelessWidget {
         child: RefreshIndicator(
           onRefresh: () async => context.read<DetailViewBloc>().refresh(),
           child: const CustomScrollView(
-            slivers: [
-              DetailAppBar(),
-              DetailView(),
-            ],
+            slivers: [DetailAppBar(), DetailView()],
           ),
         ),
       ),

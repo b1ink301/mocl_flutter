@@ -29,12 +29,12 @@ final GetIt getIt = GetIt.instance;
 abstract class ParserModule {
   @singleton
   Map<SiteType, (BaseParser, BaseApi)> get parsers => {
-        SiteType.clien: _clienParser,
-        SiteType.damoang: _damoangParser,
-        SiteType.meeco: _meecoParser,
-        SiteType.naverCafe: _naverCafeParser,
-        SiteType.reddit: _redditParser,
-      };
+    SiteType.clien: _clienParser,
+    SiteType.damoang: _damoangParser,
+    SiteType.meeco: _meecoParser,
+    SiteType.naverCafe: _naverCafeParser,
+    SiteType.reddit: _redditParser,
+  };
 
   @LazySingleton()
   Dio get _dio => Dio();

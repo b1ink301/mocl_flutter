@@ -32,44 +32,36 @@ class DetailAppBar extends StatelessWidget {
       );
 
   List<Widget> _buildPopupMenuButton(BuildContext context) => [
-        PopupMenuButton<int>(
-          icon: const Icon(Icons.more_vert),
-          onSelected: (int value) {
-            final DetailViewBloc detailViewBloc =
-                context.read<DetailViewBloc>();
-            switch (value) {
-              case 0:
-                detailViewBloc.refresh();
-                break;
-              case 1:
-                final String url = detailViewBloc.itemUrl;
-                getIt<DetailViewUtil>().openBrowserByUrl(url);
-                break;
-              case 2:
-                final String url = detailViewBloc.itemUrl;
-                getIt<DetailViewUtil>().shareUrl(url);
-                break;
-            }
-          },
-          itemBuilder: (BuildContext context) {
-            final TextStyle? textStyle =
-                Theme.of(context).textTheme.headlineSmall;
-            return [
-              PopupMenuItem(
-                value: 0,
-                child: Text('새로고침', style: textStyle),
-              ),
-              PopupMenuItem(
-                value: 1,
-                child: Text('브라우저로 열기', style: textStyle),
-              ),
-              PopupMenuItem(
-                value: 2,
-                enabled: Platform.isAndroid || Platform.isIOS,
-                child: Text('공유하기', style: textStyle),
-              ),
-            ];
-          },
-        )
-      ];
+    PopupMenuButton<int>(
+      icon: const Icon(Icons.more_vert),
+      onSelected: (int value) {
+        final DetailViewBloc detailViewBloc = context.read<DetailViewBloc>();
+        switch (value) {
+          case 0:
+            detailViewBloc.refresh();
+            break;
+          case 1:
+            final String url = detailViewBloc.itemUrl;
+            getIt<DetailViewUtil>().openBrowserByUrl(url);
+            break;
+          case 2:
+            final String url = detailViewBloc.itemUrl;
+            getIt<DetailViewUtil>().shareUrl(url);
+            break;
+        }
+      },
+      itemBuilder: (BuildContext context) {
+        final TextStyle? textStyle = Theme.of(context).textTheme.headlineSmall;
+        return [
+          PopupMenuItem(value: 0, child: Text('새로고침', style: textStyle)),
+          PopupMenuItem(value: 1, child: Text('브라우저로 열기', style: textStyle)),
+          PopupMenuItem(
+            value: 2,
+            enabled: Platform.isAndroid || Platform.isIOS,
+            child: Text('공유하기', style: textStyle),
+          ),
+        ];
+      },
+    ),
+  ];
 }

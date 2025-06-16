@@ -37,6 +37,7 @@ class MoclListPage extends StatelessWidget {
         child: RefreshIndicator(
           onRefresh: context.read<ListPagingCubit>().refresh,
           child: const CustomScrollView(
+            cacheExtent: 1000,
             slivers: <Widget>[_ListAppbar(), MoclListView()],
           ),
         ),
@@ -45,13 +46,13 @@ class MoclListPage extends StatelessWidget {
 
     return Platform.isMacOS
         ? Listener(
-          onPointerDown: (event) {
-            if (event.buttons == kSecondaryMouseButton) {
-              GoRouter.of(context).pop();
-            }
-          },
-          child: child,
-        )
+            onPointerDown: (event) {
+              if (event.buttons == kSecondaryMouseButton) {
+                GoRouter.of(context).pop();
+              }
+            },
+            child: child,
+          )
         : child;
   }
 }
