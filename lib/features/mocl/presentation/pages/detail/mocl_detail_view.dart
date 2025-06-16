@@ -171,7 +171,7 @@ class _Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) => HtmlWidget(
     detail.bodyHtml,
-    onLoadingBuilder: (_, __, ___) => const LoadingWidget(),
+    onLoadingBuilder: (_, _, _) => const LoadingWidget(),
     // onErrorBuilder: (context, element, error) {
     //   debugPrint('element.innerHtml=${element.innerHtml}');
     //   return HtmlWidget(element.innerHtml);
@@ -293,7 +293,7 @@ class _CommentList extends StatelessWidget {
   @override
   Widget build(BuildContext context) => ListView.separated(
     padding: EdgeInsets.zero,
-    separatorBuilder: (_, __) => const Divider(),
+    separatorBuilder: (_, _) => const Divider(),
     shrinkWrap: true,
     physics: const ClampingScrollPhysics(),
     itemCount: comments.length,
