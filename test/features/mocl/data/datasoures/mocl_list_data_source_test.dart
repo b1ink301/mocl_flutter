@@ -44,7 +44,7 @@ void main() {
   test('리스트 목록을 가져온다. (성공)', () async {
     // arrange
     provideDummyBuilder<Result<List<ListItem>>>(
-        (_, __) => ResultSuccess(const <ListItem>[]));
+        (_, _) => ResultSuccess(const <ListItem>[]));
 
     when(listDataSource.getList(any, any, any, any))
         .thenAnswer((_) => Future.value(ResultSuccess(const <ListItem>[])));
@@ -64,7 +64,7 @@ void main() {
   test('리스트 목록을 가져온다. (에러)', () async {
     //arrange
     provideDummyBuilder<Result<List<ListItem>>>(
-        (_, __) => ResultSuccess(const <ListItem>[]));
+        (_, _) => ResultSuccess(const <ListItem>[]));
 
     when(listDataSource.getList(any, any, any, any))
         .thenThrow(ResultFailure(GetListFailure(message: '----')));

@@ -52,10 +52,14 @@ class ListPagingCubit extends Cubit<PagingState<int, ListItemCubit>> {
       final Result<List<ListItem>> result = await _getList(params);
       switch (result) {
         case ResultSuccess<List<ListItem>>():
-          final List<ListItemCubit> newItems =
-              result.data.map((item) => ListItemCubit(item)).toList();
+          final List<ListItemCubit> newItems = result.data
+              .map((item) => ListItemCubit(item))
+              .toList();
           if (newItems.isNotEmpty) {
-            _lastId = LastId(intId: result.data.last.id);
+            _lastId = LastId(
+              intId: result.data.last.id,
+              stringId: result.data.last.url,
+            );
           }
           final bool hasReachedMax =
               _mainItem.siteType == SiteType.clien &&

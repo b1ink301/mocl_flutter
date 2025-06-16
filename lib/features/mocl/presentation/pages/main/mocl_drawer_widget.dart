@@ -51,7 +51,7 @@ class DrawerWidget extends StatelessWidget {
                                       siteType
                                   ? Icon(
                                       Icons.check_outlined,
-                                      color: Theme.of(context).highlightColor,
+                                      color: Theme.of(context).focusColor,
                                     )
                                   : null,
                             ),

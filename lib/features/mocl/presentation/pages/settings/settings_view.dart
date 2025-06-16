@@ -10,59 +10,56 @@ class SettingsView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SliverToBoxAdapter(
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            BlocBuilder<GetVersionCubit, GetVersionState>(
-              builder: (context, state) => switch (state) {
-                SuccessGetVersionState() => Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 16.0),
-                    child: Text(
-                      state.version,
-                      style: TextStyle(
-                        fontSize: 17,
-                        color: Theme.of(context).highlightColor,
-                      ),
-                    ),
-                  ),
-                _ => _buildLoadingView()
-              },
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      children: [
+        BlocBuilder<GetVersionCubit, GetVersionState>(
+          builder: (context, state) => switch (state) {
+            SuccessGetVersionState() => Padding(
+              padding: const EdgeInsets.symmetric(vertical: 16.0),
+              child: Text(
+                state.version,
+                style: TextStyle(
+                  fontSize: 17,
+                  color: Theme.of(context).focusColor,
+                ),
+              ),
             ),
-            const DividerWidget(),
-            BlocBuilder<ClearDataCubit, ClearDataState>(
-              builder: (context, state) => switch (state) {
-                LoadingClearDataState() => _buildLoadingView(),
-                _ => InkWell(
-                    onTap: () => context.read<ClearDataCubit>().clearData(),
-                    child: Container(
-                      width: double.infinity,
-                      height: 58,
-                      alignment: Alignment.center,
-                      child: Text(
-                        '캐시 데이터 삭제',
-                        style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                              color: Theme.of(context).highlightColor,
-                            ),
-                      ),
-                    ),
-                  )
-              },
-            ),
-            const DividerWidget(),
-          ],
+            _ => _buildLoadingView(),
+          },
         ),
-      );
+        const DividerWidget(),
+        BlocBuilder<ClearDataCubit, ClearDataState>(
+          builder: (context, state) => switch (state) {
+            LoadingClearDataState() => _buildLoadingView(),
+            _ => InkWell(
+              onTap: () => context.read<ClearDataCubit>().clearData(),
+              child: Container(
+                width: double.infinity,
+                height: 58,
+                alignment: Alignment.center,
+                child: Text(
+                  '캐시 데이터 삭제',
+                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(
+                    color: Theme.of(context).focusColor,
+                  ),
+                ),
+              ),
+            ),
+          },
+        ),
+        const DividerWidget(),
+      ],
+    ),
+  );
 
   Widget _buildLoadingView() => const LoadingWidget();
 
   Widget _buildErrorView(BuildContext context, String message) => Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Text(
-          message,
-          style: TextStyle(
-            fontSize: 16,
-            color: Theme.of(context).highlightColor,
-          ),
-        ),
-      );
+    padding: const EdgeInsets.all(12.0),
+    child: Text(
+      message,
+      style: TextStyle(fontSize: 16, color: Theme.of(context).focusColor),
+    ),
+  );
 }

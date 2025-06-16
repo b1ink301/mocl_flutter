@@ -118,7 +118,7 @@ class MeecoParser implements BaseParser {
               } catch (e) {
                 parsedTime = time;
               }
-              final info = '$nickName ・ $parsedTime';
+              final info = '$nickNameㆍ$parsedTime';
               var bodyHtml = body?.innerHtml;
 
               if (bodyHtml?.startsWith(

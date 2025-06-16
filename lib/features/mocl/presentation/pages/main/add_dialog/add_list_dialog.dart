@@ -17,10 +17,8 @@ class AddListDialog extends StatelessWidget {
   static Widget withBloc(BuildContext context, SiteType siteType) =>
       BlocProvider(
         child: const AddListDialog(),
-        create:
-            (BuildContext context) =>
-                getIt<MainDataJsonBloc>()
-                  ..add(GetListEvent(siteType: siteType)),
+        create: (BuildContext context) =>
+            getIt<MainDataJsonBloc>()..add(GetListEvent(siteType: siteType)),
       );
 
   @override
@@ -28,35 +26,37 @@ class AddListDialog extends StatelessWidget {
 
   AlertDialog _buildAlertDialog(BuildContext context) => AlertDialog(
     backgroundColor: DialogTheme.of(context).backgroundColor,
-    title: Column(
-      children: [
-        const SizedBox(height: 20),
-        Text('게시판 선택', style: Theme.of(context).textTheme.headlineMedium),
-        const SizedBox(height: 20),
-        const DividerWidget(thickness: 1, indent: 16, endIndent: 16),
-      ],
+    title: Padding(
+      padding: const EdgeInsets.only(left: 24, top: 20),
+      child: Text(
+        '게시판 선택',
+        style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+          color: Theme.of(context).focusColor,
+          fontWeight: FontWeight.bold,
+        ),
+      ),
     ),
-    elevation: 8,
-    contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+    elevation: 12,
+    contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
     titlePadding: EdgeInsets.zero,
     content: SizedBox(
       width: MediaQuery.of(context).size.width * 0.7,
       height: MediaQuery.of(context).size.height * 0.7,
       child: BlocBuilder<MainDataJsonBloc, MainDataJsonState>(
-        builder: (BuildContext context, MainDataJsonState state) {
-          final MainDataJsonBloc bloc = context.read<MainDataJsonBloc>();
-          return switch (state) {
-            StateSuccess() => _buildListView(
-              context,
-              state.data,
-              bloc.onChanged,
-            ),
-            StateFailure() => MessageWidget(message: state.message),
-            _ => const LoadingWidget(),
-          };
-        },
+        builder: (BuildContext context, MainDataJsonState state) =>
+            switch (state) {
+              StateSuccess() => _buildListView(
+                context,
+                state.data,
+                context.read<MainDataJsonBloc>().onChanged,
+              ),
+              StateFailure() => MessageWidget(message: state.message),
+              _ => const LoadingWidget(),
+            },
       ),
     ),
+    actionsPadding: const EdgeInsets.only(right: 16, bottom: 12),
+    buttonPadding: EdgeInsets.zero,
     actions: [
       TextButton(
         onPressed: () {
@@ -77,7 +77,8 @@ class AddListDialog extends StatelessWidget {
         child: Text(
           '적용',
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-            color: Theme.of(context).highlightColor,
+            color: Theme.of(context).focusColor,
+            fontWeight: FontWeight.w500,
           ),
         ),
       ),
@@ -93,17 +94,15 @@ class AddListDialog extends StatelessWidget {
     itemCount: data.length,
     itemBuilder: (context, index) {
       final item = data[index];
-      final bloc = context.read<MainDataJsonBloc>();
       return CheckBoxListTitleWidget<MainItem>(
         text: item.text,
         object: item,
-        isChecked: bloc.hasItem(item),
+        isChecked: context.read<MainDataJsonBloc>().hasItem(item),
         textStyle: Theme.of(context).textTheme.bodyMedium,
         onChanged: onChanged,
       );
     },
-    separatorBuilder:
-        (BuildContext context, int index) =>
-            const DividerWidget(indent: 0, endIndent: 0),
+    separatorBuilder: (BuildContext context, int index) =>
+        const DividerWidget(indent: 8, endIndent: 8),
   );
 }

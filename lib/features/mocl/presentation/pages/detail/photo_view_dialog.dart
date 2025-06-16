@@ -30,51 +30,50 @@ class PhotoViewDialog extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => Stack(children: [
-        Positioned.fill(
-          child: PhotoView(
-            imageProvider: imageProvider,
-            loadingBuilder: loadingBuilder ?? defaultLoading,
-            backgroundDecoration: backgroundDecoration ??
-                BoxDecoration(
-                  color: Theme.of(context).scaffoldBackgroundColor,
-                ),
-            minScale: minScale,
-            maxScale: maxScale,
-            initialScale: initialScale,
-            basePosition: basePosition,
-            filterQuality: filterQuality,
-            disableGestures: disableGestures,
-            errorBuilder: errorBuilder,
-          ),
+  Widget build(BuildContext context) => Stack(
+    children: [
+      Positioned.fill(
+        child: PhotoView(
+          imageProvider: imageProvider,
+          loadingBuilder: loadingBuilder ?? defaultLoading,
+          backgroundDecoration:
+              backgroundDecoration ??
+              BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
+          minScale: minScale,
+          maxScale: maxScale,
+          initialScale: initialScale,
+          basePosition: basePosition,
+          filterQuality: filterQuality,
+          disableGestures: disableGestures,
+          errorBuilder: errorBuilder,
         ),
-        Positioned(
-          top: 10.0,
-          right: 10.0,
-          child: IconButton(
-            onPressed: () => {context.pop()},
-            icon: Icon(Icons.close),
-          ),
-        )
-      ]);
+      ),
+      Positioned(
+        top: 10.0,
+        right: 10.0,
+        child: IconButton(
+          onPressed: () => {context.pop()},
+          icon: Icon(Icons.close),
+        ),
+      ),
+    ],
+  );
 
-  Widget defaultLoading(
-    BuildContext context,
-    ImageChunkEvent? event,
-  ) {
+  Widget defaultLoading(BuildContext context, ImageChunkEvent? event) {
     if (event == null) {
-      return const Center(
-        child: LoadingWidget(),
-      );
+      return const Center(child: LoadingWidget());
     }
 
-    final value = event.cumulativeBytesLoaded /
+    final value =
+        event.cumulativeBytesLoaded /
         (event.expectedTotalBytes ?? event.cumulativeBytesLoaded);
 
     final percentage = (100 * value).floor();
     return Center(
-      child:
-          Text("$percentage%", style: Theme.of(context).textTheme.bodyMedium),
+      child: Text(
+        "$percentage%",
+        style: Theme.of(context).textTheme.bodyMedium,
+      ),
     );
   }
 }

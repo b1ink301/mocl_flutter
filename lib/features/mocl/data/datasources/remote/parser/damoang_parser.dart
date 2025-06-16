@@ -184,7 +184,7 @@ class DamoangParser implements BaseParser {
               } catch (e) {
                 parsedTime = time;
               }
-              final info = '$nickName ・ $parsedTime';
+              final info = '$nickNameㆍ$parsedTime';
               final bodyHtml = body?.innerHtml.trim() ?? '';
               final newBodyHtml = bodyHtml
                   .replaceAll('<noscript>', '')
