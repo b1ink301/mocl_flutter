@@ -18,6 +18,17 @@ part 'detail_providers.g.dart';
 @riverpod
 ListItem listItem(Ref ref) => throw UnimplementedError('listItem');
 
+/*@riverpod
+class DetailFontSizeNotifier extends _$DetailFontSizeNotifier {
+  @override
+  Future<Details> build() async {
+    state = const AsyncValue.loading();
+    return data;
+  }
+
+  void refresh() => ref.invalidateSelf();
+}*/
+
 @Riverpod(dependencies: [listItem])
 class DetailsNotifier extends _$DetailsNotifier {
   @override

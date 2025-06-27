@@ -110,15 +110,13 @@ class DamoangParser implements BaseParser {
     //         ?.attributes['data-bs-title'] ??
     //     '';
     final memberElement = container?.querySelector(
-      'section[id=bo_v_info] > div.d-flex > div.me-auto > span.d-inline-block > span.sv_wrap > a.sv_member',
+      'section[id=bo_v_info] > div.d-flex > div.me-auto > div.d-flex > span.sv_wrap > a.sv_member',
     );
 
-    final nickName = memberElement?.text.trim() ?? '';
+    final nickName =
+        memberElement?.querySelector('span.sv_name')?.text.trim() ?? '';
     final nickImage = isShowNickImage
-        ? memberElement
-                  ?.querySelector('span.profile_img > img')
-                  ?.attributes['src'] ??
-              ''
+        ? memberElement?.querySelector('img.mb-photo')?.attributes['src'] ?? ''
         : '';
 
     var index = 0;
@@ -212,7 +210,7 @@ class DamoangParser implements BaseParser {
       parsedTime = time;
     }
     final info = BaseParser.parserInfo(
-      nickImage.isNotEmpty,
+      false,
       nickName,
       parsedTime,
       viewCount,
@@ -375,7 +373,7 @@ class DamoangParser implements BaseParser {
 
       final nickImage = isShowNickImage
           ? metaElement
-                    ?.querySelector("span.profile_img > img.mb-photo")
+                    ?.querySelector("img.mb-photo")
                     ?.attributes["src"]
                     ?.trim() ??
                 ''
