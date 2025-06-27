@@ -156,7 +156,7 @@ class ListStateNotifier extends _$ListStateNotifier {
     updatedItems[index] = state.requireValue.items[index].copyWith(
       isRead: true,
     );
-
+    
     state = AsyncData(state.requireValue.copyWith(items: updatedItems));
   }
 }
