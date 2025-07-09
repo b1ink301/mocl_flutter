@@ -105,10 +105,6 @@ class DamoangParser implements BaseParser {
       likeCount = headerElements?.elementAtOrNull(3)?.text.trim() ?? '';
     }
 
-    // final authorIp = container
-    //         ?.querySelector('section[id=bo_v_info] > div > div.me-auto')
-    //         ?.attributes['data-bs-title'] ??
-    //     '';
     final memberElement = container?.querySelector(
       'section[id=bo_v_info] > div.d-flex > div.me-auto > div.d-flex > span.sv_wrap > a.sv_member',
     );
@@ -150,7 +146,7 @@ class DamoangParser implements BaseParser {
 
               final nickImage = isShowNickImage
                   ? nickElement
-                            ?.querySelector('span.profile_img > img.mb-photo')
+                            ?.querySelector('img.mb-photo')
                             ?.attributes['src']
                             ?.trim() ??
                         ''
@@ -209,12 +205,7 @@ class DamoangParser implements BaseParser {
     } catch (e) {
       parsedTime = time;
     }
-    final info = BaseParser.parserInfo(
-      false,
-      nickName,
-      parsedTime,
-      viewCount,
-    );
+    final info = BaseParser.parserInfo(false, nickName, parsedTime, viewCount);
 
     // debugPrint('bodyHtml=${bodyHtml?.innerHtml}');
 
@@ -323,15 +314,13 @@ class DamoangParser implements BaseParser {
         continue;
       }
 
-      final metaElement =
-          infoElement?.querySelector(
-            'div.da-list-meta > div.d-flex > div.wr-name > span.sv_wrap > a.sv_member',
-          ) ??
-          infoElement?.querySelector(
-            'div.da-list-meta > div.d-flex > div.wr-name',
-          );
+      final metaElement = infoElement?.querySelector(
+        'div.da-list-meta > div.d-flex > div.wr-name > span.sv_wrap > a.sv_member, div.da-list-meta > div.d-flex > div.wr-name',
+      );
       final profile = metaElement?.attributes['href'] ?? '';
       final userId = Uri.parse(profile).queryParameters['mb_id'] ?? '';
+
+      debugPrint('metaElement=${metaElement?.innerHtml}');
 
       final reply =
           infoElement
@@ -380,8 +369,10 @@ class DamoangParser implements BaseParser {
           : '';
 
       final nickName =
-          metaElement?.querySelector("span.sv_name")?.text.trim() ??
-          metaElement?.querySelector("span.sv_member")?.text.trim() ??
+          metaElement
+              ?.querySelector("span.sv_name, span.sv_member")
+              ?.text
+              .trim() ??
           '';
 
       final hitElement = infoElement?.querySelector(
@@ -404,12 +395,7 @@ class DamoangParser implements BaseParser {
               ?.hasContent() ??
           false;
 
-      final info = BaseParser.parserInfo(
-        nickImage.isNotEmpty,
-        nickName,
-        parsedTime,
-        hit,
-      );
+      final info = BaseParser.parserInfo(false, nickName, parsedTime, hit);
 
       final parsedItem = {
         'id': id,
