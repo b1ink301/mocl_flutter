@@ -13,15 +13,15 @@ class DetailAppBar extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => PlatformWidget(
-        material: (context, _) => _buildMaterialAppBar(context, ref),
-        cupertino: (context, _) {
-          final String title = ref.watch(detailTitleNotifierProvider);
-          final double height = ref.read(detailAppbarHeightProvider(title));
-          return SliverPersistentHeader(
-            delegate: _DetailCupertinoAppBar(title: title, height: height),
-          );
-        },
+    material: (context, _) => _buildMaterialAppBar(context, ref),
+    cupertino: (context, _) {
+      final String title = ref.watch(detailTitleNotifierProvider);
+      final double height = ref.read(detailAppbarHeightProvider(title));
+      return SliverPersistentHeader(
+        delegate: _DetailCupertinoAppBar(title: title, height: height),
       );
+    },
+  );
 
   Widget _buildMaterialAppBar(BuildContext context, WidgetRef ref) {
     final String title = ref.watch(detailTitleNotifierProvider);
@@ -64,6 +64,7 @@ class DetailAppBar extends ConsumerWidget {
               ref.read(shareUrlProvider(url));
             },
           ),
+          PopupMenuOption(label: '글자크기 변경', onTap: (_) {}),
         ],
       );
 }
@@ -76,18 +77,19 @@ class _DetailCupertinoAppBar extends SliverPersistentHeaderDelegate {
 
   @override
   Widget build(
-      BuildContext context, double shrinkOffset, bool overlapsContent) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      color: CupertinoTheme.of(context).scaffoldBackgroundColor,
-      child: Text(
-        title,
-        style: CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle,
-        maxLines: 3,
-        overflow: TextOverflow.ellipsis,
-      ),
-    );
-  }
+    BuildContext context,
+    double shrinkOffset,
+    bool overlapsContent,
+  ) => Container(
+    padding: const EdgeInsets.symmetric(horizontal: 16),
+    color: CupertinoTheme.of(context).scaffoldBackgroundColor,
+    child: Text(
+      title,
+      style: CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle,
+      maxLines: 3,
+      overflow: TextOverflow.ellipsis,
+    ),
+  );
 
   @override
   double get maxExtent => height; // 3줄 높이에 맞게 조정

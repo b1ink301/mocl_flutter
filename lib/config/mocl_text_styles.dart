@@ -62,15 +62,14 @@ class MoclTextStyles extends ThemeExtension<MoclTextStyles> {
     TextStyle? readSmallTextStyle,
     TextStyle? badgeTextStyle,
     TextStyle? readBadgeTextStyle,
-  }) =>
-      MoclTextStyles(
-        titleTextStyle: titleTextStyle ?? this.titleTextStyle,
-        readTitleTextStyle: readTitleTextStyle ?? this.readTitleTextStyle,
-        smallTextStyle: smallTextStyle ?? this.smallTextStyle,
-        readSmallTextStyle: readSmallTextStyle ?? this.readSmallTextStyle,
-        badgeTextStyle: badgeTextStyle ?? this.badgeTextStyle,
-        readBadgeTextStyle: readBadgeTextStyle ?? this.readBadgeTextStyle,
-      );
+  }) => MoclTextStyles(
+    titleTextStyle: titleTextStyle ?? this.titleTextStyle,
+    readTitleTextStyle: readTitleTextStyle ?? this.readTitleTextStyle,
+    smallTextStyle: smallTextStyle ?? this.smallTextStyle,
+    readSmallTextStyle: readSmallTextStyle ?? this.readSmallTextStyle,
+    badgeTextStyle: badgeTextStyle ?? this.badgeTextStyle,
+    readBadgeTextStyle: readBadgeTextStyle ?? this.readBadgeTextStyle,
+  );
 
   @override
   ThemeExtension<MoclTextStyles> lerp(
@@ -80,14 +79,23 @@ class MoclTextStyles extends ThemeExtension<MoclTextStyles> {
     if (other is! MoclTextStyles) return this;
     return MoclTextStyles(
       titleTextStyle: TextStyle.lerp(titleTextStyle, other.titleTextStyle, t)!,
-      readTitleTextStyle:
-          TextStyle.lerp(readTitleTextStyle, other.readTitleTextStyle, t)!,
+      readTitleTextStyle: TextStyle.lerp(
+        readTitleTextStyle,
+        other.readTitleTextStyle,
+        t,
+      )!,
       smallTextStyle: TextStyle.lerp(smallTextStyle, other.smallTextStyle, t)!,
-      readSmallTextStyle:
-          TextStyle.lerp(readSmallTextStyle, other.readSmallTextStyle, t)!,
+      readSmallTextStyle: TextStyle.lerp(
+        readSmallTextStyle,
+        other.readSmallTextStyle,
+        t,
+      )!,
       badgeTextStyle: TextStyle.lerp(badgeTextStyle, other.badgeTextStyle, t)!,
-      readBadgeTextStyle:
-          TextStyle.lerp(readBadgeTextStyle, other.readBadgeTextStyle, t)!,
+      readBadgeTextStyle: TextStyle.lerp(
+        readBadgeTextStyle,
+        other.readBadgeTextStyle,
+        t,
+      )!,
     );
   }
 
@@ -102,56 +110,56 @@ class MoclTextStyles extends ThemeExtension<MoclTextStyles> {
       Theme.of(context).extension<MoclTextStyles>()!;
 
   static MoclTextStyles light() => MoclTextStyles(
-        titleTextStyle: _createTextStyle(
-          color: MoclColors.title,
-          fontSize: MoclSizes.titleFontSize,
-        ),
-        readTitleTextStyle: _createTextStyle(
-          color: MoclColors.readTitle,
-          fontSize: MoclSizes.titleFontSize,
-        ),
-        smallTextStyle: _createTextStyle(
-          color: MoclColors.small,
-          fontSize: MoclSizes.smallFontSize,
-        ),
-        readSmallTextStyle: _createTextStyle(
-          color: MoclColors.readSmall,
-          fontSize: MoclSizes.smallFontSize,
-        ),
-        badgeTextStyle: _createTextStyle(
-          color: MoclColors.badge,
-          fontSize: MoclSizes.badgeFontSize,
-        ),
-        readBadgeTextStyle: _createTextStyle(
-          color: MoclColors.readBadge,
-          fontSize: MoclSizes.badgeFontSize,
-        ),
-      );
+    titleTextStyle: _createTextStyle(
+      color: MoclColors.title,
+      fontSize: MoclSizes.titleFontSize,
+    ),
+    readTitleTextStyle: _createTextStyle(
+      color: MoclColors.readTitle,
+      fontSize: MoclSizes.titleFontSize,
+    ),
+    smallTextStyle: _createTextStyle(
+      color: MoclColors.small,
+      fontSize: MoclSizes.smallFontSize,
+    ),
+    readSmallTextStyle: _createTextStyle(
+      color: MoclColors.readSmall,
+      fontSize: MoclSizes.smallFontSize,
+    ),
+    badgeTextStyle: _createTextStyle(
+      color: MoclColors.badge,
+      fontSize: MoclSizes.badgeFontSize,
+    ),
+    readBadgeTextStyle: _createTextStyle(
+      color: MoclColors.readBadge,
+      fontSize: MoclSizes.badgeFontSize,
+    ),
+  );
 
   static MoclTextStyles dark() => MoclTextStyles(
-        titleTextStyle: _createTextStyle(
-          color: MoclColors.darkTitle,
-          fontSize: MoclSizes.titleFontSize,
-        ),
-        readTitleTextStyle: _createTextStyle(
-          color: MoclColors.darkReadTitle,
-          fontSize: MoclSizes.titleFontSize, // Fixed font size consistency
-        ),
-        smallTextStyle: _createTextStyle(
-          color: MoclColors.darkSmall,
-          fontSize: MoclSizes.smallFontSize,
-        ),
-        readSmallTextStyle: _createTextStyle(
-          color: MoclColors.darkReadSmall,
-          fontSize: MoclSizes.smallFontSize,
-        ),
-        badgeTextStyle: _createTextStyle(
-          color: MoclColors.darkBadge,
-          fontSize: MoclSizes.badgeFontSize,
-        ),
-        readBadgeTextStyle: _createTextStyle(
-          color: MoclColors.darkReadBadge,
-          fontSize: MoclSizes.badgeFontSize,
-        ),
-      );
+    titleTextStyle: _createTextStyle(
+      color: MoclColors.darkTitle,
+      fontSize: MoclSizes.titleFontSize,
+    ),
+    readTitleTextStyle: _createTextStyle(
+      color: MoclColors.darkReadTitle,
+      fontSize: MoclSizes.titleFontSize, // Fixed font size consistency
+    ),
+    smallTextStyle: _createTextStyle(
+      color: MoclColors.darkSmall,
+      fontSize: MoclSizes.smallFontSize,
+    ),
+    readSmallTextStyle: _createTextStyle(
+      color: MoclColors.darkReadSmall,
+      fontSize: MoclSizes.smallFontSize,
+    ),
+    badgeTextStyle: _createTextStyle(
+      color: MoclColors.darkBadge,
+      fontSize: MoclSizes.badgeFontSize,
+    ),
+    readBadgeTextStyle: _createTextStyle(
+      color: MoclColors.darkReadBadge,
+      fontSize: MoclSizes.badgeFontSize,
+    ),
+  );
 }
