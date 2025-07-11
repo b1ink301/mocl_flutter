@@ -141,7 +141,8 @@ class ListStateNotifier extends _$ListStateNotifier {
   void retry() => loadMore();
 
   void refresh() {
-    ref.invalidateSelf();
+    state = AsyncData(ListState.initial(_initialPage()));
+    // ref.invalidateSelf();
     initialize();
   }
 
@@ -155,7 +156,7 @@ class ListStateNotifier extends _$ListStateNotifier {
     updatedItems[index] = state.requireValue.items[index].copyWith(
       isRead: true,
     );
-
+    
     state = AsyncData(state.requireValue.copyWith(items: updatedItems));
   }
 }
