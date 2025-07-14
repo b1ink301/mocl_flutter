@@ -331,7 +331,7 @@ class ClienParser implements BaseParser {
                 parsedTime = time;
               }
               final info = nickName.isNotEmpty
-                  ? '$nickName ・ $parsedTime'
+                  ? '$nickNameㆍ$parsedTime'
                   : parsedTime;
 
               return CommentItem(

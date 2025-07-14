@@ -18,7 +18,7 @@ class MoclColors {
 }
 
 class MoclSizes {
-  static const double titleFontSize = 17.0;
+  static const double titleFontSize = 16.4;
   static const double smallFontSize = 14.0;
   static const double badgeFontSize = 11.0;
 }

@@ -58,7 +58,7 @@ dependencies:
   flutter_cache_manager: ^3.4.1
 
   # URL 런처
-  url_launcher: ^6.3.1
+  url_launcher: ^6.3.2
 
   # swipe back
   swipeable_page_route: ^0.4.7

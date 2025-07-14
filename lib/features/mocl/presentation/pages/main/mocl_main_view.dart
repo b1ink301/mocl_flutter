@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/providers/main_providers.dart';
@@ -51,8 +52,6 @@ class _MainBody extends ConsumerWidget {
       ),
       (AsyncValue? previous, AsyncValue? next) {
         if (next case AsyncError error when error.error is NotLoginFailure) {
-          // }
-          // if (next is AsyncError && next.error is NotLoginFailure) {
           context.push<bool>(Routes.login).then((bool? result) {
             if (context.mounted && result == true) {
               ref.read(mainItemsNotifierProvider.notifier).refresh();
@@ -87,7 +86,8 @@ class _MainBody extends ConsumerWidget {
   );
 
   Widget _buildListView(BuildContext context, List<MainItem> items) {
-    final textStyle = Theme.of(context).textTheme.bodyMedium;
+    // final textStyle = Theme.of(context).textTheme.bodyMedium;
+    final textStyle = MoclTextStyles.of(context).titleTextStyle.copyWith(fontSize: 16.8);
     return items.isEmpty
         ? _buildEmptyView(textStyle)
         : SliverList.separated(
@@ -143,8 +143,6 @@ class _MainAppBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) => SliverAppBar(
     scrolledUnderElevation: 0,
-    // flexibleSpace:
-    //     Container(color: Theme.of(context).appBarTheme.backgroundColor),
     title: PlatformText(ref.watch(mainTitleProvider)),
     titleTextStyle: Theme.of(context).textTheme.labelMedium,
     titleSpacing: 0,

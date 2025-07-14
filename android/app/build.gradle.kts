@@ -57,7 +57,7 @@ android {
 
     signingConfigs {
         create("key") { // 일반 사이닝 키
-            val keyPropertiesFile = project.rootProject.file("key.properties")
+            val keyPropertiesFile = project.rootProject.file("../../keystore/key.properties")
             if (!keyPropertiesFile.exists()) {
                 throw FileNotFoundException("key.properties file not found at ${keyPropertiesFile.absolutePath}")
             }

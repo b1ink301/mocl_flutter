@@ -68,14 +68,14 @@ abstract class BaseParser {
     }
     if (parsedTime.isNotEmpty) {
       if (info.isNotEmpty) {
-        info += " ・ $parsedTime";
+        info += "ㆍ$parsedTime";
       } else {
         info = parsedTime;
       }
     }
     if (viewCount.isNotEmpty) {
       if (info.isNotEmpty) {
-        info += " ・ $viewCount 읽음";
+        info += "ㆍ$viewCount 읽음";
       } else {
         info = "$viewCount 읽음";
       }
