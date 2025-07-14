@@ -106,7 +106,7 @@ class DamoangParser implements BaseParser {
     }
 
     final memberElement = container?.querySelector(
-      'section[id=bo_v_info] > div.d-flex > div.me-auto > div.d-flex > span.sv_wrap > a.sv_member',
+      'section[id=bo_v_info] > div.d-flex > div.me-auto > div.d-flex > div.d-flex > div.d-flex',
     );
 
     final nickName =
@@ -175,7 +175,7 @@ class DamoangParser implements BaseParser {
               } catch (e) {
                 parsedTime = time;
               }
-              final info = '$nickName ・ $parsedTime';
+              final info = '$nickNameㆍ$parsedTime';
 
               return CommentItem(
                 id: index++,

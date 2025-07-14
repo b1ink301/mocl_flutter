@@ -9,6 +9,8 @@ import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.d
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
 
+import '../../../../../../config/mocl_text_styles.dart';
+
 class AddListDialog extends ConsumerWidget {
   const AddListDialog({super.key});
 
@@ -82,7 +84,7 @@ class AddListDialog extends ConsumerWidget {
               return CheckBoxListTitleWidget(
                   text: item.mainItem.text,
                   isChecked: item.isChecked,
-                  textStyle: Theme.of(context).textTheme.bodyMedium,
+                  textStyle: MoclTextStyles.of(context).titleTextStyle,
                   onChanged: (bool isChecked) {
                     notifier.onChanged(isChecked, index);
                   });

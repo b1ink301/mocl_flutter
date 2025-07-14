@@ -25,7 +25,7 @@ class MoclListItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) => PlatformListTile(
     material: (_, _) => MaterialListTileData(
-      minVerticalPadding: 10,
+      minVerticalPadding: 6,
       contentPadding: _aosPadding,
     ),
     cupertino: (_, _) => CupertinoListTileData(padding: _iosPadding),

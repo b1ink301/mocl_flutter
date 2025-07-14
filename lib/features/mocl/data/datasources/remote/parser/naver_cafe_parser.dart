@@ -121,7 +121,7 @@ class NaverCafeParser implements BaseParser {
           } catch (e) {
             parsedTime = time.toString();
           }
-          final info = '$nickName ・ $parsedTime';
+          final info = '$nickNameㆍ$parsedTime';
 
           return CommentItem(
             id: id,

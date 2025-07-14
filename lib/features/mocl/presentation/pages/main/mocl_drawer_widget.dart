@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/providers/main_providers.dart';
@@ -89,7 +90,7 @@ class _DrawerSiteItem extends ConsumerWidget {
         children: [
           ListTile(
             title: Text(siteType.title),
-            titleTextStyle: Theme.of(context).textTheme.bodyMedium,
+            titleTextStyle: MoclTextStyles.of(context).titleTextStyle,
             onTap: onTap,
             trailing: ref.watch(isCurrentSiteTypeProvider(siteType))
                 ? Icon(Icons.check_outlined,
