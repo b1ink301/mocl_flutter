@@ -2,8 +2,6 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:firebase_core/firebase_core.dart';
-import 'package:firebase_crashlytics/firebase_crashlytics.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,9 +17,9 @@ import 'firebase_options.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-  unawaited(_firebase());
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   final SharedPreferences sharedPreferences =
-      await SharedPreferences.getInstance();
+  await SharedPreferences.getInstance();
   final Database database = await _database();
 
   runApp(
@@ -41,12 +39,4 @@ Future<Database> _database() async {
   final String dbPath = join(dir.path, 'mocl-sembast.db');
   final Database database = await databaseFactoryIo.openDatabase(dbPath);
   return database;
-}
-
-Future<void> _firebase() async {
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  PlatformDispatcher.instance.onError = (error, stack) {
-    FirebaseCrashlytics.instance.recordError(error, stack);
-    return true;
-  };
 }

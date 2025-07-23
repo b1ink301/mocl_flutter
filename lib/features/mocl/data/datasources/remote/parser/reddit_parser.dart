@@ -2,7 +2,9 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:html/parser.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_ext.dart';
@@ -228,8 +230,21 @@ class RedditParser implements BaseParser {
   }
 
   @override
-  Future<Either<Failure, List<MainItem>>> main(Response response) {
-    throw UnimplementedError('main');
+  Future<Either<Failure, List<MainItem>>> main(Response response) async {
+
+    final responseData = response.data;
+
+    final document = parse(responseData);
+    final container = document.querySelectorAll(
+      'div[id=communities_section] > li',
+    );
+
+    for (final element in container) {
+      debugPrint('container=${element.innerHtml}');
+    }
+
+
+    return Left(GetMainFailure(message: 'test'));
   }
 
   @override

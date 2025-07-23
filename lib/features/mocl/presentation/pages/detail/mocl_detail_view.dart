@@ -11,7 +11,6 @@ import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/providers/detail_providers.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/cached_item_builder.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
@@ -55,7 +54,7 @@ class _DetailView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final String hexColor = Theme.of(context).focusColor.stringHexColor;
     final bodySmall = MoclTextStyles.of(context).smallTextStyle;
-    final bodyMedium = MoclTextStyles.of(context).titleTextStyle;
+    final TextStyle bodyMedium = MoclTextStyles.of(context).titleTextStyle;
 
     final comments = detail.comments.isNotEmpty
         ? [
@@ -70,7 +69,8 @@ class _DetailView extends ConsumerWidget {
               bodySmall: bodySmall,
               bodyMedium: bodyMedium,
               hexColor: hexColor,
-              openUrl: (String url) => ref.read(openUrlProvider(context, url)),
+              openUrl: (String url) =>
+                  ref.read(openUrlProvider(context, url).future),
             ),
           ]
         : null;
@@ -88,10 +88,7 @@ class _DetailView extends ConsumerWidget {
             detail: detail,
             hexColor: hexColor,
             bodyMedium: bodyMedium,
-            onTapUrl: (url) async {
-              final result = ref.read(openUrlProvider(context, url));
-              return result.valueOrNull == true;
-            },
+            onTapUrl: (url) => ref.read(openUrlProvider(context, url).future),
           ),
           const _SpaceWidget(),
           ...?comments,
@@ -145,7 +142,9 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    final TextStyle bodySmall = Theme.of(context).textTheme.bodySmall!.copyWith(fontSize: 15.4);
+    final TextStyle bodySmall = Theme.of(
+      context,
+    ).textTheme.bodySmall!.copyWith(fontSize: 15.4);
     final Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
     final List<Widget>? likeView = _buildLikeView(context, bodySmall);
 
@@ -204,19 +203,12 @@ class _Body extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => HtmlWidget(
-    detail.bodyHtml,
-    onLoadingBuilder: (_, _, _) => const LoadingWidget(),
-    customStylesBuilder: (element) {
-      if (element.localName == 'a') {
-        return {'color': hexColor, 'text-decoration': 'underline'};
-      }
-      return null;
-    },
+  Widget build(BuildContext context) => _HtmlWidget(
+    html: detail.bodyHtml,
     textStyle: bodyMedium,
+    hexColor: hexColor,
+    openUrl: onTapUrl,
     renderMode: RenderMode.sliverList,
-    onTapUrl: (url) => onTapUrl(url),
-    onTapImage: (data) => onTapUrl(data.sources.first.url),
   );
 }
 
@@ -263,20 +255,13 @@ class _CommentList extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) => SliverList.separated(
     separatorBuilder: (_, _) => const DividerWidget(indent: 0, endIndent: 0),
     itemCount: comments.length,
-    addAutomaticKeepAlives: false,
-    itemBuilder: (_, int index) {
-      final comment = comments[index];
-      return CachedItemBuilder(
-        key: ValueKey(comment.id),
-        builder: () => _CommentItem(
-          comment: comment,
-          bodySmall: bodySmall,
-          bodyMedium: bodyMedium,
-          hexColor: hexColor,
-          openUrl: openUrl,
-        ),
-      );
-    },
+    itemBuilder: (_, int index) => _CommentItem(
+      comment: comments[index],
+      bodySmall: bodySmall,
+      bodyMedium: bodyMedium,
+      hexColor: hexColor,
+      openUrl: openUrl,
+    ),
   );
 }
 
@@ -328,28 +313,91 @@ class _CommentItem extends StatelessWidget {
           ...?likeView,
         ],
       ),
-      subtitle: Padding(
-        padding: const EdgeInsets.only(top: 8.0),
-        child: HtmlWidget(
-          comment.bodyHtml,
-          onLoadingBuilder: (_, _, _) =>
-              const LoadingWidget(),
-          textStyle: bodyMedium,
-          customStylesBuilder: (element) {
-            if (element.localName == 'a') {
-              return {'color': hexColor, 'text-decoration': 'underline'};
-            }
-            return null;
-          },
-          onTapUrl: (url) async {
-            openUrl(url);
-            return true;
-          },
-          onTapImage: (data) => openUrl(data.sources.first.url),
-        ),
-      ),
+      subtitle: comment.bodyHtml.isNotEmpty
+          ? Padding(
+              padding: const EdgeInsets.only(top: 8.0),
+              child: _HtmlWidget(
+                html: comment.bodyHtml,
+                textStyle: bodyMedium,
+                hexColor: hexColor,
+                openUrl: openUrl,
+              ),
+            )
+          : null,
     );
   }
+}
+
+class _HtmlLoadingWidget extends StatelessWidget {
+  final String src;
+  final TextStyle? textStyle;
+  final double? progress;
+
+  const _HtmlLoadingWidget({
+    super.key,
+    required this.src,
+    this.textStyle,
+    this.progress,
+  });
+
+  @override
+  Widget build(BuildContext context) => src.isEmpty || progress == null
+      ? SizedBox.shrink()
+      : Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: Column(
+            children: [
+              Text(src, style: textStyle),
+              LinearProgressIndicator(
+                value: progress,
+                backgroundColor: Theme.of(context).dividerTheme.color,
+                valueColor: AlwaysStoppedAnimation<Color>(
+                  Theme.of(context).focusColor,
+                ),
+              ),
+            ],
+          ),
+        );
+}
+
+class _HtmlWidget extends StatelessWidget {
+  final String html;
+  final TextStyle? textStyle;
+  final String hexColor;
+  final void Function(String) openUrl;
+  final RenderMode renderMode;
+
+  const _HtmlWidget({
+    super.key,
+    required this.html,
+    required this.textStyle,
+    required this.hexColor,
+    required this.openUrl,
+    this.renderMode = RenderMode.column,
+  });
+
+  @override
+  Widget build(BuildContext context) => HtmlWidget(
+    html,
+    onLoadingBuilder: (context, element, progress) {
+      final src = element.attributes['src'] ?? '';
+      return _HtmlLoadingWidget(
+        key: ValueKey(src),
+        src: src,
+        textStyle: textStyle?.copyWith(fontSize: 12),
+        progress: progress,
+      );
+    },
+    textStyle: textStyle,
+    customStylesBuilder: (element) {
+      if (element.localName == 'a') {
+        return {'color': hexColor, 'text-decoration': 'underline'};
+      }
+      return null;
+    },
+    renderMode: renderMode,
+    onTapImage: (data) => openUrl(data.sources.first.url),
+  );
 }
 
 class _RefreshButton extends StatelessWidget {

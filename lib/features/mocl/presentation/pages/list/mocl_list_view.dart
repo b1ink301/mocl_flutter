@@ -9,48 +9,35 @@ import 'package:mocl_flutter/features/mocl/presentation/pages/list/widget/mocl_l
 import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/loading_widget.dart';
 
-class MoclListView extends ConsumerStatefulWidget {
+class MoclListView extends ConsumerWidget {
   const MoclListView({super.key});
 
   @override
-  MoclListViewState createState() => MoclListViewState();
-}
-
-class MoclListViewState extends ConsumerState<MoclListView> {
-  @override
-  Widget build(BuildContext context) => RefreshIndicator.adaptive(
-    color: Theme.of(context).focusColor,
-    onRefresh: () async =>
-        ref.read(listStateNotifierProvider.notifier).refresh(),
-    child: NotificationListener<ScrollNotification>(
-      onNotification: (ScrollNotification notification) {
-        if (notification is ScrollEndNotification &&
-            notification.metrics.extentAfter < 100) {
-          EasyThrottle.throttle(
-            'list-fetch-throttle',
-            const Duration(milliseconds: 1000),
-            ref.read(listStateNotifierProvider.notifier).loadMore,
-          );
-          return true;
-        }
-        return false;
-      },
-      child: const CustomScrollView(
-        physics: ClampingScrollPhysics(),
-        cacheExtent: 1000,
-        slivers: <Widget>[_ListAppBar(), _ListBody()],
-      ),
-    ),
-  );
-
-  @override
-  void initState() {
-    super.initState();
-
-    WidgetsBinding.instance.addPostFrameCallback(
-      (_) => ref.read(listStateNotifierProvider.notifier).initialize(),
-    );
-  }
+  Widget build(BuildContext context, WidgetRef ref) =>
+      RefreshIndicator.adaptive(
+        color: Theme.of(context).focusColor,
+        onRefresh: () async =>
+            ref.read(listStateNotifierProvider.notifier).refresh(),
+        child: NotificationListener<ScrollNotification>(
+          onNotification: (ScrollNotification notification) {
+            if (notification is ScrollEndNotification &&
+                notification.metrics.extentAfter < 100) {
+              EasyThrottle.throttle(
+                'list-fetch-throttle',
+                const Duration(milliseconds: 1500),
+                ref.read(listStateNotifierProvider.notifier).loadMore,
+              );
+              return true;
+            }
+            return false;
+          },
+          child: const CustomScrollView(
+            physics: ClampingScrollPhysics(),
+            cacheExtent: 1000,
+            slivers: <Widget>[_ListAppBar(), _ListBody()],
+          ),
+        ),
+      );
 }
 
 class _ListAppBar extends StatelessWidget {

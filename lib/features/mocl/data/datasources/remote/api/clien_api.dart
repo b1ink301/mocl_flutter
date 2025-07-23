@@ -53,7 +53,6 @@ class ClienApi extends BaseApi {
 
     log('[getList] url=$url, headers=$headers');
     final Response response = await get(url, headers: headers);
-    log('[getList] response = ${response.statusCode}');
 
     return response.statusCode == 200
         ? parser.list(response, lastId, item.text, isReads)
