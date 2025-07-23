@@ -86,7 +86,6 @@ class _MainBody extends ConsumerWidget {
   );
 
   Widget _buildListView(BuildContext context, List<MainItem> items) {
-    // final textStyle = Theme.of(context).textTheme.bodyMedium;
     final textStyle = MoclTextStyles.of(context).titleTextStyle.copyWith(fontSize: 16.8);
     return items.isEmpty
         ? _buildEmptyView(textStyle)

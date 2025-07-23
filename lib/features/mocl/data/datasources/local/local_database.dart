@@ -27,6 +27,7 @@ class LocalDatabase {
     final StoreRef<int, Map<String, Object?>> store = intMapStoreFactory.store(
       siteType.name,
     );
+
     return await _db.transaction((txn) async {
       final Iterable<Future<int>> futures = entities.map(
         (entity) async => await store.add(txn, entity.toJson()),

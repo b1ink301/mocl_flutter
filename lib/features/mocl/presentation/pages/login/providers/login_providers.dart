@@ -13,24 +13,24 @@ URLRequest urlRequest(Ref ref) {
   final siteType = ref.watch(currentSiteTypeNotifierProvider);
   final Map<String, String> headers = switch (siteType) {
     SiteType.clien => {
-        'Referer': 'https://m.clien.net/service/mypage/myInfo',
-        'ContentType': 'application/x-www-form-urlencoded',
-      },
+      'Referer': 'https://m.clien.net/service/mypage/myInfo',
+      'ContentType': 'application/x-www-form-urlencoded',
+    },
     SiteType.damoang => {
-        'Referer': 'https://damoang.net/bbs/memo.php',
-        'ContentType': 'application/x-www-form-urlencoded',
-      },
+      'Referer': 'https://damoang.net/bbs/memo.php',
+      'ContentType': 'application/x-www-form-urlencoded',
+    },
     SiteType.reddit => <String, String>{
-        'Referer': 'https://www.reddit.com/settings/',
-        'ContentType': 'application/x-www-form-urlencoded',
-      },
+      'Referer': 'https://www.reddit.com/settings/',
+      'ContentType': 'application/x-www-form-urlencoded',
+    },
     SiteType.meeco => <String, String>{},
     SiteType.naverCafe => {
-        'Referer':
-            'https://nid.naver.com/mobile/user/help/naverProfile.nhn?lang=ko_KR',
-        'ContentType': 'application/x-www-form-urlencoded',
-      },
-    _ => const {}
+      'Referer':
+          'https://nid.naver.com/mobile/user/help/naverProfile.nhn?lang=ko_KR',
+      'ContentType': 'application/x-www-form-urlencoded',
+    },
+    _ => const {},
   };
 
   final String url = switch (ref.watch(currentSiteTypeNotifierProvider)) {
@@ -42,7 +42,7 @@ URLRequest urlRequest(Ref ref) {
       'https://nid.naver.com/mobile/user/help/naverProfile.nhn?lang=ko_KR',
     SiteType.reddit =>
       'https://www.reddit.com/login?dest=https://www.reddit.com/settings/',
-    _ => ''
+    _ => '',
   };
 
   return URLRequest(
@@ -53,11 +53,7 @@ URLRequest urlRequest(Ref ref) {
 }
 
 @riverpod
-Future<bool> hasLogin(
-  Ref ref,
-  CookieManager cookieManager,
-  String url,
-) async {
+Future<bool> hasLogin(Ref ref, CookieManager cookieManager, String url) async {
   final uri = WebUri(url);
   final List<Cookie> cookies = await cookieManager.getCookies(url: uri);
 
@@ -83,7 +79,7 @@ Future<bool> hasLogin(
     SiteType.meeco => uri.path == '/',
     SiteType.naverCafe => uri.path == '/user2/help/myInfoV2',
     SiteType.reddit => uri.path == '/settings/',
-    _ => throw UnimplementedError()
+    _ => throw UnimplementedError(),
   };
 }
 

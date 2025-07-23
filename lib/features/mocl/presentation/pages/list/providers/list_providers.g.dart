@@ -390,7 +390,133 @@ class _ReqListDataProviderElement
   LastId get lastId => (origin as ReqListDataProvider).lastId;
 }
 
-String _$getListItemHash() => r'c96a741b6958c4763cf054184ecae4ca9b01f294';
+String _$handleItemTapHash() => r'7220d4b2361698b0af774211d30d9799a34bfb62';
+
+/// See also [handleItemTap].
+@ProviderFor(handleItemTap)
+const handleItemTapProvider = HandleItemTapFamily();
+
+/// See also [handleItemTap].
+class HandleItemTapFamily extends Family<void> {
+  /// See also [handleItemTap].
+  const HandleItemTapFamily();
+
+  /// See also [handleItemTap].
+  HandleItemTapProvider call(BuildContext context) {
+    return HandleItemTapProvider(context);
+  }
+
+  @override
+  HandleItemTapProvider getProviderOverride(
+    covariant HandleItemTapProvider provider,
+  ) {
+    return call(provider.context);
+  }
+
+  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
+    listItemProvider,
+    listItemIndexProvider,
+  ];
+
+  @override
+  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
+
+  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
+      <ProviderOrFamily>{
+        listItemProvider,
+        ...?listItemProvider.allTransitiveDependencies,
+        listItemIndexProvider,
+        ...?listItemIndexProvider.allTransitiveDependencies,
+      };
+
+  @override
+  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
+      _allTransitiveDependencies;
+
+  @override
+  String? get name => r'handleItemTapProvider';
+}
+
+/// See also [handleItemTap].
+class HandleItemTapProvider extends AutoDisposeProvider<void> {
+  /// See also [handleItemTap].
+  HandleItemTapProvider(BuildContext context)
+    : this._internal(
+        (ref) => handleItemTap(ref as HandleItemTapRef, context),
+        from: handleItemTapProvider,
+        name: r'handleItemTapProvider',
+        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+            ? null
+            : _$handleItemTapHash,
+        dependencies: HandleItemTapFamily._dependencies,
+        allTransitiveDependencies:
+            HandleItemTapFamily._allTransitiveDependencies,
+        context: context,
+      );
+
+  HandleItemTapProvider._internal(
+    super._createNotifier, {
+    required super.name,
+    required super.dependencies,
+    required super.allTransitiveDependencies,
+    required super.debugGetCreateSourceHash,
+    required super.from,
+    required this.context,
+  }) : super.internal();
+
+  final BuildContext context;
+
+  @override
+  Override overrideWith(void Function(HandleItemTapRef provider) create) {
+    return ProviderOverride(
+      origin: this,
+      override: HandleItemTapProvider._internal(
+        (ref) => create(ref as HandleItemTapRef),
+        from: from,
+        name: null,
+        dependencies: null,
+        allTransitiveDependencies: null,
+        debugGetCreateSourceHash: null,
+        context: context,
+      ),
+    );
+  }
+
+  @override
+  AutoDisposeProviderElement<void> createElement() {
+    return _HandleItemTapProviderElement(this);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is HandleItemTapProvider && other.context == context;
+  }
+
+  @override
+  int get hashCode {
+    var hash = _SystemHash.combine(0, runtimeType.hashCode);
+    hash = _SystemHash.combine(hash, context.hashCode);
+
+    return _SystemHash.finish(hash);
+  }
+}
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+mixin HandleItemTapRef on AutoDisposeProviderRef<void> {
+  /// The parameter `context` of this provider.
+  BuildContext get context;
+}
+
+class _HandleItemTapProviderElement extends AutoDisposeProviderElement<void>
+    with HandleItemTapRef {
+  _HandleItemTapProviderElement(super.provider);
+
+  @override
+  BuildContext get context => (origin as HandleItemTapProvider).context;
+}
+
+String _$getListItemHash() => r'acb63b2c6cf355f6e35c579dcc668adb147997f8';
 
 /// See also [getListItem].
 @ProviderFor(getListItem)
@@ -551,7 +677,7 @@ final listItemIndexProvider = AutoDisposeProvider<int>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ListItemIndexRef = AutoDisposeProviderRef<int>;
-String _$listStateNotifierHash() => r'b29091fdd90126004e60efb2f6a9dbc1c5065b72';
+String _$listStateNotifierHash() => r'4a96d8d3a2acec4d2bbf17d5bb4229a00b7ebc10';
 
 /// See also [ListStateNotifier].
 @ProviderFor(ListStateNotifier)
@@ -578,12 +704,12 @@ final listStateNotifierProvider =
     );
 
 typedef _$ListStateNotifier = AutoDisposeAsyncNotifier<ListState>;
-String _$sortTypeNotifierHash() => r'234f694cb017377563596b5bcaffc6bba5587609';
+String _$sortTypeNotifierHash() => r'19fe9c4b29d4d6b3d4c1c845099428124cb94554';
 
 /// See also [SortTypeNotifier].
 @ProviderFor(SortTypeNotifier)
 final sortTypeNotifierProvider =
-    NotifierProvider<SortTypeNotifier, SortType>.internal(
+    AutoDisposeNotifierProvider<SortTypeNotifier, SortType>.internal(
       SortTypeNotifier.new,
       name: r'sortTypeNotifierProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -593,6 +719,6 @@ final sortTypeNotifierProvider =
       allTransitiveDependencies: null,
     );
 
-typedef _$SortTypeNotifier = Notifier<SortType>;
+typedef _$SortTypeNotifier = AutoDisposeNotifier<SortType>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

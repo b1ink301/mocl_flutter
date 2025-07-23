@@ -29,7 +29,7 @@ class DetailFontSizeNotifier extends _$DetailFontSizeNotifier {
   void refresh() => ref.invalidateSelf();
 }*/
 
-@Riverpod(dependencies: [listItem])
+@Riverpod(dependencies: [listItem, DetailTitleNotifier, _markAsRead])
 class DetailsNotifier extends _$DetailsNotifier {
   @override
   Future<Details> build() async {
@@ -39,7 +39,7 @@ class DetailsNotifier extends _$DetailsNotifier {
       listItem,
     );
     final Details data = result.getOrElse((f) => throw f);
-    ref.read(_markAsReadProvider(listItem));
+    await ref.watch(_markAsReadProvider(listItem).future);
     ref.read(detailTitleNotifierProvider.notifier).update(data.title);
     return data;
   }

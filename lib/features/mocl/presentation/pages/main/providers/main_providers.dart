@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
@@ -54,7 +53,7 @@ Future<Either<Failure, List<int>>> setMainItems(
   Ref ref,
   List<MainItem> list,
 ) async {
-  final SiteType siteType = ref.watch(currentSiteTypeNotifierProvider);
+  final SiteType siteType = ref.read(currentSiteTypeNotifierProvider);
   final SetMainParams params = SetMainParams(siteType: siteType, list: list);
   final SetMainList setList = ref.read(setMainListProvider);
   return await setList.call(params);
@@ -85,10 +84,17 @@ Future<void> handleAddButton(Ref ref, BuildContext context) async {
   //   );
   // }
 
-  if (!context.mounted || result == null) return;
+  debugPrint('[handleAddButton] result=$result');
+
+  if (result == null) return;
+
+  debugPrint('[handleAddButton]#2');
   final Either<Failure, List<int>> state = await ref.read(
     setMainItemsProvider(result).future,
   );
+
+  debugPrint('[handleAddButton]#3 state=$state');
+
   state.fold(
     (failure) => ref.read(showToastProvider(failure.message, context)),
     (data) => ref.read(mainItemsNotifierProvider.notifier).refresh(),

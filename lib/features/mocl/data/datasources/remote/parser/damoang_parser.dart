@@ -4,6 +4,7 @@ import 'dart:isolate';
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_ext.dart';
@@ -48,23 +49,23 @@ class DamoangParser implements BaseParser {
   }
 
   static void _detailIsolate(List<dynamic> args) {
-    final responseData = args[0] as String;
-    final isShowNickImage = args[1] as bool;
-    final sendPort = args[2] as SendPort;
+    final String responseData = args[0] as String;
+    final bool isShowNickImage = args[1] as bool;
+    final SendPort sendPort = args[2] as SendPort;
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
-    final document = parse(responseData);
-    final container = document.querySelector('article[id=bo_v]');
-    final title =
+    final Document document = parse(responseData);
+    final Element? container = document.querySelector('article[id=bo_v]');
+    final String title =
         container?.querySelector('header > h1[id=bo_v_title]')?.text.trim() ??
         '';
-    final timeElement = container?.querySelector(
+    final Element? timeElement = container?.querySelector(
       'section[id=bo_v_info] > div.d-flex > div:last-child',
     ); //:first-child, div:nth-child(2)
     timeElement?.querySelector("span.visually-hidden")?.remove();
-    final time = timeElement?.text.trim() ?? '';
-    final bodyHtml = container?.querySelector(
+    final String time = timeElement?.text.trim() ?? '';
+    final Element? bodyHtml = container?.querySelector(
       'section[id=bo_v_atc] > div[id=bo_v_con]',
     );
     bodyHtml
@@ -115,8 +116,8 @@ class DamoangParser implements BaseParser {
         ? memberElement?.querySelector('img.mb-photo')?.attributes['src'] ?? ''
         : '';
 
-    var index = 0;
-    final comments =
+    int index = 0;
+    final List<CommentItem> comments =
         container
             ?.querySelectorAll('div[id=viewcomment] > section > article')
             .map((element) {
@@ -133,18 +134,13 @@ class DamoangParser implements BaseParser {
                     'div.comment-list-wrap > header > div > div.me-2 > i.bi',
                   ) !=
                   null;
-              // final ip = element
-              //         .querySelector(
-              //             'div.comment_info > div.comment_info_area > div.comment_ip > span.ip_address')
-              //         ?.text ??
-              //     '';
-              final timeElement = element.querySelector(
+              final Element? timeElement = element.querySelector(
                 'div.comment-list-wrap > header > div > div.ms-auto',
               );
               timeElement?.querySelector("span.visually-hidden")?.remove();
-              final time = timeElement?.text.trim() ?? '';
+              final String time = timeElement?.text.trim() ?? '';
 
-              final nickImage = isShowNickImage
+              final String nickImage = isShowNickImage
                   ? nickElement
                             ?.querySelector('img.mb-photo')
                             ?.attributes['src']
@@ -152,7 +148,7 @@ class DamoangParser implements BaseParser {
                         ''
                   : '';
 
-              final likeCount =
+              final String likeCount =
                   element
                       .querySelector(
                         'div.comment-content > div.d-flex > div:last-child > button:last-child > span:first-child',
@@ -161,21 +157,21 @@ class DamoangParser implements BaseParser {
                       .trim() ??
                   '';
 
-              final body = element.querySelector(
+              final Element? body = element.querySelector(
                 'div.comment-content > div.na-convert',
               );
               body
                   ?.querySelectorAll('input, span.name, button')
                   .forEach((e) => e.remove());
 
-              var parsedTime = '';
+              String parsedTime = '';
               try {
-                var dateTime = parseDateTime(time);
+                DateTime dateTime = parseDateTime(time);
                 parsedTime = timeago.format(dateTime, locale: 'ko');
               } catch (e) {
                 parsedTime = time;
               }
-              final info = '$nickNameㆍ$parsedTime';
+              final String info = '$nickNameㆍ$parsedTime';
 
               return CommentItem(
                 id: index++,
@@ -200,7 +196,7 @@ class DamoangParser implements BaseParser {
 
     var parsedTime = '';
     try {
-      var dateTime = parseDateTime(time);
+      DateTime dateTime = parseDateTime(time);
       parsedTime = timeago.format(dateTime, locale: 'ko');
     } catch (e) {
       parsedTime = time;
@@ -276,53 +272,51 @@ class DamoangParser implements BaseParser {
 
   static void _parseListInIsolate(IsolateMessage<String> message) async {
     final replyPort = message.replyPort;
-    final responseData = message.responseData;
+    final String responseData = message.responseData;
     final lastId = message.lastId;
-    final boardTitle = message.boardTitle;
+    final String boardTitle = message.boardTitle;
     final isShowNickImage = message.isShowNickImage;
 
-    final parsedItems = <Map<String, dynamic>>[];
-    final ids = <int>[];
+    final List<Map<String, dynamic>> parsedItems = <Map<String, dynamic>>[];
+    final List<int> ids = <int>[];
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
-    final document = parse(responseData);
+    final Document document = parse(responseData);
     final elementList = document.querySelectorAll(
       'form[id=fboardlist] > section[id=bo_list] > ul.list-group > li.list-group-item > div.d-flex',
     );
 
-    for (final element in elementList) {
-      final test = element.querySelector(
+    for (final Element element in elementList) {
+      final Element? test = element.querySelector(
         'div.wr-num > div.rcmd-box > span.orangered > img',
       );
-      final category = test?.attributes['alt'] ?? '';
-
+      final String category = test?.attributes['alt'] ?? '';
       if (category == "공지" || category == "홍보" || category == "추천") continue;
-
-      final infoElement = element.querySelector('div.flex-grow-1');
-      final link = infoElement?.querySelector("div.d-flex > div > a");
+      final Element? infoElement = element.querySelector('div.flex-grow-1');
+      final Element? link = infoElement?.querySelector("div.d-flex > div > a");
       if (link == null) continue;
-      final url = link.attributes["href"]?.trim() ?? '';
+      final String url = link.attributes["href"]?.trim() ?? '';
       if (url.isEmpty || url.startsWith('/promotion')) continue;
 
-      final uri = Uri.tryParse(url);
+      final Uri? uri = Uri.tryParse(url);
       if (uri == null) continue;
-      final idString = uri.pathSegments.lastOrNull ?? '-1';
-      final id = int.tryParse(idString) ?? -1;
+      final String idString = uri.pathSegments.lastOrNull ?? '-1';
+      final int id = int.tryParse(idString) ?? -1;
       if (id <= 0 || lastId > 0 && id >= lastId) {
         debugPrint('[SKIP] id=$id, lastId=$lastId');
         continue;
       }
 
-      final metaElement = infoElement?.querySelector(
+      final Element? metaElement = infoElement?.querySelector(
         'div.da-list-meta > div.d-flex > div.wr-name > span.sv_wrap > a.sv_member, div.da-list-meta > div.d-flex > div.wr-name',
       );
-      final profile = metaElement?.attributes['href'] ?? '';
-      final userId = Uri.parse(profile).queryParameters['mb_id'] ?? '';
+      final String profile = metaElement?.attributes['href'] ?? '';
+      final String userId = Uri.parse(profile).queryParameters['mb_id'] ?? '';
 
-      debugPrint('metaElement=${metaElement?.innerHtml}');
+      // debugPrint('metaElement=${metaElement?.innerHtml}');
 
-      final reply =
+      final String reply =
           infoElement
               ?.querySelectorAll("div.d-flex > div.d-inline-flex > a")
               .map((a) => a.querySelector('span.count-plus')?.text.trim())
@@ -332,7 +326,7 @@ class DamoangParser implements BaseParser {
               ) ??
           '';
 
-      var board = '';
+      String board = '';
       final end = url.lastIndexOf("/");
       if (end > 0) {
         final start = url.lastIndexOf("/", end - 1);
@@ -341,9 +335,9 @@ class DamoangParser implements BaseParser {
         }
       }
 
-      final title = link.text.trim();
+      final String title = link.text.trim();
 
-      final timeElement = infoElement?.querySelector(
+      final Element? timeElement = infoElement?.querySelector(
         "div > div.d-flex > div.wr-date",
       );
 
@@ -351,16 +345,16 @@ class DamoangParser implements BaseParser {
           ?.querySelectorAll("span.visually-hidden, i.bi")
           .forEach((ele) => ele.remove());
 
-      final time = timeElement?.text.trim() ?? '';
-      var parsedTime = '';
+      final String time = timeElement?.text.trim() ?? '';
+      String parsedTime = '';
       try {
-        var dateTime = parseDateTime(time);
+        DateTime dateTime = parseDateTime(time);
         parsedTime = timeago.format(dateTime, locale: 'ko');
       } catch (e) {
         parsedTime = time;
       }
 
-      final nickImage = isShowNickImage
+      final String nickImage = isShowNickImage
           ? metaElement
                     ?.querySelector("img.mb-photo")
                     ?.attributes["src"]
@@ -368,20 +362,20 @@ class DamoangParser implements BaseParser {
                 ''
           : '';
 
-      final nickName =
+      final String nickName =
           metaElement
               ?.querySelector("span.sv_name, span.sv_member")
               ?.text
               .trim() ??
           '';
 
-      final hitElement = infoElement?.querySelector(
+      final Element? hitElement = infoElement?.querySelector(
         "div > div.d-flex > div.wr-num.order-4",
       );
       hitElement?.querySelector("span.visually-hidden")?.remove();
-      final hit = hitElement?.text.trim() ?? '';
+      final String hit = hitElement?.text.trim() ?? '';
 
-      final likeElement = infoElement?.querySelector(
+      final Element? likeElement = infoElement?.querySelector(
         "div.wr-num > div.rcmd-box",
       );
       likeElement
@@ -389,15 +383,15 @@ class DamoangParser implements BaseParser {
           .forEach((ele) => ele.remove());
       final like = likeElement?.text.trim() ?? '';
 
-      final hasImage =
+      final bool hasImage =
           infoElement
               ?.querySelector("div.d-flex > div > span.na-icon")
               ?.hasContent() ??
           false;
 
-      final info = BaseParser.parserInfo(false, nickName, parsedTime, hit);
+      final String info = BaseParser.parserInfo(false, nickName, parsedTime, hit);
 
-      final parsedItem = {
+      final Map<String, Object> parsedItem = {
         'id': id,
         'title': title,
         'reply': reply,
@@ -421,12 +415,12 @@ class DamoangParser implements BaseParser {
       ids.add(id);
     }
 
-    final readStatusPort = ReceivePort();
+    final ReceivePort readStatusPort = ReceivePort();
     replyPort.send(ReadStatusRequest(ids, readStatusPort.sendPort));
-    final readStatusResponse = await readStatusPort.first as ReadStatusResponse;
+    final ReadStatusResponse readStatusResponse = await readStatusPort.first as ReadStatusResponse;
     readStatusPort.close();
 
-    final resultList = parsedItems
+    final List<ListItem> resultList = parsedItems
         .map(
           (item) => ListItem(
             id: item['id'],

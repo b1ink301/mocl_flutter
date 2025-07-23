@@ -359,7 +359,7 @@ class _DetailAppbarHeightProviderElement
   String get text => (origin as DetailAppbarHeightProvider).text;
 }
 
-String _$detailsNotifierHash() => r'26526494740868f369979d642d6859a09e145e40';
+String _$detailsNotifierHash() => r'ea0ba6b469a2e987cb611655767c5f91cb223284';
 
 /// See also [DetailsNotifier].
 @ProviderFor(DetailsNotifier)
@@ -370,10 +370,18 @@ final detailsNotifierProvider =
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
           ? null
           : _$detailsNotifierHash,
-      dependencies: <ProviderOrFamily>[listItemProvider],
+      dependencies: <ProviderOrFamily>[
+        listItemProvider,
+        detailTitleNotifierProvider,
+        _markAsReadProvider,
+      ],
       allTransitiveDependencies: <ProviderOrFamily>{
         listItemProvider,
         ...?listItemProvider.allTransitiveDependencies,
+        detailTitleNotifierProvider,
+        ...?detailTitleNotifierProvider.allTransitiveDependencies,
+        _markAsReadProvider,
+        ...?_markAsReadProvider.allTransitiveDependencies,
       },
     );
 

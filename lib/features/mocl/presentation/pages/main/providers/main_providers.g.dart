@@ -178,7 +178,7 @@ class _IsCurrentSiteTypeProviderElement extends AutoDisposeProviderElement<bool>
   SiteType get siteType => (origin as IsCurrentSiteTypeProvider).siteType;
 }
 
-String _$setMainItemsHash() => r'bb96780b22b459d9a6c48ab323950bf23317beb8';
+String _$setMainItemsHash() => r'e959eb52e32d28baaab1f984d4461f4d29f3a132';
 
 /// See also [setMainItems].
 @ProviderFor(setMainItems)
@@ -302,7 +302,7 @@ class _SetMainItemsProviderElement
   List<MainItem> get list => (origin as SetMainItemsProvider).list;
 }
 
-String _$handleAddButtonHash() => r'adeb3dd82cb16a790852813d0ed8f205f170632d';
+String _$handleAddButtonHash() => r'5f58f664b4879dde64bfcb348daf44eda1508977';
 
 /// See also [handleAddButton].
 @ProviderFor(handleAddButton)

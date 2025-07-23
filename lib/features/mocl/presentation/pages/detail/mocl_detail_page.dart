@@ -15,24 +15,21 @@ import 'package:mocl_flutter/features/mocl/presentation/pages/detail/providers/d
 class DetailPage extends ConsumerWidget {
   const DetailPage({super.key});
 
-  static Widget init(
-    BuildContext context,
-    ListItem item,
-  ) =>
-      ProviderScope(
-        overrides: [
-          listItemProvider.overrideWithValue(item),
-          screenWidthProvider
-              .overrideWithValue(MediaQuery.of(context).size.width),
-          appbarTextStyleProvider.overrideWithValue(Platform.isIOS
-              ? CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle
-              : Theme.of(context).textTheme.labelMedium!),
-        ],
-        child: AnnotatedRegion<SystemUiOverlayStyle>(
-          value: Theme.of(context).appBarTheme.systemOverlayStyle!,
-          child: const DetailPage(),
-        ),
-      );
+  static Widget init(BuildContext context, ListItem item) => ProviderScope(
+    overrides: [
+      listItemProvider.overrideWithValue(item),
+      screenWidthProvider.overrideWithValue(MediaQuery.of(context).size.width),
+      appbarTextStyleProvider.overrideWithValue(
+        Platform.isIOS
+            ? CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle
+            : Theme.of(context).textTheme.labelMedium!,
+      ),
+    ],
+    child: AnnotatedRegion<SystemUiOverlayStyle>(
+      value: Theme.of(context).appBarTheme.systemOverlayStyle!,
+      child: const DetailPage(),
+    ),
+  );
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -41,10 +38,10 @@ class DetailPage extends ConsumerWidget {
           ? PlatformAppBar(
               cupertino: (BuildContext context, PlatformTarget platform) =>
                   CupertinoNavigationBarData(
-                      previousPageTitle: ref.watch(detailSmallTitleProvider),
-                      backgroundColor:
-                          Theme.of(context).scaffoldBackgroundColor,
-                      trailing: _buildPopupMenuButton(context, ref)),
+                    previousPageTitle: ref.watch(detailSmallTitleProvider),
+                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+                    trailing: _buildPopupMenuButton(context, ref),
+                  ),
             )
           : null,
       body: SafeArea(
@@ -55,16 +52,14 @@ class DetailPage extends ConsumerWidget {
           onRefresh: () async =>
               ref.read(detailsNotifierProvider.notifier).refresh(),
           child: const CustomScrollView(
-            slivers: [
-              DetailAppBar(),
-              DetailView(),
-            ],
+            cacheExtent: 1000,
+            slivers: [DetailAppBar(), DetailView()],
           ),
         ),
       ),
     );
 
-    return Platform.isMacOS
+    return Platform.isMacOS || Platform.isAndroid
         ? Listener(
             onPointerDown: (event) {
               if (event.buttons == kSecondaryMouseButton) {

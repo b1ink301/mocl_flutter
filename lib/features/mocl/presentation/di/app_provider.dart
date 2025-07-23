@@ -28,8 +28,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 part 'app_provider.g.dart';
 
-final localeCodeProvider = StateProvider<String>((ref) => 'ko');
-
 @Riverpod(keepAlive: true)
 class CurrentSiteTypeNotifier extends _$CurrentSiteTypeNotifier {
   @override

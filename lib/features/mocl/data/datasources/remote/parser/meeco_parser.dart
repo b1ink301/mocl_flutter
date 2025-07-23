@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:html/parser.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
@@ -96,12 +97,6 @@ class MeecoParser implements BaseParser {
             )
             .map((element) {
               final headerElement = element.querySelector('header.cmt_hd');
-              final nickNameElement = headerElement?.children.firstWhere(
-                (child) => child.localName == 'spanclass="bt_cmt_ctrl3',
-              );
-              nickNameElement
-                  ?.querySelectorAll('span, i, div')
-                  .forEach((element) => element.remove());
 
               final isReply =
                   element.attributes['class']?.contains('reply') ?? false;
@@ -109,9 +104,11 @@ class MeecoParser implements BaseParser {
                 'div.pf_wrap > span.pf > img.pf_img',
               );
 
+              debugPrint('element=${element.innerHtml}');
+
               final tmpUrl = profileElement?.attributes['src']?.trim() ?? '';
               final nickImage = isShowNickImage ? tmpUrl.toUrl(baseUrl) : '';
-              final nickName = nickNameElement?.text.trim() ?? '';
+
               final time =
                   element.querySelector('span.date')?.text.trim() ?? '';
               final likeCount =
@@ -121,6 +118,9 @@ class MeecoParser implements BaseParser {
                       .trim() ??
                   '';
 
+              final cmtTo =
+                  headerElement?.querySelector('div.cmt_to')?.text.trim() ?? '';
+              
               final body = element.querySelector('div.xe_content');
               body
                   ?.querySelectorAll('input, span.name, button')
@@ -133,8 +133,28 @@ class MeecoParser implements BaseParser {
               } catch (e) {
                 parsedTime = time;
               }
+
+              final isSecret =
+                  element.querySelector('div.cmt_secret_ctn') != null;
+
+              debugPrint(
+                'isSecret=$isSecret, headerElement=${headerElement?.innerHtml}',
+              );
+
+              final nickNameElement = headerElement?.children.firstWhere(
+                (child) => child.localName == 'spanclass="bt_cmt_ctrl3',
+              );
+              nickNameElement
+                  ?.querySelectorAll('span, i, div')
+                  .forEach((element) => element.remove());
+              final nickName = nickNameElement?.text.trim() ?? '';
+
               final info = '$nickNameㆍ$parsedTime';
-              var bodyHtml = body?.innerHtml;
+              var bodyHtml = isSecret ? '비밀글입니다.' : body?.innerHtml;
+
+              if (cmtTo.isNotEmpty) {
+                bodyHtml = '@$cmtTo\n$bodyHtml';
+              }
 
               if (bodyHtml?.startsWith(
                     '<a href="https://meeco.kr/index.php?mid=sticker&',
@@ -150,7 +170,7 @@ class MeecoParser implements BaseParser {
 
                   if (match != null) {
                     final url = match.group(1)!;
-                    bodyHtml = '<img src=$url height="140" width="140">';
+                    bodyHtml = '<img src=$url height="140" width="140">\n$bodyHtml';
                   }
                 }
               }

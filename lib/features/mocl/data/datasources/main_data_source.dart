@@ -1,5 +1,4 @@
 import 'package:flutter/foundation.dart';
-import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/util/read_json_from_assets.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_api.dart';
@@ -36,21 +35,12 @@ class MainDataSourceImpl implements MainDataSource {
   });
 
   @override
-  Future<List<MainItem>> get(SiteType siteType) async {
-    if (siteType == SiteType.naverCafe) {
-      final Either<Failure, List<MainItem>> result = await apiClient.main(
-        parser,
-      );
-      return result.getOrElse((Failure f) => throw f);
-    } else {
-      final List<MainItemData> result = await localDatabase.getMainData(
-        siteType,
-      );
-      return result
-          .map((MainItemData item) => item.toMainItemModel().toEntity(siteType))
-          .toList();
-    }
-  }
+  Future<List<MainItem>> get(SiteType siteType) async =>
+      siteType == SiteType.naverCafe
+      ? (await apiClient.main(parser)).getOrElse((Failure f) => throw f)
+      : (await localDatabase.getMainData(
+          siteType,
+        )).map((item) => item.toMainItemModel().toEntity(siteType)).toList();
 
   @override
   Future<List<int>> set(SiteType siteType, List<MainItem> list) async {
