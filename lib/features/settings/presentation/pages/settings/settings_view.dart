@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/settings/providers/settings_providers.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/divider_widget.dart';
+import 'package:mocl_flutter/di/app_provider.dart';
+import 'package:mocl_flutter/core/presentation/widgets/divider_widget.dart';
+import 'package:mocl_flutter/features/settings/presentation/pages/settings/providers/settings_providers.dart';
 
 class SettingsView extends ConsumerWidget {
   const SettingsView({super.key});

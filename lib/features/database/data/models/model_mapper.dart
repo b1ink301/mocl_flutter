@@ -1,8 +1,7 @@
-import 'package:mocl_flutter/features/database/data/models/main_item_model.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
-
-import '../datasources/local/entities/main_item_data.dart';
+import 'package:mocl_flutter/features/database/data/models/main_item_model.dart';
+import 'package:mocl_flutter/features/database/domain/entities/main_item_data.dart';
 
 class MainItemMapper {
   MainItemMapper._();
