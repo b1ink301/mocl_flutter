@@ -1,24 +1,23 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mocl_flutter/core/data/remote/base/base_api.dart';
+import 'package:mocl_flutter/core/data/remote/base/base_parser.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/core/domain/repositories/settings_repository.dart';
+import 'package:mocl_flutter/features/clien/data/datasources/remote/parser/clien_parser.dart';
+import 'package:mocl_flutter/features/damoang/data/datasources/remote/parser/damoang_parser.dart';
+import 'package:mocl_flutter/features/database/data/datasources/local/local_database.dart';
+import 'package:mocl_flutter/features/meeco/data/datasources/remote/parser/meeco_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/detail_data_source.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/list_data_source.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart';
 import 'package:mocl_flutter/features/mocl/data/di/network_provider.dart';
 import 'package:mocl_flutter/features/mocl/data/di/repository_provider.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/features/mocl/domain/repositories/settings_repository.dart';
+import 'package:mocl_flutter/features/naver_cafe/data/datasources/remote/parser/naver_cafe_parser.dart';
+import 'package:mocl_flutter/features/reddit/data/datasources/remote/parser/reddit_parser.dart';
+import 'package:mocl_flutter/features/theqoo/data/datasources/remote/parser/theqoo_parser.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:sembast/sembast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../datasources/local/local_database.dart';
-import '../datasources/remote/base/base_api.dart';
-import '../datasources/remote/base/base_parser.dart';
-import '../datasources/remote/parser/clien_parser.dart';
-import '../datasources/remote/parser/damoang_parser.dart';
-import '../datasources/remote/parser/meeco_parser.dart';
-import '../datasources/remote/parser/naver_cafe_parser.dart';
-import '../datasources/remote/parser/reddit_parser.dart';
-import '../datasources/remote/parser/theqoo_parser.dart';
 
 part 'datasource_provider.g.dart';
 
@@ -40,7 +39,10 @@ MainDataSource mainDatasource(Ref ref) {
   final LocalDatabase localDatabase = ref.watch(localDatabaseProvider);
   final (parser, apiClient) = ref.watch(currentParserProvider);
   return MainDataSourceImpl(
-      localDatabase: localDatabase, apiClient: apiClient, parser: parser);
+    localDatabase: localDatabase,
+    apiClient: apiClient,
+    parser: parser,
+  );
 }
 
 @riverpod
@@ -48,7 +50,10 @@ ListDataSource listDatasource(Ref ref) {
   final LocalDatabase localDatabase = ref.watch(localDatabaseProvider);
   final (parser, apiClient) = ref.watch(currentParserProvider);
   return ListDataSourceImpl(
-      localDatabase: localDatabase, apiClient: apiClient, parser: parser);
+    localDatabase: localDatabase,
+    apiClient: apiClient,
+    parser: parser,
+  );
 }
 
 @riverpod
@@ -96,13 +101,14 @@ DetailDataSource detailDatasource(Ref ref) {
 @riverpod
 (BaseParser, BaseApi) theqooParser(Ref ref) {
   final baseApi = ref.watch(theQooApiClientProvider);
-  return (const TheQoo(), baseApi);
+  return (const TheQooParser(), baseApi);
 }
 
 @riverpod
 (BaseParser, BaseApi) currentParser(Ref ref) {
-  final SettingsRepository settingsRepository =
-      ref.watch(settingsRepositoryProvider);
+  final SettingsRepository settingsRepository = ref.watch(
+    settingsRepositoryProvider,
+  );
   final SiteType siteType = settingsRepository.getSiteType();
 
   return switch (siteType) {

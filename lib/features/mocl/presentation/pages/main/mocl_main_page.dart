@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/mocl_drawer_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/mocl_main_view.dart';
@@ -48,13 +48,12 @@ class MainPage extends ConsumerWidget {
           cupertino: (_, _) => const _MainCupertinoView(),
         ),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        material:
-            (_, _) => MaterialScaffoldData(
-              widgetKey: scaffoldState,
-              drawer: const DrawerWidget(),
-              drawerEdgeDragWidth: ref.watch(screenWidthProvider),
-              drawerEnableOpenDragGesture: true,
-            ),
+        material: (_, _) => MaterialScaffoldData(
+          widgetKey: scaffoldState,
+          drawer: const DrawerWidget(),
+          drawerEdgeDragWidth: ref.watch(screenWidthProvider),
+          drawerEnableOpenDragGesture: true,
+        ),
         // cupertino: (_, _) => CupertinoPageScaffoldData(),
       ),
     );
@@ -69,7 +68,7 @@ class _MainCupertinoView extends ConsumerWidget {
     final isSidebarExpanded = ref.watch(mainSidebarNotifierProvider);
     final sidebarClose = ref.read(mainSidebarNotifierProvider.notifier).close;
 
-    changeSiteType(SiteType siteType) => ref
+    changeSiteType(siteType) => ref
         .read(currentSiteTypeNotifierProvider.notifier)
         .changeSiteType(siteType);
 
@@ -94,10 +93,9 @@ class _MainCupertinoView extends ConsumerWidget {
                 ref.watch(currentSiteTypeNotifierProvider),
               ),
               onDestinationSelected: (index) {
-                final siteType =
-                    SiteType.values
-                        .where((s) => s != SiteType.settings)
-                        .toList()[index];
+                final siteType = SiteType.values
+                    .where((s) => s != SiteType.settings)
+                    .toList()[index];
                 changeSiteType(siteType);
                 sidebarClose();
               },
@@ -107,15 +105,12 @@ class _MainCupertinoView extends ConsumerWidget {
               children: [
                 SidebarSection(
                   label: PlatformText(AppLocalizations.of(context)!.site),
-                  children:
-                      SiteType.values
-                          .where((s) => s != SiteType.settings)
-                          .map(
-                            (s) => SidebarDestination(
-                              label: PlatformText(s.title),
-                            ),
-                          )
-                          .toList(),
+                  children: SiteType.values
+                      .where((s) => s != SiteType.settings)
+                      .map(
+                        (s) => SidebarDestination(label: PlatformText(s.title)),
+                      )
+                      .toList(),
                 ),
                 SidebarSection(
                   label: PlatformText('설정'),
@@ -146,10 +141,9 @@ class _MainCupertinoView extends ConsumerWidget {
                 ref.watch(currentSiteTypeNotifierProvider),
               ),
               onDestinationSelected: (index) {
-                final siteType =
-                    SiteType.values
-                        .where((s) => s != SiteType.settings)
-                        .toList()[index];
+                final siteType = SiteType.values
+                    .where((s) => s != SiteType.settings)
+                    .toList()[index];
                 changeSiteType(siteType);
               },
               navigationBar: SidebarNavigationBar(
@@ -158,15 +152,12 @@ class _MainCupertinoView extends ConsumerWidget {
               children: [
                 SidebarSection(
                   label: PlatformText(AppLocalizations.of(context)!.site),
-                  children:
-                      SiteType.values
-                          .where((s) => s != SiteType.settings)
-                          .map(
-                            (s) => SidebarDestination(
-                              label: PlatformText(s.title),
-                            ),
-                          )
-                          .toList(),
+                  children: SiteType.values
+                      .where((s) => s != SiteType.settings)
+                      .map(
+                        (s) => SidebarDestination(label: PlatformText(s.title)),
+                      )
+                      .toList(),
                 ),
                 SidebarSection(
                   label: PlatformText('설정'),

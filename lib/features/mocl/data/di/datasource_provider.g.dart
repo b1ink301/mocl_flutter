@@ -197,7 +197,7 @@ final redditParserProvider =
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef RedditParserRef = AutoDisposeProviderRef<(BaseParser, BaseApi)>;
-String _$theqooParserHash() => r'109d4c85eb4cccac277bb06066d3518791893c98';
+String _$theqooParserHash() => r'b778a69f9de06e2bb95a94bb39c47461b23853c7';
 
 /// See also [theqooParser].
 @ProviderFor(theqooParser)

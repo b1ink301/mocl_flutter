@@ -1,15 +1,14 @@
 import 'package:flutter/foundation.dart';
+import 'package:mocl_flutter/core/data/remote/base/base_api.dart';
+import 'package:mocl_flutter/core/data/remote/base/base_parser.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/util/read_json_from_assets.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_api.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
-import 'package:mocl_flutter/features/mocl/data/models/model_mapper.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
-
-import 'local/entities/main_item_data.dart';
-import 'local/local_database.dart';
+import 'package:mocl_flutter/features/database/data/datasources/local/entities/main_item_data.dart';
+import 'package:mocl_flutter/features/database/data/datasources/local/local_database.dart';
+import 'package:mocl_flutter/features/database/data/models/main_item_model.dart';
+import 'package:mocl_flutter/features/database/data/models/model_mapper.dart';
 
 abstract class MainDataSource {
   Future<List<MainItem>> get(SiteType siteType);
@@ -44,7 +43,7 @@ class MainDataSourceImpl implements MainDataSource {
 
   @override
   Future<List<int>> set(SiteType siteType, List<MainItem> list) async {
-    final List<MainItemData> entities = list.map((item) {
+    final entities = list.map((item) {
       final MainItemModel data = MainItemMapper.fromEntityToModel(item);
       return MainItemMapper.fromModelToEntity(data);
     }).toList();
@@ -72,8 +71,8 @@ class MainDataSourceImpl implements MainDataSource {
 
   @override
   Future<bool> hasItem(SiteType siteType, MainItem item) {
-    final MainItemModel data = MainItemMapper.fromEntityToModel(item);
-    final MainItemData entity = MainItemMapper.fromModelToEntity(data);
+    final data = MainItemMapper.fromEntityToModel(item);
+    final entity = MainItemMapper.fromModelToEntity(data);
     return localDatabase.hasItem(siteType, entity);
   }
 }

@@ -3,12 +3,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:fpdart/fpdart.dart';
-import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/features/mocl/domain/usecases/set_read_flag.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/core/domain/usecases/set_read_flag.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/use_case_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -34,11 +32,9 @@ class DetailsNotifier extends _$DetailsNotifier {
   @override
   Future<Details> build() async {
     state = const AsyncValue.loading();
-    final ListItem listItem = ref.watch(listItemProvider);
-    final Either<Failure, Details> result = await ref.read(getDetailProvider)(
-      listItem,
-    );
-    final Details data = result.getOrElse((f) => throw f);
+    final listItem = ref.watch(listItemProvider);
+    final result = await ref.read(getDetailProvider)(listItem);
+    final data = result.getOrElse((f) => throw f);
     await ref.watch(_markAsReadProvider(listItem).future);
     ref.read(detailTitleNotifierProvider.notifier).update(data.title);
     return data;
@@ -50,12 +46,9 @@ class DetailsNotifier extends _$DetailsNotifier {
 @riverpod
 Future<int> _markAsRead(Ref ref, ListItem listItem) async {
   if (!listItem.isRead) {
-    final SiteType siteType = ref.read(currentSiteTypeNotifierProvider);
-    final SetReadFlagParams params = SetReadFlagParams(
-      siteType: siteType,
-      boardId: listItem.id,
-    );
-    final SetReadFlag setReadFlag = ref.read(setReadProvider);
+    final siteType = ref.read(currentSiteTypeNotifierProvider);
+    final params = SetReadFlagParams(siteType: siteType, boardId: listItem.id);
+    final setReadFlag = ref.read(setReadProvider);
     final int result = await setReadFlag(params);
     ref.read(readableStateNotifierProvider.notifier).update(listItem.id);
     return result;
@@ -99,8 +92,8 @@ String detailTitle(Ref ref) {
 
 @Riverpod(dependencies: [listItem, CurrentSiteTypeNotifier])
 String detailUrl(Ref ref) {
-  final SiteType siteType = ref.watch(currentSiteTypeNotifierProvider);
-  final ListItem listItem = ref.watch(listItemProvider);
+  final siteType = ref.watch(currentSiteTypeNotifierProvider);
+  final listItem = ref.watch(listItemProvider);
   return siteType == SiteType.naverCafe
       ? 'https://m.cafe.naver.com/ca-fe/web/cafes/${listItem.board}/articles/${listItem.id}'
       : listItem.url;

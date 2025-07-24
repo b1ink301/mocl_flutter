@@ -23,7 +23,7 @@ final mainTitleProvider = AutoDisposeProvider<String>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MainTitleRef = AutoDisposeProviderRef<String>;
-String _$showAddButtonHash() => r'28c94100bcb60029d83ccecdb2c155c02bdd73f9';
+String _$showAddButtonHash() => r'c32d018e97a3e9f27ebf85919cae75d35efc35f0';
 
 /// See also [showAddButton].
 @ProviderFor(showAddButton)
@@ -178,7 +178,7 @@ class _IsCurrentSiteTypeProviderElement extends AutoDisposeProviderElement<bool>
   SiteType get siteType => (origin as IsCurrentSiteTypeProvider).siteType;
 }
 
-String _$setMainItemsHash() => r'e959eb52e32d28baaab1f984d4461f4d29f3a132';
+String _$setMainItemsHash() => r'64d04ceb9a4f1b1b52e8cf09f6812a5c3ceedb53';
 
 /// See also [setMainItems].
 @ProviderFor(setMainItems)
@@ -302,7 +302,7 @@ class _SetMainItemsProviderElement
   List<MainItem> get list => (origin as SetMainItemsProvider).list;
 }
 
-String _$handleAddButtonHash() => r'5f58f664b4879dde64bfcb348daf44eda1508977';
+String _$handleAddButtonHash() => r'79e4e6f3f57edbe81784910982d0ff2982ce3c49';
 
 /// See also [handleAddButton].
 @ProviderFor(handleAddButton)
@@ -439,7 +439,7 @@ final mainScaffoldStateProvider = Provider<GlobalKey<ScaffoldState>>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef MainScaffoldStateRef = ProviderRef<GlobalKey<ScaffoldState>>;
-String _$mainItemsNotifierHash() => r'86b23ee300f094255bb5993053eb02c3638f2421';
+String _$mainItemsNotifierHash() => r'937ec4ac5bc0c84ea08fbc43484e4667bc930259';
 
 /// See also [MainItemsNotifier].
 @ProviderFor(MainItemsNotifier)

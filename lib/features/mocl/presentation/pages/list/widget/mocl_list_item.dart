@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/providers/list_providers.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/round_text_widget.dart';
@@ -22,9 +21,7 @@ class MoclListItem extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final hasInfo = ref.watch(
-      listItemProvider.select(
-        (ListItem? item) => item?.info.isNotEmpty ?? false,
-      ),
+      listItemProvider.select((item) => item?.info.isNotEmpty ?? false),
     );
     return PlatformListTile(
       material: (_, _) => MaterialListTileData(
@@ -46,7 +43,7 @@ class _TitleView extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final (title, isRead) = ref.watch(
       listItemProvider.select(
-        (ListItem? item) => (item?.title ?? "", item?.isRead ?? false),
+        (item) => (item?.title ?? "", item?.isRead ?? false),
       ),
     );
 
@@ -91,7 +88,7 @@ class _ReplyText extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final (reply, isRead) = ref.watch(
       listItemProvider.select(
-        (ListItem? item) => (item?.reply ?? "", item?.isRead ?? false),
+        (item) => (item?.reply ?? "", item?.isRead ?? false),
       ),
     );
 
@@ -112,9 +109,7 @@ class _NickImage extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final url = ref.watch(
-      listItemProvider.select(
-        (ListItem? item) => item?.userInfo.nickImage ?? "",
-      ),
+      listItemProvider.select((item) => item?.userInfo.nickImage ?? ""),
     );
 
     if (url.isEmpty) {
@@ -131,7 +126,7 @@ class _InfoText extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final (info, isRead) = ref.watch(
       listItemProvider.select(
-        (ListItem? item) => (item?.info ?? "", item?.isRead ?? false),
+        (item) => (item?.info ?? "", item?.isRead ?? false),
       ),
     );
 

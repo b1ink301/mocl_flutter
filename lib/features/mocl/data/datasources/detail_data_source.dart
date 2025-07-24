@@ -1,9 +1,9 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_api.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_parser.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/core/data/remote/base/base_api.dart';
+import 'package:mocl_flutter/core/data/remote/base/base_parser.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
 
 abstract class DetailDataSource {
   Future<Either<Failure, Details>> getDetail(ListItem item);

@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/core/domain/usecases/set_main_list.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/features/mocl/domain/usecases/set_main_list.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/use_case_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/widgets/add_list_modal_sheet_page.dart';
@@ -18,10 +18,8 @@ class MainItemsNotifier extends _$MainItemsNotifier {
   @override
   Future<List<MainItem>> build() async {
     state = const AsyncValue.loading();
-    final SiteType siteType = ref.watch(currentSiteTypeNotifierProvider);
-    final Either<Failure, List<MainItem>> result = await ref.read(
-      getMainListProvider,
-    )(siteType);
+    final siteType = ref.watch(currentSiteTypeNotifierProvider);
+    final result = await ref.read(getMainListProvider)(siteType);
     return result.getOrElse((Failure failure) => throw failure);
   }
 
@@ -38,7 +36,7 @@ String mainTitle(Ref ref) {
 
 @riverpod
 bool showAddButton(Ref ref) {
-  final SiteType siteType = ref.watch(currentSiteTypeNotifierProvider);
+  final siteType = ref.watch(currentSiteTypeNotifierProvider);
   return siteType != SiteType.naverCafe;
 }
 
@@ -53,9 +51,9 @@ Future<Either<Failure, List<int>>> setMainItems(
   Ref ref,
   List<MainItem> list,
 ) async {
-  final SiteType siteType = ref.read(currentSiteTypeNotifierProvider);
-  final SetMainParams params = SetMainParams(siteType: siteType, list: list);
-  final SetMainList setList = ref.read(setMainListProvider);
+  final siteType = ref.read(currentSiteTypeNotifierProvider);
+  final params = SetMainParams(siteType: siteType, list: list);
+  final setList = ref.read(setMainListProvider);
   return await setList.call(params);
 }
 
@@ -84,16 +82,11 @@ Future<void> handleAddButton(Ref ref, BuildContext context) async {
   //   );
   // }
 
-  debugPrint('[handleAddButton] result=$result');
-
   if (result == null) return;
 
-  debugPrint('[handleAddButton]#2');
   final Either<Failure, List<int>> state = await ref.read(
     setMainItemsProvider(result).future,
   );
-
-  debugPrint('[handleAddButton]#3 state=$state');
 
   state.fold(
     (failure) => ref.read(showToastProvider(failure.message, context)),

@@ -1,19 +1,17 @@
 import 'dart:core';
 
 import 'package:fpdart/fpdart.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/core/domain/repositories/main_repository.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/features/database/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart';
-import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/features/mocl/domain/repositories/main_repository.dart';
 
 class MainRepositoryImpl implements MainRepository {
   final MainDataSource dataSource;
 
-  const MainRepositoryImpl({
-    required this.dataSource,
-  });
+  const MainRepositoryImpl({required this.dataSource});
 
   @override
   Stream<Either<Failure, List<MainItem>>> getMainListStream({
@@ -45,10 +43,10 @@ class MainRepositoryImpl implements MainRepository {
     required SiteType siteType,
   }) async {
     try {
-      final List<MainItemModel> mainData =
-          await dataSource.getAllFromJson(siteType);
-      final Iterable<MainItem> result =
-          mainData.map((data) => data.toEntity(siteType));
+      final mainData = await dataSource.getAllFromJson(siteType);
+      final Iterable<MainItem> result = mainData.map(
+        (data) => data.toEntity(siteType),
+      );
       final List<Future<MainItem>> futures = result.map((item) async {
         final bool hasItem = await dataSource.hasItem(siteType, item);
         return item.copyWith(hasItem: hasItem);

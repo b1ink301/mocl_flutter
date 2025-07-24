@@ -1,15 +1,14 @@
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mocl_flutter/core/data/remote/base/base_api.dart';
+import 'package:mocl_flutter/features/clien/data/datasources/remote/api/clien_api.dart';
+import 'package:mocl_flutter/features/damoang/data/datasources/remote/api/damoang_api.dart';
+import 'package:mocl_flutter/features/meeco/data/datasources/remote/api/meeco_api.dart';
+import 'package:mocl_flutter/features/naver_cafe/data/datasources/remote/api/naver_cafe_api.dart';
+import 'package:mocl_flutter/features/reddit/data/datasources/remote/api/reddit_api.dart';
+import 'package:mocl_flutter/features/theqoo/data/datasources/remote/api/theqoo_api.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import '../datasources/remote/api/clien_api.dart';
-import '../datasources/remote/api/damoang_api.dart';
-import '../datasources/remote/api/meeco_api.dart';
-import '../datasources/remote/api/naver_cafe_api.dart';
-import '../datasources/remote/api/reddit_api.dart';
-import '../datasources/remote/api/theqoo_api.dart';
-import '../datasources/remote/base/base_api.dart';
 
 part 'network_provider.g.dart';
 
