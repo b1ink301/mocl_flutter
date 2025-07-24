@@ -23,7 +23,7 @@ final listItemProvider = AutoDisposeProvider<ListItem>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef ListItemRef = AutoDisposeProviderRef<ListItem>;
-String _$markAsReadHash() => r'e52c0d22ebcc34d1867674991180f040318689e3';
+String _$markAsReadHash() => r'536841a42c40168bada35f1f45788c0576b6f6a8';
 
 /// Copied from Dart SDK
 class _SystemHash {
@@ -204,7 +204,7 @@ final detailTitleProvider = AutoDisposeProvider<String>.internal(
 @Deprecated('Will be removed in 3.0. Use Ref instead')
 // ignore: unused_element
 typedef DetailTitleRef = AutoDisposeProviderRef<String>;
-String _$detailUrlHash() => r'f90c3c2d94844fcde8f28210cee4e8e44eeeb4fc';
+String _$detailUrlHash() => r'cff7f4f07c11d8b412ba29427e36676f252b81ae';
 
 /// See also [detailUrl].
 @ProviderFor(detailUrl)
@@ -359,7 +359,7 @@ class _DetailAppbarHeightProviderElement
   String get text => (origin as DetailAppbarHeightProvider).text;
 }
 
-String _$detailsNotifierHash() => r'ea0ba6b469a2e987cb611655767c5f91cb223284';
+String _$detailsNotifierHash() => r'374943627b947fd53ce42373caea9c1c240944f2';
 
 /// See also [DetailsNotifier].
 @ProviderFor(DetailsNotifier)

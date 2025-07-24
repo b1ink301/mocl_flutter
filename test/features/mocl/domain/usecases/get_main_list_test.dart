@@ -4,12 +4,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_result.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/core/domain/repositories/main_repository.dart';
+import 'package:mocl_flutter/core/domain/usecases/get_main_list.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/features/mocl/domain/repositories/main_repository.dart';
-import 'package:mocl_flutter/features/mocl/domain/usecases/get_main_list.dart';
 
 import 'get_main_list_test.mocks.dart';
 

@@ -1,8 +1,4 @@
-import 'package:fpdart/fpdart.dart';
-import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/features/mocl/domain/usecases/get_main_list_from_json.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/di/use_case_provider.dart';
 import 'package:mocl_flutter/features/mocl/presentation/models/checkable_main_item.dart';
@@ -16,17 +12,17 @@ class AddListDlgNotifier extends _$AddListDlgNotifier {
   FutureOr<List<CheckableMainItem>> build() async {
     state = const AsyncValue.loading();
 
-    final SiteType siteType = ref.read(currentSiteTypeNotifierProvider);
-    final GetMainListFromJson getMainListFromJson =
-        ref.read(getMainListFromJsonProvider);
-    final Either<Failure, List<MainItem>> result =
-        await getMainListFromJson(siteType);
+    final siteType = ref.watch(currentSiteTypeNotifierProvider);
+    final getMainListFromJson = ref.read(getMainListFromJsonProvider);
+    final result = await getMainListFromJson(siteType);
 
     return result.fold(
-      (Failure failure) => throw failure,
-      (List<MainItem> data) => data
-          .map((MainItem item) =>
-              CheckableMainItem(mainItem: item, isChecked: item.hasItem))
+      (failure) => throw failure,
+      (data) => data
+          .map(
+            (item) =>
+                CheckableMainItem(mainItem: item, isChecked: item.hasItem),
+          )
           .toList(),
     );
   }
@@ -40,7 +36,7 @@ class AddListDlgNotifier extends _$AddListDlgNotifier {
   List<MainItem> selectedItems() => state.value == null
       ? const []
       : state.value!
-          .where((CheckableMainItem item) => item.isChecked)
-          .map((CheckableMainItem item) => item.mainItem)
-          .toList();
+            .where((CheckableMainItem item) => item.isChecked)
+            .map((CheckableMainItem item) => item.mainItem)
+            .toList();
 }

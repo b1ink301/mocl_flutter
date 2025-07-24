@@ -4,15 +4,15 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/local/entities/main_item_data.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/local/local_database.dart';
+import 'package:mocl_flutter/core/data/remote/base/base_api.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/damoang/data/datasources/remote/parser/damoang_parser.dart';
+import 'package:mocl_flutter/features/database/data/datasources/local/entities/main_item_data.dart';
+import 'package:mocl_flutter/features/database/data/datasources/local/local_database.dart';
+import 'package:mocl_flutter/features/database/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/main_data_source.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_api.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/remote/parser/damoang_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/di/datasource_provider.dart';
-import 'package:mocl_flutter/features/mocl/data/models/main_item_model.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart';
 
 import './mocl_local_data_source_test.mocks.dart';
 
@@ -34,10 +34,13 @@ void main() {
 
     container = ProviderContainer(
       overrides: [
-        mainDatasourceProvider.overrideWithValue(MainDataSourceImpl(
+        mainDatasourceProvider.overrideWithValue(
+          MainDataSourceImpl(
             localDatabase: localDatabase,
             apiClient: mockApiClient,
-            parser: DamoangParser(true)))
+            parser: DamoangParser(true),
+          ),
+        ),
       ],
     );
 
@@ -47,8 +50,9 @@ void main() {
   tearDownAll(() => localDatabase.dispose());
 
   test('main local datasource test. (empty)', () async {
-    when(localDatabase.getMainData(any))
-        .thenAnswer((_) async => List<MainItemData>.empty());
+    when(
+      localDatabase.getMainData(any),
+    ).thenAnswer((_) async => List<MainItemData>.empty());
 
     verifyZeroInteractions(localDatabase);
 
@@ -85,13 +89,15 @@ void main() {
     //     Future.value(
     //         mainListJson.map((item) => MainItemModel.fromJson(item)).toList()));
 
-    when(localDatabase.setMainData(any, any))
-        .thenAnswer((_) async => <int>[1, 2, 3]);
+    when(
+      localDatabase.setMainData(any, any),
+    ).thenAnswer((_) async => <int>[1, 2, 3]);
 
     // act
     final mainResult = await mainDataSource.getAllFromJson(siteType);
-    var mainItemList =
-        mainResult.map((item) => item.toEntity(siteType)).toList();
+    var mainItemList = mainResult
+        .map((item) => item.toEntity(siteType))
+        .toList();
 
     var result = await mainDataSource.set(siteType, mainItemList);
     log("result=$result");
@@ -101,8 +107,9 @@ void main() {
   });
 
   test('query MainItemData from DB', () async {
-    when(localDatabase.getMainData(any))
-        .thenAnswer((_) async => List<MainItemData>.empty());
+    when(
+      localDatabase.getMainData(any),
+    ).thenAnswer((_) async => List<MainItemData>.empty());
 
     final result = await mainDataSource.get(siteType);
     log("result=$result");

@@ -4,15 +4,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mockito/annotations.dart';
 import 'package:mockito/mockito.dart';
+import 'package:mocl_flutter/core/data/remote/base/base_api.dart';
+import 'package:mocl_flutter/core/data/remote/base/base_parser.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/features/damoang/data/datasources/remote/parser/damoang_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/datasources/detail_data_source.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_api.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_parser.dart';
-import 'package:mocl_flutter/features/mocl/data/datasources/remote/parser/damoang_parser.dart';
 import 'package:mocl_flutter/features/mocl/data/di/datasource_provider.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_user_info.dart';
 
 import 'mocl_detail_data_source_test.mocks.dart';
 
