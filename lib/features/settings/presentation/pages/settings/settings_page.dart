@@ -6,8 +6,9 @@ import 'package:flutter/services.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/features/mocl/presentation/pages/settings/settings_view.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.dart';
+import 'package:mocl_flutter/core/presentation/widgets/message_widget.dart';
+
+import 'settings_view.dart';
 
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});

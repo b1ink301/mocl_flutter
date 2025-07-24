@@ -1,7 +1,7 @@
 import 'package:flutter/foundation.dart';
-import 'package:mocl_flutter/features/mocl/data/di/repository_provider.dart';
-import 'package:mocl_flutter/features/mocl/presentation/di/app_provider.dart';
-import 'package:mocl_flutter/features/mocl/presentation/widgets/nick_image_widget.dart';
+import 'package:mocl_flutter/di/repository_provider.dart';
+import 'package:mocl_flutter/di/app_provider.dart';
+import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'settings_providers.g.dart';
