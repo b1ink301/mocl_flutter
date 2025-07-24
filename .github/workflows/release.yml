@@ -4,6 +4,10 @@ on:
   push:
     tags:
       - 'v*.*.*' # v1.0.0과 같은 태그가 푸시될 때 실행
+  pull_request:
+    types: [ closed ] # PR이 닫혔을 때 워크플로우 실행
+    branches:
+      - main # main 브랜치에 대한 PR만 해당
 
 jobs:
   build-and-release:
