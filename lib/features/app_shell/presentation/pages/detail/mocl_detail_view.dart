@@ -368,7 +368,6 @@ class _HtmlWidget extends StatelessWidget {
   final RenderMode renderMode;
 
   const _HtmlWidget({
-    super.key,
     required this.html,
     required this.textStyle,
     required this.hexColor,
