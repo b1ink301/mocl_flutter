@@ -1,0 +1,69 @@
+name: Build and Release Flutter Android
+
+on:
+  push:
+    tags:
+      - 'v*.*.*' # v1.0.0과 같은 태그가 푸시될 때 실행
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      # 1. 소스 코드 체크아웃
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # 2. 자바(JDK) 설치
+      - name: Set up JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      # 3. Flutter SDK 설치
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: 'stable'
+          cache: true
+
+      # 4. 의존성 설치
+      - name: Install dependencies
+        run: flutter pub get
+
+      # 5. Keystore 디코딩 (Secrets 사용)
+      - name: Decode Keystore
+        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
+
+      # 6. key.properties 파일 생성 (Secrets 사용)
+      - name: Create key.properties
+        run: |
+          echo "storeFile=upload-keystore.jks" > android/key.properties
+          echo "storePassword=${{ secrets.STORE_PASSWORD }}" >> android/key.properties
+          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
+          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
+      
+      # 7. Flutter 릴리즈 빌드
+      - name: Build Release
+        run: flutter build apk --flavor prd -t lib/main_prd.dart
+
+      # 8. GitHub Release 생성 및 파일 업로드
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          # 워크플로우를 실행시킨 Git 태그를 릴리즈 태그로 사용
+          tag: ${{ github.ref_name }}
+          # 릴리즈 이름
+          name: Release ${{ github.ref_name }}
+          # 릴리즈 노트 (비워두면 태그의 커밋 메시지가 자동으로 사용됨)
+          body: ""
+          # 드래프트(초안) 상태로 생성할지 여부
+          draft: false
+          # Prerelease로 표시할지 여부
+          prerelease: false
+          # 업로드할 파일들 (줄바꿈으로 여러 개 지정 가능)
+          artifacts: |
+            build/app/outputs/flutter-apk/app-prd-release.apk
+          # GitHub API 인증 토큰
+          token: ${{ secrets.GITHUB_TOKEN }}
