@@ -8,13 +8,13 @@ import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
-import 'package:mocl_flutter/core/util/utilities.dart';
-import 'package:mocl_flutter/di/app_provider.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/pages/detail/providers/detail_providers.dart';
 import 'package:mocl_flutter/core/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/message_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
+import 'package:mocl_flutter/core/util/utilities.dart';
+import 'package:mocl_flutter/di/app_provider.dart';
+import 'package:mocl_flutter/features/app_shell/presentation/pages/detail/providers/detail_providers.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
 class DetailView extends ConsumerStatefulWidget {
@@ -29,8 +29,8 @@ class DetailViewState extends ConsumerState<DetailView> {
   Widget build(BuildContext context) => ref
       .watch(detailsNotifierProvider)
       .maybeMap(
-        data: (AsyncData<Details> state) => _DetailView(detail: state.value),
-        error: (AsyncError<Details> state) => SliverFillRemaining(
+        data: (state) => _DetailView(detail: state.value),
+        error: (state) => SliverFillRemaining(
           hasScrollBody: false,
           child: Padding(
             padding: const EdgeInsets.all(12.0),
@@ -142,11 +142,10 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    final TextStyle bodySmall = Theme.of(
-      context,
-    ).textTheme.bodySmall!.copyWith(fontSize: 15.4);
-    final Color backgroundColor = Theme.of(context).scaffoldBackgroundColor;
-    final List<Widget>? likeView = _buildLikeView(context, bodySmall);
+    final theme = Theme.of(context);
+    final bodySmall = theme.textTheme.bodySmall!.copyWith(fontSize: 15.4);
+    final backgroundColor = theme.scaffoldBackgroundColor;
+    final likeView = _buildLikeView(context, bodySmall);
 
     return Column(
       children: [
@@ -342,7 +341,7 @@ class _HtmlLoadingWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => src.isEmpty || progress == null
-      ? SizedBox.shrink()
+      ? const SizedBox.shrink()
       : Padding(
           padding: const EdgeInsets.symmetric(vertical: 4.0),
           child: Column(

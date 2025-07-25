@@ -45,13 +45,12 @@ class DetailPage extends ConsumerWidget {
             )
           : null,
       body: SafeArea(
-        left: false,
-        right: false,
         child: RefreshIndicator.adaptive(
           color: Theme.of(context).focusColor,
           onRefresh: () async =>
               ref.read(detailsNotifierProvider.notifier).refresh(),
           child: const CustomScrollView(
+            physics: ClampingScrollPhysics(),
             cacheExtent: 1000,
             slivers: [DetailAppBar(), DetailView()],
           ),
