@@ -1,7 +1,7 @@
 #include "../../Flutter/devDebug.xcconfig"
 #include "Warnings.xcconfig"
 
-FLUTTER_TARGET=lib/main_dev.dart
+FLUTTER_TARGET=lib/main.dart
 ASSET_PREFIX=dev
 BUNDLE_NAME=Mocl_DEV
 BUNDLE_DISPLAY_NAME=Mocl_DEV
