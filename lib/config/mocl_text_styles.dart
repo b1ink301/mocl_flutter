@@ -45,14 +45,12 @@ class MoclTextStyles extends ThemeExtension<MoclTextStyles> {
     required double fontSize,
     FontWeight? fontWeight,
     double? height,
-  }) {
-    return TextStyle(
+  }) => TextStyle(
       color: color,
       fontSize: fontSize,
       fontWeight: fontWeight,
       height: height,
     );
-  }
 
   @override
   ThemeExtension<MoclTextStyles> copyWith({
