@@ -17,7 +17,7 @@ dependencies:
   html: ^0.15.5+1
 
   # HTML Widget
-  flutter_widget_from_html: ^0.16.0
+  flutter_widget_from_html: ^0.17.0
 
   # DI
   injectable: ^2.5.0
@@ -51,7 +51,7 @@ dependencies:
   path_provider: ^2.1.5
 
   # class 자동화
-  freezed_annotation: ^3.0.0
+  freezed_annotation: ^3.1.0
 
   # 이미지 캐시
   cached_network_image: ^3.4.1
@@ -59,7 +59,7 @@ dependencies:
   flutter_cache_manager: ^3.4.1
 
   # URL 런처
-  url_launcher: ^6.3.1
+  url_launcher: ^6.3.2
 
   # swipe back
   swipeable_page_route: ^0.4.7
@@ -72,10 +72,10 @@ dependencies:
   #  hive_flutter: ^1.1.0
 
   # router
-  go_router: ^15.2.3
+  go_router: ^16.0.0
 
   # firebase
-  firebase_crashlytics: ^4.3.7
+  firebase_crashlytics: ^4.3.10
 
   # async
 #  async: ^2.12.0
