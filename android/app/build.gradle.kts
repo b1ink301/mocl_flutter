@@ -47,8 +47,6 @@ android {
 
     defaultConfig {
         applicationId = "kr.b1ink.mocl"
-        // You can update the following values to match your application needs.
-        // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
@@ -57,14 +55,17 @@ android {
 
     signingConfigs {
         create("key") { // 일반 사이닝 키
-            val keyPropertiesFile = project.rootProject.file("key.properties")
+            var keyPropertiesFile = project.rootProject.file("../../keystore/key.properties")
             if (!keyPropertiesFile.exists()) {
-                throw FileNotFoundException("key.properties file not found at ${keyPropertiesFile.absolutePath}")
+                // github action
+                keyPropertiesFile = project.rootProject.file("./key.properties")
+                if (!keyPropertiesFile.exists()) {
+                    throw FileNotFoundException("key.properties file not found at ${keyPropertiesFile.absolutePath}")
+                }
             }
             val properties = Properties().apply {
                 load(keyPropertiesFile.reader())
             }
-            // 필요한 속성이 모두 존재하는지 검증
             storeFile = file(properties.getProperty("storeFile") ?: throw IllegalArgumentException("Missing 'storeFile' in key.properties"))
             keyAlias = properties.getProperty("keyAlias") ?: throw IllegalArgumentException("Missing 'keyAlias' in key.properties")
             keyPassword = properties.getProperty("keyPassword") ?: throw IllegalArgumentException("Missing 'keyPassword' in key.properties")
