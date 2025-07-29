@@ -171,10 +171,11 @@ class _Body extends StatelessWidget {
   Widget build(BuildContext context) => HtmlWidget(
     detail.bodyHtml,
     onLoadingBuilder: (_, _, _) => const LoadingWidget(),
-    // onErrorBuilder: (context, element, error) {
-    //   debugPrint('element.innerHtml=${element.innerHtml}');
+    onErrorBuilder: (context, element, error) {
+      debugPrint('element.innerHtml=${element.innerHtml}, error=$error');
     //   return HtmlWidget(element.innerHtml);
-    // },
+      return null;
+    },
     customStylesBuilder: (element) {
       if (element.localName == 'a') {
         return {'color': hexColor, 'text-decoration': 'underline'};
@@ -334,7 +335,7 @@ class _CommentItem extends StatelessWidget {
             Text(comment.likeCount, style: bodySmall),
             const SizedBox(width: 4),
           ]
-        : [];
+        : null;
 
     return ListTile(
       key: ValueKey(comment.id),
@@ -343,7 +344,7 @@ class _CommentItem extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           Text(comment.info, style: bodySmall),
-          ...likeView,
+          ...?likeView,
         ],
       ),
       subtitle: Padding(

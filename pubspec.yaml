@@ -1,7 +1,7 @@
 name: mocl_flutter
 description: "Mocl Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.3.0+370
+version: 1.3.0+371
 
 environment:
   sdk: '>=3.8.0 <4.0.0'
@@ -26,6 +26,7 @@ dependencies:
   # Bloc for state management
   flutter_bloc: ^9.1.1
   bloc: ^9.0.0
+#  hydrated_bloc: ^10.1.1
 
   # Value equality
   equatable: ^2.0.7
@@ -77,8 +78,8 @@ dependencies:
   go_router: ^16.0.0
 
   # firebase
-  firebase_crashlytics: ^5.0.0
-  firebase_core: ^4.0.0
+  firebase_core: ^3.15.2
+  firebase_crashlytics: ^4.3.10
 
   # async
 #  async: ^2.12.0

@@ -19,7 +19,7 @@ class MoclListPage extends StatelessWidget {
       MultiBlocProvider(
         providers: [
           BlocProvider(
-            create: (context) => getIt<ListPagingCubit>(param1: item),
+            create: (_) => getIt<ListPagingCubit>(param1: item),
           ),
         ],
         child: AnnotatedRegion<SystemUiOverlayStyle>(
@@ -32,8 +32,6 @@ class MoclListPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final Scaffold child = Scaffold(
       body: SafeArea(
-        left: false,
-        right: false,
         child: RefreshIndicator(
           onRefresh: context.read<ListPagingCubit>().refresh,
           child: const CustomScrollView(
@@ -64,12 +62,9 @@ class _ListAppbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ListPagingCubit bloc = context.read<ListPagingCubit>();
-    final String smallTitle = bloc.smallTitle;
-    final String title = bloc.title;
-
     return AppbarDualTextWidget(
-      smallTitle: smallTitle,
-      title: title,
+      smallTitle: bloc.smallTitle,
+      title: bloc.title,
       automaticallyImplyLeading: Platform.isMacOS,
       actions: [
         IconButton(onPressed: bloc.refresh, icon: const Icon(Icons.refresh)),

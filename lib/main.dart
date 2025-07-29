@@ -19,7 +19,7 @@ Future<void> main() async {
   unawaited(_firebase());
 
   F.appFlavor = Flavor.values.firstWhere(
-        (element) => element.name == appFlavor,
+    (element) => element.name == appFlavor,
   );
 
   runApp(

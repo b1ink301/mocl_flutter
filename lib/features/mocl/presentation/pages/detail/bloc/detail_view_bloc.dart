@@ -12,9 +12,7 @@ import 'package:mocl_flutter/features/mocl/domain/usecases/set_read_flag.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/list/readable_flag.dart';
 
 part 'detail_view_bloc.freezed.dart';
-
 part 'detail_view_event.dart';
-
 part 'detail_view_state.dart';
 
 @injectable
@@ -51,13 +49,12 @@ class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
   ) async {
     try {
       emit(const DetailLoading());
-      final Result result = await _getDetail(_listItem);
+      final result = await _getDetail(_listItem);
       switch (result) {
         case ResultLoading():
           break;
         case ResultSuccess():
-          _markAsRead();
-          _readableFlag.id = _listItem.id;
+          await _markAsRead();
           emit(DetailSuccess(result.data));
           break;
         case ResultFailure():
@@ -71,9 +68,12 @@ class DetailViewBloc extends Bloc<DetailViewEvent, DetailViewState> {
 
   Future<void> _markAsRead() async {
     if (!_listItem.isRead) {
-      final SetReadFlagParams params =
-          SetReadFlagParams(siteType: _siteType, boardId: _listItem.id);
+      final params = SetReadFlagParams(
+        siteType: _siteType,
+        boardId: _listItem.id,
+      );
       await _setReadFlag(params);
+      _readableFlag.id = _listItem.id;
     }
   }
 }

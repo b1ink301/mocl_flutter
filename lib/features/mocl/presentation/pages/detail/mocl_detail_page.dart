@@ -52,6 +52,7 @@ class DetailPage extends StatelessWidget {
         child: RefreshIndicator(
           onRefresh: () async => context.read<DetailViewBloc>().refresh(),
           child: const CustomScrollView(
+            cacheExtent: 1000,
             slivers: [DetailAppBar(), DetailView()],
           ),
         ),

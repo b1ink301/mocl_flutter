@@ -26,7 +26,7 @@ class MainPage extends StatelessWidget {
           return getIt<MainDataBloc>()..initialize(siteTypeBloc);
         },
       ),
-      BlocProvider(create: (_) => getIt<GetVersionCubit>()..getVersion()),
+      BlocProvider(create: (_) => getIt<GetVersionCubit>()),
     ],
     child: AnnotatedRegion<SystemUiOverlayStyle>(
       value: Theme.of(context).appBarTheme.systemOverlayStyle!,
@@ -35,13 +35,14 @@ class MainPage extends StatelessWidget {
   );
 
   Widget _buildAppBar(BuildContext context) {
-    final SiteTypeBloc siteType = context.watch<SiteTypeBloc>();
-    final Color? backgroundColor = Theme.of(
-      context,
-    ).appBarTheme.backgroundColor;
+    final siteType = context.watch<SiteTypeBloc>();
+    final backgroundColor = Theme.of(context).appBarTheme.backgroundColor;
 
     return SliverAppBar(
-      title: _buildTitle(context, siteType.title),
+      title: MessageWidget(
+        message: siteType.title,
+        textStyle: Theme.of(context).textTheme.labelMedium,
+      ),
       flexibleSpace: Container(color: backgroundColor),
       backgroundColor: backgroundColor,
       scrolledUnderElevation: 0,
@@ -75,11 +76,6 @@ class MainPage extends StatelessWidget {
       );
     }
   }
-
-  Widget _buildTitle(BuildContext context, String title) => MessageWidget(
-    message: title,
-    textStyle: Theme.of(context).textTheme.labelMedium,
-  );
 
   @override
   Widget build(BuildContext context) => Scaffold(

@@ -42,17 +42,17 @@ class ListPagingCubit extends Cubit<PagingState<int, ListItemCubit>> {
     try {
       final page = state.keys?.last ?? _initPage();
 
-      final GetListParams params = GetListParams(
+      final params = GetListParams(
         mainItem: _mainItem,
         page: page,
         lastId: _lastId,
         sortType: SortType.recent,
       );
 
-      final Result<List<ListItem>> result = await _getList(params);
+      final result = await _getList(params);
       switch (result) {
         case ResultSuccess<List<ListItem>>():
-          final List<ListItemCubit> newItems = result.data
+          final newItems = result.data
               .map((item) => ListItemCubit(item))
               .toList();
           if (newItems.isNotEmpty) {
