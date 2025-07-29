@@ -40,8 +40,8 @@ class AddListDialog extends StatelessWidget {
     contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 10),
     titlePadding: EdgeInsets.zero,
     content: SizedBox(
-      width: MediaQuery.of(context).size.width * 0.7,
-      height: MediaQuery.of(context).size.height * 0.7,
+      width: MediaQuery.of(context).size.width * 0.75,
+      height: MediaQuery.of(context).size.height * 0.65,
       child: BlocBuilder<MainDataJsonBloc, MainDataJsonState>(
         builder: (BuildContext context, MainDataJsonState state) =>
             switch (state) {
@@ -69,8 +69,7 @@ class AddListDialog extends StatelessWidget {
       TextButton(
         onPressed: () {
           if (context.mounted) {
-            final bloc = BlocProvider.of<MainDataJsonBloc>(context);
-            debugPrint('[onPressed] =${bloc.selectedItems.length}');
+            final bloc = context.read<MainDataJsonBloc>();
             context.pop(bloc.selectedItems.sortedBy((item) => item.orderBy));
           }
         },

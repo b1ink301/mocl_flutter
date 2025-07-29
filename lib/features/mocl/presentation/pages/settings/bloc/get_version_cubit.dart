@@ -9,9 +9,11 @@ part 'get_version_cubit.freezed.dart';
 
 @injectable
 class GetVersionCubit extends Cubit<GetVersionState> {
-  GetVersionCubit() : super(const GetVersionState.initial());
+  GetVersionCubit() : super(const GetVersionState.initial()) {
+    _getVersion();
+  }
 
-  Future<void> getVersion() async {
+  Future<void> _getVersion() async {
     try {
       final info = await PackageInfo.fromPlatform();
       final version = 'v${info.version}-${info.buildNumber}';

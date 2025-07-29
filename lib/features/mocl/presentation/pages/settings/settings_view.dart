@@ -25,13 +25,13 @@ class SettingsView extends StatelessWidget {
                 ),
               ),
             ),
-            _ => _buildLoadingView(),
+            _ => const LoadingWidget(),
           },
         ),
         const DividerWidget(),
         BlocBuilder<ClearDataCubit, ClearDataState>(
           builder: (context, state) => switch (state) {
-            LoadingClearDataState() => _buildLoadingView(),
+            LoadingClearDataState() => const LoadingWidget(),
             _ => InkWell(
               onTap: () => context.read<ClearDataCubit>().clearData(),
               child: Container(
@@ -50,16 +50,6 @@ class SettingsView extends StatelessWidget {
         ),
         const DividerWidget(),
       ],
-    ),
-  );
-
-  Widget _buildLoadingView() => const LoadingWidget();
-
-  Widget _buildErrorView(BuildContext context, String message) => Padding(
-    padding: const EdgeInsets.all(12.0),
-    child: Text(
-      message,
-      style: TextStyle(fontSize: 16, color: Theme.of(context).focusColor),
     ),
   );
 }

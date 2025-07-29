@@ -13,59 +13,47 @@ import 'package:mocl_flutter/features/mocl/presentation/widgets/message_widget.d
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
-  static Widget withBloc(
-    BuildContext context,
-  ) =>
-      MultiBlocProvider(
-        providers: [
-          BlocProvider(create: (_) => getIt<GetVersionCubit>()..getVersion()),
-          BlocProvider(create: (_) => getIt<ClearDataCubit>()),
-        ],
-        child: AnnotatedRegion<SystemUiOverlayStyle>(
-            value: Theme.of(context).appBarTheme.systemOverlayStyle!,
-            child: const SettingsPage()),
-      );
-
-  Widget _buildAppBar(
-    BuildContext context,
-  ) {
-    final backgroundColor = Theme.of(context).appBarTheme.backgroundColor;
-    return SliverAppBar(
-      title: _buildTitle(context, SiteType.settings.title),
-      // flexibleSpace: Container(color: backgroundColor),
-      scrolledUnderElevation: 0,
-      backgroundColor: backgroundColor,
-      titleSpacing: 0,
-      pinned: true,
-      centerTitle: false,
-      toolbarHeight: 64,
-    );
-  }
-
-  Widget _buildTitle(BuildContext context, String title) => MessageWidget(
-        message: title,
-        textStyle: Theme.of(context).textTheme.labelMedium,
-      );
+  static Widget withBloc(BuildContext context) => MultiBlocProvider(
+    providers: [
+      BlocProvider(create: (_) => getIt<GetVersionCubit>()),
+      BlocProvider(create: (_) => getIt<ClearDataCubit>()),
+    ],
+    child: AnnotatedRegion<SystemUiOverlayStyle>(
+      value: Theme.of(context).appBarTheme.systemOverlayStyle!,
+      child: const SettingsPage(),
+    ),
+  );
 
   @override
   Widget build(BuildContext context) => Scaffold(
-        appBar: Platform.isIOS
-            ? AppBar(
-                toolbarHeight: 0,
-                flexibleSpace: Container(
-                    color: Theme.of(context)
-                        .appBarTheme
-                        .systemOverlayStyle
-                        ?.statusBarColor),
-              )
-            : null,
-        body: SafeArea(
-          child: CustomScrollView(
-            slivers: <Widget>[
-              _buildAppBar(context),
-              const SettingsView(),
-            ],
+    appBar: Platform.isIOS
+        ? AppBar(
+            toolbarHeight: 0,
+            flexibleSpace: Container(
+              color: Theme.of(
+                context,
+              ).appBarTheme.systemOverlayStyle?.statusBarColor,
+            ),
+          )
+        : null,
+    body: SafeArea(
+      child: CustomScrollView(
+        slivers: <Widget>[
+          SliverAppBar(
+            title: MessageWidget(
+              message: SiteType.settings.title,
+              textStyle: Theme.of(context).textTheme.labelMedium,
+            ),
+            scrolledUnderElevation: 0,
+            backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
+            titleSpacing: 0,
+            pinned: true,
+            centerTitle: false,
+            toolbarHeight: 64,
           ),
-        ),
-      );
+          const SettingsView(),
+        ],
+      ),
+    ),
+  );
 }

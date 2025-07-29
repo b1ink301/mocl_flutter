@@ -31,7 +31,7 @@ class DetailViewUtil {
     } else {
       openBrowserByUrl(url);
     }
-    return Future.value(true);
+    return true;
   }
 
   bool _isImageUrl(String url) {

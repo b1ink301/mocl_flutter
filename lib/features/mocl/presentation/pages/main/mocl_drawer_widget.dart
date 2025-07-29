@@ -12,8 +12,6 @@ class DrawerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SafeArea(
-        left: false,
-        right: false,
         child: Drawer(
           backgroundColor: Theme.of(context).scaffoldBackgroundColor,
           child: Column(

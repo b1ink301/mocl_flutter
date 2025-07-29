@@ -8,6 +8,7 @@ import 'package:mocl_flutter/features/mocl/presentation/pages/detail/bloc/get_he
 import 'package:mocl_flutter/features/mocl/presentation/pages/detail/detail_view_util.dart';
 import 'package:mocl_flutter/features/mocl/presentation/widgets/appbar_dual_text_widget.dart';
 
+@immutable
 class DetailAppBar extends StatelessWidget {
   const DetailAppBar({super.key});
 

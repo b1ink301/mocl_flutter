@@ -49,7 +49,7 @@ abstract class ParserModule {
 
   @lazySingleton
   (BaseParser, BaseApi) get _damoangParser =>
-      (const DamoangParser(false), DamoangApi(_dio, userAgentMobile));
+      (const DamoangParser(false), DamoangApi(_dio, userAgentPc));
 
   @lazySingleton
   (BaseParser, BaseApi) get _naverCafeParser =>
