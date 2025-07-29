@@ -15,31 +15,31 @@ dart run build_runner build --delete-conflicting-outputs
 ### prd
 
 ```shell
-flutter run --flavor prd -t lib/main_prd.dart
+flutter run --flavor prd
 ```
 
 ```shell
-flutter run --release --flavor prd -t lib/main_prd.dart
+flutter run --release --flavor prd
 ```
 
 ```shell
-flutter run --profile --flavor prd -t lib/main_prd.dart
+flutter run --profile --flavor prd
 ```
 
 ### dev
 
 ```shell
-flutter run --flavor dev -t lib/main_dev.dart
+flutter run --flavor dev
 ```
 
 ```shell
-flutter run --release --flavor dev -t lib/main_dev.dart
+flutter run --release --flavor dev
 ```
 
 ## 빌드 옵션
 
 ```shell
-flutter build [appbundle|apk|ios|ipa] --flavor [dev|prd] -t lib/[main_dev|main_prd].dart
+flutter build [appbundle|apk|ios|ipa] --flavor [dev|prd]
 ```
 
 ```shell
@@ -48,22 +48,20 @@ flutter clean
 
 ## Build Apk
 
-* 인증서는 android의 gradle.properties에 정의
-
 ### prd
 
 ```shell
-flutter build apk --flavor prd -t lib/main_prd.dart
+flutter build apk --flavor prd
 ```
 
 ```shell
-flutter build appbundle --flavor prd -t lib/main_prd.dart 
+flutter build appbundle --flavor prd 
 ```
 
 ### dev
 
 ```shell
-flutter build apk --flavor dev -t lib/main_dev.dart
+flutter build apk --flavor dev
 ```
 
 ## Build iOS
@@ -80,13 +78,13 @@ pod install
 ### prd
 
 ```shell
-flutter build ipa --flavor prd -t lib/main_prd.dart
+flutter build ipa --flavor prd
 ```
 
 ### dev
 
 ```shell
-flutter build ipa --flavor dev -t lib/main_dev.dart
+flutter build ipa --flavor dev
 ```
 
 ## Flavor 설정

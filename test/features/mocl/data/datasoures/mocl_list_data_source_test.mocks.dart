@@ -8,25 +8,19 @@ import 'dart:async' as _i3;
 import 'package:dio/dio.dart' as _i12;
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i9;
-import 'package:mocl_flutter/features/mocl/data/datasources/list_data_source.dart'
+import 'package:mocl_flutter/core/data/datasources/list_data_source.dart'
     as _i2;
-import 'package:mocl_flutter/features/mocl/data/datasources/remote/base/base_parser.dart'
+import 'package:mocl_flutter/core/data/datasources/remote/base/base_parser.dart'
     as _i11;
-import 'package:mocl_flutter/features/mocl/domain/entities/last_id.dart' as _i7;
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_comment_item.dart'
+import 'package:mocl_flutter/core/domain/entities/last_id.dart' as _i7;
+import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart'
     as _i14;
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_details.dart'
-    as _i13;
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_list_item.dart'
-    as _i5;
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart'
-    as _i6;
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart'
-    as _i4;
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart'
-    as _i10;
-import 'package:mocl_flutter/features/mocl/domain/entities/sort_type.dart'
-    as _i8;
+import 'package:mocl_flutter/core/domain/entities/mocl_details.dart' as _i13;
+import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart' as _i5;
+import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart' as _i6;
+import 'package:mocl_flutter/core/domain/entities/mocl_result.dart' as _i4;
+import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart' as _i10;
+import 'package:mocl_flutter/core/domain/entities/sort_type.dart' as _i8;
 
 // ignore_for_file: type=lint
 // ignore_for_file: avoid_redundant_argument_values
