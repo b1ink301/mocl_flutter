@@ -1,0 +1,25 @@
+import 'package:injectable/injectable.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/settings/domain/repositories/settings_repository.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+@LazySingleton(as: SettingsRepository)
+class SettingsRepositoryImpl implements SettingsRepository {
+  final SharedPreferences _prefs;
+
+  const SettingsRepositoryImpl({required SharedPreferences prefs})
+    : _prefs = prefs;
+
+  @override
+  SiteType getSiteType() {
+    final siteTypeName =
+        _prefs.getString(extraSiteType) ?? SiteType.damoang.name;
+    return SiteType.values.firstWhere((e) => e.name == siteTypeName);
+  }
+
+  @override
+  void setSiteType(SiteType siteType) =>
+      _prefs.setString(extraSiteType, siteType.name);
+
+  static String extraSiteType = 'site_type';
+}

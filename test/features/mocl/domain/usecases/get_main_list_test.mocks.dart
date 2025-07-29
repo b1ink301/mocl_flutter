@@ -7,13 +7,10 @@ import 'dart:async' as _i3;
 
 import 'package:mockito/mockito.dart' as _i1;
 import 'package:mockito/src/dummies.dart' as _i7;
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_main_item.dart'
-    as _i5;
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_result.dart'
-    as _i4;
-import 'package:mocl_flutter/features/mocl/domain/entities/mocl_site_type.dart'
-    as _i6;
-import 'package:mocl_flutter/features/mocl/domain/repositories/main_repository.dart'
+import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart' as _i5;
+import 'package:mocl_flutter/core/domain/entities/mocl_result.dart' as _i4;
+import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart' as _i6;
+import 'package:mocl_flutter/core/domain/repositories/main_repository.dart'
     as _i2;
 
 // ignore_for_file: type=lint
