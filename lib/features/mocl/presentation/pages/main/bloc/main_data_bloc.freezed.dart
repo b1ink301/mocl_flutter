@@ -1,6 +1,5 @@
-// dart format width=80
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -72,6 +71,130 @@ as SiteType,
 
 }
 
+
+/// Adds pattern-matching-related methods to [MainDataEvent].
+extension MainDataEventPatterns on MainDataEvent {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( GetListEvent value)?  getList,required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case GetListEvent() when getList != null:
+return getList(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( GetListEvent value)  getList,}){
+final _that = this;
+switch (_that) {
+case GetListEvent():
+return getList(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( GetListEvent value)?  getList,}){
+final _that = this;
+switch (_that) {
+case GetListEvent() when getList != null:
+return getList(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function( SiteType siteType)?  getList,required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case GetListEvent() when getList != null:
+return getList(_that.siteType);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function( SiteType siteType)  getList,}) {final _that = this;
+switch (_that) {
+case GetListEvent():
+return getList(_that.siteType);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function( SiteType siteType)?  getList,}) {final _that = this;
+switch (_that) {
+case GetListEvent() when getList != null:
+return getList(_that.siteType);case _:
+  return null;
+
+}
+}
+
+}
 
 /// @nodoc
 
@@ -168,6 +291,154 @@ class $MainDataStateCopyWith<$Res>  {
 $MainDataStateCopyWith(MainDataState _, $Res Function(MainDataState) __);
 }
 
+
+/// Adds pattern-matching-related methods to [MainDataState].
+extension MainDataStatePatterns on MainDataState {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>({TResult Function( StateInitial value)?  initial,TResult Function( StateLoading value)?  loading,TResult Function( StateSuccess value)?  success,TResult Function( StateFailure value)?  failure,TResult Function( StateRequireLogin value)?  requireLogin,required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case StateInitial() when initial != null:
+return initial(_that);case StateLoading() when loading != null:
+return loading(_that);case StateSuccess() when success != null:
+return success(_that);case StateFailure() when failure != null:
+return failure(_that);case StateRequireLogin() when requireLogin != null:
+return requireLogin(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>({required TResult Function( StateInitial value)  initial,required TResult Function( StateLoading value)  loading,required TResult Function( StateSuccess value)  success,required TResult Function( StateFailure value)  failure,required TResult Function( StateRequireLogin value)  requireLogin,}){
+final _that = this;
+switch (_that) {
+case StateInitial():
+return initial(_that);case StateLoading():
+return loading(_that);case StateSuccess():
+return success(_that);case StateFailure():
+return failure(_that);case StateRequireLogin():
+return requireLogin(_that);}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>({TResult? Function( StateInitial value)?  initial,TResult? Function( StateLoading value)?  loading,TResult? Function( StateSuccess value)?  success,TResult? Function( StateFailure value)?  failure,TResult? Function( StateRequireLogin value)?  requireLogin,}){
+final _that = this;
+switch (_that) {
+case StateInitial() when initial != null:
+return initial(_that);case StateLoading() when loading != null:
+return loading(_that);case StateSuccess() when success != null:
+return success(_that);case StateFailure() when failure != null:
+return failure(_that);case StateRequireLogin() when requireLogin != null:
+return requireLogin(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>({TResult Function()?  initial,TResult Function()?  loading,TResult Function( List<MainItem> data)?  success,TResult Function( String message)?  failure,TResult Function( String message)?  requireLogin,required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case StateInitial() when initial != null:
+return initial();case StateLoading() when loading != null:
+return loading();case StateSuccess() when success != null:
+return success(_that.data);case StateFailure() when failure != null:
+return failure(_that.message);case StateRequireLogin() when requireLogin != null:
+return requireLogin(_that.message);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>({required TResult Function()  initial,required TResult Function()  loading,required TResult Function( List<MainItem> data)  success,required TResult Function( String message)  failure,required TResult Function( String message)  requireLogin,}) {final _that = this;
+switch (_that) {
+case StateInitial():
+return initial();case StateLoading():
+return loading();case StateSuccess():
+return success(_that.data);case StateFailure():
+return failure(_that.message);case StateRequireLogin():
+return requireLogin(_that.message);}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>({TResult? Function()?  initial,TResult? Function()?  loading,TResult? Function( List<MainItem> data)?  success,TResult? Function( String message)?  failure,TResult? Function( String message)?  requireLogin,}) {final _that = this;
+switch (_that) {
+case StateInitial() when initial != null:
+return initial();case StateLoading() when loading != null:
+return loading();case StateSuccess() when success != null:
+return success(_that.data);case StateFailure() when failure != null:
+return failure(_that.message);case StateRequireLogin() when requireLogin != null:
+return requireLogin(_that.message);case _:
+  return null;
+
+}
+}
+
+}
 
 /// @nodoc
 
