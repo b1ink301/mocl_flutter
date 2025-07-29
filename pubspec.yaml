@@ -74,8 +74,8 @@ dependencies:
   go_router: ^16.0.0
 
   # firebase
-  firebase_core: ^3.15.2
-  firebase_crashlytics: ^4.3.10
+  firebase_core: ^4.0.0
+  firebase_crashlytics: ^5.0.0
 
   # async
   async: ^2.13.0
