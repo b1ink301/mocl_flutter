@@ -10,12 +10,17 @@ import 'package:mocl_flutter/features/mocl/presentation/app_widget.dart';
 import 'package:mocl_flutter/features/mocl/presentation/injection.dart';
 import 'package:mocl_flutter/features/mocl/presentation/pages/main/bloc/site_type_bloc.dart';
 import 'package:mocl_flutter/firebase_options.dart';
+import 'package:mocl_flutter/flavors.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
   await configureDependencies();
   unawaited(_firebase());
+
+  F.appFlavor = Flavor.values.firstWhere(
+        (element) => element.name == appFlavor,
+  );
 
   runApp(
     BlocProvider(

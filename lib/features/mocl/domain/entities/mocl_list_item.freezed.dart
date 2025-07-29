@@ -1,6 +1,5 @@
-// dart format width=80
-// coverage:ignore-file
 // GENERATED CODE - DO NOT MODIFY BY HAND
+// coverage:ignore-file
 // ignore_for_file: type=lint
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
@@ -100,6 +99,136 @@ $UserInfoCopyWith<$Res> get userInfo {
 }
 }
 
+
+/// Adds pattern-matching-related methods to [ListItem].
+extension ListItemPatterns on ListItem {
+/// A variant of `map` that fallback to returning `orElse`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeMap<TResult extends Object?>(TResult Function( _ListItem value)?  $default,{required TResult orElse(),}){
+final _that = this;
+switch (_that) {
+case _ListItem() when $default != null:
+return $default(_that);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// Callbacks receives the raw object, upcasted.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case final Subclass2 value:
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult map<TResult extends Object?>(TResult Function( _ListItem value)  $default,){
+final _that = this;
+switch (_that) {
+case _ListItem():
+return $default(_that);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `map` that fallback to returning `null`.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case final Subclass value:
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? mapOrNull<TResult extends Object?>(TResult? Function( _ListItem value)?  $default,){
+final _that = this;
+switch (_that) {
+case _ListItem() when $default != null:
+return $default(_that);case _:
+  return null;
+
+}
+}
+/// A variant of `when` that fallback to an `orElse` callback.
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return orElse();
+/// }
+/// ```
+
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String title,  String reply,  String category,  String time,  String url,  String info,  String board,  String boardTitle,  String like,  String hit,  UserInfo userInfo,  bool hasImage,  bool isRead)?  $default,{required TResult orElse(),}) {final _that = this;
+switch (_that) {
+case _ListItem() when $default != null:
+return $default(_that.id,_that.title,_that.reply,_that.category,_that.time,_that.url,_that.info,_that.board,_that.boardTitle,_that.like,_that.hit,_that.userInfo,_that.hasImage,_that.isRead);case _:
+  return orElse();
+
+}
+}
+/// A `switch`-like method, using callbacks.
+///
+/// As opposed to `map`, this offers destructuring.
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case Subclass2(:final field2):
+///     return ...;
+/// }
+/// ```
+
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String title,  String reply,  String category,  String time,  String url,  String info,  String board,  String boardTitle,  String like,  String hit,  UserInfo userInfo,  bool hasImage,  bool isRead)  $default,) {final _that = this;
+switch (_that) {
+case _ListItem():
+return $default(_that.id,_that.title,_that.reply,_that.category,_that.time,_that.url,_that.info,_that.board,_that.boardTitle,_that.like,_that.hit,_that.userInfo,_that.hasImage,_that.isRead);case _:
+  throw StateError('Unexpected subclass');
+
+}
+}
+/// A variant of `when` that fallback to returning `null`
+///
+/// It is equivalent to doing:
+/// ```dart
+/// switch (sealedClass) {
+///   case Subclass(:final field):
+///     return ...;
+///   case _:
+///     return null;
+/// }
+/// ```
+
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String title,  String reply,  String category,  String time,  String url,  String info,  String board,  String boardTitle,  String like,  String hit,  UserInfo userInfo,  bool hasImage,  bool isRead)?  $default,) {final _that = this;
+switch (_that) {
+case _ListItem() when $default != null:
+return $default(_that.id,_that.title,_that.reply,_that.category,_that.time,_that.url,_that.info,_that.board,_that.boardTitle,_that.like,_that.hit,_that.userInfo,_that.hasImage,_that.isRead);case _:
+  return null;
+
+}
+}
+
+}
 
 /// @nodoc
 
