@@ -49,6 +49,11 @@ dependencies:
   path_provider: ^2.1.5
   path: ^1.9.1
 
+  # Google Sign In & Drive
+  google_sign_in: ^6.2.1
+  googleapis: ^13.1.0
+  googleapis_auth: ^1.6.0
+
   # class 자동화
   freezed_annotation: ^3.1.0
 

@@ -6,6 +6,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'settings_providers.g.dart';
 
+
 @riverpod
 class SizeCacheDirNotifier extends _$SizeCacheDirNotifier {
   @override
