@@ -40,5 +40,5 @@ Future<Database> _database() async {
   final dir = await getApplicationDocumentsDirectory();
   await dir.create(recursive: true);
   final dbPath = join(dir.path, 'mocl-sembast.db');
-  return await databaseFactoryIo.openDatabase(dbPath);
+  return databaseFactoryIo.openDatabase(dbPath);
 }
