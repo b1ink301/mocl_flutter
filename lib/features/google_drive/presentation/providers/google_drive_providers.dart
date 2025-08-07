@@ -5,6 +5,7 @@ import 'package:mocl_flutter/features/google_drive/data/datasources/google_drive
 import 'package:mocl_flutter/features/google_drive/data/repositories/google_drive_repository_impl.dart';
 import 'package:mocl_flutter/features/google_drive/domain/repositories/google_drive_repository.dart';
 import 'package:mocl_flutter/features/google_drive/domain/usecases/backup_database_usecase.dart';
+import 'package:mocl_flutter/features/google_drive/domain/usecases/check_sync_status_usecase.dart';
 import 'package:mocl_flutter/features/google_drive/domain/usecases/restore_database_usecase.dart';
 import 'package:mocl_flutter/features/google_drive/domain/usecases/sign_in_usecase.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -31,6 +32,10 @@ BackupDatabaseUseCase backupDatabaseUseCase(Ref ref) =>
 RestoreDatabaseUseCase restoreDatabaseUseCase(Ref ref) =>
     RestoreDatabaseUseCase(ref.watch(googleDriveRepositoryProvider));
 
+@riverpod
+CheckSyncStatusUseCase checkSyncStatusUseCase(Ref ref) =>
+    CheckSyncStatusUseCase(ref.watch(googleDriveRepositoryProvider));
+
 enum SyncStatus { idle, syncing, success, error }
 
 @riverpod
@@ -38,23 +43,27 @@ class GoogleDriveSyncNotifier extends _$GoogleDriveSyncNotifier {
   @override
   SyncStatus build() => SyncStatus.idle;
 
-  Future<void> backup() async {
+  Future<void> backup({bool showToast = true}) async {
     state = SyncStatus.syncing;
     await ref.read(signInUseCaseProvider).call();
     final success = await ref.read(backupDatabaseUseCaseProvider).call();
     state = success ? SyncStatus.success : SyncStatus.error;
-    _showResultToast(success, isBackup: true);
+    if (showToast) {
+      _showResultToast(success, isBackup: true);
+    }
     if (state != SyncStatus.syncing) {
       state = SyncStatus.idle;
     }
   }
 
-  Future<void> restore() async {
+  Future<void> restore({bool showToast = true}) async {
     state = SyncStatus.syncing;
     await ref.read(signInUseCaseProvider).call();
     final success = await ref.read(restoreDatabaseUseCaseProvider).call();
     state = success ? SyncStatus.success : SyncStatus.error;
-    _showResultToast(success, isBackup: false);
+    if (showToast) {
+      _showResultToast(success, isBackup: false);
+    }
     if (state != SyncStatus.syncing) {
       state = SyncStatus.idle;
     }

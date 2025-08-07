@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:googleapis/drive/v3.dart' as drive;
 import 'package:http/http.dart' as http;
@@ -46,7 +47,7 @@ class GoogleDriveRemoteDataSource {
   Future<drive.DriveApi?> _getDriveApi() async {
     final googleUser = _currentUser ?? await signIn();
     if (googleUser == null) {
-      print("Google Sign-In failed.");
+      debugPrint("Google Sign-In failed.");
       return null;
     }
 
@@ -81,9 +82,28 @@ class GoogleDriveRemoteDataSource {
         return createdFolder.id;
       }
     } catch (e) {
-      print('Error creating/finding app folder: $e');
+      debugPrint('Error creating/finding app folder: $e');
       return null;
     }
+  }
+
+  Future<drive.File?> getRemoteDbFileMetadata() async {
+    final driveApi = await _getDriveApi();
+    if (driveApi == null) return null;
+
+    final appFolderId = await _getOrCreateAppFolder(driveApi);
+    if (appFolderId == null) return null;
+
+    final response = await driveApi.files.list(
+      q: "name='$_dbFileName' and '$appFolderId' in parents and trashed=false",
+      spaces: 'drive',
+      $fields: 'files(id, name, modifiedTime)',
+    );
+
+    if (response.files != null && response.files!.isNotEmpty) {
+      return response.files!.first;
+    }
+    return null;
   }
 
   Future<bool> uploadDb() async {
@@ -91,14 +111,14 @@ class GoogleDriveRemoteDataSource {
     final dbFile = await _getDbFile();
 
     if (driveApi == null || dbFile == null) {
-      print("Drive API or DB file not available.");
+      debugPrint("Drive API or DB file not available.");
       return false;
     }
 
     try {
       final appFolderId = await _getOrCreateAppFolder(driveApi);
       if (appFolderId == null) {
-        print("Could not get or create app folder.");
+        debugPrint("Could not get or create app folder.");
         return false;
       }
 
@@ -113,15 +133,15 @@ class GoogleDriveRemoteDataSource {
       if (listResponse.files != null && listResponse.files!.isNotEmpty) {
         final fileId = listResponse.files!.first.id!;
         await driveApi.files.update(driveFile, fileId, uploadMedia: media);
-        print("Database updated successfully.");
+        debugPrint("Database updated successfully.");
       } else {
         driveFile.parents = [appFolderId];
         await driveApi.files.create(driveFile, uploadMedia: media);
-        print("Database uploaded successfully.");
+        debugPrint("Database uploaded successfully.");
       }
       return true;
     } catch (e) {
-      print('Error uploading DB: $e');
+      debugPrint('Error uploading DB: $e');
       return false;
     }
   }
@@ -129,14 +149,14 @@ class GoogleDriveRemoteDataSource {
   Future<bool> downloadDb() async {
     final driveApi = await _getDriveApi();
     if (driveApi == null) {
-      print("Drive API not available.");
+      debugPrint("Drive API not available.");
       return false;
     }
 
     try {
       final appFolderId = await _getOrCreateAppFolder(driveApi);
       if (appFolderId == null) {
-        print("Could not get or create app folder.");
+        debugPrint("Could not get or create app folder.");
         return false;
       }
 
@@ -146,7 +166,7 @@ class GoogleDriveRemoteDataSource {
       );
 
       if (listResponse.files == null || listResponse.files!.isEmpty) {
-        print("No database file found on Google Drive.");
+        debugPrint("No database file found on Google Drive.");
         return false;
       }
 
@@ -166,10 +186,10 @@ class GoogleDriveRemoteDataSource {
       await fileStream.flush();
       await fileStream.close();
 
-      print("Database downloaded successfully.");
+      debugPrint("Database downloaded successfully.");
       return true;
     } catch (e) {
-      print('Error downloading DB: $e');
+      debugPrint('Error downloading DB: $e');
       return false;
     }
   }
