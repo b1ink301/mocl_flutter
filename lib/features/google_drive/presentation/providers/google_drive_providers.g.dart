@@ -7,7 +7,7 @@ part of 'google_drive_providers.dart';
 // **************************************************************************
 
 String _$googleDriveRemoteDataSourceHash() =>
-    r'77eace1af8276bff1b039d5f02d291b934955d32';
+    r'8af5407ccf2f6ac830cb18a5fda3b23903d58ef1';
 
 /// See also [googleDriveRemoteDataSource].
 @ProviderFor(googleDriveRemoteDataSource)
@@ -27,7 +27,7 @@ final googleDriveRemoteDataSourceProvider =
 typedef GoogleDriveRemoteDataSourceRef =
     AutoDisposeProviderRef<GoogleDriveRemoteDataSource>;
 String _$googleDriveRepositoryHash() =>
-    r'5290b336138a0f3914a6f74a1f528684d98c25c9';
+    r'8d5c29271e97f1a3c5b87d3d3c52d5bd5cba2d3c';
 
 /// See also [googleDriveRepository].
 @ProviderFor(googleDriveRepository)
@@ -46,7 +46,7 @@ final googleDriveRepositoryProvider =
 // ignore: unused_element
 typedef GoogleDriveRepositoryRef =
     AutoDisposeProviderRef<GoogleDriveRepository>;
-String _$signInUseCaseHash() => r'0c25e64605b5d5aa48b366cf015a663ff05638c7';
+String _$signInUseCaseHash() => r'40ca4b64e19784d6ac57d84e961af3317e417cf7';
 
 /// See also [signInUseCase].
 @ProviderFor(signInUseCase)
@@ -64,7 +64,7 @@ final signInUseCaseProvider = AutoDisposeProvider<SignInUseCase>.internal(
 // ignore: unused_element
 typedef SignInUseCaseRef = AutoDisposeProviderRef<SignInUseCase>;
 String _$backupDatabaseUseCaseHash() =>
-    r'083a21054b0a48185926c5d39ff0ad3af2c72c93';
+    r'39b64950197ec3fd24a5c5751df2d13db23f64c5';
 
 /// See also [backupDatabaseUseCase].
 @ProviderFor(backupDatabaseUseCase)
@@ -84,7 +84,7 @@ final backupDatabaseUseCaseProvider =
 typedef BackupDatabaseUseCaseRef =
     AutoDisposeProviderRef<BackupDatabaseUseCase>;
 String _$restoreDatabaseUseCaseHash() =>
-    r'ab7c3c3ab1a71a3802b59943739a5ac014904c84';
+    r'5b4fe08717439c9225429d28ed003fba8279330b';
 
 /// See also [restoreDatabaseUseCase].
 @ProviderFor(restoreDatabaseUseCase)
@@ -103,8 +103,28 @@ final restoreDatabaseUseCaseProvider =
 // ignore: unused_element
 typedef RestoreDatabaseUseCaseRef =
     AutoDisposeProviderRef<RestoreDatabaseUseCase>;
+String _$checkSyncStatusUseCaseHash() =>
+    r'230b21acbb534345f1958f4ef5ef02ba59baada7';
+
+/// See also [checkSyncStatusUseCase].
+@ProviderFor(checkSyncStatusUseCase)
+final checkSyncStatusUseCaseProvider =
+    AutoDisposeProvider<CheckSyncStatusUseCase>.internal(
+      checkSyncStatusUseCase,
+      name: r'checkSyncStatusUseCaseProvider',
+      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
+          ? null
+          : _$checkSyncStatusUseCaseHash,
+      dependencies: null,
+      allTransitiveDependencies: null,
+    );
+
+@Deprecated('Will be removed in 3.0. Use Ref instead')
+// ignore: unused_element
+typedef CheckSyncStatusUseCaseRef =
+    AutoDisposeProviderRef<CheckSyncStatusUseCase>;
 String _$googleDriveSyncNotifierHash() =>
-    r'76e31a240c04ed179874e67e06582c2ccb1fb29a';
+    r'ff43d5c8d1791f22e6f805bd4650060ee643aae5';
 
 /// See also [GoogleDriveSyncNotifier].
 @ProviderFor(GoogleDriveSyncNotifier)

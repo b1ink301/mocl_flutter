@@ -1,17 +1,18 @@
 import 'dart:async';
 
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart' show Firebase;
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mocl_flutter/di/datasource_provider.dart';
+import 'package:mocl_flutter/features/app_shell/presentation/app_widget.dart';
+import 'package:mocl_flutter/features/google_drive/presentation/providers/auto_sync_provider.dart';
+import 'package:mocl_flutter/firebase_options.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sembast/sembast_io.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'di/datasource_provider.dart';
-import 'features/app_shell/presentation/app_widget.dart';
-import 'firebase_options.dart';
 import 'flavors.dart';
 
 Future<void> main() async {
@@ -23,16 +24,20 @@ Future<void> main() async {
     (element) => element.name == appFlavor,
   );
 
+  final container = ProviderContainer(
+    overrides: [
+      sharedPreferencesProvider.overrideWithValue(
+        await SharedPreferences.getInstance(),
+      ),
+      appDatabaseProvider.overrideWithValue(await _database()),
+    ]
+  );
+
+  // Start auto-sync check
+  container.read(autoSyncNotifierProvider.notifier).checkSyncStatus();
+
   runApp(
-    ProviderScope(
-      overrides: [
-        sharedPreferencesProvider.overrideWithValue(
-          await SharedPreferences.getInstance(),
-        ),
-        appDatabaseProvider.overrideWithValue(await _database()),
-      ],
-      child: const AppWidget(),
-    ),
+    UncontrolledProviderScope(container: container, child: const AppWidget()),
   );
 }
 
