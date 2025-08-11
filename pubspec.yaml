@@ -12,10 +12,10 @@ dependencies:
   flutter_localizations:
     sdk: flutter
   # localization
-#  intl: ^0.20.2
+  #  intl: ^0.20.2
 
   # icons
-#  cupertino_icons: ^1.0.8
+  #  cupertino_icons: ^1.0.8
 
   # HTML 파서
   html: ^0.15.6
@@ -32,12 +32,12 @@ dependencies:
   # Remote API
   #  internet_connection_checker_plus: ^2.4.2
   # Http Client
-  #  http: ^1.2.2
-  dio: ^5.8.0+1
+  dio: ^5.9.0
+  http: ^1.5.0
 
   # cookie
   cookie_jar: ^4.0.8
-  dio_cookie_manager: ^3.2.0
+  dio_cookie_manager: ^3.3.0
 
   # Local cache
   shared_preferences: ^2.5.3
@@ -50,9 +50,9 @@ dependencies:
   path: ^1.9.1
 
   # Google Sign In & Drive
-  google_sign_in: ^6.2.1
-  googleapis: ^13.1.0
-  googleapis_auth: ^1.6.0
+  google_sign_in: ^7.1.1
+  googleapis: ^14.0.0
+  googleapis_auth: ^2.0.0
 
   # class 자동화
   freezed_annotation: ^3.1.0
@@ -90,17 +90,17 @@ dependencies:
   #  flutter_isolate: ^2.0.4
 
   # share
-  share_plus: ^11.0.0
+  share_plus: ^11.1.0
   #  share_plus_platform_interface: ^5.0.2
 
   # package info
-  package_info_plus: ^8.3.0
+  package_info_plus: ^8.3.1
 
   # time format
   timeago: ^3.7.1
 
   # like crashlytics..
-#  sentry_flutter: ^8.14.2
+  #  sentry_flutter: ^8.14.2
 
   # sliver tools
   sliver_tools: ^0.2.12
@@ -118,10 +118,10 @@ dependencies:
   dartx: ^1.2.0
 
   # riverpod
-  flutter_riverpod: ^2.6.1
-  riverpod_annotation: ^2.6.1
-#  flutter_riverpod: ^3.0.0-dev.16
-#  riverpod_annotation: ^3.0.0-dev.16
+  flutter_riverpod: ^3.0.0-dev.17
+  riverpod_annotation: ^3.0.0-dev.17
+  #  flutter_riverpod: ^3.0.0-dev.16
+  #  riverpod_annotation: ^3.0.0-dev.16
 
   # sliver list
   #  super_sliver_list: ^0.4.1
@@ -152,21 +152,21 @@ dependencies:
 dev_dependencies:
   flutter_test:
     sdk: flutter
-#  integration_test:
-#    sdk: flutter
+  #  integration_test:
+  #    sdk: flutter
 
   flutter_lints: ^6.0.0
-  build_runner: ^2.5.4
-  json_serializable: ^6.9.5
-  mockito: ^5.4.6
-  freezed: ^3.1.0
-  analyzer: ^7.4.5
+  build_runner: ^2.6.0
+  json_serializable: ^6.10.0
+  mockito: ^5.5.0
+  freezed: ^3.2.0
+  analyzer: ^7.6.0
   #  test: ^1.25.10
   #  test_api: ^0.7.4
-  riverpod_generator: ^2.6.5
-  riverpod_lint: ^2.6.5
-#  riverpod_generator: ^3.0.0-dev.16
-#  riverpod_lint: ^3.0.0-dev.16
+  riverpod_generator: ^3.0.0-dev.17
+  riverpod_lint: ^3.0.0-dev.17
+  #  riverpod_generator: ^3.0.0-dev.16
+  #  riverpod_lint: ^3.0.0-dev.16
 
   # flavor
 #  flutter_flavorizr: ^2.4.1

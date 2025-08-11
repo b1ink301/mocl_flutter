@@ -1,7 +1,6 @@
 import 'dart:developer';
 
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/di/app_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

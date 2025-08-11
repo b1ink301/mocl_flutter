@@ -6,719 +6,612 @@ part of 'list_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$listSmallTitleHash() => r'afb276d55425a9e7f1bf477590ddc03e0236bea3';
-
-/// See also [listSmallTitle].
 @ProviderFor(listSmallTitle)
-final listSmallTitleProvider = AutoDisposeProvider<String>.internal(
-  listSmallTitle,
-  name: r'listSmallTitleProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$listSmallTitleHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+const listSmallTitleProvider = ListSmallTitleProvider._();
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef ListSmallTitleRef = AutoDisposeProviderRef<String>;
-String _$listTitleHash() => r'334015293ab03a204a6f3c31553fea624aaf7120';
-
-/// See also [listTitle].
-@ProviderFor(listTitle)
-final listTitleProvider = AutoDisposeProvider<String>.internal(
-  listTitle,
-  name: r'listTitleProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$listTitleHash,
-  dependencies: <ProviderOrFamily>[mainItemProvider],
-  allTransitiveDependencies: <ProviderOrFamily>{
-    mainItemProvider,
-    ...?mainItemProvider.allTransitiveDependencies,
-  },
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef ListTitleRef = AutoDisposeProviderRef<String>;
-String _$mainItemHash() => r'bfd8c4675d74a8ec6b735008aa9f59eee3c014e6';
-
-/// See also [mainItem].
-@ProviderFor(mainItem)
-final mainItemProvider = AutoDisposeProvider<MainItem>.internal(
-  mainItem,
-  name: r'mainItemProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$mainItemHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef MainItemRef = AutoDisposeProviderRef<MainItem>;
-String _$titleHeightHash() => r'db651b17f1a464563f1fbd0d9e130579f3648c25';
-
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-/// See also [titleHeight].
-@ProviderFor(titleHeight)
-const titleHeightProvider = TitleHeightFamily();
-
-/// See also [titleHeight].
-class TitleHeightFamily extends Family<double> {
-  /// See also [titleHeight].
-  const TitleHeightFamily();
-
-  /// See also [titleHeight].
-  TitleHeightProvider call(String text) {
-    return TitleHeightProvider(text);
-  }
-
-  @override
-  TitleHeightProvider getProviderOverride(
-    covariant TitleHeightProvider provider,
-  ) {
-    return call(provider.text);
-  }
-
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    appbarTextStyleProvider,
-    screenWidthProvider,
-  ];
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
-      <ProviderOrFamily>{
-        appbarTextStyleProvider,
-        ...?appbarTextStyleProvider.allTransitiveDependencies,
-        screenWidthProvider,
-        ...?screenWidthProvider.allTransitiveDependencies,
-      };
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'titleHeightProvider';
-}
-
-/// See also [titleHeight].
-class TitleHeightProvider extends AutoDisposeProvider<double> {
-  /// See also [titleHeight].
-  TitleHeightProvider(String text)
-    : this._internal(
-        (ref) => titleHeight(ref as TitleHeightRef, text),
-        from: titleHeightProvider,
-        name: r'titleHeightProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$titleHeightHash,
-        dependencies: TitleHeightFamily._dependencies,
-        allTransitiveDependencies: TitleHeightFamily._allTransitiveDependencies,
-        text: text,
+final class ListSmallTitleProvider
+    extends $FunctionalProvider<String, String, String>
+    with $Provider<String> {
+  const ListSmallTitleProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'listSmallTitleProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
       );
 
-  TitleHeightProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.text,
-  }) : super.internal();
+  @override
+  String debugGetCreateSourceHash() => _$listSmallTitleHash();
 
-  final String text;
+  @$internal
+  @override
+  $ProviderElement<String> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
-  Override overrideWith(double Function(TitleHeightRef provider) create) {
-    return ProviderOverride(
+  String create(Ref ref) {
+    return listSmallTitle(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
       origin: this,
-      override: TitleHeightProvider._internal(
-        (ref) => create(ref as TitleHeightRef),
-        from: from,
-        name: null,
+      providerOverride: $SyncValueProvider<String>(value),
+    );
+  }
+}
+
+String _$listSmallTitleHash() => r'afb276d55425a9e7f1bf477590ddc03e0236bea3';
+
+@ProviderFor(listTitle)
+const listTitleProvider = ListTitleProvider._();
+
+final class ListTitleProvider
+    extends $FunctionalProvider<String, String, String>
+    with $Provider<String> {
+  const ListTitleProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'listTitleProvider',
+        isAutoDispose: true,
+        dependencies: const <ProviderOrFamily>[mainItemProvider],
+        $allTransitiveDependencies: const <ProviderOrFamily>[
+          ListTitleProvider.$allTransitiveDependencies0,
+        ],
+      );
+
+  static const $allTransitiveDependencies0 = mainItemProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$listTitleHash();
+
+  @$internal
+  @override
+  $ProviderElement<String> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  String create(Ref ref) {
+    return listTitle(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String>(value),
+    );
+  }
+}
+
+String _$listTitleHash() => r'334015293ab03a204a6f3c31553fea624aaf7120';
+
+@ProviderFor(mainItem)
+const mainItemProvider = MainItemProvider._();
+
+final class MainItemProvider
+    extends $FunctionalProvider<MainItem, MainItem, MainItem>
+    with $Provider<MainItem> {
+  const MainItemProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'mainItemProvider',
+        isAutoDispose: true,
         dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        text: text,
-      ),
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$mainItemHash();
+
+  @$internal
+  @override
+  $ProviderElement<MainItem> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  MainItem create(Ref ref) {
+    return mainItem(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(MainItem value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<MainItem>(value),
+    );
+  }
+}
+
+String _$mainItemHash() => r'bfd8c4675d74a8ec6b735008aa9f59eee3c014e6';
+
+@ProviderFor(titleHeight)
+const titleHeightProvider = TitleHeightFamily._();
+
+final class TitleHeightProvider
+    extends $FunctionalProvider<double, double, double>
+    with $Provider<double> {
+  const TitleHeightProvider._({
+    required TitleHeightFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'titleHeightProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  static const $allTransitiveDependencies0 = appbarTextStyleProvider;
+  static const $allTransitiveDependencies1 = screenWidthProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$titleHeightHash();
+
+  @override
+  String toString() {
+    return r'titleHeightProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<double> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  double create(Ref ref) {
+    final argument = this.argument as String;
+    return titleHeight(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(double value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<double>(value),
     );
   }
 
   @override
-  AutoDisposeProviderElement<double> createElement() {
-    return _TitleHeightProviderElement(this);
-  }
-
-  @override
   bool operator ==(Object other) {
-    return other is TitleHeightProvider && other.text == text;
+    return other is TitleHeightProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, text.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin TitleHeightRef on AutoDisposeProviderRef<double> {
-  /// The parameter `text` of this provider.
-  String get text;
-}
+String _$titleHeightHash() => r'db651b17f1a464563f1fbd0d9e130579f3648c25';
 
-class _TitleHeightProviderElement extends AutoDisposeProviderElement<double>
-    with TitleHeightRef {
-  _TitleHeightProviderElement(super.provider);
+final class TitleHeightFamily extends $Family
+    with $FunctionalFamilyOverride<double, String> {
+  const TitleHeightFamily._()
+    : super(
+        retry: null,
+        name: r'titleHeightProvider',
+        dependencies: const <ProviderOrFamily>[
+          appbarTextStyleProvider,
+          screenWidthProvider,
+        ],
+        $allTransitiveDependencies: const <ProviderOrFamily>[
+          TitleHeightProvider.$allTransitiveDependencies0,
+          TitleHeightProvider.$allTransitiveDependencies1,
+        ],
+        isAutoDispose: true,
+      );
+
+  TitleHeightProvider call(String text) =>
+      TitleHeightProvider._(argument: text, from: this);
 
   @override
-  String get text => (origin as TitleHeightProvider).text;
+  String toString() => r'titleHeightProvider';
+}
+
+@ProviderFor(reqListData)
+const reqListDataProvider = ReqListDataFamily._();
+
+final class ReqListDataProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<Either<Failure, List<ListItem>>>,
+          Either<Failure, List<ListItem>>,
+          FutureOr<Either<Failure, List<ListItem>>>
+        >
+    with
+        $FutureModifier<Either<Failure, List<ListItem>>>,
+        $FutureProvider<Either<Failure, List<ListItem>>> {
+  const ReqListDataProvider._({
+    required ReqListDataFamily super.from,
+    required (MainItem, SortType, int, LastId) super.argument,
+  }) : super(
+         retry: null,
+         name: r'reqListDataProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  static const $allTransitiveDependencies0 = mainItemProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$reqListDataHash();
+
+  @override
+  String toString() {
+    return r'reqListDataProvider'
+        ''
+        '$argument';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<Either<Failure, List<ListItem>>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<Either<Failure, List<ListItem>>> create(Ref ref) {
+    final argument = this.argument as (MainItem, SortType, int, LastId);
+    return reqListData(ref, argument.$1, argument.$2, argument.$3, argument.$4);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ReqListDataProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
 }
 
 String _$reqListDataHash() => r'764566d49278bc1cfed67831f7d982da6a7e6764';
 
-/// See also [reqListData].
-@ProviderFor(reqListData)
-const reqListDataProvider = ReqListDataFamily();
+final class ReqListDataFamily extends $Family
+    with
+        $FunctionalFamilyOverride<
+          FutureOr<Either<Failure, List<ListItem>>>,
+          (MainItem, SortType, int, LastId)
+        > {
+  const ReqListDataFamily._()
+    : super(
+        retry: null,
+        name: r'reqListDataProvider',
+        dependencies: const <ProviderOrFamily>[mainItemProvider],
+        $allTransitiveDependencies: const <ProviderOrFamily>[
+          ReqListDataProvider.$allTransitiveDependencies0,
+        ],
+        isAutoDispose: true,
+      );
 
-/// See also [reqListData].
-class ReqListDataFamily
-    extends Family<AsyncValue<Either<Failure, List<ListItem>>>> {
-  /// See also [reqListData].
-  const ReqListDataFamily();
-
-  /// See also [reqListData].
   ReqListDataProvider call(
     MainItem mainItem,
     SortType sortType,
     int page,
     LastId lastId,
-  ) {
-    return ReqListDataProvider(mainItem, sortType, page, lastId);
-  }
+  ) => ReqListDataProvider._(
+    argument: (mainItem, sortType, page, lastId),
+    from: this,
+  );
 
   @override
-  ReqListDataProvider getProviderOverride(
-    covariant ReqListDataProvider provider,
-  ) {
-    return call(
-      provider.mainItem,
-      provider.sortType,
-      provider.page,
-      provider.lastId,
-    );
-  }
-
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    mainItemProvider,
-  ];
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
-      <ProviderOrFamily>{
-        mainItemProvider,
-        ...?mainItemProvider.allTransitiveDependencies,
-      };
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'reqListDataProvider';
+  String toString() => r'reqListDataProvider';
 }
 
-/// See also [reqListData].
-class ReqListDataProvider
-    extends AutoDisposeFutureProvider<Either<Failure, List<ListItem>>> {
-  /// See also [reqListData].
-  ReqListDataProvider(
-    MainItem mainItem,
-    SortType sortType,
-    int page,
-    LastId lastId,
-  ) : this._internal(
-        (ref) => reqListData(
-          ref as ReqListDataRef,
-          mainItem,
-          sortType,
-          page,
-          lastId,
-        ),
-        from: reqListDataProvider,
-        name: r'reqListDataProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$reqListDataHash,
-        dependencies: ReqListDataFamily._dependencies,
-        allTransitiveDependencies: ReqListDataFamily._allTransitiveDependencies,
-        mainItem: mainItem,
-        sortType: sortType,
-        page: page,
-        lastId: lastId,
+@ProviderFor(ListStateNotifier)
+const listStateNotifierProvider = ListStateNotifierProvider._();
+
+final class ListStateNotifierProvider
+    extends $AsyncNotifierProvider<ListStateNotifier, ListState> {
+  const ListStateNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'listStateNotifierProvider',
+        isAutoDispose: true,
+        dependencies: const <ProviderOrFamily>[
+          mainItemProvider,
+          reqListDataProvider,
+          sortTypeNotifierProvider,
+        ],
+        $allTransitiveDependencies: const <ProviderOrFamily>[
+          ListStateNotifierProvider.$allTransitiveDependencies0,
+          ListStateNotifierProvider.$allTransitiveDependencies1,
+          ListStateNotifierProvider.$allTransitiveDependencies2,
+        ],
       );
 
-  ReqListDataProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.mainItem,
-    required this.sortType,
-    required this.page,
-    required this.lastId,
-  }) : super.internal();
-
-  final MainItem mainItem;
-  final SortType sortType;
-  final int page;
-  final LastId lastId;
+  static const $allTransitiveDependencies0 = mainItemProvider;
+  static const $allTransitiveDependencies1 = reqListDataProvider;
+  static const $allTransitiveDependencies2 = sortTypeNotifierProvider;
 
   @override
-  Override overrideWith(
-    FutureOr<Either<Failure, List<ListItem>>> Function(ReqListDataRef provider)
-    create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: ReqListDataProvider._internal(
-        (ref) => create(ref as ReqListDataRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        mainItem: mainItem,
-        sortType: sortType,
-        page: page,
-        lastId: lastId,
-      ),
-    );
+  String debugGetCreateSourceHash() => _$listStateNotifierHash();
+
+  @$internal
+  @override
+  ListStateNotifier create() => ListStateNotifier();
+}
+
+String _$listStateNotifierHash() => r'4a96d8d3a2acec4d2bbf17d5bb4229a00b7ebc10';
+
+abstract class _$ListStateNotifier extends $AsyncNotifier<ListState> {
+  FutureOr<ListState> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<AsyncValue<ListState>, ListState>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<ListState>, ListState>,
+              AsyncValue<ListState>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(getListItem)
+const getListItemProvider = GetListItemFamily._();
+
+final class GetListItemProvider
+    extends $FunctionalProvider<ListItem?, ListItem?, ListItem?>
+    with $Provider<ListItem?> {
+  const GetListItemProvider._({
+    required GetListItemFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: null,
+         name: r'getListItemProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  static const $allTransitiveDependencies0 = listStateNotifierProvider;
+  static const $allTransitiveDependencies1 =
+      ListStateNotifierProvider.$allTransitiveDependencies0;
+  static const $allTransitiveDependencies2 =
+      ListStateNotifierProvider.$allTransitiveDependencies1;
+  static const $allTransitiveDependencies3 =
+      ListStateNotifierProvider.$allTransitiveDependencies2;
+
+  @override
+  String debugGetCreateSourceHash() => _$getListItemHash();
+
+  @override
+  String toString() {
+    return r'getListItemProvider'
+        ''
+        '($argument)';
   }
 
+  @$internal
   @override
-  AutoDisposeFutureProviderElement<Either<Failure, List<ListItem>>>
-  createElement() {
-    return _ReqListDataProviderElement(this);
+  $ProviderElement<ListItem?> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  ListItem? create(Ref ref) {
+    final argument = this.argument as int;
+    return getListItem(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ListItem? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ListItem?>(value),
+    );
   }
 
   @override
   bool operator ==(Object other) {
-    return other is ReqListDataProvider &&
-        other.mainItem == mainItem &&
-        other.sortType == sortType &&
-        other.page == page &&
-        other.lastId == lastId;
+    return other is GetListItemProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, mainItem.hashCode);
-    hash = _SystemHash.combine(hash, sortType.hashCode);
-    hash = _SystemHash.combine(hash, page.hashCode);
-    hash = _SystemHash.combine(hash, lastId.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin ReqListDataRef
-    on AutoDisposeFutureProviderRef<Either<Failure, List<ListItem>>> {
-  /// The parameter `mainItem` of this provider.
-  MainItem get mainItem;
-
-  /// The parameter `sortType` of this provider.
-  SortType get sortType;
-
-  /// The parameter `page` of this provider.
-  int get page;
-
-  /// The parameter `lastId` of this provider.
-  LastId get lastId;
-}
-
-class _ReqListDataProviderElement
-    extends AutoDisposeFutureProviderElement<Either<Failure, List<ListItem>>>
-    with ReqListDataRef {
-  _ReqListDataProviderElement(super.provider);
-
-  @override
-  MainItem get mainItem => (origin as ReqListDataProvider).mainItem;
-  @override
-  SortType get sortType => (origin as ReqListDataProvider).sortType;
-  @override
-  int get page => (origin as ReqListDataProvider).page;
-  @override
-  LastId get lastId => (origin as ReqListDataProvider).lastId;
-}
-
-String _$handleItemTapHash() => r'7220d4b2361698b0af774211d30d9799a34bfb62';
-
-/// See also [handleItemTap].
-@ProviderFor(handleItemTap)
-const handleItemTapProvider = HandleItemTapFamily();
-
-/// See also [handleItemTap].
-class HandleItemTapFamily extends Family<void> {
-  /// See also [handleItemTap].
-  const HandleItemTapFamily();
-
-  /// See also [handleItemTap].
-  HandleItemTapProvider call(BuildContext context) {
-    return HandleItemTapProvider(context);
-  }
-
-  @override
-  HandleItemTapProvider getProviderOverride(
-    covariant HandleItemTapProvider provider,
-  ) {
-    return call(provider.context);
-  }
-
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    listItemProvider,
-    listItemIndexProvider,
-  ];
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
-      <ProviderOrFamily>{
-        listItemProvider,
-        ...?listItemProvider.allTransitiveDependencies,
-        listItemIndexProvider,
-        ...?listItemIndexProvider.allTransitiveDependencies,
-      };
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'handleItemTapProvider';
-}
-
-/// See also [handleItemTap].
-class HandleItemTapProvider extends AutoDisposeProvider<void> {
-  /// See also [handleItemTap].
-  HandleItemTapProvider(BuildContext context)
-    : this._internal(
-        (ref) => handleItemTap(ref as HandleItemTapRef, context),
-        from: handleItemTapProvider,
-        name: r'handleItemTapProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$handleItemTapHash,
-        dependencies: HandleItemTapFamily._dependencies,
-        allTransitiveDependencies:
-            HandleItemTapFamily._allTransitiveDependencies,
-        context: context,
-      );
-
-  HandleItemTapProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.context,
-  }) : super.internal();
-
-  final BuildContext context;
-
-  @override
-  Override overrideWith(void Function(HandleItemTapRef provider) create) {
-    return ProviderOverride(
-      origin: this,
-      override: HandleItemTapProvider._internal(
-        (ref) => create(ref as HandleItemTapRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        context: context,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeProviderElement<void> createElement() {
-    return _HandleItemTapProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is HandleItemTapProvider && other.context == context;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, context.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin HandleItemTapRef on AutoDisposeProviderRef<void> {
-  /// The parameter `context` of this provider.
-  BuildContext get context;
-}
-
-class _HandleItemTapProviderElement extends AutoDisposeProviderElement<void>
-    with HandleItemTapRef {
-  _HandleItemTapProviderElement(super.provider);
-
-  @override
-  BuildContext get context => (origin as HandleItemTapProvider).context;
 }
 
 String _$getListItemHash() => r'acb63b2c6cf355f6e35c579dcc668adb147997f8';
 
-/// See also [getListItem].
-@ProviderFor(getListItem)
-const getListItemProvider = GetListItemFamily();
-
-/// See also [getListItem].
-class GetListItemFamily extends Family<ListItem?> {
-  /// See also [getListItem].
-  const GetListItemFamily();
-
-  /// See also [getListItem].
-  GetListItemProvider call(int index) {
-    return GetListItemProvider(index);
-  }
-
-  @override
-  GetListItemProvider getProviderOverride(
-    covariant GetListItemProvider provider,
-  ) {
-    return call(provider.index);
-  }
-
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    listStateNotifierProvider,
-  ];
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
-      <ProviderOrFamily>{
-        listStateNotifierProvider,
-        ...?listStateNotifierProvider.allTransitiveDependencies,
-      };
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'getListItemProvider';
-}
-
-/// See also [getListItem].
-class GetListItemProvider extends AutoDisposeProvider<ListItem?> {
-  /// See also [getListItem].
-  GetListItemProvider(int index)
-    : this._internal(
-        (ref) => getListItem(ref as GetListItemRef, index),
-        from: getListItemProvider,
+final class GetListItemFamily extends $Family
+    with $FunctionalFamilyOverride<ListItem?, int> {
+  const GetListItemFamily._()
+    : super(
+        retry: null,
         name: r'getListItemProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$getListItemHash,
-        dependencies: GetListItemFamily._dependencies,
-        allTransitiveDependencies: GetListItemFamily._allTransitiveDependencies,
-        index: index,
+        dependencies: const <ProviderOrFamily>[listStateNotifierProvider],
+        $allTransitiveDependencies: const <ProviderOrFamily>{
+          GetListItemProvider.$allTransitiveDependencies0,
+          GetListItemProvider.$allTransitiveDependencies1,
+          GetListItemProvider.$allTransitiveDependencies2,
+          GetListItemProvider.$allTransitiveDependencies3,
+        },
+        isAutoDispose: true,
       );
 
-  GetListItemProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.index,
-  }) : super.internal();
-
-  final int index;
+  GetListItemProvider call(int index) =>
+      GetListItemProvider._(argument: index, from: this);
 
   @override
-  Override overrideWith(ListItem? Function(GetListItemRef provider) create) {
-    return ProviderOverride(
-      origin: this,
-      override: GetListItemProvider._internal(
-        (ref) => create(ref as GetListItemRef),
-        from: from,
-        name: null,
+  String toString() => r'getListItemProvider';
+}
+
+@ProviderFor(SortTypeNotifier)
+const sortTypeNotifierProvider = SortTypeNotifierProvider._();
+
+final class SortTypeNotifierProvider
+    extends $NotifierProvider<SortTypeNotifier, SortType> {
+  const SortTypeNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'sortTypeNotifierProvider',
+        isAutoDispose: true,
         dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        index: index,
-      ),
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$sortTypeNotifierHash();
+
+  @$internal
+  @override
+  SortTypeNotifier create() => SortTypeNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SortType value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SortType>(value),
     );
   }
+}
 
+String _$sortTypeNotifierHash() => r'19fe9c4b29d4d6b3d4c1c845099428124cb94554';
+
+abstract class _$SortTypeNotifier extends $Notifier<SortType> {
+  SortType build();
+  @$mustCallSuper
   @override
-  AutoDisposeProviderElement<ListItem?> createElement() {
-    return _GetListItemProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is GetListItemProvider && other.index == index;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, index.hashCode);
-
-    return _SystemHash.finish(hash);
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<SortType, SortType>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<SortType, SortType>,
+              SortType,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin GetListItemRef on AutoDisposeProviderRef<ListItem?> {
-  /// The parameter `index` of this provider.
-  int get index;
-}
+@ProviderFor(listItem)
+const listItemProvider = ListItemProvider._();
 
-class _GetListItemProviderElement extends AutoDisposeProviderElement<ListItem?>
-    with GetListItemRef {
-  _GetListItemProviderElement(super.provider);
+final class ListItemProvider
+    extends $FunctionalProvider<ListItem?, ListItem?, ListItem?>
+    with $Provider<ListItem?> {
+  const ListItemProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'listItemProvider',
+        isAutoDispose: true,
+        dependencies: const <ProviderOrFamily>[
+          listItemIndexProvider,
+          getListItemProvider,
+        ],
+        $allTransitiveDependencies: const <ProviderOrFamily>{
+          ListItemProvider.$allTransitiveDependencies0,
+          ListItemProvider.$allTransitiveDependencies1,
+          ListItemProvider.$allTransitiveDependencies2,
+          ListItemProvider.$allTransitiveDependencies3,
+          ListItemProvider.$allTransitiveDependencies4,
+          ListItemProvider.$allTransitiveDependencies5,
+        },
+      );
+
+  static const $allTransitiveDependencies0 = listItemIndexProvider;
+  static const $allTransitiveDependencies1 = getListItemProvider;
+  static const $allTransitiveDependencies2 =
+      GetListItemProvider.$allTransitiveDependencies0;
+  static const $allTransitiveDependencies3 =
+      GetListItemProvider.$allTransitiveDependencies1;
+  static const $allTransitiveDependencies4 =
+      GetListItemProvider.$allTransitiveDependencies2;
+  static const $allTransitiveDependencies5 =
+      GetListItemProvider.$allTransitiveDependencies3;
 
   @override
-  int get index => (origin as GetListItemProvider).index;
+  String debugGetCreateSourceHash() => _$listItemHash();
+
+  @$internal
+  @override
+  $ProviderElement<ListItem?> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  ListItem? create(Ref ref) {
+    return listItem(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ListItem? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ListItem?>(value),
+    );
+  }
 }
 
 String _$listItemHash() => r'cfa14f06c2d46a8696f395988a6e6969451ef49d';
 
-/// See also [listItem].
-@ProviderFor(listItem)
-final listItemProvider = AutoDisposeProvider<ListItem?>.internal(
-  listItem,
-  name: r'listItemProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$listItemHash,
-  dependencies: <ProviderOrFamily>[listItemIndexProvider, getListItemProvider],
-  allTransitiveDependencies: <ProviderOrFamily>{
-    listItemIndexProvider,
-    ...?listItemIndexProvider.allTransitiveDependencies,
-    getListItemProvider,
-    ...?getListItemProvider.allTransitiveDependencies,
-  },
-);
+@ProviderFor(listItemIndex)
+const listItemIndexProvider = ListItemIndexProvider._();
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef ListItemRef = AutoDisposeProviderRef<ListItem?>;
+final class ListItemIndexProvider extends $FunctionalProvider<int, int, int>
+    with $Provider<int> {
+  const ListItemIndexProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'listItemIndexProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$listItemIndexHash();
+
+  @$internal
+  @override
+  $ProviderElement<int> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  int create(Ref ref) {
+    return listItemIndex(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<int>(value),
+    );
+  }
+}
+
 String _$listItemIndexHash() => r'70b52c3cc678f4bd8e917a5b7a17378665040e04';
 
-/// See also [listItemIndex].
-@ProviderFor(listItemIndex)
-final listItemIndexProvider = AutoDisposeProvider<int>.internal(
-  listItemIndex,
-  name: r'listItemIndexProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$listItemIndexHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef ListItemIndexRef = AutoDisposeProviderRef<int>;
-String _$listStateNotifierHash() => r'4a96d8d3a2acec4d2bbf17d5bb4229a00b7ebc10';
-
-/// See also [ListStateNotifier].
-@ProviderFor(ListStateNotifier)
-final listStateNotifierProvider =
-    AutoDisposeAsyncNotifierProvider<ListStateNotifier, ListState>.internal(
-      ListStateNotifier.new,
-      name: r'listStateNotifierProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$listStateNotifierHash,
-      dependencies: <ProviderOrFamily>[
-        mainItemProvider,
-        reqListDataProvider,
-        sortTypeNotifierProvider,
-      ],
-      allTransitiveDependencies: <ProviderOrFamily>{
-        mainItemProvider,
-        ...?mainItemProvider.allTransitiveDependencies,
-        reqListDataProvider,
-        ...?reqListDataProvider.allTransitiveDependencies,
-        sortTypeNotifierProvider,
-        ...?sortTypeNotifierProvider.allTransitiveDependencies,
-      },
-    );
-
-typedef _$ListStateNotifier = AutoDisposeAsyncNotifier<ListState>;
-String _$sortTypeNotifierHash() => r'19fe9c4b29d4d6b3d4c1c845099428124cb94554';
-
-/// See also [SortTypeNotifier].
-@ProviderFor(SortTypeNotifier)
-final sortTypeNotifierProvider =
-    AutoDisposeNotifierProvider<SortTypeNotifier, SortType>.internal(
-      SortTypeNotifier.new,
-      name: r'sortTypeNotifierProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$sortTypeNotifierHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
-
-typedef _$SortTypeNotifier = AutoDisposeNotifier<SortType>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

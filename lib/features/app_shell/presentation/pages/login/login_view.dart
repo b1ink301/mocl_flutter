@@ -36,41 +36,38 @@ class LoginView extends ConsumerWidget {
       onCreateWindow: (controller, createWindowAction) async {
         debugPrint('onCreateWindow ${createWindowAction.request.url}');
 
-        if (createWindowAction.request.url
-            .toString()
-            .contains("login/google")) {
+        if (createWindowAction.request.url.toString().contains(
+          "login/google",
+        )) {
           showDialog(
             context: context,
-            builder: (context) {
-              return InAppWebView(
-                initialUrlRequest: createWindowAction.request,
-                initialSettings: InAppWebViewSettings(
-                  javaScriptEnabled: true,
-                  thirdPartyCookiesEnabled: true,
-                  mixedContentMode: MixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
-                ),
-              );
-            },
+            builder: (context) => InAppWebView(
+              initialUrlRequest: createWindowAction.request,
+              initialSettings: InAppWebViewSettings(
+                javaScriptEnabled: true,
+                thirdPartyCookiesEnabled: true,
+                mixedContentMode: MixedContentMode.MIXED_CONTENT_ALWAYS_ALLOW,
+              ),
+            ),
           );
         }
         return true;
       },
-      onReceivedServerTrustAuthRequest: (
-        InAppWebViewController controller,
-        URLAuthenticationChallenge challenge,
-      ) async =>
-          ServerTrustAuthResponse(
-              action: ServerTrustAuthResponseAction.PROCEED),
-      onLoadStop: (
-        InAppWebViewController controller,
-        WebUri? url,
-      ) async {
+      onReceivedServerTrustAuthRequest:
+          (
+            InAppWebViewController controller,
+            URLAuthenticationChallenge challenge,
+          ) async => ServerTrustAuthResponse(
+            action: ServerTrustAuthResponseAction.PROCEED,
+          ),
+      onLoadStop: (InAppWebViewController controller, WebUri? url) async {
         if (url == null) {
           return;
         }
 
-        final bool hasLogin =
-            await ref.read(hasLoginProvider(cookieManager, url.toString()).future);
+        final bool hasLogin = await ref.read(
+          hasLoginProvider(cookieManager, url.toString()).future,
+        );
 
         debugPrint('hasLogin=$hasLogin, uri=$url');
 

@@ -6,7 +6,6 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/di/datasource_provider.dart';
 import 'package:mocl_flutter/features/app_shell/presentation/app_widget.dart';
-import 'package:mocl_flutter/features/google_drive/presentation/providers/auto_sync_provider.dart';
 import 'package:mocl_flutter/firebase_options.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -25,16 +24,17 @@ Future<void> main() async {
   );
 
   final container = ProviderContainer(
+    retry: (retryCount, error) => null,
     overrides: [
       sharedPreferencesProvider.overrideWithValue(
         await SharedPreferences.getInstance(),
       ),
       appDatabaseProvider.overrideWithValue(await _database()),
-    ]
+    ],
   );
 
   // Start auto-sync check
-  container.read(autoSyncNotifierProvider.notifier).checkSyncStatus();
+  // container.read(autoSyncNotifierProvider.notifier).checkSyncStatus();
 
   runApp(
     UncontrolledProviderScope(container: container, child: const AppWidget()),

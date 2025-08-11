@@ -7,9 +7,7 @@ import 'package:mocl_flutter/core/domain/usecases/set_main_list.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/di/app_provider.dart';
 import 'package:mocl_flutter/di/use_case_provider.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/pages/main/widgets/add_list_modal_sheet_page.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 part 'main_providers.g.dart';
 
@@ -47,51 +45,11 @@ bool isCurrentSiteType(Ref ref, SiteType siteType) {
 }
 
 @riverpod
-Future<Either<Failure, List<int>>> setMainItems(
-  Ref ref,
-  List<MainItem> list,
-) async {
+Future<Either<Failure, List<int>>> setMainItems(Ref ref, List<MainItem> list) {
   final siteType = ref.read(currentSiteTypeNotifierProvider);
   final params = SetMainParams(siteType: siteType, list: list);
-  final setList = ref.read(setMainListProvider);
-  return await setList.call(params);
-}
-
-@riverpod
-Future<void> handleAddButton(Ref ref, BuildContext context) async {
-  List<MainItem>? result = await WoltModalSheet.show(
-    context: context,
-    modalTypeBuilder: (context) => WoltModalType.bottomSheet(),
-    pageListBuilder: (bottomSheetContext) => [
-      AddListModalSheetPage(context: bottomSheetContext),
-    ],
-  );
-
-  // List<MainItem>? result;
-  // if (isCupertino(context)) {
-  //   result = await showPlatformDialog(
-  //     context: context,
-  //     builder: (context) => AddListDialog(),
-  //     material: MaterialDialogData(
-  //       useSafeArea: false,
-  //     ),
-  //   );
-  // } else {
-  //   result = await context.push<List<MainItem>>(
-  //     Routes.setMainDlgFull,
-  //   );
-  // }
-
-  if (result == null) return;
-
-  final Either<Failure, List<int>> state = await ref.read(
-    setMainItemsProvider(result).future,
-  );
-
-  state.fold(
-    (failure) => ref.read(showToastProvider(failure.message, context)),
-    (data) => ref.read(mainItemsNotifierProvider.notifier).refresh(),
-  );
+  final result = ref.read(setMainListProvider).call(params);
+  return result;
 }
 
 @Riverpod(keepAlive: true)

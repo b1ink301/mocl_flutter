@@ -6,168 +6,114 @@ part of 'login_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
-String _$urlRequestHash() => r'309fca7c9d71708450c0a653780faab23ac1216c';
-
-/// See also [urlRequest].
 @ProviderFor(urlRequest)
-final urlRequestProvider = AutoDisposeProvider<URLRequest>.internal(
-  urlRequest,
-  name: r'urlRequestProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$urlRequestHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+const urlRequestProvider = UrlRequestProvider._();
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef UrlRequestRef = AutoDisposeProviderRef<URLRequest>;
-String _$hasLoginHash() => r'723405ea143bc5fff3c7f977672e39de4f4b0e3b';
-
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-/// See also [hasLogin].
-@ProviderFor(hasLogin)
-const hasLoginProvider = HasLoginFamily();
-
-/// See also [hasLogin].
-class HasLoginFamily extends Family<AsyncValue<bool>> {
-  /// See also [hasLogin].
-  const HasLoginFamily();
-
-  /// See also [hasLogin].
-  HasLoginProvider call(CookieManager cookieManager, String url) {
-    return HasLoginProvider(cookieManager, url);
-  }
-
-  @override
-  HasLoginProvider getProviderOverride(covariant HasLoginProvider provider) {
-    return call(provider.cookieManager, provider.url);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'hasLoginProvider';
-}
-
-/// See also [hasLogin].
-class HasLoginProvider extends AutoDisposeFutureProvider<bool> {
-  /// See also [hasLogin].
-  HasLoginProvider(CookieManager cookieManager, String url)
-    : this._internal(
-        (ref) => hasLogin(ref as HasLoginRef, cookieManager, url),
-        from: hasLoginProvider,
-        name: r'hasLoginProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$hasLoginHash,
-        dependencies: HasLoginFamily._dependencies,
-        allTransitiveDependencies: HasLoginFamily._allTransitiveDependencies,
-        cookieManager: cookieManager,
-        url: url,
+final class UrlRequestProvider
+    extends $FunctionalProvider<URLRequest, URLRequest, URLRequest>
+    with $Provider<URLRequest> {
+  const UrlRequestProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'urlRequestProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
       );
 
-  HasLoginProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.cookieManager,
-    required this.url,
-  }) : super.internal();
+  @override
+  String debugGetCreateSourceHash() => _$urlRequestHash();
 
-  final CookieManager cookieManager;
-  final String url;
+  @$internal
+  @override
+  $ProviderElement<URLRequest> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
 
   @override
-  Override overrideWith(FutureOr<bool> Function(HasLoginRef provider) create) {
-    return ProviderOverride(
-      origin: this,
-      override: HasLoginProvider._internal(
-        (ref) => create(ref as HasLoginRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        cookieManager: cookieManager,
-        url: url,
-      ),
-    );
+  URLRequest create(Ref ref) {
+    return urlRequest(ref);
   }
 
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(URLRequest value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<URLRequest>(value),
+    );
+  }
+}
+
+String _$urlRequestHash() => r'309fca7c9d71708450c0a653780faab23ac1216c';
+
+@ProviderFor(hasLogin)
+const hasLoginProvider = HasLoginFamily._();
+
+final class HasLoginProvider
+    extends $FunctionalProvider<AsyncValue<bool>, bool, FutureOr<bool>>
+    with $FutureModifier<bool>, $FutureProvider<bool> {
+  const HasLoginProvider._({
+    required HasLoginFamily super.from,
+    required (CookieManager, String) super.argument,
+  }) : super(
+         retry: null,
+         name: r'hasLoginProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
   @override
-  AutoDisposeFutureProviderElement<bool> createElement() {
-    return _HasLoginProviderElement(this);
+  String debugGetCreateSourceHash() => _$hasLoginHash();
+
+  @override
+  String toString() {
+    return r'hasLoginProvider'
+        ''
+        '$argument';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<bool> create(Ref ref) {
+    final argument = this.argument as (CookieManager, String);
+    return hasLogin(ref, argument.$1, argument.$2);
   }
 
   @override
   bool operator ==(Object other) {
-    return other is HasLoginProvider &&
-        other.cookieManager == cookieManager &&
-        other.url == url;
+    return other is HasLoginProvider && other.argument == argument;
   }
 
   @override
   int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, cookieManager.hashCode);
-    hash = _SystemHash.combine(hash, url.hashCode);
-
-    return _SystemHash.finish(hash);
+    return argument.hashCode;
   }
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin HasLoginRef on AutoDisposeFutureProviderRef<bool> {
-  /// The parameter `cookieManager` of this provider.
-  CookieManager get cookieManager;
+String _$hasLoginHash() => r'723405ea143bc5fff3c7f977672e39de4f4b0e3b';
 
-  /// The parameter `url` of this provider.
-  String get url;
-}
+final class HasLoginFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<bool>, (CookieManager, String)> {
+  const HasLoginFamily._()
+    : super(
+        retry: null,
+        name: r'hasLoginProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
 
-class _HasLoginProviderElement extends AutoDisposeFutureProviderElement<bool>
-    with HasLoginRef {
-  _HasLoginProviderElement(super.provider);
+  HasLoginProvider call(CookieManager cookieManager, String url) =>
+      HasLoginProvider._(argument: (cookieManager, url), from: this);
 
   @override
-  CookieManager get cookieManager => (origin as HasLoginProvider).cookieManager;
-  @override
-  String get url => (origin as HasLoginProvider).url;
+  String toString() => r'hasLoginProvider';
 }
 
 // ignore_for_file: type=lint

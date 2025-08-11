@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/core/domain/usecases/get_detail.dart';
 import 'package:mocl_flutter/core/domain/usecases/get_list.dart';
 import 'package:mocl_flutter/core/domain/usecases/get_main_list.dart';
@@ -6,9 +5,9 @@ import 'package:mocl_flutter/core/domain/usecases/get_main_list_from_json.dart';
 import 'package:mocl_flutter/core/domain/usecases/get_search_list.dart';
 import 'package:mocl_flutter/core/domain/usecases/set_main_list.dart';
 import 'package:mocl_flutter/core/domain/usecases/set_read_flag.dart';
+import 'package:mocl_flutter/di/repository_provider.dart';
 import 'package:mocl_flutter/features/settings/domain/usecases/get_site_type.dart';
 import 'package:mocl_flutter/features/settings/domain/usecases/set_site_type.dart';
-import 'package:mocl_flutter/di/repository_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'use_case_provider.g.dart';

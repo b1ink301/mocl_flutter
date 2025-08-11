@@ -18,8 +18,9 @@ class _MainBody extends ConsumerWidget {
     return ref
         .watch(mainItemsNotifierProvider)
         .when(
-          data: (data) => _BodyList(items: data),
+          data: (data) => _BodyList(key: ValueKey(data.hashCode), items: data),
           error: (error, _) => _ErrorWidget(
+            key: ValueKey(error.hashCode),
             message: error is Failure ? error.message : error.toString(),
           ),
           loading: () => const SliverToBoxAdapter(
@@ -112,7 +113,7 @@ class _MainAppBar extends ConsumerWidget {
     actions: ref.watch(showAddButtonProvider)
         ? [
             PlatformIconButton(
-              onPressed: () => ref.read(handleAddButtonProvider(context)),
+              onPressed: () => _handleAddButton(context, ref),
               icon: const Icon(Icons.add),
             ),
             PlatformPopupMenu(
@@ -170,7 +171,7 @@ class _MainNavigationBar extends ConsumerWidget {
                 options: [
                   PopupMenuOption(
                     label: '게시판 추가',
-                    onTap: (_) => ref.read(handleAddButtonProvider(context)),
+                    onTap: (_) => _handleAddButton(context, ref),
                   ),
                   PopupMenuOption(
                     label: '로그인',
@@ -186,4 +187,22 @@ class _MainNavigationBar extends ConsumerWidget {
               )
             : null,
       );
+}
+
+Future<void> _handleAddButton(BuildContext context, WidgetRef ref) async {
+  List<MainItem>? result = await WoltModalSheet.show(
+    context: context,
+    modalTypeBuilder: (context) => WoltModalType.bottomSheet(),
+    pageListBuilder: (bottomSheetContext) => [
+      AddListModalSheetPage(context: bottomSheetContext),
+    ],
+  );
+  if (result == null) {
+    return;
+  }
+  final state = await ref.read(setMainItemsProvider(result).future);
+  state.fold(
+    (failure) => ref.read(showToastProvider(failure.message, context)),
+    (data) => ref.read(mainItemsNotifierProvider.notifier).refresh(),
+  );
 }

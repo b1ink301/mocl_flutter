@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/core/data/datasources/remote/base/base_api.dart';
 import 'package:mocl_flutter/core/data/datasources/remote/base/base_parser.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
