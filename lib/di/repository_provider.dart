@@ -1,4 +1,3 @@
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/core/domain/repositories/detail_repository.dart';
 import 'package:mocl_flutter/core/domain/repositories/list_repository.dart';
 import 'package:mocl_flutter/core/domain/repositories/main_repository.dart';

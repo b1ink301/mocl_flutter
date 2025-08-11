@@ -3,7 +3,6 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/core/domain/entities/last_id.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
@@ -15,8 +14,6 @@ import 'package:mocl_flutter/di/app_provider.dart';
 import 'package:mocl_flutter/di/use_case_provider.dart';
 import 'package:mocl_flutter/features/app_shell/presentation/pages/list/providers/list_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import '../../../routes/mocl_routes.dart';
 
 part 'list_providers.g.dart';
 
@@ -203,27 +200,6 @@ class ListStateNotifier extends _$ListStateNotifier {
     updatedItems[index] = currentStateValue.items[index].copyWith(isRead: true);
 
     state = AsyncData(currentStateValue.copyWith(items: updatedItems));
-  }
-}
-
-@Riverpod(dependencies: [listItem, listItemIndex])
-void handleItemTap(Ref ref, BuildContext context) {
-  final item = ref.watch(listItemProvider);
-  if (item == null) {
-    return;
-  }
-  try {
-    final index = ref.watch(listItemIndexProvider);
-    GoRouter.of(context).push(Routes.detail, extra: item).then((_) {
-      if (context.mounted) {
-        final readId = ref.read(readableStateNotifierProvider);
-        if (readId == item.id && !item.isRead) {
-          ref.read(listStateNotifierProvider.notifier).markAsRead(index);
-        }
-      }
-    });
-  } catch (e) {
-    debugPrint('_handleItemTap = $e');
   }
 }
 

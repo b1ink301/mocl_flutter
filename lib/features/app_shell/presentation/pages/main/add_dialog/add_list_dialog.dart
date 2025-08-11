@@ -91,18 +91,17 @@ class AddListDialog extends ConsumerWidget {
       ),
     ),
     Consumer(
-      builder: (context, ref, _) {
-        final notifier = ref.read(addListDlgNotifierProvider.notifier);
-        return PlatformDialogAction(
-          onPressed: () => context.pop(notifier.selectedItems()),
-          child: PlatformText(
-            '적용',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              color: Theme.of(context).focusColor,
-            ),
+      builder: (context, ref, _) => PlatformDialogAction(
+        onPressed: () => context.pop(
+          ref.read(addListDlgNotifierProvider.notifier).selectedItems(),
+        ),
+        child: PlatformText(
+          '적용',
+          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
+            color: Theme.of(context).focusColor,
           ),
-        );
-      },
+        ),
+      ),
     ),
   ];
 }

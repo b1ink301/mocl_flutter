@@ -6,407 +6,470 @@ part of 'detail_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+@ProviderFor(listItem)
+const listItemProvider = ListItemProvider._();
+
+final class ListItemProvider
+    extends $FunctionalProvider<ListItem, ListItem, ListItem>
+    with $Provider<ListItem> {
+  const ListItemProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'listItemProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$listItemHash();
+
+  @$internal
+  @override
+  $ProviderElement<ListItem> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  ListItem create(Ref ref) {
+    return listItem(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ListItem value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ListItem>(value),
+    );
+  }
+}
+
 String _$listItemHash() => r'5979621f5fb9d6c055c046d194e6282673cf181e';
 
-/// See also [listItem].
-@ProviderFor(listItem)
-final listItemProvider = AutoDisposeProvider<ListItem>.internal(
-  listItem,
-  name: r'listItemProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$listItemHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+@ProviderFor(DetailsNotifier)
+const detailsNotifierProvider = DetailsNotifierProvider._();
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef ListItemRef = AutoDisposeProviderRef<ListItem>;
-String _$markAsReadHash() => r'536841a42c40168bada35f1f45788c0576b6f6a8';
-
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-/// See also [_markAsRead].
-@ProviderFor(_markAsRead)
-const _markAsReadProvider = _MarkAsReadFamily();
-
-/// See also [_markAsRead].
-class _MarkAsReadFamily extends Family<AsyncValue<int>> {
-  /// See also [_markAsRead].
-  const _MarkAsReadFamily();
-
-  /// See also [_markAsRead].
-  _MarkAsReadProvider call(ListItem listItem) {
-    return _MarkAsReadProvider(listItem);
-  }
-
-  @override
-  _MarkAsReadProvider getProviderOverride(
-    covariant _MarkAsReadProvider provider,
-  ) {
-    return call(provider.listItem);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'_markAsReadProvider';
-}
-
-/// See also [_markAsRead].
-class _MarkAsReadProvider extends AutoDisposeFutureProvider<int> {
-  /// See also [_markAsRead].
-  _MarkAsReadProvider(ListItem listItem)
-    : this._internal(
-        (ref) => _markAsRead(ref as _MarkAsReadRef, listItem),
-        from: _markAsReadProvider,
-        name: r'_markAsReadProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$markAsReadHash,
-        dependencies: _MarkAsReadFamily._dependencies,
-        allTransitiveDependencies: _MarkAsReadFamily._allTransitiveDependencies,
-        listItem: listItem,
+final class DetailsNotifierProvider
+    extends $AsyncNotifierProvider<DetailsNotifier, Details> {
+  const DetailsNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'detailsNotifierProvider',
+        isAutoDispose: true,
+        dependencies: const <ProviderOrFamily>[
+          listItemProvider,
+          detailTitleNotifierProvider,
+          _markAsReadProvider,
+        ],
+        $allTransitiveDependencies: const <ProviderOrFamily>{
+          DetailsNotifierProvider.$allTransitiveDependencies0,
+          DetailsNotifierProvider.$allTransitiveDependencies1,
+          DetailsNotifierProvider.$allTransitiveDependencies2,
+          DetailsNotifierProvider.$allTransitiveDependencies3,
+        },
       );
 
-  _MarkAsReadProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.listItem,
-  }) : super.internal();
-
-  final ListItem listItem;
+  static const $allTransitiveDependencies0 = listItemProvider;
+  static const $allTransitiveDependencies1 = detailTitleNotifierProvider;
+  static const $allTransitiveDependencies2 =
+      DetailTitleNotifierProvider.$allTransitiveDependencies1;
+  static const $allTransitiveDependencies3 = _markAsReadProvider;
 
   @override
-  Override overrideWith(
-    FutureOr<int> Function(_MarkAsReadRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: _MarkAsReadProvider._internal(
-        (ref) => create(ref as _MarkAsReadRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        listItem: listItem,
-      ),
-    );
-  }
+  String debugGetCreateSourceHash() => _$detailsNotifierHash();
 
+  @$internal
   @override
-  AutoDisposeFutureProviderElement<int> createElement() {
-    return _MarkAsReadProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is _MarkAsReadProvider && other.listItem == listItem;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, listItem.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin _MarkAsReadRef on AutoDisposeFutureProviderRef<int> {
-  /// The parameter `listItem` of this provider.
-  ListItem get listItem;
-}
-
-class _MarkAsReadProviderElement extends AutoDisposeFutureProviderElement<int>
-    with _MarkAsReadRef {
-  _MarkAsReadProviderElement(super.provider);
-
-  @override
-  ListItem get listItem => (origin as _MarkAsReadProvider).listItem;
-}
-
-String _$detailSmallTitleHash() => r'9bc30084263914d4fcba17904ecc6e1f8f20d2b5';
-
-/// See also [detailSmallTitle].
-@ProviderFor(detailSmallTitle)
-final detailSmallTitleProvider = AutoDisposeProvider<String>.internal(
-  detailSmallTitle,
-  name: r'detailSmallTitleProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$detailSmallTitleHash,
-  dependencies: <ProviderOrFamily>[listItemProvider, detailTitleProvider],
-  allTransitiveDependencies: <ProviderOrFamily>{
-    listItemProvider,
-    ...?listItemProvider.allTransitiveDependencies,
-    detailTitleProvider,
-    ...?detailTitleProvider.allTransitiveDependencies,
-  },
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef DetailSmallTitleRef = AutoDisposeProviderRef<String>;
-String _$detailTitleHash() => r'ccdd0e6b61dab49331f7aacf0fd2a63a978f88b5';
-
-/// See also [detailTitle].
-@ProviderFor(detailTitle)
-final detailTitleProvider = AutoDisposeProvider<String>.internal(
-  detailTitle,
-  name: r'detailTitleProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$detailTitleHash,
-  dependencies: <ProviderOrFamily>[listItemProvider],
-  allTransitiveDependencies: <ProviderOrFamily>{
-    listItemProvider,
-    ...?listItemProvider.allTransitiveDependencies,
-  },
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef DetailTitleRef = AutoDisposeProviderRef<String>;
-String _$detailUrlHash() => r'a47ce191409d0c8786952a7f6dcfb3a8e016e3b1';
-
-/// See also [detailUrl].
-@ProviderFor(detailUrl)
-final detailUrlProvider = AutoDisposeProvider<String>.internal(
-  detailUrl,
-  name: r'detailUrlProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$detailUrlHash,
-  dependencies: <ProviderOrFamily>[
-    listItemProvider,
-    currentSiteTypeNotifierProvider,
-  ],
-  allTransitiveDependencies: <ProviderOrFamily>{
-    listItemProvider,
-    ...?listItemProvider.allTransitiveDependencies,
-    currentSiteTypeNotifierProvider,
-    ...?currentSiteTypeNotifierProvider.allTransitiveDependencies,
-  },
-);
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef DetailUrlRef = AutoDisposeProviderRef<String>;
-String _$detailAppbarHeightHash() =>
-    r'2d2ff4d5afa07dcf2b883a9010511a83ad210c63';
-
-/// See also [detailAppbarHeight].
-@ProviderFor(detailAppbarHeight)
-const detailAppbarHeightProvider = DetailAppbarHeightFamily();
-
-/// See also [detailAppbarHeight].
-class DetailAppbarHeightFamily extends Family<double> {
-  /// See also [detailAppbarHeight].
-  const DetailAppbarHeightFamily();
-
-  /// See also [detailAppbarHeight].
-  DetailAppbarHeightProvider call(String text) {
-    return DetailAppbarHeightProvider(text);
-  }
-
-  @override
-  DetailAppbarHeightProvider getProviderOverride(
-    covariant DetailAppbarHeightProvider provider,
-  ) {
-    return call(provider.text);
-  }
-
-  static final Iterable<ProviderOrFamily> _dependencies = <ProviderOrFamily>[
-    appbarTextStyleProvider,
-    screenWidthProvider,
-  ];
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static final Iterable<ProviderOrFamily> _allTransitiveDependencies =
-      <ProviderOrFamily>{
-        appbarTextStyleProvider,
-        ...?appbarTextStyleProvider.allTransitiveDependencies,
-        screenWidthProvider,
-        ...?screenWidthProvider.allTransitiveDependencies,
-      };
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'detailAppbarHeightProvider';
-}
-
-/// See also [detailAppbarHeight].
-class DetailAppbarHeightProvider extends AutoDisposeProvider<double> {
-  /// See also [detailAppbarHeight].
-  DetailAppbarHeightProvider(String text)
-    : this._internal(
-        (ref) => detailAppbarHeight(ref as DetailAppbarHeightRef, text),
-        from: detailAppbarHeightProvider,
-        name: r'detailAppbarHeightProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$detailAppbarHeightHash,
-        dependencies: DetailAppbarHeightFamily._dependencies,
-        allTransitiveDependencies:
-            DetailAppbarHeightFamily._allTransitiveDependencies,
-        text: text,
-      );
-
-  DetailAppbarHeightProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.text,
-  }) : super.internal();
-
-  final String text;
-
-  @override
-  Override overrideWith(
-    double Function(DetailAppbarHeightRef provider) create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: DetailAppbarHeightProvider._internal(
-        (ref) => create(ref as DetailAppbarHeightRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        text: text,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeProviderElement<double> createElement() {
-    return _DetailAppbarHeightProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is DetailAppbarHeightProvider && other.text == text;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, text.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin DetailAppbarHeightRef on AutoDisposeProviderRef<double> {
-  /// The parameter `text` of this provider.
-  String get text;
-}
-
-class _DetailAppbarHeightProviderElement
-    extends AutoDisposeProviderElement<double>
-    with DetailAppbarHeightRef {
-  _DetailAppbarHeightProviderElement(super.provider);
-
-  @override
-  String get text => (origin as DetailAppbarHeightProvider).text;
+  DetailsNotifier create() => DetailsNotifier();
 }
 
 String _$detailsNotifierHash() => r'e1128f9b9dda76116dbead4fd943f0e997e42d2c';
 
-/// See also [DetailsNotifier].
-@ProviderFor(DetailsNotifier)
-final detailsNotifierProvider =
-    AutoDisposeAsyncNotifierProvider<DetailsNotifier, Details>.internal(
-      DetailsNotifier.new,
-      name: r'detailsNotifierProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$detailsNotifierHash,
-      dependencies: <ProviderOrFamily>[
-        listItemProvider,
-        detailTitleNotifierProvider,
-        _markAsReadProvider,
-      ],
-      allTransitiveDependencies: <ProviderOrFamily>{
-        listItemProvider,
-        ...?listItemProvider.allTransitiveDependencies,
-        detailTitleNotifierProvider,
-        ...?detailTitleNotifierProvider.allTransitiveDependencies,
-        _markAsReadProvider,
-        ...?_markAsReadProvider.allTransitiveDependencies,
-      },
-    );
+abstract class _$DetailsNotifier extends $AsyncNotifier<Details> {
+  FutureOr<Details> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<AsyncValue<Details>, Details>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<Details>, Details>,
+              AsyncValue<Details>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
 
-typedef _$DetailsNotifier = AutoDisposeAsyncNotifier<Details>;
+@ProviderFor(_markAsRead)
+const _markAsReadProvider = _MarkAsReadFamily._();
+
+final class _MarkAsReadProvider
+    extends $FunctionalProvider<AsyncValue<int>, int, FutureOr<int>>
+    with $FutureModifier<int>, $FutureProvider<int> {
+  const _MarkAsReadProvider._({
+    required _MarkAsReadFamily super.from,
+    required ListItem super.argument,
+  }) : super(
+         retry: null,
+         name: r'_markAsReadProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$_markAsReadHash();
+
+  @override
+  String toString() {
+    return r'_markAsReadProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<int> $createElement($ProviderPointer pointer) =>
+      $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<int> create(Ref ref) {
+    final argument = this.argument as ListItem;
+    return _markAsRead(ref, argument);
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is _MarkAsReadProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$_markAsReadHash() => r'536841a42c40168bada35f1f45788c0576b6f6a8';
+
+final class _MarkAsReadFamily extends $Family
+    with $FunctionalFamilyOverride<FutureOr<int>, ListItem> {
+  const _MarkAsReadFamily._()
+    : super(
+        retry: null,
+        name: r'_markAsReadProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  _MarkAsReadProvider call(ListItem listItem) =>
+      _MarkAsReadProvider._(argument: listItem, from: this);
+
+  @override
+  String toString() => r'_markAsReadProvider';
+}
+
+@ProviderFor(detailSmallTitle)
+const detailSmallTitleProvider = DetailSmallTitleProvider._();
+
+final class DetailSmallTitleProvider
+    extends $FunctionalProvider<String, String, String>
+    with $Provider<String> {
+  const DetailSmallTitleProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'detailSmallTitleProvider',
+        isAutoDispose: true,
+        dependencies: const <ProviderOrFamily>[
+          listItemProvider,
+          detailTitleProvider,
+        ],
+        $allTransitiveDependencies: const <ProviderOrFamily>[
+          DetailSmallTitleProvider.$allTransitiveDependencies0,
+          DetailSmallTitleProvider.$allTransitiveDependencies1,
+        ],
+      );
+
+  static const $allTransitiveDependencies0 = listItemProvider;
+  static const $allTransitiveDependencies1 = detailTitleProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$detailSmallTitleHash();
+
+  @$internal
+  @override
+  $ProviderElement<String> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  String create(Ref ref) {
+    return detailSmallTitle(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String>(value),
+    );
+  }
+}
+
+String _$detailSmallTitleHash() => r'9bc30084263914d4fcba17904ecc6e1f8f20d2b5';
+
+@ProviderFor(DetailTitleNotifier)
+const detailTitleNotifierProvider = DetailTitleNotifierProvider._();
+
+final class DetailTitleNotifierProvider
+    extends $NotifierProvider<DetailTitleNotifier, String> {
+  const DetailTitleNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'detailTitleNotifierProvider',
+        isAutoDispose: true,
+        dependencies: const <ProviderOrFamily>[
+          listItemProvider,
+          detailTitleProvider,
+        ],
+        $allTransitiveDependencies: const <ProviderOrFamily>[
+          DetailTitleNotifierProvider.$allTransitiveDependencies0,
+          DetailTitleNotifierProvider.$allTransitiveDependencies1,
+        ],
+      );
+
+  static const $allTransitiveDependencies0 = listItemProvider;
+  static const $allTransitiveDependencies1 = detailTitleProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$detailTitleNotifierHash();
+
+  @$internal
+  @override
+  DetailTitleNotifier create() => DetailTitleNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String>(value),
+    );
+  }
+}
+
 String _$detailTitleNotifierHash() =>
     r'2c0eed6e6d6396efab1fdc1b172511429d686e9d';
 
-/// See also [DetailTitleNotifier].
-@ProviderFor(DetailTitleNotifier)
-final detailTitleNotifierProvider =
-    AutoDisposeNotifierProvider<DetailTitleNotifier, String>.internal(
-      DetailTitleNotifier.new,
-      name: r'detailTitleNotifierProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$detailTitleNotifierHash,
-      dependencies: <ProviderOrFamily>[listItemProvider, detailTitleProvider],
-      allTransitiveDependencies: <ProviderOrFamily>{
-        listItemProvider,
-        ...?listItemProvider.allTransitiveDependencies,
-        detailTitleProvider,
-        ...?detailTitleProvider.allTransitiveDependencies,
-      },
-    );
+abstract class _$DetailTitleNotifier extends $Notifier<String> {
+  String build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<String, String>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String, String>,
+              String,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
 
-typedef _$DetailTitleNotifier = AutoDisposeNotifier<String>;
+@ProviderFor(detailTitle)
+const detailTitleProvider = DetailTitleProvider._();
+
+final class DetailTitleProvider
+    extends $FunctionalProvider<String, String, String>
+    with $Provider<String> {
+  const DetailTitleProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'detailTitleProvider',
+        isAutoDispose: true,
+        dependencies: const <ProviderOrFamily>[listItemProvider],
+        $allTransitiveDependencies: const <ProviderOrFamily>[
+          DetailTitleProvider.$allTransitiveDependencies0,
+        ],
+      );
+
+  static const $allTransitiveDependencies0 = listItemProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$detailTitleHash();
+
+  @$internal
+  @override
+  $ProviderElement<String> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  String create(Ref ref) {
+    return detailTitle(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String>(value),
+    );
+  }
+}
+
+String _$detailTitleHash() => r'ccdd0e6b61dab49331f7aacf0fd2a63a978f88b5';
+
+@ProviderFor(detailUrl)
+const detailUrlProvider = DetailUrlProvider._();
+
+final class DetailUrlProvider
+    extends $FunctionalProvider<String, String, String>
+    with $Provider<String> {
+  const DetailUrlProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'detailUrlProvider',
+        isAutoDispose: true,
+        dependencies: const <ProviderOrFamily>[
+          listItemProvider,
+          currentSiteTypeNotifierProvider,
+        ],
+        $allTransitiveDependencies: const <ProviderOrFamily>[
+          DetailUrlProvider.$allTransitiveDependencies0,
+          DetailUrlProvider.$allTransitiveDependencies1,
+        ],
+      );
+
+  static const $allTransitiveDependencies0 = listItemProvider;
+  static const $allTransitiveDependencies1 = currentSiteTypeNotifierProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$detailUrlHash();
+
+  @$internal
+  @override
+  $ProviderElement<String> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  String create(Ref ref) {
+    return detailUrl(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String>(value),
+    );
+  }
+}
+
+String _$detailUrlHash() => r'a47ce191409d0c8786952a7f6dcfb3a8e016e3b1';
+
+@ProviderFor(detailAppbarHeight)
+const detailAppbarHeightProvider = DetailAppbarHeightFamily._();
+
+final class DetailAppbarHeightProvider
+    extends $FunctionalProvider<double, double, double>
+    with $Provider<double> {
+  const DetailAppbarHeightProvider._({
+    required DetailAppbarHeightFamily super.from,
+    required String super.argument,
+  }) : super(
+         retry: null,
+         name: r'detailAppbarHeightProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  static const $allTransitiveDependencies0 = appbarTextStyleProvider;
+  static const $allTransitiveDependencies1 = screenWidthProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$detailAppbarHeightHash();
+
+  @override
+  String toString() {
+    return r'detailAppbarHeightProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<double> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  double create(Ref ref) {
+    final argument = this.argument as String;
+    return detailAppbarHeight(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(double value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<double>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is DetailAppbarHeightProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$detailAppbarHeightHash() =>
+    r'2d2ff4d5afa07dcf2b883a9010511a83ad210c63';
+
+final class DetailAppbarHeightFamily extends $Family
+    with $FunctionalFamilyOverride<double, String> {
+  const DetailAppbarHeightFamily._()
+    : super(
+        retry: null,
+        name: r'detailAppbarHeightProvider',
+        dependencies: const <ProviderOrFamily>[
+          appbarTextStyleProvider,
+          screenWidthProvider,
+        ],
+        $allTransitiveDependencies: const <ProviderOrFamily>[
+          DetailAppbarHeightProvider.$allTransitiveDependencies0,
+          DetailAppbarHeightProvider.$allTransitiveDependencies1,
+        ],
+        isAutoDispose: true,
+      );
+
+  DetailAppbarHeightProvider call(String text) =>
+      DetailAppbarHeightProvider._(argument: text, from: this);
+
+  @override
+  String toString() => r'detailAppbarHeightProvider';
+}
+
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

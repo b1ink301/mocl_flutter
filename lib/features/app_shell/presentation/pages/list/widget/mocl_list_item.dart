@@ -1,10 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
+import 'package:mocl_flutter/di/app_provider.dart';
 import 'package:mocl_flutter/features/app_shell/presentation/pages/list/providers/list_providers.dart';
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/round_text_widget.dart';
+import 'package:mocl_flutter/features/app_shell/presentation/routes/mocl_routes.dart';
 
 class MoclListItem extends ConsumerWidget {
   static const _iosPadding = EdgeInsets.only(
@@ -29,10 +32,30 @@ class MoclListItem extends ConsumerWidget {
         contentPadding: _aosPadding,
       ),
       cupertino: (_, _) => CupertinoListTileData(padding: _iosPadding),
-      onTap: () => ref.read(handleItemTapProvider(context)),
+      onTap: () => _handleItemTap(ref, context),
       title: const _TitleView(),
       subtitle: hasInfo ? const _BottomView() : null,
     );
+  }
+
+  void _handleItemTap(WidgetRef ref, BuildContext context) {
+    final item = ref.read(listItemProvider);
+    if (item == null) {
+      return;
+    }
+    try {
+      final index = ref.read(listItemIndexProvider);
+      GoRouter.of(context).push(Routes.detail, extra: item).then((_) {
+        if (context.mounted) {
+          final readId = ref.read(readableStateNotifierProvider);
+          if (readId == item.id && !item.isRead) {
+            ref.read(listStateNotifierProvider.notifier).markAsRead(index);
+          }
+        }
+      });
+    } catch (e) {
+      debugPrint('_handleItemTap = $e');
+    }
   }
 }
 

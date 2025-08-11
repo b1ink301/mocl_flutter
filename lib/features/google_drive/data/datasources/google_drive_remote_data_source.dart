@@ -22,9 +22,7 @@ class GoogleAuthClient extends http.BaseClient {
 }
 
 class GoogleDriveRemoteDataSource {
-  final GoogleSignIn _googleSignIn = GoogleSignIn(
-    scopes: [drive.DriveApi.driveFileScope],
-  );
+  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
 
   static const String _dbFileName = 'mocl-sembast.db';
   static const String _appDataFolderName = 'MoclFlutterApp';
@@ -35,7 +33,7 @@ class GoogleDriveRemoteDataSource {
     if (_currentUser != null) {
       return _currentUser;
     }
-    _currentUser = await _googleSignIn.signIn();
+    _currentUser = await _googleSignIn.authenticate();
     return _currentUser;
   }
 
@@ -51,8 +49,14 @@ class GoogleDriveRemoteDataSource {
       return null;
     }
 
-    final headers = await googleUser.authHeaders;
+    final headers = await googleUser.authorizationClient.authorizationHeaders([
+      drive.DriveApi.driveFileScope,
+    ]);
+    if (headers == null) {
+      return null;
+    }
     final client = GoogleAuthClient(headers);
+
     return drive.DriveApi(client);
   }
 

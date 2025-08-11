@@ -6,474 +6,390 @@ part of 'main_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+@ProviderFor(MainItemsNotifier)
+const mainItemsNotifierProvider = MainItemsNotifierProvider._();
+
+final class MainItemsNotifierProvider
+    extends $AsyncNotifierProvider<MainItemsNotifier, List<MainItem>> {
+  const MainItemsNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'mainItemsNotifierProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$mainItemsNotifierHash();
+
+  @$internal
+  @override
+  MainItemsNotifier create() => MainItemsNotifier();
+}
+
+String _$mainItemsNotifierHash() => r'937ec4ac5bc0c84ea08fbc43484e4667bc930259';
+
+abstract class _$MainItemsNotifier extends $AsyncNotifier<List<MainItem>> {
+  FutureOr<List<MainItem>> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<AsyncValue<List<MainItem>>, List<MainItem>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<List<MainItem>>, List<MainItem>>,
+              AsyncValue<List<MainItem>>,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
+
+@ProviderFor(mainTitle)
+const mainTitleProvider = MainTitleProvider._();
+
+final class MainTitleProvider
+    extends $FunctionalProvider<String, String, String>
+    with $Provider<String> {
+  const MainTitleProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'mainTitleProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$mainTitleHash();
+
+  @$internal
+  @override
+  $ProviderElement<String> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  String create(Ref ref) {
+    return mainTitle(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String>(value),
+    );
+  }
+}
+
 String _$mainTitleHash() => r'0f4a5b000762f1f7f5786eca779b0668c124eb7c';
 
-/// See also [mainTitle].
-@ProviderFor(mainTitle)
-final mainTitleProvider = AutoDisposeProvider<String>.internal(
-  mainTitle,
-  name: r'mainTitleProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$mainTitleHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+@ProviderFor(showAddButton)
+const showAddButtonProvider = ShowAddButtonProvider._();
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef MainTitleRef = AutoDisposeProviderRef<String>;
+final class ShowAddButtonProvider extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
+  const ShowAddButtonProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'showAddButtonProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$showAddButtonHash();
+
+  @$internal
+  @override
+  $ProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  bool create(Ref ref) {
+    return showAddButton(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
 String _$showAddButtonHash() => r'c32d018e97a3e9f27ebf85919cae75d35efc35f0';
 
-/// See also [showAddButton].
-@ProviderFor(showAddButton)
-final showAddButtonProvider = AutoDisposeProvider<bool>.internal(
-  showAddButton,
-  name: r'showAddButtonProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$showAddButtonHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+@ProviderFor(isCurrentSiteType)
+const isCurrentSiteTypeProvider = IsCurrentSiteTypeFamily._();
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef ShowAddButtonRef = AutoDisposeProviderRef<bool>;
+final class IsCurrentSiteTypeProvider
+    extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
+  const IsCurrentSiteTypeProvider._({
+    required IsCurrentSiteTypeFamily super.from,
+    required SiteType super.argument,
+  }) : super(
+         retry: null,
+         name: r'isCurrentSiteTypeProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$isCurrentSiteTypeHash();
+
+  @override
+  String toString() {
+    return r'isCurrentSiteTypeProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  bool create(Ref ref) {
+    final argument = this.argument as SiteType;
+    return isCurrentSiteType(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is IsCurrentSiteTypeProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
 String _$isCurrentSiteTypeHash() => r'651fd497bf91f2bee0259aa8b5f729f183aa61e2';
 
-/// Copied from Dart SDK
-class _SystemHash {
-  _SystemHash._();
-
-  static int combine(int hash, int value) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + value);
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x0007ffff & hash) << 10));
-    return hash ^ (hash >> 6);
-  }
-
-  static int finish(int hash) {
-    // ignore: parameter_assignments
-    hash = 0x1fffffff & (hash + ((0x03ffffff & hash) << 3));
-    // ignore: parameter_assignments
-    hash = hash ^ (hash >> 11);
-    return 0x1fffffff & (hash + ((0x00003fff & hash) << 15));
-  }
-}
-
-/// See also [isCurrentSiteType].
-@ProviderFor(isCurrentSiteType)
-const isCurrentSiteTypeProvider = IsCurrentSiteTypeFamily();
-
-/// See also [isCurrentSiteType].
-class IsCurrentSiteTypeFamily extends Family<bool> {
-  /// See also [isCurrentSiteType].
-  const IsCurrentSiteTypeFamily();
-
-  /// See also [isCurrentSiteType].
-  IsCurrentSiteTypeProvider call(SiteType siteType) {
-    return IsCurrentSiteTypeProvider(siteType);
-  }
-
-  @override
-  IsCurrentSiteTypeProvider getProviderOverride(
-    covariant IsCurrentSiteTypeProvider provider,
-  ) {
-    return call(provider.siteType);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'isCurrentSiteTypeProvider';
-}
-
-/// See also [isCurrentSiteType].
-class IsCurrentSiteTypeProvider extends AutoDisposeProvider<bool> {
-  /// See also [isCurrentSiteType].
-  IsCurrentSiteTypeProvider(SiteType siteType)
-    : this._internal(
-        (ref) => isCurrentSiteType(ref as IsCurrentSiteTypeRef, siteType),
-        from: isCurrentSiteTypeProvider,
+final class IsCurrentSiteTypeFamily extends $Family
+    with $FunctionalFamilyOverride<bool, SiteType> {
+  const IsCurrentSiteTypeFamily._()
+    : super(
+        retry: null,
         name: r'isCurrentSiteTypeProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$isCurrentSiteTypeHash,
-        dependencies: IsCurrentSiteTypeFamily._dependencies,
-        allTransitiveDependencies:
-            IsCurrentSiteTypeFamily._allTransitiveDependencies,
-        siteType: siteType,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
       );
 
-  IsCurrentSiteTypeProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.siteType,
-  }) : super.internal();
-
-  final SiteType siteType;
+  IsCurrentSiteTypeProvider call(SiteType siteType) =>
+      IsCurrentSiteTypeProvider._(argument: siteType, from: this);
 
   @override
-  Override overrideWith(bool Function(IsCurrentSiteTypeRef provider) create) {
-    return ProviderOverride(
-      origin: this,
-      override: IsCurrentSiteTypeProvider._internal(
-        (ref) => create(ref as IsCurrentSiteTypeRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        siteType: siteType,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeProviderElement<bool> createElement() {
-    return _IsCurrentSiteTypeProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is IsCurrentSiteTypeProvider && other.siteType == siteType;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, siteType.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
+  String toString() => r'isCurrentSiteTypeProvider';
 }
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin IsCurrentSiteTypeRef on AutoDisposeProviderRef<bool> {
-  /// The parameter `siteType` of this provider.
-  SiteType get siteType;
-}
-
-class _IsCurrentSiteTypeProviderElement extends AutoDisposeProviderElement<bool>
-    with IsCurrentSiteTypeRef {
-  _IsCurrentSiteTypeProviderElement(super.provider);
-
-  @override
-  SiteType get siteType => (origin as IsCurrentSiteTypeProvider).siteType;
-}
-
-String _$setMainItemsHash() => r'64d04ceb9a4f1b1b52e8cf09f6812a5c3ceedb53';
-
-/// See also [setMainItems].
 @ProviderFor(setMainItems)
-const setMainItemsProvider = SetMainItemsFamily();
+const setMainItemsProvider = SetMainItemsFamily._();
 
-/// See also [setMainItems].
-class SetMainItemsFamily
-    extends Family<AsyncValue<Either<Failure, List<int>>>> {
-  /// See also [setMainItems].
-  const SetMainItemsFamily();
+final class SetMainItemsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<Either<Failure, List<int>>>,
+          Either<Failure, List<int>>,
+          FutureOr<Either<Failure, List<int>>>
+        >
+    with
+        $FutureModifier<Either<Failure, List<int>>>,
+        $FutureProvider<Either<Failure, List<int>>> {
+  const SetMainItemsProvider._({
+    required SetMainItemsFamily super.from,
+    required List<MainItem> super.argument,
+  }) : super(
+         retry: null,
+         name: r'setMainItemsProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
-  /// See also [setMainItems].
-  SetMainItemsProvider call(List<MainItem> list) {
-    return SetMainItemsProvider(list);
+  @override
+  String debugGetCreateSourceHash() => _$setMainItemsHash();
+
+  @override
+  String toString() {
+    return r'setMainItemsProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $FutureProviderElement<Either<Failure, List<int>>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<Either<Failure, List<int>>> create(Ref ref) {
+    final argument = this.argument as List<MainItem>;
+    return setMainItems(ref, argument);
   }
 
   @override
-  SetMainItemsProvider getProviderOverride(
-    covariant SetMainItemsProvider provider,
-  ) {
-    return call(provider.list);
+  bool operator ==(Object other) {
+    return other is SetMainItemsProvider && other.argument == argument;
   }
 
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
   @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'setMainItemsProvider';
+  int get hashCode {
+    return argument.hashCode;
+  }
 }
 
-/// See also [setMainItems].
-class SetMainItemsProvider
-    extends AutoDisposeFutureProvider<Either<Failure, List<int>>> {
-  /// See also [setMainItems].
-  SetMainItemsProvider(List<MainItem> list)
-    : this._internal(
-        (ref) => setMainItems(ref as SetMainItemsRef, list),
-        from: setMainItemsProvider,
+String _$setMainItemsHash() => r'd4de75f3aa63149603539c87fe36edd427912b42';
+
+final class SetMainItemsFamily extends $Family
+    with
+        $FunctionalFamilyOverride<
+          FutureOr<Either<Failure, List<int>>>,
+          List<MainItem>
+        > {
+  const SetMainItemsFamily._()
+    : super(
+        retry: null,
         name: r'setMainItemsProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$setMainItemsHash,
-        dependencies: SetMainItemsFamily._dependencies,
-        allTransitiveDependencies:
-            SetMainItemsFamily._allTransitiveDependencies,
-        list: list,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
       );
 
-  SetMainItemsProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.list,
-  }) : super.internal();
-
-  final List<MainItem> list;
+  SetMainItemsProvider call(List<MainItem> list) =>
+      SetMainItemsProvider._(argument: list, from: this);
 
   @override
-  Override overrideWith(
-    FutureOr<Either<Failure, List<int>>> Function(SetMainItemsRef provider)
-    create,
-  ) {
-    return ProviderOverride(
-      origin: this,
-      override: SetMainItemsProvider._internal(
-        (ref) => create(ref as SetMainItemsRef),
-        from: from,
-        name: null,
+  String toString() => r'setMainItemsProvider';
+}
+
+@ProviderFor(mainScaffoldState)
+const mainScaffoldStateProvider = MainScaffoldStateProvider._();
+
+final class MainScaffoldStateProvider
+    extends
+        $FunctionalProvider<
+          GlobalKey<ScaffoldState>,
+          GlobalKey<ScaffoldState>,
+          GlobalKey<ScaffoldState>
+        >
+    with $Provider<GlobalKey<ScaffoldState>> {
+  const MainScaffoldStateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'mainScaffoldStateProvider',
+        isAutoDispose: false,
         dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        list: list,
-      ),
-    );
-  }
-
-  @override
-  AutoDisposeFutureProviderElement<Either<Failure, List<int>>> createElement() {
-    return _SetMainItemsProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is SetMainItemsProvider && other.list == list;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, list.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin SetMainItemsRef
-    on AutoDisposeFutureProviderRef<Either<Failure, List<int>>> {
-  /// The parameter `list` of this provider.
-  List<MainItem> get list;
-}
-
-class _SetMainItemsProviderElement
-    extends AutoDisposeFutureProviderElement<Either<Failure, List<int>>>
-    with SetMainItemsRef {
-  _SetMainItemsProviderElement(super.provider);
-
-  @override
-  List<MainItem> get list => (origin as SetMainItemsProvider).list;
-}
-
-String _$handleAddButtonHash() => r'79e4e6f3f57edbe81784910982d0ff2982ce3c49';
-
-/// See also [handleAddButton].
-@ProviderFor(handleAddButton)
-const handleAddButtonProvider = HandleAddButtonFamily();
-
-/// See also [handleAddButton].
-class HandleAddButtonFamily extends Family<AsyncValue<void>> {
-  /// See also [handleAddButton].
-  const HandleAddButtonFamily();
-
-  /// See also [handleAddButton].
-  HandleAddButtonProvider call(BuildContext context) {
-    return HandleAddButtonProvider(context);
-  }
-
-  @override
-  HandleAddButtonProvider getProviderOverride(
-    covariant HandleAddButtonProvider provider,
-  ) {
-    return call(provider.context);
-  }
-
-  static const Iterable<ProviderOrFamily>? _dependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get dependencies => _dependencies;
-
-  static const Iterable<ProviderOrFamily>? _allTransitiveDependencies = null;
-
-  @override
-  Iterable<ProviderOrFamily>? get allTransitiveDependencies =>
-      _allTransitiveDependencies;
-
-  @override
-  String? get name => r'handleAddButtonProvider';
-}
-
-/// See also [handleAddButton].
-class HandleAddButtonProvider extends AutoDisposeFutureProvider<void> {
-  /// See also [handleAddButton].
-  HandleAddButtonProvider(BuildContext context)
-    : this._internal(
-        (ref) => handleAddButton(ref as HandleAddButtonRef, context),
-        from: handleAddButtonProvider,
-        name: r'handleAddButtonProvider',
-        debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-            ? null
-            : _$handleAddButtonHash,
-        dependencies: HandleAddButtonFamily._dependencies,
-        allTransitiveDependencies:
-            HandleAddButtonFamily._allTransitiveDependencies,
-        context: context,
+        $allTransitiveDependencies: null,
       );
 
-  HandleAddButtonProvider._internal(
-    super._createNotifier, {
-    required super.name,
-    required super.dependencies,
-    required super.allTransitiveDependencies,
-    required super.debugGetCreateSourceHash,
-    required super.from,
-    required this.context,
-  }) : super.internal();
+  @override
+  String debugGetCreateSourceHash() => _$mainScaffoldStateHash();
 
-  final BuildContext context;
+  @$internal
+  @override
+  $ProviderElement<GlobalKey<ScaffoldState>> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
 
   @override
-  Override overrideWith(
-    FutureOr<void> Function(HandleAddButtonRef provider) create,
-  ) {
-    return ProviderOverride(
+  GlobalKey<ScaffoldState> create(Ref ref) {
+    return mainScaffoldState(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GlobalKey<ScaffoldState> value) {
+    return $ProviderOverride(
       origin: this,
-      override: HandleAddButtonProvider._internal(
-        (ref) => create(ref as HandleAddButtonRef),
-        from: from,
-        name: null,
-        dependencies: null,
-        allTransitiveDependencies: null,
-        debugGetCreateSourceHash: null,
-        context: context,
-      ),
+      providerOverride: $SyncValueProvider<GlobalKey<ScaffoldState>>(value),
     );
   }
-
-  @override
-  AutoDisposeFutureProviderElement<void> createElement() {
-    return _HandleAddButtonProviderElement(this);
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is HandleAddButtonProvider && other.context == context;
-  }
-
-  @override
-  int get hashCode {
-    var hash = _SystemHash.combine(0, runtimeType.hashCode);
-    hash = _SystemHash.combine(hash, context.hashCode);
-
-    return _SystemHash.finish(hash);
-  }
-}
-
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-mixin HandleAddButtonRef on AutoDisposeFutureProviderRef<void> {
-  /// The parameter `context` of this provider.
-  BuildContext get context;
-}
-
-class _HandleAddButtonProviderElement
-    extends AutoDisposeFutureProviderElement<void>
-    with HandleAddButtonRef {
-  _HandleAddButtonProviderElement(super.provider);
-
-  @override
-  BuildContext get context => (origin as HandleAddButtonProvider).context;
 }
 
 String _$mainScaffoldStateHash() => r'e08ed879718fe9af8a42c31c3df1fbd7c053b5eb';
 
-/// See also [mainScaffoldState].
-@ProviderFor(mainScaffoldState)
-final mainScaffoldStateProvider = Provider<GlobalKey<ScaffoldState>>.internal(
-  mainScaffoldState,
-  name: r'mainScaffoldStateProvider',
-  debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-      ? null
-      : _$mainScaffoldStateHash,
-  dependencies: null,
-  allTransitiveDependencies: null,
-);
+@ProviderFor(MainSidebarNotifier)
+const mainSidebarNotifierProvider = MainSidebarNotifierProvider._();
 
-@Deprecated('Will be removed in 3.0. Use Ref instead')
-// ignore: unused_element
-typedef MainScaffoldStateRef = ProviderRef<GlobalKey<ScaffoldState>>;
-String _$mainItemsNotifierHash() => r'937ec4ac5bc0c84ea08fbc43484e4667bc930259';
+final class MainSidebarNotifierProvider
+    extends $NotifierProvider<MainSidebarNotifier, bool> {
+  const MainSidebarNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'mainSidebarNotifierProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
 
-/// See also [MainItemsNotifier].
-@ProviderFor(MainItemsNotifier)
-final mainItemsNotifierProvider =
-    AutoDisposeAsyncNotifierProvider<
-      MainItemsNotifier,
-      List<MainItem>
-    >.internal(
-      MainItemsNotifier.new,
-      name: r'mainItemsNotifierProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$mainItemsNotifierHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
+  @override
+  String debugGetCreateSourceHash() => _$mainSidebarNotifierHash();
+
+  @$internal
+  @override
+  MainSidebarNotifier create() => MainSidebarNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
     );
+  }
+}
 
-typedef _$MainItemsNotifier = AutoDisposeAsyncNotifier<List<MainItem>>;
 String _$mainSidebarNotifierHash() =>
     r'7cf94c97c85560c6689389f28a0d7eb385adf4c5';
 
-/// See also [MainSidebarNotifier].
-@ProviderFor(MainSidebarNotifier)
-final mainSidebarNotifierProvider =
-    AutoDisposeNotifierProvider<MainSidebarNotifier, bool>.internal(
-      MainSidebarNotifier.new,
-      name: r'mainSidebarNotifierProvider',
-      debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
-          ? null
-          : _$mainSidebarNotifierHash,
-      dependencies: null,
-      allTransitiveDependencies: null,
-    );
+abstract class _$MainSidebarNotifier extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final created = build();
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    element.handleValue(ref, created);
+  }
+}
 
-typedef _$MainSidebarNotifier = AutoDisposeNotifier<bool>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
