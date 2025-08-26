@@ -44,16 +44,14 @@ class DetailPage extends ConsumerWidget {
                   ),
             )
           : null,
-      body: SafeArea(
-        child: RefreshIndicator.adaptive(
-          color: Theme.of(context).focusColor,
-          onRefresh: () async =>
-              ref.read(detailsNotifierProvider.notifier).refresh(),
-          child: const CustomScrollView(
-            physics: ClampingScrollPhysics(),
-            cacheExtent: 1000,
-            slivers: [DetailAppBar(), DetailView()],
-          ),
+      body: RefreshIndicator.adaptive(
+        color: Theme.of(context).focusColor,
+        onRefresh: () async =>
+            ref.read(detailsNotifierProvider.notifier).refresh(),
+        child: const CustomScrollView(
+          physics: ClampingScrollPhysics(),
+          cacheExtent: 1600,
+          slivers: [DetailAppBar(), DetailView()],
         ),
       ),
     );

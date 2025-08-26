@@ -61,7 +61,7 @@ class ReadableStateNotifier extends _$ReadableStateNotifier {
 @Riverpod(keepAlive: true)
 Future<String> getAppVersion(Ref ref) async {
   final PackageInfo info = await PackageInfo.fromPlatform();
-  final String version = '${info.version}-${info.buildNumber}';
+  final String version = 'v${info.version}-${info.buildNumber}';
   return version;
 }
 
@@ -94,11 +94,11 @@ GoRouter appRouter(Ref ref) => GoRouter(
     GoRoute(
       path: Routes.main,
       pageBuilder: (BuildContext context, GoRouterState state) => SwipeablePage(
-        builder: (BuildContext context) {
-          final width = MediaQuery.of(context).size.width;
-          return MainPage.init(context, width);
-        },
-      ),
+          builder: (BuildContext context) {
+            final width = MediaQuery.of(context).size.width;
+            return MainPage.init(context, width);
+          },
+        ),
       routes: [
         GoRoute(
           path: Routes.setMainDlg,

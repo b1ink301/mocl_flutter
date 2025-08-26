@@ -21,7 +21,9 @@ class SettingsView extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          ref.read(getAppVersionProvider).maybeWhen(
+          ref
+              .read(getAppVersionProvider)
+              .maybeWhen(
                 orElse: () => _buildLoadingView(context),
                 data: (version) => SizedBox(
                   height: 58,
@@ -34,7 +36,9 @@ class SettingsView extends ConsumerWidget {
                 ),
               ),
           const DividerWidget(),
-          ref.watch(sizeCacheDirNotifierProvider).maybeWhen(
+          ref
+              .watch(sizeCacheDirNotifierProvider)
+              .maybeWhen(
                 orElse: () => _buildLoadingView(context),
                 data: (data) => InkWell(
                   onTap: () =>
@@ -74,10 +78,13 @@ class SettingsView extends ConsumerWidget {
               child: Column(
                 children: [
                   CircularProgressIndicator(
-                      color: Theme.of(context).focusColor),
+                    color: Theme.of(context).focusColor,
+                  ),
                   const SizedBox(height: 8),
-                  Text('Google Drive와 동기화 중...',
-                      style: Theme.of(context).textTheme.bodyMedium),
+                  Text(
+                    'Google Drive와 동기화 중...',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
                 ],
               ),
             )
@@ -88,8 +95,8 @@ class SettingsView extends ConsumerWidget {
                   onTap: isSyncing
                       ? null
                       : () => ref
-                          .read(googleDriveSyncNotifierProvider.notifier)
-                          .backup(),
+                            .read(googleDriveSyncNotifierProvider.notifier)
+                            .backup(),
                   child: SizedBox(
                     height: 58,
                     child: Center(
@@ -105,8 +112,8 @@ class SettingsView extends ConsumerWidget {
                   onTap: isSyncing
                       ? null
                       : () => ref
-                          .read(googleDriveSyncNotifierProvider.notifier)
-                          .restore(),
+                            .read(googleDriveSyncNotifierProvider.notifier)
+                            .restore(),
                   child: SizedBox(
                     height: 58,
                     child: Center(
@@ -126,9 +133,9 @@ class SettingsView extends ConsumerWidget {
   }
 
   Widget _buildLoadingView(BuildContext context) => Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
-        child: Center(
-          child: CircularProgressIndicator(color: Theme.of(context).focusColor),
-        ),
-      );
+    padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+    child: Center(
+      child: CircularProgressIndicator(color: Theme.of(context).focusColor),
+    ),
+  );
 }

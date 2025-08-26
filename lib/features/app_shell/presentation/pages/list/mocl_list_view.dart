@@ -75,9 +75,10 @@ class _ListBody extends ConsumerWidget {
       addSemanticIndexes: false,
       addAutomaticKeepAlives: false,
       itemCount: count + 1,
-      itemBuilder: (_, index) {
+      itemBuilder: (context, index) {
         if (count == index) {
           return _buildFooter(
+            context,
             error,
             hasReachedMax,
             ref.read(listStateNotifierProvider.notifier).retry,
@@ -93,13 +94,21 @@ class _ListBody extends ConsumerWidget {
     );
   }
 
-  Widget _buildFooter(String? error, bool hasReachedMax, VoidCallback retry) {
+  Widget _buildFooter(
+    BuildContext context,
+    String? error,
+    bool hasReachedMax,
+    VoidCallback retry,
+  ) {
     if (error != null) {
       return _buildError(error, retry);
     } else if (hasReachedMax) {
       return const SizedBox.shrink();
     } else {
-      return const Column(children: [LoadingWidget(), DividerWidget()]);
+      return Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+        child: const Column(children: [LoadingWidget(), DividerWidget()]),
+      );
     }
   }
 

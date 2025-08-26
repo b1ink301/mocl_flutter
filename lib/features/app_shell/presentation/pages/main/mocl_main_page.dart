@@ -25,20 +25,26 @@ class MainPage extends ConsumerWidget {
     ),
   );
 
+  bool _canPop(ScaffoldState? scaffoldState) {
+    debugPrint('scaffoldState=$scaffoldState');
+    if (scaffoldState?.isDrawerOpen == true) {
+      debugPrint('scaffoldState=$scaffoldState #1');
+      scaffoldState?.closeDrawer();
+      return false;
+    }
+    return true;
+  }
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final GlobalKey<ScaffoldState> scaffoldState = ref.watch(
-      mainScaffoldStateProvider,
-    );
+    final scaffoldState = ref.watch(mainScaffoldStateProvider);
     return PopScope(
-      canPop: false,
+      canPop: true,
       onPopInvokedWithResult: (bool didPop, _) {
         if (didPop) {
           return;
         }
-        if (scaffoldState.currentState?.isDrawerOpen == true) {
-          scaffoldState.currentState?.closeDrawer();
-        } else {
+        if (_canPop(scaffoldState.currentState)) {
           SystemNavigator.pop();
         }
       },

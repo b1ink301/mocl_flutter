@@ -65,7 +65,7 @@ class _BodyList extends ConsumerWidget {
     key: ValueKey(item.board),
     leading: item.icon.isEmpty ? null : _buildIconView(item.icon),
     title: PlatformText(item.text, style: textStyle),
-    onTap: () async => await context.push(Routes.list, extra: item),
+    onTap: () => context.push(Routes.list, extra: item),
     material: (_, _) => MaterialListTileData(
       contentPadding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
     ),
@@ -108,7 +108,6 @@ class _MainAppBar extends ConsumerWidget {
     titleTextStyle: Theme.of(context).textTheme.labelMedium,
     titleSpacing: 0,
     floating: true,
-    centerTitle: false,
     toolbarHeight: 64,
     actions: ref.watch(showAddButtonProvider)
         ? [

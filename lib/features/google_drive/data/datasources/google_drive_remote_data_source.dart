@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
@@ -22,8 +23,6 @@ class GoogleAuthClient extends http.BaseClient {
 }
 
 class GoogleDriveRemoteDataSource {
-  final GoogleSignIn _googleSignIn = GoogleSignIn.instance;
-
   static const String _dbFileName = 'mocl-sembast.db';
   static const String _appDataFolderName = 'MoclFlutterApp';
 
@@ -33,12 +32,23 @@ class GoogleDriveRemoteDataSource {
     if (_currentUser != null) {
       return _currentUser;
     }
-    _currentUser = await _googleSignIn.authenticate();
+
+    final GoogleSignIn signIn = GoogleSignIn.instance;
+
+    await signIn
+        .initialize(clientId: '275270612301-3jajhso3ce2c9ungjkgifi3em060uupa', serverClientId: null);
+
+      // _googleSignIn.authenticationEvents
+      //     .listen(_handleAuthenticationEvent)
+      //     .onError(_handleAuthenticationError);
+
+    _currentUser = await signIn.attemptLightweightAuthentication();
+    // _currentUser = await signIn.authenticate();
     return _currentUser;
   }
 
   Future<void> signOut() async {
-    await _googleSignIn.signOut();
+    await GoogleSignIn.instance.signOut();
     _currentUser = null;
   }
 

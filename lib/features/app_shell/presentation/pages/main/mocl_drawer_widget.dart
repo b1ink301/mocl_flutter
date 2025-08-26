@@ -12,37 +12,44 @@ class DrawerWidget extends ConsumerWidget {
   const DrawerWidget({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => SafeArea(
-    left: false,
-    right: false,
-    child: Drawer(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      child: Column(
-        children: [
-          const _DrawerHeader(),
-          Expanded(
-            child: ListView(
-              shrinkWrap: true,
-              padding: EdgeInsets.zero,
-              children: SiteType.values
-                  .map(
-                    (SiteType siteType) => _DrawerSiteItem(
-                      siteType: siteType,
-                      onTap: () => _changeSiteType(
-                        context,
-                        siteType,
-                        () => ref
-                            .read(currentSiteTypeNotifierProvider.notifier)
-                            .changeSiteType(siteType),
-                      ),
-                    ),
-                  )
-                  .toList(),
+  Widget build(BuildContext context, WidgetRef ref) => Drawer(
+    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+    child: Column(
+      children: [
+        Container(
+          color: Theme.of(context).primaryColor,
+          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+          height: 220 + MediaQuery.of(context).padding.top,
+          child: Center(
+            child: ClipOval(
+              child: Image.asset('assets/icon.png', width: 80, height: 80),
             ),
           ),
-          const AppVersionWidget(),
-        ],
-      ),
+        ),
+        Expanded(
+          child: ListView(
+            physics: const NeverScrollableScrollPhysics(),
+            shrinkWrap: true,
+            padding: EdgeInsets.zero,
+            children: SiteType.values
+                .map(
+                  (SiteType siteType) => _DrawerSiteItem(
+                    siteType: siteType,
+                    onTap: () => _changeSiteType(
+                      context,
+                      siteType,
+                      () => ref
+                          .read(currentSiteTypeNotifierProvider.notifier)
+                          .changeSiteType(siteType),
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
+        ),
+        const AppVersionWidget(),
+        SizedBox(height: MediaQuery.of(context).padding.bottom),
+      ],
     ),
   );
 
@@ -59,21 +66,6 @@ class DrawerWidget extends ConsumerWidget {
       onChangeSiteType();
     }
   }
-}
-
-class _DrawerHeader extends StatelessWidget {
-  const _DrawerHeader();
-
-  @override
-  Widget build(BuildContext context) => Container(
-    height: 220,
-    color: Theme.of(context).primaryColor,
-    child: Center(
-      child: ClipOval(
-        child: Image.asset('assets/icon.png', width: 80, height: 80),
-      ),
-    ),
-  );
 }
 
 class _DrawerSiteItem extends ConsumerWidget {

@@ -17,29 +17,23 @@ import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
 part 'widgets/mocl_main_widgets.dart';
 
-class MainView extends ConsumerStatefulWidget {
+class MainView extends ConsumerWidget {
   const MainView({super.key});
 
   @override
-  MainViewState createState() => MainViewState();
-}
-
-class MainViewState extends ConsumerState<MainView> {
-  @override
-  Widget build(BuildContext context) => SafeArea(
-    child: RefreshIndicator.adaptive(
-      color: Theme.of(context).focusColor,
-      onRefresh: () async =>
-          ref.read(mainItemsNotifierProvider.notifier).refresh(),
-      child: CustomScrollView(
-        slivers: <Widget>[
-          PlatformWidget(
-            material: (_, _) => const _MainAppBar(),
-            cupertino: (_, _) => const _MainNavigationBar(),
-          ),
-          const _MainBody(),
-        ],
-      ),
-    ),
-  );
+  Widget build(BuildContext context, WidgetRef ref) =>
+      RefreshIndicator.adaptive(
+        color: Theme.of(context).focusColor,
+        onRefresh: () async =>
+            ref.read(mainItemsNotifierProvider.notifier).refresh(),
+        child: CustomScrollView(
+          slivers: <Widget>[
+            PlatformWidget(
+              material: (_, _) => const _MainAppBar(),
+              cupertino: (_, _) => const _MainNavigationBar(),
+            ),
+            const _MainBody(),
+          ],
+        ),
+      );
 }

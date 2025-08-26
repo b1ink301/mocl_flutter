@@ -145,7 +145,7 @@ final class GetAppVersionProvider
   }
 }
 
-String _$getAppVersionHash() => r'1a8aa3b2a8533b27f91dcf846a37fb098b0673b8';
+String _$getAppVersionHash() => r'c4281fce8377945fd7409c9eca1fb5f423da0eff';
 
 @ProviderFor(clearData)
 const clearDataProvider = ClearDataProvider._();

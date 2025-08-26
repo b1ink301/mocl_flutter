@@ -17,16 +17,11 @@ import 'package:mocl_flutter/di/app_provider.dart';
 import 'package:mocl_flutter/features/app_shell/presentation/pages/detail/providers/detail_providers.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
-class DetailView extends ConsumerStatefulWidget {
+class DetailView extends ConsumerWidget {
   const DetailView({super.key});
 
   @override
-  DetailViewState createState() => DetailViewState();
-}
-
-class DetailViewState extends ConsumerState<DetailView> {
-  @override
-  Widget build(BuildContext context) => ref
+  Widget build(BuildContext context, WidgetRef ref) => ref
       .watch(detailsNotifierProvider)
       .maybeMap(
         data: (state) => _DetailView(detail: state.value),
@@ -75,30 +70,33 @@ class _DetailView extends ConsumerWidget {
           ]
         : null;
 
-    return SliverPadding(
-      padding: const EdgeInsets.only(left: 16, right: 8),
-      sliver: MultiSliver(
-        children: [
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: _HeaderSectionDelegate(detail: detail),
-          ),
-          const _SpaceWidget(),
-          _Body(
-            detail: detail,
-            hexColor: hexColor,
-            bodyMedium: bodyMedium,
-            onTapUrl: (url) => ref.read(openUrlProvider(context, url).future),
-          ),
-          const _SpaceWidget(),
-          ...?comments,
-          const _DividerWidget(),
-          _RefreshButton(
-            onRefresh: ref.read(detailsNotifierProvider.notifier).refresh,
-            bodyMedium: bodyMedium,
-          ),
-          const _DividerWidget(),
-        ],
+    return SliverSafeArea(
+      top: false,
+      sliver: SliverPadding(
+        padding: const EdgeInsets.only(left: 16, right: 8),
+        sliver: MultiSliver(
+          children: [
+            SliverPersistentHeader(
+              pinned: false,
+              delegate: _HeaderSectionDelegate(detail: detail),
+            ),
+            const _SpaceWidget(),
+            _Body(
+              detail: detail,
+              hexColor: hexColor,
+              bodyMedium: bodyMedium,
+              onTapUrl: (url) => ref.read(openUrlProvider(context, url).future),
+            ),
+            const _SpaceWidget(),
+            ...?comments,
+            const _DividerWidget(),
+            _RefreshButton(
+              onRefresh: ref.read(detailsNotifierProvider.notifier).refresh,
+              bodyMedium: bodyMedium,
+            ),
+            const _DividerWidget(),
+          ],
+        ),
       ),
     );
   }
@@ -252,6 +250,8 @@ class _CommentList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => SliverList.separated(
+    addSemanticIndexes: false,
+    // addAutomaticKeepAlives: false,
     separatorBuilder: (_, _) => const DividerWidget(indent: 0, endIndent: 0),
     itemCount: comments.length,
     itemBuilder: (_, int index) => _CommentItem(

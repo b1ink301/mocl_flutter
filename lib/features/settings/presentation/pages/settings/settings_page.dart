@@ -52,10 +52,8 @@ class SettingsPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final child = PlatformScaffold(
-      body: SafeArea(
-        child: CustomScrollView(
-          slivers: <Widget>[_buildAppBar(context), const SettingsView()],
-        ),
+      body: CustomScrollView(
+        slivers: <Widget>[_buildAppBar(context), const SettingsView()],
       ),
       material: (_, _) => MaterialScaffoldData(),
       cupertino: (_, _) => CupertinoPageScaffoldData(),
