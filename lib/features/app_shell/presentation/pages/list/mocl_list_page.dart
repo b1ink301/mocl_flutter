@@ -40,12 +40,7 @@ class MoclListPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final child = PlatformScaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: const SafeArea(
-        top: false,
-        left: false,
-        right: false,
-        child: MoclListView(),
-      ),
+      body: MoclListView(),
     );
 
     return Platform.isMacOS

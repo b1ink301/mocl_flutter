@@ -1,6 +1,6 @@
 [versions]
 agp = "8.7.3"
-kotlin = "2.0.20"
+kotlin = "2.1.0"
 flutterPlugin = "1.0.0"
 
 [plugins]

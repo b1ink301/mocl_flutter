@@ -44,7 +44,6 @@ class GoogleDriveSyncNotifier extends _$GoogleDriveSyncNotifier {
 
   Future<void> backup({bool showToast = true}) async {
     state = SyncStatus.syncing;
-    await ref.read(signInUseCaseProvider).call();
     final success = await ref.read(backupDatabaseUseCaseProvider).call();
     state = success ? SyncStatus.success : SyncStatus.error;
     if (showToast) {
@@ -57,7 +56,6 @@ class GoogleDriveSyncNotifier extends _$GoogleDriveSyncNotifier {
 
   Future<void> restore({bool showToast = true}) async {
     state = SyncStatus.syncing;
-    await ref.read(signInUseCaseProvider).call();
     final success = await ref.read(restoreDatabaseUseCaseProvider).call();
     state = success ? SyncStatus.success : SyncStatus.error;
     if (showToast) {
