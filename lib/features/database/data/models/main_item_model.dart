@@ -18,7 +18,7 @@ abstract class MainItemModel with _$MainItemModel {
     SiteType? siteType,
   }) = _MainItemData;
 
-  factory MainItemModel.fromJson(Map<String, Object?> json) =>
+  factory MainItemModel.fromJson(Map<String, Object> json) =>
       _$MainItemModelFromJson(json);
 
   // @override

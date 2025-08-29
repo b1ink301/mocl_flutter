@@ -144,6 +144,7 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
     final bodySmall = theme.textTheme.bodySmall!.copyWith(fontSize: 15.4);
     final backgroundColor = theme.scaffoldBackgroundColor;
     final likeView = _buildLikeView(context, bodySmall);
+    final nickImage = detail.userInfo.nickImage;
 
     return Column(
       children: [
@@ -152,13 +153,12 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
           padding: const EdgeInsets.symmetric(vertical: 12),
           color: backgroundColor,
           child: Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            // mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Expanded(
                 child: Row(
                   children: [
-                    if (detail.userInfo.nickImage.isNotEmpty &&
-                        detail.userInfo.nickImage.startsWith('http'))
+                    if (nickImage.isNotEmpty)
                       NickImageWidget(url: detail.userInfo.nickImage),
                     Flexible(
                       child: PlatformText(detail.info, style: bodySmall),

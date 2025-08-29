@@ -8,13 +8,13 @@ class MoclTheme {
       MaterialBasedCupertinoThemeData(materialTheme: lightTheme).copyWith(
         brightness: Brightness.light,
         primaryColor: const Color(0xFF0E7EA3),
-        textTheme: CupertinoTextThemeData(
+        textTheme: const CupertinoTextThemeData(
           navActionTextStyle: TextStyle(
             inherit: false,
             fontFamily: 'CupertinoSystemText',
             fontSize: 17.0,
             letterSpacing: -0.41,
-            color: const Color(0xFF0E7EA3),
+            color: Color(0xFF0E7EA3),
             decoration: TextDecoration.none,
           ),
           navLargeTitleTextStyle: TextStyle(
@@ -33,16 +33,16 @@ class MoclTheme {
         brightness: Brightness.dark,
         applyThemeToAll: true,
         primaryColor: const Color(0xFFFF4081),
-        textTheme: CupertinoTextThemeData(
+        textTheme: const CupertinoTextThemeData(
           navActionTextStyle: TextStyle(
             inherit: false,
             fontFamily: 'CupertinoSystemText',
             fontSize: 17.0,
             letterSpacing: -0.41,
-            color: const Color(0xFFFF4081),
+            color: Color(0xFFFF4081),
             decoration: TextDecoration.none,
           ),
-          navLargeTitleTextStyle: const TextStyle(
+          navLargeTitleTextStyle: TextStyle(
             inherit: false,
             fontFamily: 'CupertinoSystemDisplay',
             fontSize: 34.0,
@@ -71,7 +71,6 @@ class MoclTheme {
     ),
     pageTransitionsTheme: const PageTransitionsTheme(
       builders: <TargetPlatform, PageTransitionsBuilder>{
-        // Set the predictive back transitions for Android.
         TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
       },
     ),
@@ -98,12 +97,6 @@ class MoclTheme {
       labelMedium: TextStyle(color: Colors.white, fontSize: 16),
       labelLarge: TextStyle(color: Colors.white, fontSize: 17),
     ),
-    // pageTransitionsTheme: const PageTransitionsTheme(
-    //   builders: {
-    //     TargetPlatform.android: CupertinoPageTransitionsBuilder(),
-    //     TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-    //   },
-    // ),
   );
 
   static ThemeData get darkTheme => ThemeData.dark().copyWith(
@@ -118,7 +111,7 @@ class MoclTheme {
         systemNavigationBarIconBrightness: Brightness.dark,
         statusBarIconBrightness: Brightness.light,
         statusBarBrightness: Brightness.dark,
-        systemStatusBarContrastEnforced: true,
+        systemStatusBarContrastEnforced: false,
         systemNavigationBarContrastEnforced: false,
       ),
     ),
@@ -129,7 +122,6 @@ class MoclTheme {
     ),
     pageTransitionsTheme: const PageTransitionsTheme(
       builders: <TargetPlatform, PageTransitionsBuilder>{
-        // Set the predictive back transitions for Android.
         TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
       },
     ),
@@ -146,15 +138,9 @@ class MoclTheme {
     ),
     primaryColor: const Color(0xFF292929),
     scaffoldBackgroundColor: const Color(0xFF333333),
-    popupMenuTheme: PopupMenuThemeData(
-      color: const Color(0xFF333333),
-      textStyle: const TextStyle(color: Color(0xFFEEEEEE), fontSize: 17),
+    popupMenuTheme: const PopupMenuThemeData(
+      color: Color(0xFF333333),
+      textStyle: TextStyle(color: Color(0xFFEEEEEE), fontSize: 17),
     ),
-    // pageTransitionsTheme: const PageTransitionsTheme(
-    //   builders: {
-    //     TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
-    //     TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-    //   },
-    // ),
   );
 }
