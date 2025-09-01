@@ -18,7 +18,7 @@ abstract class MainItem with _$MainItem {
     @Default('') String icon,
   }) = _MainItem;
 
-  factory MainItem.fromJson(Map<String, Object?> json) =>
+  factory MainItem.fromJson(Map<String, dynamic> json) =>
       _$MainItemFromJson(json);
 
   factory MainItem.empty() => MainItem(

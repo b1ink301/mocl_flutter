@@ -95,6 +95,7 @@ class NaverCafeParser implements BaseParser {
         .map((comment) {
           final id = comment['id'] ?? -1;
           final writer = comment['writer'];
+          final replyMember = comment['replyMember'];
           var body = comment['content'].toString();
           final userId = writer['memberKey'].toString();
           final nickImage = ''; //writer['image']['url'] ?? '';
@@ -105,10 +106,15 @@ class NaverCafeParser implements BaseParser {
           final image = comment['image'];
           final sticker = comment['sticker'];
 
+          if (replyMember != null) {
+            final replyNickName = replyMember['nick'];
+            if (replyNickName != null) {
+              body = "<strong>@$replyNickName님</strong> $body";
+            }
+          }
           if (image != null) {
             body += '<br><img src=\'${image["url"]}\' width="240" >';
           }
-
           if (sticker != null) {
             body +=
                 '<br><img src=\'${sticker["url"]}?type=${sticker["type"]}\' width="129" >';
@@ -252,7 +258,12 @@ class NaverCafeParser implements BaseParser {
       final bool hasImage = article['attachImage'] as bool? ?? false;
       final dateTime = DateTime.fromMillisecondsSinceEpoch(time);
       final parsedTime = timeago.format(dateTime, locale: 'ko');
-      final info = BaseParser.parserInfo(false, nickName, parsedTime, hit.toString());
+      final info = BaseParser.parserInfo(
+        false,
+        nickName,
+        parsedTime,
+        hit.toString(),
+      );
 
       final parsedItem = {
         'id': id,
