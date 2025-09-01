@@ -18,7 +18,7 @@ abstract class MainItemData with _$MainItemData {
     required int type,
   }) = _MainItemData;
 
-  factory MainItemData.fromJson(Map<String, Object?> json) =>
+  factory MainItemData.fromJson(Map<String, dynamic> json) =>
       _$MainItemDataFromJson(json);
 }
 

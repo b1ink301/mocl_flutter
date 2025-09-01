@@ -38,7 +38,8 @@ class AddListModalSheetPage extends SliverWoltModalSheetPage {
         hasSabGradient: false,
         mainContentSliversBuilder: (_) => [
           Consumer(
-            builder: (context, ref, _) => ref
+            builder: (_, ref, _) {
+              final result = ref
                 .watch(addListDlgNotifierProvider)
                 .maybeWhen(
                   data: (data) => SliverList.separated(
@@ -56,8 +57,17 @@ class AddListModalSheetPage extends SliverWoltModalSheetPage {
                     },
                     separatorBuilder: (_, _) => const DividerWidget(),
                   ),
+                  error: (error, _) => SliverToBoxAdapter(
+                    child: Padding(
+                      padding: const EdgeInsets.all(8.0),
+                      child: Text(error.toString()),
+                    ),
+                  ),
                   orElse: () => const SliverToBoxAdapter(child: LoadingWidget()),
-                ),
+                );
+              debugPrint('[mainContentSliversBuilder] result=$result');
+              return result;
+            },
           ),
         ],
       );
