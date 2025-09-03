@@ -15,7 +15,11 @@ import 'package:mocl_flutter/features/app_shell/presentation/pages/detail/provid
 class DetailPage extends ConsumerWidget {
   const DetailPage({super.key});
 
-  static Widget init(BuildContext context, ListItem item) => ProviderScope(
+  static Widget init(
+    BuildContext context,
+    ListItem item,
+    double statusBarHeight,
+  ) => ProviderScope(
     overrides: [
       listItemProvider.overrideWithValue(item),
       screenWidthProvider.overrideWithValue(MediaQuery.of(context).size.width),
@@ -27,7 +31,20 @@ class DetailPage extends ConsumerWidget {
     ],
     child: AnnotatedRegion<SystemUiOverlayStyle>(
       value: Theme.of(context).appBarTheme.systemOverlayStyle!,
-      child: const DetailPage(),
+      child: Stack(
+        children: [
+          const Positioned.fill(child: DetailPage()),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: statusBarHeight,
+              color: const Color(0x22000000),
+            ),
+          ),
+        ],
+      ),
     ),
   );
 

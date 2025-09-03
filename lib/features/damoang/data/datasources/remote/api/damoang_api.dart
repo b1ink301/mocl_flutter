@@ -20,7 +20,7 @@ class DamoangApi extends BaseApi {
   Future<Either<Failure, Details>> detail(ListItem item, BaseParser parser) =>
       withSyncCookie(parser.baseUrl, () async {
         final String url = parser.urlByDetail(item.url, item.board, item.id);
-        final Map<String, String> headers = {'User-Agent': userAgent};
+        final Map<String, String> headers = {};//{'User-Agent': userAgent};
 
         final Response response = await get(url, headers: headers);
         log('[detail] $url, $headers response = ${response.statusCode}');
@@ -49,8 +49,9 @@ class DamoangApi extends BaseApi {
       sortType,
       lastId,
     );
-    final String host = Uri.parse(parser.baseUrl).host;
-    final Map<String, String> headers = {'Host': host, 'User-Agent': userAgent};
+    // final String host = Uri.parse(parser.baseUrl).host;
+    final Map<String, String> headers = {};//{'User-Agent': userAgent};
+
     final Response response = await get(url, headers: headers);
     log('[getList] $url, $headers response = ${response.statusCode}');
 

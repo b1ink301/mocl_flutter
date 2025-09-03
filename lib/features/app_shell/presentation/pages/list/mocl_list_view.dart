@@ -70,27 +70,30 @@ class _ListBody extends ConsumerWidget {
       '[_ListBody] count=$count, hasReachedMax=$hasReachedMax, error=$error',
     );
 
-    return SliverList.separated(
-      // addRepaintBoundaries: false,
-      addSemanticIndexes: false,
-      addAutomaticKeepAlives: false,
-      itemCount: count + 1,
-      itemBuilder: (context, index) {
-        if (count == index) {
-          return _buildFooter(
-            context,
-            error,
-            hasReachedMax,
-            ref.read(listStateNotifierProvider.notifier).retry,
-          );
-        } else {
-          return ProviderScope(
-            overrides: [listItemIndexProvider.overrideWithValue(index)],
-            child: const MoclListItem(),
-          );
-        }
-      },
-      separatorBuilder: (_, _) => const DividerWidget(),
+    return SliverPadding(
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+      sliver: SliverList.separated(
+        // addRepaintBoundaries: false,
+        addSemanticIndexes: false,
+        addAutomaticKeepAlives: false,
+        itemCount: count + 1,
+        itemBuilder: (context, index) {
+          if (count == index) {
+            return _buildFooter(
+              context,
+              error,
+              hasReachedMax,
+              ref.read(listStateNotifierProvider.notifier).retry,
+            );
+          } else {
+            return ProviderScope(
+              overrides: [listItemIndexProvider.overrideWithValue(index)],
+              child: const MoclListItem(),
+            );
+          }
+        },
+        separatorBuilder: (_, _) => const DividerWidget(),
+      ),
     );
   }
 

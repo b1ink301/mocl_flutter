@@ -17,11 +17,28 @@ import 'package:mocl_flutter/src/generated/i18n/app_localizations.dart';
 class MainPage extends ConsumerWidget {
   const MainPage({super.key});
 
-  static Widget init(BuildContext context, double width) => ProviderScope(
+  static Widget init(
+    BuildContext context,
+    double width,
+    double statusBarHeight,
+  ) => ProviderScope(
     overrides: [screenWidthProvider.overrideWithValue(width)],
     child: AnnotatedRegion<SystemUiOverlayStyle>(
       value: Theme.of(context).appBarTheme.systemOverlayStyle!,
-      child: const MainPage(),
+      child: Stack(
+        children: [
+          const Positioned.fill(child: MainPage()),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: statusBarHeight,
+              color: const Color(0x22000000),
+            ),
+          ),
+        ],
+      ),
     ),
   );
 

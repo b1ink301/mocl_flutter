@@ -15,32 +15,48 @@ import 'package:mocl_flutter/features/app_shell/presentation/pages/list/provider
 class MoclListPage extends ConsumerWidget {
   const MoclListPage({super.key});
 
-  static Widget init(BuildContext context, MainItem item) =>
-      AnnotatedRegion<SystemUiOverlayStyle>(
-        value: Theme.of(context).appBarTheme.systemOverlayStyle!,
-        child: ProviderScope(
-          overrides: [
-            screenWidthProvider.overrideWithValue(
-              MediaQuery.of(context).size.width,
-            ),
-            appbarTextStyleProvider.overrideWithValue(
-              Platform.isIOS
-                  ? CupertinoTheme.of(
-                      context,
-                    ).textTheme.navLargeTitleTextStyle.copyWith(height: 1.3)
-                  : Theme.of(context).textTheme.labelMedium!,
-            ),
-            mainItemProvider.overrideWithValue(item),
-          ],
-          child: const MoclListPage(),
+  static Widget init(
+    BuildContext context,
+    MainItem item,
+    double statusBarHeight,
+  ) => AnnotatedRegion<SystemUiOverlayStyle>(
+    value: Theme.of(context).appBarTheme.systemOverlayStyle!,
+    child: ProviderScope(
+      overrides: [
+        screenWidthProvider.overrideWithValue(
+          MediaQuery.of(context).size.width,
         ),
-      );
+        appbarTextStyleProvider.overrideWithValue(
+          Platform.isIOS
+              ? CupertinoTheme.of(
+                  context,
+                ).textTheme.navLargeTitleTextStyle.copyWith(height: 1.3)
+              : Theme.of(context).textTheme.labelMedium!,
+        ),
+        mainItemProvider.overrideWithValue(item),
+      ],
+      child: Stack(
+        children: [
+          const Positioned.fill(child: MoclListPage()),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Container(
+              height: statusBarHeight,
+              color: const Color(0x22000000),
+            ),
+          ),
+        ],
+      ),
+    ),
+  );
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final child = PlatformScaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: MoclListView(),
+      body: const MoclListView(),
     );
 
     return Platform.isMacOS
