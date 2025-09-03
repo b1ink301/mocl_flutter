@@ -15,7 +15,7 @@ const String userAgentMobile =
     'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/130.0.6723.58 Mobile '
     'Safari/537.36 Yappli/1673b203.20240919 (Linux; Android 14; Google Build/Pixel 8)';
 const String userAgentPc =
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:126.0) Gecko/20100101 Firefox/126.0';
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36';
 
 abstract class BaseApi with BaseAction {
   final Dio _dio;
@@ -111,6 +111,7 @@ abstract class BaseApi with BaseAction {
       final String message = e.message ?? 'Unknown Error';
       return Left(NetworkFailure(message: message));
     } on Failure catch (e) {
+      log('DioException: $e');
       return Left(e);
     } finally {
       _dio.interceptors.remove(interceptor);

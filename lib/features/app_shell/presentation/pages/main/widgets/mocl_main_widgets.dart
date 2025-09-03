@@ -18,7 +18,12 @@ class _MainBody extends ConsumerWidget {
     return ref
         .watch(mainItemsNotifierProvider)
         .when(
-          data: (data) => _BodyList(key: ValueKey(data.hashCode), items: data),
+          data: (data) => SliverPadding(
+            padding: EdgeInsets.only(
+              bottom: MediaQuery.of(context).padding.bottom,
+            ),
+            sliver: _BodyList(key: ValueKey(data.hashCode), items: data),
+          ),
           error: (error, _) => _ErrorWidget(
             key: ValueKey(error.hashCode),
             message: error is Failure ? error.message : error.toString(),

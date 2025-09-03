@@ -295,7 +295,7 @@ final class AppRouterProvider
   }
 }
 
-String _$appRouterHash() => r'fff3f2857065d9454c5cd1625db3b5e6377fe411';
+String _$appRouterHash() => r'6e80798fefc7837b3278f71bd5114ae75c827c0a';
 
 @ProviderFor(openBrowserByUrl)
 const openBrowserByUrlProvider = OpenBrowserByUrlFamily._();

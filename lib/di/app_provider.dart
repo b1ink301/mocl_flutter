@@ -96,7 +96,8 @@ GoRouter appRouter(Ref ref) => GoRouter(
       pageBuilder: (BuildContext context, GoRouterState state) => SwipeablePage(
           builder: (BuildContext context) {
             final width = MediaQuery.of(context).size.width;
-            return MainPage.init(context, width);
+            final double statusBarHeight = MediaQuery.of(context).padding.top;
+            return MainPage.init(context, width, statusBarHeight);
           },
         ),
       routes: [
@@ -114,7 +115,8 @@ GoRouter appRouter(Ref ref) => GoRouter(
       pageBuilder: (BuildContext context, GoRouterState state) => SwipeablePage(
         builder: (BuildContext context) {
           final MainItem item = GoRouterState.of(context).extra as MainItem;
-          return MoclListPage.init(context, item);
+          final double statusBarHeight = MediaQuery.of(context).padding.top;
+          return MoclListPage.init(context, item, statusBarHeight);
         },
       ),
     ),
@@ -123,7 +125,8 @@ GoRouter appRouter(Ref ref) => GoRouter(
       pageBuilder: (BuildContext context, GoRouterState state) => SwipeablePage(
         builder: (BuildContext context) {
           final ListItem item = GoRouterState.of(context).extra as ListItem;
-          return DetailPage.init(context, item);
+          final double statusBarHeight = MediaQuery.of(context).padding.top;
+          return DetailPage.init(context, item, statusBarHeight);
         },
       ),
       routes: [
