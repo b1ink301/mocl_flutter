@@ -25,7 +25,7 @@ class MainView extends ConsumerWidget {
       RefreshIndicator.adaptive(
         color: Theme.of(context).focusColor,
         onRefresh: () async =>
-            ref.read(mainItemsNotifierProvider.notifier).refresh(),
+            ref.read(mainItemsProvider.notifier).refresh(),
         child: CustomScrollView(
           slivers: <Widget>[
             PlatformWidget(

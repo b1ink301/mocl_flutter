@@ -6,6 +6,9 @@ part of 'google_drive_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
 @ProviderFor(googleDriveRemoteDataSource)
 const googleDriveRemoteDataSourceProvider =
     GoogleDriveRemoteDataSourceProvider._();
@@ -289,7 +292,7 @@ String _$checkSyncStatusUseCaseHash() =>
     r'230b21acbb534345f1958f4ef5ef02ba59baada7';
 
 @ProviderFor(GoogleDriveSyncNotifier)
-const googleDriveSyncNotifierProvider = GoogleDriveSyncNotifierProvider._();
+const googleDriveSyncProvider = GoogleDriveSyncNotifierProvider._();
 
 final class GoogleDriveSyncNotifierProvider
     extends $NotifierProvider<GoogleDriveSyncNotifier, SyncStatus> {
@@ -298,7 +301,7 @@ final class GoogleDriveSyncNotifierProvider
         from: null,
         argument: null,
         retry: null,
-        name: r'googleDriveSyncNotifierProvider',
+        name: r'googleDriveSyncProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
@@ -341,6 +344,3 @@ abstract class _$GoogleDriveSyncNotifier extends $Notifier<SyncStatus> {
     element.handleValue(ref, created);
   }
 }
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

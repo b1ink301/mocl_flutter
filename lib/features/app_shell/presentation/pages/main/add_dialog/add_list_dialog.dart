@@ -18,7 +18,7 @@ class AddListDialog extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(addListDlgNotifierProvider);
+    final state = ref.watch(addListDlgProvider);
     final size = MediaQuery.of(context).size;
 
     return PlatformAlertDialog(
@@ -73,9 +73,9 @@ class AddListDialog extends ConsumerWidget {
             return CheckBoxListTitleWidget(
               text: item.mainItem.text,
               isChecked: item.isChecked,
-              textStyle: MoclTextStyles.of(context).titleTextStyle,
+              textStyle: AppTextStyles.of(context).titleTextStyle,
               onChanged: (isChecked) => ref
-                  .read(addListDlgNotifierProvider.notifier)
+                  .read(addListDlgProvider.notifier)
                   .onChanged(isChecked, index),
             );
           },
@@ -93,7 +93,7 @@ class AddListDialog extends ConsumerWidget {
     Consumer(
       builder: (context, ref, _) => PlatformDialogAction(
         onPressed: () => context.pop(
-          ref.read(addListDlgNotifierProvider.notifier).selectedItems(),
+          ref.read(addListDlgProvider.notifier).selectedItems(),
         ),
         child: PlatformText(
           '적용',

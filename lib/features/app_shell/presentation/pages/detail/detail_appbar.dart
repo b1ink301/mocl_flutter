@@ -15,7 +15,7 @@ class DetailAppBar extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) => PlatformWidget(
     material: (context, _) => _buildMaterialAppBar(context, ref),
     cupertino: (context, _) {
-      final String title = ref.watch(detailTitleNotifierProvider);
+      final String title = ref.watch(detailTitleStateProvider);
       final double height = ref.read(detailAppbarHeightProvider(title));
       return SliverPersistentHeader(
         delegate: _DetailCupertinoAppBar(title: title, height: height),
@@ -24,7 +24,7 @@ class DetailAppBar extends ConsumerWidget {
   );
 
   Widget _buildMaterialAppBar(BuildContext context, WidgetRef ref) {
-    final String title = ref.watch(detailTitleNotifierProvider);
+    final String title = ref.watch(detailTitleStateProvider);
     final String smallTitle = ref.watch(detailSmallTitleProvider);
     final double height = ref.read(detailAppbarHeightProvider(title));
     return AppbarDualTextWidget(
@@ -48,7 +48,7 @@ class DetailAppBar extends ConsumerWidget {
         options: [
           PopupMenuOption(
             label: '새로고침',
-            onTap: (_) => ref.read(detailsNotifierProvider.notifier).refresh(),
+            onTap: (_) => ref.read(detailsProvider.notifier).refresh(),
           ),
           PopupMenuOption(
             label: '브라우저로 열기',

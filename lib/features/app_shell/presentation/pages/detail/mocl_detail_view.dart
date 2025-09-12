@@ -22,7 +22,7 @@ class DetailView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => ref
-      .watch(detailsNotifierProvider)
+      .watch(detailsProvider)
       .maybeMap(
         data: (state) => _DetailView(detail: state.value),
         error: (state) => SliverFillRemaining(
@@ -48,8 +48,8 @@ class _DetailView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final String hexColor = Theme.of(context).focusColor.stringHexColor;
-    final bodySmall = MoclTextStyles.of(context).smallTextStyle;
-    final TextStyle bodyMedium = MoclTextStyles.of(context).titleTextStyle;
+    final TextStyle bodySmall = AppTextStyles.of(context).smallTextStyle;
+    final TextStyle bodyMedium = AppTextStyles.of(context).titleTextStyle;
 
     final comments = detail.comments.isNotEmpty
         ? [
@@ -91,7 +91,7 @@ class _DetailView extends ConsumerWidget {
             ...?comments,
             const _DividerWidget(),
             _RefreshButton(
-              onRefresh: ref.read(detailsNotifierProvider.notifier).refresh,
+              onRefresh: ref.read(detailsProvider.notifier).refresh,
               bodyMedium: bodyMedium,
             ),
             const _DividerWidget(),
@@ -150,7 +150,7 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
       children: [
         Container(
           height: 46,
-          padding: const EdgeInsets.symmetric(vertical: 12),
+          alignment: AlignmentGeometry.centerLeft,
           color: backgroundColor,
           child: Row(
             // mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -259,6 +259,7 @@ class _CommentList extends ConsumerWidget {
       bodySmall: bodySmall,
       bodyMedium: bodyMedium,
       hexColor: hexColor,
+      depth: comments[index].isReply ? 1 : 0,
       openUrl: openUrl,
     ),
   );
@@ -269,6 +270,7 @@ class _CommentItem extends StatelessWidget {
   final TextStyle? bodySmall;
   final TextStyle? bodyMedium;
   final String hexColor;
+  final int depth;
   final void Function(String) openUrl;
 
   const _CommentItem({
@@ -276,6 +278,7 @@ class _CommentItem extends StatelessWidget {
     required this.bodySmall,
     required this.bodyMedium,
     required this.hexColor,
+    required this.depth,
     required this.openUrl,
   });
 
@@ -295,34 +298,60 @@ class _CommentItem extends StatelessWidget {
           ]
         : null;
 
-    return PlatformListTile(
-      key: ValueKey(comment.id.toString()),
-      material: (_, _) => MaterialListTileData(
-        contentPadding: EdgeInsets.only(left: left, top: 2, bottom: 2),
+    final List<Widget> commentWidgets = [
+      PlatformListTile(
+        key: ValueKey(comment.id.toString()),
+        material: (_, _) => MaterialListTileData(
+          contentPadding: EdgeInsets.only(left: left, top: 2, bottom: 2),
+        ),
+        cupertino: (_, _) => CupertinoListTileData(
+          padding: EdgeInsets.only(left: left, top: 8, bottom: 8),
+        ),
+        title: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            if (userInfo.nickImage.isNotEmpty)
+              NickImageWidget(url: userInfo.nickImage),
+            PlatformText(comment.info, style: bodySmall),
+            ...?likeView,
+          ],
+        ),
+        subtitle: comment.bodyHtml.isNotEmpty
+            ? Padding(
+                padding: const EdgeInsets.only(top: 8.0),
+                child: _HtmlWidget(
+                  html: comment.bodyHtml,
+                  textStyle: bodyMedium,
+                  hexColor: hexColor,
+                  openUrl: openUrl,
+                ),
+              )
+            : null,
       ),
-      cupertino: (_, _) => CupertinoListTileData(
-        padding: EdgeInsets.only(left: left, top: 8, bottom: 8),
-      ),
-      title: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          if (userInfo.nickImage.isNotEmpty)
-            NickImageWidget(url: userInfo.nickImage),
-          PlatformText(comment.info, style: bodySmall),
-          ...?likeView,
-        ],
-      ),
-      subtitle: comment.bodyHtml.isNotEmpty
-          ? Padding(
-              padding: const EdgeInsets.only(top: 8.0),
-              child: _HtmlWidget(
-                html: comment.bodyHtml,
-                textStyle: bodyMedium,
+    ];
+
+    // 대댓글이 있다면, 각 대댓글에 대해 _CommentItem을 재귀적으로 추가
+    if (comment.replies.isNotEmpty) {
+      commentWidgets.addAll(
+        comment.replies
+            .map(
+              (reply) => _CommentItem(
+                comment: reply,
+                bodySmall: bodySmall,
+                bodyMedium: bodyMedium,
                 hexColor: hexColor,
                 openUrl: openUrl,
+                depth: depth + 1, // 다음 깊이로 전달
               ),
             )
-          : null,
+            .toList(),
+      );
+    }
+
+    // Column을 사용하여 현재 댓글과 대댓글들을 수직으로 배열
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: commentWidgets,
     );
   }
 }

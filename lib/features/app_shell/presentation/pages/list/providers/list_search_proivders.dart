@@ -22,8 +22,8 @@ class KeywordNotifier extends _$KeywordNotifier {
 @Riverpod(dependencies: [mainItem, KeywordNotifier])
 Future<Either<Failure, List<ListItem>>> reqSearchListData(Ref ref) async {
   final mainItem = ref.watch(mainItemProvider);
-  final sortType = ref.watch(sortTypeNotifierProvider);
-  final String keyword = ref.watch(keywordNotifierProvider);
+  final sortType = ref.watch(sortTypeProvider);
+  final String keyword = ref.watch(keywordProvider);
 
   if (keyword.isEmpty) {
     return Right(List.empty());

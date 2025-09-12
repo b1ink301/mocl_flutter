@@ -6,6 +6,9 @@ part of 'detail_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
 @ProviderFor(listItem)
 const listItemProvider = ListItemProvider._();
 
@@ -48,7 +51,7 @@ final class ListItemProvider
 String _$listItemHash() => r'5979621f5fb9d6c055c046d194e6282673cf181e';
 
 @ProviderFor(DetailsNotifier)
-const detailsNotifierProvider = DetailsNotifierProvider._();
+const detailsProvider = DetailsNotifierProvider._();
 
 final class DetailsNotifierProvider
     extends $AsyncNotifierProvider<DetailsNotifier, Details> {
@@ -57,11 +60,11 @@ final class DetailsNotifierProvider
         from: null,
         argument: null,
         retry: null,
-        name: r'detailsNotifierProvider',
+        name: r'detailsProvider',
         isAutoDispose: true,
         dependencies: const <ProviderOrFamily>[
           listItemProvider,
-          detailTitleNotifierProvider,
+          detailTitleStateProvider,
           _markAsReadProvider,
         ],
         $allTransitiveDependencies: const <ProviderOrFamily>{
@@ -73,9 +76,9 @@ final class DetailsNotifierProvider
       );
 
   static const $allTransitiveDependencies0 = listItemProvider;
-  static const $allTransitiveDependencies1 = detailTitleNotifierProvider;
+  static const $allTransitiveDependencies1 = detailTitleStateProvider;
   static const $allTransitiveDependencies2 =
-      DetailTitleNotifierProvider.$allTransitiveDependencies1;
+      DetailTitleStateNotifierProvider.$allTransitiveDependencies1;
   static const $allTransitiveDependencies3 = _markAsReadProvider;
 
   @override
@@ -86,7 +89,7 @@ final class DetailsNotifierProvider
   DetailsNotifier create() => DetailsNotifier();
 }
 
-String _$detailsNotifierHash() => r'e1128f9b9dda76116dbead4fd943f0e997e42d2c';
+String _$detailsNotifierHash() => r'2bb881f9efad651923d7630a9b076ed803fb4dfe';
 
 abstract class _$DetailsNotifier extends $AsyncNotifier<Details> {
   FutureOr<Details> build();
@@ -156,7 +159,7 @@ final class _MarkAsReadProvider
   }
 }
 
-String _$_markAsReadHash() => r'536841a42c40168bada35f1f45788c0576b6f6a8';
+String _$_markAsReadHash() => r'ed92d496df52482481f6938e0e64d3bc790e941d';
 
 final class _MarkAsReadFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<int>, ListItem> {
@@ -224,27 +227,27 @@ final class DetailSmallTitleProvider
   }
 }
 
-String _$detailSmallTitleHash() => r'9bc30084263914d4fcba17904ecc6e1f8f20d2b5';
+String _$detailSmallTitleHash() => r'710823e81464ca519003e6367eda2f308610d560';
 
-@ProviderFor(DetailTitleNotifier)
-const detailTitleNotifierProvider = DetailTitleNotifierProvider._();
+@ProviderFor(DetailTitleStateNotifier)
+const detailTitleStateProvider = DetailTitleStateNotifierProvider._();
 
-final class DetailTitleNotifierProvider
-    extends $NotifierProvider<DetailTitleNotifier, String> {
-  const DetailTitleNotifierProvider._()
+final class DetailTitleStateNotifierProvider
+    extends $NotifierProvider<DetailTitleStateNotifier, String> {
+  const DetailTitleStateNotifierProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'detailTitleNotifierProvider',
+        name: r'detailTitleStateProvider',
         isAutoDispose: true,
         dependencies: const <ProviderOrFamily>[
           listItemProvider,
           detailTitleProvider,
         ],
         $allTransitiveDependencies: const <ProviderOrFamily>[
-          DetailTitleNotifierProvider.$allTransitiveDependencies0,
-          DetailTitleNotifierProvider.$allTransitiveDependencies1,
+          DetailTitleStateNotifierProvider.$allTransitiveDependencies0,
+          DetailTitleStateNotifierProvider.$allTransitiveDependencies1,
         ],
       );
 
@@ -252,11 +255,11 @@ final class DetailTitleNotifierProvider
   static const $allTransitiveDependencies1 = detailTitleProvider;
 
   @override
-  String debugGetCreateSourceHash() => _$detailTitleNotifierHash();
+  String debugGetCreateSourceHash() => _$detailTitleStateNotifierHash();
 
   @$internal
   @override
-  DetailTitleNotifier create() => DetailTitleNotifier();
+  DetailTitleStateNotifier create() => DetailTitleStateNotifier();
 
   /// {@macro riverpod.override_with_value}
   Override overrideWithValue(String value) {
@@ -267,10 +270,10 @@ final class DetailTitleNotifierProvider
   }
 }
 
-String _$detailTitleNotifierHash() =>
-    r'2c0eed6e6d6396efab1fdc1b172511429d686e9d';
+String _$detailTitleStateNotifierHash() =>
+    r'63decb395ef74d725259430126449c2460871287';
 
-abstract class _$DetailTitleNotifier extends $Notifier<String> {
+abstract class _$DetailTitleStateNotifier extends $Notifier<String> {
   String build();
   @$mustCallSuper
   @override
@@ -349,7 +352,7 @@ final class DetailUrlProvider
         isAutoDispose: true,
         dependencies: const <ProviderOrFamily>[
           listItemProvider,
-          currentSiteTypeNotifierProvider,
+          currentSiteTypeProvider,
         ],
         $allTransitiveDependencies: const <ProviderOrFamily>[
           DetailUrlProvider.$allTransitiveDependencies0,
@@ -358,7 +361,7 @@ final class DetailUrlProvider
       );
 
   static const $allTransitiveDependencies0 = listItemProvider;
-  static const $allTransitiveDependencies1 = currentSiteTypeNotifierProvider;
+  static const $allTransitiveDependencies1 = currentSiteTypeProvider;
 
   @override
   String debugGetCreateSourceHash() => _$detailUrlHash();
@@ -382,7 +385,7 @@ final class DetailUrlProvider
   }
 }
 
-String _$detailUrlHash() => r'a47ce191409d0c8786952a7f6dcfb3a8e016e3b1';
+String _$detailUrlHash() => r'e8d8b65b390da45d78b52b2fa4cafe7415b04d7a';
 
 @ProviderFor(detailAppbarHeight)
 const detailAppbarHeightProvider = DetailAppbarHeightFamily._();
@@ -470,6 +473,3 @@ final class DetailAppbarHeightFamily extends $Family
   @override
   String toString() => r'detailAppbarHeightProvider';
 }
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

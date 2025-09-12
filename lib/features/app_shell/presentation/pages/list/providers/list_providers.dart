@@ -19,7 +19,7 @@ part 'list_providers.g.dart';
 
 @riverpod
 String listSmallTitle(Ref ref) => ref.watch(
-  currentSiteTypeNotifierProvider.select((siteType) => siteType.title),
+  currentSiteTypeProvider.select((siteType) => siteType.title),
 );
 
 @Riverpod(dependencies: [mainItem])
@@ -68,7 +68,7 @@ class ListStateNotifier extends _$ListStateNotifier {
   Future<ListState> build() async {
     final initialPage = _initialPage();
     final mainItem = ref.watch(mainItemProvider);
-    final sortType = ref.watch(sortTypeNotifierProvider);
+    final sortType = ref.watch(sortTypeProvider);
     return _fetchData(mainItem, sortType, initialPage, const LastId());
   }
 
@@ -142,7 +142,7 @@ class ListStateNotifier extends _$ListStateNotifier {
     ); // 에러 초기화
 
     final MainItem mainItem = ref.read(mainItemProvider);
-    final SortType sortType = ref.read(sortTypeNotifierProvider);
+    final SortType sortType = ref.read(sortTypeProvider);
 
     final ListState newState = await _fetchData(
       mainItem,
@@ -155,7 +155,7 @@ class ListStateNotifier extends _$ListStateNotifier {
   }
 
   int _initialPage() {
-    final siteType = ref.read(currentSiteTypeNotifierProvider);
+    final siteType = ref.read(currentSiteTypeProvider);
     final int page = siteType == SiteType.clien ? 0 : 1;
     return page;
   }
@@ -206,7 +206,7 @@ class ListStateNotifier extends _$ListStateNotifier {
 @Riverpod(dependencies: [ListStateNotifier])
 ListItem? getListItem(Ref ref, int index) {
   final item = ref.watch(
-    listStateNotifierProvider.select((state) {
+    listStateProvider.select((state) {
       try {
         return state.value?.items[index];
       } catch (e) {

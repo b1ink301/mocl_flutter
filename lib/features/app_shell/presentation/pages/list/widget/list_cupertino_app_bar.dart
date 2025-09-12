@@ -29,7 +29,7 @@ class ListCupertinoAppBar extends ConsumerWidget {
             PopupMenuOption(
               label: '새로고침',
               onTap: (_) =>
-                  ref.read(listStateNotifierProvider.notifier).refresh(),
+                  ref.read(listStateProvider.notifier).refresh(),
             ),
           ],
         ),

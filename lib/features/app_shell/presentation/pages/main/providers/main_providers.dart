@@ -16,7 +16,7 @@ class MainItemsNotifier extends _$MainItemsNotifier {
   @override
   Future<List<MainItem>> build() async {
     state = const AsyncValue.loading();
-    final siteType = ref.watch(currentSiteTypeNotifierProvider);
+    final siteType = ref.watch(currentSiteTypeProvider);
     final result = await ref.read(getMainListProvider)(siteType);
     return result.getOrElse((Failure failure) => throw failure);
   }
@@ -27,26 +27,26 @@ class MainItemsNotifier extends _$MainItemsNotifier {
 @riverpod
 String mainTitle(Ref ref) {
   final String title = ref.watch(
-    currentSiteTypeNotifierProvider.select((siteType) => siteType.title),
+    currentSiteTypeProvider.select((siteType) => siteType.title),
   );
   return title;
 }
 
 @riverpod
 bool showAddButton(Ref ref) {
-  final siteType = ref.watch(currentSiteTypeNotifierProvider);
+  final siteType = ref.watch(currentSiteTypeProvider);
   return siteType != SiteType.naverCafe;
 }
 
 @riverpod
 bool isCurrentSiteType(Ref ref, SiteType siteType) {
-  final SiteType currentSiteType = ref.watch(currentSiteTypeNotifierProvider);
+  final SiteType currentSiteType = ref.watch(currentSiteTypeProvider);
   return currentSiteType == siteType;
 }
 
 @riverpod
 Future<Either<Failure, List<int>>> setMainItems(Ref ref, List<MainItem> list) {
-  final siteType = ref.read(currentSiteTypeNotifierProvider);
+  final siteType = ref.read(currentSiteTypeProvider);
   final params = SetMainParams(siteType: siteType, list: list);
   final result = ref.read(setMainListProvider).call(params);
   return result;

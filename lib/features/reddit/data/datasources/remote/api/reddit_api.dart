@@ -44,7 +44,7 @@ class RedditApi extends BaseApi {
   ) => withSyncCookie<List<ListItem>>(parser.baseUrl, () async {
     final String url = parser.urlByList(
       item.url,
-      item.board,
+      item.text,
       page,
       sortType,
       lastId,
@@ -69,7 +69,7 @@ class RedditApi extends BaseApi {
         final String url = parser.urlByMain();
         final Map<String, String> headers = {
           'User-Agent': userAgent,
-          'Content-Type': 'application/x-www-form-urlencoded',
+          'Host': 'www.reddit.com',
         };
         final Response response = await get(url, headers: headers);
         log('[getMain] $url, $headers response = ${response.statusCode}');

@@ -6,6 +6,9 @@ part of 'network_provider.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
 @ProviderFor(dio)
 const dioProvider = DioProvider._();
 
@@ -333,6 +336,3 @@ final class MeecoApiClientProvider
 }
 
 String _$meecoApiClientHash() => r'70b0f3b891f308fb00fbad934dbf4b3cee9997ad';
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

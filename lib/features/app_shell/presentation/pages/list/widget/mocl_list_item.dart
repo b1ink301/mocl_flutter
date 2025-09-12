@@ -47,9 +47,9 @@ class MoclListItem extends ConsumerWidget {
       final index = ref.read(listItemIndexProvider);
       GoRouter.of(context).push(Routes.detail, extra: item).then((_) {
         if (context.mounted) {
-          final readId = ref.read(readableStateNotifierProvider);
+          final readId = ref.read(readableStateProvider);
           if (readId == item.id && !item.isRead) {
-            ref.read(listStateNotifierProvider.notifier).markAsRead(index);
+            ref.read(listStateProvider.notifier).markAsRead(index);
           }
         }
       });
@@ -74,7 +74,7 @@ class _TitleView extends ConsumerWidget {
       title,
       maxLines: 3,
       overflow: TextOverflow.ellipsis,
-      style: MoclTextStyles.of(context).title(isRead),
+      style: AppTextStyles.of(context).title(isRead),
     );
   }
 }
@@ -118,7 +118,7 @@ class _ReplyText extends ConsumerWidget {
     if (reply.isNotEmpty && reply != '0') {
       return RoundTextWidget(
         text: reply,
-        textStyle: MoclTextStyles.of(context).badge(isRead),
+        textStyle: AppTextStyles.of(context).badge(isRead),
       );
     } else {
       return SizedBox.shrink();
@@ -160,7 +160,7 @@ class _InfoText extends ConsumerWidget {
       info,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-      style: MoclTextStyles.of(context).smallTitle(isRead),
+      style: AppTextStyles.of(context).smallTitle(isRead),
     );
   }
 }

@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
@@ -6,7 +7,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:html/parser.dart';
 import 'package:html_unescape/html_unescape.dart';
-import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/data/datasources/remote/base/base_ext.dart';
 import 'package:mocl_flutter/core/data/datasources/remote/base/base_parser.dart';
 import 'package:mocl_flutter/core/domain/entities/last_id.dart';
@@ -17,6 +17,7 @@ import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
+import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class RedditParser implements BaseParser {
@@ -91,44 +92,12 @@ class RedditParser implements BaseParser {
   static CommentItem? _parseComment(
     dynamic element,
     HtmlUnescape htmlUnescape,
-  ) {
-    final item = element['data'];
-
-    if (item == null) {
-      return null;
-    }
-
-    final bodyHtml = item['body_html'].toString();
-    final id = item['id'].toString();
-    final viewCount = '';
-    final likeCount = item['ups'].toString();
-    final nickImage = '';
-    final userId = item['author_fullname'].toString();
-    final nickName = item['author'].toString();
-    final double created = item['created'];
-    final replies = item['replies'];
+  ) => CommentItem.fromJson(element, htmlUnescape.convert, (created, nickName) {
     final int milliseconds = (created * 1000).toInt();
     final date = DateTime.fromMillisecondsSinceEpoch(milliseconds).toLocal();
     final parsedTime = timeago.format(date, locale: 'ko');
-    final info = BaseParser.parserInfo(false, nickName, parsedTime, viewCount);
-
-    // if (replies != '') {
-    //   debugPrint('replies=$replies');
-    // }
-
-    return CommentItem(
-      id: id.hashCode,
-      isReply: replies != '',
-      bodyHtml: htmlUnescape.convert(bodyHtml),
-      likeCount: likeCount,
-      mediaHtml: '',
-      isVideo: false,
-      time: created.toString(),
-      info: info,
-      userInfo: UserInfo(id: userId, nickName: nickName, nickImage: nickImage),
-      authorId: '',
-    );
-  }
+    return BaseParser.parserInfo(false, nickName, parsedTime, '');
+  });
 
   @override
   Future<Either<Failure, List<ListItem>>> list(
@@ -231,20 +200,41 @@ class RedditParser implements BaseParser {
 
   @override
   Future<Either<Failure, List<MainItem>>> main(Response response) async {
-
     final responseData = response.data;
-
-    final document = parse(responseData);
-    final container = document.querySelectorAll(
-      'div[id=communities_section] > li',
+    final document = parse(responseData).body;
+    final container = document?.querySelector(
+      'left-nav-communities-controller',
     );
-
-    for (final element in container) {
-      debugPrint('container=${element.innerHtml}');
+    if (container == null) {
+      return Left(NotLoginFailure(message: 'Not login #1'));
     }
+    debugPrint('container=${container.outerHtml}');
+    final initialStateJson = container.attributes['initialstatejson'];
+    if (initialStateJson == null) {
+      return Left(NotLoginFailure(message: 'Not login #2'));
+    }
+    final list = jsonDecode(initialStateJson);
+    var orderBy = 0;
+    final List<MainItem> result = list
+        .map((item) {
+          final prefixedName = item['prefixedName'].toString();
+          final mainItem = MainItem(
+            siteType: SiteType.reddit,
+            orderBy: orderBy++,
+            url: 'https://www.reddit.com/$prefixedName',
+            board: item['id'].toString(),
+            text: prefixedName,
+            icon: item['styles']['icon64'].toString(),
+            type: 0,
+          );
+          return mainItem;
+        })
+        .whereType<MainItem>()
+        .toList();
 
+    debugPrint('[main]#3 result=$result');
 
-    return Left(GetMainFailure(message: 'test'));
+    return Right(result);
   }
 
   @override
@@ -264,7 +254,7 @@ class RedditParser implements BaseParser {
   ) {
     final sort = sortType.toQuery(siteType);
     final extra = page > 1 ? '&after=t3_${lastId.stringId}' : '';
-    return 'https://www.reddit.com/r/$board/$sort/.json?limit=25$extra';
+    return 'https://www.reddit.com/$board/$sort/.json?limit=25$extra';
   }
 
   @override

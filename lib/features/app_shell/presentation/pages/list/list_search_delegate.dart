@@ -76,7 +76,7 @@ class SearchResultViewState extends ConsumerState<SearchResultView> {
   void initState() {
     super.initState();
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      ref.read(keywordNotifierProvider.notifier).setKeyword(widget.searchText);
+      ref.read(keywordProvider.notifier).setKeyword(widget.searchText);
     });
   }
 

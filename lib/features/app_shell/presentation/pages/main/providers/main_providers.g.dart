@@ -6,8 +6,11 @@ part of 'main_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
 @ProviderFor(MainItemsNotifier)
-const mainItemsNotifierProvider = MainItemsNotifierProvider._();
+const mainItemsProvider = MainItemsNotifierProvider._();
 
 final class MainItemsNotifierProvider
     extends $AsyncNotifierProvider<MainItemsNotifier, List<MainItem>> {
@@ -16,7 +19,7 @@ final class MainItemsNotifierProvider
         from: null,
         argument: null,
         retry: null,
-        name: r'mainItemsNotifierProvider',
+        name: r'mainItemsProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
@@ -30,7 +33,7 @@ final class MainItemsNotifierProvider
   MainItemsNotifier create() => MainItemsNotifier();
 }
 
-String _$mainItemsNotifierHash() => r'937ec4ac5bc0c84ea08fbc43484e4667bc930259';
+String _$mainItemsNotifierHash() => r'1400cf1d0d3ab82adc8bfebd5b4c5a3d20bb13f0';
 
 abstract class _$MainItemsNotifier extends $AsyncNotifier<List<MainItem>> {
   FutureOr<List<MainItem>> build();
@@ -90,7 +93,7 @@ final class MainTitleProvider
   }
 }
 
-String _$mainTitleHash() => r'0f4a5b000762f1f7f5786eca779b0668c124eb7c';
+String _$mainTitleHash() => r'0d94a3111178e112437c9f0f4bee8f7cbbbf87fc';
 
 @ProviderFor(showAddButton)
 const showAddButtonProvider = ShowAddButtonProvider._();
@@ -130,7 +133,7 @@ final class ShowAddButtonProvider extends $FunctionalProvider<bool, bool, bool>
   }
 }
 
-String _$showAddButtonHash() => r'c32d018e97a3e9f27ebf85919cae75d35efc35f0';
+String _$showAddButtonHash() => r'fb7aefd0fc2c2f0c812e4bcea9b88ac8d26b4935';
 
 @ProviderFor(isCurrentSiteType)
 const isCurrentSiteTypeProvider = IsCurrentSiteTypeFamily._();
@@ -189,7 +192,7 @@ final class IsCurrentSiteTypeProvider
   }
 }
 
-String _$isCurrentSiteTypeHash() => r'651fd497bf91f2bee0259aa8b5f729f183aa61e2';
+String _$isCurrentSiteTypeHash() => r'35356447502396e793f81f7b4e7891058882dfd4';
 
 final class IsCurrentSiteTypeFamily extends $Family
     with $FunctionalFamilyOverride<bool, SiteType> {
@@ -266,7 +269,7 @@ final class SetMainItemsProvider
   }
 }
 
-String _$setMainItemsHash() => r'd4de75f3aa63149603539c87fe36edd427912b42';
+String _$setMainItemsHash() => r'd84ee9b7a6a84a0156487e053f06e97a595abd0f';
 
 final class SetMainItemsFamily extends $Family
     with
@@ -338,7 +341,7 @@ final class MainScaffoldStateProvider
 String _$mainScaffoldStateHash() => r'e08ed879718fe9af8a42c31c3df1fbd7c053b5eb';
 
 @ProviderFor(MainSidebarNotifier)
-const mainSidebarNotifierProvider = MainSidebarNotifierProvider._();
+const mainSidebarProvider = MainSidebarNotifierProvider._();
 
 final class MainSidebarNotifierProvider
     extends $NotifierProvider<MainSidebarNotifier, bool> {
@@ -347,7 +350,7 @@ final class MainSidebarNotifierProvider
         from: null,
         argument: null,
         retry: null,
-        name: r'mainSidebarNotifierProvider',
+        name: r'mainSidebarProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
@@ -390,6 +393,3 @@ abstract class _$MainSidebarNotifier extends $Notifier<bool> {
     element.handleValue(ref, created);
   }
 }
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
