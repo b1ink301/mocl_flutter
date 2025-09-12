@@ -28,7 +28,6 @@ class DrawerWidget extends ConsumerWidget {
         ),
         Expanded(
           child: ListView(
-            physics: const NeverScrollableScrollPhysics(),
             shrinkWrap: true,
             padding: EdgeInsets.zero,
             children: SiteType.values
@@ -39,7 +38,7 @@ class DrawerWidget extends ConsumerWidget {
                       context,
                       siteType,
                       () => ref
-                          .read(currentSiteTypeNotifierProvider.notifier)
+                          .read(currentSiteTypeProvider.notifier)
                           .changeSiteType(siteType),
                     ),
                   ),
@@ -79,7 +78,7 @@ class _DrawerSiteItem extends ConsumerWidget {
     children: [
       ListTile(
         title: Text(siteType.title),
-        titleTextStyle: MoclTextStyles.of(context).titleTextStyle,
+        titleTextStyle: AppTextStyles.of(context).titleTextStyle,
         onTap: onTap,
         trailing: ref.watch(isCurrentSiteTypeProvider(siteType))
             ? Icon(Icons.check_outlined, color: Theme.of(context).focusColor)

@@ -6,8 +6,11 @@ part of 'list_search_proivders.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
 @ProviderFor(KeywordNotifier)
-const keywordNotifierProvider = KeywordNotifierProvider._();
+const keywordProvider = KeywordNotifierProvider._();
 
 final class KeywordNotifierProvider
     extends $NotifierProvider<KeywordNotifier, String> {
@@ -16,7 +19,7 @@ final class KeywordNotifierProvider
         from: null,
         argument: null,
         retry: null,
-        name: r'keywordNotifierProvider',
+        name: r'keywordProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
@@ -81,7 +84,7 @@ final class ReqSearchListDataProvider
         isAutoDispose: true,
         dependencies: const <ProviderOrFamily>[
           mainItemProvider,
-          keywordNotifierProvider,
+          keywordProvider,
         ],
         $allTransitiveDependencies: const <ProviderOrFamily>[
           ReqSearchListDataProvider.$allTransitiveDependencies0,
@@ -90,7 +93,7 @@ final class ReqSearchListDataProvider
       );
 
   static const $allTransitiveDependencies0 = mainItemProvider;
-  static const $allTransitiveDependencies1 = keywordNotifierProvider;
+  static const $allTransitiveDependencies1 = keywordProvider;
 
   @override
   String debugGetCreateSourceHash() => _$reqSearchListDataHash();
@@ -107,7 +110,4 @@ final class ReqSearchListDataProvider
   }
 }
 
-String _$reqSearchListDataHash() => r'e35e23b8910273d83af1fb5a8811f0b979102b0d';
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package
+String _$reqSearchListDataHash() => r'caeafad09113b483b11de9f8a7dfb0b079773221';

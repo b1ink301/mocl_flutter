@@ -24,7 +24,7 @@ class AddListModalSheetPage extends SliverWoltModalSheetPage {
             icon: const Icon(Icons.check),
             onPressed: () {
               final selectedItems = ref
-                  .read(addListDlgNotifierProvider.notifier)
+                  .read(addListDlgProvider.notifier)
                   .selectedItems();
               context.pop(selectedItems);
             },
@@ -38,9 +38,8 @@ class AddListModalSheetPage extends SliverWoltModalSheetPage {
         hasSabGradient: false,
         mainContentSliversBuilder: (_) => [
           Consumer(
-            builder: (_, ref, _) {
-              final result = ref
-                .watch(addListDlgNotifierProvider)
+            builder: (_, ref, _) => ref
+                .watch(addListDlgProvider)
                 .maybeWhen(
                   data: (data) => SliverList.separated(
                     itemCount: data.length,
@@ -51,7 +50,7 @@ class AddListModalSheetPage extends SliverWoltModalSheetPage {
                         isChecked: item.isChecked,
                         textStyle: Theme.of(context).textTheme.bodyMedium,
                         onChanged: (isChecked) => ref
-                            .read(addListDlgNotifierProvider.notifier)
+                            .read(addListDlgProvider.notifier)
                             .onChanged(isChecked, index),
                       );
                     },
@@ -63,11 +62,9 @@ class AddListModalSheetPage extends SliverWoltModalSheetPage {
                       child: Text(error.toString()),
                     ),
                   ),
-                  orElse: () => const SliverToBoxAdapter(child: LoadingWidget()),
-                );
-              debugPrint('[mainContentSliversBuilder] result=$result');
-              return result;
-            },
+                  orElse: () =>
+                      const SliverToBoxAdapter(child: LoadingWidget()),
+                ),
           ),
         ],
       );

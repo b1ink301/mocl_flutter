@@ -27,7 +27,7 @@ class DetailFontSizeNotifier extends _$DetailFontSizeNotifier {
   void refresh() => ref.invalidateSelf();
 }*/
 
-@Riverpod(dependencies: [listItem, DetailTitleNotifier, _markAsRead])
+@Riverpod(dependencies: [listItem, DetailTitleStateNotifier, _markAsRead])
 class DetailsNotifier extends _$DetailsNotifier {
   @override
   Future<Details> build() async {
@@ -36,7 +36,7 @@ class DetailsNotifier extends _$DetailsNotifier {
     final result = await ref.read(getDetailProvider)(listItem);
     final data = result.getOrElse((f) => throw f);
     await ref.watch(_markAsReadProvider(listItem).future);
-    ref.read(detailTitleNotifierProvider.notifier).update(data.title);
+    ref.read(detailTitleStateProvider.notifier).update(data.title);
     return data;
   }
 
@@ -46,11 +46,11 @@ class DetailsNotifier extends _$DetailsNotifier {
 @riverpod
 Future<int> _markAsRead(Ref ref, ListItem listItem) async {
   if (!listItem.isRead) {
-    final siteType = ref.read(currentSiteTypeNotifierProvider);
+    final siteType = ref.read(currentSiteTypeProvider);
     final params = SetReadFlagParams(siteType: siteType, boardId: listItem.id);
     final setReadFlag = ref.read(setReadProvider);
     final int result = await setReadFlag(params);
-    ref.read(readableStateNotifierProvider.notifier).update(listItem.id);
+    ref.read(readableStateProvider.notifier).update(listItem.id);
     return result;
   }
   return -1;
@@ -65,7 +65,7 @@ String detailSmallTitle(Ref ref) {
     return boardTitle;
   } else {
     final String title = ref.watch(
-      currentSiteTypeNotifierProvider.select((siteType) => siteType.title),
+      currentSiteTypeProvider.select((siteType) => siteType.title),
     );
 
     return '$title > $boardTitle';
@@ -73,7 +73,7 @@ String detailSmallTitle(Ref ref) {
 }
 
 @Riverpod(dependencies: [listItem, detailTitle])
-class DetailTitleNotifier extends _$DetailTitleNotifier {
+class DetailTitleStateNotifier extends _$DetailTitleStateNotifier {
   @override
   String build() => ref.watch(detailTitleProvider);
 
@@ -92,7 +92,7 @@ String detailTitle(Ref ref) {
 
 @Riverpod(dependencies: [listItem, CurrentSiteTypeNotifier])
 String detailUrl(Ref ref) {
-  final siteType = ref.watch(currentSiteTypeNotifierProvider);
+  final siteType = ref.watch(currentSiteTypeProvider);
   final listItem = ref.watch(listItemProvider);
   return siteType == SiteType.naverCafe
       ? 'https://m.cafe.naver.com/ca-fe/web/cafes/${listItem.board}/articles/${listItem.id}'

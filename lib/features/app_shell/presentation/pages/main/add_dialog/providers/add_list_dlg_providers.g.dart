@@ -6,8 +6,11 @@ part of 'add_list_dlg_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
 @ProviderFor(AddListDlgNotifier)
-const addListDlgNotifierProvider = AddListDlgNotifierProvider._();
+const addListDlgProvider = AddListDlgNotifierProvider._();
 
 final class AddListDlgNotifierProvider
     extends
@@ -17,7 +20,7 @@ final class AddListDlgNotifierProvider
         from: null,
         argument: null,
         retry: null,
-        name: r'addListDlgNotifierProvider',
+        name: r'addListDlgProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
@@ -32,7 +35,7 @@ final class AddListDlgNotifierProvider
 }
 
 String _$addListDlgNotifierHash() =>
-    r'62743c49d3b692256a31476f570010f4036a4064';
+    r'385972035378bd160bddb4cc98c64ba3578a6648';
 
 abstract class _$AddListDlgNotifier
     extends $AsyncNotifier<List<CheckableMainItem>> {
@@ -61,6 +64,3 @@ abstract class _$AddListDlgNotifier
     element.handleValue(ref, created);
   }
 }
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

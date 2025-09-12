@@ -64,7 +64,7 @@ class DetailPage extends ConsumerWidget {
       body: RefreshIndicator.adaptive(
         color: Theme.of(context).focusColor,
         onRefresh: () async =>
-            ref.read(detailsNotifierProvider.notifier).refresh(),
+            ref.read(detailsProvider.notifier).refresh(),
         child: const CustomScrollView(
           physics: ClampingScrollPhysics(),
           cacheExtent: 1600,
@@ -75,8 +75,11 @@ class DetailPage extends ConsumerWidget {
 
     return Platform.isMacOS || Platform.isAndroid
         ? Listener(
+            behavior: HitTestBehavior.opaque,
             onPointerDown: (event) {
-              if (event.buttons == kSecondaryMouseButton) {
+              debugPrint('onPointerDown=$event');
+              if (event.kind == PointerDeviceKind.mouse &&
+                  event.buttons == kSecondaryMouseButton) {
                 Navigator.of(context).pop();
               }
             },
@@ -97,7 +100,7 @@ class DetailPage extends ConsumerWidget {
         options: [
           PopupMenuOption(
             label: '새로고침',
-            onTap: (_) => ref.read(detailsNotifierProvider.notifier).refresh(),
+            onTap: (_) => ref.read(detailsProvider.notifier).refresh(),
           ),
           PopupMenuOption(
             label: '브라우저로 열기',

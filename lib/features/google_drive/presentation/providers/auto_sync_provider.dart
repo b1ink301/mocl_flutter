@@ -17,7 +17,7 @@ class AutoSyncNotifier extends _$AutoSyncNotifier {
       case SyncAction.initialBackup:
       case SyncAction.autoBackup:
         await ref
-            .read(googleDriveSyncNotifierProvider.notifier)
+            .read(googleDriveSyncProvider.notifier)
             .backup(showToast: false);
         break;
       case SyncAction.promptRestore:

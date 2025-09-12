@@ -12,7 +12,7 @@ class LoginPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final backgroundColor = Theme.of(context).appBarTheme.backgroundColor;
     final style = Theme.of(context).textTheme.labelMedium;
-    final siteType = ref.watch(currentSiteTypeNotifierProvider);
+    final siteType = ref.watch(currentSiteTypeProvider);
     return PlatformScaffold(
       appBar: PlatformAppBar(
         material: (_, _) => MaterialAppBarData(

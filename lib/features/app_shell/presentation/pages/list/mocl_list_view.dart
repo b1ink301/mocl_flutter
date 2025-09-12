@@ -17,7 +17,7 @@ class MoclListView extends ConsumerWidget {
       RefreshIndicator.adaptive(
         color: Theme.of(context).focusColor,
         onRefresh: () async =>
-            ref.read(listStateNotifierProvider.notifier).refresh(),
+            ref.read(listStateProvider.notifier).refresh(),
         child: NotificationListener<ScrollNotification>(
           onNotification: (ScrollNotification notification) {
             if (notification is ScrollEndNotification &&
@@ -25,7 +25,7 @@ class MoclListView extends ConsumerWidget {
               EasyThrottle.throttle(
                 'list-fetch-throttle',
                 const Duration(milliseconds: 1500),
-                ref.read(listStateNotifierProvider.notifier).loadMore,
+                ref.read(listStateProvider.notifier).loadMore,
               );
               return true;
             }
@@ -56,7 +56,7 @@ class _ListBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final (count, hasReachedMax, error) = ref.watch(
-      listStateNotifierProvider.select(
+      listStateProvider.select(
         (value) => value.when(
           data: (state) =>
               (state.items.length, state.hasReachedMax, state.error),
@@ -83,7 +83,7 @@ class _ListBody extends ConsumerWidget {
               context,
               error,
               hasReachedMax,
-              ref.read(listStateNotifierProvider.notifier).retry,
+              ref.read(listStateProvider.notifier).retry,
             );
           } else {
             return ProviderScope(

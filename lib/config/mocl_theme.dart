@@ -4,15 +4,17 @@ import 'package:flutter/services.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
 
 class MoclTheme {
-  static CupertinoThemeData get lightCupertinoTheme =>
-      MaterialBasedCupertinoThemeData(materialTheme: lightTheme).copyWith(
+  static CupertinoThemeData lightCupertinoTheme(BuildContext context) =>
+      MaterialBasedCupertinoThemeData(
+        materialTheme: lightTheme(context),
+      ).copyWith(
         brightness: Brightness.light,
         primaryColor: const Color(0xFF0E7EA3),
         textTheme: const CupertinoTextThemeData(
           navActionTextStyle: TextStyle(
             inherit: false,
             fontFamily: 'CupertinoSystemText',
-            fontSize: 17.0,
+            fontSize: 16.0,
             letterSpacing: -0.41,
             color: Color(0xFF0E7EA3),
             decoration: TextDecoration.none,
@@ -28,8 +30,10 @@ class MoclTheme {
         ),
       );
 
-  static CupertinoThemeData get dartCupertinoTheme =>
-      MaterialBasedCupertinoThemeData(materialTheme: darkTheme).copyWith(
+  static CupertinoThemeData dartCupertinoTheme(BuildContext context) =>
+      MaterialBasedCupertinoThemeData(
+        materialTheme: darkTheme(context),
+      ).copyWith(
         brightness: Brightness.dark,
         applyThemeToAll: true,
         primaryColor: const Color(0xFFFF4081),
@@ -37,7 +41,7 @@ class MoclTheme {
           navActionTextStyle: TextStyle(
             inherit: false,
             fontFamily: 'CupertinoSystemText',
-            fontSize: 17.0,
+            fontSize: 16.0,
             letterSpacing: -0.41,
             color: Color(0xFFFF4081),
             decoration: TextDecoration.none,
@@ -53,54 +57,60 @@ class MoclTheme {
         ),
       );
 
-  static ThemeData get lightTheme => ThemeData.light().copyWith(
-    extensions: [MoclTextStyles.light()],
-    appBarTheme: const AppBarTheme(
-      backgroundColor: Color(0xFF595D66),
-      foregroundColor: Colors.white,
-      surfaceTintColor: Colors.white,
-      systemOverlayStyle: SystemUiOverlayStyle(
-        statusBarColor: Color(0xFF4d5057),
-        systemNavigationBarColor: Color(0xFFEAEBE6),
-        systemNavigationBarIconBrightness: Brightness.dark,
-        statusBarIconBrightness: Brightness.light,
-        statusBarBrightness: Brightness.light,
-        systemStatusBarContrastEnforced: false,
-        systemNavigationBarContrastEnforced: false,
-      ),
-    ),
-    pageTransitionsTheme: const PageTransitionsTheme(
-      builders: <TargetPlatform, PageTransitionsBuilder>{
-        TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
-      },
-    ),
-    // listTileTheme: ListTileThemeData(),
-    focusColor: const Color(0xFF0E7EA3),
-    highlightColor: const Color(0xFFAAAAAA),
-    primaryColor: const Color(0xFF595D66),
-    scaffoldBackgroundColor: const Color(0xFFEAEBE6),
-    popupMenuTheme: const PopupMenuThemeData(
-      color: Color(0xFFEAEBE6),
-      textStyle: TextStyle(color: Color(0xFF111111), fontSize: 17),
-    ),
-    dividerTheme: const DividerThemeData(
-      color: Color(0xFFC9CAC5),
-      space: 1,
-      thickness: 1,
-    ),
-    textTheme: const TextTheme(
-      bodyMedium: TextStyle(color: Color(0xFF111111), fontSize: 17),
-      bodySmall: TextStyle(color: Color(0xFF888888), fontSize: 14),
-      labelSmall: TextStyle(color: Color(0xFF888888), fontSize: 11),
-      headlineSmall: TextStyle(color: Color(0xFF000000), fontSize: 15),
-      headlineMedium: TextStyle(color: Color(0xFF111111), fontSize: 16),
-      labelMedium: TextStyle(color: Colors.white, fontSize: 16),
-      labelLarge: TextStyle(color: Colors.white, fontSize: 17),
-    ),
-  );
+  static ThemeData lightTheme(BuildContext context) =>
+      ThemeData.light().copyWith(
+        extensions: [AppTextStyles.light(context)],
+        appBarTheme: const AppBarTheme(
+          backgroundColor: Color(0xFF595D66),
+          foregroundColor: Colors.white,
+          surfaceTintColor: Colors.white,
+          systemOverlayStyle: SystemUiOverlayStyle(
+            statusBarColor: Color(0xFF4d5057),
+            systemNavigationBarColor: Color(0xFFEAEBE6),
+            systemNavigationBarIconBrightness: Brightness.dark,
+            statusBarIconBrightness: Brightness.light,
+            statusBarBrightness: Brightness.light,
+            systemStatusBarContrastEnforced: false,
+            systemNavigationBarContrastEnforced: false,
+          ),
+        ),
+        pageTransitionsTheme: const PageTransitionsTheme(
+          builders: <TargetPlatform, PageTransitionsBuilder>{
+            TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
+          },
+        ),
+        // listTileTheme: ListTileThemeData(),
+        focusColor: const Color(0xFF0E7EA3),
+        highlightColor: const Color(0xFFAAAAAA),
+        primaryColor: const Color(0xFF595D66),
+        scaffoldBackgroundColor: const Color(0xFFEAEBE6),
+        popupMenuTheme: const PopupMenuThemeData(
+          color: Color(0xFFEAEBE6),
+          position: PopupMenuPosition.under,
+          menuPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+          textStyle: TextStyle(color: Color(0xFF111111), fontSize: 13),
+          labelTextStyle: WidgetStatePropertyAll(
+            TextStyle(color: Color(0xFF111111), fontSize: 15),
+          ),
+        ),
+        dividerTheme: const DividerThemeData(
+          color: Color(0xFFC9CAC5),
+          space: 1,
+          thickness: 1,
+        ),
+        textTheme: const TextTheme(
+          bodyMedium: TextStyle(color: Color(0xFF111111), fontSize: 16),
+          bodySmall: TextStyle(color: Color(0xFF888888), fontSize: 14),
+          labelSmall: TextStyle(color: Color(0xFF888888), fontSize: 11),
+          headlineSmall: TextStyle(color: Color(0xFF000000), fontSize: 13),
+          headlineMedium: TextStyle(color: Color(0xFF111111), fontSize: 16),
+          labelMedium: TextStyle(color: Colors.white, fontSize: 16),
+          labelLarge: TextStyle(color: Colors.white, fontSize: 17),
+        ),
+      );
 
-  static ThemeData get darkTheme => ThemeData.dark().copyWith(
-    extensions: [MoclTextStyles.dark()],
+  static ThemeData darkTheme(BuildContext context) => ThemeData.dark().copyWith(
+    extensions: [AppTextStyles.dark(context)],
     appBarTheme: const AppBarTheme(
       backgroundColor: Color(0xFF292929),
       foregroundColor: Colors.white,
@@ -128,10 +138,10 @@ class MoclTheme {
     focusColor: const Color(0xFFFF4081),
     highlightColor: const Color(0xFF888888),
     textTheme: const TextTheme(
-      bodyMedium: TextStyle(color: Color(0xFFEEEEEE), fontSize: 17),
+      bodyMedium: TextStyle(color: Color(0xFFEEEEEE), fontSize: 16),
       bodySmall: TextStyle(color: Color(0xFFAAAAAA), fontSize: 14),
       labelSmall: TextStyle(color: Color(0xFFAAAAAA), fontSize: 11),
-      headlineSmall: TextStyle(color: Color(0xFFFFFFFF), fontSize: 16),
+      headlineSmall: TextStyle(color: Color(0xFFFFFFFF), fontSize: 13),
       headlineMedium: TextStyle(color: Colors.white, fontSize: 16),
       labelMedium: TextStyle(color: Colors.white, fontSize: 16),
       labelLarge: TextStyle(color: Colors.white, fontSize: 17),
@@ -140,7 +150,12 @@ class MoclTheme {
     scaffoldBackgroundColor: const Color(0xFF333333),
     popupMenuTheme: const PopupMenuThemeData(
       color: Color(0xFF333333),
-      textStyle: TextStyle(color: Color(0xFFEEEEEE), fontSize: 17),
+      textStyle: TextStyle(color: Color(0xFFEEEEEE), fontSize: 13),
+      position: PopupMenuPosition.under,
+      menuPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      labelTextStyle: WidgetStatePropertyAll(
+        TextStyle(color: Color(0xFFEEEEEE), fontSize: 15),
+      ),
     ),
   );
 }

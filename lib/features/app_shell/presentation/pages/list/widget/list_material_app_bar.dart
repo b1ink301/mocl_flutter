@@ -19,32 +19,29 @@ class ListMaterialAppBar extends ConsumerWidget {
     actions: [
       IconButton(
         icon: const Icon(Icons.search),
-        onPressed:
-            () => showSearch(
-              context: context,
-              delegate: ListSearchDelegate(item: ref.watch(mainItemProvider)),
-            ),
+        onPressed: () => showSearch(
+          context: context,
+          delegate: ListSearchDelegate(item: ref.watch(mainItemProvider)),
+        ),
       ),
       PopupMenuButton<SortType>(
         icon: const Icon(Icons.sort),
         onSelected: (SortType value) {
-          ref.read(sortTypeNotifierProvider.notifier).changeSortType(value);
-          ref.read(listStateNotifierProvider.notifier).refresh();
+          ref.read(sortTypeProvider.notifier).changeSortType(value);
+          ref.read(listStateProvider.notifier).refresh();
         },
         itemBuilder: (BuildContext context) {
-          final SortType sortType = ref.watch(sortTypeNotifierProvider);
-          final TextStyle? textStyle =
-              Theme.of(context).textTheme.headlineSmall;
+          final SortType sortType = ref.watch(sortTypeProvider);
           return [
             CheckedPopupMenuItem<SortType>(
               value: SortType.recent,
               checked: sortType == SortType.recent,
-              child: Text('최신순', style: textStyle),
+              child: Text('최신순'),
             ),
             CheckedPopupMenuItem<SortType>(
               value: SortType.recommend,
               checked: sortType == SortType.recommend,
-              child: Text('추천순', style: textStyle),
+              child: Text('추천순'),
             ),
           ];
         },
@@ -54,16 +51,13 @@ class ListMaterialAppBar extends ConsumerWidget {
         onSelected: (int value) {
           switch (value) {
             case 0:
-              ref.read(listStateNotifierProvider.notifier).refresh();
+              ref.read(listStateProvider.notifier).refresh();
               break;
           }
         },
-        itemBuilder: (BuildContext context) {
-          final textStyle = Theme.of(context).textTheme.headlineSmall;
-          return [
-            PopupMenuItem(value: 0, child: Text('새로고침', style: textStyle)),
-          ];
-        },
+        itemBuilder: (BuildContext context) => [
+          PopupMenuItem(value: 0, child: Text('새로고침')),
+        ],
       ),
     ],
   );

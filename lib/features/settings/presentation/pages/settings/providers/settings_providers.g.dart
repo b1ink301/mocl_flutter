@@ -6,8 +6,11 @@ part of 'settings_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
 @ProviderFor(SizeCacheDirNotifier)
-const sizeCacheDirNotifierProvider = SizeCacheDirNotifierProvider._();
+const sizeCacheDirProvider = SizeCacheDirNotifierProvider._();
 
 final class SizeCacheDirNotifierProvider
     extends $AsyncNotifierProvider<SizeCacheDirNotifier, String> {
@@ -16,7 +19,7 @@ final class SizeCacheDirNotifierProvider
         from: null,
         argument: null,
         retry: null,
-        name: r'sizeCacheDirNotifierProvider',
+        name: r'sizeCacheDirProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
@@ -53,7 +56,7 @@ abstract class _$SizeCacheDirNotifier extends $AsyncNotifier<String> {
 }
 
 @ProviderFor(ShowNickImageNotifier)
-const showNickImageNotifierProvider = ShowNickImageNotifierProvider._();
+const showNickImageProvider = ShowNickImageNotifierProvider._();
 
 final class ShowNickImageNotifierProvider
     extends $NotifierProvider<ShowNickImageNotifier, bool> {
@@ -62,7 +65,7 @@ final class ShowNickImageNotifierProvider
         from: null,
         argument: null,
         retry: null,
-        name: r'showNickImageNotifierProvider',
+        name: r'showNickImageProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
@@ -105,6 +108,3 @@ abstract class _$ShowNickImageNotifier extends $Notifier<bool> {
     element.handleValue(ref, created);
   }
 }
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

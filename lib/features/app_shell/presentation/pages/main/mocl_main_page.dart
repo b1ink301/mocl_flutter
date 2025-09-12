@@ -88,11 +88,11 @@ class _MainCupertinoView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isSidebarExpanded = ref.watch(mainSidebarNotifierProvider);
-    final sidebarClose = ref.read(mainSidebarNotifierProvider.notifier).close;
+    final isSidebarExpanded = ref.watch(mainSidebarProvider);
+    final sidebarClose = ref.read(mainSidebarProvider.notifier).close;
 
     changeSiteType(siteType) => ref
-        .read(currentSiteTypeNotifierProvider.notifier)
+        .read(currentSiteTypeProvider.notifier)
         .changeSiteType(siteType);
 
     if (Platform.isIOS) {
@@ -113,7 +113,7 @@ class _MainCupertinoView extends ConsumerWidget {
               maxWidth: 240,
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               selectedIndex: SiteType.values.indexOf(
-                ref.watch(currentSiteTypeNotifierProvider),
+                ref.watch(currentSiteTypeProvider),
               ),
               onDestinationSelected: (index) {
                 final siteType = SiteType.values
@@ -161,7 +161,7 @@ class _MainCupertinoView extends ConsumerWidget {
               maxWidth: 250,
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
               selectedIndex: SiteType.values.indexOf(
-                ref.watch(currentSiteTypeNotifierProvider),
+                ref.watch(currentSiteTypeProvider),
               ),
               onDestinationSelected: (index) {
                 final siteType = SiteType.values

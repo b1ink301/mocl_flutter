@@ -5,18 +5,18 @@ class _MainBody extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen(mainItemsNotifierProvider, (previous, next) {
+    ref.listen(mainItemsProvider, (previous, next) {
       if (next case AsyncError error when error.error is NotLoginFailure) {
         context.push<bool>(Routes.login).then((result) {
           if (context.mounted && result == true) {
-            ref.read(mainItemsNotifierProvider.notifier).refresh();
+            ref.read(mainItemsProvider.notifier).refresh();
           }
         });
       }
     });
 
     return ref
-        .watch(mainItemsNotifierProvider)
+        .watch(mainItemsProvider)
         .when(
           data: (data) => SliverPadding(
             padding: EdgeInsets.only(
@@ -42,9 +42,7 @@ class _BodyList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final textStyle = MoclTextStyles.of(
-      context,
-    ).titleTextStyle.copyWith(fontSize: 16.8);
+    final textStyle = AppTextStyles.of(context).titleTextStyle;
     return items.isEmpty
         ? _buildEmptyView(textStyle)
         : SliverList.separated(
@@ -72,16 +70,16 @@ class _BodyList extends ConsumerWidget {
     title: PlatformText(item.text, style: textStyle),
     onTap: () => context.push(Routes.list, extra: item),
     material: (_, _) => MaterialListTileData(
-      contentPadding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
+      contentPadding: const EdgeInsets.fromLTRB(16, 4, 8, 4),
     ),
     cupertino: (_, _) => CupertinoListTileData(
       padding: const EdgeInsets.fromLTRB(16, 18, 8, 18),
-      additionalInfo: Icon(CupertinoIcons.chevron_forward),
+      additionalInfo: const Icon(CupertinoIcons.chevron_forward),
     ),
   );
 
   Widget _buildIconView(String url) => CircleAvatar(
-    radius: 24,
+    radius: 20,
     backgroundImage: CachedNetworkImageProvider(url),
   );
 }
@@ -113,7 +111,7 @@ class _MainAppBar extends ConsumerWidget {
     titleTextStyle: Theme.of(context).textTheme.labelMedium,
     titleSpacing: 0,
     floating: true,
-    toolbarHeight: 64,
+    toolbarHeight: 62,
     actions: ref.watch(showAddButtonProvider)
         ? [
             PlatformIconButton(
@@ -151,8 +149,7 @@ class _MainNavigationBar extends ConsumerWidget {
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         leading: PlatformIconButton(
           padding: const EdgeInsets.all(0),
-          onPressed: () =>
-              ref.read(mainSidebarNotifierProvider.notifier).toggle(),
+          onPressed: () => ref.read(mainSidebarProvider.notifier).toggle(),
           icon: Icon(
             size: 24,
             color: Theme.of(context).focusColor,
@@ -179,13 +176,12 @@ class _MainNavigationBar extends ConsumerWidget {
                   ),
                   PopupMenuOption(
                     label: '로그인',
-                    onTap: (_) => context.push<bool>(Routes.login).then((
-                      result,
-                    ) {
-                      if (context.mounted && result == true) {
-                        ref.read(mainItemsNotifierProvider.notifier).refresh();
-                      }
-                    }),
+                    onTap: (_) =>
+                        context.push<bool>(Routes.login).then((result) {
+                          if (context.mounted && result == true) {
+                            ref.read(mainItemsProvider.notifier).refresh();
+                          }
+                        }),
                   ),
                 ],
               )
@@ -207,6 +203,6 @@ Future<void> _handleAddButton(BuildContext context, WidgetRef ref) async {
   final state = await ref.read(setMainItemsProvider(result).future);
   state.fold(
     (failure) => ref.read(showToastProvider(failure.message, context)),
-    (data) => ref.read(mainItemsNotifierProvider.notifier).refresh(),
+    (data) => ref.read(mainItemsProvider.notifier).refresh(),
   );
 }

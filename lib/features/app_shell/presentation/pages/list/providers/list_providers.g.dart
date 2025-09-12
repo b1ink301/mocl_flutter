@@ -6,6 +6,9 @@ part of 'list_providers.dart';
 // RiverpodGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
 @ProviderFor(listSmallTitle)
 const listSmallTitleProvider = ListSmallTitleProvider._();
 
@@ -45,7 +48,7 @@ final class ListSmallTitleProvider
   }
 }
 
-String _$listSmallTitleHash() => r'afb276d55425a9e7f1bf477590ddc03e0236bea3';
+String _$listSmallTitleHash() => r'4d44c4e8d04a365a84741c0d5ce123f586f67b4b';
 
 @ProviderFor(listTitle)
 const listTitleProvider = ListTitleProvider._();
@@ -312,7 +315,7 @@ final class ReqListDataFamily extends $Family
 }
 
 @ProviderFor(ListStateNotifier)
-const listStateNotifierProvider = ListStateNotifierProvider._();
+const listStateProvider = ListStateNotifierProvider._();
 
 final class ListStateNotifierProvider
     extends $AsyncNotifierProvider<ListStateNotifier, ListState> {
@@ -321,12 +324,12 @@ final class ListStateNotifierProvider
         from: null,
         argument: null,
         retry: null,
-        name: r'listStateNotifierProvider',
+        name: r'listStateProvider',
         isAutoDispose: true,
         dependencies: const <ProviderOrFamily>[
           mainItemProvider,
           reqListDataProvider,
-          sortTypeNotifierProvider,
+          sortTypeProvider,
         ],
         $allTransitiveDependencies: const <ProviderOrFamily>[
           ListStateNotifierProvider.$allTransitiveDependencies0,
@@ -337,7 +340,7 @@ final class ListStateNotifierProvider
 
   static const $allTransitiveDependencies0 = mainItemProvider;
   static const $allTransitiveDependencies1 = reqListDataProvider;
-  static const $allTransitiveDependencies2 = sortTypeNotifierProvider;
+  static const $allTransitiveDependencies2 = sortTypeProvider;
 
   @override
   String debugGetCreateSourceHash() => _$listStateNotifierHash();
@@ -347,7 +350,7 @@ final class ListStateNotifierProvider
   ListStateNotifier create() => ListStateNotifier();
 }
 
-String _$listStateNotifierHash() => r'4a96d8d3a2acec4d2bbf17d5bb4229a00b7ebc10';
+String _$listStateNotifierHash() => r'bb8f40c0addac2fe44fca9c2baf919b3f2daef6a';
 
 abstract class _$ListStateNotifier extends $AsyncNotifier<ListState> {
   FutureOr<ListState> build();
@@ -385,7 +388,7 @@ final class GetListItemProvider
          $allTransitiveDependencies: null,
        );
 
-  static const $allTransitiveDependencies0 = listStateNotifierProvider;
+  static const $allTransitiveDependencies0 = listStateProvider;
   static const $allTransitiveDependencies1 =
       ListStateNotifierProvider.$allTransitiveDependencies0;
   static const $allTransitiveDependencies2 =
@@ -433,7 +436,7 @@ final class GetListItemProvider
   }
 }
 
-String _$getListItemHash() => r'acb63b2c6cf355f6e35c579dcc668adb147997f8';
+String _$getListItemHash() => r'35b993f4c3bf57aec4264399d0f2154beb1b8ccf';
 
 final class GetListItemFamily extends $Family
     with $FunctionalFamilyOverride<ListItem?, int> {
@@ -441,7 +444,7 @@ final class GetListItemFamily extends $Family
     : super(
         retry: null,
         name: r'getListItemProvider',
-        dependencies: const <ProviderOrFamily>[listStateNotifierProvider],
+        dependencies: const <ProviderOrFamily>[listStateProvider],
         $allTransitiveDependencies: const <ProviderOrFamily>{
           GetListItemProvider.$allTransitiveDependencies0,
           GetListItemProvider.$allTransitiveDependencies1,
@@ -459,7 +462,7 @@ final class GetListItemFamily extends $Family
 }
 
 @ProviderFor(SortTypeNotifier)
-const sortTypeNotifierProvider = SortTypeNotifierProvider._();
+const sortTypeProvider = SortTypeNotifierProvider._();
 
 final class SortTypeNotifierProvider
     extends $NotifierProvider<SortTypeNotifier, SortType> {
@@ -468,7 +471,7 @@ final class SortTypeNotifierProvider
         from: null,
         argument: null,
         retry: null,
-        name: r'sortTypeNotifierProvider',
+        name: r'sortTypeProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
@@ -612,6 +615,3 @@ final class ListItemIndexProvider extends $FunctionalProvider<int, int, int>
 }
 
 String _$listItemIndexHash() => r'70b52c3cc678f4bd8e917a5b7a17378665040e04';
-
-// ignore_for_file: type=lint
-// ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member, deprecated_member_use_from_same_package

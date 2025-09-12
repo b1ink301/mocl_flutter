@@ -12,7 +12,7 @@ class AddListDlgNotifier extends _$AddListDlgNotifier {
   FutureOr<List<CheckableMainItem>> build() async {
     state = const AsyncValue.loading();
 
-    final siteType = ref.watch(currentSiteTypeNotifierProvider);
+    final siteType = ref.watch(currentSiteTypeProvider);
     final getMainListFromJson = ref.read(getMainListFromJsonProvider);
     final result = await getMainListFromJson(siteType);
 

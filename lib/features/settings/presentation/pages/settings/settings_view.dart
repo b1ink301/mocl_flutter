@@ -10,11 +10,11 @@ class SettingsView extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen<SyncStatus>(googleDriveSyncNotifierProvider, (previous, next) {
+    ref.listen<SyncStatus>(googleDriveSyncProvider, (previous, next) {
       // You can listen to the state and show dialogs or other widgets here if needed
     });
 
-    final syncStatus = ref.watch(googleDriveSyncNotifierProvider);
+    final syncStatus = ref.watch(googleDriveSyncProvider);
     final isSyncing = syncStatus == SyncStatus.syncing;
 
     return SliverToBoxAdapter(
@@ -37,12 +37,11 @@ class SettingsView extends ConsumerWidget {
               ),
           const DividerWidget(),
           ref
-              .watch(sizeCacheDirNotifierProvider)
+              .watch(sizeCacheDirProvider)
               .maybeWhen(
                 orElse: () => _buildLoadingView(context),
                 data: (data) => InkWell(
-                  onTap: () =>
-                      ref.read(sizeCacheDirNotifierProvider.notifier).clear(),
+                  onTap: () => ref.read(sizeCacheDirProvider.notifier).clear(),
                   child: SizedBox(
                     height: 58,
                     child: Center(
@@ -62,10 +61,10 @@ class SettingsView extends ConsumerWidget {
               children: [
                 Text('닉 이미지 보기', style: Theme.of(context).textTheme.bodyMedium),
                 Checkbox(
-                  value: ref.watch(showNickImageNotifierProvider),
+                  value: ref.watch(showNickImageProvider),
                   activeColor: Theme.of(context).focusColor,
                   onChanged: (bool? value) => {
-                    ref.read(showNickImageNotifierProvider.notifier).toggle(),
+                    ref.read(showNickImageProvider.notifier).toggle(),
                   },
                 ),
               ],
@@ -94,9 +93,8 @@ class SettingsView extends ConsumerWidget {
                 InkWell(
                   onTap: isSyncing
                       ? null
-                      : () => ref
-                            .read(googleDriveSyncNotifierProvider.notifier)
-                            .backup(),
+                      : () =>
+                            ref.read(googleDriveSyncProvider.notifier).backup(),
                   child: SizedBox(
                     height: 58,
                     child: Center(
@@ -112,7 +110,7 @@ class SettingsView extends ConsumerWidget {
                   onTap: isSyncing
                       ? null
                       : () => ref
-                            .read(googleDriveSyncNotifierProvider.notifier)
+                            .read(googleDriveSyncProvider.notifier)
                             .restore(),
                   child: SizedBox(
                     height: 58,

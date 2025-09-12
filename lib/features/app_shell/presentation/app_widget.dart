@@ -22,15 +22,15 @@ class AppWidget extends ConsumerWidget {
             PlatformDialogAction(
               child: PlatformText('아니요'),
               onPressed: () {
-                ref.read(autoSyncNotifierProvider.notifier).resetState();
+                ref.read(autoSyncProvider.notifier).resetState();
                 context.pop();
               },
             ),
             PlatformDialogAction(
               child: PlatformText('예'),
               onPressed: () {
-                ref.read(googleDriveSyncNotifierProvider.notifier).restore();
-                ref.read(autoSyncNotifierProvider.notifier).resetState();
+                ref.read(googleDriveSyncProvider.notifier).restore();
+                ref.read(autoSyncProvider.notifier).resetState();
                 context.pop();
               },
             ),
@@ -56,12 +56,12 @@ class AppWidget extends ConsumerWidget {
         iosUsesMaterialWidgets: true,
         iosUseZeroPaddingForAppbarPlatformIcon: true,
       ),
-      builder: (_) => PlatformTheme(
+      builder: (context) => PlatformTheme(
         themeMode: ThemeMode.system,
-        materialLightTheme: MoclTheme.lightTheme,
-        materialDarkTheme: MoclTheme.darkTheme,
-        cupertinoLightTheme: MoclTheme.lightCupertinoTheme,
-        cupertinoDarkTheme: MoclTheme.dartCupertinoTheme,
+        materialLightTheme: MoclTheme.lightTheme(context),
+        materialDarkTheme: MoclTheme.darkTheme(context),
+        cupertinoLightTheme: MoclTheme.lightCupertinoTheme(context),
+        cupertinoDarkTheme: MoclTheme.dartCupertinoTheme(context),
         matchCupertinoSystemChromeBrightness: true,
         builder: (_) => PlatformApp.router(
           localizationsDelegates: AppLocalizations.localizationsDelegates,

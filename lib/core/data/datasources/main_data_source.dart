@@ -34,12 +34,14 @@ class MainDataSourceImpl implements MainDataSource {
   });
 
   @override
-  Future<List<MainItem>> get(SiteType siteType) async =>
-      siteType == SiteType.naverCafe
-      ? (await apiClient.main(parser)).getOrElse((Failure f) => throw f)
-      : (await localDatabase.getMainData(
-          siteType,
-        )).map((item) => item.toMainItemModel().toEntity(siteType)).toList();
+  Future<List<MainItem>> get(SiteType siteType) async => switch (siteType) {
+    SiteType.reddit || SiteType.naverCafe => (await apiClient.main(
+      parser,
+    )).getOrElse((Failure f) => throw f),
+    _ => (await localDatabase.getMainData(
+      siteType,
+    )).map((item) => item.toMainItemModel().toEntity(siteType)).toList(),
+  };
 
   @override
   Future<List<int>> set(SiteType siteType, List<MainItem> list) async {
