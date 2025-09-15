@@ -5,7 +5,6 @@ import 'package:cookie_jar/cookie_jar.dart' as cookiejar;
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart' as diocookie;
-import 'package:flutter/foundation.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart' as webview;
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/data/datasources/remote/base/base_action.dart';
@@ -82,10 +81,7 @@ abstract class BaseApi with BaseAction {
     );
 
     final List<cookiejar.Cookie> dioCookies = cookies
-        .map((cookie) {
-          debugPrint('[_buildInterceptorCookie]cookie: $cookie');
-          return cookiejar.Cookie(cookie.name, cookie.value);
-        })
+        .map((cookie) => cookiejar.Cookie(cookie.name, cookie.value))
         .toList();
 
     final InterceptorsWrapper interceptor = InterceptorsWrapper(
@@ -93,9 +89,7 @@ abstract class BaseApi with BaseAction {
         options.headers['Cookie'] = dioCookies
             .map((cookie) => '${cookie.name}=${cookie.value}')
             .join('; ');
-
-        debugPrint('options.headers[Cookie]=${options.headers['Cookie']}');
-
+        // debugPrint('options.headers[Cookie]=${options.headers['Cookie']}');
         return handler.next(options);
       },
     );

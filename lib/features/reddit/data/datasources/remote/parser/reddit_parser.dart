@@ -73,6 +73,10 @@ class RedditParser implements BaseParser {
             .toList() ??
         const [];
 
+    // final translator = GoogleTranslator();
+    // final html = htmlUnescape.convert(bodyHtml);
+    // final translation = await translator.translate(html, to: 'ko');
+
     final detail = Details(
       title: title,
       viewCount: viewCount,

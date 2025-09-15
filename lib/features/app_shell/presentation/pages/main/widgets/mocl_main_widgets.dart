@@ -202,7 +202,9 @@ Future<void> _handleAddButton(BuildContext context, WidgetRef ref) async {
   }
   final state = await ref.read(setMainItemsProvider(result).future);
   state.fold(
-    (failure) => ref.read(showToastProvider(failure.message, context)),
+    (failure) => failure.message.showToast(
+      backgroundColor: Theme.of(context).appBarTheme.backgroundColor!,
+    ),
     (data) => ref.read(mainItemsProvider.notifier).refresh(),
   );
 }

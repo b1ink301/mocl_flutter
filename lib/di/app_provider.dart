@@ -1,13 +1,15 @@
+import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/presentation/widgets/dialog_page.dart';
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/core/usecases/usecase.dart';
+import 'package:mocl_flutter/core/util/utilities.dart';
 import 'package:mocl_flutter/di/use_case_provider.dart';
 import 'package:mocl_flutter/features/app_shell/presentation/pages/detail/mocl_detail_page.dart';
 import 'package:mocl_flutter/features/app_shell/presentation/pages/detail/photo_view_dialog.dart';
@@ -21,9 +23,7 @@ import 'package:mocl_flutter/features/settings/domain/usecases/set_site_type.dar
 import 'package:mocl_flutter/features/settings/presentation/pages/settings/settings_page.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:share_plus/share_plus.dart';
 import 'package:swipeable_page_route/swipeable_page_route.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 part 'app_provider.g.dart';
 
@@ -74,19 +74,6 @@ Future<void> clearData(Ref ref) async {
   await Future.delayed(Duration(milliseconds: 300));
 }
 
-@riverpod
-void showToast(Ref ref, String message, BuildContext context) {
-  Fluttertoast.showToast(
-    msg: message,
-    toastLength: Toast.LENGTH_LONG,
-    gravity: ToastGravity.BOTTOM,
-    timeInSecForIosWeb: 2,
-    backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-    textColor: Colors.white,
-    fontSize: 16.0,
-  );
-}
-
 @Riverpod(keepAlive: true)
 GoRouter appRouter(Ref ref) => GoRouter(
   initialLocation: Routes.main,
@@ -94,12 +81,12 @@ GoRouter appRouter(Ref ref) => GoRouter(
     GoRoute(
       path: Routes.main,
       pageBuilder: (BuildContext context, GoRouterState state) => SwipeablePage(
-          builder: (BuildContext context) {
-            final width = MediaQuery.of(context).size.width;
-            final double statusBarHeight = MediaQuery.of(context).padding.top;
-            return MainPage.init(context, width, statusBarHeight);
-          },
-        ),
+        builder: (BuildContext context) {
+          final width = MediaQuery.of(context).size.width;
+          final double statusBarHeight = MediaQuery.of(context).padding.top;
+          return MainPage.init(context, width, statusBarHeight);
+        },
+      ),
       routes: [
         GoRoute(
           path: Routes.setMainDlg,
@@ -159,42 +146,14 @@ GoRouter appRouter(Ref ref) => GoRouter(
 );
 
 @riverpod
-Future<bool> openBrowserByUrl(Ref ref, String url) async {
-  final Uri uri = Uri.parse(url);
-  return await launchUrl(uri);
-}
-
-@riverpod
-Future<bool> shareUrl(Ref ref, String url) async {
-  final Uri uri = Uri.parse(url);
-  final ShareParams params = ShareParams(uri: uri);
-  final ShareResult result = await SharePlus.instance.share(params);
-  return result.status == ShareResultStatus.success;
-}
-
-@Riverpod(dependencies: [_isImageUrl])
 Future<bool> openUrl(Ref ref, BuildContext context, String url) async {
   final Uri uri = Uri.parse(url);
   final String? last = uri.pathSegments.lastOrNull;
-  if (last != null && ref.read(_isImageUrlProvider(last))) {
+  if (last != null && last.isImageUrl()) {
     context.push(Routes.viewPhotoDlgFull, extra: url);
     return true;
   }
-  return await ref.read(openBrowserByUrlProvider(url).future);
-}
-
-@riverpod
-bool _isImageUrl(Ref ref, String url) {
-  final List<String> imageExtensions = [
-    '.jpg',
-    '.jpeg',
-    '.png',
-    '.gif',
-    '.bmp',
-    '.webp',
-    '.tiff',
-  ];
-  return imageExtensions.any((ext) => url.toLowerCase().endsWith(ext));
+  return url.openBrowser();
 }
 
 @riverpod
@@ -203,3 +162,113 @@ TextStyle appbarTextStyle(Ref ref) =>
 
 @Riverpod(keepAlive: true)
 double screenWidth(Ref ref) => throw UnimplementedError('screenWidth');
+
+@Riverpod(keepAlive: true)
+AppTextStyles appTextStyles(Ref ref) =>
+    throw UnimplementedError('appTextStyles');
+
+class CurrentTextStyles extends Equatable {
+  final TextStyle titleTextStyle;
+  final TextStyle readTitleTextStyle;
+  final TextStyle smallTextStyle;
+  final TextStyle readSmallTextStyle;
+  final TextStyle badgeTextStyle;
+  final TextStyle readBadgeTextStyle;
+
+  const CurrentTextStyles({
+    required this.titleTextStyle,
+    required this.readTitleTextStyle,
+    required this.smallTextStyle,
+    required this.readSmallTextStyle,
+    required this.badgeTextStyle,
+    required this.readBadgeTextStyle,
+  });
+
+  CurrentTextStyles copyWith({
+    TextStyle? titleTextStyle,
+    TextStyle? readTitleTextStyle,
+    TextStyle? smallTextStyle,
+    TextStyle? readSmallTextStyle,
+    TextStyle? badgeTextStyle,
+    TextStyle? readBadgeTextStyle,
+  }) => CurrentTextStyles(
+    titleTextStyle: titleTextStyle ?? this.titleTextStyle,
+    readTitleTextStyle: readTitleTextStyle ?? this.readTitleTextStyle,
+    smallTextStyle: smallTextStyle ?? this.smallTextStyle,
+    readSmallTextStyle: readSmallTextStyle ?? this.readSmallTextStyle,
+    badgeTextStyle: badgeTextStyle ?? this.badgeTextStyle,
+    readBadgeTextStyle: readBadgeTextStyle ?? this.readBadgeTextStyle,
+  );
+
+  @override
+  List<Object?> get props => [
+    titleTextStyle,
+    readTitleTextStyle,
+    smallTextStyle,
+    readSmallTextStyle,
+    badgeTextStyle,
+    readBadgeTextStyle,
+  ];
+}
+
+@Riverpod(keepAlive: true, dependencies: [appTextStyles])
+class AppTextStylesFontSizeNotifier extends _$AppTextStylesFontSizeNotifier {
+  @override
+  CurrentTextStyles build() {
+    final textStyles = ref.watch(appTextStylesProvider);
+    final fontSize = ref.read(getFontSizeProvider).call(NoParams());
+    return CurrentTextStyles(
+      titleTextStyle: _changeFontSize(textStyles.titleTextStyle, fontSize),
+      readTitleTextStyle: _changeFontSize(textStyles.readTitleTextStyle, fontSize),
+      smallTextStyle: _changeFontSize(textStyles.smallTextStyle, fontSize),
+      readSmallTextStyle: _changeFontSize(textStyles.readSmallTextStyle, fontSize),
+      badgeTextStyle: _changeFontSize(textStyles.badgeTextStyle, fontSize),
+      readBadgeTextStyle: _changeFontSize(textStyles.readBadgeTextStyle, fontSize),
+    );
+  }
+
+  void increaseFontSize({double fontSize = 0.5}) {
+    state = state.copyWith(
+      titleTextStyle: _changeFontSize(state.titleTextStyle, fontSize),
+      readTitleTextStyle: _changeFontSize(state.readTitleTextStyle, fontSize),
+      smallTextStyle: _changeFontSize(state.smallTextStyle, fontSize),
+      readSmallTextStyle: _changeFontSize(state.readSmallTextStyle, fontSize),
+      badgeTextStyle: _changeFontSize(state.badgeTextStyle, fontSize),
+      readBadgeTextStyle: _changeFontSize(state.readBadgeTextStyle, fontSize),
+    );
+    ref.read(setFontSizeProvider)(fontSize);
+    debugPrint('[increaseFontSize] state=$state');
+  }
+
+  TextStyle _changeFontSize(TextStyle style, double fontSize) =>
+      style.copyWith(fontSize: style.fontSize! + fontSize);
+
+  void decreaseFontSize({double fontSize = -0.5}) {
+    state = state.copyWith(
+      titleTextStyle: _changeFontSize(state.titleTextStyle, fontSize),
+      readTitleTextStyle: _changeFontSize(state.readTitleTextStyle, fontSize),
+      smallTextStyle: _changeFontSize(state.smallTextStyle, fontSize),
+      readSmallTextStyle: _changeFontSize(state.readSmallTextStyle, fontSize),
+      badgeTextStyle: _changeFontSize(state.badgeTextStyle, fontSize),
+      readBadgeTextStyle: _changeFontSize(state.readBadgeTextStyle, fontSize),
+    );
+
+    ref.read(setFontSizeProvider)(fontSize);
+    debugPrint('[decreaseFontSize] state=$state');
+  }
+
+  void initFontSize() {
+    final textStyles = ref.read(appTextStylesProvider);
+    state = state.copyWith(
+      titleTextStyle: textStyles.titleTextStyle,
+      readTitleTextStyle: textStyles.readTitleTextStyle,
+      smallTextStyle: textStyles.smallTextStyle,
+      readSmallTextStyle: textStyles.readSmallTextStyle,
+      badgeTextStyle: textStyles.badgeTextStyle,
+      readBadgeTextStyle: textStyles.readBadgeTextStyle,
+    );
+
+    ref.read(initFontSizeProvider)(NoParams());
+    debugPrint('[decreaseFontSize] state=$state');
+  }
+}
