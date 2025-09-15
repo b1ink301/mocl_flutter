@@ -16,11 +16,11 @@ abstract class Details with _$Details {
     required String viewCount,
     required String likeCount,
     required String bodyHtml,
-    required String csrf,
     required String info,
     required UserInfo userInfo,
     required List<CommentItem> comments,
     @Default(null) Recents? recents,
+    @Default('') String csrf,
     dynamic extraData,
   }) = _Details;
 

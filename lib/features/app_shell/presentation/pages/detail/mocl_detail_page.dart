@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/core/util/utilities.dart';
 import 'package:mocl_flutter/di/app_provider.dart';
 import 'package:mocl_flutter/features/app_shell/presentation/pages/detail/detail_appbar.dart';
 import 'package:mocl_flutter/features/app_shell/presentation/pages/detail/mocl_detail_view.dart';
@@ -21,6 +23,7 @@ class DetailPage extends ConsumerWidget {
     double statusBarHeight,
   ) => ProviderScope(
     overrides: [
+      appTextStylesProvider.overrideWithValue(AppTextStyles.of(context)),
       listItemProvider.overrideWithValue(item),
       screenWidthProvider.overrideWithValue(MediaQuery.of(context).size.width),
       appbarTextStyleProvider.overrideWithValue(
@@ -63,8 +66,7 @@ class DetailPage extends ConsumerWidget {
           : null,
       body: RefreshIndicator.adaptive(
         color: Theme.of(context).focusColor,
-        onRefresh: () async =>
-            ref.read(detailsProvider.notifier).refresh(),
+        onRefresh: () async => ref.read(detailsProvider.notifier).refresh(),
         child: const CustomScrollView(
           physics: ClampingScrollPhysics(),
           cacheExtent: 1600,
@@ -77,7 +79,6 @@ class DetailPage extends ConsumerWidget {
         ? Listener(
             behavior: HitTestBehavior.opaque,
             onPointerDown: (event) {
-              debugPrint('onPointerDown=$event');
               if (event.kind == PointerDeviceKind.mouse &&
                   event.buttons == kSecondaryMouseButton) {
                 Navigator.of(context).pop();
@@ -104,17 +105,11 @@ class DetailPage extends ConsumerWidget {
           ),
           PopupMenuOption(
             label: '브라우저로 열기',
-            onTap: (_) {
-              final String url = ref.read(detailUrlProvider);
-              ref.read(openBrowserByUrlProvider(url));
-            },
+            onTap: (_) => ref.read(detailUrlProvider).openBrowser(),
           ),
           PopupMenuOption(
             label: '공유하기',
-            onTap: (_) {
-              final String url = ref.read(detailUrlProvider);
-              ref.read(shareUrlProvider(url));
-            },
+            onTap: (_) => ref.read(detailUrlProvider).shareUrl(),
           ),
         ],
       );

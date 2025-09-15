@@ -1,18 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/config/mocl_theme.dart';
 import 'package:mocl_flutter/di/app_provider.dart';
 import 'package:mocl_flutter/features/app_shell/presentation/common/mocl_custom_scroll_behavior.dart';
-import 'package:mocl_flutter/features/google_drive/presentation/providers/auto_sync_provider.dart';
-import 'package:mocl_flutter/features/google_drive/presentation/providers/google_drive_providers.dart';
 import 'package:mocl_flutter/src/generated/i18n/app_localizations.dart';
 
 class AppWidget extends ConsumerWidget {
   const AppWidget({super.key});
 
-  void _showRestoreDialog(BuildContext context, WidgetRef ref) =>
+  /*void _showRestoreDialog(BuildContext context, WidgetRef ref) =>
       showPlatformDialog(
         context: context,
         builder: (_) => PlatformAlertDialog(
@@ -36,7 +33,7 @@ class AppWidget extends ConsumerWidget {
             ),
           ],
         ),
-      );
+      );*/
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

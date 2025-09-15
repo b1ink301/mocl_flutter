@@ -6,7 +6,10 @@ import 'package:mocl_flutter/core/domain/usecases/get_search_list.dart';
 import 'package:mocl_flutter/core/domain/usecases/set_main_list.dart';
 import 'package:mocl_flutter/core/domain/usecases/set_read_flag.dart';
 import 'package:mocl_flutter/di/repository_provider.dart';
+import 'package:mocl_flutter/features/settings/domain/usecases/get_font_size.dart';
 import 'package:mocl_flutter/features/settings/domain/usecases/get_site_type.dart';
+import 'package:mocl_flutter/features/settings/domain/usecases/init_font_size.dart';
+import 'package:mocl_flutter/features/settings/domain/usecases/set_font_size.dart';
 import 'package:mocl_flutter/features/settings/domain/usecases/set_site_type.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -47,3 +50,15 @@ GetDetail getDetail(Ref ref) =>
 @riverpod
 SetReadFlag setRead(Ref ref) =>
     SetReadFlag(listRepository: ref.watch(listRepositoryProvider));
+
+@riverpod
+SetFontSize setFontSize(Ref ref) =>
+    SetFontSize(settingsRepository: ref.watch(settingsRepositoryProvider));
+
+@riverpod
+GetFontSize getFontSize(Ref ref) =>
+    GetFontSize(settingsRepository: ref.watch(settingsRepositoryProvider));
+
+@riverpod
+InitFontSize initFontSize(Ref ref) =>
+    InitFontSize(settingsRepository: ref.watch(settingsRepositoryProvider));

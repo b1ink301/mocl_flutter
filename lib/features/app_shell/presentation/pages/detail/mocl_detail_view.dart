@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
@@ -48,8 +47,11 @@ class _DetailView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final String hexColor = Theme.of(context).focusColor.stringHexColor;
-    final TextStyle bodySmall = AppTextStyles.of(context).smallTextStyle;
-    final TextStyle bodyMedium = AppTextStyles.of(context).titleTextStyle;
+    final (bodySmall, bodyMedium) = ref.watch(
+      appTextStylesFontSizeProvider.select(
+        (style) => (style.smallTextStyle, style.titleTextStyle),
+      ),
+    );
 
     final comments = detail.comments.isNotEmpty
         ? [
@@ -78,7 +80,11 @@ class _DetailView extends ConsumerWidget {
           children: [
             SliverPersistentHeader(
               pinned: false,
-              delegate: _HeaderSectionDelegate(detail: detail),
+              delegate: _HeaderSectionDelegate(
+                detail: detail,
+                bodySmall: bodySmall,
+                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              ),
             ),
             const _SpaceWidget(),
             _Body(
@@ -120,8 +126,14 @@ class _DividerWidget extends StatelessWidget {
 
 class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
   final Details detail;
+  final TextStyle? bodySmall;
+  final Color backgroundColor;
 
-  const _HeaderSectionDelegate({required this.detail});
+  const _HeaderSectionDelegate({
+    required this.detail,
+    required this.bodySmall,
+    required this.backgroundColor,
+  });
 
   List<Widget>? _buildLikeView(BuildContext context, TextStyle bodySmall) =>
       detail.likeCount.isNotEmpty && detail.likeCount != '0'
@@ -140,10 +152,7 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    final theme = Theme.of(context);
-    final bodySmall = theme.textTheme.bodySmall!.copyWith(fontSize: 15.4);
-    final backgroundColor = theme.scaffoldBackgroundColor;
-    final likeView = _buildLikeView(context, bodySmall);
+    final likeView = _buildLikeView(context, bodySmall!);
     final nickImage = detail.userInfo.nickImage;
 
     return Column(
@@ -177,7 +186,7 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(covariant _HeaderSectionDelegate oldDelegate) =>
-      oldDelegate.detail != detail;
+      oldDelegate.detail != detail || oldDelegate.bodySmall != bodySmall;
 
   @override
   double get maxExtent => 47;
@@ -225,7 +234,7 @@ class _CommentHeader extends StatelessWidget {
           '댓글 ($commentCount)',
           style: bodyMedium?.copyWith(
             color: Theme.of(context).focusColor,
-            fontSize: 15.4,
+            // fontSize: 15.4,
           ),
         ),
       ),
@@ -347,8 +356,6 @@ class _CommentItem extends StatelessWidget {
             .toList(),
       );
     }
-
-    // Column을 사용하여 현재 댓글과 대댓글들을 수직으로 배열
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: commentWidgets,

@@ -10,18 +10,18 @@ class MainItemMapper {
     siteType: siteType,
     board: model.board,
     type: model.type,
-    text: model.text,
+    text: model.title,
     url: model.url,
-    orderBy: model.orderBy,
+    orderBy: model.no,
   );
 
   static MainItemModel toModel(MainItemData data) => MainItemModel(
     siteType: data.siteType,
     board: data.board,
     type: data.type,
-    text: data.text,
+    title: data.text,
     url: data.url,
-    orderBy: data.orderBy,
+    no: data.orderBy,
   );
 
   static MainItem fromDbToEntity(MainItemData data) =>
@@ -31,17 +31,17 @@ class MainItemMapper {
     siteType: model.siteType ?? SiteType.damoang,
     board: model.board,
     type: model.type,
-    text: model.text,
+    text: model.title,
     url: model.url,
-    orderBy: model.orderBy,
+    orderBy: model.no,
   );
 
   static MainItemModel fromEntityToModel(MainItem entity) => MainItemModel(
     siteType: entity.siteType,
     board: entity.board,
     type: entity.type,
-    text: entity.text,
+    title: entity.text,
     url: entity.url,
-    orderBy: entity.orderBy,
+    no: entity.orderBy,
   );
 }
