@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/di/app_provider.dart';
 import 'package:mocl_flutter/features/app_shell/presentation/pages/list/mocl_list_view.dart';
@@ -26,6 +27,7 @@ class MoclListPage extends ConsumerWidget {
         screenWidthProvider.overrideWithValue(
           MediaQuery.of(context).size.width,
         ),
+        appTextStylesProvider.overrideWithValue(AppTextStyles.of(context)),
         appbarTextStyleProvider.overrideWithValue(
           Platform.isIOS
               ? CupertinoTheme.of(

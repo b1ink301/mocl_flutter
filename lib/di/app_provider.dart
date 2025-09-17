@@ -216,14 +216,24 @@ class AppTextStylesFontSizeNotifier extends _$AppTextStylesFontSizeNotifier {
   @override
   CurrentTextStyles build() {
     final textStyles = ref.watch(appTextStylesProvider);
-    final fontSize = ref.read(getFontSizeProvider).call(NoParams());
+    final fontSize = ref.read(getFontSizeProvider)(NoParams());
+
     return CurrentTextStyles(
       titleTextStyle: _changeFontSize(textStyles.titleTextStyle, fontSize),
-      readTitleTextStyle: _changeFontSize(textStyles.readTitleTextStyle, fontSize),
+      readTitleTextStyle: _changeFontSize(
+        textStyles.readTitleTextStyle,
+        fontSize,
+      ),
       smallTextStyle: _changeFontSize(textStyles.smallTextStyle, fontSize),
-      readSmallTextStyle: _changeFontSize(textStyles.readSmallTextStyle, fontSize),
+      readSmallTextStyle: _changeFontSize(
+        textStyles.readSmallTextStyle,
+        fontSize,
+      ),
       badgeTextStyle: _changeFontSize(textStyles.badgeTextStyle, fontSize),
-      readBadgeTextStyle: _changeFontSize(textStyles.readBadgeTextStyle, fontSize),
+      readBadgeTextStyle: _changeFontSize(
+        textStyles.readBadgeTextStyle,
+        fontSize,
+      ),
     );
   }
 
@@ -269,6 +279,14 @@ class AppTextStylesFontSizeNotifier extends _$AppTextStylesFontSizeNotifier {
     );
 
     ref.read(initFontSizeProvider)(NoParams());
-    debugPrint('[decreaseFontSize] state=$state');
   }
+
+  TextStyle badge(bool isRead) =>
+      isRead ? state.readBadgeTextStyle : state.badgeTextStyle;
+
+  TextStyle title(bool isRead) =>
+      isRead ? state.readTitleTextStyle : state.titleTextStyle;
+
+  TextStyle smallTitle(bool isRead) =>
+      isRead ? state.readSmallTextStyle : state.smallTextStyle;
 }

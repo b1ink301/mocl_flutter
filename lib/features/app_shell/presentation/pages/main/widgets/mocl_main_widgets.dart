@@ -42,7 +42,9 @@ class _BodyList extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final textStyle = AppTextStyles.of(context).titleTextStyle;
+    final textStyle = ref.watch(
+      appTextStylesFontSizeProvider.select((style) => style.titleTextStyle),
+    );
     return items.isEmpty
         ? _buildEmptyView(textStyle)
         : SliverList.separated(

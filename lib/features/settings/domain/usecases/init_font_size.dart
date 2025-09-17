@@ -7,5 +7,5 @@ class InitFontSize implements UseCase<void, void> {
   const InitFontSize({required this.settingsRepository});
 
   @override
-  void call(void params) => settingsRepository.initFontSize();
+  void call(void params) => settingsRepository.setFontSize(0);
 }

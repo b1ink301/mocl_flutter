@@ -16,6 +16,8 @@ import 'package:mocl_flutter/di/app_provider.dart';
 import 'package:mocl_flutter/features/app_shell/presentation/pages/detail/providers/detail_providers.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 
+const _kHeaderHeight = 46.0;
+
 class DetailView extends ConsumerWidget {
   const DetailView({super.key});
 
@@ -158,7 +160,7 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
     return Column(
       children: [
         Container(
-          height: 46,
+          height: _kHeaderHeight,
           alignment: AlignmentGeometry.centerLeft,
           color: backgroundColor,
           child: Row(
@@ -189,10 +191,10 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
       oldDelegate.detail != detail || oldDelegate.bodySmall != bodySmall;
 
   @override
-  double get maxExtent => 47;
+  double get maxExtent => _kHeaderHeight + 1;
 
   @override
-  double get minExtent => 47;
+  double get minExtent => _kHeaderHeight + 1;
 }
 
 class _Body extends StatelessWidget {
@@ -210,11 +212,12 @@ class _Body extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => _HtmlWidget(
+    key: ValueKey('body-${detail.time}'),
     html: detail.bodyHtml,
     textStyle: bodyMedium,
     hexColor: hexColor,
     openUrl: onTapUrl,
-    renderMode: RenderMode.sliverList,
+    // renderMode: RenderMode.sliverList,
   );
 }
 
@@ -226,16 +229,13 @@ class _CommentHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SliverFixedExtentList(
-    itemExtent: 46,
+    itemExtent: _kHeaderHeight,
     delegate: SliverChildListDelegate([
       Align(
         alignment: Alignment.centerLeft,
         child: PlatformText(
           '댓글 ($commentCount)',
-          style: bodyMedium?.copyWith(
-            color: Theme.of(context).focusColor,
-            // fontSize: 15.4,
-          ),
+          style: bodyMedium?.copyWith(color: Theme.of(context).focusColor),
         ),
       ),
     ]),
@@ -307,11 +307,15 @@ class _CommentItem extends StatelessWidget {
           ]
         : null;
 
+    final isEmptyBody = comment.bodyHtml.isEmpty;
+
     final List<Widget> commentWidgets = [
       PlatformListTile(
-        key: ValueKey(comment.id.toString()),
+        key: ValueKey('comment-${comment.id}'),
         material: (_, _) => MaterialListTileData(
-          contentPadding: EdgeInsets.only(left: left, top: 2, bottom: 2),
+          contentPadding: isEmptyBody
+              ? EdgeInsets.only(left: left, top: 0, bottom: 0)
+              : EdgeInsets.only(left: left, top: 2, bottom: 2),
         ),
         cupertino: (_, _) => CupertinoListTileData(
           padding: EdgeInsets.only(left: left, top: 8, bottom: 8),
@@ -321,25 +325,26 @@ class _CommentItem extends StatelessWidget {
           children: [
             if (userInfo.nickImage.isNotEmpty)
               NickImageWidget(url: userInfo.nickImage),
-            PlatformText(comment.info, style: bodySmall),
+            if (comment.info.isNotEmpty)
+              PlatformText(comment.info, style: bodySmall),
             ...?likeView,
           ],
         ),
-        subtitle: comment.bodyHtml.isNotEmpty
-            ? Padding(
+        subtitle: isEmptyBody
+            ? null
+            : Padding(
                 padding: const EdgeInsets.only(top: 8.0),
                 child: _HtmlWidget(
+                  key: ValueKey('comment-body-${comment.id}'),
                   html: comment.bodyHtml,
                   textStyle: bodyMedium,
                   hexColor: hexColor,
                   openUrl: openUrl,
                 ),
-              )
-            : null,
+              ),
       ),
     ];
 
-    // 대댓글이 있다면, 각 대댓글에 대해 _CommentItem을 재귀적으로 추가
     if (comment.replies.isNotEmpty) {
       commentWidgets.addAll(
         comment.replies
@@ -357,6 +362,7 @@ class _CommentItem extends StatelessWidget {
       );
     }
     return Column(
+      mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: commentWidgets,
     );
@@ -408,29 +414,32 @@ class _HtmlWidget extends StatelessWidget {
     required this.hexColor,
     required this.openUrl,
     this.renderMode = RenderMode.column,
+    super.key,
   });
 
   @override
-  Widget build(BuildContext context) => HtmlWidget(
-    html,
-    onLoadingBuilder: (context, element, progress) {
-      final src = element.attributes['src'] ?? '';
-      return _HtmlLoadingWidget(
-        key: ValueKey(src),
-        src: src,
-        textStyle: textStyle?.copyWith(fontSize: 12),
-        progress: progress,
-      );
-    },
-    textStyle: textStyle,
-    customStylesBuilder: (element) {
-      if (element.localName == 'a') {
-        return {'color': hexColor, 'text-decoration': 'underline'};
-      }
-      return null;
-    },
-    renderMode: renderMode,
-    onTapImage: (data) => openUrl(data.sources.first.url),
+  Widget build(BuildContext context) => SelectionArea(
+    child: HtmlWidget(
+      html,
+      onLoadingBuilder: (context, element, progress) {
+        final src = element.attributes['src'] ?? '';
+        return _HtmlLoadingWidget(
+          key: ValueKey(src),
+          src: src,
+          textStyle: textStyle?.copyWith(fontSize: 12),
+          progress: progress,
+        );
+      },
+      textStyle: textStyle,
+      customStylesBuilder: (element) {
+        if (element.localName == 'a') {
+          return {'color': hexColor, 'text-decoration': 'underline'};
+        }
+        return null;
+      },
+      renderMode: renderMode,
+      onTapImage: (data) => openUrl(data.sources.first.url),
+    ),
   );
 }
 

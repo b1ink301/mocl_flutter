@@ -314,7 +314,7 @@ class ClienParser implements BaseParser {
                       .trim() ??
                   '';
               final bodyElements = element.querySelectorAll(
-                "div.comment_content, div.comment-img, div.comment-video",
+                "div.comment_content > div.comment_view, div.comment-img, div.comment-video",
               );
               for (final tmp in bodyElements) {
                 tmp
@@ -322,7 +322,7 @@ class ClienParser implements BaseParser {
                     .forEach((element) => element.remove());
               }
 
-              final body = bodyElements.map((item) => item.innerHtml).join();
+              final body = bodyElements.map((item) => item.innerHtml.trim()).join();
               var parsedTime = '';
               try {
                 var dateTime = parseDateTime(time);

@@ -454,7 +454,7 @@ final class AppTextStylesFontSizeNotifierProvider
 }
 
 String _$appTextStylesFontSizeNotifierHash() =>
-    r'493e95ef209dea93230a9a1a99d33b9c16512e5e';
+    r'a8324073acf8a0fd1ae1d898c44fa760942d5f10';
 
 abstract class _$AppTextStylesFontSizeNotifier
     extends $Notifier<CurrentTextStyles> {

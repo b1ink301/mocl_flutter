@@ -9,5 +9,4 @@ abstract class SettingsRepository {
 
   double getFontSize();
   void setFontSize(double fontSize);
-  void initFontSize();
 }
