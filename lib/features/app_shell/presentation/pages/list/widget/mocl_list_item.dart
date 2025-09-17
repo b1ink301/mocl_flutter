@@ -70,11 +70,17 @@ class _TitleView extends ConsumerWidget {
       ),
     );
 
+    final textStyle = ref.watch(
+      appTextStylesFontSizeProvider.select(
+        (style) => (isRead ? style.readTitleTextStyle : style.titleTextStyle),
+      ),
+    );
+
     return PlatformText(
       title,
       maxLines: 3,
       overflow: TextOverflow.ellipsis,
-      style: AppTextStyles.of(context).title(isRead),
+      style: textStyle,
     );
   }
 }
@@ -153,6 +159,12 @@ class _InfoText extends ConsumerWidget {
       ),
     );
 
+    final textStyle = ref.watch(
+      appTextStylesFontSizeProvider.select(
+        (style) => (isRead ? style.readSmallTextStyle : style.smallTextStyle),
+      ),
+    );
+
     if (info.isEmpty) {
       return SizedBox.shrink();
     }
@@ -160,7 +172,7 @@ class _InfoText extends ConsumerWidget {
       info,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
-      style: AppTextStyles.of(context).smallTitle(isRead),
+      style: textStyle,
     );
   }
 }

@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/di/app_provider.dart';
 import 'package:mocl_flutter/features/app_shell/presentation/pages/main/mocl_drawer_widget.dart';
@@ -22,7 +23,10 @@ class MainPage extends ConsumerWidget {
     double width,
     double statusBarHeight,
   ) => ProviderScope(
-    overrides: [screenWidthProvider.overrideWithValue(width)],
+    overrides: [
+      screenWidthProvider.overrideWithValue(width),
+      appTextStylesProvider.overrideWithValue(AppTextStyles.of(context)),
+    ],
     child: AnnotatedRegion<SystemUiOverlayStyle>(
       value: Theme.of(context).appBarTheme.systemOverlayStyle!,
       child: Stack(
@@ -91,9 +95,8 @@ class _MainCupertinoView extends ConsumerWidget {
     final isSidebarExpanded = ref.watch(mainSidebarProvider);
     final sidebarClose = ref.read(mainSidebarProvider.notifier).close;
 
-    changeSiteType(siteType) => ref
-        .read(currentSiteTypeProvider.notifier)
-        .changeSiteType(siteType);
+    changeSiteType(siteType) =>
+        ref.read(currentSiteTypeProvider.notifier).changeSiteType(siteType);
 
     if (Platform.isIOS) {
       return Stack(
