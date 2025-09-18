@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:go_router/go_router.dart';
+import 'package:mocl_flutter/features/app_shell/presentation/routes/mocl_app_pages.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -61,4 +63,14 @@ extension StringExtension on String {
     textColor: Colors.white,
     fontSize: 16.0,
   );
+
+  Future<bool> openUrl(BuildContext context) async {
+    final Uri uri = Uri.parse(this);
+    final String? last = uri.pathSegments.lastOrNull;
+    if (last != null && last.isImageUrl()) {
+      context.push(Routes.viewPhotoDlgFull, extra: this);
+      return true;
+    }
+    return openBrowser();
+  }
 }

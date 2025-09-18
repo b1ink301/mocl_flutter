@@ -68,8 +68,7 @@ class _DetailView extends ConsumerWidget {
               bodySmall: bodySmall,
               bodyMedium: bodyMedium,
               hexColor: hexColor,
-              openUrl: (String url) =>
-                  ref.read(openUrlProvider(context, url).future),
+              openUrl: (String url) => url.openUrl(context),
             ),
           ]
         : null;
@@ -93,7 +92,7 @@ class _DetailView extends ConsumerWidget {
               detail: detail,
               hexColor: hexColor,
               bodyMedium: bodyMedium,
-              onTapUrl: (url) => ref.read(openUrlProvider(context, url).future),
+              onTapUrl: (url) => url.openUrl(context),
             ),
             const _SpaceWidget(),
             ...?comments,

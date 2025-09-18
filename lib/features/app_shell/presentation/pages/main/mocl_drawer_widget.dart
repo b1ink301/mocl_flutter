@@ -5,7 +5,7 @@ import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/di/app_provider.dart';
 import 'package:mocl_flutter/features/app_shell/presentation/pages/main/providers/main_providers.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/routes/mocl_routes.dart';
+import 'package:mocl_flutter/features/app_shell/presentation/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/core/presentation/widgets/app_version_widget.dart';
 
 class DrawerWidget extends ConsumerWidget {

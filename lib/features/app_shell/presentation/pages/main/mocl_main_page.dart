@@ -12,7 +12,7 @@ import 'package:mocl_flutter/di/app_provider.dart';
 import 'package:mocl_flutter/features/app_shell/presentation/pages/main/mocl_drawer_widget.dart';
 import 'package:mocl_flutter/features/app_shell/presentation/pages/main/mocl_main_view.dart';
 import 'package:mocl_flutter/features/app_shell/presentation/pages/main/providers/main_providers.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/routes/mocl_routes.dart';
+import 'package:mocl_flutter/features/app_shell/presentation/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/src/generated/i18n/app_localizations.dart';
 
 class MainPage extends ConsumerWidget {

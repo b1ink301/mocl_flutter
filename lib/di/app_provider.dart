@@ -1,29 +1,15 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
-import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/core/presentation/widgets/dialog_page.dart';
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/core/usecases/usecase.dart';
-import 'package:mocl_flutter/core/util/utilities.dart';
 import 'package:mocl_flutter/di/use_case_provider.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/pages/detail/mocl_detail_page.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/pages/detail/photo_view_dialog.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/pages/list/mocl_list_page.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/pages/login/login_page.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/pages/main/add_dialog/add_list_dialog.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/pages/main/mocl_main_page.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/routes/mocl_routes.dart';
 import 'package:mocl_flutter/features/settings/domain/usecases/get_site_type.dart';
 import 'package:mocl_flutter/features/settings/domain/usecases/set_site_type.dart';
-import 'package:mocl_flutter/features/settings/presentation/pages/settings/settings_page.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 part 'app_provider.g.dart';
 
@@ -72,88 +58,6 @@ Future<void> clearData(Ref ref) async {
 
   // CookieManager.instance().deleteAllCookies();
   await Future.delayed(Duration(milliseconds: 300));
-}
-
-@Riverpod(keepAlive: true)
-GoRouter appRouter(Ref ref) => GoRouter(
-  initialLocation: Routes.main,
-  routes: <RouteBase>[
-    GoRoute(
-      path: Routes.main,
-      pageBuilder: (BuildContext context, GoRouterState state) => SwipeablePage(
-        builder: (BuildContext context) {
-          final width = MediaQuery.of(context).size.width;
-          final double statusBarHeight = MediaQuery.of(context).padding.top;
-          return MainPage.init(context, width, statusBarHeight);
-        },
-      ),
-      routes: [
-        GoRoute(
-          path: Routes.setMainDlg,
-          pageBuilder: (BuildContext context, GoRouterState state) =>
-              CupertinoModalPopupPage(
-                builder: (BuildContext context) => AddListDialog.init(context),
-              ),
-        ),
-      ],
-    ),
-    GoRoute(
-      path: Routes.list,
-      pageBuilder: (BuildContext context, GoRouterState state) => SwipeablePage(
-        builder: (BuildContext context) {
-          final MainItem item = GoRouterState.of(context).extra as MainItem;
-          final double statusBarHeight = MediaQuery.of(context).padding.top;
-          return MoclListPage.init(context, item, statusBarHeight);
-        },
-      ),
-    ),
-    GoRoute(
-      path: Routes.detail,
-      pageBuilder: (BuildContext context, GoRouterState state) => SwipeablePage(
-        builder: (BuildContext context) {
-          final ListItem item = GoRouterState.of(context).extra as ListItem;
-          final double statusBarHeight = MediaQuery.of(context).padding.top;
-          return DetailPage.init(context, item, statusBarHeight);
-        },
-      ),
-      routes: [
-        GoRoute(
-          path: Routes.viewPhotoDlg,
-          pageBuilder: (BuildContext context, GoRouterState state) =>
-              CupertinoModalPopupPage(
-                builder: (BuildContext context) {
-                  final url = GoRouterState.of(context).extra as String;
-                  return PhotoViewDialog(
-                    imageProvider: NetworkImage(url),
-                    filterQuality: FilterQuality.high,
-                  );
-                },
-              ),
-        ),
-      ],
-    ),
-    GoRoute(
-      path: Routes.settings,
-      pageBuilder: (BuildContext context, GoRouterState state) => SwipeablePage(
-        builder: (BuildContext context) => SettingsPage.init(context),
-      ),
-    ),
-    GoRoute(
-      path: Routes.login,
-      builder: (BuildContext context, GoRouterState state) => const LoginPage(),
-    ),
-  ],
-);
-
-@riverpod
-Future<bool> openUrl(Ref ref, BuildContext context, String url) async {
-  final Uri uri = Uri.parse(url);
-  final String? last = uri.pathSegments.lastOrNull;
-  if (last != null && last.isImageUrl()) {
-    context.push(Routes.viewPhotoDlgFull, extra: url);
-    return true;
-  }
-  return url.openBrowser();
 }
 
 @riverpod
