@@ -7,7 +7,7 @@ import 'package:mocl_flutter/di/app_provider.dart';
 import 'package:mocl_flutter/features/app_shell/presentation/pages/list/providers/list_providers.dart';
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/round_text_widget.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/routes/mocl_routes.dart';
+import 'package:mocl_flutter/features/app_shell/presentation/routes/mocl_app_pages.dart';
 
 class MoclListItem extends ConsumerWidget {
   static const _iosPadding = EdgeInsets.only(
