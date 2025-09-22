@@ -93,7 +93,7 @@ final class MainTitleProvider
   }
 }
 
-String _$mainTitleHash() => r'0d94a3111178e112437c9f0f4bee8f7cbbbf87fc';
+String _$mainTitleHash() => r'e0b3513472862bfa8b45f23a70918377478b7c24';
 
 @ProviderFor(showAddButton)
 const showAddButtonProvider = ShowAddButtonProvider._();
@@ -133,7 +133,7 @@ final class ShowAddButtonProvider extends $FunctionalProvider<bool, bool, bool>
   }
 }
 
-String _$showAddButtonHash() => r'fb7aefd0fc2c2f0c812e4bcea9b88ac8d26b4935';
+String _$showAddButtonHash() => r'221c94ee967358b0e8764a291e4404bd31388892';
 
 @ProviderFor(isCurrentSiteType)
 const isCurrentSiteTypeProvider = IsCurrentSiteTypeFamily._();
@@ -192,7 +192,7 @@ final class IsCurrentSiteTypeProvider
   }
 }
 
-String _$isCurrentSiteTypeHash() => r'35356447502396e793f81f7b4e7891058882dfd4';
+String _$isCurrentSiteTypeHash() => r'83cebea6efe00c23a93e714427deb038c92e3766';
 
 final class IsCurrentSiteTypeFamily extends $Family
     with $FunctionalFamilyOverride<bool, SiteType> {
@@ -269,7 +269,7 @@ final class SetMainItemsProvider
   }
 }
 
-String _$setMainItemsHash() => r'd84ee9b7a6a84a0156487e053f06e97a595abd0f';
+String _$setMainItemsHash() => r'6b11aa00a40a64b1b0e0ac0e078410f046591b51';
 
 final class SetMainItemsFamily extends $Family
     with

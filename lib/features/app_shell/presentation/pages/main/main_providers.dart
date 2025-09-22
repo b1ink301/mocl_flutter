@@ -25,30 +25,23 @@ class MainItemsNotifier extends _$MainItemsNotifier {
 }
 
 @riverpod
-String mainTitle(Ref ref) {
-  final String title = ref.watch(
-    currentSiteTypeProvider.select((siteType) => siteType.title),
-  );
-  return title;
-}
+String mainTitle(Ref ref) =>
+    ref.watch(currentSiteTypeProvider.select((state) => state.title));
 
 @riverpod
-bool showAddButton(Ref ref) {
-  final siteType = ref.watch(currentSiteTypeProvider);
-  return siteType != SiteType.naverCafe;
-}
+bool showAddButton(Ref ref) => ref.watch(
+  currentSiteTypeProvider.select((state) => state != SiteType.naverCafe),
+);
 
 @riverpod
-bool isCurrentSiteType(Ref ref, SiteType siteType) {
-  final SiteType currentSiteType = ref.watch(currentSiteTypeProvider);
-  return currentSiteType == siteType;
-}
+bool isCurrentSiteType(Ref ref, SiteType siteType) =>
+    ref.watch(currentSiteTypeProvider.select((state) => state == siteType));
 
 @riverpod
 Future<Either<Failure, List<int>>> setMainItems(Ref ref, List<MainItem> list) {
-  final siteType = ref.read(currentSiteTypeProvider);
+  final siteType = ref.watch(currentSiteTypeProvider);
   final params = SetMainParams(siteType: siteType, list: list);
-  final result = ref.read(setMainListProvider).call(params);
+  final result = ref.read(setMainListProvider)(params);
   return result;
 }
 

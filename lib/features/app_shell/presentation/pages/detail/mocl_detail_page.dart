@@ -6,15 +6,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mocl_flutter/config/mocl_text_styles.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/core/util/utilities.dart';
-import 'package:mocl_flutter/di/app_provider.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/pages/detail/detail_appbar.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/pages/detail/mocl_detail_view.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/pages/detail/providers/detail_providers.dart';
 
-class DetailPage extends ConsumerWidget {
+import 'detail_appbar.dart';
+import 'detail_event_mixin.dart';
+import 'detail_state_mixin.dart';
+import 'mocl_detail_view.dart';
+
+class DetailPage extends ConsumerWidget with DetailState, DetailEvent {
   const DetailPage({super.key});
 
   static Widget init(
@@ -22,16 +22,7 @@ class DetailPage extends ConsumerWidget {
     ListItem item,
     double statusBarHeight,
   ) => ProviderScope(
-    overrides: [
-      appTextStylesProvider.overrideWithValue(AppTextStyles.of(context)),
-      listItemProvider.overrideWithValue(item),
-      screenWidthProvider.overrideWithValue(MediaQuery.of(context).size.width),
-      appbarTextStyleProvider.overrideWithValue(
-        Platform.isIOS
-            ? CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle
-            : Theme.of(context).textTheme.labelMedium!,
-      ),
-    ],
+    overrides: DetailEvent.overridesProviderScope(context, item),
     child: AnnotatedRegion<SystemUiOverlayStyle>(
       value: Theme.of(context).appBarTheme.systemOverlayStyle!,
       child: Stack(
@@ -58,7 +49,7 @@ class DetailPage extends ConsumerWidget {
           ? PlatformAppBar(
               cupertino: (BuildContext context, PlatformTarget platform) =>
                   CupertinoNavigationBarData(
-                    previousPageTitle: ref.watch(detailSmallTitleProvider),
+                    previousPageTitle: smallTitleState(ref),
                     backgroundColor: Theme.of(context).scaffoldBackgroundColor,
                     trailing: _buildPopupMenuButton(context, ref),
                   ),
@@ -66,9 +57,8 @@ class DetailPage extends ConsumerWidget {
           : null,
       body: RefreshIndicator.adaptive(
         color: Theme.of(context).focusColor,
-        onRefresh: () async => ref.read(detailsProvider.notifier).refresh(),
+        onRefresh: () async => handleRefresh(ref),
         child: const CustomScrollView(
-          physics: ClampingScrollPhysics(),
           cacheExtent: 1600,
           slivers: [DetailAppBar(), DetailView()],
         ),
@@ -81,7 +71,7 @@ class DetailPage extends ConsumerWidget {
             onPointerDown: (event) {
               if (event.kind == PointerDeviceKind.mouse &&
                   event.buttons == kSecondaryMouseButton) {
-                Navigator.of(context).pop();
+                context.pop();
               }
             },
             child: child,
@@ -99,18 +89,12 @@ class DetailPage extends ConsumerWidget {
           ),
         ),
         options: [
-          PopupMenuOption(
-            label: '새로고침',
-            onTap: (_) => ref.read(detailsProvider.notifier).refresh(),
-          ),
+          PopupMenuOption(label: '새로고침', onTap: (_) => handleRefresh(ref)),
           PopupMenuOption(
             label: '브라우저로 열기',
-            onTap: (_) => ref.read(detailUrlProvider).openBrowser(),
+            onTap: (_) => handleOpenBrowser(ref),
           ),
-          PopupMenuOption(
-            label: '공유하기',
-            onTap: (_) => ref.read(detailUrlProvider).shareUrl(),
-          ),
+          PopupMenuOption(label: '공유하기', onTap: (_) => handleShareUrl(ref)),
         ],
       );
 }

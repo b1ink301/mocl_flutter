@@ -5,6 +5,7 @@ import 'package:cookie_jar/cookie_jar.dart' as cookiejar;
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart' as diocookie;
+import 'package:flutter/foundation.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart' as webview;
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/data/datasources/remote/base/base_action.dart';
@@ -30,8 +31,10 @@ abstract class BaseApi with BaseAction {
           HttpClient()..badCertificateCallback = (_, _, _) => true,
     );
 
-    _dio.interceptors.clear();
-    _dio.interceptors.add(diocookie.CookieManager(cookieJar));
+    if (!kIsWeb) {
+      _dio.interceptors.clear();
+      _dio.interceptors.add(diocookie.CookieManager(cookieJar));
+    }
   }
 
   Future<Response> getUri(Uri uri, {Map<String, String>? headers}) => _dio
@@ -100,6 +103,8 @@ abstract class BaseApi with BaseAction {
     String baseUrl,
     Future<Either<Failure, T>> Function() action,
   ) async {
+    if (kIsWeb) return await action();
+
     final InterceptorsWrapper interceptor = await _buildInterceptorCookie(
       baseUrl,
     );

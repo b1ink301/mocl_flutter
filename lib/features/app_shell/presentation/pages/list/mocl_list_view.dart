@@ -2,7 +2,7 @@ import 'package:easy_debounce/easy_throttle.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/pages/list/providers/list_providers.dart';
+import 'package:mocl_flutter/features/app_shell/presentation/pages/list/list_providers.dart';
 import 'package:mocl_flutter/features/app_shell/presentation/pages/list/widget/list_cupertino_app_bar.dart';
 import 'package:mocl_flutter/features/app_shell/presentation/pages/list/widget/list_material_app_bar.dart';
 import 'package:mocl_flutter/features/app_shell/presentation/pages/list/widget/mocl_list_item.dart';
@@ -17,7 +17,7 @@ class MoclListView extends ConsumerWidget {
       RefreshIndicator.adaptive(
         color: Theme.of(context).focusColor,
         onRefresh: () async =>
-            ref.read(listStateProvider.notifier).refresh(),
+            ref.read(pageStateProvider.notifier).refresh(),
         child: NotificationListener<ScrollNotification>(
           onNotification: (ScrollNotification notification) {
             if (notification is ScrollEndNotification &&
@@ -25,14 +25,13 @@ class MoclListView extends ConsumerWidget {
               EasyThrottle.throttle(
                 'list-fetch-throttle',
                 const Duration(milliseconds: 1500),
-                ref.read(listStateProvider.notifier).loadMore,
+                ref.read(pageStateProvider.notifier).loadMore,
               );
               return true;
             }
             return false;
           },
           child: const CustomScrollView(
-            physics: ClampingScrollPhysics(),
             cacheExtent: 1000,
             slivers: <Widget>[_ListAppBar(), _ListBody()],
           ),
@@ -56,7 +55,7 @@ class _ListBody extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final (count, hasReachedMax, error) = ref.watch(
-      listStateProvider.select(
+      pageStateProvider.select(
         (value) => value.when(
           data: (state) =>
               (state.items.length, state.hasReachedMax, state.error),
@@ -83,7 +82,7 @@ class _ListBody extends ConsumerWidget {
               context,
               error,
               hasReachedMax,
-              ref.read(listStateProvider.notifier).retry,
+              ref.read(pageStateProvider.notifier).retry,
             );
           } else {
             return ProviderScope(

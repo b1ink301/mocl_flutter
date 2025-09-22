@@ -1,50 +1,35 @@
 part of '../mocl_main_view.dart';
 
-class _MainBody extends ConsumerWidget {
+class _MainBody extends ConsumerWidget with MainState, MainEvent {
   const _MainBody();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen(mainItemsProvider, (previous, next) {
-      if (next case AsyncError error when error.error is NotLoginFailure) {
-        context.push<bool>(Routes.login).then((result) {
-          if (context.mounted && result == true) {
-            ref.read(mainItemsProvider.notifier).refresh();
-          }
-        });
-      }
-    });
-
-    return ref
-        .watch(mainItemsProvider)
-        .when(
-          data: (data) => SliverPadding(
-            padding: EdgeInsets.only(
-              bottom: MediaQuery.of(context).padding.bottom,
-            ),
-            sliver: _BodyList(key: ValueKey(data.hashCode), items: data),
-          ),
-          error: (error, _) => _ErrorWidget(
-            key: ValueKey(error.hashCode),
-            message: error is Failure ? error.message : error.toString(),
-          ),
-          loading: () => const SliverToBoxAdapter(
-            child: Column(children: [LoadingWidget(), DividerWidget()]),
-          ),
-        );
+    listenNotLoginFailure(ref, context);
+    return mainState(ref).when(
+      data: (data) => SliverPadding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+        sliver: _BodyList(key: ValueKey(data.hashCode), items: data),
+      ),
+      error: (error, _) => _ErrorWidget(
+        key: ValueKey(error.hashCode),
+        message: error is Failure ? error.message : error.toString(),
+      ),
+      loading: () => const SliverToBoxAdapter(
+        child: Column(children: [LoadingWidget(), DividerWidget()]),
+      ),
+    );
   }
 }
 
-class _BodyList extends ConsumerWidget {
+class _BodyList extends ConsumerWidget with AppFontState {
   final List<MainItem> items;
 
   const _BodyList({super.key, required this.items});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final textStyle = ref.watch(
-      appTextStylesFontSizeProvider.select((style) => style.titleTextStyle),
-    );
+    final textStyle = titleTextStyleSate(ref);
     return items.isEmpty
         ? _buildEmptyView(textStyle)
         : SliverList.separated(
@@ -103,28 +88,28 @@ class _ErrorWidget extends StatelessWidget {
   );
 }
 
-class _MainAppBar extends ConsumerWidget {
+class _MainAppBar extends ConsumerWidget with MainState, MainEvent {
   const _MainAppBar();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => SliverAppBar(
     scrolledUnderElevation: 0,
-    title: PlatformText(ref.watch(mainTitleProvider)),
+    title: PlatformText(titleState(ref)),
     titleTextStyle: Theme.of(context).textTheme.labelMedium,
     titleSpacing: 0,
     floating: true,
     toolbarHeight: 62,
-    actions: ref.watch(showAddButtonProvider)
+    actions: showAddButtonState(ref)
         ? [
             PlatformIconButton(
-              onPressed: () => _handleAddButton(context, ref),
+              onPressed: () => handleAddButton(ref, context),
               icon: const Icon(Icons.add),
             ),
             PlatformPopupMenu(
               options: [
                 PopupMenuOption(
                   label: '로그인',
-                  onTap: (_) => context.push(Routes.login),
+                  onTap: (_) => handleLogin(ref, context),
                 ),
               ],
               icon: Icon(
@@ -140,18 +125,18 @@ class _MainAppBar extends ConsumerWidget {
   );
 }
 
-class _MainNavigationBar extends ConsumerWidget {
+class _MainNavigationBar extends ConsumerWidget with MainState, MainEvent {
   const _MainNavigationBar();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) =>
       CupertinoSliverNavigationBar(
-        largeTitle: PlatformText(ref.watch(mainTitleProvider)),
+        largeTitle: PlatformText(titleState(ref)),
         padding: const EdgeInsetsDirectional.only(start: 5, end: 10),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         leading: PlatformIconButton(
           padding: const EdgeInsets.all(0),
-          onPressed: () => ref.read(mainSidebarProvider.notifier).toggle(),
+          onPressed: () => handleSideBarToggle(ref),
           icon: Icon(
             size: 24,
             color: Theme.of(context).focusColor,
@@ -161,7 +146,7 @@ class _MainNavigationBar extends ConsumerWidget {
             ),
           ),
         ),
-        trailing: ref.watch(showAddButtonProvider)
+        trailing: showAddButtonState(ref)
             ? PlatformPopupMenu(
                 icon: Icon(
                   color: Theme.of(context).focusColor,
@@ -174,39 +159,14 @@ class _MainNavigationBar extends ConsumerWidget {
                 options: [
                   PopupMenuOption(
                     label: '게시판 추가',
-                    onTap: (_) => _handleAddButton(context, ref),
+                    onTap: (_) => handleAddButton(ref, context),
                   ),
                   PopupMenuOption(
                     label: '로그인',
-                    onTap: (_) =>
-                        context.push<bool>(Routes.login).then((result) {
-                          if (context.mounted && result == true) {
-                            ref.read(mainItemsProvider.notifier).refresh();
-                          }
-                        }),
+                    onTap: (_) => handleLogin(ref, context),
                   ),
                 ],
               )
             : null,
       );
-}
-
-Future<void> _handleAddButton(BuildContext context, WidgetRef ref) async {
-  List<MainItem>? result = await WoltModalSheet.show(
-    context: context,
-    modalTypeBuilder: (context) => WoltModalType.bottomSheet(),
-    pageListBuilder: (bottomSheetContext) => [
-      AddListModalSheetPage(context: bottomSheetContext),
-    ],
-  );
-  if (result == null) {
-    return;
-  }
-  final state = await ref.read(setMainItemsProvider(result).future);
-  state.fold(
-    (failure) => failure.message.showToast(
-      backgroundColor: Theme.of(context).appBarTheme.backgroundColor!,
-    ),
-    (data) => ref.read(mainItemsProvider.notifier).refresh(),
-  );
 }

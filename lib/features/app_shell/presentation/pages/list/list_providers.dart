@@ -12,10 +12,14 @@ import 'package:mocl_flutter/core/domain/usecases/get_list.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/di/app_provider.dart';
 import 'package:mocl_flutter/di/use_case_provider.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/pages/list/providers/list_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import 'page_state.dart';
+
 part 'list_providers.g.dart';
+
+@riverpod
+MainItem mainItem(Ref ref) => throw UnimplementedError('mainItem');
 
 @riverpod
 String listSmallTitle(Ref ref) => ref.watch(
@@ -25,9 +29,6 @@ String listSmallTitle(Ref ref) => ref.watch(
 @Riverpod(dependencies: [mainItem])
 String listTitle(Ref ref) =>
     ref.watch(mainItemProvider.select((MainItem item) => item.text));
-
-@riverpod
-MainItem mainItem(Ref ref) => throw UnimplementedError('mainItem');
 
 @Riverpod(dependencies: [appbarTextStyle, screenWidth])
 double titleHeight(Ref ref, String text) {
@@ -63,16 +64,16 @@ Future<Either<Failure, List<ListItem>>> reqListData(
 }
 
 @Riverpod(dependencies: [mainItem, reqListData, SortTypeNotifier])
-class ListStateNotifier extends _$ListStateNotifier {
+class PageStateNotifier extends _$PageStateNotifier {
   @override
-  Future<ListState> build() async {
+  Future<PageState> build() async {
     final initialPage = _initialPage();
     final mainItem = ref.watch(mainItemProvider);
     final sortType = ref.watch(sortTypeProvider);
     return _fetchData(mainItem, sortType, initialPage, const LastId());
   }
 
-  Future<ListState> _fetchData(
+  Future<PageState> _fetchData(
     MainItem mainItem,
     SortType sortType,
     int page,
@@ -87,7 +88,7 @@ class ListStateNotifier extends _$ListStateNotifier {
       (Failure failure) {
         // 기존 아이템이 있다면 기존 상태를 유지하면서 에러만 추가
         if (existingItems.isNotEmpty) {
-          return ListState(
+          return PageState(
             items: existingItems,
             currentPage: page,
             // 실패했으므로 페이지는 이전 페이지 유지 또는 현재 요청 페이지
@@ -99,7 +100,7 @@ class ListStateNotifier extends _$ListStateNotifier {
           );
         }
         // 초기 로딩 실패 시
-        return ListState.initial(
+        return PageState.initial(
           page,
         ).copyWith(error: failure.message, isLoading: false);
       },
@@ -110,7 +111,7 @@ class ListStateNotifier extends _$ListStateNotifier {
         );
         final allItems = existingItems + newItems;
 
-        return ListState(
+        return PageState(
           items: allItems,
           currentPage: hasReachedMax ? page : page + 1,
           lastId: LastId(
@@ -130,7 +131,7 @@ class ListStateNotifier extends _$ListStateNotifier {
   }
 
   Future<void> loadMore() async {
-    final ListState? currentStateValue = state.value;
+    final PageState? currentStateValue = state.value;
     if (state.isLoading ||
         currentStateValue == null ||
         currentStateValue.hasReachedMax) {
@@ -144,7 +145,7 @@ class ListStateNotifier extends _$ListStateNotifier {
     final MainItem mainItem = ref.read(mainItemProvider);
     final SortType sortType = ref.read(sortTypeProvider);
 
-    final ListState newState = await _fetchData(
+    final PageState newState = await _fetchData(
       mainItem,
       sortType,
       currentStateValue.currentPage,
@@ -169,7 +170,7 @@ class ListStateNotifier extends _$ListStateNotifier {
   }
 
   void retry() {
-    final ListState? currentStateValue = state.value;
+    final PageState? currentStateValue = state.value;
     if (currentStateValue != null && !state.isLoading) {
       // loadMore 실패 후 재시도 시나리오
       if (currentStateValue.error != null) {
@@ -184,7 +185,7 @@ class ListStateNotifier extends _$ListStateNotifier {
   }
 
   void refresh() {
-    state = AsyncData(ListState.initial(_initialPage()));
+    state = AsyncData(PageState.initial(_initialPage()));
     ref.invalidateSelf();
   }
 
@@ -203,10 +204,10 @@ class ListStateNotifier extends _$ListStateNotifier {
   }
 }
 
-@Riverpod(dependencies: [ListStateNotifier])
+@Riverpod(dependencies: [PageStateNotifier])
 ListItem? getListItem(Ref ref, int index) {
   final item = ref.watch(
-    listStateProvider.select((state) {
+    pageStateProvider.select((state) {
       try {
         return state.value?.items[index];
       } catch (e) {

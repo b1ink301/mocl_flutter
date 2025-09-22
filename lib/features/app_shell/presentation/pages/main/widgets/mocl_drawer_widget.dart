@@ -3,12 +3,13 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/di/app_provider.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/pages/main/providers/main_providers.dart';
 import 'package:mocl_flutter/features/app_shell/presentation/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/core/presentation/widgets/app_version_widget.dart';
 
-class DrawerWidget extends ConsumerWidget {
+import '../main_event_mixin.dart';
+import '../main_state_mixin.dart';
+
+class DrawerWidget extends ConsumerWidget with MainEvent {
   const DrawerWidget({super.key});
 
   @override
@@ -37,9 +38,7 @@ class DrawerWidget extends ConsumerWidget {
                     onTap: () => _changeSiteType(
                       context,
                       siteType,
-                      () => ref
-                          .read(currentSiteTypeProvider.notifier)
-                          .changeSiteType(siteType),
+                      () => changeSiteType(ref, siteType),
                     ),
                   ),
                 )
@@ -67,7 +66,7 @@ class DrawerWidget extends ConsumerWidget {
   }
 }
 
-class _DrawerSiteItem extends ConsumerWidget {
+class _DrawerSiteItem extends ConsumerWidget with MainState {
   const _DrawerSiteItem({required this.siteType, required this.onTap});
 
   final SiteType siteType;
@@ -80,7 +79,7 @@ class _DrawerSiteItem extends ConsumerWidget {
         title: Text(siteType.title),
         titleTextStyle: AppTextStyles.of(context).titleTextStyle,
         onTap: onTap,
-        trailing: ref.watch(isCurrentSiteTypeProvider(siteType))
+        trailing: isSiteType(ref, siteType)
             ? Icon(Icons.check_outlined, color: Theme.of(context).focusColor)
             : null,
       ),

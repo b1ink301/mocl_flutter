@@ -2,20 +2,20 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:mocl_flutter/core/domain/entities/last_id.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
 
-part 'list_state.freezed.dart';
+part 'page_state.freezed.dart';
 
 @freezed
-abstract class ListState with _$ListState {
-  const factory ListState({
+abstract class PageState with _$PageState {
+  const factory PageState({
     required List<ListItem> items,
     required bool isLoading,
     required int currentPage,
     required LastId lastId,
     @Default(false) bool hasReachedMax,
     String? error,
-  }) = _ListState;
+  }) = _PageState;
 
-  factory ListState.initial(int page) => ListState(
+  factory PageState.initial(int page) => PageState(
     items: const [],
     isLoading: false,
     currentPage: page,
@@ -23,7 +23,7 @@ abstract class ListState with _$ListState {
     lastId: LastId.empty(),
   );
 
-  factory ListState.empty() => ListState(
+  factory PageState.empty() => PageState(
     items: const [],
     isLoading: false,
     currentPage: 0,

@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:io';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -13,18 +15,19 @@ import 'package:mocl_flutter/core/presentation/widgets/message_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/core/util/utilities.dart';
 import 'package:mocl_flutter/di/app_provider.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/pages/detail/providers/detail_providers.dart';
 import 'package:sliver_tools/sliver_tools.dart';
+
+import 'detail_event_mixin.dart';
+import 'detail_state_mixin.dart';
 
 const _kHeaderHeight = 46.0;
 
-class DetailView extends ConsumerWidget {
+class DetailView extends ConsumerWidget with DetailState {
   const DetailView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => ref
-      .watch(detailsProvider)
-      .maybeMap(
+  Widget build(BuildContext context, WidgetRef ref) =>
+      detailState(ref).maybeMap(
         data: (state) => _DetailView(detail: state.value),
         error: (state) => SliverFillRemaining(
           hasScrollBody: false,
@@ -41,7 +44,7 @@ class DetailView extends ConsumerWidget {
       );
 }
 
-class _DetailView extends ConsumerWidget {
+class _DetailView extends ConsumerWidget with DetailEvent, AppFontState {
   final Details detail;
 
   const _DetailView({required this.detail});
@@ -49,12 +52,7 @@ class _DetailView extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final String hexColor = Theme.of(context).focusColor.stringHexColor;
-    final (bodySmall, bodyMedium) = ref.watch(
-      appTextStylesFontSizeProvider.select(
-        (style) => (style.smallTextStyle, style.titleTextStyle),
-      ),
-    );
-
+    final (bodySmall, bodyMedium) = smallTitleAndTitleTextStyleSate(ref);
     final comments = detail.comments.isNotEmpty
         ? [
             const _DividerWidget(),
@@ -98,7 +96,7 @@ class _DetailView extends ConsumerWidget {
             ...?comments,
             const _DividerWidget(),
             _RefreshButton(
-              onRefresh: ref.read(detailsProvider.notifier).refresh,
+              onRefresh: () => handleRefresh(ref),
               bodyMedium: bodyMedium,
             ),
             const _DividerWidget(),
@@ -417,8 +415,8 @@ class _HtmlWidget extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => SelectionArea(
-    child: HtmlWidget(
+  Widget build(BuildContext context) {
+    final htmlWidget = HtmlWidget(
       html,
       onLoadingBuilder: (context, element, progress) {
         final src = element.attributes['src'] ?? '';
@@ -438,8 +436,14 @@ class _HtmlWidget extends StatelessWidget {
       },
       renderMode: renderMode,
       onTapImage: (data) => openUrl(data.sources.first.url),
-    ),
-  );
+    );
+
+    if (kIsWeb || Platform.isMacOS) {
+      return htmlWidget;
+    } else {
+      return SelectionArea(child: htmlWidget);
+    }
+  }
 }
 
 class _RefreshButton extends StatelessWidget {

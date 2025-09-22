@@ -2,9 +2,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/pages/list/providers/list_providers.dart';
 
-class ListCupertinoAppBar extends ConsumerWidget {
+import '../list_event_mixin.dart';
+import '../list_state_mixin.dart';
+
+class ListCupertinoAppBar extends ConsumerWidget with ListState, ListEvent {
   const ListCupertinoAppBar({super.key});
 
   @override
@@ -13,8 +15,8 @@ class ListCupertinoAppBar extends ConsumerWidget {
         heroTag: 'list-appbar',
         transitionBetweenRoutes: false,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        previousPageTitle: ref.watch(listSmallTitleProvider),
-        largeTitle: Text(ref.watch(listTitleProvider)),
+        previousPageTitle: smallTitleState(ref),
+        largeTitle: Text(titleState(ref)),
         padding: const EdgeInsetsDirectional.only(start: 5, end: 10),
         trailing: PlatformPopupMenu(
           icon: Icon(
@@ -26,11 +28,7 @@ class ListCupertinoAppBar extends ConsumerWidget {
             ),
           ),
           options: [
-            PopupMenuOption(
-              label: '새로고침',
-              onTap: (_) =>
-                  ref.read(listStateProvider.notifier).refresh(),
-            ),
+            PopupMenuOption(label: '새로고침', onTap: (_) => handleRefresh(ref)),
           ],
         ),
       );

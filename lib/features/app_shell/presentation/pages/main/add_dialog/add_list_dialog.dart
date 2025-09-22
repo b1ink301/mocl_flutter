@@ -2,23 +2,24 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/presentation/widgets/check_box_list_title_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/message_widget.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/models/checkable_main_item.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/pages/main/add_dialog/providers/add_list_dlg_providers.dart';
 
-import '../../../../../../config/mocl_text_styles.dart';
+import '../../../models/checkable_main_item.dart';
+import 'add_event_mixin.dart';
+import 'add_state_mixin.dart';
 
-class AddListDialog extends ConsumerWidget {
+class AddListDialog extends ConsumerWidget with AddState, AddEvent {
   const AddListDialog({super.key});
 
   static Widget init(BuildContext context) => const AddListDialog();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final state = ref.watch(addListDlgProvider);
+    final state = addState(ref);
     final size = MediaQuery.of(context).size;
 
     return PlatformAlertDialog(
@@ -74,9 +75,7 @@ class AddListDialog extends ConsumerWidget {
               text: item.mainItem.text,
               isChecked: item.isChecked,
               textStyle: AppTextStyles.of(context).titleTextStyle,
-              onChanged: (isChecked) => ref
-                  .read(addListDlgProvider.notifier)
-                  .onChanged(isChecked, index),
+              onChanged: (isChecked) => onChanged(ref, isChecked, index),
             );
           },
         ),
@@ -92,9 +91,7 @@ class AddListDialog extends ConsumerWidget {
     ),
     Consumer(
       builder: (context, ref, _) => PlatformDialogAction(
-        onPressed: () => context.pop(
-          ref.read(addListDlgProvider.notifier).selectedItems(),
-        ),
+        onPressed: () => pop(ref, context),
         child: PlatformText(
           '적용',
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
