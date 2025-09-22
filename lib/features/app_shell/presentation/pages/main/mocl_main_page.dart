@@ -6,16 +6,16 @@ import 'package:flutter/services.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/di/app_provider.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/pages/main/mocl_drawer_widget.dart';
+import 'package:mocl_flutter/features/app_shell/presentation/pages/main/widgets/mocl_drawer_widget.dart';
 import 'package:mocl_flutter/features/app_shell/presentation/pages/main/mocl_main_view.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/pages/main/providers/main_providers.dart';
 import 'package:mocl_flutter/features/app_shell/presentation/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/src/generated/i18n/app_localizations.dart';
 
-class MainPage extends ConsumerWidget {
+import 'main_event_mixin.dart';
+import 'main_state_mixin.dart';
+
+class MainPage extends ConsumerWidget with MainState, MainEvent {
   const MainPage({super.key});
 
   static Widget init(
@@ -23,10 +23,7 @@ class MainPage extends ConsumerWidget {
     double width,
     double statusBarHeight,
   ) => ProviderScope(
-    overrides: [
-      screenWidthProvider.overrideWithValue(width),
-      appTextStylesProvider.overrideWithValue(AppTextStyles.of(context)),
-    ],
+    overrides: MainEvent.overridesProviderScope(context, width),
     child: AnnotatedRegion<SystemUiOverlayStyle>(
       value: Theme.of(context).appBarTheme.systemOverlayStyle!,
       child: Stack(
@@ -46,111 +43,65 @@ class MainPage extends ConsumerWidget {
     ),
   );
 
-  bool _canPop(ScaffoldState? scaffoldState) {
-    debugPrint('scaffoldState=$scaffoldState');
-    if (scaffoldState?.isDrawerOpen == true) {
-      debugPrint('scaffoldState=$scaffoldState #1');
-      scaffoldState?.closeDrawer();
-      return false;
-    }
-    return true;
-  }
-
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final scaffoldState = ref.watch(mainScaffoldStateProvider);
-    return PopScope(
-      canPop: true,
-      onPopInvokedWithResult: (bool didPop, _) {
-        if (didPop) {
-          return;
-        }
-        if (_canPop(scaffoldState.currentState)) {
-          SystemNavigator.pop();
-        }
-      },
-      child: PlatformScaffold(
-        body: PlatformWidget(
-          material: (_, _) => const MainView(),
-          cupertino: (_, _) => const _MainCupertinoView(),
-        ),
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        material: (_, _) => MaterialScaffoldData(
-          widgetKey: scaffoldState,
-          drawer: const DrawerWidget(),
-          drawerEdgeDragWidth: ref.watch(screenWidthProvider),
-          drawerEnableOpenDragGesture: true,
-        ),
-        // cupertino: (_, _) => CupertinoPageScaffoldData(),
+  Widget build(BuildContext context, WidgetRef ref) => PopScope(
+    canPop: true,
+    onPopInvokedWithResult: (bool didPop, _) => handlePop(ref, didPop),
+    child: PlatformScaffold(
+      body: PlatformWidget(
+        material: (_, _) => const MainView(),
+        cupertino: (_, _) => const _MainCupertinoView(),
       ),
-    );
-  }
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      material: (_, _) => MaterialScaffoldData(
+        widgetKey: scaffoldState(ref),
+        drawer: const DrawerWidget(),
+        drawerEdgeDragWidth: screenWidth(ref),
+        drawerEnableOpenDragGesture: true,
+      ),
+    ),
+  );
 }
 
-class _MainCupertinoView extends ConsumerWidget {
+class _MainCupertinoView extends ConsumerWidget with MainState, MainEvent {
   const _MainCupertinoView();
+
+  void _onDestinationSelected(WidgetRef ref, BuildContext context, int index) {
+    final siteType = SiteType.values
+        .where((s) => s != SiteType.settings)
+        .toList()[index];
+    changeSiteType(ref, siteType);
+    sidebarClose(ref);
+  }
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isSidebarExpanded = ref.watch(mainSidebarProvider);
-    final sidebarClose = ref.read(mainSidebarProvider.notifier).close;
-
-    changeSiteType(siteType) =>
-        ref.read(currentSiteTypeProvider.notifier).changeSiteType(siteType);
+    final isExpanded = isSidebarExpanded(ref);
 
     if (Platform.isIOS) {
       return Stack(
         children: [
           const CupertinoTabTransitionBuilder(child: MainView()),
-          if (isSidebarExpanded)
+          if (isExpanded)
             GestureDetector(
-              onTap: sidebarClose,
+              onTap: () => sidebarClose(ref),
               behavior: HitTestBehavior.opaque, // 뒤쪽 터치 이벤트 캔슬
               child: Container(
                 color: Colors.black38, // 투명한 레이어
               ),
             ),
           CupertinoSidebarCollapsible(
-            isExpanded: isSidebarExpanded,
+            isExpanded: isExpanded,
             child: CupertinoSidebar(
               maxWidth: 240,
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              selectedIndex: SiteType.values.indexOf(
-                ref.watch(currentSiteTypeProvider),
-              ),
-              onDestinationSelected: (index) {
-                final siteType = SiteType.values
-                    .where((s) => s != SiteType.settings)
-                    .toList()[index];
-                changeSiteType(siteType);
-                sidebarClose();
-              },
+              selectedIndex: SiteType.values.indexOf(currentSiteType(ref)),
+              onDestinationSelected: (index) =>
+                  _onDestinationSelected(ref, context, index),
               navigationBar: SidebarNavigationBar(
                 title: PlatformText(AppLocalizations.of(context)!.menu),
               ),
-              children: [
-                SidebarSection(
-                  label: PlatformText(AppLocalizations.of(context)!.site),
-                  children: SiteType.values
-                      .where((s) => s != SiteType.settings)
-                      .map(
-                        (s) => SidebarDestination(label: PlatformText(s.title)),
-                      )
-                      .toList(),
-                ),
-                SidebarSection(
-                  label: PlatformText('설정'),
-                  children: [
-                    SidebarDestination(
-                      label: PlatformText(SiteType.settings.title),
-                      onTap: () {
-                        context.push(Routes.settings);
-                        sidebarClose();
-                      },
-                    ),
-                  ],
-                ),
-              ],
+              children: _buildChildrenCupertinoSidebar(context),
             ),
           ),
         ],
@@ -159,42 +110,17 @@ class _MainCupertinoView extends ConsumerWidget {
       return Row(
         children: [
           CupertinoSidebarCollapsible(
-            isExpanded: isSidebarExpanded,
+            isExpanded: isExpanded,
             child: CupertinoSidebar(
               maxWidth: 250,
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              selectedIndex: SiteType.values.indexOf(
-                ref.watch(currentSiteTypeProvider),
-              ),
-              onDestinationSelected: (index) {
-                final siteType = SiteType.values
-                    .where((s) => s != SiteType.settings)
-                    .toList()[index];
-                changeSiteType(siteType);
-              },
+              selectedIndex: SiteType.values.indexOf(currentSiteType(ref)),
+              onDestinationSelected: (index) =>
+                  _onDestinationSelected(ref, context, index),
               navigationBar: SidebarNavigationBar(
                 title: PlatformText(AppLocalizations.of(context)!.menu),
               ),
-              children: [
-                SidebarSection(
-                  label: PlatformText(AppLocalizations.of(context)!.site),
-                  children: SiteType.values
-                      .where((s) => s != SiteType.settings)
-                      .map(
-                        (s) => SidebarDestination(label: PlatformText(s.title)),
-                      )
-                      .toList(),
-                ),
-                SidebarSection(
-                  label: PlatformText('설정'),
-                  children: [
-                    SidebarDestination(
-                      label: PlatformText(SiteType.settings.title),
-                      onTap: () => context.push(Routes.settings),
-                    ),
-                  ],
-                ),
-              ],
+              children: _buildChildrenCupertinoSidebar(context),
             ),
           ),
           Expanded(
@@ -204,4 +130,23 @@ class _MainCupertinoView extends ConsumerWidget {
       );
     }
   }
+
+  List<Widget> _buildChildrenCupertinoSidebar(BuildContext context) => [
+    SidebarSection(
+      label: PlatformText(AppLocalizations.of(context)!.site),
+      children: SiteType.values
+          .where((s) => s != SiteType.settings)
+          .map((s) => SidebarDestination(label: PlatformText(s.title)))
+          .toList(),
+    ),
+    SidebarSection(
+      label: PlatformText('설정'),
+      children: [
+        SidebarDestination(
+          label: PlatformText(SiteType.settings.title),
+          onTap: () => context.push(Routes.settings),
+        ),
+      ],
+    ),
+  ];
 }

@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
-import 'package:mocl_flutter/di/app_provider.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/pages/list/providers/list_providers.dart';
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/round_text_widget.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/routes/mocl_app_pages.dart';
+import 'package:mocl_flutter/features/app_shell/presentation/pages/list/list_event_mixin.dart';
 
-class MoclListItem extends ConsumerWidget {
+import '../list_state_mixin.dart';
+
+class MoclListItem extends ConsumerWidget with ListState, ListEvent {
   static const _iosPadding = EdgeInsets.only(
     left: 16,
     right: 12,
@@ -22,59 +21,25 @@ class MoclListItem extends ConsumerWidget {
   const MoclListItem({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final hasInfo = ref.watch(
-      listItemProvider.select((item) => item?.info.isNotEmpty ?? false),
-    );
-    return PlatformListTile(
-      material: (_, _) => MaterialListTileData(
-        minVerticalPadding: 6,
-        contentPadding: _aosPadding,
-      ),
-      cupertino: (_, _) => CupertinoListTileData(padding: _iosPadding),
-      onTap: () => _handleItemTap(ref, context),
-      title: const _TitleView(),
-      subtitle: hasInfo ? const _BottomView() : null,
-    );
-  }
-
-  void _handleItemTap(WidgetRef ref, BuildContext context) {
-    final item = ref.read(listItemProvider);
-    if (item == null) {
-      return;
-    }
-    try {
-      final index = ref.read(listItemIndexProvider);
-      GoRouter.of(context).push(Routes.detail, extra: item).then((_) {
-        if (context.mounted) {
-          final readId = ref.read(readableStateProvider);
-          if (readId == item.id && !item.isRead) {
-            ref.read(listStateProvider.notifier).markAsRead(index);
-          }
-        }
-      });
-    } catch (e) {
-      debugPrint('_handleItemTap = $e');
-    }
-  }
+  Widget build(BuildContext context, WidgetRef ref) => PlatformListTile(
+    material: (_, _) => MaterialListTileData(
+      minVerticalPadding: 6,
+      contentPadding: _aosPadding,
+    ),
+    cupertino: (_, _) => CupertinoListTileData(padding: _iosPadding),
+    onTap: () => handleItemTap(ref, context),
+    title: const _TitleView(),
+    subtitle: hasInfoState(ref) ? const _BottomView() : null,
+  );
 }
 
-class _TitleView extends ConsumerWidget {
+class _TitleView extends ConsumerWidget with ListState {
   const _TitleView();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final (title, isRead) = ref.watch(
-      listItemProvider.select(
-        (item) => (item?.title ?? "", item?.isRead ?? false),
-      ),
-    );
-
-    final textStyle = ref.watch(
-      appTextStylesFontSizeProvider.select(
-        (style) => (isRead ? style.readTitleTextStyle : style.titleTextStyle),
-      ),
-    );
+    final (title, isRead) = titleViewState(ref);
+    final textStyle = titleTextStyleState(ref, isRead);
 
     return PlatformText(
       title,
@@ -110,36 +75,27 @@ class _BottomView extends StatelessWidget {
   );
 }
 
-class _ReplyText extends ConsumerWidget {
+class _ReplyText extends ConsumerWidget with ListState {
   const _ReplyText();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final (reply, isRead) = ref.watch(
-      listItemProvider.select(
-        (item) => (item?.reply ?? "", item?.isRead ?? false),
-      ),
-    );
-
-    if (reply.isNotEmpty && reply != '0') {
-      return RoundTextWidget(
-        text: reply,
-        textStyle: AppTextStyles.of(context).badge(isRead),
-      );
-    } else {
-      return SizedBox.shrink();
-    }
+    final (reply, isRead) = replyViewState(ref);
+    return reply.isNotEmpty && reply != '0'
+        ? RoundTextWidget(
+            text: reply,
+            textStyle: AppTextStyles.of(context).badge(isRead),
+          )
+        : SizedBox.shrink();
   }
 }
 
-class _NickImage extends ConsumerWidget {
+class _NickImage extends ConsumerWidget with ListState {
   const _NickImage();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final url = ref.watch(
-      listItemProvider.select((item) => item?.userInfo.nickImage ?? ""),
-    );
+    final url = nickImageState(ref);
 
     if (url.isEmpty) {
       return SizedBox.shrink();
@@ -148,23 +104,13 @@ class _NickImage extends ConsumerWidget {
   }
 }
 
-class _InfoText extends ConsumerWidget {
+class _InfoText extends ConsumerWidget with ListState {
   const _InfoText();
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final (info, isRead) = ref.watch(
-      listItemProvider.select(
-        (item) => (item?.info ?? "", item?.isRead ?? false),
-      ),
-    );
-
-    final textStyle = ref.watch(
-      appTextStylesFontSizeProvider.select(
-        (style) => (isRead ? style.readSmallTextStyle : style.smallTextStyle),
-      ),
-    );
-
+    final (info, isRead) = infoViewState(ref);
+    final textStyle = smallTitleTextStyleState(ref, isRead);
     if (info.isEmpty) {
       return SizedBox.shrink();
     }

@@ -9,6 +9,47 @@ part of 'list_providers.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
+@ProviderFor(mainItem)
+const mainItemProvider = MainItemProvider._();
+
+final class MainItemProvider
+    extends $FunctionalProvider<MainItem, MainItem, MainItem>
+    with $Provider<MainItem> {
+  const MainItemProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'mainItemProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$mainItemHash();
+
+  @$internal
+  @override
+  $ProviderElement<MainItem> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  MainItem create(Ref ref) {
+    return mainItem(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(MainItem value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<MainItem>(value),
+    );
+  }
+}
+
+String _$mainItemHash() => r'bfd8c4675d74a8ec6b735008aa9f59eee3c014e6';
+
 @ProviderFor(listSmallTitle)
 const listSmallTitleProvider = ListSmallTitleProvider._();
 
@@ -94,47 +135,6 @@ final class ListTitleProvider
 }
 
 String _$listTitleHash() => r'334015293ab03a204a6f3c31553fea624aaf7120';
-
-@ProviderFor(mainItem)
-const mainItemProvider = MainItemProvider._();
-
-final class MainItemProvider
-    extends $FunctionalProvider<MainItem, MainItem, MainItem>
-    with $Provider<MainItem> {
-  const MainItemProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'mainItemProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$mainItemHash();
-
-  @$internal
-  @override
-  $ProviderElement<MainItem> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  MainItem create(Ref ref) {
-    return mainItem(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(MainItem value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<MainItem>(value),
-    );
-  }
-}
-
-String _$mainItemHash() => r'bfd8c4675d74a8ec6b735008aa9f59eee3c014e6';
 
 @ProviderFor(titleHeight)
 const titleHeightProvider = TitleHeightFamily._();
@@ -314,17 +314,17 @@ final class ReqListDataFamily extends $Family
   String toString() => r'reqListDataProvider';
 }
 
-@ProviderFor(ListStateNotifier)
-const listStateProvider = ListStateNotifierProvider._();
+@ProviderFor(PageStateNotifier)
+const pageStateProvider = PageStateNotifierProvider._();
 
-final class ListStateNotifierProvider
-    extends $AsyncNotifierProvider<ListStateNotifier, ListState> {
-  const ListStateNotifierProvider._()
+final class PageStateNotifierProvider
+    extends $AsyncNotifierProvider<PageStateNotifier, PageState> {
+  const PageStateNotifierProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'listStateProvider',
+        name: r'pageStateProvider',
         isAutoDispose: true,
         dependencies: const <ProviderOrFamily>[
           mainItemProvider,
@@ -332,9 +332,9 @@ final class ListStateNotifierProvider
           sortTypeProvider,
         ],
         $allTransitiveDependencies: const <ProviderOrFamily>[
-          ListStateNotifierProvider.$allTransitiveDependencies0,
-          ListStateNotifierProvider.$allTransitiveDependencies1,
-          ListStateNotifierProvider.$allTransitiveDependencies2,
+          PageStateNotifierProvider.$allTransitiveDependencies0,
+          PageStateNotifierProvider.$allTransitiveDependencies1,
+          PageStateNotifierProvider.$allTransitiveDependencies2,
         ],
       );
 
@@ -343,27 +343,27 @@ final class ListStateNotifierProvider
   static const $allTransitiveDependencies2 = sortTypeProvider;
 
   @override
-  String debugGetCreateSourceHash() => _$listStateNotifierHash();
+  String debugGetCreateSourceHash() => _$pageStateNotifierHash();
 
   @$internal
   @override
-  ListStateNotifier create() => ListStateNotifier();
+  PageStateNotifier create() => PageStateNotifier();
 }
 
-String _$listStateNotifierHash() => r'bb8f40c0addac2fe44fca9c2baf919b3f2daef6a';
+String _$pageStateNotifierHash() => r'bc62381d232464042f240d0fd39d25758639fa05';
 
-abstract class _$ListStateNotifier extends $AsyncNotifier<ListState> {
-  FutureOr<ListState> build();
+abstract class _$PageStateNotifier extends $AsyncNotifier<PageState> {
+  FutureOr<PageState> build();
   @$mustCallSuper
   @override
   void runBuild() {
     final created = build();
-    final ref = this.ref as $Ref<AsyncValue<ListState>, ListState>;
+    final ref = this.ref as $Ref<AsyncValue<PageState>, PageState>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AsyncValue<ListState>, ListState>,
-              AsyncValue<ListState>,
+              AnyNotifier<AsyncValue<PageState>, PageState>,
+              AsyncValue<PageState>,
               Object?,
               Object?
             >;
@@ -388,13 +388,13 @@ final class GetListItemProvider
          $allTransitiveDependencies: null,
        );
 
-  static const $allTransitiveDependencies0 = listStateProvider;
+  static const $allTransitiveDependencies0 = pageStateProvider;
   static const $allTransitiveDependencies1 =
-      ListStateNotifierProvider.$allTransitiveDependencies0;
+      PageStateNotifierProvider.$allTransitiveDependencies0;
   static const $allTransitiveDependencies2 =
-      ListStateNotifierProvider.$allTransitiveDependencies1;
+      PageStateNotifierProvider.$allTransitiveDependencies1;
   static const $allTransitiveDependencies3 =
-      ListStateNotifierProvider.$allTransitiveDependencies2;
+      PageStateNotifierProvider.$allTransitiveDependencies2;
 
   @override
   String debugGetCreateSourceHash() => _$getListItemHash();
@@ -436,7 +436,7 @@ final class GetListItemProvider
   }
 }
 
-String _$getListItemHash() => r'35b993f4c3bf57aec4264399d0f2154beb1b8ccf';
+String _$getListItemHash() => r'7989487e8b24ef20cc5289b6d5867a16b4f5d79e';
 
 final class GetListItemFamily extends $Family
     with $FunctionalFamilyOverride<ListItem?, int> {
@@ -444,7 +444,7 @@ final class GetListItemFamily extends $Family
     : super(
         retry: null,
         name: r'getListItemProvider',
-        dependencies: const <ProviderOrFamily>[listStateProvider],
+        dependencies: const <ProviderOrFamily>[pageStateProvider],
         $allTransitiveDependencies: const <ProviderOrFamily>{
           GetListItemProvider.$allTransitiveDependencies0,
           GetListItemProvider.$allTransitiveDependencies1,

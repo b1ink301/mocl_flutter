@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -11,7 +12,7 @@ import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/di/app_provider.dart';
 import 'package:mocl_flutter/features/app_shell/presentation/pages/list/mocl_list_view.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/pages/list/providers/list_providers.dart';
+import 'package:mocl_flutter/features/app_shell/presentation/pages/list/list_providers.dart';
 
 class MoclListPage extends ConsumerWidget {
   const MoclListPage({super.key});
@@ -29,7 +30,7 @@ class MoclListPage extends ConsumerWidget {
         ),
         appTextStylesProvider.overrideWithValue(AppTextStyles.of(context)),
         appbarTextStyleProvider.overrideWithValue(
-          Platform.isIOS
+          !kIsWeb && Platform.isIOS
               ? CupertinoTheme.of(
                   context,
                 ).textTheme.navLargeTitleTextStyle.copyWith(height: 1.3)
@@ -61,7 +62,7 @@ class MoclListPage extends ConsumerWidget {
       body: const MoclListView(),
     );
 
-    return Platform.isMacOS
+    return !kIsWeb &&Platform.isMacOS
         ? Listener(
             onPointerDown: (event) {
               if (event.buttons == kSecondaryMouseButton) {

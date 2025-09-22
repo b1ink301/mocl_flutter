@@ -4,7 +4,7 @@ import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/core/domain/usecases/get_search_list.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/di/use_case_provider.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/pages/list/providers/list_providers.dart';
+import 'package:mocl_flutter/features/app_shell/presentation/pages/list/list_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'list_search_proivders.g.dart';

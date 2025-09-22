@@ -5,39 +5,33 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/core/presentation/widgets/appbar_dual_text_widget.dart';
-import 'package:mocl_flutter/core/util/utilities.dart';
-import 'package:mocl_flutter/di/app_provider.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/pages/detail/providers/detail_providers.dart';
 
-class DetailAppBar extends ConsumerWidget {
+import 'detail_event_mixin.dart';
+import 'detail_state_mixin.dart';
+
+class DetailAppBar extends ConsumerWidget with DetailState, DetailEvent {
   const DetailAppBar({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final String title = ref.watch(detailTitleStateProvider);
-    final double height = ref.read(detailAppbarHeightProvider(title));
+    final String title = titleState(ref);
+    final double height = appbarHeight(ref, title);
 
     return PlatformWidget(
       material: (_, _) => AppbarDualTextWidget(
         title: title,
-        smallTitle: ref.watch(detailSmallTitleProvider),
+        smallTitle: smallTitleState(ref),
         automaticallyImplyLeading: Platform.isMacOS,
         toolbarHeight: height,
         actions: [
           _DetailPopupMenuButton(
             focusColor: Theme.of(context).focusColor,
-            onRefresh: ref.read(detailsProvider.notifier).refresh,
-            onOpenBrowser: ref.read(detailUrlProvider).openBrowser,
-            onShareUrl: ref.read(detailUrlProvider).shareUrl,
-            onIncreaseFontSize: ref
-                .read(appTextStylesFontSizeProvider.notifier)
-                .increaseFontSize,
-            onDecreaseFontSize: ref
-                .read(appTextStylesFontSizeProvider.notifier)
-                .decreaseFontSize,
-            onInitFontSize: ref
-                .read(appTextStylesFontSizeProvider.notifier)
-                .initFontSize,
+            onRefresh: () => handleRefresh(ref),
+            onOpenBrowser: () => handleOpenBrowser(ref),
+            onShareUrl: () => handleShareUrl(ref),
+            onIncreaseFontSize: () => increaseFontSize(ref),
+            onDecreaseFontSize: () => decreaseFontSize(ref),
+            onInitFontSize: () => initFontSize(ref),
           ),
         ],
       ),

@@ -1,6 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
@@ -12,6 +13,31 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'app_provider.g.dart';
+
+mixin class AppFontState {
+  CurrentTextStyles fontSizeSate(WidgetRef ref) =>
+      ref.watch(appTextStylesFontSizeProvider);
+
+  TextStyle titleTextStyleSate(WidgetRef ref) => ref.watch(
+    appTextStylesFontSizeProvider.select((state) => state.titleTextStyle),
+  );
+
+  (TextStyle, TextStyle) smallTitleAndTitleTextStyleSate(WidgetRef ref) => ref.watch(
+    appTextStylesFontSizeProvider.select(
+          (style) => (style.smallTextStyle, style.titleTextStyle),
+    ),
+  );
+}
+//
+// mixin class SiteTypeState {
+//   SiteType siteType(WidgetRef ref) => ref.watch(currentSiteTypeProvider);
+// }
+//
+// mixin class SiteTypeEvent {
+//   void changeSiteType(WidgetRef ref, SiteType siteType) =>
+//       ref.read(currentSiteTypeProvider.notifier).changeSiteType(siteType);
+// }
+
 
 @Riverpod(keepAlive: true)
 class CurrentSiteTypeNotifier extends _$CurrentSiteTypeNotifier {
@@ -141,7 +167,7 @@ class AppTextStylesFontSizeNotifier extends _$AppTextStylesFontSizeNotifier {
     );
   }
 
-  void increaseFontSize({double fontSize = 0.5}) {
+  void increaseFontSize({double fontSize = 0.3}) {
     state = state.copyWith(
       titleTextStyle: _changeFontSize(state.titleTextStyle, fontSize),
       readTitleTextStyle: _changeFontSize(state.readTitleTextStyle, fontSize),
@@ -150,14 +176,14 @@ class AppTextStylesFontSizeNotifier extends _$AppTextStylesFontSizeNotifier {
       badgeTextStyle: _changeFontSize(state.badgeTextStyle, fontSize),
       readBadgeTextStyle: _changeFontSize(state.readBadgeTextStyle, fontSize),
     );
+
     ref.read(setFontSizeProvider)(fontSize);
-    debugPrint('[increaseFontSize] state=$state');
   }
 
   TextStyle _changeFontSize(TextStyle style, double fontSize) =>
       style.copyWith(fontSize: style.fontSize! + fontSize);
 
-  void decreaseFontSize({double fontSize = -0.5}) {
+  void decreaseFontSize({double fontSize = -0.3}) {
     state = state.copyWith(
       titleTextStyle: _changeFontSize(state.titleTextStyle, fontSize),
       readTitleTextStyle: _changeFontSize(state.readTitleTextStyle, fontSize),
@@ -168,7 +194,6 @@ class AppTextStylesFontSizeNotifier extends _$AppTextStylesFontSizeNotifier {
     );
 
     ref.read(setFontSizeProvider)(fontSize);
-    debugPrint('[decreaseFontSize] state=$state');
   }
 
   void initFontSize() {
