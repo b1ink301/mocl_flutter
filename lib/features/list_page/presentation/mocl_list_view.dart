@@ -1,0 +1,148 @@
+import 'package:easy_debounce/easy_throttle.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mocl_flutter/core/presentation/widgets/divider_widget.dart';
+import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
+import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mixin.dart';
+import 'package:mocl_flutter/features/list_page/presentation/state/list_state_mixin.dart';
+import 'package:mocl_flutter/features/list_page/presentation/widgets/list_cupertino_app_bar.dart';
+import 'package:mocl_flutter/features/list_page/presentation/widgets/list_material_app_bar.dart';
+import 'package:mocl_flutter/features/list_page/presentation/widgets/mocl_list_item.dart';
+
+class MoclListView extends ConsumerWidget with ListEvent {
+  const MoclListView({super.key});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) =>
+      RefreshIndicator.adaptive(
+        color: Theme.of(context).focusColor,
+        onRefresh: () async => handleRefresh(ref),
+        child: NotificationListener<ScrollNotification>(
+          onNotification: (ScrollNotification notification) {
+            if (notification is ScrollEndNotification &&
+                notification.metrics.extentAfter < 100) {
+              EasyThrottle.throttle(
+                'list-fetch-throttle',
+                const Duration(milliseconds: 1000),
+                () => handleLoadMore(ref),
+              );
+              return true;
+            }
+            return false;
+          },
+          child: const CustomScrollView(
+            cacheExtent: 1000,
+            slivers: <Widget>[_ListAppBar(), _ListBody()],
+          ),
+        ),
+      );
+}
+
+class _ListAppBar extends StatelessWidget {
+  const _ListAppBar();
+
+  @override
+  Widget build(BuildContext context) => PlatformWidget(
+    material: (_, _) => const ListMaterialAppBar(),
+    cupertino: (_, _) => const ListCupertinoAppBar(),
+  );
+}
+
+class _ListBody extends ConsumerWidget with ListState, ListEvent {
+  const _ListBody();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final (count, hasReachedMax, error) = listState(ref);
+    debugPrint(
+      '[_ListBody] count=$count, hasReachedMax=$hasReachedMax, error=$error',
+    );
+
+    return SliverPadding(
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+      sliver: SliverList.separated(
+        // addRepaintBoundaries: false,
+        // addAutomaticKeepAlives: false,
+        addSemanticIndexes: false,
+        itemCount: count + 1,
+        itemBuilder: (context, index) => (count == index)
+            ? _ListFooter(
+                error: error,
+                hasReachedMax: hasReachedMax,
+                retry: () => handleRetry(ref),
+              )
+            : ProviderScope(
+                overrides: ListEvent.overridesProviderScopeForRow(index),
+                child: const MoclListItem(),
+              ),
+        separatorBuilder: (_, _) => const DividerWidget(),
+      ),
+    );
+  }
+}
+
+class _ListFooter extends StatelessWidget {
+  final String? error;
+  final bool hasReachedMax;
+  final VoidCallback retry;
+
+  const _ListFooter({
+    required this.error,
+    required this.hasReachedMax,
+    required this.retry,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
+    if (error != null) {
+      return _ListError(
+        errorMessage: error!,
+        onRetry: retry,
+        bottomPadding: bottomPadding,
+      );
+    } else if (hasReachedMax) {
+      return Padding(
+        padding: EdgeInsets.only(bottom: bottomPadding),
+        child: const SizedBox.shrink(),
+      );
+    } else {
+      return Padding(
+        padding: EdgeInsets.only(bottom: bottomPadding),
+        child: const Column(children: [LoadingWidget(), DividerWidget()]),
+      );
+    }
+  }
+}
+
+class _ListError extends StatelessWidget {
+  final String errorMessage;
+  final VoidCallback onRetry;
+  final double bottomPadding;
+
+  const _ListError({
+    required this.errorMessage,
+    required this.onRetry,
+    required this.bottomPadding,
+  });
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + bottomPadding),
+    child: Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        PlatformText(
+          errorMessage,
+          maxLines: 4,
+          overflow: TextOverflow.ellipsis,
+        ),
+        const SizedBox(height: 16),
+        PlatformElevatedButton(onPressed: onRetry, child: PlatformText('재시도')),
+        const SizedBox(height: 8),
+        const DividerWidget(indent: 0, endIndent: 0),
+      ],
+    ),
+  );
+}

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/routes/mocl_app_pages.dart';
+import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:url_launcher/url_launcher.dart';
 

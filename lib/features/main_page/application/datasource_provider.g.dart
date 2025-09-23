@@ -1,0 +1,87 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'datasource_provider.dart';
+
+// **************************************************************************
+// RiverpodGenerator
+// **************************************************************************
+
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(mainDatasource)
+const mainDatasourceProvider = MainDatasourceFamily._();
+
+final class MainDatasourceProvider
+    extends $FunctionalProvider<MainDataSource, MainDataSource, MainDataSource>
+    with $Provider<MainDataSource> {
+  const MainDatasourceProvider._({
+    required MainDatasourceFamily super.from,
+    required SiteType super.argument,
+  }) : super(
+         retry: null,
+         name: r'mainDatasourceProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$mainDatasourceHash();
+
+  @override
+  String toString() {
+    return r'mainDatasourceProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<MainDataSource> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  MainDataSource create(Ref ref) {
+    final argument = this.argument as SiteType;
+    return mainDatasource(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(MainDataSource value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<MainDataSource>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is MainDatasourceProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$mainDatasourceHash() => r'c145eca16cf2ebbc78de87f36f256def38882a2b';
+
+final class MainDatasourceFamily extends $Family
+    with $FunctionalFamilyOverride<MainDataSource, SiteType> {
+  const MainDatasourceFamily._()
+    : super(
+        retry: null,
+        name: r'mainDatasourceProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  MainDatasourceProvider call(SiteType siteType) =>
+      MainDatasourceProvider._(argument: siteType, from: this);
+
+  @override
+  String toString() => r'mainDatasourceProvider';
+}

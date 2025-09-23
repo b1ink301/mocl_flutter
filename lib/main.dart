@@ -1,19 +1,14 @@
 import 'dart:async';
 
 import 'package:firebase_core/firebase_core.dart' show Firebase;
-import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mocl_flutter/di/datasource_provider.dart';
-import 'package:mocl_flutter/features/app_shell/presentation/app_widget.dart';
+import 'package:mocl_flutter/app_widget.dart';
 import 'package:mocl_flutter/firebase_options.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:sembast/sembast_io.dart';
-import 'package:sembast_web/sembast_web.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'features/settings_page/application/datasource_provider.dart';
 import 'flavors.dart';
 
 Future<void> main() async {
@@ -25,32 +20,15 @@ Future<void> main() async {
     (element) => element.name == appFlavor,
   );
 
-  final container = ProviderContainer(
-    retry: (retryCount, error) => null,
-    overrides: [
-      sharedPreferencesProvider.overrideWithValue(
-        await SharedPreferences.getInstance(),
-      ),
-      appDatabaseProvider.overrideWithValue(await _database()),
-    ],
-  );
-
-  // Start auto-sync check
-  // container.read(autoSyncNotifierProvider.notifier).checkSyncStatus();
-
   runApp(
-    UncontrolledProviderScope(container: container, child: const AppWidget()),
+    ProviderScope(
+      retry: (retryCount, error) => null,
+      overrides: [
+        sharedPreferencesProvider.overrideWithValue(
+          await SharedPreferences.getInstance(),
+        ),
+      ],
+      child: const AppWidget(),
+    ),
   );
-}
-
-Future<Database> _database() async {
-  if (kIsWeb) {
-    final path = join('/assets/db', 'mocl-sembast.db');
-    return databaseFactoryWeb.openDatabase(path);
-  } else {
-    final dir = await getApplicationDocumentsDirectory();
-    await dir.create(recursive: true);
-    final path = join(dir.path, 'mocl-sembast.db');
-    return databaseFactoryIo.openDatabase(path);
-  }
 }

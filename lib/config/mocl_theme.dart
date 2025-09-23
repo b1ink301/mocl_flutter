@@ -101,10 +101,10 @@ class MoclTheme {
         textTheme: const TextTheme(
           bodyMedium: TextStyle(color: Color(0xFF111111), fontSize: 16),
           bodySmall: TextStyle(color: Color(0xFF888888), fontSize: 14),
-          labelSmall: TextStyle(color: Color(0xFF888888), fontSize: 11),
           headlineSmall: TextStyle(color: Color(0xFF000000), fontSize: 13),
           headlineMedium: TextStyle(color: Color(0xFF111111), fontSize: 16),
-          labelMedium: TextStyle(color: Colors.white, fontSize: 16),
+          labelSmall: TextStyle(color: Colors.white, fontSize: 11),
+          labelMedium: TextStyle(color: Colors.white, fontSize: 14),
           labelLarge: TextStyle(color: Colors.white, fontSize: 17),
         ),
       );
@@ -140,10 +140,10 @@ class MoclTheme {
     textTheme: const TextTheme(
       bodyMedium: TextStyle(color: Color(0xFFEEEEEE), fontSize: 16),
       bodySmall: TextStyle(color: Color(0xFFAAAAAA), fontSize: 14),
-      labelSmall: TextStyle(color: Color(0xFFAAAAAA), fontSize: 11),
       headlineSmall: TextStyle(color: Color(0xFFFFFFFF), fontSize: 13),
       headlineMedium: TextStyle(color: Colors.white, fontSize: 16),
-      labelMedium: TextStyle(color: Colors.white, fontSize: 16),
+      labelSmall: TextStyle(color: Colors.white, fontSize: 11),
+      labelMedium: TextStyle(color: Colors.white, fontSize: 14),
       labelLarge: TextStyle(color: Colors.white, fontSize: 17),
     ),
     primaryColor: const Color(0xFF292929),
