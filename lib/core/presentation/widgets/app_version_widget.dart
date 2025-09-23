@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mocl_flutter/di/app_provider.dart';
+import 'package:mocl_flutter/features/settings_page/application/datasource_provider.dart';
 
 class AppVersionWidget extends ConsumerWidget {
   const AppVersionWidget({super.key});
