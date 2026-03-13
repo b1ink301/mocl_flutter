@@ -88,4 +88,3 @@ mixin class ListState {
     ),
   );
 }
-

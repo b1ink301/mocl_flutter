@@ -40,17 +40,11 @@ class TheQooParser extends BaseParser {
 
   @override
   Future<Either<Failure, Details>> detail(Response response) async {
-    final responseData = response.data;
-    final resultPort = ReceivePort();
-
-    await Isolate.spawn(_detailIsolate, [responseData, resultPort.sendPort]);
-
-    return await resultPort.first as Either<Failure, Details>;
+    final responseData = response.data as List<dynamic>;
+    return Isolate.run(() => _parseDetail(responseData));
   }
 
-  static void _detailIsolate(List<dynamic> args) {
-    final responseData = args[0] as List<dynamic>;
-    final sendPort = args[1] as SendPort;
+  static Either<Failure, Details> _parseDetail(List<dynamic> responseData) {
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
@@ -144,8 +138,7 @@ class TheQooParser extends BaseParser {
       extraData: {'nowCommentPage': nowCommentPage},
     );
 
-    final result = Right<Failure, Details>(detail);
-    sendPort.send(result);
+    return Right<Failure, Details>(detail);
   }
 
   @override

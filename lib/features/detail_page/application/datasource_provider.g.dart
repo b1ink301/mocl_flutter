@@ -10,7 +10,7 @@ part of 'datasource_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(detailDatasource)
-const detailDatasourceProvider = DetailDatasourceFamily._();
+final detailDatasourceProvider = DetailDatasourceFamily._();
 
 final class DetailDatasourceProvider
     extends
@@ -20,7 +20,7 @@ final class DetailDatasourceProvider
           DetailDataSource
         >
     with $Provider<DetailDataSource> {
-  const DetailDatasourceProvider._({
+  DetailDatasourceProvider._({
     required DetailDatasourceFamily super.from,
     required SiteType super.argument,
   }) : super(
@@ -75,7 +75,7 @@ String _$detailDatasourceHash() => r'ac93f38e54ee98446f887d811d54d807c95bcc9f';
 
 final class DetailDatasourceFamily extends $Family
     with $FunctionalFamilyOverride<DetailDataSource, SiteType> {
-  const DetailDatasourceFamily._()
+  DetailDatasourceFamily._()
     : super(
         retry: null,
         name: r'detailDatasourceProvider',

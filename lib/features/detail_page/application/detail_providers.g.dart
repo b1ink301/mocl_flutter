@@ -10,12 +10,12 @@ part of 'detail_providers.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(listItem)
-const listItemProvider = ListItemProvider._();
+final listItemProvider = ListItemProvider._();
 
 final class ListItemProvider
     extends $FunctionalProvider<ListItem, ListItem, ListItem>
     with $Provider<ListItem> {
-  const ListItemProvider._()
+  ListItemProvider._()
     : super(
         from: null,
         argument: null,
@@ -51,23 +51,23 @@ final class ListItemProvider
 String _$listItemHash() => r'5979621f5fb9d6c055c046d194e6282673cf181e';
 
 @ProviderFor(DetailsNotifier)
-const detailsProvider = DetailsNotifierProvider._();
+final detailsProvider = DetailsNotifierProvider._();
 
 final class DetailsNotifierProvider
     extends $AsyncNotifierProvider<DetailsNotifier, Details> {
-  const DetailsNotifierProvider._()
+  DetailsNotifierProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
         name: r'detailsProvider',
         isAutoDispose: true,
-        dependencies: const <ProviderOrFamily>[
+        dependencies: <ProviderOrFamily>[
           listItemProvider,
           detailTitleStateProvider,
           _markAsReadProvider,
         ],
-        $allTransitiveDependencies: const <ProviderOrFamily>{
+        $allTransitiveDependencies: <ProviderOrFamily>{
           DetailsNotifierProvider.$allTransitiveDependencies0,
           DetailsNotifierProvider.$allTransitiveDependencies1,
           DetailsNotifierProvider.$allTransitiveDependencies2,
@@ -75,11 +75,11 @@ final class DetailsNotifierProvider
         },
       );
 
-  static const $allTransitiveDependencies0 = listItemProvider;
-  static const $allTransitiveDependencies1 = detailTitleStateProvider;
-  static const $allTransitiveDependencies2 =
+  static final $allTransitiveDependencies0 = listItemProvider;
+  static final $allTransitiveDependencies1 = detailTitleStateProvider;
+  static final $allTransitiveDependencies2 =
       DetailTitleStateNotifierProvider.$allTransitiveDependencies1;
-  static const $allTransitiveDependencies3 = _markAsReadProvider;
+  static final $allTransitiveDependencies3 = _markAsReadProvider;
 
   @override
   String debugGetCreateSourceHash() => _$detailsNotifierHash();
@@ -96,7 +96,6 @@ abstract class _$DetailsNotifier extends $AsyncNotifier<Details> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<AsyncValue<Details>, Details>;
     final element =
         ref.element
@@ -106,17 +105,17 @@ abstract class _$DetailsNotifier extends $AsyncNotifier<Details> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(_markAsRead)
-const _markAsReadProvider = _MarkAsReadFamily._();
+final _markAsReadProvider = _MarkAsReadFamily._();
 
 final class _MarkAsReadProvider
     extends $FunctionalProvider<AsyncValue<int>, int, FutureOr<int>>
     with $FutureModifier<int>, $FutureProvider<int> {
-  const _MarkAsReadProvider._({
+  _MarkAsReadProvider._({
     required _MarkAsReadFamily super.from,
     required ListItem super.argument,
   }) : super(
@@ -163,7 +162,7 @@ String _$_markAsReadHash() => r'8ba56bf4538ae91b0ae6ad423f8d9a1e3a0c81bf';
 
 final class _MarkAsReadFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<int>, ListItem> {
-  const _MarkAsReadFamily._()
+  _MarkAsReadFamily._()
     : super(
         retry: null,
         name: r'_markAsReadProvider',
@@ -180,30 +179,27 @@ final class _MarkAsReadFamily extends $Family
 }
 
 @ProviderFor(detailSmallTitle)
-const detailSmallTitleProvider = DetailSmallTitleProvider._();
+final detailSmallTitleProvider = DetailSmallTitleProvider._();
 
 final class DetailSmallTitleProvider
     extends $FunctionalProvider<String, String, String>
     with $Provider<String> {
-  const DetailSmallTitleProvider._()
+  DetailSmallTitleProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
         name: r'detailSmallTitleProvider',
         isAutoDispose: true,
-        dependencies: const <ProviderOrFamily>[
-          listItemProvider,
-          detailTitleProvider,
-        ],
-        $allTransitiveDependencies: const <ProviderOrFamily>[
+        dependencies: <ProviderOrFamily>[listItemProvider, detailTitleProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
           DetailSmallTitleProvider.$allTransitiveDependencies0,
           DetailSmallTitleProvider.$allTransitiveDependencies1,
         ],
       );
 
-  static const $allTransitiveDependencies0 = listItemProvider;
-  static const $allTransitiveDependencies1 = detailTitleProvider;
+  static final $allTransitiveDependencies0 = listItemProvider;
+  static final $allTransitiveDependencies1 = detailTitleProvider;
 
   @override
   String debugGetCreateSourceHash() => _$detailSmallTitleHash();
@@ -230,29 +226,26 @@ final class DetailSmallTitleProvider
 String _$detailSmallTitleHash() => r'710823e81464ca519003e6367eda2f308610d560';
 
 @ProviderFor(DetailTitleStateNotifier)
-const detailTitleStateProvider = DetailTitleStateNotifierProvider._();
+final detailTitleStateProvider = DetailTitleStateNotifierProvider._();
 
 final class DetailTitleStateNotifierProvider
     extends $NotifierProvider<DetailTitleStateNotifier, String> {
-  const DetailTitleStateNotifierProvider._()
+  DetailTitleStateNotifierProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
         name: r'detailTitleStateProvider',
         isAutoDispose: true,
-        dependencies: const <ProviderOrFamily>[
-          listItemProvider,
-          detailTitleProvider,
-        ],
-        $allTransitiveDependencies: const <ProviderOrFamily>[
+        dependencies: <ProviderOrFamily>[listItemProvider, detailTitleProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
           DetailTitleStateNotifierProvider.$allTransitiveDependencies0,
           DetailTitleStateNotifierProvider.$allTransitiveDependencies1,
         ],
       );
 
-  static const $allTransitiveDependencies0 = listItemProvider;
-  static const $allTransitiveDependencies1 = detailTitleProvider;
+  static final $allTransitiveDependencies0 = listItemProvider;
+  static final $allTransitiveDependencies1 = detailTitleProvider;
 
   @override
   String debugGetCreateSourceHash() => _$detailTitleStateNotifierHash();
@@ -278,7 +271,6 @@ abstract class _$DetailTitleStateNotifier extends $Notifier<String> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<String, String>;
     final element =
         ref.element
@@ -288,30 +280,30 @@ abstract class _$DetailTitleStateNotifier extends $Notifier<String> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(detailTitle)
-const detailTitleProvider = DetailTitleProvider._();
+final detailTitleProvider = DetailTitleProvider._();
 
 final class DetailTitleProvider
     extends $FunctionalProvider<String, String, String>
     with $Provider<String> {
-  const DetailTitleProvider._()
+  DetailTitleProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
         name: r'detailTitleProvider',
         isAutoDispose: true,
-        dependencies: const <ProviderOrFamily>[listItemProvider],
-        $allTransitiveDependencies: const <ProviderOrFamily>[
+        dependencies: <ProviderOrFamily>[listItemProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
           DetailTitleProvider.$allTransitiveDependencies0,
         ],
       );
 
-  static const $allTransitiveDependencies0 = listItemProvider;
+  static final $allTransitiveDependencies0 = listItemProvider;
 
   @override
   String debugGetCreateSourceHash() => _$detailTitleHash();
@@ -338,30 +330,30 @@ final class DetailTitleProvider
 String _$detailTitleHash() => r'54a077ead00ea5b1644d41c85f12b2b94ce2ca75';
 
 @ProviderFor(detailUrl)
-const detailUrlProvider = DetailUrlProvider._();
+final detailUrlProvider = DetailUrlProvider._();
 
 final class DetailUrlProvider
     extends $FunctionalProvider<String, String, String>
     with $Provider<String> {
-  const DetailUrlProvider._()
+  DetailUrlProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
         name: r'detailUrlProvider',
         isAutoDispose: true,
-        dependencies: const <ProviderOrFamily>[
+        dependencies: <ProviderOrFamily>[
           listItemProvider,
           currentSiteTypeProvider,
         ],
-        $allTransitiveDependencies: const <ProviderOrFamily>[
+        $allTransitiveDependencies: <ProviderOrFamily>[
           DetailUrlProvider.$allTransitiveDependencies0,
           DetailUrlProvider.$allTransitiveDependencies1,
         ],
       );
 
-  static const $allTransitiveDependencies0 = listItemProvider;
-  static const $allTransitiveDependencies1 = currentSiteTypeProvider;
+  static final $allTransitiveDependencies0 = listItemProvider;
+  static final $allTransitiveDependencies1 = currentSiteTypeProvider;
 
   @override
   String debugGetCreateSourceHash() => _$detailUrlHash();
@@ -388,12 +380,12 @@ final class DetailUrlProvider
 String _$detailUrlHash() => r'e8d8b65b390da45d78b52b2fa4cafe7415b04d7a';
 
 @ProviderFor(detailAppbarHeight)
-const detailAppbarHeightProvider = DetailAppbarHeightFamily._();
+final detailAppbarHeightProvider = DetailAppbarHeightFamily._();
 
 final class DetailAppbarHeightProvider
     extends $FunctionalProvider<double, double, double>
     with $Provider<double> {
-  const DetailAppbarHeightProvider._({
+  DetailAppbarHeightProvider._({
     required DetailAppbarHeightFamily super.from,
     required String super.argument,
   }) : super(
@@ -404,8 +396,9 @@ final class DetailAppbarHeightProvider
          $allTransitiveDependencies: null,
        );
 
-  static const $allTransitiveDependencies0 = appbarTextStyleProvider;
-  static const $allTransitiveDependencies1 = screenWidthProvider;
+  static final $allTransitiveDependencies0 = appbarTextStyleProvider;
+  static final $allTransitiveDependencies1 = screenWidthProvider;
+  static final $allTransitiveDependencies2 = fontSizeDeltaProvider;
 
   @override
   String debugGetCreateSourceHash() => _$detailAppbarHeightHash();
@@ -448,21 +441,23 @@ final class DetailAppbarHeightProvider
 }
 
 String _$detailAppbarHeightHash() =>
-    r'2d2ff4d5afa07dcf2b883a9010511a83ad210c63';
+    r'a4b18ca4d084af10fe7aacad81cd993ab7cf37bd';
 
 final class DetailAppbarHeightFamily extends $Family
     with $FunctionalFamilyOverride<double, String> {
-  const DetailAppbarHeightFamily._()
+  DetailAppbarHeightFamily._()
     : super(
         retry: null,
         name: r'detailAppbarHeightProvider',
-        dependencies: const <ProviderOrFamily>[
+        dependencies: <ProviderOrFamily>[
           appbarTextStyleProvider,
           screenWidthProvider,
+          fontSizeDeltaProvider,
         ],
-        $allTransitiveDependencies: const <ProviderOrFamily>[
+        $allTransitiveDependencies: <ProviderOrFamily>[
           DetailAppbarHeightProvider.$allTransitiveDependencies0,
           DetailAppbarHeightProvider.$allTransitiveDependencies1,
+          DetailAppbarHeightProvider.$allTransitiveDependencies2,
         ],
         isAutoDispose: true,
       );

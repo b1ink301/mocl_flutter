@@ -85,7 +85,7 @@ class _MainCupertinoView extends ConsumerWidget with MainState, MainEvent {
           if (isExpanded)
             GestureDetector(
               onTap: () => sidebarClose(ref),
-              behavior: HitTestBehavior.opaque, // 뒤쪽 터치 이벤트 캔슬
+              behavior: .opaque, // 뒤쪽 터치 이벤트 캔슬
               child: Container(
                 color: Colors.black38, // 투명한 레이어
               ),

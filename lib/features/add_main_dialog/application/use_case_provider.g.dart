@@ -10,7 +10,7 @@ part of 'use_case_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(getMainListFromJson)
-const getMainListFromJsonProvider = GetMainListFromJsonProvider._();
+final getMainListFromJsonProvider = GetMainListFromJsonProvider._();
 
 final class GetMainListFromJsonProvider
     extends
@@ -20,7 +20,7 @@ final class GetMainListFromJsonProvider
           GetMainListFromJson
         >
     with $Provider<GetMainListFromJson> {
-  const GetMainListFromJsonProvider._()
+  GetMainListFromJsonProvider._()
     : super(
         from: null,
         argument: null,

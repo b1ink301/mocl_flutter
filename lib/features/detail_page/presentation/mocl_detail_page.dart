@@ -67,9 +67,9 @@ class DetailPage extends ConsumerWidget with DetailState, DetailEvent {
 
     return Platform.isMacOS || Platform.isAndroid
         ? Listener(
-            behavior: HitTestBehavior.opaque,
+            behavior: .opaque,
             onPointerDown: (event) {
-              if (event.kind == PointerDeviceKind.mouse &&
+              if (event.kind == .mouse &&
                   event.buttons == kSecondaryMouseButton) {
                 context.pop();
               }

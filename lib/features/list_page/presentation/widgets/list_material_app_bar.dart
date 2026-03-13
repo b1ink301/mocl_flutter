@@ -27,12 +27,12 @@ class ListMaterialAppBar extends ConsumerWidget with ListState, ListEvent {
         onSelected: (SortType value) => handleChangeSortType(ref, value),
         itemBuilder: (BuildContext context) => [
           CheckedPopupMenuItem<SortType>(
-            value: SortType.recent,
+            value: .recent,
             checked: isRecentState(ref),
             child: Text('최신순'),
           ),
           CheckedPopupMenuItem<SortType>(
-            value: SortType.recommend,
+            value: .recommend,
             checked: isRecommendState(ref),
             child: Text('추천순'),
           ),

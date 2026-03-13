@@ -10,12 +10,12 @@ part of 'use_case_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(getListUseCase)
-const getListUseCaseProvider = GetListUseCaseProvider._();
+final getListUseCaseProvider = GetListUseCaseProvider._();
 
 final class GetListUseCaseProvider
     extends $FunctionalProvider<GetList, GetList, GetList>
     with $Provider<GetList> {
-  const GetListUseCaseProvider._()
+  GetListUseCaseProvider._()
     : super(
         from: null,
         argument: null,
@@ -51,12 +51,12 @@ final class GetListUseCaseProvider
 String _$getListUseCaseHash() => r'0b1601eb453b888fda5613b0f1ea0acc3c0438dd';
 
 @ProviderFor(getSearchListUseCase)
-const getSearchListUseCaseProvider = GetSearchListUseCaseProvider._();
+final getSearchListUseCaseProvider = GetSearchListUseCaseProvider._();
 
 final class GetSearchListUseCaseProvider
     extends $FunctionalProvider<GetSearchList, GetSearchList, GetSearchList>
     with $Provider<GetSearchList> {
-  const GetSearchListUseCaseProvider._()
+  GetSearchListUseCaseProvider._()
     : super(
         from: null,
         argument: null,

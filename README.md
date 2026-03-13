@@ -113,3 +113,7 @@ $ dart run flutter_native_splash:create --path=./flutter_native_splash.yaml
 flutter run flutter_flavorizr -p assets:download assets:extract ios:xcconfig assets:clean
 flutter run flutter_flavorizr -p assets:download assets:extract -p google:firebase
 dart pub global activate flutterfire_cli
+
+```shell
+flutter pub upgrade --major-versions
+```

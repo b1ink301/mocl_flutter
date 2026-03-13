@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/presentation/widgets/app_version_widget.dart';
@@ -19,7 +18,7 @@ class DrawerWidget extends ConsumerWidget with MainEvent {
       children: [
         Container(
           color: Theme.of(context).primaryColor,
-          padding: EdgeInsets.only(top: MediaQuery.of(context).padding.top),
+          padding: .only(top: MediaQuery.of(context).padding.top),
           height: 220 + MediaQuery.of(context).padding.top,
           child: Center(
             child: ClipOval(
@@ -30,7 +29,7 @@ class DrawerWidget extends ConsumerWidget with MainEvent {
         Expanded(
           child: ListView(
             shrinkWrap: true,
-            padding: EdgeInsets.zero,
+            padding: .zero,
             children: SiteType.values
                 .map(
                   (SiteType siteType) => _DrawerSiteItem(
@@ -58,7 +57,7 @@ class DrawerWidget extends ConsumerWidget with MainEvent {
   ) {
     context.pop();
 
-    if (siteType == SiteType.settings) {
+    if (siteType == .settings) {
       context.push(Routes.settings);
     } else {
       onChangeSiteType();
@@ -77,7 +76,7 @@ class _DrawerSiteItem extends ConsumerWidget with MainState {
     children: [
       ListTile(
         title: Text(siteType.title),
-        titleTextStyle: AppTextStyles.of(context).titleTextStyle,
+        titleTextStyle: titleTextStyleSate(ref),
         onTap: onTap,
         trailing: isSiteType(ref, siteType)
             ? Icon(Icons.check_outlined, color: Theme.of(context).focusColor)

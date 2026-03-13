@@ -8,7 +8,7 @@ mixin class DetailState {
 
   AsyncValue<Details> detailState(WidgetRef ref) => ref.watch(detailsProvider);
 
-  String titleState(WidgetRef ref) => ref.watch(detailTitleProvider);
+  String titleState(WidgetRef ref) => ref.watch(detailTitleStateProvider);
 
   String smallTitleState(WidgetRef ref) => ref.watch(detailSmallTitleProvider);
 }

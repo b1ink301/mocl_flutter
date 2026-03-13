@@ -6,9 +6,9 @@ import 'package:mocl_flutter/core/presentation/models/current_text_styles.dart';
 import 'package:mocl_flutter/core/usecases/usecase.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-import '../../features/settings_page/application/use_case_provider.dart';
-import '../../features/settings_page/domain/usecases/get_site_type.dart';
-import '../../features/settings_page/domain/usecases/set_site_type.dart';
+import 'package:mocl_flutter/core/domain/usecases/get_site_type.dart';
+import 'package:mocl_flutter/core/domain/usecases/set_site_type.dart';
+import 'package:mocl_flutter/features/settings_page/application/use_case_provider.dart';
 
 part 'app_provider.g.dart';
 
@@ -20,22 +20,13 @@ mixin AppFontState {
     appTextStylesFontSizeProvider.select((state) => state.titleTextStyle),
   );
 
-  (TextStyle, TextStyle) smallTitleAndTitleTextStyleSate(WidgetRef ref) => ref.watch(
-    appTextStylesFontSizeProvider.select(
+  (TextStyle, TextStyle) smallTitleAndTitleTextStyleSate(WidgetRef ref) =>
+      ref.watch(
+        appTextStylesFontSizeProvider.select(
           (style) => (style.smallTextStyle, style.titleTextStyle),
-    ),
-  );
+        ),
+      );
 }
-//
-// mixin class SiteTypeState {
-//   SiteType siteType(WidgetRef ref) => ref.watch(currentSiteTypeProvider);
-// }
-//
-// mixin class SiteTypeEvent {
-//   void changeSiteType(WidgetRef ref, SiteType siteType) =>
-//       ref.read(currentSiteTypeProvider.notifier).changeSiteType(siteType);
-// }
-
 
 @Riverpod(keepAlive: true)
 class CurrentSiteTypeNotifier extends _$CurrentSiteTypeNotifier {
@@ -51,8 +42,6 @@ class CurrentSiteTypeNotifier extends _$CurrentSiteTypeNotifier {
       setSiteType(siteType);
       state = siteType;
     }
-
-    debugPrint('[changeSiteType] siteType=$siteType, state=$state');
   }
 }
 
@@ -81,12 +70,31 @@ double screenWidth(Ref ref) => throw UnimplementedError('screenWidth');
 AppTextStyles appTextStyles(Ref ref) =>
     throw UnimplementedError('appTextStyles');
 
-@Riverpod(keepAlive: true, dependencies: [appTextStyles])
+/// Global font size delta provider.
+/// NOT dependent on scoped providers, so changes propagate across ALL
+/// ProviderScopes (detail, list, main pages all share this instance).
+@Riverpod(keepAlive: true)
+class FontSizeDelta extends _$FontSizeDelta {
+  @override
+  double build() => ref.read(getFontSizeProvider)(NoParams());
+
+  void update(double delta) {
+    ref.read(setFontSizeProvider)(delta);
+    state = ref.read(getFontSizeProvider)(NoParams());
+  }
+
+  void reset() {
+    ref.read(initFontSizeProvider)(NoParams());
+    state = 0;
+  }
+}
+
+@Riverpod(keepAlive: true, dependencies: [appTextStyles, FontSizeDelta])
 class AppTextStylesFontSizeNotifier extends _$AppTextStylesFontSizeNotifier {
   @override
   CurrentTextStyles build() {
     final textStyles = ref.watch(appTextStylesProvider);
-    final fontSize = ref.read(getFontSizeProvider)(NoParams());
+    final fontSize = ref.watch(fontSizeDeltaProvider);
 
     return CurrentTextStyles(
       titleTextStyle: _changeFontSize(textStyles.titleTextStyle, fontSize),
@@ -108,46 +116,18 @@ class AppTextStylesFontSizeNotifier extends _$AppTextStylesFontSizeNotifier {
   }
 
   void increaseFontSize({double fontSize = 0.3}) {
-    state = state.copyWith(
-      titleTextStyle: _changeFontSize(state.titleTextStyle, fontSize),
-      readTitleTextStyle: _changeFontSize(state.readTitleTextStyle, fontSize),
-      smallTextStyle: _changeFontSize(state.smallTextStyle, fontSize),
-      readSmallTextStyle: _changeFontSize(state.readSmallTextStyle, fontSize),
-      badgeTextStyle: _changeFontSize(state.badgeTextStyle, fontSize),
-      readBadgeTextStyle: _changeFontSize(state.readBadgeTextStyle, fontSize),
-    );
-
-    ref.read(setFontSizeProvider)(fontSize);
+    ref.read(fontSizeDeltaProvider.notifier).update(fontSize);
   }
 
   TextStyle _changeFontSize(TextStyle style, double fontSize) =>
       style.copyWith(fontSize: style.fontSize! + fontSize);
 
   void decreaseFontSize({double fontSize = -0.3}) {
-    state = state.copyWith(
-      titleTextStyle: _changeFontSize(state.titleTextStyle, fontSize),
-      readTitleTextStyle: _changeFontSize(state.readTitleTextStyle, fontSize),
-      smallTextStyle: _changeFontSize(state.smallTextStyle, fontSize),
-      readSmallTextStyle: _changeFontSize(state.readSmallTextStyle, fontSize),
-      badgeTextStyle: _changeFontSize(state.badgeTextStyle, fontSize),
-      readBadgeTextStyle: _changeFontSize(state.readBadgeTextStyle, fontSize),
-    );
-
-    ref.read(setFontSizeProvider)(fontSize);
+    ref.read(fontSizeDeltaProvider.notifier).update(fontSize);
   }
 
   void initFontSize() {
-    final textStyles = ref.read(appTextStylesProvider);
-    state = state.copyWith(
-      titleTextStyle: textStyles.titleTextStyle,
-      readTitleTextStyle: textStyles.readTitleTextStyle,
-      smallTextStyle: textStyles.smallTextStyle,
-      readSmallTextStyle: textStyles.readSmallTextStyle,
-      badgeTextStyle: textStyles.badgeTextStyle,
-      readBadgeTextStyle: textStyles.readBadgeTextStyle,
-    );
-
-    ref.read(initFontSizeProvider)(NoParams());
+    ref.read(fontSizeDeltaProvider.notifier).reset();
   }
 
   TextStyle badge(bool isRead) =>

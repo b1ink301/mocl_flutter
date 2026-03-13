@@ -10,11 +10,11 @@ part of 'app_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(CurrentSiteTypeNotifier)
-const currentSiteTypeProvider = CurrentSiteTypeNotifierProvider._();
+final currentSiteTypeProvider = CurrentSiteTypeNotifierProvider._();
 
 final class CurrentSiteTypeNotifierProvider
     extends $NotifierProvider<CurrentSiteTypeNotifier, SiteType> {
-  const CurrentSiteTypeNotifierProvider._()
+  CurrentSiteTypeNotifierProvider._()
     : super(
         from: null,
         argument: null,
@@ -42,14 +42,13 @@ final class CurrentSiteTypeNotifierProvider
 }
 
 String _$currentSiteTypeNotifierHash() =>
-    r'c73bf72962d97791de69a72d75d769545797e8e7';
+    r'4ddd017b677cd41d51252aa6c9792989240f07b9';
 
 abstract class _$CurrentSiteTypeNotifier extends $Notifier<SiteType> {
   SiteType build();
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<SiteType, SiteType>;
     final element =
         ref.element
@@ -59,16 +58,16 @@ abstract class _$CurrentSiteTypeNotifier extends $Notifier<SiteType> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(ReadableStateNotifier)
-const readableStateProvider = ReadableStateNotifierProvider._();
+final readableStateProvider = ReadableStateNotifierProvider._();
 
 final class ReadableStateNotifierProvider
     extends $NotifierProvider<ReadableStateNotifier, int> {
-  const ReadableStateNotifierProvider._()
+  ReadableStateNotifierProvider._()
     : super(
         from: null,
         argument: null,
@@ -103,7 +102,6 @@ abstract class _$ReadableStateNotifier extends $Notifier<int> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<int, int>;
     final element =
         ref.element
@@ -113,17 +111,17 @@ abstract class _$ReadableStateNotifier extends $Notifier<int> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(appbarTextStyle)
-const appbarTextStyleProvider = AppbarTextStyleProvider._();
+final appbarTextStyleProvider = AppbarTextStyleProvider._();
 
 final class AppbarTextStyleProvider
     extends $FunctionalProvider<TextStyle, TextStyle, TextStyle>
     with $Provider<TextStyle> {
-  const AppbarTextStyleProvider._()
+  AppbarTextStyleProvider._()
     : super(
         from: null,
         argument: null,
@@ -159,12 +157,12 @@ final class AppbarTextStyleProvider
 String _$appbarTextStyleHash() => r'831bec677d811438105caedd0b3152db2db72e02';
 
 @ProviderFor(screenWidth)
-const screenWidthProvider = ScreenWidthProvider._();
+final screenWidthProvider = ScreenWidthProvider._();
 
 final class ScreenWidthProvider
     extends $FunctionalProvider<double, double, double>
     with $Provider<double> {
-  const ScreenWidthProvider._()
+  ScreenWidthProvider._()
     : super(
         from: null,
         argument: null,
@@ -200,12 +198,12 @@ final class ScreenWidthProvider
 String _$screenWidthHash() => r'f9429b6bf80fa9cf2ffb37cba2678dbfcafd523e';
 
 @ProviderFor(appTextStyles)
-const appTextStylesProvider = AppTextStylesProvider._();
+final appTextStylesProvider = AppTextStylesProvider._();
 
 final class AppTextStylesProvider
     extends $FunctionalProvider<AppTextStyles, AppTextStyles, AppTextStyles>
     with $Provider<AppTextStyles> {
-  const AppTextStylesProvider._()
+  AppTextStylesProvider._()
     : super(
         from: null,
         argument: null,
@@ -240,26 +238,97 @@ final class AppTextStylesProvider
 
 String _$appTextStylesHash() => r'32605ed7bb94d2f39defcd0599f4fc86c90cb0a1';
 
+/// Global font size delta provider.
+/// NOT dependent on scoped providers, so changes propagate across ALL
+/// ProviderScopes (detail, list, main pages all share this instance).
+
+@ProviderFor(FontSizeDelta)
+final fontSizeDeltaProvider = FontSizeDeltaProvider._();
+
+/// Global font size delta provider.
+/// NOT dependent on scoped providers, so changes propagate across ALL
+/// ProviderScopes (detail, list, main pages all share this instance).
+final class FontSizeDeltaProvider
+    extends $NotifierProvider<FontSizeDelta, double> {
+  /// Global font size delta provider.
+  /// NOT dependent on scoped providers, so changes propagate across ALL
+  /// ProviderScopes (detail, list, main pages all share this instance).
+  FontSizeDeltaProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'fontSizeDeltaProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$fontSizeDeltaHash();
+
+  @$internal
+  @override
+  FontSizeDelta create() => FontSizeDelta();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(double value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<double>(value),
+    );
+  }
+}
+
+String _$fontSizeDeltaHash() => r'2bf04fb22b96fab95b49b76535d47ee1b2917763';
+
+/// Global font size delta provider.
+/// NOT dependent on scoped providers, so changes propagate across ALL
+/// ProviderScopes (detail, list, main pages all share this instance).
+
+abstract class _$FontSizeDelta extends $Notifier<double> {
+  double build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<double, double>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<double, double>,
+              double,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(AppTextStylesFontSizeNotifier)
-const appTextStylesFontSizeProvider = AppTextStylesFontSizeNotifierProvider._();
+final appTextStylesFontSizeProvider = AppTextStylesFontSizeNotifierProvider._();
 
 final class AppTextStylesFontSizeNotifierProvider
     extends
         $NotifierProvider<AppTextStylesFontSizeNotifier, CurrentTextStyles> {
-  const AppTextStylesFontSizeNotifierProvider._()
+  AppTextStylesFontSizeNotifierProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
         name: r'appTextStylesFontSizeProvider',
         isAutoDispose: false,
-        dependencies: const <ProviderOrFamily>[appTextStylesProvider],
-        $allTransitiveDependencies: const <ProviderOrFamily>[
+        dependencies: <ProviderOrFamily>[
+          appTextStylesProvider,
+          fontSizeDeltaProvider,
+        ],
+        $allTransitiveDependencies: <ProviderOrFamily>[
           AppTextStylesFontSizeNotifierProvider.$allTransitiveDependencies0,
+          AppTextStylesFontSizeNotifierProvider.$allTransitiveDependencies1,
         ],
       );
 
-  static const $allTransitiveDependencies0 = appTextStylesProvider;
+  static final $allTransitiveDependencies0 = appTextStylesProvider;
+  static final $allTransitiveDependencies1 = fontSizeDeltaProvider;
 
   @override
   String debugGetCreateSourceHash() => _$appTextStylesFontSizeNotifierHash();
@@ -278,7 +347,7 @@ final class AppTextStylesFontSizeNotifierProvider
 }
 
 String _$appTextStylesFontSizeNotifierHash() =>
-    r'be4778f121411c57280b45f6f3fa7c547cd2f4f2';
+    r'95299ba345948a04e09cb94d84dbd456ee189538';
 
 abstract class _$AppTextStylesFontSizeNotifier
     extends $Notifier<CurrentTextStyles> {
@@ -286,7 +355,6 @@ abstract class _$AppTextStylesFontSizeNotifier
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<CurrentTextStyles, CurrentTextStyles>;
     final element =
         ref.element
@@ -296,6 +364,6 @@ abstract class _$AppTextStylesFontSizeNotifier
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

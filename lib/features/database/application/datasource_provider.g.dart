@@ -9,26 +9,26 @@ part of 'datasource_provider.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(appDatabase)
-const appDatabaseProvider = AppDatabaseProvider._();
+@ProviderFor(_appDatabase)
+final _appDatabaseProvider = _AppDatabaseProvider._();
 
-final class AppDatabaseProvider
+final class _AppDatabaseProvider
     extends
         $FunctionalProvider<AsyncValue<Database>, Database, FutureOr<Database>>
     with $FutureModifier<Database>, $FutureProvider<Database> {
-  const AppDatabaseProvider._()
+  _AppDatabaseProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'appDatabaseProvider',
+        name: r'_appDatabaseProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$appDatabaseHash();
+  String debugGetCreateSourceHash() => _$_appDatabaseHash();
 
   @$internal
   @override
@@ -37,19 +37,19 @@ final class AppDatabaseProvider
 
   @override
   FutureOr<Database> create(Ref ref) {
-    return appDatabase(ref);
+    return _appDatabase(ref);
   }
 }
 
-String _$appDatabaseHash() => r'64470d53bc233b7f3188c1cf1964c6c8972b0635';
+String _$_appDatabaseHash() => r'eab9e525e31e88c7ebd5f15fc11adb365fc7254c';
 
 @ProviderFor(localDatabase)
-const localDatabaseProvider = LocalDatabaseProvider._();
+final localDatabaseProvider = LocalDatabaseProvider._();
 
 final class LocalDatabaseProvider
     extends $FunctionalProvider<LocalDatabase, LocalDatabase, LocalDatabase>
     with $Provider<LocalDatabase> {
-  const LocalDatabaseProvider._()
+  LocalDatabaseProvider._()
     : super(
         from: null,
         argument: null,
@@ -82,4 +82,4 @@ final class LocalDatabaseProvider
   }
 }
 
-String _$localDatabaseHash() => r'fe2f18c543ff01c2be91477774c2377ed7ab4060';
+String _$localDatabaseHash() => r'e0cb5c43ed00cc4e64a55eb6c2d2ec1bd1ecec0c';

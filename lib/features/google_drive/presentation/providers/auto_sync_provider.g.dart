@@ -10,11 +10,11 @@ part of 'auto_sync_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(AutoSyncNotifier)
-const autoSyncProvider = AutoSyncNotifierProvider._();
+final autoSyncProvider = AutoSyncNotifierProvider._();
 
 final class AutoSyncNotifierProvider
     extends $NotifierProvider<AutoSyncNotifier, SyncAction> {
-  const AutoSyncNotifierProvider._()
+  AutoSyncNotifierProvider._()
     : super(
         from: null,
         argument: null,
@@ -48,7 +48,6 @@ abstract class _$AutoSyncNotifier extends $Notifier<SyncAction> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<SyncAction, SyncAction>;
     final element =
         ref.element
@@ -58,6 +57,6 @@ abstract class _$AutoSyncNotifier extends $Notifier<SyncAction> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

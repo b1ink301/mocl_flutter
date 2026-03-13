@@ -10,12 +10,12 @@ part of 'use_case_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(getDetail)
-const getDetailProvider = GetDetailProvider._();
+final getDetailProvider = GetDetailProvider._();
 
 final class GetDetailProvider
     extends $FunctionalProvider<GetDetail, GetDetail, GetDetail>
     with $Provider<GetDetail> {
-  const GetDetailProvider._()
+  GetDetailProvider._()
     : super(
         from: null,
         argument: null,
@@ -51,12 +51,12 @@ final class GetDetailProvider
 String _$getDetailHash() => r'02d7c131080e1cc739795aa3d56be69dfc3fbac8';
 
 @ProviderFor(setReadFlag)
-const setReadFlagProvider = SetReadFlagProvider._();
+final setReadFlagProvider = SetReadFlagProvider._();
 
 final class SetReadFlagProvider
     extends $FunctionalProvider<SetReadFlag, SetReadFlag, SetReadFlag>
     with $Provider<SetReadFlag> {
-  const SetReadFlagProvider._()
+  SetReadFlagProvider._()
     : super(
         from: null,
         argument: null,

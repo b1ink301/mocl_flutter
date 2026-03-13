@@ -31,7 +31,7 @@ class DetailView extends ConsumerWidget with DetailState {
         error: (state) => SliverFillRemaining(
           hasScrollBody: false,
           child: Padding(
-            padding: const EdgeInsets.all(12.0),
+            padding: const .all(12.0),
             child: Center(
               child: MessageWidget(message: state.error.toString()),
             ),
@@ -73,7 +73,7 @@ class _DetailView extends ConsumerWidget with DetailEvent, AppFontState {
     return SliverSafeArea(
       top: false,
       sliver: SliverPadding(
-        padding: const EdgeInsets.only(left: 16, right: 8),
+        padding: const .only(left: 16, right: 8),
         sliver: MultiSliver(
           children: [
             SliverPersistentHeader(
@@ -157,7 +157,7 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
       children: [
         Container(
           height: _kHeaderHeight,
-          alignment: AlignmentGeometry.centerLeft,
+          alignment: .centerLeft,
           color: backgroundColor,
           child: Row(
             // mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -310,11 +310,11 @@ class _CommentItem extends StatelessWidget {
         key: ValueKey('comment-${comment.id}'),
         material: (_, _) => MaterialListTileData(
           contentPadding: isEmptyBody
-              ? EdgeInsets.only(left: left, top: 0, bottom: 0)
-              : EdgeInsets.only(left: left, top: 2, bottom: 2),
+              ? .only(left: left, top: 0, bottom: 0)
+              : .only(left: left, top: 2, bottom: 2),
         ),
         cupertino: (_, _) => CupertinoListTileData(
-          padding: EdgeInsets.only(left: left, top: 8, bottom: 8),
+          padding: .only(left: left, top: 8, bottom: 8),
         ),
         title: Row(
           mainAxisSize: MainAxisSize.min,
@@ -410,7 +410,7 @@ class _HtmlWidget extends StatelessWidget {
     required this.textStyle,
     required this.hexColor,
     required this.openUrl,
-    this.renderMode = RenderMode.column,
+    this.renderMode = .column,
   });
 
   @override
@@ -458,7 +458,7 @@ class _RefreshButton extends StatelessWidget {
       child: Container(
         width: double.infinity,
         height: 58,
-        alignment: Alignment.center,
+        alignment: .center,
         child: PlatformText(
           '새로고침',
           style: bodyMedium?.copyWith(color: Theme.of(context).focusColor),

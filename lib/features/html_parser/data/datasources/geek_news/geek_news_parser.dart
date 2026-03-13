@@ -17,8 +17,8 @@ import 'package:timeago/timeago.dart' as timeago;
 
 import '../base/base_parser.dart';
 
-class NaverCafeParser implements BaseParser {
-  const NaverCafeParser();
+class GeekNewsParser implements BaseParser {
+  const GeekNewsParser();
 
   @override
   SiteType get siteType => SiteType.naverCafe;

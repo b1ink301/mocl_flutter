@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/widget_previews.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,6 +14,7 @@ import 'state/add_event_mixin.dart';
 import 'state/add_state_mixin.dart';
 
 class AddListDialog extends ConsumerWidget with AddState, AddEvent {
+  @Preview(name: 'AddListDialog')
   const AddListDialog({super.key});
 
   static Widget init(BuildContext context) => const AddListDialog();
@@ -27,7 +29,7 @@ class AddListDialog extends ConsumerWidget with AddState, AddEvent {
         elevation: 8,
         title: _buildTitle(context),
         titlePadding: EdgeInsets.zero,
-        contentPadding: const EdgeInsets.symmetric(
+        contentPadding: const .symmetric(
           vertical: 10,
           horizontal: 16,
         ),

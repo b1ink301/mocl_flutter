@@ -8,7 +8,7 @@ class _MainBody extends ConsumerWidget with MainState, MainEvent {
     listenNotLoginFailure(ref, context);
     return mainState(ref).when(
       data: (data) => SliverPadding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+        padding: .only(bottom: MediaQuery.of(context).padding.bottom),
         sliver: _BodyList(key: ValueKey(data.hashCode), items: data),
       ),
       error: (error, _) => _ErrorWidget(
@@ -56,11 +56,10 @@ class _BodyList extends ConsumerWidget with MainState {
     leading: item.icon.isEmpty ? null : _buildIconView(item.icon),
     title: PlatformText(item.text, style: textStyle),
     onTap: () => context.push(Routes.list, extra: item),
-    material: (_, _) => MaterialListTileData(
-      contentPadding: const EdgeInsets.fromLTRB(16, 4, 8, 4),
-    ),
+    material: (_, _) =>
+        MaterialListTileData(contentPadding: const .fromLTRB(16, 4, 8, 4)),
     cupertino: (_, _) => CupertinoListTileData(
-      padding: const EdgeInsets.fromLTRB(16, 18, 8, 18),
+      padding: const .fromLTRB(16, 18, 8, 18),
       additionalInfo: const Icon(CupertinoIcons.chevron_forward),
     ),
   );
@@ -78,7 +77,7 @@ class _ErrorWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => SliverPadding(
-    padding: const EdgeInsets.all(12.0),
+    padding: const .all(12.0),
     sliver: SliverToBoxAdapter(
       child: PlatformText(
         message,
@@ -92,12 +91,16 @@ class _MainAppBar extends ConsumerWidget with MainState, MainEvent {
   const _MainAppBar();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => SliverAppBar(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final delta = ref.watch(fontSizeDeltaProvider);
+    final baseStyle = AppTextStyles.of(context).titleTextStyle;
+    return SliverAppBar(
     scrolledUnderElevation: 0,
     title: PlatformText(titleState(ref)),
-    titleTextStyle: AppTextStyles.of(
-      context,
-    ).titleTextStyle.copyWith(color: Colors.white),
+    titleTextStyle: baseStyle.copyWith(
+      color: Colors.white,
+      fontSize: baseStyle.fontSize! + delta,
+    ),
     titleSpacing: 0,
     floating: true,
     toolbarHeight: 62,
@@ -124,19 +127,28 @@ class _MainAppBar extends ConsumerWidget with MainState, MainEvent {
       ),
     ],
   );
+  }
 }
 
 class _MainNavigationBar extends ConsumerWidget with MainState, MainEvent {
   const _MainNavigationBar();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) =>
-      CupertinoSliverNavigationBar(
-        largeTitle: PlatformText(titleState(ref)),
-        padding: const EdgeInsetsDirectional.only(start: 5, end: 10),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final delta = ref.watch(fontSizeDeltaProvider);
+    final baseLargeStyle =
+        CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle;
+    return CupertinoSliverNavigationBar(
+        largeTitle: Text(
+          titleState(ref),
+          style: baseLargeStyle.copyWith(
+            fontSize: (baseLargeStyle.fontSize ?? 34) + delta,
+          ),
+        ),
+        padding: const .only(start: 5, end: 10),
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         leading: PlatformIconButton(
-          padding: const EdgeInsets.all(0),
+          padding: const .all(0),
           onPressed: () => handleSideBarToggle(ref),
           icon: Icon(
             size: 24,
@@ -170,4 +182,5 @@ class _MainNavigationBar extends ConsumerWidget with MainState, MainEvent {
               )
             : null,
       );
+  }
 }

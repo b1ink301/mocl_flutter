@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/presentation/widgets/appbar_dual_text_widget.dart';
 
 import 'state/detail_event_mixin.dart';
@@ -36,7 +37,11 @@ class DetailAppBar extends ConsumerWidget with DetailState, DetailEvent {
         ],
       ),
       cupertino: (_, _) => SliverPersistentHeader(
-        delegate: _DetailCupertinoAppBar(title: title, height: height),
+        delegate: _DetailCupertinoAppBar(
+          title: title,
+          height: height,
+          fontSizeDelta: ref.watch(fontSizeDeltaProvider),
+        ),
       ),
     );
   }
@@ -81,8 +86,8 @@ class _DetailPopupMenuButton extends StatelessWidget {
           builder: (dialogContext) => AlertDialog.adaptive(
             title: const Text('글자 크기 변경'),
             content: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisSize: .min,
+              mainAxisAlignment: .center,
               children: [
                 IconButton(
                   icon: Icon(Icons.exposure_minus_1, color: focusColor),
@@ -115,24 +120,35 @@ class _DetailPopupMenuButton extends StatelessWidget {
 class _DetailCupertinoAppBar extends SliverPersistentHeaderDelegate {
   final String title;
   final double height;
+  final double fontSizeDelta;
 
-  const _DetailCupertinoAppBar({required this.title, required this.height});
+  const _DetailCupertinoAppBar({
+    required this.title,
+    required this.height,
+    this.fontSizeDelta = 0,
+  });
 
   @override
   Widget build(
     BuildContext context,
     double shrinkOffset,
     bool overlapsContent,
-  ) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 16),
-    color: CupertinoTheme.of(context).scaffoldBackgroundColor,
-    child: Text(
-      title,
-      style: CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle,
-      maxLines: 3,
-      overflow: TextOverflow.ellipsis,
-    ),
-  );
+  ) {
+    final baseStyle =
+        CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 16),
+      color: CupertinoTheme.of(context).scaffoldBackgroundColor,
+      child: Text(
+        title,
+        style: baseStyle.copyWith(
+          fontSize: (baseStyle.fontSize ?? 34) + fontSizeDelta,
+        ),
+        maxLines: 3,
+        overflow: TextOverflow.ellipsis,
+      ),
+    );
+  }
 
   @override
   double get maxExtent => height; // 3줄 높이에 맞게 조정
@@ -141,6 +157,8 @@ class _DetailCupertinoAppBar extends SliverPersistentHeaderDelegate {
   double get minExtent => height;
 
   @override
-  bool shouldRebuild(covariant SliverPersistentHeaderDelegate oldDelegate) =>
-      false;
+  bool shouldRebuild(covariant _DetailCupertinoAppBar oldDelegate) =>
+      title != oldDelegate.title ||
+      height != oldDelegate.height ||
+      fontSizeDelta != oldDelegate.fontSizeDelta;
 }

@@ -10,12 +10,12 @@ part of 'add_list_dlg_providers.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(AddListDlgNotifier)
-const addListDlgProvider = AddListDlgNotifierProvider._();
+final addListDlgProvider = AddListDlgNotifierProvider._();
 
 final class AddListDlgNotifierProvider
     extends
         $AsyncNotifierProvider<AddListDlgNotifier, List<CheckableMainItem>> {
-  const AddListDlgNotifierProvider._()
+  AddListDlgNotifierProvider._()
     : super(
         from: null,
         argument: null,
@@ -43,7 +43,6 @@ abstract class _$AddListDlgNotifier
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref =
         this.ref
             as $Ref<
@@ -61,6 +60,6 @@ abstract class _$AddListDlgNotifier
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

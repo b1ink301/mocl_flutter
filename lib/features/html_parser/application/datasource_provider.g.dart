@@ -10,7 +10,7 @@ part of 'datasource_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(_clienParser)
-const _clienParserProvider = _ClienParserFamily._();
+final _clienParserProvider = _ClienParserFamily._();
 
 final class _ClienParserProvider
     extends
@@ -20,7 +20,7 @@ final class _ClienParserProvider
           (BaseParser, BaseApi)
         >
     with $Provider<(BaseParser, BaseApi)> {
-  const _ClienParserProvider._({
+  _ClienParserProvider._({
     required _ClienParserFamily super.from,
     required bool super.argument,
   }) : super(
@@ -76,7 +76,7 @@ String _$_clienParserHash() => r'3805cc0a5f78bf4f254a006b014055d98d4ffd97';
 
 final class _ClienParserFamily extends $Family
     with $FunctionalFamilyOverride<(BaseParser, BaseApi), bool> {
-  const _ClienParserFamily._()
+  _ClienParserFamily._()
     : super(
         retry: null,
         name: r'_clienParserProvider',
@@ -93,7 +93,7 @@ final class _ClienParserFamily extends $Family
 }
 
 @ProviderFor(_damoangParser)
-const _damoangParserProvider = _DamoangParserFamily._();
+final _damoangParserProvider = _DamoangParserFamily._();
 
 final class _DamoangParserProvider
     extends
@@ -103,7 +103,7 @@ final class _DamoangParserProvider
           (BaseParser, BaseApi)
         >
     with $Provider<(BaseParser, BaseApi)> {
-  const _DamoangParserProvider._({
+  _DamoangParserProvider._({
     required _DamoangParserFamily super.from,
     required bool super.argument,
   }) : super(
@@ -159,7 +159,7 @@ String _$_damoangParserHash() => r'30b98e6a4f509bb79568bcfd0c2558825710604e';
 
 final class _DamoangParserFamily extends $Family
     with $FunctionalFamilyOverride<(BaseParser, BaseApi), bool> {
-  const _DamoangParserFamily._()
+  _DamoangParserFamily._()
     : super(
         retry: null,
         name: r'_damoangParserProvider',
@@ -176,7 +176,7 @@ final class _DamoangParserFamily extends $Family
 }
 
 @ProviderFor(_meecoParser)
-const _meecoParserProvider = _MeecoParserFamily._();
+final _meecoParserProvider = _MeecoParserFamily._();
 
 final class _MeecoParserProvider
     extends
@@ -186,7 +186,7 @@ final class _MeecoParserProvider
           (BaseParser, BaseApi)
         >
     with $Provider<(BaseParser, BaseApi)> {
-  const _MeecoParserProvider._({
+  _MeecoParserProvider._({
     required _MeecoParserFamily super.from,
     required bool super.argument,
   }) : super(
@@ -242,7 +242,7 @@ String _$_meecoParserHash() => r'34a6096b158e5ccffd106dc27d887395e491a092';
 
 final class _MeecoParserFamily extends $Family
     with $FunctionalFamilyOverride<(BaseParser, BaseApi), bool> {
-  const _MeecoParserFamily._()
+  _MeecoParserFamily._()
     : super(
         retry: null,
         name: r'_meecoParserProvider',
@@ -259,7 +259,7 @@ final class _MeecoParserFamily extends $Family
 }
 
 @ProviderFor(_naverCafeParser)
-const _naverCafeParserProvider = _NaverCafeParserFamily._();
+final _naverCafeParserProvider = _NaverCafeParserFamily._();
 
 final class _NaverCafeParserProvider
     extends
@@ -269,7 +269,7 @@ final class _NaverCafeParserProvider
           (BaseParser, BaseApi)
         >
     with $Provider<(BaseParser, BaseApi)> {
-  const _NaverCafeParserProvider._({
+  _NaverCafeParserProvider._({
     required _NaverCafeParserFamily super.from,
     required bool super.argument,
   }) : super(
@@ -325,7 +325,7 @@ String _$_naverCafeParserHash() => r'd49d7b92c83778dec8a7011268b0b6e17daf5ade';
 
 final class _NaverCafeParserFamily extends $Family
     with $FunctionalFamilyOverride<(BaseParser, BaseApi), bool> {
-  const _NaverCafeParserFamily._()
+  _NaverCafeParserFamily._()
     : super(
         retry: null,
         name: r'_naverCafeParserProvider',
@@ -342,7 +342,7 @@ final class _NaverCafeParserFamily extends $Family
 }
 
 @ProviderFor(_redditParser)
-const _redditParserProvider = _RedditParserFamily._();
+final _redditParserProvider = _RedditParserFamily._();
 
 final class _RedditParserProvider
     extends
@@ -352,7 +352,7 @@ final class _RedditParserProvider
           (BaseParser, BaseApi)
         >
     with $Provider<(BaseParser, BaseApi)> {
-  const _RedditParserProvider._({
+  _RedditParserProvider._({
     required _RedditParserFamily super.from,
     required bool super.argument,
   }) : super(
@@ -408,7 +408,7 @@ String _$_redditParserHash() => r'76707f2a6d56a31f7908cac04cafed59071515d1';
 
 final class _RedditParserFamily extends $Family
     with $FunctionalFamilyOverride<(BaseParser, BaseApi), bool> {
-  const _RedditParserFamily._()
+  _RedditParserFamily._()
     : super(
         retry: null,
         name: r'_redditParserProvider',
@@ -425,7 +425,7 @@ final class _RedditParserFamily extends $Family
 }
 
 @ProviderFor(_theqooParser)
-const _theqooParserProvider = _TheqooParserFamily._();
+final _theqooParserProvider = _TheqooParserFamily._();
 
 final class _TheqooParserProvider
     extends
@@ -435,7 +435,7 @@ final class _TheqooParserProvider
           (BaseParser, BaseApi)
         >
     with $Provider<(BaseParser, BaseApi)> {
-  const _TheqooParserProvider._({
+  _TheqooParserProvider._({
     required _TheqooParserFamily super.from,
     required bool super.argument,
   }) : super(
@@ -491,7 +491,7 @@ String _$_theqooParserHash() => r'980a34e5d1a2350fe1bdd07974c6a8b89b23c3a2';
 
 final class _TheqooParserFamily extends $Family
     with $FunctionalFamilyOverride<(BaseParser, BaseApi), bool> {
-  const _TheqooParserFamily._()
+  _TheqooParserFamily._()
     : super(
         retry: null,
         name: r'_theqooParserProvider',
@@ -508,7 +508,7 @@ final class _TheqooParserFamily extends $Family
 }
 
 @ProviderFor(currentParser)
-const currentParserProvider = CurrentParserFamily._();
+final currentParserProvider = CurrentParserFamily._();
 
 final class CurrentParserProvider
     extends
@@ -518,7 +518,7 @@ final class CurrentParserProvider
           (BaseParser, BaseApi)
         >
     with $Provider<(BaseParser, BaseApi)> {
-  const CurrentParserProvider._({
+  CurrentParserProvider._({
     required CurrentParserFamily super.from,
     required SiteType super.argument,
   }) : super(
@@ -574,7 +574,7 @@ String _$currentParserHash() => r'6ed842e5c0bbcd1aab5c91b094c244c61d1b1d8f';
 
 final class CurrentParserFamily extends $Family
     with $FunctionalFamilyOverride<(BaseParser, BaseApi), SiteType> {
-  const CurrentParserFamily._()
+  CurrentParserFamily._()
     : super(
         retry: null,
         name: r'currentParserProvider',

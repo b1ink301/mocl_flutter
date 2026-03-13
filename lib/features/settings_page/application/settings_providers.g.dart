@@ -10,11 +10,11 @@ part of 'settings_providers.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(SizeCacheDirNotifier)
-const sizeCacheDirProvider = SizeCacheDirNotifierProvider._();
+final sizeCacheDirProvider = SizeCacheDirNotifierProvider._();
 
 final class SizeCacheDirNotifierProvider
     extends $AsyncNotifierProvider<SizeCacheDirNotifier, String> {
-  const SizeCacheDirNotifierProvider._()
+  SizeCacheDirNotifierProvider._()
     : super(
         from: null,
         argument: null,
@@ -41,7 +41,6 @@ abstract class _$SizeCacheDirNotifier extends $AsyncNotifier<String> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<AsyncValue<String>, String>;
     final element =
         ref.element
@@ -51,16 +50,16 @@ abstract class _$SizeCacheDirNotifier extends $AsyncNotifier<String> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(ShowNickImageNotifier)
-const showNickImageProvider = ShowNickImageNotifierProvider._();
+final showNickImageProvider = ShowNickImageNotifierProvider._();
 
 final class ShowNickImageNotifierProvider
     extends $NotifierProvider<ShowNickImageNotifier, bool> {
-  const ShowNickImageNotifierProvider._()
+  ShowNickImageNotifierProvider._()
     : super(
         from: null,
         argument: null,
@@ -95,7 +94,6 @@ abstract class _$ShowNickImageNotifier extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -105,6 +103,6 @@ abstract class _$ShowNickImageNotifier extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

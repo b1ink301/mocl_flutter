@@ -41,7 +41,7 @@ class _TitleView extends ConsumerWidget with ListState {
     return PlatformText(
       title,
       maxLines: 3,
-      overflow: TextOverflow.ellipsis,
+      overflow: .ellipsis,
       style: textStyle,
     );
   }
@@ -52,7 +52,7 @@ class _BottomView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => const Padding(
-    padding: EdgeInsets.only(top: 8.0),
+    padding: .only(top: 8.0),
     child: SizedBox(
       height: 20,
       child: Row(
@@ -105,7 +105,7 @@ class _InfoText extends ConsumerWidget with ListState {
         : PlatformText(
             info,
             maxLines: 1,
-            overflow: TextOverflow.ellipsis,
+            overflow: .ellipsis,
             style: textStyle,
           );
   }

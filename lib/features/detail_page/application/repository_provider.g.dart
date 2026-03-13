@@ -10,7 +10,7 @@ part of 'repository_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(detailRepository)
-const detailRepositoryProvider = DetailRepositoryFamily._();
+final detailRepositoryProvider = DetailRepositoryFamily._();
 
 final class DetailRepositoryProvider
     extends
@@ -20,7 +20,7 @@ final class DetailRepositoryProvider
           DetailRepository
         >
     with $Provider<DetailRepository> {
-  const DetailRepositoryProvider._({
+  DetailRepositoryProvider._({
     required DetailRepositoryFamily super.from,
     required SiteType super.argument,
   }) : super(
@@ -75,7 +75,7 @@ String _$detailRepositoryHash() => r'bc370fcf11b540d58978748f7f72f1eda6b8a8d3';
 
 final class DetailRepositoryFamily extends $Family
     with $FunctionalFamilyOverride<DetailRepository, SiteType> {
-  const DetailRepositoryFamily._()
+  DetailRepositoryFamily._()
     : super(
         retry: null,
         name: r'detailRepositoryProvider',

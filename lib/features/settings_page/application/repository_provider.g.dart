@@ -10,7 +10,7 @@ part of 'repository_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(settingsRepository)
-const settingsRepositoryProvider = SettingsRepositoryProvider._();
+final settingsRepositoryProvider = SettingsRepositoryProvider._();
 
 final class SettingsRepositoryProvider
     extends
@@ -20,7 +20,7 @@ final class SettingsRepositoryProvider
           SettingsRepository
         >
     with $Provider<SettingsRepository> {
-  const SettingsRepositoryProvider._()
+  SettingsRepositoryProvider._()
     : super(
         from: null,
         argument: null,

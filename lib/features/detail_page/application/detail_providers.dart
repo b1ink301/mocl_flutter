@@ -90,10 +90,16 @@ const double _kHorizontalPadding = 16.0; // 좌우 패딩
 double _kMinTextHeight = !Platform.isIOS ? 30 : 10; // 최소 텍스트 높이
 double _kExtraVerticalSpace = !Platform.isIOS ? 36 : 0; // 추가 수직 공간
 
-@Riverpod(dependencies: [appbarTextStyle, screenWidth])
+@Riverpod(dependencies: [appbarTextStyle, screenWidth, FontSizeDelta])
 double detailAppbarHeight(Ref ref, String text) {
-  final TextStyle style = ref.watch(appbarTextStyleProvider);
+  final TextStyle baseStyle = ref.watch(appbarTextStyleProvider);
+  final double fontSizeDelta = ref.watch(fontSizeDeltaProvider);
   final double screenWidth = ref.watch(screenWidthProvider);
+
+  // fontSizeDelta를 반영한 실제 렌더링 스타일로 높이 계산
+  final TextStyle style = fontSizeDelta != 0
+      ? baseStyle.copyWith(fontSize: (baseStyle.fontSize ?? 14) + fontSizeDelta)
+      : baseStyle;
 
   final double availableWidth =
       screenWidth -
@@ -107,6 +113,8 @@ double detailAppbarHeight(Ref ref, String text) {
     textDirection: TextDirection.ltr,
   )..layout(minWidth: 0, maxWidth: availableWidth);
 
-  // 최소 높이와 비교하여 더 큰 값 반환
-  return max(_kMinTextHeight, textPainter.height) + _kExtraVerticalSpace;
+  final double height =
+      max(_kMinTextHeight, textPainter.height) + _kExtraVerticalSpace;
+  textPainter.dispose();
+  return height;
 }

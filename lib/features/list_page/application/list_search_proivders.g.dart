@@ -10,11 +10,11 @@ part of 'list_search_proivders.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(KeywordNotifier)
-const keywordProvider = KeywordNotifierProvider._();
+final keywordProvider = KeywordNotifierProvider._();
 
 final class KeywordNotifierProvider
     extends $NotifierProvider<KeywordNotifier, String> {
-  const KeywordNotifierProvider._()
+  KeywordNotifierProvider._()
     : super(
         from: null,
         argument: null,
@@ -48,7 +48,6 @@ abstract class _$KeywordNotifier extends $Notifier<String> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<String, String>;
     final element =
         ref.element
@@ -58,12 +57,12 @@ abstract class _$KeywordNotifier extends $Notifier<String> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(reqSearchListData)
-const reqSearchListDataProvider = ReqSearchListDataProvider._();
+final reqSearchListDataProvider = ReqSearchListDataProvider._();
 
 final class ReqSearchListDataProvider
     extends
@@ -75,25 +74,22 @@ final class ReqSearchListDataProvider
     with
         $FutureModifier<Either<Failure, List<ListItem>>>,
         $FutureProvider<Either<Failure, List<ListItem>>> {
-  const ReqSearchListDataProvider._()
+  ReqSearchListDataProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
         name: r'reqSearchListDataProvider',
         isAutoDispose: true,
-        dependencies: const <ProviderOrFamily>[
-          mainItemProvider,
-          keywordProvider,
-        ],
-        $allTransitiveDependencies: const <ProviderOrFamily>[
+        dependencies: <ProviderOrFamily>[mainItemProvider, keywordProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
           ReqSearchListDataProvider.$allTransitiveDependencies0,
           ReqSearchListDataProvider.$allTransitiveDependencies1,
         ],
       );
 
-  static const $allTransitiveDependencies0 = mainItemProvider;
-  static const $allTransitiveDependencies1 = keywordProvider;
+  static final $allTransitiveDependencies0 = mainItemProvider;
+  static final $allTransitiveDependencies1 = keywordProvider;
 
   @override
   String debugGetCreateSourceHash() => _$reqSearchListDataHash();

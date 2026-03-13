@@ -10,12 +10,12 @@ part of 'list_providers.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(mainItem)
-const mainItemProvider = MainItemProvider._();
+final mainItemProvider = MainItemProvider._();
 
 final class MainItemProvider
     extends $FunctionalProvider<MainItem, MainItem, MainItem>
     with $Provider<MainItem> {
-  const MainItemProvider._()
+  MainItemProvider._()
     : super(
         from: null,
         argument: null,
@@ -51,12 +51,12 @@ final class MainItemProvider
 String _$mainItemHash() => r'bfd8c4675d74a8ec6b735008aa9f59eee3c014e6';
 
 @ProviderFor(listSmallTitle)
-const listSmallTitleProvider = ListSmallTitleProvider._();
+final listSmallTitleProvider = ListSmallTitleProvider._();
 
 final class ListSmallTitleProvider
     extends $FunctionalProvider<String, String, String>
     with $Provider<String> {
-  const ListSmallTitleProvider._()
+  ListSmallTitleProvider._()
     : super(
         from: null,
         argument: null,
@@ -92,25 +92,25 @@ final class ListSmallTitleProvider
 String _$listSmallTitleHash() => r'4d44c4e8d04a365a84741c0d5ce123f586f67b4b';
 
 @ProviderFor(listTitle)
-const listTitleProvider = ListTitleProvider._();
+final listTitleProvider = ListTitleProvider._();
 
 final class ListTitleProvider
     extends $FunctionalProvider<String, String, String>
     with $Provider<String> {
-  const ListTitleProvider._()
+  ListTitleProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
         name: r'listTitleProvider',
         isAutoDispose: true,
-        dependencies: const <ProviderOrFamily>[mainItemProvider],
-        $allTransitiveDependencies: const <ProviderOrFamily>[
+        dependencies: <ProviderOrFamily>[mainItemProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
           ListTitleProvider.$allTransitiveDependencies0,
         ],
       );
 
-  static const $allTransitiveDependencies0 = mainItemProvider;
+  static final $allTransitiveDependencies0 = mainItemProvider;
 
   @override
   String debugGetCreateSourceHash() => _$listTitleHash();
@@ -137,12 +137,12 @@ final class ListTitleProvider
 String _$listTitleHash() => r'334015293ab03a204a6f3c31553fea624aaf7120';
 
 @ProviderFor(titleHeight)
-const titleHeightProvider = TitleHeightFamily._();
+final titleHeightProvider = TitleHeightFamily._();
 
 final class TitleHeightProvider
     extends $FunctionalProvider<double, double, double>
     with $Provider<double> {
-  const TitleHeightProvider._({
+  TitleHeightProvider._({
     required TitleHeightFamily super.from,
     required String super.argument,
   }) : super(
@@ -153,8 +153,8 @@ final class TitleHeightProvider
          $allTransitiveDependencies: null,
        );
 
-  static const $allTransitiveDependencies0 = appbarTextStyleProvider;
-  static const $allTransitiveDependencies1 = screenWidthProvider;
+  static final $allTransitiveDependencies0 = appbarTextStyleProvider;
+  static final $allTransitiveDependencies1 = screenWidthProvider;
 
   @override
   String debugGetCreateSourceHash() => _$titleHeightHash();
@@ -196,19 +196,19 @@ final class TitleHeightProvider
   }
 }
 
-String _$titleHeightHash() => r'db651b17f1a464563f1fbd0d9e130579f3648c25';
+String _$titleHeightHash() => r'b3ac5f226f086bdf6c69eb2b3e0571faac67a2f3';
 
 final class TitleHeightFamily extends $Family
     with $FunctionalFamilyOverride<double, String> {
-  const TitleHeightFamily._()
+  TitleHeightFamily._()
     : super(
         retry: null,
         name: r'titleHeightProvider',
-        dependencies: const <ProviderOrFamily>[
+        dependencies: <ProviderOrFamily>[
           appbarTextStyleProvider,
           screenWidthProvider,
         ],
-        $allTransitiveDependencies: const <ProviderOrFamily>[
+        $allTransitiveDependencies: <ProviderOrFamily>[
           TitleHeightProvider.$allTransitiveDependencies0,
           TitleHeightProvider.$allTransitiveDependencies1,
         ],
@@ -223,7 +223,7 @@ final class TitleHeightFamily extends $Family
 }
 
 @ProviderFor(reqListData)
-const reqListDataProvider = ReqListDataFamily._();
+final reqListDataProvider = ReqListDataFamily._();
 
 final class ReqListDataProvider
     extends
@@ -235,7 +235,7 @@ final class ReqListDataProvider
     with
         $FutureModifier<Either<Failure, List<ListItem>>>,
         $FutureProvider<Either<Failure, List<ListItem>>> {
-  const ReqListDataProvider._({
+  ReqListDataProvider._({
     required ReqListDataFamily super.from,
     required (MainItem, SortType, int, LastId) super.argument,
   }) : super(
@@ -246,7 +246,7 @@ final class ReqListDataProvider
          $allTransitiveDependencies: null,
        );
 
-  static const $allTransitiveDependencies0 = mainItemProvider;
+  static final $allTransitiveDependencies0 = mainItemProvider;
 
   @override
   String debugGetCreateSourceHash() => _$reqListDataHash();
@@ -289,12 +289,12 @@ final class ReqListDataFamily extends $Family
           FutureOr<Either<Failure, List<ListItem>>>,
           (MainItem, SortType, int, LastId)
         > {
-  const ReqListDataFamily._()
+  ReqListDataFamily._()
     : super(
         retry: null,
         name: r'reqListDataProvider',
-        dependencies: const <ProviderOrFamily>[mainItemProvider],
-        $allTransitiveDependencies: const <ProviderOrFamily>[
+        dependencies: <ProviderOrFamily>[mainItemProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
           ReqListDataProvider.$allTransitiveDependencies0,
         ],
         isAutoDispose: true,
@@ -315,32 +315,32 @@ final class ReqListDataFamily extends $Family
 }
 
 @ProviderFor(PageStateNotifier)
-const pageStateProvider = PageStateNotifierProvider._();
+final pageStateProvider = PageStateNotifierProvider._();
 
 final class PageStateNotifierProvider
     extends $AsyncNotifierProvider<PageStateNotifier, PageState> {
-  const PageStateNotifierProvider._()
+  PageStateNotifierProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
         name: r'pageStateProvider',
         isAutoDispose: true,
-        dependencies: const <ProviderOrFamily>[
+        dependencies: <ProviderOrFamily>[
           mainItemProvider,
           reqListDataProvider,
           sortTypeProvider,
         ],
-        $allTransitiveDependencies: const <ProviderOrFamily>[
+        $allTransitiveDependencies: <ProviderOrFamily>[
           PageStateNotifierProvider.$allTransitiveDependencies0,
           PageStateNotifierProvider.$allTransitiveDependencies1,
           PageStateNotifierProvider.$allTransitiveDependencies2,
         ],
       );
 
-  static const $allTransitiveDependencies0 = mainItemProvider;
-  static const $allTransitiveDependencies1 = reqListDataProvider;
-  static const $allTransitiveDependencies2 = sortTypeProvider;
+  static final $allTransitiveDependencies0 = mainItemProvider;
+  static final $allTransitiveDependencies1 = reqListDataProvider;
+  static final $allTransitiveDependencies2 = sortTypeProvider;
 
   @override
   String debugGetCreateSourceHash() => _$pageStateNotifierHash();
@@ -357,7 +357,6 @@ abstract class _$PageStateNotifier extends $AsyncNotifier<PageState> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<AsyncValue<PageState>, PageState>;
     final element =
         ref.element
@@ -367,17 +366,17 @@ abstract class _$PageStateNotifier extends $AsyncNotifier<PageState> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(getListItem)
-const getListItemProvider = GetListItemFamily._();
+final getListItemProvider = GetListItemFamily._();
 
 final class GetListItemProvider
     extends $FunctionalProvider<ListItem?, ListItem?, ListItem?>
     with $Provider<ListItem?> {
-  const GetListItemProvider._({
+  GetListItemProvider._({
     required GetListItemFamily super.from,
     required int super.argument,
   }) : super(
@@ -388,12 +387,12 @@ final class GetListItemProvider
          $allTransitiveDependencies: null,
        );
 
-  static const $allTransitiveDependencies0 = pageStateProvider;
-  static const $allTransitiveDependencies1 =
+  static final $allTransitiveDependencies0 = pageStateProvider;
+  static final $allTransitiveDependencies1 =
       PageStateNotifierProvider.$allTransitiveDependencies0;
-  static const $allTransitiveDependencies2 =
+  static final $allTransitiveDependencies2 =
       PageStateNotifierProvider.$allTransitiveDependencies1;
-  static const $allTransitiveDependencies3 =
+  static final $allTransitiveDependencies3 =
       PageStateNotifierProvider.$allTransitiveDependencies2;
 
   @override
@@ -440,12 +439,12 @@ String _$getListItemHash() => r'7989487e8b24ef20cc5289b6d5867a16b4f5d79e';
 
 final class GetListItemFamily extends $Family
     with $FunctionalFamilyOverride<ListItem?, int> {
-  const GetListItemFamily._()
+  GetListItemFamily._()
     : super(
         retry: null,
         name: r'getListItemProvider',
-        dependencies: const <ProviderOrFamily>[pageStateProvider],
-        $allTransitiveDependencies: const <ProviderOrFamily>{
+        dependencies: <ProviderOrFamily>[pageStateProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>{
           GetListItemProvider.$allTransitiveDependencies0,
           GetListItemProvider.$allTransitiveDependencies1,
           GetListItemProvider.$allTransitiveDependencies2,
@@ -462,11 +461,11 @@ final class GetListItemFamily extends $Family
 }
 
 @ProviderFor(SortTypeNotifier)
-const sortTypeProvider = SortTypeNotifierProvider._();
+final sortTypeProvider = SortTypeNotifierProvider._();
 
 final class SortTypeNotifierProvider
     extends $NotifierProvider<SortTypeNotifier, SortType> {
-  const SortTypeNotifierProvider._()
+  SortTypeNotifierProvider._()
     : super(
         from: null,
         argument: null,
@@ -500,7 +499,6 @@ abstract class _$SortTypeNotifier extends $Notifier<SortType> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<SortType, SortType>;
     final element =
         ref.element
@@ -510,28 +508,28 @@ abstract class _$SortTypeNotifier extends $Notifier<SortType> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(listItem)
-const listItemProvider = ListItemProvider._();
+final listItemProvider = ListItemProvider._();
 
 final class ListItemProvider
     extends $FunctionalProvider<ListItem?, ListItem?, ListItem?>
     with $Provider<ListItem?> {
-  const ListItemProvider._()
+  ListItemProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
         name: r'listItemProvider',
         isAutoDispose: true,
-        dependencies: const <ProviderOrFamily>[
+        dependencies: <ProviderOrFamily>[
           listItemIndexProvider,
           getListItemProvider,
         ],
-        $allTransitiveDependencies: const <ProviderOrFamily>{
+        $allTransitiveDependencies: <ProviderOrFamily>{
           ListItemProvider.$allTransitiveDependencies0,
           ListItemProvider.$allTransitiveDependencies1,
           ListItemProvider.$allTransitiveDependencies2,
@@ -541,15 +539,15 @@ final class ListItemProvider
         },
       );
 
-  static const $allTransitiveDependencies0 = listItemIndexProvider;
-  static const $allTransitiveDependencies1 = getListItemProvider;
-  static const $allTransitiveDependencies2 =
+  static final $allTransitiveDependencies0 = listItemIndexProvider;
+  static final $allTransitiveDependencies1 = getListItemProvider;
+  static final $allTransitiveDependencies2 =
       GetListItemProvider.$allTransitiveDependencies0;
-  static const $allTransitiveDependencies3 =
+  static final $allTransitiveDependencies3 =
       GetListItemProvider.$allTransitiveDependencies1;
-  static const $allTransitiveDependencies4 =
+  static final $allTransitiveDependencies4 =
       GetListItemProvider.$allTransitiveDependencies2;
-  static const $allTransitiveDependencies5 =
+  static final $allTransitiveDependencies5 =
       GetListItemProvider.$allTransitiveDependencies3;
 
   @override
@@ -577,11 +575,11 @@ final class ListItemProvider
 String _$listItemHash() => r'cfa14f06c2d46a8696f395988a6e6969451ef49d';
 
 @ProviderFor(listItemIndex)
-const listItemIndexProvider = ListItemIndexProvider._();
+final listItemIndexProvider = ListItemIndexProvider._();
 
 final class ListItemIndexProvider extends $FunctionalProvider<int, int, int>
     with $Provider<int> {
-  const ListItemIndexProvider._()
+  ListItemIndexProvider._()
     : super(
         from: null,
         argument: null,
