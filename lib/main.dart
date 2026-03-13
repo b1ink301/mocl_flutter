@@ -1,17 +1,14 @@
 import 'dart:async';
 
-import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter/material.dart';
+import 'package:firebase_core/firebase_core.dart' show Firebase;
 import 'package:flutter/services.dart';
+import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:path/path.dart';
-import 'package:path_provider/path_provider.dart';
-import 'package:sembast/sembast_io.dart';
+import 'package:mocl_flutter/app_widget.dart';
+import 'package:mocl_flutter/firebase_options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'di/datasource_provider.dart';
-import 'features/app_shell/presentation/app_widget.dart';
-import 'firebase_options.dart';
+import 'features/settings_page/application/datasource_provider.dart';
 import 'flavors.dart';
 
 Future<void> main() async {
@@ -29,16 +26,8 @@ Future<void> main() async {
         sharedPreferencesProvider.overrideWithValue(
           await SharedPreferences.getInstance(),
         ),
-        appDatabaseProvider.overrideWithValue(await _database()),
       ],
       child: const AppWidget(),
     ),
   );
-}
-
-Future<Database> _database() async {
-  final dir = await getApplicationDocumentsDirectory();
-  await dir.create(recursive: true);
-  final dbPath = join(dir.path, 'mocl-sembast.db');
-  return databaseFactoryIo.openDatabase(dbPath);
 }

@@ -105,11 +105,15 @@ json 변환 작업을 하기 위해서는 아래 명령어를 선행해야한다
 $ dart run build_runner build --delete-conflicting-outputs       
 
 $ flutter run --profile --cache-sksl --purge-persistent-cache --no-enable-impeller (Press M)
-$ flutter build appbundle --bundle-sksl-path flutter_01.sksl.json 
-$ flutter config --jdk-dir "/usr/local/Cellar/openjdk@17/17.0.14/libexec/openjdk.jdk/Contents/Home"
+$ flutter build appbundle --bundle-sksl-path flutter_01.sksl.json
+$ flutter config --jdk-dir "/usr/local/Cellar/openjdk@21/21.0.8/libexec/openjdk.jdk/Contents/Home"
 
 $ dart run flutter_native_splash:create --path=./flutter_native_splash.yaml
 
 flutter run flutter_flavorizr -p assets:download assets:extract ios:xcconfig assets:clean
 flutter run flutter_flavorizr -p assets:download assets:extract -p google:firebase
 dart pub global activate flutterfire_cli
+
+```shell
+flutter pub upgrade --major-versions
+```

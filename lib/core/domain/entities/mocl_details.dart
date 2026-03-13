@@ -16,12 +16,12 @@ abstract class Details with _$Details {
     required String viewCount,
     required String likeCount,
     required String bodyHtml,
-    required String csrf,
     required String info,
     required UserInfo userInfo,
     required List<CommentItem> comments,
     @Default(null) Recents? recents,
-    dynamic extraData,
+    @Default('') String csrf,
+    Map<String, dynamic>? extraData,
   }) = _Details;
 
   factory Details.empty() => const Details(

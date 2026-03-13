@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$CommentItem {
 
- int get id; String get bodyHtml; String get mediaHtml; bool get isVideo; String get time; String get info; String get likeCount; UserInfo get userInfo; String get authorId; bool get isReply;
+ int get id; String get bodyHtml; String get mediaHtml; bool get isVideo; String get time; String get info; String get likeCount; UserInfo get userInfo; String get authorId; bool get isReply; List<CommentItem> get replies;
 /// Create a copy of CommentItem
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $CommentItemCopyWith<CommentItem> get copyWith => _$CommentItemCopyWithImpl<Comm
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommentItem&&(identical(other.id, id) || other.id == id)&&(identical(other.bodyHtml, bodyHtml) || other.bodyHtml == bodyHtml)&&(identical(other.mediaHtml, mediaHtml) || other.mediaHtml == mediaHtml)&&(identical(other.isVideo, isVideo) || other.isVideo == isVideo)&&(identical(other.time, time) || other.time == time)&&(identical(other.info, info) || other.info == info)&&(identical(other.likeCount, likeCount) || other.likeCount == likeCount)&&(identical(other.userInfo, userInfo) || other.userInfo == userInfo)&&(identical(other.authorId, authorId) || other.authorId == authorId)&&(identical(other.isReply, isReply) || other.isReply == isReply));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommentItem&&(identical(other.id, id) || other.id == id)&&(identical(other.bodyHtml, bodyHtml) || other.bodyHtml == bodyHtml)&&(identical(other.mediaHtml, mediaHtml) || other.mediaHtml == mediaHtml)&&(identical(other.isVideo, isVideo) || other.isVideo == isVideo)&&(identical(other.time, time) || other.time == time)&&(identical(other.info, info) || other.info == info)&&(identical(other.likeCount, likeCount) || other.likeCount == likeCount)&&(identical(other.userInfo, userInfo) || other.userInfo == userInfo)&&(identical(other.authorId, authorId) || other.authorId == authorId)&&(identical(other.isReply, isReply) || other.isReply == isReply)&&const DeepCollectionEquality().equals(other.replies, replies));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,bodyHtml,mediaHtml,isVideo,time,info,likeCount,userInfo,authorId,isReply);
+int get hashCode => Object.hash(runtimeType,id,bodyHtml,mediaHtml,isVideo,time,info,likeCount,userInfo,authorId,isReply,const DeepCollectionEquality().hash(replies));
 
 @override
 String toString() {
-  return 'CommentItem(id: $id, bodyHtml: $bodyHtml, mediaHtml: $mediaHtml, isVideo: $isVideo, time: $time, info: $info, likeCount: $likeCount, userInfo: $userInfo, authorId: $authorId, isReply: $isReply)';
+  return 'CommentItem(id: $id, bodyHtml: $bodyHtml, mediaHtml: $mediaHtml, isVideo: $isVideo, time: $time, info: $info, likeCount: $likeCount, userInfo: $userInfo, authorId: $authorId, isReply: $isReply, replies: $replies)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $CommentItemCopyWith<$Res>  {
   factory $CommentItemCopyWith(CommentItem value, $Res Function(CommentItem) _then) = _$CommentItemCopyWithImpl;
 @useResult
 $Res call({
- int id, String bodyHtml, String mediaHtml, bool isVideo, String time, String info, String likeCount, UserInfo userInfo, String authorId, bool isReply
+ int id, String bodyHtml, String mediaHtml, bool isVideo, String time, String info, String likeCount, UserInfo userInfo, String authorId, bool isReply, List<CommentItem> replies
 });
 
 
@@ -62,7 +62,7 @@ class _$CommentItemCopyWithImpl<$Res>
 
 /// Create a copy of CommentItem
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? bodyHtml = null,Object? mediaHtml = null,Object? isVideo = null,Object? time = null,Object? info = null,Object? likeCount = null,Object? userInfo = null,Object? authorId = null,Object? isReply = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? bodyHtml = null,Object? mediaHtml = null,Object? isVideo = null,Object? time = null,Object? info = null,Object? likeCount = null,Object? userInfo = null,Object? authorId = null,Object? isReply = null,Object? replies = null,}) {
   return _then(_self.copyWith(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,bodyHtml: null == bodyHtml ? _self.bodyHtml : bodyHtml // ignore: cast_nullable_to_non_nullable
@@ -74,7 +74,8 @@ as String,likeCount: null == likeCount ? _self.likeCount : likeCount // ignore: 
 as String,userInfo: null == userInfo ? _self.userInfo : userInfo // ignore: cast_nullable_to_non_nullable
 as UserInfo,authorId: null == authorId ? _self.authorId : authorId // ignore: cast_nullable_to_non_nullable
 as String,isReply: null == isReply ? _self.isReply : isReply // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,replies: null == replies ? _self.replies : replies // ignore: cast_nullable_to_non_nullable
+as List<CommentItem>,
   ));
 }
 /// Create a copy of CommentItem
@@ -168,10 +169,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String bodyHtml,  String mediaHtml,  bool isVideo,  String time,  String info,  String likeCount,  UserInfo userInfo,  String authorId,  bool isReply)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String bodyHtml,  String mediaHtml,  bool isVideo,  String time,  String info,  String likeCount,  UserInfo userInfo,  String authorId,  bool isReply,  List<CommentItem> replies)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _CommentItem() when $default != null:
-return $default(_that.id,_that.bodyHtml,_that.mediaHtml,_that.isVideo,_that.time,_that.info,_that.likeCount,_that.userInfo,_that.authorId,_that.isReply);case _:
+return $default(_that.id,_that.bodyHtml,_that.mediaHtml,_that.isVideo,_that.time,_that.info,_that.likeCount,_that.userInfo,_that.authorId,_that.isReply,_that.replies);case _:
   return orElse();
 
 }
@@ -189,10 +190,10 @@ return $default(_that.id,_that.bodyHtml,_that.mediaHtml,_that.isVideo,_that.time
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String bodyHtml,  String mediaHtml,  bool isVideo,  String time,  String info,  String likeCount,  UserInfo userInfo,  String authorId,  bool isReply)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String bodyHtml,  String mediaHtml,  bool isVideo,  String time,  String info,  String likeCount,  UserInfo userInfo,  String authorId,  bool isReply,  List<CommentItem> replies)  $default,) {final _that = this;
 switch (_that) {
 case _CommentItem():
-return $default(_that.id,_that.bodyHtml,_that.mediaHtml,_that.isVideo,_that.time,_that.info,_that.likeCount,_that.userInfo,_that.authorId,_that.isReply);case _:
+return $default(_that.id,_that.bodyHtml,_that.mediaHtml,_that.isVideo,_that.time,_that.info,_that.likeCount,_that.userInfo,_that.authorId,_that.isReply,_that.replies);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -209,10 +210,10 @@ return $default(_that.id,_that.bodyHtml,_that.mediaHtml,_that.isVideo,_that.time
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String bodyHtml,  String mediaHtml,  bool isVideo,  String time,  String info,  String likeCount,  UserInfo userInfo,  String authorId,  bool isReply)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String bodyHtml,  String mediaHtml,  bool isVideo,  String time,  String info,  String likeCount,  UserInfo userInfo,  String authorId,  bool isReply,  List<CommentItem> replies)?  $default,) {final _that = this;
 switch (_that) {
 case _CommentItem() when $default != null:
-return $default(_that.id,_that.bodyHtml,_that.mediaHtml,_that.isVideo,_that.time,_that.info,_that.likeCount,_that.userInfo,_that.authorId,_that.isReply);case _:
+return $default(_that.id,_that.bodyHtml,_that.mediaHtml,_that.isVideo,_that.time,_that.info,_that.likeCount,_that.userInfo,_that.authorId,_that.isReply,_that.replies);case _:
   return null;
 
 }
@@ -224,7 +225,7 @@ return $default(_that.id,_that.bodyHtml,_that.mediaHtml,_that.isVideo,_that.time
 
 
 class _CommentItem implements CommentItem {
-  const _CommentItem({required this.id, required this.bodyHtml, required this.mediaHtml, required this.isVideo, required this.time, required this.info, required this.likeCount, required this.userInfo, required this.authorId, required this.isReply});
+  const _CommentItem({required this.id, required this.bodyHtml, required this.mediaHtml, required this.isVideo, required this.time, required this.info, required this.likeCount, required this.userInfo, required this.authorId, required this.isReply, final  List<CommentItem> replies = const []}): _replies = replies;
   
 
 @override final  int id;
@@ -237,6 +238,13 @@ class _CommentItem implements CommentItem {
 @override final  UserInfo userInfo;
 @override final  String authorId;
 @override final  bool isReply;
+ final  List<CommentItem> _replies;
+@override@JsonKey() List<CommentItem> get replies {
+  if (_replies is EqualUnmodifiableListView) return _replies;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_replies);
+}
+
 
 /// Create a copy of CommentItem
 /// with the given fields replaced by the non-null parameter values.
@@ -248,16 +256,16 @@ _$CommentItemCopyWith<_CommentItem> get copyWith => __$CommentItemCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CommentItem&&(identical(other.id, id) || other.id == id)&&(identical(other.bodyHtml, bodyHtml) || other.bodyHtml == bodyHtml)&&(identical(other.mediaHtml, mediaHtml) || other.mediaHtml == mediaHtml)&&(identical(other.isVideo, isVideo) || other.isVideo == isVideo)&&(identical(other.time, time) || other.time == time)&&(identical(other.info, info) || other.info == info)&&(identical(other.likeCount, likeCount) || other.likeCount == likeCount)&&(identical(other.userInfo, userInfo) || other.userInfo == userInfo)&&(identical(other.authorId, authorId) || other.authorId == authorId)&&(identical(other.isReply, isReply) || other.isReply == isReply));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CommentItem&&(identical(other.id, id) || other.id == id)&&(identical(other.bodyHtml, bodyHtml) || other.bodyHtml == bodyHtml)&&(identical(other.mediaHtml, mediaHtml) || other.mediaHtml == mediaHtml)&&(identical(other.isVideo, isVideo) || other.isVideo == isVideo)&&(identical(other.time, time) || other.time == time)&&(identical(other.info, info) || other.info == info)&&(identical(other.likeCount, likeCount) || other.likeCount == likeCount)&&(identical(other.userInfo, userInfo) || other.userInfo == userInfo)&&(identical(other.authorId, authorId) || other.authorId == authorId)&&(identical(other.isReply, isReply) || other.isReply == isReply)&&const DeepCollectionEquality().equals(other._replies, _replies));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,bodyHtml,mediaHtml,isVideo,time,info,likeCount,userInfo,authorId,isReply);
+int get hashCode => Object.hash(runtimeType,id,bodyHtml,mediaHtml,isVideo,time,info,likeCount,userInfo,authorId,isReply,const DeepCollectionEquality().hash(_replies));
 
 @override
 String toString() {
-  return 'CommentItem(id: $id, bodyHtml: $bodyHtml, mediaHtml: $mediaHtml, isVideo: $isVideo, time: $time, info: $info, likeCount: $likeCount, userInfo: $userInfo, authorId: $authorId, isReply: $isReply)';
+  return 'CommentItem(id: $id, bodyHtml: $bodyHtml, mediaHtml: $mediaHtml, isVideo: $isVideo, time: $time, info: $info, likeCount: $likeCount, userInfo: $userInfo, authorId: $authorId, isReply: $isReply, replies: $replies)';
 }
 
 
@@ -268,7 +276,7 @@ abstract mixin class _$CommentItemCopyWith<$Res> implements $CommentItemCopyWith
   factory _$CommentItemCopyWith(_CommentItem value, $Res Function(_CommentItem) _then) = __$CommentItemCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String bodyHtml, String mediaHtml, bool isVideo, String time, String info, String likeCount, UserInfo userInfo, String authorId, bool isReply
+ int id, String bodyHtml, String mediaHtml, bool isVideo, String time, String info, String likeCount, UserInfo userInfo, String authorId, bool isReply, List<CommentItem> replies
 });
 
 
@@ -285,7 +293,7 @@ class __$CommentItemCopyWithImpl<$Res>
 
 /// Create a copy of CommentItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? bodyHtml = null,Object? mediaHtml = null,Object? isVideo = null,Object? time = null,Object? info = null,Object? likeCount = null,Object? userInfo = null,Object? authorId = null,Object? isReply = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? bodyHtml = null,Object? mediaHtml = null,Object? isVideo = null,Object? time = null,Object? info = null,Object? likeCount = null,Object? userInfo = null,Object? authorId = null,Object? isReply = null,Object? replies = null,}) {
   return _then(_CommentItem(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,bodyHtml: null == bodyHtml ? _self.bodyHtml : bodyHtml // ignore: cast_nullable_to_non_nullable
@@ -297,7 +305,8 @@ as String,likeCount: null == likeCount ? _self.likeCount : likeCount // ignore: 
 as String,userInfo: null == userInfo ? _self.userInfo : userInfo // ignore: cast_nullable_to_non_nullable
 as UserInfo,authorId: null == authorId ? _self.authorId : authorId // ignore: cast_nullable_to_non_nullable
 as String,isReply: null == isReply ? _self.isReply : isReply // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,replies: null == replies ? _self._replies : replies // ignore: cast_nullable_to_non_nullable
+as List<CommentItem>,
   ));
 }
 

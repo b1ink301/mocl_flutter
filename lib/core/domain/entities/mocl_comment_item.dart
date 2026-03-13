@@ -16,5 +16,6 @@ abstract class CommentItem with _$CommentItem {
     required UserInfo userInfo,
     required String authorId,
     required bool isReply,
+    @Default([]) List<CommentItem> replies,
   }) = _CommentItem;
 }

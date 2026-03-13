@@ -10,15 +10,15 @@ part 'main_item_model.g.dart';
 @freezed
 abstract class MainItemModel with _$MainItemModel {
   const factory MainItemModel({
-    @JsonKey(name: 'no') required int orderBy,
+    required int no,
     required String board,
     required int type,
-    @JsonKey(name: 'title') required String text,
+    required String title,
     required String url,
     SiteType? siteType,
   }) = _MainItemData;
 
-  factory MainItemModel.fromJson(Map<String, Object?> json) =>
+  factory MainItemModel.fromJson(Map<String, dynamic> json) =>
       _$MainItemModelFromJson(json);
 
   // @override
