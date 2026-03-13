@@ -14,7 +14,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Details {
 
- String get title; String get time; String get viewCount; String get likeCount; String get bodyHtml; String get csrf; String get info; UserInfo get userInfo; List<CommentItem> get comments; Recents? get recents; dynamic get extraData;
+ String get title; String get time; String get viewCount; String get likeCount; String get bodyHtml; String get info; UserInfo get userInfo; List<CommentItem> get comments; Recents? get recents; String get csrf; Map<String, dynamic>? get extraData;
 /// Create a copy of Details
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -25,16 +25,16 @@ $DetailsCopyWith<Details> get copyWith => _$DetailsCopyWithImpl<Details>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Details&&(identical(other.title, title) || other.title == title)&&(identical(other.time, time) || other.time == time)&&(identical(other.viewCount, viewCount) || other.viewCount == viewCount)&&(identical(other.likeCount, likeCount) || other.likeCount == likeCount)&&(identical(other.bodyHtml, bodyHtml) || other.bodyHtml == bodyHtml)&&(identical(other.csrf, csrf) || other.csrf == csrf)&&(identical(other.info, info) || other.info == info)&&(identical(other.userInfo, userInfo) || other.userInfo == userInfo)&&const DeepCollectionEquality().equals(other.comments, comments)&&(identical(other.recents, recents) || other.recents == recents)&&const DeepCollectionEquality().equals(other.extraData, extraData));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Details&&(identical(other.title, title) || other.title == title)&&(identical(other.time, time) || other.time == time)&&(identical(other.viewCount, viewCount) || other.viewCount == viewCount)&&(identical(other.likeCount, likeCount) || other.likeCount == likeCount)&&(identical(other.bodyHtml, bodyHtml) || other.bodyHtml == bodyHtml)&&(identical(other.info, info) || other.info == info)&&(identical(other.userInfo, userInfo) || other.userInfo == userInfo)&&const DeepCollectionEquality().equals(other.comments, comments)&&(identical(other.recents, recents) || other.recents == recents)&&(identical(other.csrf, csrf) || other.csrf == csrf)&&const DeepCollectionEquality().equals(other.extraData, extraData));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,time,viewCount,likeCount,bodyHtml,csrf,info,userInfo,const DeepCollectionEquality().hash(comments),recents,const DeepCollectionEquality().hash(extraData));
+int get hashCode => Object.hash(runtimeType,title,time,viewCount,likeCount,bodyHtml,info,userInfo,const DeepCollectionEquality().hash(comments),recents,csrf,const DeepCollectionEquality().hash(extraData));
 
 @override
 String toString() {
-  return 'Details(title: $title, time: $time, viewCount: $viewCount, likeCount: $likeCount, bodyHtml: $bodyHtml, csrf: $csrf, info: $info, userInfo: $userInfo, comments: $comments, recents: $recents, extraData: $extraData)';
+  return 'Details(title: $title, time: $time, viewCount: $viewCount, likeCount: $likeCount, bodyHtml: $bodyHtml, info: $info, userInfo: $userInfo, comments: $comments, recents: $recents, csrf: $csrf, extraData: $extraData)';
 }
 
 
@@ -45,7 +45,7 @@ abstract mixin class $DetailsCopyWith<$Res>  {
   factory $DetailsCopyWith(Details value, $Res Function(Details) _then) = _$DetailsCopyWithImpl;
 @useResult
 $Res call({
- String title, String time, String viewCount, String likeCount, String bodyHtml, String csrf, String info, UserInfo userInfo, List<CommentItem> comments, Recents? recents, dynamic extraData
+ String title, String time, String viewCount, String likeCount, String bodyHtml, String info, UserInfo userInfo, List<CommentItem> comments, Recents? recents, String csrf, Map<String, dynamic>? extraData
 });
 
 
@@ -62,20 +62,20 @@ class _$DetailsCopyWithImpl<$Res>
 
 /// Create a copy of Details
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? time = null,Object? viewCount = null,Object? likeCount = null,Object? bodyHtml = null,Object? csrf = null,Object? info = null,Object? userInfo = null,Object? comments = null,Object? recents = freezed,Object? extraData = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? time = null,Object? viewCount = null,Object? likeCount = null,Object? bodyHtml = null,Object? info = null,Object? userInfo = null,Object? comments = null,Object? recents = freezed,Object? csrf = null,Object? extraData = freezed,}) {
   return _then(_self.copyWith(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,time: null == time ? _self.time : time // ignore: cast_nullable_to_non_nullable
 as String,viewCount: null == viewCount ? _self.viewCount : viewCount // ignore: cast_nullable_to_non_nullable
 as String,likeCount: null == likeCount ? _self.likeCount : likeCount // ignore: cast_nullable_to_non_nullable
 as String,bodyHtml: null == bodyHtml ? _self.bodyHtml : bodyHtml // ignore: cast_nullable_to_non_nullable
-as String,csrf: null == csrf ? _self.csrf : csrf // ignore: cast_nullable_to_non_nullable
 as String,info: null == info ? _self.info : info // ignore: cast_nullable_to_non_nullable
 as String,userInfo: null == userInfo ? _self.userInfo : userInfo // ignore: cast_nullable_to_non_nullable
 as UserInfo,comments: null == comments ? _self.comments : comments // ignore: cast_nullable_to_non_nullable
 as List<CommentItem>,recents: freezed == recents ? _self.recents : recents // ignore: cast_nullable_to_non_nullable
-as Recents?,extraData: freezed == extraData ? _self.extraData : extraData // ignore: cast_nullable_to_non_nullable
-as dynamic,
+as Recents?,csrf: null == csrf ? _self.csrf : csrf // ignore: cast_nullable_to_non_nullable
+as String,extraData: freezed == extraData ? _self.extraData : extraData // ignore: cast_nullable_to_non_nullable
+as Map<String, dynamic>?,
   ));
 }
 /// Create a copy of Details
@@ -181,10 +181,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String title,  String time,  String viewCount,  String likeCount,  String bodyHtml,  String csrf,  String info,  UserInfo userInfo,  List<CommentItem> comments,  Recents? recents,  dynamic extraData)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String title,  String time,  String viewCount,  String likeCount,  String bodyHtml,  String info,  UserInfo userInfo,  List<CommentItem> comments,  Recents? recents,  String csrf,  Map<String, dynamic>? extraData)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Details() when $default != null:
-return $default(_that.title,_that.time,_that.viewCount,_that.likeCount,_that.bodyHtml,_that.csrf,_that.info,_that.userInfo,_that.comments,_that.recents,_that.extraData);case _:
+return $default(_that.title,_that.time,_that.viewCount,_that.likeCount,_that.bodyHtml,_that.info,_that.userInfo,_that.comments,_that.recents,_that.csrf,_that.extraData);case _:
   return orElse();
 
 }
@@ -202,10 +202,10 @@ return $default(_that.title,_that.time,_that.viewCount,_that.likeCount,_that.bod
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String title,  String time,  String viewCount,  String likeCount,  String bodyHtml,  String csrf,  String info,  UserInfo userInfo,  List<CommentItem> comments,  Recents? recents,  dynamic extraData)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String title,  String time,  String viewCount,  String likeCount,  String bodyHtml,  String info,  UserInfo userInfo,  List<CommentItem> comments,  Recents? recents,  String csrf,  Map<String, dynamic>? extraData)  $default,) {final _that = this;
 switch (_that) {
 case _Details():
-return $default(_that.title,_that.time,_that.viewCount,_that.likeCount,_that.bodyHtml,_that.csrf,_that.info,_that.userInfo,_that.comments,_that.recents,_that.extraData);case _:
+return $default(_that.title,_that.time,_that.viewCount,_that.likeCount,_that.bodyHtml,_that.info,_that.userInfo,_that.comments,_that.recents,_that.csrf,_that.extraData);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -222,10 +222,10 @@ return $default(_that.title,_that.time,_that.viewCount,_that.likeCount,_that.bod
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String title,  String time,  String viewCount,  String likeCount,  String bodyHtml,  String csrf,  String info,  UserInfo userInfo,  List<CommentItem> comments,  Recents? recents,  dynamic extraData)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String title,  String time,  String viewCount,  String likeCount,  String bodyHtml,  String info,  UserInfo userInfo,  List<CommentItem> comments,  Recents? recents,  String csrf,  Map<String, dynamic>? extraData)?  $default,) {final _that = this;
 switch (_that) {
 case _Details() when $default != null:
-return $default(_that.title,_that.time,_that.viewCount,_that.likeCount,_that.bodyHtml,_that.csrf,_that.info,_that.userInfo,_that.comments,_that.recents,_that.extraData);case _:
+return $default(_that.title,_that.time,_that.viewCount,_that.likeCount,_that.bodyHtml,_that.info,_that.userInfo,_that.comments,_that.recents,_that.csrf,_that.extraData);case _:
   return null;
 
 }
@@ -237,7 +237,7 @@ return $default(_that.title,_that.time,_that.viewCount,_that.likeCount,_that.bod
 
 
 class _Details implements Details {
-  const _Details({required this.title, required this.time, required this.viewCount, required this.likeCount, required this.bodyHtml, required this.csrf, required this.info, required this.userInfo, required final  List<CommentItem> comments, this.recents = null, this.extraData}): _comments = comments;
+  const _Details({required this.title, required this.time, required this.viewCount, required this.likeCount, required this.bodyHtml, required this.info, required this.userInfo, required final  List<CommentItem> comments, this.recents = null, this.csrf = '', final  Map<String, dynamic>? extraData}): _comments = comments,_extraData = extraData;
   
 
 @override final  String title;
@@ -245,7 +245,6 @@ class _Details implements Details {
 @override final  String viewCount;
 @override final  String likeCount;
 @override final  String bodyHtml;
-@override final  String csrf;
 @override final  String info;
 @override final  UserInfo userInfo;
  final  List<CommentItem> _comments;
@@ -256,7 +255,16 @@ class _Details implements Details {
 }
 
 @override@JsonKey() final  Recents? recents;
-@override final  dynamic extraData;
+@override@JsonKey() final  String csrf;
+ final  Map<String, dynamic>? _extraData;
+@override Map<String, dynamic>? get extraData {
+  final value = _extraData;
+  if (value == null) return null;
+  if (_extraData is EqualUnmodifiableMapView) return _extraData;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableMapView(value);
+}
+
 
 /// Create a copy of Details
 /// with the given fields replaced by the non-null parameter values.
@@ -268,16 +276,16 @@ _$DetailsCopyWith<_Details> get copyWith => __$DetailsCopyWithImpl<_Details>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Details&&(identical(other.title, title) || other.title == title)&&(identical(other.time, time) || other.time == time)&&(identical(other.viewCount, viewCount) || other.viewCount == viewCount)&&(identical(other.likeCount, likeCount) || other.likeCount == likeCount)&&(identical(other.bodyHtml, bodyHtml) || other.bodyHtml == bodyHtml)&&(identical(other.csrf, csrf) || other.csrf == csrf)&&(identical(other.info, info) || other.info == info)&&(identical(other.userInfo, userInfo) || other.userInfo == userInfo)&&const DeepCollectionEquality().equals(other._comments, _comments)&&(identical(other.recents, recents) || other.recents == recents)&&const DeepCollectionEquality().equals(other.extraData, extraData));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Details&&(identical(other.title, title) || other.title == title)&&(identical(other.time, time) || other.time == time)&&(identical(other.viewCount, viewCount) || other.viewCount == viewCount)&&(identical(other.likeCount, likeCount) || other.likeCount == likeCount)&&(identical(other.bodyHtml, bodyHtml) || other.bodyHtml == bodyHtml)&&(identical(other.info, info) || other.info == info)&&(identical(other.userInfo, userInfo) || other.userInfo == userInfo)&&const DeepCollectionEquality().equals(other._comments, _comments)&&(identical(other.recents, recents) || other.recents == recents)&&(identical(other.csrf, csrf) || other.csrf == csrf)&&const DeepCollectionEquality().equals(other._extraData, _extraData));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,time,viewCount,likeCount,bodyHtml,csrf,info,userInfo,const DeepCollectionEquality().hash(_comments),recents,const DeepCollectionEquality().hash(extraData));
+int get hashCode => Object.hash(runtimeType,title,time,viewCount,likeCount,bodyHtml,info,userInfo,const DeepCollectionEquality().hash(_comments),recents,csrf,const DeepCollectionEquality().hash(_extraData));
 
 @override
 String toString() {
-  return 'Details(title: $title, time: $time, viewCount: $viewCount, likeCount: $likeCount, bodyHtml: $bodyHtml, csrf: $csrf, info: $info, userInfo: $userInfo, comments: $comments, recents: $recents, extraData: $extraData)';
+  return 'Details(title: $title, time: $time, viewCount: $viewCount, likeCount: $likeCount, bodyHtml: $bodyHtml, info: $info, userInfo: $userInfo, comments: $comments, recents: $recents, csrf: $csrf, extraData: $extraData)';
 }
 
 
@@ -288,7 +296,7 @@ abstract mixin class _$DetailsCopyWith<$Res> implements $DetailsCopyWith<$Res> {
   factory _$DetailsCopyWith(_Details value, $Res Function(_Details) _then) = __$DetailsCopyWithImpl;
 @override @useResult
 $Res call({
- String title, String time, String viewCount, String likeCount, String bodyHtml, String csrf, String info, UserInfo userInfo, List<CommentItem> comments, Recents? recents, dynamic extraData
+ String title, String time, String viewCount, String likeCount, String bodyHtml, String info, UserInfo userInfo, List<CommentItem> comments, Recents? recents, String csrf, Map<String, dynamic>? extraData
 });
 
 
@@ -305,20 +313,20 @@ class __$DetailsCopyWithImpl<$Res>
 
 /// Create a copy of Details
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? time = null,Object? viewCount = null,Object? likeCount = null,Object? bodyHtml = null,Object? csrf = null,Object? info = null,Object? userInfo = null,Object? comments = null,Object? recents = freezed,Object? extraData = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? time = null,Object? viewCount = null,Object? likeCount = null,Object? bodyHtml = null,Object? info = null,Object? userInfo = null,Object? comments = null,Object? recents = freezed,Object? csrf = null,Object? extraData = freezed,}) {
   return _then(_Details(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,time: null == time ? _self.time : time // ignore: cast_nullable_to_non_nullable
 as String,viewCount: null == viewCount ? _self.viewCount : viewCount // ignore: cast_nullable_to_non_nullable
 as String,likeCount: null == likeCount ? _self.likeCount : likeCount // ignore: cast_nullable_to_non_nullable
 as String,bodyHtml: null == bodyHtml ? _self.bodyHtml : bodyHtml // ignore: cast_nullable_to_non_nullable
-as String,csrf: null == csrf ? _self.csrf : csrf // ignore: cast_nullable_to_non_nullable
 as String,info: null == info ? _self.info : info // ignore: cast_nullable_to_non_nullable
 as String,userInfo: null == userInfo ? _self.userInfo : userInfo // ignore: cast_nullable_to_non_nullable
 as UserInfo,comments: null == comments ? _self._comments : comments // ignore: cast_nullable_to_non_nullable
 as List<CommentItem>,recents: freezed == recents ? _self.recents : recents // ignore: cast_nullable_to_non_nullable
-as Recents?,extraData: freezed == extraData ? _self.extraData : extraData // ignore: cast_nullable_to_non_nullable
-as dynamic,
+as Recents?,csrf: null == csrf ? _self.csrf : csrf // ignore: cast_nullable_to_non_nullable
+as String,extraData: freezed == extraData ? _self._extraData : extraData // ignore: cast_nullable_to_non_nullable
+as Map<String, dynamic>?,
   ));
 }
 
