@@ -10,12 +10,12 @@ part of 'datasource_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(listDatasource)
-const listDatasourceProvider = ListDatasourceFamily._();
+final listDatasourceProvider = ListDatasourceFamily._();
 
 final class ListDatasourceProvider
     extends $FunctionalProvider<ListDataSource, ListDataSource, ListDataSource>
     with $Provider<ListDataSource> {
-  const ListDatasourceProvider._({
+  ListDatasourceProvider._({
     required ListDatasourceFamily super.from,
     required SiteType super.argument,
   }) : super(
@@ -70,7 +70,7 @@ String _$listDatasourceHash() => r'4ba2012024c995f9d3e64dab792203a31d28d287';
 
 final class ListDatasourceFamily extends $Family
     with $FunctionalFamilyOverride<ListDataSource, SiteType> {
-  const ListDatasourceFamily._()
+  ListDatasourceFamily._()
     : super(
         retry: null,
         name: r'listDatasourceProvider',

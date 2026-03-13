@@ -34,14 +34,37 @@ double titleHeight(Ref ref, String text) {
   final double screenWidth = ref.watch(screenWidthProvider);
   final double availableWidth = screenWidth - 16 - 12;
 
-  final TextPainter textPainter = TextPainter(
-    text: TextSpan(text: text, style: style),
-    maxLines: 3,
-    textDirection: TextDirection.ltr,
-  )..layout(minWidth: 0, maxWidth: availableWidth);
+  return _titleHeightCache.getOrCalculate(text, style, availableWidth);
+}
 
-  // 최소 높이와 비교하여 더 큰 값 반환
-  return max(49, textPainter.height) + 27;
+/// TextPainter layout 결과 캐시.
+/// 스타일이나 화면 너비가 변경되면 자동 무효화됩니다.
+final _titleHeightCache = _TitleHeightCache();
+
+class _TitleHeightCache {
+  final Map<String, double> _cache = {};
+  TextStyle? _lastStyle;
+  double? _lastWidth;
+
+  double getOrCalculate(String text, TextStyle style, double availableWidth) {
+    if (_lastStyle != style || _lastWidth != availableWidth) {
+      _cache.clear();
+      _lastStyle = style;
+      _lastWidth = availableWidth;
+    }
+
+    return _cache.putIfAbsent(text, () {
+      final textPainter = TextPainter(
+        text: TextSpan(text: text, style: style),
+        maxLines: 3,
+        textDirection: TextDirection.ltr,
+      )..layout(minWidth: 0, maxWidth: availableWidth);
+
+      final double height = max(49.0, textPainter.height) + 27;
+      textPainter.dispose();
+      return height;
+    });
+  }
 }
 
 @Riverpod(dependencies: [mainItem])

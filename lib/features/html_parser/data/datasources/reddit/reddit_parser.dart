@@ -30,21 +30,13 @@ class RedditParser implements BaseParser {
   @override
   Future<Either<Failure, Details>> detail(Response response) async {
     final responseData = response.data;
-    final resultPort = ReceivePort();
-
-    await Isolate.spawn(_detailIsolate, [responseData, resultPort.sendPort]);
-
-    return await resultPort.first as Either<Failure, Details>;
+    return Isolate.run(() => _parseDetail(responseData));
   }
 
-  static void _detailIsolate(List<dynamic> args) {
-    final json = args[0] as dynamic;
-    final sendPort = args[1] as SendPort;
+  static Either<Failure, Details> _parseDetail(dynamic json) {
 
     if (json == null || json.isEmpty == true) {
-      final result = Right<Failure, Details>(Details.empty());
-      sendPort.send(result);
-      return;
+      return Right<Failure, Details>(Details.empty());
     }
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
@@ -90,19 +82,53 @@ class RedditParser implements BaseParser {
       bodyHtml: htmlUnescape.convert(bodyHtml),
     );
 
-    final result = Right<Failure, Details>(detail);
-    sendPort.send(result);
+    return Right<Failure, Details>(detail);
   }
 
   static CommentItem? _parseComment(
     dynamic element,
     HtmlUnescape htmlUnescape,
-  ) => CommentItem.fromJson(element, htmlUnescape.convert, (created, nickName) {
+  ) {
+    final json = element as Map<String, dynamic>;
+    final data = json['data'] as Map<String, dynamic>;
+    final bodyHtml = data['body_html'].toString();
+    final id = data['id'].toString();
+    final likeCount = data['ups'].toString();
+    final userId = data['author_fullname'].toString();
+    final nickName = data['author'].toString();
+    final double created = data['created'];
+    final int depth = data['depth'];
+    final replies = data['replies'];
+
     final int milliseconds = (created * 1000).toInt();
     final date = DateTime.fromMillisecondsSinceEpoch(milliseconds).toLocal();
     final parsedTime = timeago.format(date, locale: 'ko');
-    return BaseParser.parserInfo(false, nickName, parsedTime, '');
-  });
+    final info = BaseParser.parserInfo(false, nickName, parsedTime, '');
+
+    List<CommentItem> repliesList = [];
+    if (replies is Map<String, dynamic>) {
+      final repliesData = replies['data']['children'] as List;
+      repliesList =
+          repliesData
+              .map((replyJson) => _parseComment(replyJson, htmlUnescape))
+              .whereType<CommentItem>()
+              .toList();
+    }
+
+    return CommentItem(
+      id: id.hashCode,
+      isReply: depth > 0,
+      bodyHtml: htmlUnescape.convert(bodyHtml),
+      likeCount: likeCount,
+      mediaHtml: '',
+      isVideo: false,
+      time: created.toString(),
+      info: info,
+      userInfo: UserInfo(id: userId, nickName: nickName, nickImage: ''),
+      authorId: '',
+      replies: repliesList,
+    );
+  }
 
   @override
   Future<Either<Failure, List<ListItem>>> list(

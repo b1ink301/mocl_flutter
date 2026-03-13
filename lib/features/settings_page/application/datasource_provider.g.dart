@@ -10,7 +10,7 @@ part of 'datasource_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(sharedPreferences)
-const sharedPreferencesProvider = SharedPreferencesProvider._();
+final sharedPreferencesProvider = SharedPreferencesProvider._();
 
 final class SharedPreferencesProvider
     extends
@@ -20,7 +20,7 @@ final class SharedPreferencesProvider
           SharedPreferences
         >
     with $Provider<SharedPreferences> {
-  const SharedPreferencesProvider._()
+  SharedPreferencesProvider._()
     : super(
         from: null,
         argument: null,
@@ -57,12 +57,12 @@ final class SharedPreferencesProvider
 String _$sharedPreferencesHash() => r'7467c5c92fd904c96335ccc198d72f69e80a168b';
 
 @ProviderFor(getAppVersion)
-const getAppVersionProvider = GetAppVersionProvider._();
+final getAppVersionProvider = GetAppVersionProvider._();
 
 final class GetAppVersionProvider
     extends $FunctionalProvider<AsyncValue<String>, String, FutureOr<String>>
     with $FutureModifier<String>, $FutureProvider<String> {
-  const GetAppVersionProvider._()
+  GetAppVersionProvider._()
     : super(
         from: null,
         argument: null,
@@ -90,12 +90,12 @@ final class GetAppVersionProvider
 String _$getAppVersionHash() => r'c4281fce8377945fd7409c9eca1fb5f423da0eff';
 
 @ProviderFor(clearData)
-const clearDataProvider = ClearDataProvider._();
+final clearDataProvider = ClearDataProvider._();
 
 final class ClearDataProvider
     extends $FunctionalProvider<AsyncValue<void>, void, FutureOr<void>>
     with $FutureModifier<void>, $FutureProvider<void> {
-  const ClearDataProvider._()
+  ClearDataProvider._()
     : super(
         from: null,
         argument: null,

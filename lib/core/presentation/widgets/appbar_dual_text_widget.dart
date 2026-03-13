@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
+import 'package:mocl_flutter/core/application/app_provider.dart';
 
 import 'message_widget.dart';
 
-class AppbarDualTextWidget extends StatelessWidget {
+class AppbarDualTextWidget extends ConsumerWidget {
   final String _smallTitle;
   final String _title;
   final double _toolbarHeight;
@@ -22,31 +24,33 @@ class AppbarDualTextWidget extends StatelessWidget {
         _title = title,
         _toolbarHeight = toolbarHeight;
 
-  Widget _buildTitle(BuildContext context) =>
-      Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          MessageWidget(
-            message: _smallTitle,
-            textStyle: Theme
-                .of(context)
-                .textTheme
-                .labelSmall,
-          ),
-          const SizedBox(height: 4),
-          MessageWidget(
-            textStyle: AppTextStyles
-                .of(context)
-                .titleTextStyle
-                .copyWith(color: Colors.white),
-            message: _title,
-          ),
-        ],
-      );
+  Widget _buildTitle(BuildContext context, WidgetRef ref) {
+    final delta = ref.watch(fontSizeDeltaProvider);
+    final baseStyle = AppTextStyles.of(context).titleTextStyle;
+    final adjustedStyle = baseStyle.copyWith(
+      color: Colors.white,
+      fontSize: baseStyle.fontSize! + delta,
+    );
 
-  Widget _buildAppbar(BuildContext context) =>
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        MessageWidget(
+          message: _smallTitle,
+          textStyle: Theme.of(context).textTheme.labelSmall,
+        ),
+        const SizedBox(height: 4),
+        MessageWidget(
+          textStyle: adjustedStyle,
+          message: _title,
+        ),
+      ],
+    );
+  }
+
+  Widget _buildAppbar(BuildContext context, WidgetRef ref) =>
       SliverAppBar(
-        title: _buildTitle(context),
+        title: _buildTitle(context, ref),
         scrolledUnderElevation: 0,
         titleSpacing: automaticallyImplyLeading
             ? 0
@@ -60,5 +64,6 @@ class AppbarDualTextWidget extends StatelessWidget {
       );
 
   @override
-  Widget build(BuildContext context) => _buildAppbar(context);
+  Widget build(BuildContext context, WidgetRef ref) =>
+      _buildAppbar(context, ref);
 }

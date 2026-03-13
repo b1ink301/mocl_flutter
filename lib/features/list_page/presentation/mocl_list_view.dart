@@ -60,7 +60,7 @@ class _ListBody extends ConsumerWidget with ListState, ListEvent {
     );
 
     return SliverPadding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+      padding: .only(bottom: MediaQuery.of(context).padding.bottom),
       sliver: SliverList.separated(
         // addRepaintBoundaries: false,
         // addAutomaticKeepAlives: false,
@@ -104,12 +104,12 @@ class _ListFooter extends StatelessWidget {
       );
     } else if (hasReachedMax) {
       return Padding(
-        padding: EdgeInsets.only(bottom: bottomPadding),
+        padding: .only(bottom: bottomPadding),
         child: const SizedBox.shrink(),
       );
     } else {
       return Padding(
-        padding: EdgeInsets.only(bottom: bottomPadding),
+        padding: .only(bottom: bottomPadding),
         child: const Column(children: [LoadingWidget(), DividerWidget()]),
       );
     }
@@ -129,14 +129,14 @@ class _ListError extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: EdgeInsets.fromLTRB(16, 16, 16, 16 + bottomPadding),
+    padding: .fromLTRB(16, 16, 16, 16 + bottomPadding),
     child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
+      mainAxisAlignment: .center,
       children: [
         PlatformText(
           errorMessage,
           maxLines: 4,
-          overflow: TextOverflow.ellipsis,
+          overflow: .ellipsis,
         ),
         const SizedBox(height: 16),
         PlatformElevatedButton(onPressed: onRetry, child: PlatformText('재시도')),

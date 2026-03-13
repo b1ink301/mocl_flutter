@@ -23,7 +23,7 @@ class AddListModalSheetPage extends SliverWoltModalSheetPage {
         isTopBarLayerAlwaysVisible: true,
         trailingNavBarWidget: const _TrailingNavBarWidget(),
         leadingNavBarWidget: IconButton(
-          padding: const EdgeInsets.all(10),
+          padding: const .all(10),
           icon: const Icon(Icons.close),
           onPressed: context.pop,
         ),
@@ -37,7 +37,7 @@ class _TrailingNavBarWidget extends ConsumerWidget with AddEvent {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => IconButton(
-    padding: const EdgeInsets.all(10),
+    padding: const .all(10),
     icon: const Icon(Icons.check),
     onPressed: () => pop(ref, context),
   );
@@ -63,7 +63,7 @@ class _MainContent extends ConsumerWidget with AddState, AddEvent {
     ),
     error: (error, _) => SliverToBoxAdapter(
       child: Padding(
-        padding: const EdgeInsets.all(8.0),
+        padding: const .all(8.0),
         child: Text(error.toString()),
       ),
     ),

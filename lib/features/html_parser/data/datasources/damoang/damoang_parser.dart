@@ -1,11 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
 import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:html/dom.dart';
-import 'package:html/parser.dart';
 import 'package:mocl_flutter/core/domain/entities/last_id.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
@@ -34,201 +33,284 @@ class DamoangParser implements BaseParser {
   Future<Either<Failure, List<MainItem>>> main(Response response) =>
       throw UnimplementedError('main');
 
+  // ──────────────────────────────────────────────────────────────────
+  // SvelteKit Devalue helpers
+  // ──────────────────────────────────────────────────────────────────
+
+  /// Parse newline-delimited JSON response from __data.json endpoint.
+  static List<Map<String, dynamic>> _parseLines(String responseData) {
+    final lines = responseData.trim().split('\n');
+    return lines
+        .where((line) => line.trim().isNotEmpty)
+        .map((line) => jsonDecode(line) as Map<String, dynamic>)
+        .toList();
+  }
+
+  /// Find a chunk with given id from the parsed lines.
+  static List<dynamic>? _findChunkData(
+    List<Map<String, dynamic>> lines,
+    int chunkId,
+  ) {
+    for (final line in lines) {
+      if (line['type'] == 'chunk' && line['id'] == chunkId) {
+        return line['data'] as List<dynamic>;
+      }
+    }
+    return null;
+  }
+
+  /// Resolve a devalue object at [index] in [data].
+  /// Each object value is an index into the data array → replaced with the
+  /// actual value at that position.
+  static Map<String, dynamic> _resolveObject(
+    List<dynamic> data,
+    int index,
+  ) {
+    if (index < 0 || index >= data.length) return {};
+    final obj = data[index];
+    if (obj is! Map) return {};
+    final result = <String, dynamic>{};
+    for (final entry in obj.entries) {
+      final key = entry.key as String;
+      final valueIndex = entry.value;
+      if (valueIndex is int && valueIndex >= 0 && valueIndex < data.length) {
+        result[key] = data[valueIndex];
+      } else {
+        result[key] = valueIndex;
+      }
+    }
+    return result;
+  }
+
+  /// Extract the board slug from the initial data line.
+  static String _extractBoardSlug(List<Map<String, dynamic>> lines) {
+    for (final line in lines) {
+      if (line['type'] != 'data') continue;
+      final nodes = line['nodes'] as List<dynamic>?;
+      if (nodes == null) continue;
+      for (final node in nodes) {
+        if (node is! Map || node['type'] != 'data') continue;
+        final nodeData = node['data'] as List<dynamic>?;
+        if (nodeData == null || nodeData.isEmpty) continue;
+        final nodeRoot = nodeData[0];
+        if (nodeRoot is! Map || !nodeRoot.containsKey('boardId')) continue;
+        final boardIdIndex = nodeRoot['boardId'];
+        if (boardIdIndex is int &&
+            boardIdIndex < nodeData.length &&
+            nodeData[boardIdIndex] is String) {
+          return nodeData[boardIdIndex] as String;
+        }
+      }
+    }
+    return '';
+  }
+
+  /// Find the post data node from the initial data line (detail pages).
+  /// Looks for a node whose root object has a "post" field.
+  static List<dynamic>? _findPostNodeData(
+    List<Map<String, dynamic>> lines,
+  ) {
+    final firstLine = lines.firstOrNull;
+    if (firstLine == null || firstLine['type'] != 'data') return null;
+    final nodes = firstLine['nodes'] as List<dynamic>?;
+    if (nodes == null) return null;
+    for (final node in nodes) {
+      if (node is! Map || node['type'] != 'data') continue;
+      final data = node['data'] as List<dynamic>?;
+      if (data == null || data.isEmpty) continue;
+      final root = data[0];
+      if (root is Map && root.containsKey('post')) {
+        return data;
+      }
+    }
+    return null;
+  }
+
+  // ──────────────────────────────────────────────────────────────────
+  // Detail parsing
+  // ──────────────────────────────────────────────────────────────────
+
   @override
   Future<Either<Failure, Details>> detail(Response response) async {
-    final responseData = response.data;
-    final resultPort = ReceivePort();
-
-    await Isolate.spawn(_detailIsolate, [
-      responseData,
-      isShowNickImage,
-      resultPort.sendPort,
-    ]);
-
-    return await resultPort.first as Either<Failure, Details>;
+    final responseData = response.data is String
+        ? response.data as String
+        : response.data.toString();
+    final showNickImage = isShowNickImage;
+    return Isolate.run(() => _parseDetail(responseData, showNickImage));
   }
 
-  static void _detailIsolate(List<dynamic> args) {
-    final String responseData = args[0] as String;
-    final bool isShowNickImage = args[1] as bool;
-    final SendPort sendPort = args[2] as SendPort;
+  static Either<Failure, Details> _parseDetail(
+    String responseData,
+    bool isShowNickImage,
+  ) {
 
-    timeago.setLocaleMessages('ko', timeago.KoMessages());
-
-    final Document document = parse(responseData);
-    final Element? container = document.querySelector('article[id=bo_v]');
-    final String title =
-        container?.querySelector('header > h1[id=bo_v_title]')?.text.trim() ??
-        '';
-    final Element? timeElement = container?.querySelector(
-      'section[id=bo_v_info] > div.d-flex > div:last-child',
-    ); //:first-child, div:nth-child(2)
-    timeElement?.querySelector("span.visually-hidden")?.remove();
-    final String time = timeElement?.text.trim() ?? '';
-    final Element? bodyHtml = container?.querySelector(
-      'section[id=bo_v_atc] > div[id=bo_v_con]',
-    );
-    bodyHtml
-        ?.querySelectorAll('input, button')
-        .forEach((element) => element.remove());
-
-    final headerElements = container?.querySelectorAll(
-      'section[id=bo_v_info] > div.gap-1 > div.pe-2',
-    );
-
-    headerElements?.forEach(
-      (element) => element
-          .querySelectorAll('i, span.visually-hidden')
-          .forEach((e) => e.remove()),
-    );
-
-    final linkHtml =
-        container
-            ?.querySelector('section[id=bo_v_atc] > section[id=bo_v_data]')
-            ?.innerHtml ??
-        '';
-
-    var viewCount = '';
-    var likeCount = '';
-    if (headerElements?.length == 2) {
-      viewCount = headerElements?.elementAtOrNull(0)?.text.trim() ?? '';
-      likeCount = headerElements?.elementAtOrNull(1)?.text.trim() ?? '';
-    } else if (headerElements?.length == 3) {
-      try {
-        viewCount = headerElements?.elementAtOrNull(0)?.text.trim() ?? '';
-        int.parse(viewCount);
-      } catch (e) {
-        viewCount = headerElements?.elementAtOrNull(1)?.text.trim() ?? '';
-      }
-      likeCount = headerElements?.elementAtOrNull(2)?.text.trim() ?? '';
-    } else if (headerElements?.length == 4) {
-      viewCount = headerElements?.elementAtOrNull(1)?.text.trim() ?? '';
-      likeCount = headerElements?.elementAtOrNull(3)?.text.trim() ?? '';
-    }
-
-    final memberElement = container?.querySelector(
-      'section[id=bo_v_info] > div.d-flex > div.me-auto > div.d-flex > div.d-flex > div.d-flex',
-    );
-
-    final nickName =
-        memberElement?.querySelector('span.sv_name')?.text.trim() ?? '';
-    final nickImage = isShowNickImage
-        ? memberElement?.querySelector('img.mb-photo')?.attributes['src'] ?? ''
-        : '';
-
-    int index = 0;
-    final List<CommentItem> comments =
-        container
-            ?.querySelectorAll('div[id=viewcomment] > section > article')
-            .map((element) {
-              final nickElement = element.querySelector(
-                'div.comment-list-wrap > header > div.d-flex > div.me-2 > span.d-inline-block > span.sv_wrap > a.sv_member',
-              );
-
-              final url = nickElement?.attributes['href'] ?? '';
-              final uri = Uri.parse(url);
-              final id = uri.queryParameters['mb_id'] ?? '-1';
-              final nickName = nickElement?.text.trim() ?? '';
-              final isReply =
-                  element.querySelector(
-                    'div.comment-list-wrap > header > div > div.me-2 > i.bi',
-                  ) !=
-                  null;
-              final Element? timeElement = element.querySelector(
-                'div.comment-list-wrap > header > div > div.ms-auto',
-              );
-              timeElement?.querySelector("span.visually-hidden")?.remove();
-              final String time = timeElement?.text.trim() ?? '';
-
-              final String nickImage = isShowNickImage
-                  ? nickElement
-                            ?.querySelector('img.mb-photo')
-                            ?.attributes['src']
-                            ?.trim() ??
-                        ''
-                  : '';
-
-              final String likeCount =
-                  element
-                      .querySelector(
-                        'div.comment-content > div.d-flex > div:last-child > button:last-child > span:first-child',
-                      )
-                      ?.text
-                      .trim() ??
-                  '';
-
-              final Element? body = element.querySelector(
-                'div.comment-content > div.na-convert',
-              );
-              body
-                  ?.querySelectorAll('input, span.name, button')
-                  .forEach((e) => e.remove());
-
-              String parsedTime = '';
-              try {
-                DateTime dateTime = parseDateTime(time);
-                parsedTime = timeago.format(dateTime, locale: 'ko');
-              } catch (e) {
-                parsedTime = time;
-              }
-              final String info = '$nickNameㆍ$parsedTime';
-
-              return CommentItem(
-                id: index++,
-                isReply: isReply,
-                bodyHtml: body?.innerHtml ?? '',
-                likeCount: likeCount,
-                mediaHtml: '',
-                isVideo: false,
-                time: time,
-                info: info,
-                userInfo: UserInfo(
-                  id: id,
-                  nickName: nickName,
-                  nickImage: nickImage,
-                ),
-                authorId: '',
-              );
-            })
-            .whereType<CommentItem>()
-            .toList() ??
-        [];
-
-    var parsedTime = '';
     try {
-      DateTime dateTime = parseDateTime(time);
-      parsedTime = timeago.format(dateTime, locale: 'ko');
+      timeago.setLocaleMessages('ko', timeago.KoMessages());
+
+      final lines = _parseLines(responseData);
+
+      // 1. Extract post metadata from the initial data node
+      final postNodeData = _findPostNodeData(lines);
+      if (postNodeData == null) {
+        return Left<Failure, Details>(
+          GetDetailFailure(message: 'Post node data not found'),
+        );
+      }
+
+      final rootMap = postNodeData[0] as Map;
+      final postIndex = rootMap['post'];
+      if (postIndex is! int) {
+        return Left<Failure, Details>(
+          GetDetailFailure(message: 'Post index not found'),
+        );
+      }
+
+      final post = _resolveObject(postNodeData, postIndex);
+
+      final String title = (post['title'] ?? '').toString();
+      final String author = (post['author'] ?? '').toString();
+      final String content = (post['content'] ?? '').toString();
+      final int views = (post['views'] is int) ? post['views'] as int : 0;
+      final int likes = (post['likes'] is int) ? post['likes'] as int : 0;
+      final String createdAt = (post['created_at'] ?? '').toString();
+
+      final String viewCount = views.toString();
+      final String likeCount = likes.toString();
+
+      // Parse time
+      String parsedTime = '';
+      try {
+        final dateTime = DateTime.parse(createdAt);
+        parsedTime = timeago.format(dateTime, locale: 'ko');
+      } catch (e) {
+        parsedTime = createdAt;
+      }
+
+      // damoang has no nick images — always show author as text
+      final info = BaseParser.parserInfo(
+        false,
+        author,
+        parsedTime,
+        viewCount,
+      );
+
+      // 2. Get transformedPostContent from auxiliary chunk (id=2)
+      //    This has plugins applied (emoticons, auto-embed, etc.)
+      String bodyHtml = content;
+      final auxChunkData = _findChunkData(lines, 2);
+      if (auxChunkData != null && auxChunkData.isNotEmpty) {
+        final auxRoot = auxChunkData[0];
+        if (auxRoot is Map) {
+          final transformedIndex = auxRoot['transformedPostContent'];
+          if (transformedIndex is int &&
+              transformedIndex < auxChunkData.length &&
+              auxChunkData[transformedIndex] is String) {
+            bodyHtml = auxChunkData[transformedIndex] as String;
+          }
+        }
+      }
+
+      // 3. Extract comments from chunk id=1
+      final commentsChunkData = _findChunkData(lines, 1);
+      final List<CommentItem> comments = [];
+
+      if (commentsChunkData != null && commentsChunkData.isNotEmpty) {
+        final commentsRootMap = commentsChunkData[0];
+        if (commentsRootMap is Map) {
+          final commentsObjIndex = commentsRootMap['comments'];
+          if (commentsObjIndex is int &&
+              commentsObjIndex < commentsChunkData.length) {
+            final commentsObjMap = commentsChunkData[commentsObjIndex];
+            if (commentsObjMap is Map) {
+              final itemsIndex = commentsObjMap['items'];
+              if (itemsIndex is int &&
+                  itemsIndex < commentsChunkData.length &&
+                  commentsChunkData[itemsIndex] is List) {
+                final commentIndices =
+                    commentsChunkData[itemsIndex] as List<dynamic>;
+                int commentIdx = 0;
+                for (final cIndex in commentIndices) {
+                  if (cIndex is! int) continue;
+                  final comment =
+                      _resolveObject(commentsChunkData, cIndex);
+
+                  final String cAuthor =
+                      (comment['author'] ?? '').toString();
+                  final String cAuthorImage =
+                      (comment['author_image'] ?? '').toString();
+                  final String cContent =
+                      (comment['content'] ?? '').toString();
+                  final int cLikes = (comment['likes'] is int)
+                      ? comment['likes'] as int
+                      : 0;
+                  final int cDepth = (comment['depth'] is int)
+                      ? comment['depth'] as int
+                      : 0;
+                  final String cCreatedAt =
+                      (comment['created_at'] ?? '').toString();
+
+                  String cParsedTime = '';
+                  try {
+                    final dateTime = DateTime.parse(cCreatedAt);
+                    cParsedTime =
+                        timeago.format(dateTime, locale: 'ko');
+                  } catch (e) {
+                    cParsedTime = cCreatedAt;
+                  }
+
+                  final String cInfo = '$cAuthorㆍ$cParsedTime';
+
+                  comments.add(CommentItem(
+                    id: commentIdx++,
+                    isReply: cDepth > 0,
+                    bodyHtml: cContent,
+                    likeCount: cLikes > 0 ? cLikes.toString() : '',
+                    mediaHtml: '',
+                    isVideo: false,
+                    time: cCreatedAt,
+                    info: cInfo,
+                    userInfo: UserInfo(
+                      id: cAuthor,
+                      nickName: cAuthor,
+                      nickImage:
+                          isShowNickImage ? cAuthorImage : '',
+                    ),
+                    authorId: '',
+                  ));
+                }
+              }
+            }
+          }
+        }
+      }
+
+      final detail = Details(
+        title: title,
+        viewCount: viewCount,
+        likeCount: likeCount,
+        csrf: '',
+        time: createdAt,
+        info: info,
+        userInfo: UserInfo(
+          id: author,
+          nickName: author,
+          nickImage: '',
+        ),
+        comments: comments,
+        bodyHtml: bodyHtml,
+      );
+
+      return Right<Failure, Details>(detail);
     } catch (e) {
-      parsedTime = time;
+      return Left<Failure, Details>(
+        GetDetailFailure(message: e.toString()),
+      );
     }
-    final info = BaseParser.parserInfo(false, nickName, parsedTime, viewCount);
-
-    // debugPrint('bodyHtml=${bodyHtml?.innerHtml}');
-
-    var newBodyHtml = bodyHtml?.innerHtml ?? '';
-    if (linkHtml.isNotEmpty) {
-      newBodyHtml += '</br>$linkHtml';
-    }
-
-    final detail = Details(
-      title: title,
-      viewCount: viewCount,
-      likeCount: likeCount,
-      csrf: '',
-      time: time,
-      info: info,
-      userInfo: UserInfo(
-        id: nickName,
-        nickName: nickName,
-        nickImage: nickImage,
-      ),
-      comments: comments,
-      bodyHtml: newBodyHtml,
-    );
-
-    final result = Right<Failure, Details>(detail);
-    sendPort.send(result);
   }
+
+  // ──────────────────────────────────────────────────────────────────
+  // List parsing
+  // ──────────────────────────────────────────────────────────────────
 
   @override
   Future<Either<Failure, List<ListItem>>> list(
@@ -251,11 +333,15 @@ class DamoangParser implements BaseParser {
     });
 
     try {
+      final responseData = response.data is String
+          ? response.data as String
+          : response.data.toString();
+
       await Isolate.spawn(
         _parseListInIsolate,
         IsolateMessage<String>(
           receivePort.sendPort,
-          response.data,
+          responseData,
           lastId.intId,
           boardTitle,
           baseUrl,
@@ -275,6 +361,7 @@ class DamoangParser implements BaseParser {
     final String responseData = message.responseData;
     final lastId = message.lastId;
     final String boardTitle = message.boardTitle;
+    final String baseUrl = message.baseUrl;
     final isShowNickImage = message.isShowNickImage;
 
     final List<Map<String, dynamic>> parsedItems = <Map<String, dynamic>>[];
@@ -282,142 +369,117 @@ class DamoangParser implements BaseParser {
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
-    final Document document = parse(responseData);
-    final elementList = document.querySelectorAll(
-      'form[id=fboardlist] > section[id=bo_list] > ul.list-group > li.list-group-item > div.d-flex',
-    );
+    try {
+      final lines = _parseLines(responseData);
 
-    for (final Element element in elementList) {
-      final Element? test = element.querySelector(
-        'div.wr-num > div.rcmd-box > span.orangered > img',
-      );
-      final String category = test?.attributes['alt'] ?? '';
-      if (category == "공지" || category == "홍보" || category == "추천") continue;
-      final Element? infoElement = element.querySelector('div.flex-grow-1');
-      final Element? link = infoElement?.querySelector("div.d-flex > div > a");
-      if (link == null) continue;
-      final String url = link.attributes["href"]?.trim() ?? '';
-      if (url.isEmpty || url.startsWith('/promotion')) continue;
+      // Extract board slug from initial data (e.g. "free", "qa", ...)
+      final String board = _extractBoardSlug(lines);
 
-      final Uri? uri = Uri.tryParse(url);
-      if (uri == null) continue;
-      final String idString = uri.pathSegments.lastOrNull ?? '-1';
-      final int id = int.tryParse(idString) ?? -1;
-      if (id <= 0 || lastId > 0 && id >= lastId) {
-        debugPrint('[SKIP] id=$id, lastId=$lastId');
-        continue;
+      // Find posts chunk (id=1 based on observed data)
+      final chunkData = _findChunkData(lines, 1);
+      if (chunkData == null || chunkData.isEmpty) {
+        debugPrint('[DamoangParser] Posts chunk not found');
+        replyPort.send(<ListItem>[]);
+        return;
       }
 
-      final Element? metaElement = infoElement?.querySelector(
-        'div.da-list-meta > div.d-flex > div.wr-name > span.sv_wrap > a.sv_member, div.da-list-meta > div.d-flex > div.wr-name',
-      );
-      final String profile = metaElement?.attributes['href'] ?? '';
-      final String userId = Uri.parse(profile).queryParameters['mb_id'] ?? '';
+      // Root: {"posts":1,"notices":...,"pagination":...}
+      final root = chunkData[0];
+      if (root is! Map) {
+        debugPrint('[DamoangParser] Root is not a Map');
+        replyPort.send(<ListItem>[]);
+        return;
+      }
 
-      // debugPrint('metaElement=${metaElement?.innerHtml}');
+      final postsIndex = root['posts'];
+      if (postsIndex is! int || postsIndex >= chunkData.length) {
+        debugPrint('[DamoangParser] Posts index not found');
+        replyPort.send(<ListItem>[]);
+        return;
+      }
 
-      final String reply =
-          infoElement
-              ?.querySelectorAll("div.d-flex > div.d-inline-flex > a")
-              .map((a) => a.querySelector('span.count-plus')?.text.trim())
-              .firstWhere(
-                (text) => text != null && text.isNotEmpty,
-                orElse: () => '',
-              ) ??
-          '';
+      final postIndices = chunkData[postsIndex];
+      if (postIndices is! List) {
+        debugPrint('[DamoangParser] Posts array not found');
+        replyPort.send(<ListItem>[]);
+        return;
+      }
 
-      String board = '';
-      final end = url.lastIndexOf("/");
-      if (end > 0) {
-        final start = url.lastIndexOf("/", end - 1);
-        if (start >= 0) {
-          board = url.substring(start + 1, end);
+      for (final pIndex in postIndices) {
+        if (pIndex is! int) continue;
+
+        final post = _resolveObject(chunkData, pIndex);
+
+        final int id = (post['id'] is int) ? post['id'] as int : -1;
+        if (id <= 0) continue;
+        if (lastId > 0 && id >= lastId) {
+          debugPrint('[SKIP] id=$id, lastId=$lastId');
+          continue;
         }
+
+        // Skip notice posts
+        if (post['is_notice'] == true) continue;
+
+        final String title = (post['title'] ?? '').toString();
+        final String author = (post['author'] ?? '').toString();
+        final String authorId = (post['author_id'] ?? '').toString();
+        final int commentsCount = (post['comments_count'] is int)
+            ? post['comments_count'] as int
+            : 0;
+        final String createdAt = (post['created_at'] ?? '').toString();
+        final int views = (post['views'] is int) ? post['views'] as int : 0;
+        final int likes = (post['likes'] is int) ? post['likes'] as int : 0;
+        final String thumbnail = (post['thumbnail'] ?? '').toString();
+        final String category = (post['category'] ?? '').toString();
+
+        final String url = '$baseUrl/$board/$id';
+        final String reply = commentsCount > 0 ? '+$commentsCount' : '';
+
+        // Parse time
+        String parsedTime = '';
+        try {
+          final dateTime = DateTime.parse(createdAt);
+          parsedTime = timeago.format(dateTime, locale: 'ko');
+        } catch (e) {
+          parsedTime = createdAt;
+        }
+
+        final String hit = views.toString();
+        final String like = likes > 0 ? likes.toString() : '';
+
+        // damoang has no nick images — always show author as text
+        final String info = BaseParser.parserInfo(
+          false,
+          author,
+          parsedTime,
+          hit,
+        );
+
+        final Map<String, Object> parsedItem = {
+          'id': id,
+          'title': title,
+          'reply': reply,
+          'category': category,
+          'time': createdAt,
+          'info': info,
+          'url': url,
+          'board': board,
+          'boardTitle': boardTitle,
+          'like': like,
+          'hit': hit,
+          'userInfo': UserInfo(
+            id: authorId,
+            nickName: author,
+            nickImage: '',
+          ),
+          'hasImage': thumbnail.isNotEmpty,
+        };
+
+        parsedItems.add(parsedItem);
+        ids.add(id);
       }
-
-      final String title = link.text.trim();
-
-      final Element? timeElement = infoElement?.querySelector(
-        "div > div.d-flex > div.wr-date",
-      );
-
-      timeElement
-          ?.querySelectorAll("span.visually-hidden, i.bi")
-          .forEach((ele) => ele.remove());
-
-      final String time = timeElement?.text.trim() ?? '';
-      String parsedTime = '';
-      try {
-        DateTime dateTime = parseDateTime(time);
-        parsedTime = timeago.format(dateTime, locale: 'ko');
-      } catch (e) {
-        parsedTime = time;
-      }
-
-      final String nickImage = isShowNickImage
-          ? metaElement
-                    ?.querySelector("img.mb-photo")
-                    ?.attributes["src"]
-                    ?.trim() ??
-                ''
-          : '';
-
-      final String nickName =
-          metaElement
-              ?.querySelector("span.sv_name, span.sv_member")
-              ?.text
-              .trim() ??
-          '';
-
-      final Element? hitElement = infoElement?.querySelector(
-        "div > div.d-flex > div.wr-num.order-4",
-      );
-      hitElement?.querySelector("span.visually-hidden")?.remove();
-      final String hit = hitElement?.text.trim() ?? '';
-
-      final Element? likeElement = infoElement?.querySelector(
-        "div.wr-num > div.rcmd-box",
-      );
-      likeElement
-          ?.querySelectorAll("span.visually-hidden, i.bi")
-          .forEach((ele) => ele.remove());
-      final like = likeElement?.text.trim() ?? '';
-
-      final bool hasImage =
-          infoElement
-              ?.querySelector("div.d-flex > div > span.na-icon")
-              ?.hasContent() ??
-          false;
-
-      final String info = BaseParser.parserInfo(
-        false,
-        nickName,
-        parsedTime,
-        hit,
-      );
-
-      final Map<String, Object> parsedItem = {
-        'id': id,
-        'title': title,
-        'reply': reply,
-        'category': category,
-        'time': time,
-        'info': info,
-        'url': url,
-        'board': board,
-        'boardTitle': boardTitle,
-        'like': like,
-        'hit': hit,
-        'userInfo': UserInfo(
-          id: userId,
-          nickName: nickName,
-          nickImage: nickImage,
-        ),
-        'hasImage': hasImage,
-      };
-
-      parsedItems.add(parsedItem);
-      ids.add(id);
+    } catch (e) {
+      debugPrint('[DamoangParser] Error parsing list: $e');
     }
 
     final ReceivePort readStatusPort = ReceivePort();
@@ -450,9 +512,35 @@ class DamoangParser implements BaseParser {
     replyPort.send(resultList);
   }
 
+  // ──────────────────────────────────────────────────────────────────
+  // Date parsing
+  // ──────────────────────────────────────────────────────────────────
+
   static DateTime parseDateTime(String dateTimeString) {
+    // ISO 8601 (e.g. "2026-03-13T11:04:59+09:00")
+    try {
+      return DateTime.parse(dateTimeString);
+    } catch (_) {}
+
+    // Korean format: "2026년 3월 12일 오후 03:10"
+    final koreanDateRegex = RegExp(
+      r'(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일\s*(오전|오후)\s*(\d{1,2}):(\d{2})',
+    );
+    final koreanMatch = koreanDateRegex.firstMatch(dateTimeString);
+    if (koreanMatch != null) {
+      final year = int.parse(koreanMatch.group(1)!);
+      final month = int.parse(koreanMatch.group(2)!);
+      final day = int.parse(koreanMatch.group(3)!);
+      final isPm = koreanMatch.group(4) == '오후';
+      var hour = int.parse(koreanMatch.group(5)!);
+      final minute = int.parse(koreanMatch.group(6)!);
+      if (isPm && hour < 12) hour += 12;
+      if (!isPm && hour == 12) hour = 0;
+      return DateTime(year, month, day, hour, minute);
+    }
+
+    // Legacy: "년.월.일 시:분" or "월.일 시:분"
     if (dateTimeString.contains(' ')) {
-      // 년.월.일 형식
       final parts = dateTimeString.split(' ');
       final dateParts = parts[0].split('.');
       final timeParts = parts[1].split(':');
@@ -478,7 +566,6 @@ class DamoangParser implements BaseParser {
       }
     } else if (dateTimeString.contains(':')) {
       final now = DateTime.now();
-      // 시:분 형식
       final timeParts = dateTimeString.split(':');
       return DateTime(
         now.year,
@@ -495,8 +582,13 @@ class DamoangParser implements BaseParser {
     }
   }
 
+  // ──────────────────────────────────────────────────────────────────
+  // URL builders
+  // ──────────────────────────────────────────────────────────────────
+
   @override
-  String urlByDetail(String url, String board, int id) => url;
+  String urlByDetail(String url, String board, int id) =>
+      '$baseUrl/$board/$id/__data.json?x-sveltekit-invalidated=1001';
 
   @override
   String urlByList(
@@ -505,7 +597,8 @@ class DamoangParser implements BaseParser {
     int page,
     SortType sortType,
     LastId lastId,
-  ) => '$url?page=$page${sortType.toQuery(siteType)}';
+  ) =>
+      '$url/__data.json?page=$page&x-sveltekit-invalidated=101${sortType.toQuery(siteType)}';
 
   @override
   String urlBySearchList(
@@ -514,7 +607,8 @@ class DamoangParser implements BaseParser {
     int page,
     String keyword,
     LastId lastId,
-  ) => '$url?page=$page&sfl=wr_subject&sop=and&stx=$keyword';
+  ) =>
+      '$url/__data.json?page=$page&sfl=wr_subject&sop=and&stx=$keyword&x-sveltekit-invalidated=101';
 
   @override
   String urlByMain() {
@@ -523,13 +617,11 @@ class DamoangParser implements BaseParser {
 
   @override
   Future<Either<Failure, List<CommentItem>>> comments(Response response) {
-    // TODO: implement comments
     throw UnimplementedError();
   }
 
   @override
   String urlByComments(String url, String board, int id, int page) {
-    // TODO: implement urlByComments
     throw UnimplementedError();
   }
 }

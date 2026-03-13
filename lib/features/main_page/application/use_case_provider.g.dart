@@ -10,12 +10,12 @@ part of 'use_case_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(getMainList)
-const getMainListProvider = GetMainListProvider._();
+final getMainListProvider = GetMainListProvider._();
 
 final class GetMainListProvider
     extends $FunctionalProvider<GetMainList, GetMainList, GetMainList>
     with $Provider<GetMainList> {
-  const GetMainListProvider._()
+  GetMainListProvider._()
     : super(
         from: null,
         argument: null,
@@ -51,12 +51,12 @@ final class GetMainListProvider
 String _$getMainListHash() => r'28994813c73d773f49afb893a5f2214c20f499e5';
 
 @ProviderFor(setMainList)
-const setMainListProvider = SetMainListProvider._();
+final setMainListProvider = SetMainListProvider._();
 
 final class SetMainListProvider
     extends $FunctionalProvider<SetMainList, SetMainList, SetMainList>
     with $Provider<SetMainList> {
-  const SetMainListProvider._()
+  SetMainListProvider._()
     : super(
         from: null,
         argument: null,

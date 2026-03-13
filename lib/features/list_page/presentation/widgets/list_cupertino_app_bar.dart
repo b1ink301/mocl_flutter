@@ -2,6 +2,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mixin.dart';
 
 import '../state/list_state_mixin.dart';
@@ -10,13 +11,21 @@ class ListCupertinoAppBar extends ConsumerWidget with ListState, ListEvent {
   const ListCupertinoAppBar({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) =>
-      CupertinoSliverNavigationBar(
+  Widget build(BuildContext context, WidgetRef ref) {
+    final delta = ref.watch(fontSizeDeltaProvider);
+    final baseLargeStyle =
+        CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle;
+    return CupertinoSliverNavigationBar(
         heroTag: 'list-appbar',
         transitionBetweenRoutes: false,
         backgroundColor: Theme.of(context).scaffoldBackgroundColor,
         previousPageTitle: smallTitleState(ref),
-        largeTitle: Text(titleState(ref)),
+        largeTitle: Text(
+          titleState(ref),
+          style: baseLargeStyle.copyWith(
+            fontSize: (baseLargeStyle.fontSize ?? 34) + delta,
+          ),
+        ),
         padding: const EdgeInsetsDirectional.only(start: 5, end: 10),
         trailing: PlatformPopupMenu(
           icon: Icon(
@@ -32,4 +41,5 @@ class ListCupertinoAppBar extends ConsumerWidget with ListState, ListEvent {
           ],
         ),
       );
+  }
 }

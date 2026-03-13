@@ -21,7 +21,7 @@ abstract class Details with _$Details {
     required List<CommentItem> comments,
     @Default(null) Recents? recents,
     @Default('') String csrf,
-    dynamic extraData,
+    Map<String, dynamic>? extraData,
   }) = _Details;
 
   factory Details.empty() => const Details(

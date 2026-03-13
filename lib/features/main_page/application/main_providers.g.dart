@@ -10,11 +10,11 @@ part of 'main_providers.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(MainItemsNotifier)
-const mainItemsProvider = MainItemsNotifierProvider._();
+final mainItemsProvider = MainItemsNotifierProvider._();
 
 final class MainItemsNotifierProvider
     extends $AsyncNotifierProvider<MainItemsNotifier, List<MainItem>> {
-  const MainItemsNotifierProvider._()
+  MainItemsNotifierProvider._()
     : super(
         from: null,
         argument: null,
@@ -40,7 +40,6 @@ abstract class _$MainItemsNotifier extends $AsyncNotifier<List<MainItem>> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<AsyncValue<List<MainItem>>, List<MainItem>>;
     final element =
         ref.element
@@ -50,17 +49,17 @@ abstract class _$MainItemsNotifier extends $AsyncNotifier<List<MainItem>> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }
 
 @ProviderFor(mainTitle)
-const mainTitleProvider = MainTitleProvider._();
+final mainTitleProvider = MainTitleProvider._();
 
 final class MainTitleProvider
     extends $FunctionalProvider<String, String, String>
     with $Provider<String> {
-  const MainTitleProvider._()
+  MainTitleProvider._()
     : super(
         from: null,
         argument: null,
@@ -96,11 +95,11 @@ final class MainTitleProvider
 String _$mainTitleHash() => r'e0b3513472862bfa8b45f23a70918377478b7c24';
 
 @ProviderFor(showAddButton)
-const showAddButtonProvider = ShowAddButtonProvider._();
+final showAddButtonProvider = ShowAddButtonProvider._();
 
 final class ShowAddButtonProvider extends $FunctionalProvider<bool, bool, bool>
     with $Provider<bool> {
-  const ShowAddButtonProvider._()
+  ShowAddButtonProvider._()
     : super(
         from: null,
         argument: null,
@@ -133,15 +132,15 @@ final class ShowAddButtonProvider extends $FunctionalProvider<bool, bool, bool>
   }
 }
 
-String _$showAddButtonHash() => r'221c94ee967358b0e8764a291e4404bd31388892';
+String _$showAddButtonHash() => r'049dd02547904e5016935ef608c2dd53dca3ff26';
 
 @ProviderFor(isCurrentSiteType)
-const isCurrentSiteTypeProvider = IsCurrentSiteTypeFamily._();
+final isCurrentSiteTypeProvider = IsCurrentSiteTypeFamily._();
 
 final class IsCurrentSiteTypeProvider
     extends $FunctionalProvider<bool, bool, bool>
     with $Provider<bool> {
-  const IsCurrentSiteTypeProvider._({
+  IsCurrentSiteTypeProvider._({
     required IsCurrentSiteTypeFamily super.from,
     required SiteType super.argument,
   }) : super(
@@ -196,7 +195,7 @@ String _$isCurrentSiteTypeHash() => r'83cebea6efe00c23a93e714427deb038c92e3766';
 
 final class IsCurrentSiteTypeFamily extends $Family
     with $FunctionalFamilyOverride<bool, SiteType> {
-  const IsCurrentSiteTypeFamily._()
+  IsCurrentSiteTypeFamily._()
     : super(
         retry: null,
         name: r'isCurrentSiteTypeProvider',
@@ -213,7 +212,7 @@ final class IsCurrentSiteTypeFamily extends $Family
 }
 
 @ProviderFor(setMainItems)
-const setMainItemsProvider = SetMainItemsFamily._();
+final setMainItemsProvider = SetMainItemsFamily._();
 
 final class SetMainItemsProvider
     extends
@@ -225,7 +224,7 @@ final class SetMainItemsProvider
     with
         $FutureModifier<Either<Failure, List<int>>>,
         $FutureProvider<Either<Failure, List<int>>> {
-  const SetMainItemsProvider._({
+  SetMainItemsProvider._({
     required SetMainItemsFamily super.from,
     required List<MainItem> super.argument,
   }) : super(
@@ -277,7 +276,7 @@ final class SetMainItemsFamily extends $Family
           FutureOr<Either<Failure, List<int>>>,
           List<MainItem>
         > {
-  const SetMainItemsFamily._()
+  SetMainItemsFamily._()
     : super(
         retry: null,
         name: r'setMainItemsProvider',
@@ -294,7 +293,7 @@ final class SetMainItemsFamily extends $Family
 }
 
 @ProviderFor(mainScaffoldState)
-const mainScaffoldStateProvider = MainScaffoldStateProvider._();
+final mainScaffoldStateProvider = MainScaffoldStateProvider._();
 
 final class MainScaffoldStateProvider
     extends
@@ -304,7 +303,7 @@ final class MainScaffoldStateProvider
           GlobalKey<ScaffoldState>
         >
     with $Provider<GlobalKey<ScaffoldState>> {
-  const MainScaffoldStateProvider._()
+  MainScaffoldStateProvider._()
     : super(
         from: null,
         argument: null,
@@ -341,11 +340,11 @@ final class MainScaffoldStateProvider
 String _$mainScaffoldStateHash() => r'e08ed879718fe9af8a42c31c3df1fbd7c053b5eb';
 
 @ProviderFor(MainSidebarNotifier)
-const mainSidebarProvider = MainSidebarNotifierProvider._();
+final mainSidebarProvider = MainSidebarNotifierProvider._();
 
 final class MainSidebarNotifierProvider
     extends $NotifierProvider<MainSidebarNotifier, bool> {
-  const MainSidebarNotifierProvider._()
+  MainSidebarNotifierProvider._()
     : super(
         from: null,
         argument: null,
@@ -380,7 +379,6 @@ abstract class _$MainSidebarNotifier extends $Notifier<bool> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<bool, bool>;
     final element =
         ref.element
@@ -390,6 +388,6 @@ abstract class _$MainSidebarNotifier extends $Notifier<bool> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

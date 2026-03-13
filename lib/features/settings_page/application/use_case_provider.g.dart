@@ -10,12 +10,12 @@ part of 'use_case_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(getSiteType)
-const getSiteTypeProvider = GetSiteTypeProvider._();
+final getSiteTypeProvider = GetSiteTypeProvider._();
 
 final class GetSiteTypeProvider
     extends $FunctionalProvider<GetSiteType, GetSiteType, GetSiteType>
     with $Provider<GetSiteType> {
-  const GetSiteTypeProvider._()
+  GetSiteTypeProvider._()
     : super(
         from: null,
         argument: null,
@@ -51,12 +51,12 @@ final class GetSiteTypeProvider
 String _$getSiteTypeHash() => r'608cf8c25e7d2c9bdcf5316960c2d7b7899e2bca';
 
 @ProviderFor(setSiteType)
-const setSiteTypeProvider = SetSiteTypeProvider._();
+final setSiteTypeProvider = SetSiteTypeProvider._();
 
 final class SetSiteTypeProvider
     extends $FunctionalProvider<SetSiteType, SetSiteType, SetSiteType>
     with $Provider<SetSiteType> {
-  const SetSiteTypeProvider._()
+  SetSiteTypeProvider._()
     : super(
         from: null,
         argument: null,
@@ -92,12 +92,12 @@ final class SetSiteTypeProvider
 String _$setSiteTypeHash() => r'8528fec84a713df1d006d6b211df0ad222bf54b6';
 
 @ProviderFor(setFontSize)
-const setFontSizeProvider = SetFontSizeProvider._();
+final setFontSizeProvider = SetFontSizeProvider._();
 
 final class SetFontSizeProvider
     extends $FunctionalProvider<SetFontSize, SetFontSize, SetFontSize>
     with $Provider<SetFontSize> {
-  const SetFontSizeProvider._()
+  SetFontSizeProvider._()
     : super(
         from: null,
         argument: null,
@@ -133,12 +133,12 @@ final class SetFontSizeProvider
 String _$setFontSizeHash() => r'34f5a6568c283cbdd05b690b755fd1ea508d79fc';
 
 @ProviderFor(getFontSize)
-const getFontSizeProvider = GetFontSizeProvider._();
+final getFontSizeProvider = GetFontSizeProvider._();
 
 final class GetFontSizeProvider
     extends $FunctionalProvider<GetFontSize, GetFontSize, GetFontSize>
     with $Provider<GetFontSize> {
-  const GetFontSizeProvider._()
+  GetFontSizeProvider._()
     : super(
         from: null,
         argument: null,
@@ -174,12 +174,12 @@ final class GetFontSizeProvider
 String _$getFontSizeHash() => r'aed9a21366cacf210074d478d9c163800e811e43';
 
 @ProviderFor(initFontSize)
-const initFontSizeProvider = InitFontSizeProvider._();
+final initFontSizeProvider = InitFontSizeProvider._();
 
 final class InitFontSizeProvider
     extends $FunctionalProvider<InitFontSize, InitFontSize, InitFontSize>
     with $Provider<InitFontSize> {
-  const InitFontSizeProvider._()
+  InitFontSizeProvider._()
     : super(
         from: null,
         argument: null,

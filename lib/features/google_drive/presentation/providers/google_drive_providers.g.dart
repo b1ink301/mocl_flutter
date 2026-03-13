@@ -10,7 +10,7 @@ part of 'google_drive_providers.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(googleDriveRemoteDataSource)
-const googleDriveRemoteDataSourceProvider =
+final googleDriveRemoteDataSourceProvider =
     GoogleDriveRemoteDataSourceProvider._();
 
 final class GoogleDriveRemoteDataSourceProvider
@@ -21,7 +21,7 @@ final class GoogleDriveRemoteDataSourceProvider
           GoogleDriveRemoteDataSource
         >
     with $Provider<GoogleDriveRemoteDataSource> {
-  const GoogleDriveRemoteDataSourceProvider._()
+  GoogleDriveRemoteDataSourceProvider._()
     : super(
         from: null,
         argument: null,
@@ -59,7 +59,7 @@ String _$googleDriveRemoteDataSourceHash() =>
     r'8af5407ccf2f6ac830cb18a5fda3b23903d58ef1';
 
 @ProviderFor(googleDriveRepository)
-const googleDriveRepositoryProvider = GoogleDriveRepositoryProvider._();
+final googleDriveRepositoryProvider = GoogleDriveRepositoryProvider._();
 
 final class GoogleDriveRepositoryProvider
     extends
@@ -69,7 +69,7 @@ final class GoogleDriveRepositoryProvider
           GoogleDriveRepository
         >
     with $Provider<GoogleDriveRepository> {
-  const GoogleDriveRepositoryProvider._()
+  GoogleDriveRepositoryProvider._()
     : super(
         from: null,
         argument: null,
@@ -107,12 +107,12 @@ String _$googleDriveRepositoryHash() =>
     r'8d5c29271e97f1a3c5b87d3d3c52d5bd5cba2d3c';
 
 @ProviderFor(signInUseCase)
-const signInUseCaseProvider = SignInUseCaseProvider._();
+final signInUseCaseProvider = SignInUseCaseProvider._();
 
 final class SignInUseCaseProvider
     extends $FunctionalProvider<SignInUseCase, SignInUseCase, SignInUseCase>
     with $Provider<SignInUseCase> {
-  const SignInUseCaseProvider._()
+  SignInUseCaseProvider._()
     : super(
         from: null,
         argument: null,
@@ -148,7 +148,7 @@ final class SignInUseCaseProvider
 String _$signInUseCaseHash() => r'40ca4b64e19784d6ac57d84e961af3317e417cf7';
 
 @ProviderFor(backupDatabaseUseCase)
-const backupDatabaseUseCaseProvider = BackupDatabaseUseCaseProvider._();
+final backupDatabaseUseCaseProvider = BackupDatabaseUseCaseProvider._();
 
 final class BackupDatabaseUseCaseProvider
     extends
@@ -158,7 +158,7 @@ final class BackupDatabaseUseCaseProvider
           BackupDatabaseUseCase
         >
     with $Provider<BackupDatabaseUseCase> {
-  const BackupDatabaseUseCaseProvider._()
+  BackupDatabaseUseCaseProvider._()
     : super(
         from: null,
         argument: null,
@@ -196,7 +196,7 @@ String _$backupDatabaseUseCaseHash() =>
     r'39b64950197ec3fd24a5c5751df2d13db23f64c5';
 
 @ProviderFor(restoreDatabaseUseCase)
-const restoreDatabaseUseCaseProvider = RestoreDatabaseUseCaseProvider._();
+final restoreDatabaseUseCaseProvider = RestoreDatabaseUseCaseProvider._();
 
 final class RestoreDatabaseUseCaseProvider
     extends
@@ -206,7 +206,7 @@ final class RestoreDatabaseUseCaseProvider
           RestoreDatabaseUseCase
         >
     with $Provider<RestoreDatabaseUseCase> {
-  const RestoreDatabaseUseCaseProvider._()
+  RestoreDatabaseUseCaseProvider._()
     : super(
         from: null,
         argument: null,
@@ -244,7 +244,7 @@ String _$restoreDatabaseUseCaseHash() =>
     r'5b4fe08717439c9225429d28ed003fba8279330b';
 
 @ProviderFor(checkSyncStatusUseCase)
-const checkSyncStatusUseCaseProvider = CheckSyncStatusUseCaseProvider._();
+final checkSyncStatusUseCaseProvider = CheckSyncStatusUseCaseProvider._();
 
 final class CheckSyncStatusUseCaseProvider
     extends
@@ -254,7 +254,7 @@ final class CheckSyncStatusUseCaseProvider
           CheckSyncStatusUseCase
         >
     with $Provider<CheckSyncStatusUseCase> {
-  const CheckSyncStatusUseCaseProvider._()
+  CheckSyncStatusUseCaseProvider._()
     : super(
         from: null,
         argument: null,
@@ -292,11 +292,11 @@ String _$checkSyncStatusUseCaseHash() =>
     r'230b21acbb534345f1958f4ef5ef02ba59baada7';
 
 @ProviderFor(GoogleDriveSyncNotifier)
-const googleDriveSyncProvider = GoogleDriveSyncNotifierProvider._();
+final googleDriveSyncProvider = GoogleDriveSyncNotifierProvider._();
 
 final class GoogleDriveSyncNotifierProvider
     extends $NotifierProvider<GoogleDriveSyncNotifier, SyncStatus> {
-  const GoogleDriveSyncNotifierProvider._()
+  GoogleDriveSyncNotifierProvider._()
     : super(
         from: null,
         argument: null,
@@ -331,7 +331,6 @@ abstract class _$GoogleDriveSyncNotifier extends $Notifier<SyncStatus> {
   @$mustCallSuper
   @override
   void runBuild() {
-    final created = build();
     final ref = this.ref as $Ref<SyncStatus, SyncStatus>;
     final element =
         ref.element
@@ -341,6 +340,6 @@ abstract class _$GoogleDriveSyncNotifier extends $Notifier<SyncStatus> {
               Object?,
               Object?
             >;
-    element.handleValue(ref, created);
+    element.handleCreate(ref, build);
   }
 }

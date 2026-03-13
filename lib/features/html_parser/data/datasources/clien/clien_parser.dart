@@ -91,19 +91,14 @@ class ClienParser implements BaseParser {
   @override
   Future<Either<Failure, Details>> detail(Response response) async {
     final responseData = response.data;
-    final resultPort = ReceivePort();
-    await Isolate.spawn(_detailIsolate, [
-      responseData,
-      isShowNickImage,
-      resultPort.sendPort,
-    ]);
-    return await resultPort.first as Either<Failure, Details>;
+    final showNickImage = isShowNickImage;
+    return Isolate.run(() => _parseDetail(responseData, showNickImage));
   }
 
-  static void _detailIsolate(List<dynamic> args) {
-    final responseData = args[0] as String;
-    final isShowNickImage = args[1] as bool;
-    final sendPort = args[2] as SendPort;
+  static Either<Failure, Details> _parseDetail(
+    String responseData,
+    bool isShowNickImage,
+  ) {
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
@@ -386,8 +381,7 @@ class ClienParser implements BaseParser {
       bodyHtml: newBodyHtml,
     );
 
-    final result = Right<Failure, Details>(detail);
-    sendPort.send(result);
+    return Right<Failure, Details>(detail);
   }
 
   @override

@@ -10,12 +10,12 @@ part of 'datasource_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(mainDatasource)
-const mainDatasourceProvider = MainDatasourceFamily._();
+final mainDatasourceProvider = MainDatasourceFamily._();
 
 final class MainDatasourceProvider
     extends $FunctionalProvider<MainDataSource, MainDataSource, MainDataSource>
     with $Provider<MainDataSource> {
-  const MainDatasourceProvider._({
+  MainDatasourceProvider._({
     required MainDatasourceFamily super.from,
     required SiteType super.argument,
   }) : super(
@@ -70,7 +70,7 @@ String _$mainDatasourceHash() => r'c145eca16cf2ebbc78de87f36f256def38882a2b';
 
 final class MainDatasourceFamily extends $Family
     with $FunctionalFamilyOverride<MainDataSource, SiteType> {
-  const MainDatasourceFamily._()
+  MainDatasourceFamily._()
     : super(
         retry: null,
         name: r'mainDatasourceProvider',

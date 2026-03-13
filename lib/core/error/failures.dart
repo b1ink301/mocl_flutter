@@ -1,5 +1,10 @@
 import 'package:equatable/equatable.dart';
 
+// Re-export feature-specific failures for backward compatibility.
+// New code should import directly from the feature's error file.
+export 'package:mocl_flutter/features/html_parser/domain/errors/parser_failures.dart';
+export 'package:mocl_flutter/features/main_page/domain/errors/main_failures.dart';
+
 abstract class Failure extends Equatable {
   final String message;
 
@@ -13,46 +18,14 @@ class ServerFailure extends Failure {
   const ServerFailure({required super.message});
 }
 
-class CallFunctionFailure extends Failure {
-  const CallFunctionFailure({required super.message});
-}
-
 class NetworkFailure extends Failure {
   const NetworkFailure({required super.message});
-}
-
-class GetMainFailure extends Failure {
-  const GetMainFailure({required super.message});
 }
 
 class NotLoginFailure extends Failure {
   const NotLoginFailure({required super.message});
 }
 
-class GetListFailure extends Failure {
-  const GetListFailure({required super.message});
-}
-
-class GetDetailFailure extends Failure {
-  const GetDetailFailure({required super.message});
-}
-
-class GetCommentsFailure extends Failure {
-  const GetCommentsFailure({required super.message});
-}
-
-class SetMainFailure extends Failure {
-  const SetMainFailure({required super.message});
-}
-
 class UnknownFailure extends Failure {
   const UnknownFailure({required super.message});
-}
-
-class ServerException implements Exception {}
-
-class GetMainException implements Exception {}
-
-class GetVersionFailure extends Failure {
-  const GetVersionFailure({required super.message});
 }

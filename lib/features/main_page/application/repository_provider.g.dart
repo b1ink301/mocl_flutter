@@ -10,12 +10,12 @@ part of 'repository_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(mainRepository)
-const mainRepositoryProvider = MainRepositoryFamily._();
+final mainRepositoryProvider = MainRepositoryFamily._();
 
 final class MainRepositoryProvider
     extends $FunctionalProvider<MainRepository, MainRepository, MainRepository>
     with $Provider<MainRepository> {
-  const MainRepositoryProvider._({
+  MainRepositoryProvider._({
     required MainRepositoryFamily super.from,
     required SiteType super.argument,
   }) : super(
@@ -70,7 +70,7 @@ String _$mainRepositoryHash() => r'04ed3460842e34821e481dd10b51381c08ee2382';
 
 final class MainRepositoryFamily extends $Family
     with $FunctionalFamilyOverride<MainRepository, SiteType> {
-  const MainRepositoryFamily._()
+  MainRepositoryFamily._()
     : super(
         retry: null,
         name: r'mainRepositoryProvider',

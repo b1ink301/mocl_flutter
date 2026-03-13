@@ -25,7 +25,7 @@ class LoginPage extends ConsumerWidget {
           toolbarHeight: 64,
         ),
         cupertino: (_, _) => CupertinoNavigationBarData(
-          title: PlatformText('로그인'),
+          middle: PlatformText('로그인'),
           previousPageTitle: siteType.title,
           backgroundColor: backgroundColor,
         ),

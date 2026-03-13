@@ -10,12 +10,12 @@ part of 'repository_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(listRepository)
-const listRepositoryProvider = ListRepositoryFamily._();
+final listRepositoryProvider = ListRepositoryFamily._();
 
 final class ListRepositoryProvider
     extends $FunctionalProvider<ListRepository, ListRepository, ListRepository>
     with $Provider<ListRepository> {
-  const ListRepositoryProvider._({
+  ListRepositoryProvider._({
     required ListRepositoryFamily super.from,
     required SiteType super.argument,
   }) : super(
@@ -70,7 +70,7 @@ String _$listRepositoryHash() => r'8103da95af7b46ba4a9d99bfd15f0800a198ac23';
 
 final class ListRepositoryFamily extends $Family
     with $FunctionalFamilyOverride<ListRepository, SiteType> {
-  const ListRepositoryFamily._()
+  ListRepositoryFamily._()
     : super(
         retry: null,
         name: r'listRepositoryProvider',

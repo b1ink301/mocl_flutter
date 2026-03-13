@@ -22,7 +22,6 @@ Future<void> main() async {
 
   runApp(
     ProviderScope(
-      retry: (retryCount, error) => null,
       overrides: [
         sharedPreferencesProvider.overrideWithValue(
           await SharedPreferences.getInstance(),

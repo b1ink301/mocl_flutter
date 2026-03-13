@@ -37,23 +37,16 @@ class MeecoParser implements BaseParser {
   @override
   Future<Either<Failure, Details>> detail(Response response) async {
     final responseData = response.data;
-    final resultPort = ReceivePort();
-
-    await Isolate.spawn(_detailIsolate, [
-      baseUrl,
-      responseData,
-      resultPort.sendPort,
-      isShowNickImage,
-    ]);
-
-    return await resultPort.first as Either<Failure, Details>;
+    final url = baseUrl;
+    final showNickImage = isShowNickImage;
+    return Isolate.run(() => _parseDetail(url, responseData, showNickImage));
   }
 
-  static void _detailIsolate(List<dynamic> args) {
-    final baseUrl = args[0] as String;
-    final responseData = args[1] as String;
-    final sendPort = args[2] as SendPort;
-    final isShowNickImage = args[3] as bool;
+  static Either<Failure, Details> _parseDetail(
+    String baseUrl,
+    String responseData,
+    bool isShowNickImage,
+  ) {
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
@@ -223,8 +216,7 @@ class MeecoParser implements BaseParser {
       bodyHtml: bodyHtml?.innerHtml ?? '',
     );
 
-    final result = Right<Failure, Details>(detail);
-    sendPort.send(result);
+    return Right<Failure, Details>(detail);
   }
 
   @override

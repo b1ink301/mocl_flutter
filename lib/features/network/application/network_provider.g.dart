@@ -10,11 +10,11 @@ part of 'network_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(dio)
-const dioProvider = DioProvider._();
+final dioProvider = DioProvider._();
 
 final class DioProvider extends $FunctionalProvider<Dio, Dio, Dio>
     with $Provider<Dio> {
-  const DioProvider._()
+  DioProvider._()
     : super(
         from: null,
         argument: null,
@@ -50,12 +50,12 @@ final class DioProvider extends $FunctionalProvider<Dio, Dio, Dio>
 String _$dioHash() => r'088d5c03610503c2407a8d7429b0e9f3ee76406f';
 
 @ProviderFor(cookieJar)
-const cookieJarProvider = CookieJarProvider._();
+final cookieJarProvider = CookieJarProvider._();
 
 final class CookieJarProvider
     extends $FunctionalProvider<CookieJar, CookieJar, CookieJar>
     with $Provider<CookieJar> {
-  const CookieJarProvider._()
+  CookieJarProvider._()
     : super(
         from: null,
         argument: null,
@@ -91,12 +91,12 @@ final class CookieJarProvider
 String _$cookieJarHash() => r'faac22de9751ccb26d253ff2ac40f660f01b425c';
 
 @ProviderFor(theQooApiClient)
-const theQooApiClientProvider = TheQooApiClientProvider._();
+final theQooApiClientProvider = TheQooApiClientProvider._();
 
 final class TheQooApiClientProvider
     extends $FunctionalProvider<BaseApi, BaseApi, BaseApi>
     with $Provider<BaseApi> {
-  const TheQooApiClientProvider._()
+  TheQooApiClientProvider._()
     : super(
         from: null,
         argument: null,
@@ -132,12 +132,12 @@ final class TheQooApiClientProvider
 String _$theQooApiClientHash() => r'40d23b310e0c900ff4b974cf8862674ebbf2fa30';
 
 @ProviderFor(clienApiClient)
-const clienApiClientProvider = ClienApiClientProvider._();
+final clienApiClientProvider = ClienApiClientProvider._();
 
 final class ClienApiClientProvider
     extends $FunctionalProvider<BaseApi, BaseApi, BaseApi>
     with $Provider<BaseApi> {
-  const ClienApiClientProvider._()
+  ClienApiClientProvider._()
     : super(
         from: null,
         argument: null,
@@ -173,12 +173,12 @@ final class ClienApiClientProvider
 String _$clienApiClientHash() => r'69e9a26c04d4586719c1d033537496c6deca13dd';
 
 @ProviderFor(damoangApiClient)
-const damoangApiClientProvider = DamoangApiClientProvider._();
+final damoangApiClientProvider = DamoangApiClientProvider._();
 
 final class DamoangApiClientProvider
     extends $FunctionalProvider<BaseApi, BaseApi, BaseApi>
     with $Provider<BaseApi> {
-  const DamoangApiClientProvider._()
+  DamoangApiClientProvider._()
     : super(
         from: null,
         argument: null,
@@ -214,12 +214,12 @@ final class DamoangApiClientProvider
 String _$damoangApiClientHash() => r'9f9a1416fb9d3d2075c7f50f6e2b31cee94722f8';
 
 @ProviderFor(naverCafeApiClient)
-const naverCafeApiClientProvider = NaverCafeApiClientProvider._();
+final naverCafeApiClientProvider = NaverCafeApiClientProvider._();
 
 final class NaverCafeApiClientProvider
     extends $FunctionalProvider<BaseApi, BaseApi, BaseApi>
     with $Provider<BaseApi> {
-  const NaverCafeApiClientProvider._()
+  NaverCafeApiClientProvider._()
     : super(
         from: null,
         argument: null,
@@ -256,12 +256,12 @@ String _$naverCafeApiClientHash() =>
     r'e42004228c11a05a2f0e9649b0590afd09db7b43';
 
 @ProviderFor(redditApiClient)
-const redditApiClientProvider = RedditApiClientProvider._();
+final redditApiClientProvider = RedditApiClientProvider._();
 
 final class RedditApiClientProvider
     extends $FunctionalProvider<BaseApi, BaseApi, BaseApi>
     with $Provider<BaseApi> {
-  const RedditApiClientProvider._()
+  RedditApiClientProvider._()
     : super(
         from: null,
         argument: null,
@@ -297,12 +297,12 @@ final class RedditApiClientProvider
 String _$redditApiClientHash() => r'5bde1814ef36148bc3234c729b9814a760080332';
 
 @ProviderFor(meecoApiClient)
-const meecoApiClientProvider = MeecoApiClientProvider._();
+final meecoApiClientProvider = MeecoApiClientProvider._();
 
 final class MeecoApiClientProvider
     extends $FunctionalProvider<BaseApi, BaseApi, BaseApi>
     with $Provider<BaseApi> {
-  const MeecoApiClientProvider._()
+  MeecoApiClientProvider._()
     : super(
         from: null,
         argument: null,

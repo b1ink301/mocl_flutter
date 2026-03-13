@@ -10,7 +10,7 @@ import 'package:sembast_web/sembast_web.dart';
 part 'datasource_provider.g.dart';
 
 @riverpod
-Future<Database> appDatabase(Ref ref) async {
+Future<Database> _appDatabase(Ref ref) async {
   if (kIsWeb) {
     final path = join('/assets/db', 'mocl-sembast.db');
     return databaseFactoryWeb.openDatabase(path);
@@ -24,7 +24,7 @@ Future<Database> appDatabase(Ref ref) async {
 
 @riverpod
 LocalDatabase localDatabase(Ref ref) => ref
-    .watch(appDatabaseProvider)
+    .watch(_appDatabaseProvider)
     .maybeWhen(
       data: (database) => LocalDatabase(database: database),
       orElse: () => throw CallFunctionFailure(message: 'Error: appDatabase()'),
