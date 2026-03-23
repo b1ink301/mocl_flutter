@@ -55,9 +55,6 @@ class _ListBody extends ConsumerWidget with ListState, ListEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final (count, hasReachedMax, error) = listState(ref);
-    debugPrint(
-      '[_ListBody] count=$count, hasReachedMax=$hasReachedMax, error=$error',
-    );
 
     return SliverPadding(
       padding: .only(bottom: MediaQuery.of(context).padding.bottom),

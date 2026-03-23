@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 
 import 'message_widget.dart';
@@ -25,12 +24,9 @@ class AppbarDualTextWidget extends ConsumerWidget {
         _toolbarHeight = toolbarHeight;
 
   Widget _buildTitle(BuildContext context, WidgetRef ref) {
-    final delta = ref.watch(fontSizeDeltaProvider);
-    final baseStyle = AppTextStyles.of(context).titleTextStyle;
-    final adjustedStyle = baseStyle.copyWith(
-      color: Colors.white,
-      fontSize: baseStyle.fontSize! + delta,
-    );
+    final adjustedStyle = ref.watch(
+      appTextStylesFontSizeProvider.select((s) => s.titleTextStyle),
+    ).copyWith(color: Colors.white);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,

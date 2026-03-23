@@ -441,7 +441,7 @@ final class DetailAppbarHeightProvider
 }
 
 String _$detailAppbarHeightHash() =>
-    r'a4b18ca4d084af10fe7aacad81cd993ab7cf37bd';
+    r'649cc3cc3639c49da9d4a39656a2b3a466844740';
 
 final class DetailAppbarHeightFamily extends $Family
     with $FunctionalFamilyOverride<double, String> {

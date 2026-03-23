@@ -90,31 +90,59 @@ const double _kHorizontalPadding = 16.0; // 좌우 패딩
 double _kMinTextHeight = !Platform.isIOS ? 30 : 10; // 최소 텍스트 높이
 double _kExtraVerticalSpace = !Platform.isIOS ? 36 : 0; // 추가 수직 공간
 
+/// 상세 화면 앱바 높이 캐시.
+/// text, style, width가 동일하면 TextPainter.layout()을 생략합니다.
+final _detailHeightCache = _DetailHeightCache();
+
+class _DetailHeightCache {
+  String? _lastText;
+  TextStyle? _lastStyle;
+  double? _lastWidth;
+  double? _cachedHeight;
+
+  double getOrCalculate(String text, TextStyle style, double availableWidth) {
+    if (_lastText == text &&
+        _lastStyle == style &&
+        _lastWidth == availableWidth &&
+        _cachedHeight != null) {
+      return _cachedHeight!;
+    }
+
+    final textPainter = TextPainter(
+      text: TextSpan(text: text, style: style),
+      maxLines: 3,
+      textDirection: TextDirection.ltr,
+    )..layout(minWidth: 0, maxWidth: availableWidth);
+
+    final double height =
+        max(_kMinTextHeight, textPainter.height) + _kExtraVerticalSpace;
+    textPainter.dispose();
+
+    _lastText = text;
+    _lastStyle = style;
+    _lastWidth = availableWidth;
+    _cachedHeight = height;
+    return height;
+  }
+}
+
 @Riverpod(dependencies: [appbarTextStyle, screenWidth, FontSizeDelta])
 double detailAppbarHeight(Ref ref, String text) {
   final TextStyle baseStyle = ref.watch(appbarTextStyleProvider);
   final double fontSizeDelta = ref.watch(fontSizeDeltaProvider);
   final double screenWidth = ref.watch(screenWidthProvider);
 
-  // fontSizeDelta를 반영한 실제 렌더링 스타일로 높이 계산
   final TextStyle style = fontSizeDelta != 0
-      ? baseStyle.copyWith(fontSize: (baseStyle.fontSize ?? 14) + fontSizeDelta)
+      ? baseStyle.copyWith(
+          fontSize: (baseStyle.fontSize ?? 14) + fontSizeDelta,
+        )
       : baseStyle;
 
   final double availableWidth =
       screenWidth -
       (!Platform.isIOS
           ? _kMoreIconSize + _kHorizontalPadding * 2
-          : 32); // 좌우 패딩
+          : 32);
 
-  final TextPainter textPainter = TextPainter(
-    text: TextSpan(text: text, style: style),
-    maxLines: 3,
-    textDirection: TextDirection.ltr,
-  )..layout(minWidth: 0, maxWidth: availableWidth);
-
-  final double height =
-      max(_kMinTextHeight, textPainter.height) + _kExtraVerticalSpace;
-  textPainter.dispose();
-  return height;
+  return _detailHeightCache.getOrCalculate(text, style, availableWidth);
 }
