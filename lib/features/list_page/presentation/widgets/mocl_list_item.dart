@@ -53,21 +53,18 @@ class _BottomView extends StatelessWidget {
   @override
   Widget build(BuildContext context) => const Padding(
     padding: .only(top: 8.0),
-    child: SizedBox(
-      height: 20,
-      child: Row(
-        children: [
-          Expanded(
-            child: Row(
-              children: [
-                _NickImage(),
-                Flexible(child: _InfoText()),
-              ],
-            ),
+    child: Row(
+      children: [
+        Expanded(
+          child: Row(
+            children: [
+              _NickImage(),
+              Flexible(child: _InfoText()),
+            ],
           ),
-          _ReplyText(),
-        ],
-      ),
+        ),
+        _ReplyText(),
+      ],
     ),
   );
 }

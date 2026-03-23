@@ -59,13 +59,31 @@ class DamoangParser implements BaseParser {
     return null;
   }
 
+  /// Find a data node whose root contains the given [key].
+  static List<dynamic>? _findNodeDataByKey(
+    List<Map<String, dynamic>> lines,
+    String key,
+  ) {
+    final firstLine = lines.firstOrNull;
+    if (firstLine == null || firstLine['type'] != 'data') return null;
+    final nodes = firstLine['nodes'] as List<dynamic>?;
+    if (nodes == null) return null;
+    for (final node in nodes) {
+      if (node is! Map || node['type'] != 'data') continue;
+      final data = node['data'] as List<dynamic>?;
+      if (data == null || data.isEmpty) continue;
+      final root = data[0];
+      if (root is Map && root.containsKey(key)) {
+        return data;
+      }
+    }
+    return null;
+  }
+
   /// Resolve a devalue object at [index] in [data].
   /// Each object value is an index into the data array → replaced with the
   /// actual value at that position.
-  static Map<String, dynamic> _resolveObject(
-    List<dynamic> data,
-    int index,
-  ) {
+  static Map<String, dynamic> _resolveObject(List<dynamic> data, int index) {
     if (index < 0 || index >= data.length) return {};
     final obj = data[index];
     if (obj is! Map) return {};
@@ -107,9 +125,7 @@ class DamoangParser implements BaseParser {
 
   /// Find the post data node from the initial data line (detail pages).
   /// Looks for a node whose root object has a "post" field.
-  static List<dynamic>? _findPostNodeData(
-    List<Map<String, dynamic>> lines,
-  ) {
+  static List<dynamic>? _findPostNodeData(List<Map<String, dynamic>> lines) {
     final firstLine = lines.firstOrNull;
     if (firstLine == null || firstLine['type'] != 'data') return null;
     final nodes = firstLine['nodes'] as List<dynamic>?;
@@ -143,7 +159,6 @@ class DamoangParser implements BaseParser {
     String responseData,
     bool isShowNickImage,
   ) {
-
     try {
       timeago.setLocaleMessages('ko', timeago.KoMessages());
 
@@ -167,12 +182,12 @@ class DamoangParser implements BaseParser {
 
       final post = _resolveObject(postNodeData, postIndex);
 
-      final String title = (post['title'] ?? '').toString();
-      final String author = (post['author'] ?? '').toString();
-      final String content = (post['content'] ?? '').toString();
-      final int views = (post['views'] is int) ? post['views'] as int : 0;
-      final int likes = (post['likes'] is int) ? post['likes'] as int : 0;
-      final String createdAt = (post['created_at'] ?? '').toString();
+      final String title = post['title'].toString();
+      final String author = post['author'].toString();
+      final String content = post['content'].toString();
+      final int views = post['views'] as int? ?? 0;
+      final int likes = post['likes'] as int? ?? 0;
+      final String createdAt = post['created_at'].toString();
 
       final String viewCount = views.toString();
       final String likeCount = likes.toString();
@@ -187,17 +202,12 @@ class DamoangParser implements BaseParser {
       }
 
       // damoang has no nick images — always show author as text
-      final info = BaseParser.parserInfo(
-        false,
-        author,
-        parsedTime,
-        viewCount,
-      );
+      final info = BaseParser.parserInfo(false, author, parsedTime, viewCount);
 
-      // 2. Get transformedPostContent from auxiliary chunk (id=2)
+      // 2. Get transformedPostContent from auxiliary chunk (id=1)
       //    This has plugins applied (emoticons, auto-embed, etc.)
       String bodyHtml = content;
-      final auxChunkData = _findChunkData(lines, 2);
+      final auxChunkData = _findChunkData(lines, 1);
       if (auxChunkData != null && auxChunkData.isNotEmpty) {
         final auxRoot = auxChunkData[0];
         if (auxRoot is Map) {
@@ -210,73 +220,70 @@ class DamoangParser implements BaseParser {
         }
       }
 
-      // 3. Extract comments from chunk id=1
-      final commentsChunkData = _findChunkData(lines, 1);
+      // 3. Extract comments from postNodeData (commentsData field)
       final List<CommentItem> comments = [];
 
-      if (commentsChunkData != null && commentsChunkData.isNotEmpty) {
-        final commentsRootMap = commentsChunkData[0];
-        if (commentsRootMap is Map) {
-          final commentsObjIndex = commentsRootMap['comments'];
+      final commentsDataIndex = rootMap['commentsData'];
+      if (commentsDataIndex is int && commentsDataIndex < postNodeData.length) {
+        final commentsDataObj = postNodeData[commentsDataIndex];
+        if (commentsDataObj is Map) {
+          final commentsObjIndex = commentsDataObj['comments'];
           if (commentsObjIndex is int &&
-              commentsObjIndex < commentsChunkData.length) {
-            final commentsObjMap = commentsChunkData[commentsObjIndex];
+              commentsObjIndex < postNodeData.length) {
+            final commentsObjMap = postNodeData[commentsObjIndex];
             if (commentsObjMap is Map) {
               final itemsIndex = commentsObjMap['items'];
               if (itemsIndex is int &&
-                  itemsIndex < commentsChunkData.length &&
-                  commentsChunkData[itemsIndex] is List) {
+                  itemsIndex < postNodeData.length &&
+                  postNodeData[itemsIndex] is List) {
                 final commentIndices =
-                    commentsChunkData[itemsIndex] as List<dynamic>;
+                    postNodeData[itemsIndex] as List<dynamic>;
                 int commentIdx = 0;
                 for (final cIndex in commentIndices) {
                   if (cIndex is! int) continue;
-                  final comment =
-                      _resolveObject(commentsChunkData, cIndex);
+                  final comment = _resolveObject(postNodeData, cIndex);
 
-                  final String cAuthor =
-                      (comment['author'] ?? '').toString();
-                  final String cAuthorImage =
-                      (comment['author_image'] ?? '').toString();
-                  final String cContent =
-                      (comment['content'] ?? '').toString();
+                  final String cAuthor = (comment['author'] ?? '').toString();
+                  final String cAuthorImage = (comment['author_image'] ?? '')
+                      .toString();
+                  final String cContent = (comment['content'] ?? '').toString();
                   final int cLikes = (comment['likes'] is int)
                       ? comment['likes'] as int
                       : 0;
                   final int cDepth = (comment['depth'] is int)
                       ? comment['depth'] as int
                       : 0;
-                  final String cCreatedAt =
-                      (comment['created_at'] ?? '').toString();
+                  final String cCreatedAt = (comment['created_at'] ?? '')
+                      .toString();
 
                   String cParsedTime = '';
                   try {
                     final dateTime = DateTime.parse(cCreatedAt);
-                    cParsedTime =
-                        timeago.format(dateTime, locale: 'ko');
+                    cParsedTime = timeago.format(dateTime, locale: 'ko');
                   } catch (e) {
                     cParsedTime = cCreatedAt;
                   }
 
                   final String cInfo = '$cAuthorㆍ$cParsedTime';
 
-                  comments.add(CommentItem(
-                    id: commentIdx++,
-                    isReply: cDepth > 0,
-                    bodyHtml: cContent,
-                    likeCount: cLikes > 0 ? cLikes.toString() : '',
-                    mediaHtml: '',
-                    isVideo: false,
-                    time: cCreatedAt,
-                    info: cInfo,
-                    userInfo: UserInfo(
-                      id: cAuthor,
-                      nickName: cAuthor,
-                      nickImage:
-                          isShowNickImage ? cAuthorImage : '',
+                  comments.add(
+                    CommentItem(
+                      id: commentIdx++,
+                      isReply: cDepth > 0,
+                      bodyHtml: cContent,
+                      likeCount: cLikes > 0 ? cLikes.toString() : '',
+                      mediaHtml: '',
+                      isVideo: false,
+                      time: cCreatedAt,
+                      info: cInfo,
+                      userInfo: UserInfo(
+                        id: cAuthor,
+                        nickName: cAuthor,
+                        nickImage: isShowNickImage ? cAuthorImage : '',
+                      ),
+                      authorId: '',
                     ),
-                    authorId: '',
-                  ));
+                  );
                 }
               }
             }
@@ -291,20 +298,14 @@ class DamoangParser implements BaseParser {
         csrf: '',
         time: createdAt,
         info: info,
-        userInfo: UserInfo(
-          id: author,
-          nickName: author,
-          nickImage: '',
-        ),
+        userInfo: UserInfo(id: author, nickName: author, nickImage: ''),
         comments: comments,
         bodyHtml: bodyHtml,
       );
 
       return Right<Failure, Details>(detail);
     } catch (e) {
-      return Left<Failure, Details>(
-        GetDetailFailure(message: e.toString()),
-      );
+      return Left<Failure, Details>(GetDetailFailure(message: e.toString()));
     }
   }
 
@@ -320,6 +321,7 @@ class DamoangParser implements BaseParser {
     Future<List<int>> Function(SiteType, List<int>) isReads,
   ) async {
     final receivePort = ReceivePort();
+    final errorPort = ReceivePort();
     final completer = Completer<List<ListItem>>();
 
     receivePort.listen((message) async {
@@ -327,9 +329,20 @@ class DamoangParser implements BaseParser {
         final statuses = await isReads(siteType, message.ids);
         message.responsePort.send(ReadStatusResponse(statuses));
       } else if (message is List<ListItem>) {
-        completer.complete(message);
+        if (!completer.isCompleted) {
+          completer.complete(message);
+        }
         receivePort.close();
+        errorPort.close();
       }
+    });
+
+    errorPort.listen((message) {
+      if (!completer.isCompleted) {
+        completer.completeError(message);
+      }
+      receivePort.close();
+      errorPort.close();
     });
 
     try {
@@ -347,11 +360,14 @@ class DamoangParser implements BaseParser {
           baseUrl,
           isShowNickImage,
         ),
+        onError: errorPort.sendPort,
+        onExit: errorPort.sendPort,
       );
 
       return Right(await completer.future);
     } catch (e) {
       receivePort.close();
+      errorPort.close();
       return Left(GetListFailure(message: e.toString()));
     }
   }
@@ -375,30 +391,37 @@ class DamoangParser implements BaseParser {
       // Extract board slug from initial data (e.g. "free", "qa", ...)
       final String board = _extractBoardSlug(lines);
 
-      // Find posts chunk (id=1 based on observed data)
-      final chunkData = _findChunkData(lines, 1);
-      if (chunkData == null || chunkData.isEmpty) {
-        debugPrint('[DamoangParser] Posts chunk not found');
+      // Find posts data from node with 'postsData' key
+      final nodeData = _findNodeDataByKey(lines, 'postsData');
+      if (nodeData == null || nodeData.isEmpty) {
+        debugPrint('[DamoangParser] postsData node not found');
         replyPort.send(<ListItem>[]);
         return;
       }
 
-      // Root: {"posts":1,"notices":...,"pagination":...}
-      final root = chunkData[0];
-      if (root is! Map) {
-        debugPrint('[DamoangParser] Root is not a Map');
+      final nodeRoot = nodeData[0] as Map;
+      final postsDataIndex = nodeRoot['postsData'];
+      if (postsDataIndex is! int || postsDataIndex >= nodeData.length) {
+        debugPrint('[DamoangParser] postsData index not found');
         replyPort.send(<ListItem>[]);
         return;
       }
 
-      final postsIndex = root['posts'];
-      if (postsIndex is! int || postsIndex >= chunkData.length) {
+      final postsDataObj = nodeData[postsDataIndex];
+      if (postsDataObj is! Map) {
+        debugPrint('[DamoangParser] postsData is not a Map');
+        replyPort.send(<ListItem>[]);
+        return;
+      }
+
+      final postsIndex = postsDataObj['posts'];
+      if (postsIndex is! int || postsIndex >= nodeData.length) {
         debugPrint('[DamoangParser] Posts index not found');
         replyPort.send(<ListItem>[]);
         return;
       }
 
-      final postIndices = chunkData[postsIndex];
+      final postIndices = nodeData[postsIndex];
       if (postIndices is! List) {
         debugPrint('[DamoangParser] Posts array not found');
         replyPort.send(<ListItem>[]);
@@ -408,7 +431,7 @@ class DamoangParser implements BaseParser {
       for (final pIndex in postIndices) {
         if (pIndex is! int) continue;
 
-        final post = _resolveObject(chunkData, pIndex);
+        final post = _resolveObject(nodeData, pIndex);
 
         final int id = (post['id'] is int) ? post['id'] as int : -1;
         if (id <= 0) continue;
@@ -467,11 +490,7 @@ class DamoangParser implements BaseParser {
           'boardTitle': boardTitle,
           'like': like,
           'hit': hit,
-          'userInfo': UserInfo(
-            id: authorId,
-            nickName: author,
-            nickImage: '',
-          ),
+          'userInfo': UserInfo(id: authorId, nickName: author, nickImage: ''),
           'hasImage': thumbnail.isNotEmpty,
         };
 
