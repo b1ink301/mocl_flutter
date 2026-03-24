@@ -29,6 +29,7 @@ Map<String, dynamic> _$MainItemDataToJson(_MainItemData instance) =>
 const _$SiteTypeEnumMap = {
   SiteType.clien: 'clien',
   SiteType.damoang: 'damoang',
+  SiteType.geekNews: 'geekNews',
   SiteType.meeco: 'meeco',
   SiteType.naverCafe: 'naverCafe',
   SiteType.reddit: 'reddit',

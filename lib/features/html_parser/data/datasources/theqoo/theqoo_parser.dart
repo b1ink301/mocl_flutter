@@ -354,8 +354,8 @@ class TheQooParser extends BaseParser {
     SortType sortType,
     LastId lastId,
   ) {
-    // final String sort = sortType.toQuery(siteType);
-    return '$url&page=$page';
+    final separator = url.contains('?') ? '&' : '?';
+    return '$url${separator}page=$page';
   }
 
   static DateTime parseDateTime(String dateTimeString) {

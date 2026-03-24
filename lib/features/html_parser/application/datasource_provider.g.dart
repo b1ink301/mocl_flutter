@@ -507,6 +507,89 @@ final class _TheqooParserFamily extends $Family
   String toString() => r'_theqooParserProvider';
 }
 
+@ProviderFor(_geekNewsParser)
+final _geekNewsParserProvider = _GeekNewsParserFamily._();
+
+final class _GeekNewsParserProvider
+    extends
+        $FunctionalProvider<
+          (BaseParser, BaseApi),
+          (BaseParser, BaseApi),
+          (BaseParser, BaseApi)
+        >
+    with $Provider<(BaseParser, BaseApi)> {
+  _GeekNewsParserProvider._({
+    required _GeekNewsParserFamily super.from,
+    required bool super.argument,
+  }) : super(
+         retry: null,
+         name: r'_geekNewsParserProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$_geekNewsParserHash();
+
+  @override
+  String toString() {
+    return r'_geekNewsParserProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<(BaseParser, BaseApi)> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  (BaseParser, BaseApi) create(Ref ref) {
+    final argument = this.argument as bool;
+    return _geekNewsParser(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue((BaseParser, BaseApi) value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<(BaseParser, BaseApi)>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is _GeekNewsParserProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$_geekNewsParserHash() => r'4a2bf3ee93baa6627ad0bd7197c6ff920d45adb2';
+
+final class _GeekNewsParserFamily extends $Family
+    with $FunctionalFamilyOverride<(BaseParser, BaseApi), bool> {
+  _GeekNewsParserFamily._()
+    : super(
+        retry: null,
+        name: r'_geekNewsParserProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  _GeekNewsParserProvider call(bool isShowNickImage) =>
+      _GeekNewsParserProvider._(argument: isShowNickImage, from: this);
+
+  @override
+  String toString() => r'_geekNewsParserProvider';
+}
+
 @ProviderFor(currentParser)
 final currentParserProvider = CurrentParserFamily._();
 
@@ -570,7 +653,7 @@ final class CurrentParserProvider
   }
 }
 
-String _$currentParserHash() => r'6ed842e5c0bbcd1aab5c91b094c244c61d1b1d8f';
+String _$currentParserHash() => r'a8f5165777d51c81a190856c45de7b525f199eec';
 
 final class CurrentParserFamily extends $Family
     with $FunctionalFamilyOverride<(BaseParser, BaseApi), SiteType> {
