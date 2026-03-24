@@ -2,8 +2,9 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
+import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:html/parser.dart';
+import 'package:html/parser.dart' as html_parser;
 import 'package:mocl_flutter/core/domain/entities/last_id.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
@@ -13,7 +14,6 @@ import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:timeago/timeago.dart' as timeago;
 
 import '../base/base_parser.dart';
 
@@ -21,159 +21,122 @@ class GeekNewsParser implements BaseParser {
   const GeekNewsParser();
 
   @override
-  SiteType get siteType => SiteType.naverCafe;
+  SiteType get siteType => SiteType.geekNews;
 
   @override
-  String get baseUrl => 'https://m.cafe.naver.com';
+  String get baseUrl => 'https://news.hada.io';
 
   @override
-  Future<Either<Failure, List<MainItem>>> main(Response response) async {
-    final Map<String, dynamic> json = response.data['message'];
-    final String status = json['status'];
-    if (status != '200') {
-      final Map<String, dynamic> error = json['error'];
-      final String code = error['code'];
-      final String msg = error['msg'];
-      if (code == '0004') {
-        return Left(NotLoginFailure(message: msg));
-      } else {
-        return Left(GetMainFailure(message: msg));
-      }
-    } else {
-      final List<dynamic> cafes = json['result']['cafes'];
-      var orderBy = 0;
-      final List<MainItem> data = cafes.map((cafe) {
-        Map<String, dynamic> json = {
-          'siteType': siteType.name,
-          'orderBy': orderBy++,
-          'url': cafe['cafeId'].toString(),
-          'board': cafe['cafeUrl'],
-          'text': cafe['mobileCafeName'],
-          'icon': cafe['cafeIconImageUrl'],
-          'hasItem': false,
-          'type': 0,
-        };
-        return MainItem.fromJson(json);
-      }).toList();
+  Future<Either<Failure, List<MainItem>>> main(Response response) =>
+      throw UnimplementedError('main');
 
-      return Right(data.cast<MainItem>());
-    }
-  }
+  // ──────────────────────────────────────────────────────────────────
+  // Detail parsing
+  // ──────────────────────────────────────────────────────────────────
 
   @override
   Future<Either<Failure, Details>> detail(Response response) async {
-    final responseData = response.data as List<dynamic>;
+    final responseData = response.data as String;
     return Isolate.run(() => _parseDetail(responseData));
   }
 
-  static Either<Failure, Details> _parseDetail(List<dynamic> responseData) {
-
-    timeago.setLocaleMessages('ko', timeago.KoMessages());
-
-    final detail = responseData.first['result'];
-    final article = detail['article'];
-
-    final bodyHtml = article['contentHtml'].toString();
-    final writer = article['writer'];
-    final title = article['subject'].toString().trim();
-    // final id = writer['id'] ?? '';
-    final nickName = writer['nick'].toString();
-    final nickImage = writer['image']['url'].toString();
-    final time = article['writeDate'] ?? 0;
-    final viewCount = (article['readCount'] ?? 0).toString();
-    // final commentCount = writer['commentCount'];
-    final likeCount = '';
-
-    final comment = responseData.last['result'];
-
-    final List<dynamic> comments = comment['comments']['items'];
-
-    final commentItems = comments
-        .map((comment) {
-          final id = comment['id'] ?? -1;
-          final writer = comment['writer'];
-          final replyMember = comment['replyMember'];
-          var body = comment['content'].toString();
-          final userId = writer['memberKey'].toString();
-          final nickImage = ''; //writer['image']['url'] ?? '';
-          final nickName = writer['nick'].toString();
-          final isReply = comment['isRef'];
-          final time = comment['updateDate'] ?? 0;
-          final likeCount = '0';
-          final image = comment['image'];
-          final sticker = comment['sticker'];
-
-          if (replyMember != null) {
-            final replyNickName = replyMember['nick'];
-            if (replyNickName != null) {
-              body = "<strong>@$replyNickName님</strong> $body";
-            }
-          }
-          if (image != null) {
-            body += '<br><img src=\'${image["url"]}\' width="240" >';
-          }
-          if (sticker != null) {
-            body +=
-                '<br><img src=\'${sticker["url"]}?type=${sticker["type"]}\' width="129" >';
-          }
-
-          var parsedTime = '';
-          try {
-            final dateTime = DateTime.fromMillisecondsSinceEpoch(time);
-            parsedTime = timeago.format(dateTime, locale: 'ko');
-          } catch (e) {
-            parsedTime = time.toString();
-          }
-          final info = '$nickNameㆍ$parsedTime';
-
-          return CommentItem(
-            id: id,
-            isReply: isReply,
-            bodyHtml: body,
-            likeCount: likeCount,
-            mediaHtml: '',
-            isVideo: false,
-            time: time.toString(),
-            info: info,
-            userInfo: UserInfo(
-              id: userId,
-              nickName: nickName,
-              nickImage: nickImage,
-            ),
-            authorId: '',
-          );
-        })
-        .whereType<CommentItem>()
-        .toList();
-
-    String parsedTime = '';
-
+  static Either<Failure, Details> _parseDetail(String responseData) {
     try {
-      final dateTime = DateTime.fromMillisecondsSinceEpoch(time);
-      parsedTime = timeago.format(dateTime, locale: 'ko');
+      final document = html_parser.parse(responseData);
+
+      // Title
+      final titleEl = document.querySelector('div.topictitle a > h1');
+      final String title = titleEl?.text.trim() ?? '';
+
+      // External URL
+      final titleLink = document.querySelector('div.topictitle a');
+      final String externalUrl = titleLink?.attributes['href'] ?? '';
+
+      // Points
+      final pointsEl = document.querySelector('div.topicinfo span[id^="tp"]');
+      final String points = pointsEl?.text.trim() ?? '0';
+
+      // Author
+      final authorEl =
+          document.querySelector('div.topicinfo a[href^="/user"]');
+      final String author = authorEl?.text.trim() ?? '';
+
+      // Time - span with title attribute has exact datetime
+      final timeEl = document.querySelector('div.topicinfo span[title]');
+      final String timeText = timeEl?.text.trim() ?? '';
+      final String timeTitle = timeEl?.attributes['title'] ?? '';
+
+      // Body content
+      final bodyEl = document.querySelector('div#topic_contents');
+      String bodyHtml = bodyEl?.innerHtml.trim() ?? '';
+
+      // If there's an external URL, prepend it as a link
+      if (externalUrl.isNotEmpty && externalUrl.startsWith('http')) {
+        bodyHtml =
+            '<p><a href="$externalUrl">$externalUrl</a></p>$bodyHtml';
+      }
+
+      // Comments
+      final commentRows = document.querySelectorAll('div.comment_row');
+      final List<CommentItem> comments = [];
+      int commentIdx = 0;
+
+      for (final row in commentRows) {
+        final cAuthorEl = row.querySelector('div.commentinfo a[href^="/user"]');
+        final String cAuthor = cAuthorEl?.text.trim() ?? '';
+
+        final cTimeEl =
+            row.querySelector('div.commentinfo a[href^="comment?id="]');
+        final String cTime = cTimeEl?.text.trim() ?? '';
+
+        final cBodyEl = row.querySelector('span.comment_contents');
+        final String cBody = cBodyEl?.innerHtml.trim() ?? '';
+
+        // Depth from style="--depth:N"
+        final String style = row.attributes['style'] ?? '';
+        final depthMatch = RegExp(r'--depth:\s*(\d+)').firstMatch(style);
+        final int depth =
+            depthMatch != null ? int.parse(depthMatch.group(1)!) : 0;
+
+        final String cInfo = '$cAuthorㆍ$cTime';
+
+        comments.add(CommentItem(
+          id: commentIdx++,
+          isReply: depth > 0,
+          bodyHtml: cBody,
+          likeCount: '',
+          mediaHtml: '',
+          isVideo: false,
+          time: cTime,
+          info: cInfo,
+          userInfo: UserInfo(id: cAuthor, nickName: cAuthor, nickImage: ''),
+          authorId: '',
+        ));
+      }
+
+      final String info = '$authorㆍ$timeTextㆍ${points}P';
+
+      final detail = Details(
+        title: title,
+        viewCount: '',
+        likeCount: points,
+        csrf: '',
+        time: timeTitle,
+        info: info,
+        userInfo: UserInfo(id: author, nickName: author, nickImage: ''),
+        comments: comments,
+        bodyHtml: bodyHtml,
+      );
+
+      return Right<Failure, Details>(detail);
     } catch (e) {
-      parsedTime = time.toString();
+      return Left<Failure, Details>(GetDetailFailure(message: e.toString()));
     }
-    final info = BaseParser.parserInfo(false, nickName, parsedTime, viewCount);
-
-    final details = Details(
-      title: title,
-      viewCount: viewCount,
-      likeCount: likeCount,
-      csrf: '',
-      time: time.toString(),
-      info: info,
-      userInfo: UserInfo(
-        id: nickName,
-        nickName: nickName,
-        nickImage: nickImage,
-      ),
-      comments: commentItems,
-      bodyHtml: bodyHtml,
-    );
-
-    return Right<Failure, Details>(details);
   }
+
+  // ──────────────────────────────────────────────────────────────────
+  // List parsing
+  // ──────────────────────────────────────────────────────────────────
 
   @override
   Future<Either<Failure, List<ListItem>>> list(
@@ -183,6 +146,7 @@ class GeekNewsParser implements BaseParser {
     Future<List<int>> Function(SiteType, List<int>) isReads,
   ) async {
     final receivePort = ReceivePort();
+    final errorPort = ReceivePort();
     final completer = Completer<List<ListItem>>();
 
     receivePort.listen((message) async {
@@ -190,107 +154,149 @@ class GeekNewsParser implements BaseParser {
         final statuses = await isReads(siteType, message.ids);
         message.responsePort.send(ReadStatusResponse(statuses));
       } else if (message is List<ListItem>) {
-        completer.complete(message);
+        if (!completer.isCompleted) {
+          completer.complete(message);
+        }
         receivePort.close();
+        errorPort.close();
       }
     });
 
-    try {
-      final message = response.data['message'];
-      final status = message['status'].toString();
-      if (status != "200") {
-        throw Exception("status is not 200!");
+    errorPort.listen((message) {
+      if (!completer.isCompleted) {
+        completer.completeError(message);
       }
+      receivePort.close();
+      errorPort.close();
+    });
+
+    try {
+      final responseData = response.data is String
+          ? response.data as String
+          : response.data.toString();
 
       await Isolate.spawn(
         _parseListInIsolate,
-        IsolateMessage<Map<String, dynamic>>(
+        IsolateMessage<String>(
           receivePort.sendPort,
-          message['result'],
+          responseData,
           lastId.intId,
           boardTitle,
           baseUrl,
           false,
         ),
+        onError: errorPort.sendPort,
+        onExit: errorPort.sendPort,
       );
 
       return Right(await completer.future);
     } catch (e) {
       receivePort.close();
+      errorPort.close();
       return Left(GetListFailure(message: e.toString()));
     }
   }
 
-  static void _parseListInIsolate(
-    IsolateMessage<Map<String, dynamic>> message,
-  ) async {
+  static void _parseListInIsolate(IsolateMessage<String> message) async {
     final replyPort = message.replyPort;
-    final responseData = message.responseData;
-    final lastId = message.lastId;
-    final boardTitle = message.boardTitle;
+    final String responseData = message.responseData;
+    final String boardTitle = message.boardTitle;
+    final String baseUrl = message.baseUrl;
 
-    final parsedItems = <Map<String, dynamic>>[];
-    final ids = <int>[];
+    final List<Map<String, dynamic>> parsedItems = [];
+    final List<int> ids = [];
 
-    timeago.setLocaleMessages('ko', timeago.KoMessages());
+    try {
+      final document = html_parser.parse(responseData);
+      final topicRows = document.querySelectorAll('div.topic_row');
 
-    final List<dynamic> articleList = responseData['articleList'];
+      for (final row in topicRows) {
+        // Extract topic ID from description link or comments link
+        int id = -1;
+        final descLink = row.querySelector('div.topicdesc > a');
+        if (descLink != null) {
+          final href = descLink.attributes['href'] ?? '';
+          final idMatch = RegExp(r'topic\?id=(\d+)').firstMatch(href);
+          if (idMatch != null) {
+            id = int.parse(idMatch.group(1)!);
+          }
+        }
+        if (id <= 0) continue;
 
-    for (final Map<String, dynamic> article in articleList) {
-      final int id = article['articleId'] ?? -1;
+        // Title
+        final titleEl = row.querySelector('div.topictitle a > h1');
+        final String title = titleEl?.text.trim() ?? '';
+        if (title.isEmpty) continue;
 
-      if (id <= 0 || lastId > 0 && id >= lastId) continue;
+        // Source domain
+        final urlSpan = row.querySelector('span.topicurl');
+        final String category = urlSpan?.text.trim() ?? '';
 
-      final int board = article['cafeId'] ?? -2;
-      final String nickName = article['writerNickname'].toString();
-      final String category = article['menuName'].toString();
-      final String title = article['subject'].toString();
-      final String nickImage = article['profileImage'].toString();
-      final int hit = article['readCount'] ?? 0;
-      final int like = article['likeItCount'] ?? 0;
-      final int commentCount = article['commentCount'] ?? 0;
-      final int time = article['writeDateTimestamp'] ?? 0;
-      final String userId = article['memberKey'].toString();
-      final bool hasImage = article['attachImage'] as bool? ?? false;
-      final dateTime = DateTime.fromMillisecondsSinceEpoch(time);
-      final parsedTime = timeago.format(dateTime, locale: 'ko');
-      final info = BaseParser.parserInfo(
-        false,
-        nickName,
-        parsedTime,
-        hit.toString(),
-      );
+        // Points
+        final pointsEl = row.querySelector('div.topicinfo span[id^="tp"]');
+        final String points = pointsEl?.text.trim() ?? '0';
 
-      final parsedItem = {
-        'id': id,
-        'title': parse(title).body?.text,
-        'reply': commentCount.toString(),
-        'category': category,
-        'time': time.toString(),
-        'info': info,
-        'url': '',
-        'board': board.toString(),
-        'boardTitle': boardTitle,
-        'like': like.toString(),
-        'hit': hit.toString(),
-        'userInfo': UserInfo(
-          id: userId,
-          nickName: nickName,
-          nickImage: nickImage,
-        ),
-        'hasImage': hasImage,
-      };
+        // Author
+        final authorEl =
+            row.querySelector('div.topicinfo a[href^="/user"]');
+        final String author = authorEl?.text.trim() ?? '';
 
-      parsedItems.add(parsedItem);
-      ids.add(id);
+        // Time - text content in topicinfo
+        final infoEl = row.querySelector('div.topicinfo');
+        String timeText = '';
+        if (infoEl != null) {
+          // Time is a bare text node after author link
+          final infoText = infoEl.text;
+          final timeMatch = RegExp(r'(\d+[일시분초]전|방금)').firstMatch(infoText);
+          if (timeMatch != null) {
+            timeText = timeMatch.group(0)!;
+          }
+        }
+
+        // Comment count
+        final commentLink =
+            row.querySelector('div.topicinfo a[href*="go=comments"]') ??
+            row.querySelector('div.topicinfo a[href^="topic?id="]');
+        String reply = '';
+        if (commentLink != null) {
+          final commentText = commentLink.text.trim();
+          final countMatch = RegExp(r'(\d+)').firstMatch(commentText);
+          if (countMatch != null) {
+            reply = '+${countMatch.group(1)}';
+          }
+        }
+
+        final String url = '$baseUrl/topic?id=$id';
+        final String info = '$authorㆍ$timeTextㆍ${points}P';
+
+        parsedItems.add({
+          'id': id,
+          'title': title,
+          'reply': reply,
+          'category': category,
+          'time': timeText,
+          'info': info,
+          'url': url,
+          'board': '',
+          'boardTitle': boardTitle,
+          'like': points,
+          'hit': '',
+          'userInfo': UserInfo(id: author, nickName: author, nickImage: ''),
+          'hasImage': false,
+        });
+        ids.add(id);
+      }
+    } catch (e) {
+      debugPrint('[GeekNewsParser] Error parsing list: $e');
     }
 
-    final readStatusPort = ReceivePort();
+    final ReceivePort readStatusPort = ReceivePort();
     replyPort.send(ReadStatusRequest(ids, readStatusPort.sendPort));
-    final readStatusResponse = await readStatusPort.first as ReadStatusResponse;
+    final ReadStatusResponse readStatusResponse =
+        await readStatusPort.first as ReadStatusResponse;
     readStatusPort.close();
 
-    final resultList = parsedItems
+    final List<ListItem> resultList = parsedItems
         .map(
           (item) => ListItem(
             id: item['id'],
@@ -314,56 +320,13 @@ class GeekNewsParser implements BaseParser {
     replyPort.send(resultList);
   }
 
-  static DateTime parseDateTime(String dateTimeString) {
-    if (dateTimeString.contains(' ')) {
-      // 년.월.일 형식
-      var parts = dateTimeString.split(' ');
-      var dateParts = parts[0].split('.');
-      var timeParts = parts[1].split(':');
-      if (dateParts.length == 3) {
-        return DateTime(
-          int.parse(dateParts[0]),
-          int.parse(dateParts[1]),
-          int.parse(dateParts[2]),
-          int.parse(timeParts[0]),
-          int.parse(timeParts[1]),
-        );
-      } else if (dateParts.length == 2) {
-        final now = DateTime.now();
-        return DateTime(
-          now.year,
-          int.parse(dateParts[0]),
-          int.parse(dateParts[1]),
-          int.parse(timeParts[0]),
-          int.parse(timeParts[1]),
-        );
-      } else {
-        throw Exception('Error parsing $dateTimeString');
-      }
-    } else if (dateTimeString.contains(':')) {
-      final now = DateTime.now();
-      // 시:분 형식
-      var timeParts = dateTimeString.split(':');
-      return DateTime(
-        now.year,
-        now.month,
-        now.day,
-        int.parse(timeParts[0]),
-        int.parse(timeParts[1]),
-      );
-    } else if (dateTimeString == '어제') {
-      final now = DateTime.now();
-      return now.subtract(const Duration(days: 1));
-    } else {
-      throw Exception('Error parsing $dateTimeString');
-    }
-  }
+  // ──────────────────────────────────────────────────────────────────
+  // URL builders
+  // ──────────────────────────────────────────────────────────────────
 
   @override
   String urlByDetail(String url, String board, int id) =>
-      'https://apis.naver.com/cafe-web/cafe-articleapi/v3/cafes/$board/articles/$id';
-
-  // 'https://apis.naver.com/cafe-web/cafe-articleapi/v2/cafes/$board/articles/$id'; //?query=&useCafeId=true&requestFrom=A
+      '$baseUrl/topic?id=$id';
 
   @override
   String urlByList(
@@ -372,16 +335,8 @@ class GeekNewsParser implements BaseParser {
     int page,
     SortType sortType,
     LastId lastId,
-  ) {
-    // final String sort = sortType.toQuery(siteType);
-    return "https://apis.naver.com/cafe-web/cafe2/ArticleListV2dot1.json?"
-        "search.clubid=$url"
-        "&search.queryType=lastArticle"
-        "&search.perPage=20"
-        "&ad=false"
-        "&uuid=6dd62de1-7279-49f0-b009-6ccc554ac679"
-        "&search.page=$page";
-  }
+  ) =>
+      '$baseUrl/past?page=$page';
 
   @override
   String urlBySearchList(
@@ -390,23 +345,17 @@ class GeekNewsParser implements BaseParser {
     int page,
     String keyword,
     LastId lastId,
-  ) {
-    throw UnimplementedError('urlBySearchList');
-  }
+  ) =>
+      throw UnimplementedError('urlBySearchList');
 
   @override
-  String urlByMain() =>
-      'https://apis.naver.com/cafe-home-web/cafe-home/v1/cafes/join?perPage=100';
+  String urlByMain() => throw UnimplementedError('urlByMain');
 
   @override
-  Future<Either<Failure, List<CommentItem>>> comments(Response response) {
-    // TODO: implement comments
-    throw UnimplementedError();
-  }
+  Future<Either<Failure, List<CommentItem>>> comments(Response response) =>
+      throw UnimplementedError();
 
   @override
-  String urlByComments(String url, String board, int id, int page) {
-    // TODO: implement urlByComments
-    throw UnimplementedError();
-  }
+  String urlByComments(String url, String board, int id, int page) =>
+      throw UnimplementedError();
 }

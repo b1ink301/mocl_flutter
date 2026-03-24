@@ -32,6 +32,8 @@ extension SortTypeExtension on SortType {
         };
       case SiteType.theqoo:
         return '';
+      case SiteType.geekNews:
+        return '';
     }
   }
 }

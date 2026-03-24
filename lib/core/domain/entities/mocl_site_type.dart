@@ -1,6 +1,7 @@
 enum SiteType {
   clien,
   damoang,
+  geekNews,
   meeco,
   naverCafe,
   reddit,
@@ -12,6 +13,7 @@ extension SiteTypeExtension on SiteType {
   String get title => switch (this) {
         SiteType.clien => '클리앙',
         SiteType.damoang => '다모앙',
+        SiteType.geekNews => '긱뉴스',
         SiteType.settings => '설정',
         SiteType.meeco => '미코',
         SiteType.naverCafe => '네이버카페',

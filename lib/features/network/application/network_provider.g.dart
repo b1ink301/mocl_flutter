@@ -296,6 +296,47 @@ final class RedditApiClientProvider
 
 String _$redditApiClientHash() => r'5bde1814ef36148bc3234c729b9814a760080332';
 
+@ProviderFor(geekNewsApiClient)
+final geekNewsApiClientProvider = GeekNewsApiClientProvider._();
+
+final class GeekNewsApiClientProvider
+    extends $FunctionalProvider<BaseApi, BaseApi, BaseApi>
+    with $Provider<BaseApi> {
+  GeekNewsApiClientProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'geekNewsApiClientProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$geekNewsApiClientHash();
+
+  @$internal
+  @override
+  $ProviderElement<BaseApi> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  BaseApi create(Ref ref) {
+    return geekNewsApiClient(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(BaseApi value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<BaseApi>(value),
+    );
+  }
+}
+
+String _$geekNewsApiClientHash() => r'76269bc22ec97d45c8f98820434634e156cda7b6';
+
 @ProviderFor(meecoApiClient)
 final meecoApiClientProvider = MeecoApiClientProvider._();
 
