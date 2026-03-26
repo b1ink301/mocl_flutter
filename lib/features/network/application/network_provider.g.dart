@@ -129,7 +129,7 @@ final class TheQooApiClientProvider
   }
 }
 
-String _$theQooApiClientHash() => r'40d23b310e0c900ff4b974cf8862674ebbf2fa30';
+String _$theQooApiClientHash() => r'98a4b9cff27d9e12f74f1705ee1ad837a05d877f';
 
 @ProviderFor(clienApiClient)
 final clienApiClientProvider = ClienApiClientProvider._();
@@ -335,7 +335,7 @@ final class GeekNewsApiClientProvider
   }
 }
 
-String _$geekNewsApiClientHash() => r'76269bc22ec97d45c8f98820434634e156cda7b6';
+String _$geekNewsApiClientHash() => r'26eba0317737b043d259c64410a97a416ca445af';
 
 @ProviderFor(meecoApiClient)
 final meecoApiClientProvider = MeecoApiClientProvider._();
