@@ -262,7 +262,7 @@ class GeekNewsParser implements BaseParser {
           final commentText = commentLink.text.trim();
           final countMatch = RegExp(r'(\d+)').firstMatch(commentText);
           if (countMatch != null) {
-            reply = '+${countMatch.group(1)}';
+            reply = countMatch.group(1).toString();
           }
         }
 
@@ -335,8 +335,13 @@ class GeekNewsParser implements BaseParser {
     int page,
     SortType sortType,
     LastId lastId,
-  ) =>
-      '$baseUrl/past?page=$page';
+  ) {
+    debugPrint('urlByList = url = $url, board = $board, page = $page');
+    // page=1 → 오늘, page=2 → 어제, page=3 → 그저께 ...
+    final date = DateTime.now().subtract(Duration(days: page - 1));
+    final day = '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+    return '$baseUrl/$board?day=$day';
+  }
 
   @override
   String urlBySearchList(
