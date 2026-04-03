@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
@@ -31,7 +32,7 @@ class DetailView extends ConsumerWidget with DetailState {
         error: (state) => SliverFillRemaining(
           hasScrollBody: false,
           child: Padding(
-            padding: const .all(12.0),
+            padding: const EdgeInsets.all(12.0),
             child: Center(
               child: MessageWidget(message: state.error.toString()),
             ),
@@ -52,11 +53,14 @@ class _DetailView extends ConsumerWidget with DetailEvent, AppFontState {
   Widget build(BuildContext context, WidgetRef ref) {
     final String hexColor = Theme.of(context).focusColor.stringHexColor;
     final (bodySmall, bodyMedium) = smallTitleAndTitleTextStyleSate(ref);
+    final totalComments =
+        detail.extraData?['totalComments'] as int? ?? detail.comments.length;
     final comments = detail.comments.isNotEmpty
         ? [
             const _DividerWidget(),
             _CommentHeader(
               commentCount: detail.comments.length,
+              totalCount: totalComments,
               bodyMedium: bodyMedium,
             ),
             const _DividerWidget(),
@@ -73,7 +77,7 @@ class _DetailView extends ConsumerWidget with DetailEvent, AppFontState {
     return SliverSafeArea(
       top: false,
       sliver: SliverPadding(
-        padding: const .only(left: 16, right: 8),
+        padding: const EdgeInsets.only(left: 16, right: 8),
         sliver: MultiSliver(
           children: [
             SliverPersistentHeader(
@@ -157,7 +161,7 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
       children: [
         Container(
           height: _kHeaderHeight,
-          alignment: .centerLeft,
+          alignment: Alignment.centerLeft,
           color: backgroundColor,
           child: Row(
             // mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -219,23 +223,33 @@ class _Body extends StatelessWidget {
 
 class _CommentHeader extends StatelessWidget {
   final int commentCount;
+  final int totalCount;
   final TextStyle? bodyMedium;
 
-  const _CommentHeader({required this.commentCount, required this.bodyMedium});
+  const _CommentHeader({
+    required this.commentCount,
+    required this.totalCount,
+    required this.bodyMedium,
+  });
 
   @override
-  Widget build(BuildContext context) => SliverFixedExtentList(
-    itemExtent: _kHeaderHeight,
-    delegate: SliverChildListDelegate([
-      Align(
-        alignment: Alignment.centerLeft,
-        child: PlatformText(
-          '댓글 ($commentCount)',
-          style: bodyMedium?.copyWith(color: Theme.of(context).focusColor),
+  Widget build(BuildContext context) {
+    final label = totalCount > commentCount
+        ? '댓글 ($commentCount/$totalCount)'
+        : '댓글 ($commentCount)';
+    return SliverFixedExtentList(
+      itemExtent: _kHeaderHeight,
+      delegate: SliverChildListDelegate([
+        Align(
+          alignment: Alignment.centerLeft,
+          child: PlatformText(
+            label,
+            style: bodyMedium?.copyWith(color: Theme.of(context).focusColor),
+          ),
         ),
-      ),
-    ]),
-  );
+      ]),
+    );
+  }
 }
 
 class _CommentList extends ConsumerWidget {
@@ -310,11 +324,11 @@ class _CommentItem extends StatelessWidget {
         key: ValueKey('comment-${comment.id}'),
         material: (_, _) => MaterialListTileData(
           contentPadding: isEmptyBody
-              ? .only(left: left, top: 0, bottom: 0)
-              : .only(left: left, top: 2, bottom: 2),
+              ? EdgeInsets.only(left: left, top: 0, bottom: 0)
+              : EdgeInsets.only(left: left, top: 2, bottom: 2),
         ),
         cupertino: (_, _) => CupertinoListTileData(
-          padding: .only(left: left, top: 8, bottom: 8),
+          padding: EdgeInsets.only(left: left, top: 8, bottom: 8),
         ),
         title: Row(
           mainAxisSize: MainAxisSize.min,
@@ -410,7 +424,7 @@ class _HtmlWidget extends StatelessWidget {
     required this.textStyle,
     required this.hexColor,
     required this.openUrl,
-    this.renderMode = .column,
+    this.renderMode = RenderMode.column,
   });
 
   @override
@@ -426,6 +440,7 @@ class _HtmlWidget extends StatelessWidget {
           progress: progress,
         );
       },
+      factoryBuilder: () => _MoclWidgetFactory(openUrl: openUrl),
       textStyle: textStyle,
       customStylesBuilder: (element) {
         if (element.localName == 'a') {
@@ -458,7 +473,7 @@ class _RefreshButton extends StatelessWidget {
       child: Container(
         width: double.infinity,
         height: 58,
-        alignment: .center,
+        alignment: Alignment.center,
         child: PlatformText(
           '새로고침',
           style: bodyMedium?.copyWith(color: Theme.of(context).focusColor),
@@ -466,4 +481,98 @@ class _RefreshButton extends StatelessWidget {
       ),
     ),
   );
+}
+
+/// YouTube iframe을 외부 앱으로 열고, 일반 미디어는 인라인 재생을 허용하는 WidgetFactory.
+class _MoclWidgetFactory extends WidgetFactory {
+  final void Function(String) openUrl;
+
+  _MoclWidgetFactory({required this.openUrl});
+
+  static final _youtubePattern = RegExp(
+    r'youtube\.com|youtu\.be|youtube-nocookie\.com',
+  );
+
+  @override
+  bool get webViewMediaPlaybackAlwaysAllow => true;
+
+  @override
+  Widget? buildWebView(
+    BuildTree meta,
+    String url, {
+    double? height,
+    Iterable<String>? sandbox,
+    double? width,
+  }) {
+    // YouTube URL이면 썸네일 + 재생 버튼으로 표시하고 탭 시 외부 앱으로 오픈
+    if (_youtubePattern.hasMatch(url)) {
+      final videoId = _extractYouTubeId(url);
+      final thumbnailUrl = videoId != null
+          ? 'https://img.youtube.com/vi/$videoId/hqdefault.jpg'
+          : null;
+
+      final watchUrl = videoId != null
+          ? 'https://www.youtube.com/watch?v=$videoId'
+          : url;
+
+      return GestureDetector(
+        onTap: () => _launchYouTube(watchUrl),
+        child: AspectRatio(
+          aspectRatio: width != null && height != null && height > 0
+              ? width / height
+              : 16 / 9,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              if (thumbnailUrl != null)
+                Image.network(
+                  thumbnailUrl,
+                  fit: BoxFit.cover,
+                  width: double.infinity,
+                  errorBuilder: (_, _, _) =>
+                      Container(color: const Color(0xFF000000)),
+                )
+              else
+                Container(color: const Color(0xFF000000)),
+              const Icon(
+                Icons.play_circle_fill,
+                size: 64,
+                color: Color(0xCCFFFFFF),
+              ),
+            ],
+          ),
+        ),
+      );
+    }
+
+    return super.buildWebView(
+      meta,
+      url,
+      height: height,
+      sandbox: sandbox,
+      width: width,
+    );
+  }
+
+  static String? _extractYouTubeId(String url) {
+    // youtube.com/embed/VIDEO_ID, youtu.be/VIDEO_ID, youtube.com/watch?v=VIDEO_ID
+    final patterns = [
+      RegExp(r'youtube\.com/embed/([a-zA-Z0-9_-]{11})'),
+      RegExp(r'youtu\.be/([a-zA-Z0-9_-]{11})'),
+      RegExp(r'youtube\.com/watch\?v=([a-zA-Z0-9_-]{11})'),
+      RegExp(r'youtube-nocookie\.com/embed/([a-zA-Z0-9_-]{11})'),
+    ];
+    for (final pattern in patterns) {
+      final match = pattern.firstMatch(url);
+      if (match != null) return match.group(1);
+    }
+    return null;
+  }
+
+  static Future<void> _launchYouTube(String url) async {
+    final uri = Uri.parse(url);
+    if (await canLaunchUrl(uri)) {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    }
+  }
 }

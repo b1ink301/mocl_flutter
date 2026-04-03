@@ -1,3 +1,5 @@
 [
-  {"board":"past","title":"긱뉴스","type":0,"url":"https://news.hada.io/past","no":1}
+  {"board":"past","title":"최신글","type":0,"url":"https://news.hada.io/past","no":1},
+  {"board":"show","title":"Show","type":0,"url":"https://news.hada.io/show","no":2},
+  {"board":"plus","title":"GN+","type":0,"url":"https://news.hada.io/plus","no":3}
 ]

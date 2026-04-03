@@ -37,6 +37,16 @@ class DamoangParser implements BaseParser {
   // SvelteKit Devalue helpers
   // ──────────────────────────────────────────────────────────────────
 
+  /// HTML 이스케이프된 미디어 태그(video, audio, iframe)를 디코딩합니다.
+  /// 다모앙 서버가 video 등을 &lt;video&gt; 형태로 저장하는 경우 대응.
+  static String _unescapeMediaTags(String html) {
+    // &lt;video ... &gt; ... &lt;/video&gt; 패턴을 실제 태그로 변환
+    return html.replaceAllMapped(
+      RegExp(r'&lt;(/?(?:video|audio|source|iframe))\b([^&]*?)&gt;'),
+      (m) => '<${m.group(1)}${m.group(2)!.replaceAll('&amp;', '&')}>',
+    );
+  }
+
   /// Parse newline-delimited JSON response from __data.json endpoint.
   static List<Map<String, dynamic>> _parseLines(String responseData) {
     final lines = responseData.trim().split('\n');
@@ -206,7 +216,7 @@ class DamoangParser implements BaseParser {
 
       // 2. Get transformedPostContent from auxiliary chunk (id=1)
       //    This has plugins applied (emoticons, auto-embed, etc.)
-      String bodyHtml = content;
+      String bodyHtml = _unescapeMediaTags(content);
       final auxChunkData = _findChunkData(lines, 1);
       if (auxChunkData != null && auxChunkData.isNotEmpty) {
         final auxRoot = auxChunkData[0];
@@ -215,13 +225,16 @@ class DamoangParser implements BaseParser {
           if (transformedIndex is int &&
               transformedIndex < auxChunkData.length &&
               auxChunkData[transformedIndex] is String) {
-            bodyHtml = auxChunkData[transformedIndex] as String;
+            bodyHtml = _unescapeMediaTags(
+              auxChunkData[transformedIndex] as String,
+            );
           }
         }
       }
 
       // 3. Extract comments from postNodeData (commentsData field)
       final List<CommentItem> comments = [];
+      int totalComments = 0;
 
       final commentsDataIndex = rootMap['commentsData'];
       if (commentsDataIndex is int && commentsDataIndex < postNodeData.length) {
@@ -231,6 +244,12 @@ class DamoangParser implements BaseParser {
           if (commentsObjIndex is int &&
               commentsObjIndex < postNodeData.length) {
             final commentsObjMap = postNodeData[commentsObjIndex];
+            if (commentsObjMap is Map) {
+              final totalIndex = commentsObjMap['total'];
+              if (totalIndex is int && totalIndex < postNodeData.length) {
+                totalComments = postNodeData[totalIndex] as int? ?? 0;
+              }
+            }
             if (commentsObjMap is Map) {
               final itemsIndex = commentsObjMap['items'];
               if (itemsIndex is int &&
@@ -301,6 +320,9 @@ class DamoangParser implements BaseParser {
         userInfo: UserInfo(id: author, nickName: author, nickImage: ''),
         comments: comments,
         bodyHtml: bodyHtml,
+        extraData: totalComments > comments.length
+            ? {'totalComments': totalComments}
+            : null,
       );
 
       return Right<Failure, Details>(detail);
@@ -456,7 +478,7 @@ class DamoangParser implements BaseParser {
         final String category = (post['category'] ?? '').toString();
 
         final String url = '$baseUrl/$board/$id';
-        final String reply = commentsCount > 0 ? '+$commentsCount' : '';
+        final String reply = commentsCount.toString();
 
         // Parse time
         String parsedTime = '';
