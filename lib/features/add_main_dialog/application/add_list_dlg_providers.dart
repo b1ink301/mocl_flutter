@@ -1,5 +1,5 @@
-import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/features/add_main_dialog/presentation/models/checkable_main_item.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

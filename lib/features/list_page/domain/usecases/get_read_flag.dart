@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
-import 'package:mocl_flutter/core/usecases/usecase.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/core/usecases/usecase.dart';
 import 'package:mocl_flutter/features/list_page/domain/repositories/list_repository.dart';
 
 class GetReadFlag implements UseCase<Future<bool>, GetReadFlagParams> {

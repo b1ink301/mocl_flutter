@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/round_text_widget.dart';
@@ -8,24 +7,14 @@ import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mi
 import '../state/list_state_mixin.dart';
 
 class MoclListItem extends ConsumerWidget with ListState, ListEvent {
-  static const _iosPadding = EdgeInsets.only(
-    left: 16,
-    right: 12,
-    top: 10,
-    bottom: 10,
-  );
-
   static const _aosPadding = EdgeInsets.only(left: 16, right: 12);
 
   const MoclListItem({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => PlatformListTile(
-    material: (_, _) => MaterialListTileData(
-      minVerticalPadding: 6,
-      contentPadding: _aosPadding,
-    ),
-    cupertino: (_, _) => CupertinoListTileData(padding: _iosPadding),
+  Widget build(BuildContext context, WidgetRef ref) => ListTile(
+    minVerticalPadding: 6,
+    contentPadding: _aosPadding,
     onTap: () => handleItemTap(ref, context),
     title: const _TitleView(),
     subtitle: hasInfoState(ref) ? const _BottomView() : null,
@@ -38,12 +27,7 @@ class _TitleView extends ConsumerWidget with ListState {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final (title, textStyle) = titleViewState(ref);
-    return PlatformText(
-      title,
-      maxLines: 3,
-      overflow: .ellipsis,
-      style: textStyle,
-    );
+    return Text(title, maxLines: 3, overflow: .ellipsis, style: textStyle);
   }
 }
 
@@ -99,11 +83,6 @@ class _InfoText extends ConsumerWidget with ListState {
     final (info, textStyle) = infoViewState(ref);
     return info.isEmpty
         ? const SizedBox.shrink()
-        : PlatformText(
-            info,
-            maxLines: 1,
-            overflow: .ellipsis,
-            style: textStyle,
-          );
+        : Text(info, maxLines: 1, overflow: .ellipsis, style: textStyle);
   }
 }

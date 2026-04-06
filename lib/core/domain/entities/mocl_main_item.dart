@@ -2,7 +2,6 @@ import 'package:freezed_annotation/freezed_annotation.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 
 part 'mocl_main_item.freezed.dart';
-
 part 'mocl_main_item.g.dart';
 
 @freezed

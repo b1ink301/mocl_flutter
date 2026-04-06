@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 
 class MessageWidget extends StatelessWidget {
   final String message;
@@ -14,7 +13,7 @@ class MessageWidget extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => PlatformText(
+  Widget build(BuildContext context) => Text(
         message,
         style: textStyle ??
             TextStyle(

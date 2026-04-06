@@ -42,26 +42,19 @@ class _BodyList extends ConsumerWidget with MainState {
 
   Widget _buildEmptyView(TextStyle? textStyle) => SliverFillRemaining(
     hasScrollBody: false,
-    child: Center(
-      child: PlatformText('항목이 없습니다.\n항목을 추가해 주세요!', style: textStyle),
-    ),
+    child: Center(child: Text('항목이 없습니다.\n항목을 추가해 주세요!', style: textStyle)),
   );
 
   Widget _buildListItem(
     BuildContext context,
     MainItem item,
     TextStyle? textStyle,
-  ) => PlatformListTile(
+  ) => ListTile(
     key: ValueKey(item.board),
     leading: item.icon.isEmpty ? null : _buildIconView(item.icon),
-    title: PlatformText(item.text, style: textStyle),
+    title: Text(item.text, style: textStyle),
     onTap: () => context.push(Routes.list, extra: item),
-    material: (_, _) =>
-        MaterialListTileData(contentPadding: const .fromLTRB(16, 4, 8, 4)),
-    cupertino: (_, _) => CupertinoListTileData(
-      padding: const .fromLTRB(16, 18, 8, 18),
-      additionalInfo: const Icon(CupertinoIcons.chevron_forward),
-    ),
+    contentPadding: const .fromLTRB(16, 4, 8, 4),
   );
 
   Widget _buildIconView(String url) => CircleAvatar(
@@ -79,7 +72,7 @@ class _ErrorWidget extends StatelessWidget {
   Widget build(BuildContext context) => SliverPadding(
     padding: const .all(12.0),
     sliver: SliverToBoxAdapter(
-      child: PlatformText(
+      child: Text(
         message,
         style: TextStyle(fontSize: 16, color: Theme.of(context).focusColor),
       ),
@@ -95,92 +88,34 @@ class _MainAppBar extends ConsumerWidget with MainState, MainEvent {
     final delta = ref.watch(fontSizeDeltaProvider);
     final baseStyle = AppTextStyles.of(context).titleTextStyle;
     return SliverAppBar(
-    scrolledUnderElevation: 0,
-    title: PlatformText(titleState(ref)),
-    titleTextStyle: baseStyle.copyWith(
-      color: Colors.white,
-      fontSize: baseStyle.fontSize! + delta,
-    ),
-    titleSpacing: 0,
-    floating: true,
-    toolbarHeight: 62,
-    actions: [
-      if (showAddButtonState(ref))
-        PlatformIconButton(
-          onPressed: () => handleAddButton(ref, context),
-          icon: const Icon(Icons.add),
-        ),
-      PlatformPopupMenu(
-        options: [
-          PopupMenuOption(
-            label: '로그인',
-            onTap: (_) => handleLogin(ref, context),
-          ),
-        ],
-        icon: Icon(
-          size: 24,
-          context.platformIcon(
-            material: Icons.more_vert_rounded,
-            cupertino: CupertinoIcons.ellipsis,
-          ),
-        ),
+      scrolledUnderElevation: 0,
+      title: Text(titleState(ref)),
+      titleTextStyle: baseStyle.copyWith(
+        color: Colors.white,
+        fontSize: baseStyle.fontSize! + delta,
       ),
-    ],
-  );
-  }
-}
-
-class _MainNavigationBar extends ConsumerWidget with MainState, MainEvent {
-  const _MainNavigationBar();
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final delta = ref.watch(fontSizeDeltaProvider);
-    final baseLargeStyle =
-        CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle;
-    return CupertinoSliverNavigationBar(
-        largeTitle: Text(
-          titleState(ref),
-          style: baseLargeStyle.copyWith(
-            fontSize: (baseLargeStyle.fontSize ?? 34) + delta,
+      titleSpacing: 0,
+      floating: true,
+      toolbarHeight: 62,
+      actions: [
+        if (showAddButtonState(ref))
+          IconButton(
+            onPressed: () => handleAddButton(ref, context),
+            icon: const Icon(Icons.add),
           ),
-        ),
-        padding: const .only(start: 5, end: 10),
-        backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-        leading: PlatformIconButton(
-          padding: const .all(0),
-          onPressed: () => handleSideBarToggle(ref),
+        AdaptivePopupMenu(
+          options: [
+            AdaptiveMenuOption(
+              label: '로그인',
+              onTap: () => handleLogin(ref, context),
+            ),
+          ],
           icon: Icon(
             size: 24,
-            color: Theme.of(context).focusColor,
-            context.platformIcon(
-              material: Icons.menu,
-              cupertino: CupertinoIcons.sidebar_left,
-            ),
+            isCupertino() ? CupertinoIcons.ellipsis : Icons.more_vert_rounded,
           ),
         ),
-        trailing: showAddButtonState(ref)
-            ? PlatformPopupMenu(
-                icon: Icon(
-                  color: Theme.of(context).focusColor,
-                  size: 24,
-                  context.platformIcon(
-                    material: Icons.more_vert_rounded,
-                    cupertino: CupertinoIcons.ellipsis,
-                  ),
-                ),
-                options: [
-                  PopupMenuOption(
-                    label: '게시판 추가',
-                    onTap: (_) => handleAddButton(ref, context),
-                  ),
-                  PopupMenuOption(
-                    label: '로그인',
-                    onTap: (_) => handleLogin(ref, context),
-                  ),
-                ],
-              )
-            : null,
-      );
+      ],
+    );
   }
 }

@@ -1,10 +1,8 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
@@ -44,17 +42,7 @@ class DetailPage extends ConsumerWidget with DetailState, DetailEvent {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final child = PlatformScaffold(
-      appBar: isCupertino(context)
-          ? PlatformAppBar(
-              cupertino: (BuildContext context, PlatformTarget platform) =>
-                  CupertinoNavigationBarData(
-                    previousPageTitle: smallTitleState(ref),
-                    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-                    trailing: _buildPopupMenuButton(context, ref),
-                  ),
-            )
-          : null,
+    final child = Scaffold(
       body: RefreshIndicator.adaptive(
         color: Theme.of(context).focusColor,
         onRefresh: () async => handleRefresh(ref),
@@ -78,23 +66,4 @@ class DetailPage extends ConsumerWidget with DetailState, DetailEvent {
           )
         : child;
   }
-
-  Widget _buildPopupMenuButton(BuildContext context, WidgetRef ref) =>
-      PlatformPopupMenu(
-        icon: Icon(
-          size: 24,
-          context.platformIcon(
-            material: Icons.more_vert_rounded,
-            cupertino: CupertinoIcons.ellipsis,
-          ),
-        ),
-        options: [
-          PopupMenuOption(label: '새로고침', onTap: (_) => handleRefresh(ref)),
-          PopupMenuOption(
-            label: '브라우저로 열기',
-            onTap: (_) => handleOpenBrowser(ref),
-          ),
-          PopupMenuOption(label: '공유하기', onTap: (_) => handleShareUrl(ref)),
-        ],
-      );
 }

@@ -1,7 +1,7 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/core/error/failures.dart';
 
 abstract class MainRepository {
   Stream<Either<Failure, List<MainItem>>> getMainListStream({

@@ -2,13 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/core/presentation/models/current_text_styles.dart';
-import 'package:mocl_flutter/core/usecases/usecase.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
-
 import 'package:mocl_flutter/core/domain/usecases/get_site_type.dart';
 import 'package:mocl_flutter/core/domain/usecases/set_site_type.dart';
+import 'package:mocl_flutter/core/presentation/models/current_text_styles.dart';
+import 'package:mocl_flutter/core/usecases/usecase.dart';
 import 'package:mocl_flutter/features/settings_page/application/use_case_provider.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'app_provider.g.dart';
 

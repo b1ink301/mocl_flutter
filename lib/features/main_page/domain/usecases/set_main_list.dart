@@ -2,9 +2,9 @@ import 'package:equatable/equatable.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/features/main_page/domain/repositories/main_repository.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/usecases/usecase.dart';
+import 'package:mocl_flutter/features/main_page/domain/repositories/main_repository.dart';
 
 class SetMainList
     implements UseCase<Future<Either<Failure, List<int>>>, SetMainParams> {
