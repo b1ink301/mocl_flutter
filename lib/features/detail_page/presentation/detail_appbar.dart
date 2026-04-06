@@ -1,10 +1,8 @@
 import 'dart:io';
 
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mocl_flutter/core/application/app_provider.dart';
+import 'package:mocl_flutter/core/presentation/widgets/adaptive_popup_menu.dart';
 import 'package:mocl_flutter/core/presentation/widgets/appbar_dual_text_widget.dart';
 
 import 'state/detail_event_mixin.dart';
@@ -18,31 +16,22 @@ class DetailAppBar extends ConsumerWidget with DetailState, DetailEvent {
     final String title = titleState(ref);
     final double height = appbarHeight(ref, title);
 
-    return PlatformWidget(
-      material: (_, _) => AppbarDualTextWidget(
-        title: title,
-        smallTitle: smallTitleState(ref),
-        automaticallyImplyLeading: Platform.isMacOS,
-        toolbarHeight: height,
-        actions: [
-          _DetailPopupMenuButton(
-            focusColor: Theme.of(context).focusColor,
-            onRefresh: () => handleRefresh(ref),
-            onOpenBrowser: () => handleOpenBrowser(ref),
-            onShareUrl: () => handleShareUrl(ref),
-            onIncreaseFontSize: () => increaseFontSize(ref),
-            onDecreaseFontSize: () => decreaseFontSize(ref),
-            onInitFontSize: () => initFontSize(ref),
-          ),
-        ],
-      ),
-      cupertino: (_, _) => SliverPersistentHeader(
-        delegate: _DetailCupertinoAppBar(
-          title: title,
-          height: height,
-          fontSizeDelta: ref.watch(fontSizeDeltaProvider),
+    return AppbarDualTextWidget(
+      title: title,
+      smallTitle: smallTitleState(ref),
+      automaticallyImplyLeading: Platform.isMacOS,
+      toolbarHeight: height,
+      actions: [
+        _DetailPopupMenuButton(
+          focusColor: Theme.of(context).focusColor,
+          onRefresh: () => handleRefresh(ref),
+          onOpenBrowser: () => handleOpenBrowser(ref),
+          onShareUrl: () => handleShareUrl(ref),
+          onIncreaseFontSize: () => increaseFontSize(ref),
+          onDecreaseFontSize: () => decreaseFontSize(ref),
+          onInitFontSize: () => initFontSize(ref),
         ),
-      ),
+      ],
     );
   }
 }
@@ -67,27 +56,21 @@ class _DetailPopupMenuButton extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => PlatformPopupMenu(
-    icon: Icon(
-      size: 24,
-      context.platformIcon(
-        material: Icons.more_vert_rounded,
-        cupertino: CupertinoIcons.ellipsis,
-      ),
-    ),
+  Widget build(BuildContext context) => AdaptivePopupMenu(
+    icon: Icon(size: 24, Icons.more_vert_rounded),
     options: [
-      PopupMenuOption(label: '새로고침', onTap: (_) => onRefresh()),
-      PopupMenuOption(label: '브라우저로 열기', onTap: (_) => onOpenBrowser()),
-      PopupMenuOption(label: '공유하기', onTap: (_) => onShareUrl()),
-      PopupMenuOption(
+      AdaptiveMenuOption(label: '새로고침', onTap: () => onRefresh()),
+      AdaptiveMenuOption(label: '브라우저로 열기', onTap: () => onOpenBrowser()),
+      AdaptiveMenuOption(label: '공유하기', onTap: () => onShareUrl()),
+      AdaptiveMenuOption(
         label: '글자 크기 변경',
-        onTap: (_) => showAdaptiveDialog(
+        onTap: () => showAdaptiveDialog(
           context: context,
           builder: (dialogContext) => AlertDialog.adaptive(
             title: const Text('글자 크기 변경'),
             content: Row(
-              mainAxisSize: .min,
-              mainAxisAlignment: .center,
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButton(
                   icon: Icon(Icons.exposure_minus_1, color: focusColor),
@@ -100,9 +83,9 @@ class _DetailPopupMenuButton extends StatelessWidget {
               ],
             ),
             actions: [
-              PlatformDialogAction(
+              TextButton(
                 onPressed: onInitFontSize,
-                child: PlatformText(
+                child: Text(
                   '초기화',
                   style: Theme.of(context).textTheme.headlineMedium?.copyWith(
                     color: Theme.of(context).focusColor,
@@ -115,50 +98,4 @@ class _DetailPopupMenuButton extends StatelessWidget {
       ),
     ],
   );
-}
-
-class _DetailCupertinoAppBar extends SliverPersistentHeaderDelegate {
-  final String title;
-  final double height;
-  final double fontSizeDelta;
-
-  const _DetailCupertinoAppBar({
-    required this.title,
-    required this.height,
-    this.fontSizeDelta = 0,
-  });
-
-  @override
-  Widget build(
-    BuildContext context,
-    double shrinkOffset,
-    bool overlapsContent,
-  ) {
-    final baseStyle =
-        CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      color: CupertinoTheme.of(context).scaffoldBackgroundColor,
-      child: Text(
-        title,
-        style: baseStyle.copyWith(
-          fontSize: (baseStyle.fontSize ?? 34) + fontSizeDelta,
-        ),
-        maxLines: 3,
-        overflow: TextOverflow.ellipsis,
-      ),
-    );
-  }
-
-  @override
-  double get maxExtent => height; // 3줄 높이에 맞게 조정
-
-  @override
-  double get minExtent => height;
-
-  @override
-  bool shouldRebuild(covariant _DetailCupertinoAppBar oldDelegate) =>
-      title != oldDelegate.title ||
-      height != oldDelegate.height ||
-      fontSizeDelta != oldDelegate.fontSizeDelta;
 }

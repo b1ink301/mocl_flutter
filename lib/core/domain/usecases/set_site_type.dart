@@ -1,6 +1,6 @@
-import 'package:mocl_flutter/core/usecases/usecase.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/repositories/settings_repository.dart';
+import 'package:mocl_flutter/core/usecases/usecase.dart';
 
 class SetSiteType implements UseCase<void, SiteType> {
   final SettingsRepository settingsRepository;

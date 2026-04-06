@@ -1,7 +1,7 @@
 import 'package:equatable/equatable.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/features/detail_page/domain/repositories/detail_repository.dart';
 import 'package:mocl_flutter/core/usecases/usecase.dart';
+import 'package:mocl_flutter/features/detail_page/domain/repositories/detail_repository.dart';
 
 class SetReadFlag implements UseCase<Future<int>, SetReadFlagParams> {
   final DetailRepository detailRepository;

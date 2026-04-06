@@ -4,7 +4,6 @@ import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/database/data/models/model_mapper.dart';
 
 part 'main_item_model.freezed.dart';
-
 part 'main_item_model.g.dart';
 
 @freezed

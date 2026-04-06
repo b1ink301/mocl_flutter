@@ -1,5 +1,5 @@
-import 'package:flutter/material.dart';
 import 'package:equatable/equatable.dart';
+import 'package:flutter/material.dart';
 
 class CurrentTextStyles extends Equatable {
   final TextStyle titleTextStyle;

@@ -3,10 +3,9 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:url_launcher/url_launcher.dart';
+import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
@@ -15,10 +14,10 @@ import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/message_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/core/util/utilities.dart';
-import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/state/detail_event_mixin.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/state/detail_state_mixin.dart';
 import 'package:sliver_tools/sliver_tools.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 const _kHeaderHeight = 46.0;
 
@@ -171,9 +170,7 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
                   children: [
                     if (nickImage.isNotEmpty)
                       NickImageWidget(url: detail.userInfo.nickImage),
-                    Flexible(
-                      child: PlatformText(detail.info, style: bodySmall),
-                    ),
+                    Flexible(child: Text(detail.info, style: bodySmall)),
                   ],
                 ),
               ),
@@ -242,7 +239,7 @@ class _CommentHeader extends StatelessWidget {
       delegate: SliverChildListDelegate([
         Align(
           alignment: Alignment.centerLeft,
-          child: PlatformText(
+          child: Text(
             label,
             style: bodyMedium?.copyWith(color: Theme.of(context).focusColor),
           ),
@@ -312,46 +309,44 @@ class _CommentItem extends StatelessWidget {
             const Spacer(),
             Icon(Icons.favorite_outline, color: bodySmall!.color, size: 17),
             const SizedBox(width: 4),
-            PlatformText(comment.likeCount, style: bodySmall),
+            Text(comment.likeCount, style: bodySmall),
             const SizedBox(width: 4),
           ]
         : null;
 
     final isEmptyBody = comment.bodyHtml.isEmpty;
 
+    final titleRow = Row(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        if (userInfo.nickImage.isNotEmpty)
+          NickImageWidget(url: userInfo.nickImage),
+        if (comment.info.isNotEmpty) Text(comment.info, style: bodySmall),
+        ...?likeView,
+      ],
+    );
+
+    final subtitleWidget = isEmptyBody
+        ? null
+        : Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: _HtmlWidget(
+              key: ValueKey('comment-body-${comment.id}'),
+              html: comment.bodyHtml,
+              textStyle: bodyMedium,
+              hexColor: hexColor,
+              openUrl: openUrl,
+            ),
+          );
+
     final List<Widget> commentWidgets = [
-      PlatformListTile(
+      ListTile(
         key: ValueKey('comment-${comment.id}'),
-        material: (_, _) => MaterialListTileData(
-          contentPadding: isEmptyBody
-              ? EdgeInsets.only(left: left, top: 0, bottom: 0)
-              : EdgeInsets.only(left: left, top: 2, bottom: 2),
-        ),
-        cupertino: (_, _) => CupertinoListTileData(
-          padding: EdgeInsets.only(left: left, top: 8, bottom: 8),
-        ),
-        title: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            if (userInfo.nickImage.isNotEmpty)
-              NickImageWidget(url: userInfo.nickImage),
-            if (comment.info.isNotEmpty)
-              PlatformText(comment.info, style: bodySmall),
-            ...?likeView,
-          ],
-        ),
-        subtitle: isEmptyBody
-            ? null
-            : Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: _HtmlWidget(
-                  key: ValueKey('comment-body-${comment.id}'),
-                  html: comment.bodyHtml,
-                  textStyle: bodyMedium,
-                  hexColor: hexColor,
-                  openUrl: openUrl,
-                ),
-              ),
+        contentPadding: isEmptyBody
+            ? EdgeInsets.only(left: left, top: 0, bottom: 0)
+            : EdgeInsets.only(left: left, top: 2, bottom: 2),
+        title: titleRow,
+        subtitle: subtitleWidget,
       ),
     ];
 
@@ -474,7 +469,7 @@ class _RefreshButton extends StatelessWidget {
         width: double.infinity,
         height: 58,
         alignment: Alignment.center,
-        child: PlatformText(
+        child: Text(
           '새로고침',
           style: bodyMedium?.copyWith(color: Theme.of(context).focusColor),
         ),

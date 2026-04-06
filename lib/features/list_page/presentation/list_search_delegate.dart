@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
@@ -31,7 +30,7 @@ class ListSearchDelegate extends SearchDelegate {
 
   @override
   List<Widget>? buildActions(BuildContext context) => [
-    PlatformIconButton(
+    IconButton(
       icon: const Icon(Icons.clear),
       onPressed: () {
         query = ''; // 검색어 초기화
@@ -40,7 +39,7 @@ class ListSearchDelegate extends SearchDelegate {
   ];
 
   @override
-  Widget? buildLeading(BuildContext context) => PlatformIconButton(
+  Widget? buildLeading(BuildContext context) => IconButton(
     icon: const Icon(Icons.arrow_back),
     onPressed: () {
       close(context, ''); // 검색 종료
@@ -85,7 +84,7 @@ class SearchResultViewState extends ConsumerState<SearchResultView>
   Widget build(BuildContext context) => listState(ref).when(
     data: (Either<Failure, List<ListItem>> data) => data.fold(
       (Failure f) =>
-          PlatformText(f.message, style: const TextStyle(color: Colors.black)),
+          Text(f.message, style: const TextStyle(color: Colors.black)),
       (List<ListItem> items) => ListView.separated(
         itemBuilder: (BuildContext context, int index) => ProviderScope(
           overrides: ListSearchEvent.overridesProviderScopeForRow(ref, index),
@@ -97,7 +96,7 @@ class SearchResultViewState extends ConsumerState<SearchResultView>
       ),
     ),
     error: (e, s) =>
-        PlatformText(e.toString(), style: const TextStyle(color: Colors.black)),
+        Text(e.toString(), style: const TextStyle(color: Colors.black)),
     loading: () => const LoadingWidget(),
   );
 }

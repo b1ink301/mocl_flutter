@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
@@ -24,18 +23,11 @@ class AddListDialog extends ConsumerWidget with AddState, AddEvent {
     final state = addState(ref);
     final size = MediaQuery.of(context).size;
 
-    return PlatformAlertDialog(
-      material: (_, _) => MaterialAlertDialogData(
-        elevation: 8,
-        title: _buildTitle(context),
-        titlePadding: EdgeInsets.zero,
-        contentPadding: const .symmetric(
-          vertical: 10,
-          horizontal: 16,
-        ),
-      ),
-      cupertino: (_, _) =>
-          CupertinoAlertDialogData(title: PlatformText('게시판 선택')),
+    return AlertDialog(
+      elevation: 8,
+      title: _buildTitle(context),
+      titlePadding: EdgeInsets.zero,
+      contentPadding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
       content: _buildContent(context, state, size),
       actions: _buildActions(context),
     );
@@ -44,7 +36,7 @@ class AddListDialog extends ConsumerWidget with AddState, AddEvent {
   Widget _buildTitle(BuildContext context) => Column(
     children: [
       const SizedBox(height: 20),
-      PlatformText('게시판 선택', style: Theme.of(context).textTheme.headlineMedium),
+      Text('게시판 선택', style: Theme.of(context).textTheme.headlineMedium),
       const SizedBox(height: 20),
       const DividerWidget(thickness: 1, indent: 16, endIndent: 16),
     ],
@@ -84,17 +76,14 @@ class AddListDialog extends ConsumerWidget with AddState, AddEvent {
       );
 
   List<Widget> _buildActions(BuildContext context) => [
-    PlatformDialogAction(
+    TextButton(
       onPressed: context.pop,
-      child: PlatformText(
-        '취소',
-        style: Theme.of(context).textTheme.headlineMedium,
-      ),
+      child: Text('취소', style: Theme.of(context).textTheme.headlineMedium),
     ),
     Consumer(
-      builder: (context, ref, _) => PlatformDialogAction(
+      builder: (context, ref, _) => TextButton(
         onPressed: () => pop(ref, context),
-        child: PlatformText(
+        child: Text(
           '적용',
           style: Theme.of(context).textTheme.headlineMedium?.copyWith(
             color: Theme.of(context).focusColor,

@@ -5,9 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
+import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/core/util/utilities.dart';
-import 'package:mocl_flutter/core/application/app_provider.dart';
 
 import '../../application/detail_providers.dart';
 

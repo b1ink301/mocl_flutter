@@ -4,7 +4,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_platform_widgets/flutter_platform_widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
@@ -42,7 +41,7 @@ class MoclListPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final child = PlatformScaffold(
+    final child = Scaffold(
       backgroundColor: Theme.of(context).scaffoldBackgroundColor,
       body: const MoclListView(),
     );
