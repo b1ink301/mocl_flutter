@@ -4,6 +4,7 @@ import 'dart:math';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
+import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:octo_image/octo_image.dart';
 import 'package:path_provider/path_provider.dart';
 
@@ -43,10 +44,10 @@ class NickImageWidget extends StatelessWidget {
           url,
           key: url,
         );
-        debugPrint('Preloaded image: $url');
+        MoclLogger.log('Preloaded image: $url');
       }
     } catch (e) {
-      debugPrint('Error preloading image: $e');
+      MoclLogger.log('Error preloading image: $e');
     }
   }
 
@@ -85,14 +86,14 @@ class NickImageWidget extends StatelessWidget {
         totalBytes += file.statSync().size;
       });
 
-      debugPrint('totalBytes=$totalBytes');
+      MoclLogger.log('totalBytes=$totalBytes');
 
       const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
       final i = (log(totalBytes) / log(1024)).floor();
       final sizeText =
           '${(totalBytes / pow(1024, i)).toStringAsFixed(1)} ${suffixes[i]}';
 
-      debugPrint('sizeText=$sizeText');
+      MoclLogger.log('sizeText=$sizeText');
       return sizeText;
     }
     return '0 KB';

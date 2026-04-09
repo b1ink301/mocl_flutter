@@ -13,6 +13,7 @@ import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/features/list_page/presentation/list_search_delegate.dart';
 
+import '../../../../core/util/mocl_logger.dart';
 import '../../application/list_providers.dart';
 
 mixin class ListEvent {
@@ -52,7 +53,7 @@ mixin class ListEvent {
         }
       });
     } catch (e) {
-      debugPrint('_handleItemTap = $e');
+      MoclLogger.log('_handleItemTap = $e');
     }
   }
 

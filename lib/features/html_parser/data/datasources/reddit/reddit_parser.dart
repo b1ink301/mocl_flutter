@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/cupertino.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:html/parser.dart';
 import 'package:html_unescape/html_unescape.dart';
@@ -16,6 +15,7 @@ import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_ext.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -239,7 +239,7 @@ class RedditParser implements BaseParser {
     if (container == null) {
       return Left(NotLoginFailure(message: '로그인하지 않았습니다. #1'));
     }
-    debugPrint('container=${container.outerHtml}');
+    MoclLogger.log('container=${container.outerHtml}');
     final initialStateJson = container.attributes['initialstatejson'];
     if (initialStateJson == null || initialStateJson == "[]") {
       return Left(NotLoginFailure(message: '로그인하지 않았습니다. #2'));
@@ -263,7 +263,7 @@ class RedditParser implements BaseParser {
         .whereType<MainItem>()
         .toList();
 
-    debugPrint('[main]#3 result=$result');
+    MoclLogger.log('[main]#3 result=$result');
 
     return Right(result);
   }

@@ -3,7 +3,6 @@ import 'dart:convert';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/domain/entities/last_id.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
@@ -14,6 +13,7 @@ import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_ext.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_parser.dart';
 import 'package:timeago/timeago.dart' as timeago;
@@ -232,53 +232,81 @@ class DamoangParser implements BaseParser {
         }
       }
 
-      // 3. Extract comments from postNodeData (commentsData field)
+      // 3. Extract comments
+      //    commentsData may live in the same node as post OR a separate node,
+      //    so search all nodes when the post node doesn't contain it.
       final List<CommentItem> comments = [];
       int totalComments = 0;
 
-      final commentsDataIndex = rootMap['commentsData'];
-      if (commentsDataIndex is int && commentsDataIndex < postNodeData.length) {
-        final commentsDataObj = postNodeData[commentsDataIndex];
+      List<dynamic>? commentsNodeData;
+      int? commentsDataIndex;
+
+      // Try post node first (legacy layout)
+      final postCommentsIdx = rootMap['commentsData'];
+      if (postCommentsIdx is int && postCommentsIdx < postNodeData.length) {
+        commentsNodeData = postNodeData;
+        commentsDataIndex = postCommentsIdx;
+      }
+
+      // Fallback: search all nodes for a 'commentsData' key
+      if (commentsNodeData == null) {
+        final found = _findNodeDataByKey(lines, 'commentsData');
+        if (found != null && found.isNotEmpty && found[0] is Map) {
+          final foundRoot = found[0] as Map;
+          final idx = foundRoot['commentsData'];
+          if (idx is int && idx < found.length) {
+            commentsNodeData = found;
+            commentsDataIndex = idx;
+          }
+        }
+      }
+
+      if (commentsNodeData != null && commentsDataIndex != null) {
+        final commentsDataObj = commentsNodeData[commentsDataIndex];
         if (commentsDataObj is Map) {
           final commentsObjIndex = commentsDataObj['comments'];
           if (commentsObjIndex is int &&
-              commentsObjIndex < postNodeData.length) {
-            final commentsObjMap = postNodeData[commentsObjIndex];
+              commentsObjIndex < commentsNodeData.length) {
+            final commentsObjMap = commentsNodeData[commentsObjIndex];
             if (commentsObjMap is Map) {
               final totalIndex = commentsObjMap['total'];
-              if (totalIndex is int && totalIndex < postNodeData.length) {
-                totalComments = postNodeData[totalIndex] as int? ?? 0;
+              if (totalIndex is int &&
+                  totalIndex < commentsNodeData.length) {
+                totalComments =
+                    commentsNodeData[totalIndex] as int? ?? 0;
               }
-            }
-            if (commentsObjMap is Map) {
               final itemsIndex = commentsObjMap['items'];
               if (itemsIndex is int &&
-                  itemsIndex < postNodeData.length &&
-                  postNodeData[itemsIndex] is List) {
+                  itemsIndex < commentsNodeData.length &&
+                  commentsNodeData[itemsIndex] is List) {
                 final commentIndices =
-                    postNodeData[itemsIndex] as List<dynamic>;
+                    commentsNodeData[itemsIndex] as List<dynamic>;
                 int commentIdx = 0;
                 for (final cIndex in commentIndices) {
                   if (cIndex is! int) continue;
-                  final comment = _resolveObject(postNodeData, cIndex);
+                  final comment =
+                      _resolveObject(commentsNodeData, cIndex);
 
-                  final String cAuthor = (comment['author'] ?? '').toString();
-                  final String cAuthorImage = (comment['author_image'] ?? '')
-                      .toString();
-                  final String cContent = (comment['content'] ?? '').toString();
+                  final String cAuthor =
+                      (comment['author'] ?? '').toString();
+                  final String cAuthorImage =
+                      (comment['author_image'] ?? '').toString();
+                  final String cContent =
+                      (comment['content'] ?? '').toString();
                   final int cLikes = (comment['likes'] is int)
                       ? comment['likes'] as int
                       : 0;
                   final int cDepth = (comment['depth'] is int)
                       ? comment['depth'] as int
                       : 0;
-                  final String cCreatedAt = (comment['created_at'] ?? '')
-                      .toString();
+                  final String cCreatedAt =
+                      (comment['created_at'] ?? '').toString();
 
                   String cParsedTime = '';
                   try {
                     final dateTime = DateTime.parse(cCreatedAt);
-                    cParsedTime = timeago.format(dateTime, locale: 'ko');
+                    cParsedTime =
+                        timeago.format(dateTime, locale: 'ko');
                   } catch (e) {
                     cParsedTime = cCreatedAt;
                   }
@@ -290,7 +318,8 @@ class DamoangParser implements BaseParser {
                       id: commentIdx++,
                       isReply: cDepth > 0,
                       bodyHtml: cContent,
-                      likeCount: cLikes > 0 ? cLikes.toString() : '',
+                      likeCount:
+                          cLikes > 0 ? cLikes.toString() : '',
                       mediaHtml: '',
                       isVideo: false,
                       time: cCreatedAt,
@@ -298,7 +327,8 @@ class DamoangParser implements BaseParser {
                       userInfo: UserInfo(
                         id: cAuthor,
                         nickName: cAuthor,
-                        nickImage: isShowNickImage ? cAuthorImage : '',
+                        nickImage:
+                            isShowNickImage ? cAuthorImage : '',
                       ),
                       authorId: '',
                     ),
@@ -308,6 +338,10 @@ class DamoangParser implements BaseParser {
             }
           }
         }
+      } else {
+        MoclLogger.log(
+          '[DamoangParser] commentsData node not found in any data node',
+        );
       }
 
       final detail = Details(
@@ -400,7 +434,7 @@ class DamoangParser implements BaseParser {
     final lastId = message.lastId;
     final String boardTitle = message.boardTitle;
     final String baseUrl = message.baseUrl;
-    final isShowNickImage = message.isShowNickImage;
+    // final isShowNickImage = message.isShowNickImage;
 
     final List<Map<String, dynamic>> parsedItems = <Map<String, dynamic>>[];
     final List<int> ids = <int>[];
@@ -416,7 +450,7 @@ class DamoangParser implements BaseParser {
       // Find posts data from node with 'postsData' key
       final nodeData = _findNodeDataByKey(lines, 'postsData');
       if (nodeData == null || nodeData.isEmpty) {
-        debugPrint('[DamoangParser] postsData node not found');
+        MoclLogger.log('[DamoangParser] postsData node not found');
         replyPort.send(<ListItem>[]);
         return;
       }
@@ -424,28 +458,28 @@ class DamoangParser implements BaseParser {
       final nodeRoot = nodeData[0] as Map;
       final postsDataIndex = nodeRoot['postsData'];
       if (postsDataIndex is! int || postsDataIndex >= nodeData.length) {
-        debugPrint('[DamoangParser] postsData index not found');
+        MoclLogger.log('[DamoangParser] postsData index not found');
         replyPort.send(<ListItem>[]);
         return;
       }
 
       final postsDataObj = nodeData[postsDataIndex];
       if (postsDataObj is! Map) {
-        debugPrint('[DamoangParser] postsData is not a Map');
+        MoclLogger.log('[DamoangParser] postsData is not a Map');
         replyPort.send(<ListItem>[]);
         return;
       }
 
       final postsIndex = postsDataObj['posts'];
       if (postsIndex is! int || postsIndex >= nodeData.length) {
-        debugPrint('[DamoangParser] Posts index not found');
+        MoclLogger.log('[DamoangParser] Posts index not found');
         replyPort.send(<ListItem>[]);
         return;
       }
 
       final postIndices = nodeData[postsIndex];
       if (postIndices is! List) {
-        debugPrint('[DamoangParser] Posts array not found');
+        MoclLogger.log('[DamoangParser] Posts array not found');
         replyPort.send(<ListItem>[]);
         return;
       }
@@ -458,7 +492,7 @@ class DamoangParser implements BaseParser {
         final int id = (post['id'] is int) ? post['id'] as int : -1;
         if (id <= 0) continue;
         if (lastId > 0 && id >= lastId) {
-          debugPrint('[SKIP] id=$id, lastId=$lastId');
+          MoclLogger.log('[SKIP] id=$id, lastId=$lastId');
           continue;
         }
 
@@ -520,7 +554,7 @@ class DamoangParser implements BaseParser {
         ids.add(id);
       }
     } catch (e) {
-      debugPrint('[DamoangParser] Error parsing list: $e');
+      MoclLogger.log('[DamoangParser] Error parsing list: $e');
     }
 
     final ReceivePort readStatusPort = ReceivePort();
