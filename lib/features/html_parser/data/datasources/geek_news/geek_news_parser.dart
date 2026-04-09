@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:html/parser.dart' as html_parser;
 import 'package:mocl_flutter/core/domain/entities/last_id.dart';
@@ -14,6 +13,7 @@ import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/core/util/mocl_logger.dart';
 
 import '../base/base_parser.dart';
 
@@ -287,7 +287,7 @@ class GeekNewsParser implements BaseParser {
         ids.add(id);
       }
     } catch (e) {
-      debugPrint('[GeekNewsParser] Error parsing list: $e');
+      MoclLogger.log('[GeekNewsParser] Error parsing list: $e');
     }
 
     final ReceivePort readStatusPort = ReceivePort();
@@ -336,7 +336,7 @@ class GeekNewsParser implements BaseParser {
     SortType sortType,
     LastId lastId,
   ) {
-    debugPrint('urlByList = url = $url, board = $board, page = $page');
+    MoclLogger.log('urlByList = url = $url, board = $board, page = $page');
     // page=1 → 오늘, page=2 → 어제, page=3 → 그저께 ...
     final date = DateTime.now().subtract(Duration(days: page - 1));
     final day = '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';

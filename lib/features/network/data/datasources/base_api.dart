@@ -92,7 +92,7 @@ abstract class BaseApi with BaseAction {
         options.headers['Cookie'] = dioCookies
             .map((cookie) => '${cookie.name}=${cookie.value}')
             .join('; ');
-        // debugPrint('options.headers[Cookie]=${options.headers['Cookie']}');
+        // MoclLogger.log('options.headers[Cookie]=${options.headers['Cookie']}');
         return handler.next(options);
       },
     );

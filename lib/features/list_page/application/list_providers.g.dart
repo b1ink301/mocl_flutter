@@ -350,7 +350,7 @@ final class PageStateNotifierProvider
   PageStateNotifier create() => PageStateNotifier();
 }
 
-String _$pageStateNotifierHash() => r'2f2c0c191b8fceb4eb70bbb76e1c9ce7d2ed7cf3';
+String _$pageStateNotifierHash() => r'312e69bf2c4b9f841f13018625f588071d2ca99e';
 
 abstract class _$PageStateNotifier extends $AsyncNotifier<PageState> {
   FutureOr<PageState> build();

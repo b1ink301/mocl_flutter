@@ -22,7 +22,7 @@ dependencies:
   html: ^0.15.6
 
   # HTML Widget
-  flutter_widget_from_html: ^0.17.1
+  flutter_widget_from_html: ^0.17.2
 
   # Value equality
   equatable: ^2.0.8

@@ -1,5 +1,5 @@
-import 'package:flutter/foundation.dart';
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
+import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/settings_page/application/repository_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -17,7 +17,7 @@ class SizeCacheDirNotifier extends _$SizeCacheDirNotifier {
     await ref.read(clearDataProvider.future);
     state = await AsyncValue.guard(() => _getSizeCacheDir());
 
-    debugPrint('clear cache = $state');
+    MoclLogger.log('clear cache = $state');
   }
 
   Future<String> _getSizeCacheDir() async =>

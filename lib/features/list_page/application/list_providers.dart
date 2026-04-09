@@ -13,6 +13,7 @@ import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/list_page/application/use_case_provider.dart';
 import 'package:mocl_flutter/features/list_page/domain/usecases/get_list.dart';
 import 'package:mocl_flutter/features/list_page/presentation/models/page_state.dart';
+import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'list_providers.g.dart';
@@ -102,7 +103,7 @@ class PageStateNotifier extends _$PageStateNotifier {
     LastId lastId, {
     List<ListItem> existingItems = const [], // 추가 로딩 시 기존 아이템
   }) async {
-    debugPrint('[_fetchData]#1 page=$page, state=$state');
+    MoclLogger.logWithTag('_fetchData', '#1 page=$page, state=$state');
 
     final result = await ref.read(
       reqListDataProvider(mainItem, sortType, page, lastId).future,
@@ -111,7 +112,7 @@ class PageStateNotifier extends _$PageStateNotifier {
       (Failure failure) {
         // 기존 아이템이 있다면 기존 상태를 유지하면서 에러만 추가
 
-        debugPrint('[_fetchData]#2 = $failure');
+        MoclLogger.logWithTag('_fetchData', '#2 = $failure');
         if (existingItems.isNotEmpty) {
           return PageState(
             items: existingItems,
@@ -136,8 +137,9 @@ class PageStateNotifier extends _$PageStateNotifier {
         );
         final allItems = existingItems + newItems;
 
-        debugPrint(
-          '[_fetchData]#2 currentPage=${state.value?.currentPage}, allItems=${allItems.length}',
+        MoclLogger.logWithTag(
+          '_fetchData',
+          '#2 currentPage=${state.value?.currentPage}, allItems=${allItems.length}',
         );
 
         return PageState(

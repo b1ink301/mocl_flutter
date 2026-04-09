@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:html/parser.dart';
 import 'package:mocl_flutter/core/domain/entities/last_id.dart';
@@ -14,6 +13,7 @@ import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_ext.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -99,7 +99,6 @@ class ClienParser implements BaseParser {
     String responseData,
     bool isShowNickImage,
   ) {
-
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
     final document = parse(responseData);
@@ -126,7 +125,7 @@ class ClienParser implements BaseParser {
       "div.post_information > div.post_time > div.post_date",
     );
 
-    // debugPrint('timeElement = ${timeElement?.outerHtml}');
+    // MoclLogger.log('timeElement = ${timeElement?.outerHtml}');
     timeElement?.querySelectorAll('.fa').forEach((element) => element.remove());
     var time = timeElement?.text.trim() ?? '';
     final tmp = time.split('수정일 :');
@@ -155,11 +154,11 @@ class ClienParser implements BaseParser {
 
     final recentsElement = container?.querySelector("div.writer_board");
 
-    debugPrint('recentsElement=${recentsElement?.innerHtml}');
+    MoclLogger.log('recentsElement=${recentsElement?.innerHtml}');
 
     final recentsWritersElement = container?.querySelector("div.writer_menu");
 
-    debugPrint('recentsWritersElement=${recentsWritersElement?.innerHtml}');
+    MoclLogger.log('recentsWritersElement=${recentsWritersElement?.innerHtml}');
 
     final bodyHtml = bodyHtmlElement?.innerHtml ?? '';
     final viewCountElement = container?.querySelector(
@@ -443,7 +442,7 @@ class ClienParser implements BaseParser {
     for (final element in elementList) {
       final id = int.tryParse(element.attributes['data-board-sn'] ?? '') ?? 0;
       if (id <= 0 || lastId > 0 && id >= lastId) {
-        debugPrint('[SKIP] id=$id, lastId=$lastId');
+        MoclLogger.log('[SKIP] id=$id, lastId=$lastId');
         continue;
       }
 

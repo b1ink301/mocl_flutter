@@ -2,7 +2,6 @@ import 'dart:async';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
-import 'package:flutter/foundation.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:html/parser.dart';
 import 'package:mocl_flutter/core/domain/entities/last_id.dart';
@@ -14,6 +13,7 @@ import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_ext.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
@@ -98,7 +98,7 @@ class MeecoParser implements BaseParser {
                 'div.pf_wrap > span.pf > img.pf_img',
               );
 
-              debugPrint('element=${element.innerHtml}');
+              MoclLogger.log('element=${element.innerHtml}');
 
               final tmpUrl = profileElement?.attributes['src']?.trim() ?? '';
               final nickImage = isShowNickImage ? tmpUrl.toUrl(baseUrl) : '';
@@ -131,7 +131,7 @@ class MeecoParser implements BaseParser {
               final isSecret =
                   element.querySelector('div.cmt_secret_ctn') != null;
 
-              debugPrint(
+              MoclLogger.log(
                 'isSecret=$isSecret, headerElement=${headerElement?.innerHtml}',
               );
 
