@@ -12,13 +12,8 @@ import 'package:mocl_flutter/core/util/utilities.dart';
 import '../../application/detail_providers.dart';
 
 mixin class DetailEvent {
-  const DetailEvent._();
-
   void handleRefresh(WidgetRef ref) =>
       ref.read(detailsProvider.notifier).refresh();
-
-  double appbarHeight(WidgetRef ref, String title) =>
-      ref.watch(detailAppbarHeightProvider(title));
 
   void increaseFontSize(WidgetRef ref) =>
       ref.read(appTextStylesFontSizeProvider.notifier).increaseFontSize();
@@ -43,11 +38,7 @@ mixin class DetailEvent {
     listItemProvider.overrideWithValue(item),
     screenWidthProvider.overrideWithValue(MediaQuery.of(context).size.width),
     appbarTextStyleProvider.overrideWithValue(
-      Platform.isIOS
-          ? CupertinoTheme.of(context).textTheme.navLargeTitleTextStyle
-          : AppTextStyles.of(
-              context,
-            ).titleTextStyle.copyWith(color: Colors.white),
+      AppTextStyles.of(context).titleTextStyle.copyWith(color: Colors.white),
     ),
   ];
 }

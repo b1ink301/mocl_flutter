@@ -14,36 +14,26 @@ import 'mocl_list_view.dart';
 class MoclListPage extends ConsumerWidget {
   const MoclListPage({super.key});
 
-  static Widget init(
-    BuildContext context,
-    MainItem item,
-    double statusBarHeight,
-  ) => AnnotatedRegion<SystemUiOverlayStyle>(
-    value: Theme.of(context).appBarTheme.systemOverlayStyle!,
-    child: ProviderScope(
-      overrides: ListEvent.overridesProviderScope(context, item),
-      child: Stack(
-        children: [
-          const Positioned.fill(child: MoclListPage()),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              height: statusBarHeight,
-              color: const Color(0x22000000),
-            ),
-          ),
-        ],
-      ),
-    ),
-  );
+  static Widget init(BuildContext context, MainItem item) =>
+      AnnotatedRegion<SystemUiOverlayStyle>(
+        value: Theme.of(context).appBarTheme.systemOverlayStyle!,
+        child: ProviderScope(
+          overrides: ListEvent.overridesProviderScope(context, item),
+          child: const MoclListPage(),
+        ),
+      );
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final child = Scaffold(
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: const MoclListView(),
+    final child = Container(
+      color: Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor,
+      child: SafeArea(
+        bottom: false,
+        child: Scaffold(
+          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+          body: const MoclListView(),
+        ),
+      ),
     );
 
     return !kIsWeb && Platform.isMacOS

@@ -14,7 +14,7 @@ class LoginView extends ConsumerWidget with LoginState, LoginEvent {
     final siteType = siteTypeState(ref);
     return InAppWebView(
       initialSettings: inAppWebViewSettings(),
-      initialUrlRequest: urlRequest(ref, siteType),
+      initialUrlRequest: urlRequest(siteType),
       shouldOverrideUrlLoading: (controller, navigationAction) async {
         final url = navigationAction.request.url;
         if (url == null) return NavigationActionPolicy.ALLOW;

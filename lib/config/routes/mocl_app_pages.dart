@@ -2,8 +2,9 @@ import 'package:flutter/cupertino.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
+import 'package:mocl_flutter/core/presentation/widgets/bottom_sheet_page.dart';
 import 'package:mocl_flutter/core/presentation/widgets/dialog_page.dart';
-import 'package:mocl_flutter/features/add_main_dialog/presentation/add_list_dialog.dart';
+import 'package:mocl_flutter/features/add_main_dialog/presentation/add_list_modal_sheet_page.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/mocl_detail_page.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/photo_view_dialog.dart';
 import 'package:mocl_flutter/features/list_page/presentation/mocl_list_page.dart';
@@ -20,7 +21,7 @@ class AppPages {
   static const String initial = Routes.main;
 
   static final GoRouter router = GoRouter(
-    initialLocation: Routes.main,
+    initialLocation: AppPages.initial,
     routes: <RouteBase>[
       GoRoute(
         path: Routes.main,
@@ -28,19 +29,15 @@ class AppPages {
             SwipeablePage(
               builder: (BuildContext context) {
                 final width = MediaQuery.of(context).size.width;
-                final double statusBarHeight = MediaQuery.of(
-                  context,
-                ).padding.top;
-                return MainPage.init(context, width, statusBarHeight);
+                return MainPage.init(context, width);
               },
             ),
         routes: [
           GoRoute(
             path: Routes.setMainDlg,
             pageBuilder: (BuildContext context, GoRouterState state) =>
-                CupertinoModalPopupPage(
-                  builder: (BuildContext context) =>
-                      AddListDialog.init(context),
+                ModalBottomSheetPage(
+                  builder: (BuildContext context) => const AddListBottomSheet(),
                 ),
           ),
         ],
@@ -52,10 +49,7 @@ class AppPages {
               builder: (BuildContext context) {
                 final MainItem item =
                     GoRouterState.of(context).extra as MainItem;
-                final double statusBarHeight = MediaQuery.of(
-                  context,
-                ).padding.top;
-                return MoclListPage.init(context, item, statusBarHeight);
+                return MoclListPage.init(context, item);
               },
             ),
       ),
@@ -66,10 +60,7 @@ class AppPages {
               builder: (BuildContext context) {
                 final ListItem item =
                     GoRouterState.of(context).extra as ListItem;
-                final double statusBarHeight = MediaQuery.of(
-                  context,
-                ).padding.top;
-                return DetailPage.init(context, item, statusBarHeight);
+                return DetailPage.init(context, item);
               },
             ),
         routes: [
@@ -81,6 +72,7 @@ class AppPages {
                     final url = GoRouterState.of(context).extra as String;
                     return PhotoViewDialog(
                       imageProvider: NetworkImage(url),
+                      imageUrl: url,
                       filterQuality: FilterQuality.high,
                     );
                   },

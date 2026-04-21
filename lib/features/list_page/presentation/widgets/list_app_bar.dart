@@ -8,8 +8,8 @@ import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mi
 
 import '../state/list_state_mixin.dart';
 
-class ListMaterialAppBar extends ConsumerWidget with ListState, ListEvent {
-  const ListMaterialAppBar({super.key});
+class ListAppBar extends ConsumerWidget with ListState, ListEvent {
+  const ListAppBar({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => AppbarDualTextWidget(

@@ -19,7 +19,7 @@ import 'package:mocl_flutter/features/detail_page/presentation/state/detail_stat
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-const _kHeaderHeight = 46.0;
+const _kHeaderHeight = 48.0;
 
 class DetailView extends ConsumerWidget with DetailState {
   const DetailView({super.key});
@@ -73,37 +73,37 @@ class _DetailView extends ConsumerWidget with DetailEvent, AppFontState {
           ]
         : null;
 
-    return SliverSafeArea(
-      top: false,
-      sliver: SliverPadding(
-        padding: const EdgeInsets.only(left: 16, right: 8),
-        sliver: MultiSliver(
-          children: [
-            SliverPersistentHeader(
-              pinned: false,
-              delegate: _HeaderSectionDelegate(
-                detail: detail,
-                bodySmall: bodySmall,
-                backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-              ),
-            ),
-            const _SpaceWidget(),
-            _Body(
+    return SliverPadding(
+      padding: const EdgeInsets.only(left: 16, right: 8),
+      sliver: MultiSliver(
+        children: [
+          SliverPersistentHeader(
+            pinned: true,
+            delegate: _HeaderSectionDelegate(
               detail: detail,
-              hexColor: hexColor,
-              bodyMedium: bodyMedium,
-              onTapUrl: (url) => url.openUrl(context),
+              bodyMedium: bodyMedium.copyWith(color: bodySmall.color),
+              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             ),
-            const _SpaceWidget(),
-            ...?comments,
-            const _DividerWidget(),
-            _RefreshButton(
-              onRefresh: () => handleRefresh(ref),
-              bodyMedium: bodyMedium,
-            ),
-            const _DividerWidget(),
-          ],
-        ),
+          ),
+          const _SpaceWidget(),
+          _Body(
+            detail: detail,
+            hexColor: hexColor,
+            bodyMedium: bodyMedium,
+            onTapUrl: (url) => url.openUrl(context),
+          ),
+          const _SpaceWidget(),
+          ...?comments,
+          const _DividerWidget(),
+          _RefreshButton(
+            onRefresh: () => handleRefresh(ref),
+            bodyMedium: bodyMedium,
+          ),
+          const _DividerWidget(),
+          SliverPadding(
+            padding: .only(bottom: MediaQuery.of(context).padding.bottom),
+          ),
+        ],
       ),
     );
   }
@@ -127,22 +127,22 @@ class _DividerWidget extends StatelessWidget {
 
 class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
   final Details detail;
-  final TextStyle? bodySmall;
+  final TextStyle? bodyMedium;
   final Color backgroundColor;
 
   const _HeaderSectionDelegate({
     required this.detail,
-    required this.bodySmall,
+    required this.bodyMedium,
     required this.backgroundColor,
   });
 
-  List<Widget>? _buildLikeView(BuildContext context, TextStyle bodySmall) =>
+  List<Widget>? _buildLikeView(BuildContext context, TextStyle bodyMedium) =>
       detail.likeCount.isNotEmpty && detail.likeCount != '0'
       ? [
           const SizedBox(width: 10),
-          Icon(Icons.favorite_outline, color: bodySmall.color, size: 17),
+          Icon(Icons.favorite_outline, color: bodyMedium.color, size: 17),
           const SizedBox(width: 4),
-          Text(detail.likeCount, style: bodySmall),
+          Text(detail.likeCount, style: bodyMedium),
           const SizedBox(width: 10),
         ]
       : null;
@@ -153,14 +153,14 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
-    final likeView = _buildLikeView(context, bodySmall!);
+    final likeView = _buildLikeView(context, bodyMedium!);
     final nickImage = detail.userInfo.nickImage;
 
     return Column(
       children: [
         Container(
           height: _kHeaderHeight,
-          alignment: Alignment.centerLeft,
+          alignment: .centerLeft,
           color: backgroundColor,
           child: Row(
             // mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -170,7 +170,7 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
                   children: [
                     if (nickImage.isNotEmpty)
                       NickImageWidget(url: detail.userInfo.nickImage),
-                    Flexible(child: Text(detail.info, style: bodySmall)),
+                    Flexible(child: Text(detail.info, style: bodyMedium)),
                   ],
                 ),
               ),
@@ -185,7 +185,7 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(covariant _HeaderSectionDelegate oldDelegate) =>
-      oldDelegate.detail != detail || oldDelegate.bodySmall != bodySmall;
+      oldDelegate.detail != detail || oldDelegate.bodyMedium != bodyMedium;
 
   @override
   double get maxExtent => _kHeaderHeight + 1;

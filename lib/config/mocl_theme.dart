@@ -1,62 +1,8 @@
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
 
 class MoclTheme {
-  static CupertinoThemeData lightCupertinoTheme(BuildContext context) =>
-      MaterialBasedCupertinoThemeData(
-        materialTheme: lightTheme(context),
-      ).copyWith(
-        brightness: Brightness.light,
-        primaryColor: const Color(0xFF0E7EA3),
-        textTheme: const CupertinoTextThemeData(
-          navActionTextStyle: TextStyle(
-            inherit: false,
-            fontFamily: 'CupertinoSystemText',
-            fontSize: 16.0,
-            letterSpacing: -0.41,
-            color: Color(0xFF0E7EA3),
-            decoration: TextDecoration.none,
-          ),
-          navLargeTitleTextStyle: TextStyle(
-            inherit: false,
-            fontFamily: 'CupertinoSystemDisplay',
-            fontSize: 34.0,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.38,
-            color: Colors.black,
-          ),
-        ),
-      );
-
-  static CupertinoThemeData dartCupertinoTheme(BuildContext context) =>
-      MaterialBasedCupertinoThemeData(
-        materialTheme: darkTheme(context),
-      ).copyWith(
-        brightness: Brightness.dark,
-        applyThemeToAll: true,
-        primaryColor: const Color(0xFFFF4081),
-        textTheme: const CupertinoTextThemeData(
-          navActionTextStyle: TextStyle(
-            inherit: false,
-            fontFamily: 'CupertinoSystemText',
-            fontSize: 16.0,
-            letterSpacing: -0.41,
-            color: Color(0xFFFF4081),
-            decoration: TextDecoration.none,
-          ),
-          navLargeTitleTextStyle: TextStyle(
-            inherit: false,
-            fontFamily: 'CupertinoSystemDisplay',
-            fontSize: 34.0,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.38,
-            color: Colors.white,
-          ),
-        ),
-      );
-
   static ThemeData lightTheme(BuildContext context) =>
       ThemeData.light().copyWith(
         extensions: [AppTextStyles.light(context)],

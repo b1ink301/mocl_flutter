@@ -220,16 +220,16 @@ class PageStateNotifier extends _$PageStateNotifier {
     ref.invalidateSelf();
   }
 
-  void markAsRead(int index) {
+  void markAsReadById(int id) {
     final currentStateValue = state.value;
-    if (currentStateValue == null ||
-        index < 0 ||
-        index >= currentStateValue.items.length) {
-      return;
-    }
+    if (currentStateValue == null) return;
+
+    final idx = currentStateValue.items.indexWhere((e) => e.id == id);
+    if (idx < 0) return;
+    if (currentStateValue.items[idx].isRead) return;
 
     final List<ListItem> updatedItems = [...currentStateValue.items];
-    updatedItems[index] = currentStateValue.items[index].copyWith(isRead: true);
+    updatedItems[idx] = currentStateValue.items[idx].copyWith(isRead: true);
 
     state = AsyncData(currentStateValue.copyWith(items: updatedItems));
   }

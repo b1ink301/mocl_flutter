@@ -15,40 +15,29 @@ import 'state/detail_state_mixin.dart';
 class DetailPage extends ConsumerWidget with DetailState, DetailEvent {
   const DetailPage({super.key});
 
-  static Widget init(
-    BuildContext context,
-    ListItem item,
-    double statusBarHeight,
-  ) => ProviderScope(
+  static Widget init(BuildContext context, ListItem item) => ProviderScope(
     overrides: DetailEvent.overridesProviderScope(context, item),
     child: AnnotatedRegion<SystemUiOverlayStyle>(
       value: Theme.of(context).appBarTheme.systemOverlayStyle!,
-      child: Stack(
-        children: [
-          const Positioned.fill(child: DetailPage()),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              height: statusBarHeight,
-              color: const Color(0x22000000),
-            ),
-          ),
-        ],
-      ),
+      child: const DetailPage(),
     ),
   );
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final child = Scaffold(
-      body: RefreshIndicator.adaptive(
-        color: Theme.of(context).focusColor,
-        onRefresh: () async => handleRefresh(ref),
-        child: const CustomScrollView(
-          cacheExtent: 1600,
-          slivers: [DetailAppBar(), DetailView()],
+    final child = Container(
+      color: Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor,
+      child: SafeArea(
+        bottom: false,
+        child: Scaffold(
+          body: RefreshIndicator.adaptive(
+            color: Theme.of(context).focusColor,
+            onRefresh: () async => handleRefresh(ref),
+            child: const CustomScrollView(
+              cacheExtent: 1600,
+              slivers: [DetailAppBar(), DetailView()],
+            ),
+          ),
         ),
       ),
     );
