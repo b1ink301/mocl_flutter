@@ -7,11 +7,10 @@ import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/util/utilities.dart';
-import 'package:wolt_modal_sheet/wolt_modal_sheet.dart';
 
-import '../../../add_main_dialog/presentation/add_list_modal_sheet_page.dart';
 import '../../application/main_providers.dart';
 
 mixin class MainEvent {
@@ -39,15 +38,8 @@ mixin class MainEvent {
       ref.read(mainItemsProvider.notifier).refresh();
 
   Future<void> handleAddButton(WidgetRef ref, BuildContext context) async {
-    List<MainItem>? result = await WoltModalSheet.show(
-      context: context,
-      modalTypeBuilder: (context) => WoltModalType.bottomSheet(),
-      pageListBuilder: (bottomSheetContext) => [
-        AddListModalSheetPage(
-          context: bottomSheetContext,
-          color: Theme.of(context).scaffoldBackgroundColor,
-        ),
-      ],
+    List<MainItem>? result = await context.push<List<MainItem>>(
+      Routes.setMainDlgFull,
     );
     if (!context.mounted || result == null) {
       return;
@@ -68,9 +60,9 @@ mixin class MainEvent {
       ref.read(mainSidebarProvider.notifier).toggle();
 
   void sidebarClose(WidgetRef ref) =>
-      ref.read(mainSidebarProvider.notifier).close;
+      ref.read(mainSidebarProvider.notifier).close();
 
-  void changeSiteType(WidgetRef ref, siteType) =>
+  void changeSiteType(WidgetRef ref, SiteType siteType) =>
       ref.read(currentSiteTypeProvider.notifier).changeSiteType(siteType);
 
   static List<Override> overridesProviderScope(

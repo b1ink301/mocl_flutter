@@ -37,21 +37,18 @@ mixin class ListEvent {
     ref.read(pageStateProvider.notifier).refresh();
   }
 
+  void bindReadListener(WidgetRef ref) {
+    ref.listen<int>(readableStateProvider, (prev, next) {
+      if (next <= 0 || prev == next) return;
+      ref.read(pageStateProvider.notifier).markAsReadById(next);
+    });
+  }
+
   void handleItemTap(WidgetRef ref, BuildContext context) {
     final item = ref.read(listItemProvider);
-    if (item == null) {
-      return;
-    }
+    if (item == null) return;
     try {
-      final index = ref.read(listItemIndexProvider);
-      GoRouter.of(context).push(Routes.detail, extra: item).then((_) {
-        if (context.mounted) {
-          final readId = ref.read(readableStateProvider);
-          if (readId == item.id && !item.isRead) {
-            ref.read(pageStateProvider.notifier).markAsRead(index);
-          }
-        }
-      });
+      GoRouter.of(context).push(Routes.detail, extra: item);
     } catch (e) {
       MoclLogger.log('_handleItemTap = $e');
     }
@@ -68,13 +65,7 @@ mixin class ListEvent {
     screenWidthProvider.overrideWithValue(MediaQuery.of(context).size.width),
     appTextStylesProvider.overrideWithValue(AppTextStyles.of(context)),
     appbarTextStyleProvider.overrideWithValue(
-      !kIsWeb && Platform.isIOS
-          ? CupertinoTheme.of(
-              context,
-            ).textTheme.navLargeTitleTextStyle.copyWith(height: 1.3)
-          : AppTextStyles.of(
-              context,
-            ).titleTextStyle.copyWith(color: Colors.white),
+      AppTextStyles.of(context).titleTextStyle.copyWith(color: Colors.white),
     ),
     mainItemProvider.overrideWithValue(item),
   ];

@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../application/add_list_dlg_providers.dart';
 
-mixin AddEvent {
+mixin class AddEvent {
   void onChanged(WidgetRef ref, bool isChecked, int index) =>
       ref.read(addListDlgProvider.notifier).onChanged(isChecked, index);
 

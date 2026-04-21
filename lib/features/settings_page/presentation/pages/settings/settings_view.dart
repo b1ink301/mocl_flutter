@@ -1,58 +1,51 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/core/presentation/widgets/divider_widget.dart';
-import 'package:mocl_flutter/features/google_drive/presentation/providers/google_drive_providers.dart';
-import 'package:mocl_flutter/features/settings_page/application/datasource_provider.dart';
-import 'package:mocl_flutter/features/settings_page/application/settings_providers.dart';
 
-class SettingsView extends ConsumerWidget {
+import '../../state/settings_event_mixin.dart';
+import '../../state/settings_state_mixin.dart';
+
+class SettingsView extends ConsumerWidget with SettingsState, SettingsEvent {
   const SettingsView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    ref.listen<SyncStatus>(googleDriveSyncProvider, (previous, next) {
-      // You can listen to the state and show dialogs or other widgets here if needed
-    });
+    listenSyncStatus(ref);
 
-    final syncStatus = ref.watch(googleDriveSyncProvider);
-    final isSyncing = syncStatus == SyncStatus.syncing;
+    final isSyncing = isSyncingState(ref);
 
     return SliverToBoxAdapter(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          ref
-              .read(getAppVersionProvider)
-              .maybeWhen(
-                orElse: () => _buildLoadingView(context),
-                data: (version) => SizedBox(
-                  height: 58,
-                  child: Center(
-                    child: Text(
-                      '버전 $version',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ),
+          appVersionState(ref).maybeWhen(
+            orElse: () => _buildLoadingView(context),
+            data: (version) => SizedBox(
+              height: 58,
+              child: Center(
+                child: Text(
+                  '버전 $version',
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ),
+            ),
+          ),
           const DividerWidget(),
-          ref
-              .watch(sizeCacheDirProvider)
-              .maybeWhen(
-                orElse: () => _buildLoadingView(context),
-                data: (data) => InkWell(
-                  onTap: () => ref.read(sizeCacheDirProvider.notifier).clear(),
-                  child: SizedBox(
-                    height: 58,
-                    child: Center(
-                      child: Text(
-                        '캐시 데이터 삭제 ($data)',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
-                    ),
+          cacheSizeState(ref).maybeWhen(
+            orElse: () => _buildLoadingView(context),
+            data: (data) => InkWell(
+              onTap: () => handleClearCache(ref),
+              child: SizedBox(
+                height: 58,
+                child: Center(
+                  child: Text(
+                    '캐시 데이터 삭제 ($data)',
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ),
               ),
+            ),
+          ),
           const DividerWidget(),
           SizedBox(
             height: 58,
@@ -61,11 +54,9 @@ class SettingsView extends ConsumerWidget {
               children: [
                 Text('닉 이미지 보기', style: Theme.of(context).textTheme.bodyMedium),
                 Checkbox(
-                  value: ref.watch(showNickImageProvider),
+                  value: showNickImageState(ref),
                   activeColor: Theme.of(context).focusColor,
-                  onChanged: (bool? value) => {
-                    ref.read(showNickImageProvider.notifier).toggle(),
-                  },
+                  onChanged: (bool? value) => {handleToggleNickImage(ref)},
                 ),
               ],
             ),
@@ -91,10 +82,7 @@ class SettingsView extends ConsumerWidget {
             Column(
               children: [
                 InkWell(
-                  onTap: isSyncing
-                      ? null
-                      : () =>
-                            ref.read(googleDriveSyncProvider.notifier).backup(),
+                  onTap: isSyncing ? null : () => handleBackup(ref),
                   child: SizedBox(
                     height: 58,
                     child: Center(
@@ -107,11 +95,7 @@ class SettingsView extends ConsumerWidget {
                 ),
                 const DividerWidget(),
                 InkWell(
-                  onTap: isSyncing
-                      ? null
-                      : () => ref
-                            .read(googleDriveSyncProvider.notifier)
-                            .restore(),
+                  onTap: isSyncing ? null : () => handleRestore(ref),
                   child: SizedBox(
                     height: 58,
                     child: Center(

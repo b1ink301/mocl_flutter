@@ -96,6 +96,7 @@ class _MainAppBar extends ConsumerWidget with MainState, MainEvent {
       ),
       titleSpacing: 0,
       floating: true,
+      snap: true,
       toolbarHeight: 62,
       actions: [
         if (showAddButtonState(ref))

@@ -13,25 +13,11 @@ class MainPage extends ConsumerWidget with MainState, MainEvent {
   static Widget init(
     BuildContext context,
     double width,
-    double statusBarHeight,
   ) => ProviderScope(
     overrides: MainEvent.overridesProviderScope(context, width),
     child: AnnotatedRegion<SystemUiOverlayStyle>(
-      value: Theme.of(context).appBarTheme.systemOverlayStyle!,
-      child: Stack(
-        children: [
-          const Positioned.fill(child: MainPage()),
-          Positioned(
-            top: 0,
-            left: 0,
-            right: 0,
-            child: Container(
-              height: statusBarHeight,
-              color: const Color(0x22000000),
-            ),
-          ),
-        ],
-      ),
+      value: Theme.of(context).appBarTheme.systemOverlayStyle ?? SystemUiOverlayStyle.light,
+      child: const MainPage(),
     ),
   );
 
@@ -39,13 +25,18 @@ class MainPage extends ConsumerWidget with MainState, MainEvent {
   Widget build(BuildContext context, WidgetRef ref) => PopScope(
     canPop: true,
     onPopInvokedWithResult: (bool didPop, _) => handlePop(ref, didPop),
-    child: Scaffold(
-      key: scaffoldState(ref),
-      drawer: const DrawerWidget(),
-      drawerEdgeDragWidth: screenWidth(ref),
-      drawerEnableOpenDragGesture: true,
-      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-      body: const MainView(),
+    child: Container(
+      color: Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor,
+      child: SafeArea(
+        bottom: false,
+        child: Scaffold(
+          key: scaffoldState(ref),
+          drawer: const DrawerWidget(),
+          drawerEdgeDragWidth: screenWidth(ref),
+          drawerEnableOpenDragGesture: true,
+          body: const MainView(),
+        ),
+      ),
     ),
   );
 }

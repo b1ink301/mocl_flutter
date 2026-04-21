@@ -44,7 +44,7 @@ class CurrentSiteTypeNotifier extends _$CurrentSiteTypeNotifier {
   }
 }
 
-@Riverpod(keepAlive: true)
+@riverpod
 class ReadableStateNotifier extends _$ReadableStateNotifier {
   @override
   int build() => -1;

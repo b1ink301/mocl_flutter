@@ -73,7 +73,7 @@ final class ReadableStateNotifierProvider
         argument: null,
         retry: null,
         name: r'readableStateProvider',
-        isAutoDispose: false,
+        isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -95,7 +95,7 @@ final class ReadableStateNotifierProvider
 }
 
 String _$readableStateNotifierHash() =>
-    r'b6d400867e7860fcfc2758c47d287b0bd013485e';
+    r'65f77bdab3ef6f14fbbf91035f236ddb67fa0293';
 
 abstract class _$ReadableStateNotifier extends $Notifier<int> {
   int build();
