@@ -1,12 +1,7 @@
-import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
@@ -63,10 +58,6 @@ mixin class ListEvent {
     MainItem item,
   ) => [
     screenWidthProvider.overrideWithValue(MediaQuery.of(context).size.width),
-    appTextStylesProvider.overrideWithValue(AppTextStyles.of(context)),
-    appbarTextStyleProvider.overrideWithValue(
-      AppTextStyles.of(context).titleTextStyle.copyWith(color: Colors.white),
-    ),
     mainItemProvider.overrideWithValue(item),
   ];
 }

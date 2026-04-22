@@ -29,7 +29,7 @@ class _BodyList extends ConsumerWidget with MainState {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final textStyle = titleTextStyleSate(ref);
+    final textStyle = titleTextStyleState(ref);
     return items.isEmpty
         ? _buildEmptyView(textStyle)
         : SliverList.separated(
@@ -85,15 +85,11 @@ class _MainAppBar extends ConsumerWidget with MainState, MainEvent {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final delta = ref.watch(fontSizeDeltaProvider);
-    final baseStyle = AppTextStyles.of(context).titleTextStyle;
+    final titleStyle = ref.watch(appbarTextStyleProvider);
     return SliverAppBar(
       scrolledUnderElevation: 0,
       title: Text(titleState(ref)),
-      titleTextStyle: baseStyle.copyWith(
-        color: Colors.white,
-        fontSize: baseStyle.fontSize! + delta,
-      ),
+      titleTextStyle: titleStyle,
       titleSpacing: 0,
       floating: true,
       snap: true,

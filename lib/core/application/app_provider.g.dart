@@ -115,47 +115,6 @@ abstract class _$ReadableStateNotifier extends $Notifier<int> {
   }
 }
 
-@ProviderFor(appbarTextStyle)
-final appbarTextStyleProvider = AppbarTextStyleProvider._();
-
-final class AppbarTextStyleProvider
-    extends $FunctionalProvider<TextStyle, TextStyle, TextStyle>
-    with $Provider<TextStyle> {
-  AppbarTextStyleProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'appbarTextStyleProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$appbarTextStyleHash();
-
-  @$internal
-  @override
-  $ProviderElement<TextStyle> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  TextStyle create(Ref ref) {
-    return appbarTextStyle(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(TextStyle value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<TextStyle>(value),
-    );
-  }
-}
-
-String _$appbarTextStyleHash() => r'831bec677d811438105caedd0b3152db2db72e02';
-
 @ProviderFor(screenWidth)
 final screenWidthProvider = ScreenWidthProvider._();
 
@@ -197,62 +156,76 @@ final class ScreenWidthProvider
 
 String _$screenWidthHash() => r'f9429b6bf80fa9cf2ffb37cba2678dbfcafd523e';
 
-@ProviderFor(appTextStyles)
-final appTextStylesProvider = AppTextStylesProvider._();
+/// 시스템 밝기. 루트에서 `AppWidget`이 Theme 변경에 맞춰 갱신한다.
 
-final class AppTextStylesProvider
-    extends $FunctionalProvider<AppTextStyles, AppTextStyles, AppTextStyles>
-    with $Provider<AppTextStyles> {
-  AppTextStylesProvider._()
+@ProviderFor(CurrentBrightness)
+final currentBrightnessProvider = CurrentBrightnessProvider._();
+
+/// 시스템 밝기. 루트에서 `AppWidget`이 Theme 변경에 맞춰 갱신한다.
+final class CurrentBrightnessProvider
+    extends $NotifierProvider<CurrentBrightness, Brightness> {
+  /// 시스템 밝기. 루트에서 `AppWidget`이 Theme 변경에 맞춰 갱신한다.
+  CurrentBrightnessProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'appTextStylesProvider',
+        name: r'currentBrightnessProvider',
         isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$appTextStylesHash();
+  String debugGetCreateSourceHash() => _$currentBrightnessHash();
 
   @$internal
   @override
-  $ProviderElement<AppTextStyles> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  AppTextStyles create(Ref ref) {
-    return appTextStyles(ref);
-  }
+  CurrentBrightness create() => CurrentBrightness();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(AppTextStyles value) {
+  Override overrideWithValue(Brightness value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<AppTextStyles>(value),
+      providerOverride: $SyncValueProvider<Brightness>(value),
     );
   }
 }
 
-String _$appTextStylesHash() => r'32605ed7bb94d2f39defcd0599f4fc86c90cb0a1';
+String _$currentBrightnessHash() => r'6894fb32c0edaa0ac93da2ee1774aa6dca5971be';
 
-/// Global font size delta provider.
-/// NOT dependent on scoped providers, so changes propagate across ALL
-/// ProviderScopes (detail, list, main pages all share this instance).
+/// 시스템 밝기. 루트에서 `AppWidget`이 Theme 변경에 맞춰 갱신한다.
+
+abstract class _$CurrentBrightness extends $Notifier<Brightness> {
+  Brightness build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<Brightness, Brightness>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<Brightness, Brightness>,
+              Brightness,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+/// 영속화된 폰트 크기 델타(step 단위).
+/// ProviderScope와 무관하게 앱 전역에서 공유된다.
 
 @ProviderFor(FontSizeDelta)
 final fontSizeDeltaProvider = FontSizeDeltaProvider._();
 
-/// Global font size delta provider.
-/// NOT dependent on scoped providers, so changes propagate across ALL
-/// ProviderScopes (detail, list, main pages all share this instance).
+/// 영속화된 폰트 크기 델타(step 단위).
+/// ProviderScope와 무관하게 앱 전역에서 공유된다.
 final class FontSizeDeltaProvider
     extends $NotifierProvider<FontSizeDelta, double> {
-  /// Global font size delta provider.
-  /// NOT dependent on scoped providers, so changes propagate across ALL
-  /// ProviderScopes (detail, list, main pages all share this instance).
+  /// 영속화된 폰트 크기 델타(step 단위).
+  /// ProviderScope와 무관하게 앱 전역에서 공유된다.
   FontSizeDeltaProvider._()
     : super(
         from: null,
@@ -280,11 +253,10 @@ final class FontSizeDeltaProvider
   }
 }
 
-String _$fontSizeDeltaHash() => r'2bf04fb22b96fab95b49b76535d47ee1b2917763';
+String _$fontSizeDeltaHash() => r'5445c4f4fd981df26caf8a72a8d45b617d8c01ef';
 
-/// Global font size delta provider.
-/// NOT dependent on scoped providers, so changes propagate across ALL
-/// ProviderScopes (detail, list, main pages all share this instance).
+/// 영속화된 폰트 크기 델타(step 단위).
+/// ProviderScope와 무관하게 앱 전역에서 공유된다.
 
 abstract class _$FontSizeDelta extends $Notifier<double> {
   double build();
@@ -304,12 +276,18 @@ abstract class _$FontSizeDelta extends $Notifier<double> {
   }
 }
 
+/// 폰트 스케일이 적용된 앱 텍스트 스타일.
+/// 밝기/델타 변화에 따라 자동 재계산된다.
+
 @ProviderFor(AppTextStylesFontSizeNotifier)
 final appTextStylesFontSizeProvider = AppTextStylesFontSizeNotifierProvider._();
 
+/// 폰트 스케일이 적용된 앱 텍스트 스타일.
+/// 밝기/델타 변화에 따라 자동 재계산된다.
 final class AppTextStylesFontSizeNotifierProvider
-    extends
-        $NotifierProvider<AppTextStylesFontSizeNotifier, CurrentTextStyles> {
+    extends $NotifierProvider<AppTextStylesFontSizeNotifier, AppTextStyles> {
+  /// 폰트 스케일이 적용된 앱 텍스트 스타일.
+  /// 밝기/델타 변화에 따라 자동 재계산된다.
   AppTextStylesFontSizeNotifierProvider._()
     : super(
         from: null,
@@ -318,7 +296,7 @@ final class AppTextStylesFontSizeNotifierProvider
         name: r'appTextStylesFontSizeProvider',
         isAutoDispose: false,
         dependencies: <ProviderOrFamily>[
-          appTextStylesProvider,
+          currentBrightnessProvider,
           fontSizeDeltaProvider,
         ],
         $allTransitiveDependencies: <ProviderOrFamily>[
@@ -327,7 +305,7 @@ final class AppTextStylesFontSizeNotifierProvider
         ],
       );
 
-  static final $allTransitiveDependencies0 = appTextStylesProvider;
+  static final $allTransitiveDependencies0 = currentBrightnessProvider;
   static final $allTransitiveDependencies1 = fontSizeDeltaProvider;
 
   @override
@@ -338,32 +316,91 @@ final class AppTextStylesFontSizeNotifierProvider
   AppTextStylesFontSizeNotifier create() => AppTextStylesFontSizeNotifier();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(CurrentTextStyles value) {
+  Override overrideWithValue(AppTextStyles value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<CurrentTextStyles>(value),
+      providerOverride: $SyncValueProvider<AppTextStyles>(value),
     );
   }
 }
 
 String _$appTextStylesFontSizeNotifierHash() =>
-    r'95299ba345948a04e09cb94d84dbd456ee189538';
+    r'ce62c6fbecd729646f09eee72822150dc9f20c20';
+
+/// 폰트 스케일이 적용된 앱 텍스트 스타일.
+/// 밝기/델타 변화에 따라 자동 재계산된다.
 
 abstract class _$AppTextStylesFontSizeNotifier
-    extends $Notifier<CurrentTextStyles> {
-  CurrentTextStyles build();
+    extends $Notifier<AppTextStyles> {
+  AppTextStyles build();
   @$mustCallSuper
   @override
   void runBuild() {
-    final ref = this.ref as $Ref<CurrentTextStyles, CurrentTextStyles>;
+    final ref = this.ref as $Ref<AppTextStyles, AppTextStyles>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<CurrentTextStyles, CurrentTextStyles>,
-              CurrentTextStyles,
+              AnyNotifier<AppTextStyles, AppTextStyles>,
+              AppTextStyles,
               Object?,
               Object?
             >;
     element.handleCreate(ref, build);
   }
 }
+
+/// 앱바 타이틀용 흰색 스타일(폰트 크기 반영).
+
+@ProviderFor(appbarTextStyle)
+final appbarTextStyleProvider = AppbarTextStyleProvider._();
+
+/// 앱바 타이틀용 흰색 스타일(폰트 크기 반영).
+
+final class AppbarTextStyleProvider
+    extends $FunctionalProvider<TextStyle, TextStyle, TextStyle>
+    with $Provider<TextStyle> {
+  /// 앱바 타이틀용 흰색 스타일(폰트 크기 반영).
+  AppbarTextStyleProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'appbarTextStyleProvider',
+        isAutoDispose: false,
+        dependencies: <ProviderOrFamily>[appTextStylesFontSizeProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          AppbarTextStyleProvider.$allTransitiveDependencies0,
+          AppbarTextStyleProvider.$allTransitiveDependencies1,
+          AppbarTextStyleProvider.$allTransitiveDependencies2,
+        ],
+      );
+
+  static final $allTransitiveDependencies0 = appTextStylesFontSizeProvider;
+  static final $allTransitiveDependencies1 =
+      AppTextStylesFontSizeNotifierProvider.$allTransitiveDependencies0;
+  static final $allTransitiveDependencies2 =
+      AppTextStylesFontSizeNotifierProvider.$allTransitiveDependencies1;
+
+  @override
+  String debugGetCreateSourceHash() => _$appbarTextStyleHash();
+
+  @$internal
+  @override
+  $ProviderElement<TextStyle> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  TextStyle create(Ref ref) {
+    return appbarTextStyle(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(TextStyle value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<TextStyle>(value),
+    );
+  }
+}
+
+String _$appbarTextStyleHash() => r'eefda67e76c6c62d6eed748d6b6cda4f22d6916c';

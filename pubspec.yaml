@@ -91,11 +91,11 @@ dependencies:
   #  flutter_isolate: ^2.0.4
 
   # share
-  share_plus: ^13.0.0
+  share_plus: ^13.1.0
   #  share_plus_platform_interface: ^5.0.2
 
   # package info
-  package_info_plus: ^10.0.0
+  package_info_plus: ^10.1.0
 
   # time format
   timeago: ^3.7.1

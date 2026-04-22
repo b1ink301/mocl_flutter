@@ -126,23 +126,14 @@ class _DetailHeightCache {
   }
 }
 
-@Riverpod(dependencies: [appbarTextStyle, screenWidth, FontSizeDelta])
+@Riverpod(dependencies: [appbarTextStyle, screenWidth])
 double detailAppbarHeight(Ref ref, String text) {
-  final TextStyle baseStyle = ref.watch(appbarTextStyleProvider);
-  final double fontSizeDelta = ref.watch(fontSizeDeltaProvider);
+  final TextStyle style = ref.watch(appbarTextStyleProvider);
   final double screenWidth = ref.watch(screenWidthProvider);
-
-  final TextStyle style = fontSizeDelta != 0
-      ? baseStyle.copyWith(
-          fontSize: (baseStyle.fontSize ?? 14) + fontSizeDelta,
-        )
-      : baseStyle;
 
   final double availableWidth =
       screenWidth -
-      (!Platform.isIOS
-          ? _kMoreIconSize + _kHorizontalPadding * 2
-          : 32);
+      (!Platform.isIOS ? _kMoreIconSize + _kHorizontalPadding * 2 : 32);
 
   return _detailHeightCache.getOrCalculate(text, style, availableWidth);
 }

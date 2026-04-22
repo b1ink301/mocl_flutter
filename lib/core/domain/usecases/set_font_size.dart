@@ -2,16 +2,18 @@ import 'package:dartx/dartx.dart';
 import 'package:mocl_flutter/core/domain/repositories/settings_repository.dart';
 import 'package:mocl_flutter/core/usecases/usecase.dart';
 
-class SetFontSize implements UseCase<void, double> {
+class SetFontSize implements UseCase<double, double> {
   final SettingsRepository settingsRepository;
 
   const SetFontSize({required this.settingsRepository});
 
   @override
-  void call(double params) {
-    double currentFontSize = settingsRepository.getFontSize();
-    currentFontSize += params;
-    currentFontSize = currentFontSize.coerceIn(-5.0, 10.0);
-    settingsRepository.setFontSize(currentFontSize);
+  double call(double params) {
+    final double current = settingsRepository.getFontSize();
+    final double next = (current + params).coerceIn(-5.0, 10.0);
+    if (next != current) {
+      settingsRepository.setFontSize(next);
+    }
+    return next;
   }
 }
