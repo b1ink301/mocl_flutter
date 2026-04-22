@@ -76,7 +76,7 @@ class _DrawerSiteItem extends ConsumerWidget with MainState {
     children: [
       ListTile(
         title: Text(siteType.title),
-        titleTextStyle: titleTextStyleSate(ref),
+        titleTextStyle: titleTextStyleState(ref),
         onTap: onTap,
         trailing: isSiteType(ref, siteType)
             ? Icon(Icons.check_outlined, color: Theme.of(context).focusColor)

@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/widget_previews.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mocl_flutter/config/mocl_text_styles.dart';
+import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/presentation/widgets/check_box_list_title_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
@@ -58,21 +58,26 @@ class AddListDialog extends ConsumerWidget with AddState, AddEvent {
 
   Widget _buildListView(BuildContext context, List<CheckableMainItem> items) =>
       Consumer(
-        builder: (_, ref, _) => ListView.separated(
-          padding: EdgeInsets.zero,
-          itemCount: items.length,
-          separatorBuilder: (_, _) =>
-              const DividerWidget(indent: 0, endIndent: 0),
-          itemBuilder: (context, index) {
-            final item = items[index];
-            return CheckBoxListTitleWidget(
-              text: item.mainItem.text,
-              isChecked: item.isChecked,
-              textStyle: AppTextStyles.of(context).titleTextStyle,
-              onChanged: (isChecked) => onChanged(ref, isChecked, index),
-            );
-          },
-        ),
+        builder: (_, ref, _) {
+          final titleStyle = ref.watch(
+            appTextStylesFontSizeProvider.select((s) => s.titleTextStyle),
+          );
+          return ListView.separated(
+            padding: EdgeInsets.zero,
+            itemCount: items.length,
+            separatorBuilder: (_, _) =>
+                const DividerWidget(indent: 0, endIndent: 0),
+            itemBuilder: (context, index) {
+              final item = items[index];
+              return CheckBoxListTitleWidget(
+                text: item.mainItem.text,
+                isChecked: item.isChecked,
+                textStyle: titleStyle,
+                onChanged: (isChecked) => onChanged(ref, isChecked, index),
+              );
+            },
+          );
+        },
       );
 
   List<Widget> _buildActions(BuildContext context) => [

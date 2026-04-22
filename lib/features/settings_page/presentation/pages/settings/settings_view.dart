@@ -13,21 +13,17 @@ class SettingsView extends ConsumerWidget with SettingsState, SettingsEvent {
     listenSyncStatus(ref);
 
     final isSyncing = isSyncingState(ref);
+    final bodyMedium = Theme.of(context).textTheme.bodyMedium;
 
     return SliverToBoxAdapter(
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
+        crossAxisAlignment: .center,
         children: [
           appVersionState(ref).maybeWhen(
             orElse: () => _buildLoadingView(context),
             data: (version) => SizedBox(
               height: 58,
-              child: Center(
-                child: Text(
-                  '버전 $version',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ),
+              child: Center(child: Text('버전 $version', style: bodyMedium)),
             ),
           ),
           const DividerWidget(),
@@ -38,10 +34,7 @@ class SettingsView extends ConsumerWidget with SettingsState, SettingsEvent {
               child: SizedBox(
                 height: 58,
                 child: Center(
-                  child: Text(
-                    '캐시 데이터 삭제 ($data)',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
+                  child: Text('캐시 데이터 삭제 ($data)', style: bodyMedium),
                 ),
               ),
             ),
@@ -52,11 +45,11 @@ class SettingsView extends ConsumerWidget with SettingsState, SettingsEvent {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text('닉 이미지 보기', style: Theme.of(context).textTheme.bodyMedium),
+                Text('닉 이미지 보기', style: bodyMedium),
                 Checkbox(
                   value: showNickImageState(ref),
                   activeColor: Theme.of(context).focusColor,
-                  onChanged: (bool? value) => {handleToggleNickImage(ref)},
+                  onChanged: (bool? value) => handleToggleNickImage(ref),
                 ),
               ],
             ),
@@ -71,10 +64,7 @@ class SettingsView extends ConsumerWidget with SettingsState, SettingsEvent {
                     color: Theme.of(context).focusColor,
                   ),
                   const SizedBox(height: 8),
-                  Text(
-                    'Google Drive와 동기화 중...',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
+                  Text('Google Drive와 동기화 중...', style: bodyMedium),
                 ],
               ),
             )
@@ -86,10 +76,7 @@ class SettingsView extends ConsumerWidget with SettingsState, SettingsEvent {
                   child: SizedBox(
                     height: 58,
                     child: Center(
-                      child: Text(
-                        'Google Drive로 백업',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
+                      child: Text('Google Drive로 백업', style: bodyMedium),
                     ),
                   ),
                 ),
@@ -99,23 +86,23 @@ class SettingsView extends ConsumerWidget with SettingsState, SettingsEvent {
                   child: SizedBox(
                     height: 58,
                     child: Center(
-                      child: Text(
-                        'Google Drive에서 복원',
-                        style: Theme.of(context).textTheme.bodyMedium,
-                      ),
+                      child: Text('Google Drive에서 복원', style: bodyMedium),
                     ),
                   ),
                 ),
               ],
             ),
           const DividerWidget(),
+          Padding(
+            padding: .only(bottom: MediaQuery.of(context).padding.bottom),
+          ),
         ],
       ),
     );
   }
 
   Widget _buildLoadingView(BuildContext context) => Padding(
-    padding: const EdgeInsets.symmetric(horizontal: 0, vertical: 10),
+    padding: const .symmetric(horizontal: 0, vertical: 10),
     child: Center(
       child: CircularProgressIndicator(color: Theme.of(context).focusColor),
     ),

@@ -4,28 +4,11 @@ import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/usecases/get_site_type.dart';
 import 'package:mocl_flutter/core/domain/usecases/set_site_type.dart';
-import 'package:mocl_flutter/core/presentation/models/current_text_styles.dart';
 import 'package:mocl_flutter/core/usecases/usecase.dart';
 import 'package:mocl_flutter/features/settings_page/application/use_case_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'app_provider.g.dart';
-
-mixin AppFontState {
-  CurrentTextStyles fontSizeSate(WidgetRef ref) =>
-      ref.watch(appTextStylesFontSizeProvider);
-
-  TextStyle titleTextStyleSate(WidgetRef ref) => ref.watch(
-    appTextStylesFontSizeProvider.select((state) => state.titleTextStyle),
-  );
-
-  (TextStyle, TextStyle) smallTitleAndTitleTextStyleSate(WidgetRef ref) =>
-      ref.watch(
-        appTextStylesFontSizeProvider.select(
-          (style) => (style.smallTextStyle, style.titleTextStyle),
-        ),
-      );
-}
 
 @Riverpod(keepAlive: true)
 class CurrentSiteTypeNotifier extends _$CurrentSiteTypeNotifier {
@@ -58,83 +41,69 @@ class ReadableStateNotifier extends _$ReadableStateNotifier {
   void clear() => state = -1;
 }
 
-@riverpod
-TextStyle appbarTextStyle(Ref ref) =>
-    throw UnimplementedError('appbarTextStyle');
-
 @Riverpod(keepAlive: true)
 double screenWidth(Ref ref) => throw UnimplementedError('screenWidth');
 
+/// 시스템 밝기. 루트에서 `AppWidget`이 Theme 변경에 맞춰 갱신한다.
 @Riverpod(keepAlive: true)
-AppTextStyles appTextStyles(Ref ref) =>
-    throw UnimplementedError('appTextStyles');
+class CurrentBrightness extends _$CurrentBrightness {
+  @override
+  Brightness build() =>
+      WidgetsBinding.instance.platformDispatcher.platformBrightness;
 
-/// Global font size delta provider.
-/// NOT dependent on scoped providers, so changes propagate across ALL
-/// ProviderScopes (detail, list, main pages all share this instance).
+  void update(Brightness brightness) {
+    if (state != brightness) state = brightness;
+  }
+}
+
+/// 영속화된 폰트 크기 델타(step 단위).
+/// ProviderScope와 무관하게 앱 전역에서 공유된다.
 @Riverpod(keepAlive: true)
 class FontSizeDelta extends _$FontSizeDelta {
   @override
   double build() => ref.read(getFontSizeProvider)(NoParams());
 
-  void update(double delta) {
-    ref.read(setFontSizeProvider)(delta);
-    state = ref.read(getFontSizeProvider)(NoParams());
+  void update(double step) {
+    final double next = ref.read(setFontSizeProvider)(step);
+    if (next != state) state = next;
   }
 
   void reset() {
     ref.read(initFontSizeProvider)(NoParams());
-    state = 0;
+    if (state != 0) state = 0;
   }
 }
 
-@Riverpod(keepAlive: true, dependencies: [appTextStyles, FontSizeDelta])
+/// 폰트 스케일이 적용된 앱 텍스트 스타일.
+/// 밝기/델타 변화에 따라 자동 재계산된다.
+@Riverpod(keepAlive: true, dependencies: [CurrentBrightness, FontSizeDelta])
 class AppTextStylesFontSizeNotifier extends _$AppTextStylesFontSizeNotifier {
+  /// 한 스텝 = 5%. `exposure_±1` 아이콘 체감과 맞춘 값.
+  static const double _kStep = 0.05;
+
   @override
-  CurrentTextStyles build() {
-    final textStyles = ref.watch(appTextStylesProvider);
-    final fontSize = ref.watch(fontSizeDeltaProvider);
-
-    return CurrentTextStyles(
-      titleTextStyle: _changeFontSize(textStyles.titleTextStyle, fontSize),
-      readTitleTextStyle: _changeFontSize(
-        textStyles.readTitleTextStyle,
-        fontSize,
-      ),
-      smallTextStyle: _changeFontSize(textStyles.smallTextStyle, fontSize),
-      readSmallTextStyle: _changeFontSize(
-        textStyles.readSmallTextStyle,
-        fontSize,
-      ),
-      badgeTextStyle: _changeFontSize(textStyles.badgeTextStyle, fontSize),
-      readBadgeTextStyle: _changeFontSize(
-        textStyles.readBadgeTextStyle,
-        fontSize,
-      ),
-    );
+  AppTextStyles build() {
+    final Brightness brightness = ref.watch(currentBrightnessProvider);
+    final double delta = ref.watch(fontSizeDeltaProvider);
+    final AppTextStyles base = brightness == Brightness.dark
+        ? AppTextStyles.dark
+        : AppTextStyles.light;
+    return base.scaled(1.0 + delta * _kStep);
   }
 
-  void increaseFontSize({double fontSize = 0.3}) {
-    ref.read(fontSizeDeltaProvider.notifier).update(fontSize);
+  void adjustFontSize(double step) {
+    ref.read(fontSizeDeltaProvider.notifier).update(step);
   }
 
-  TextStyle _changeFontSize(TextStyle style, double fontSize) =>
-      style.copyWith(fontSize: style.fontSize! + fontSize);
-
-  void decreaseFontSize({double fontSize = -0.3}) {
-    ref.read(fontSizeDeltaProvider.notifier).update(fontSize);
-  }
-
-  void initFontSize() {
+  void resetFontSize() {
     ref.read(fontSizeDeltaProvider.notifier).reset();
   }
-
-  TextStyle badge(bool isRead) =>
-      isRead ? state.readBadgeTextStyle : state.badgeTextStyle;
-
-  TextStyle title(bool isRead) =>
-      isRead ? state.readTitleTextStyle : state.titleTextStyle;
-
-  TextStyle smallTitle(bool isRead) =>
-      isRead ? state.readSmallTextStyle : state.smallTextStyle;
 }
+
+/// 앱바 타이틀용 흰색 스타일(폰트 크기 반영).
+@Riverpod(keepAlive: true, dependencies: [AppTextStylesFontSizeNotifier])
+TextStyle appbarTextStyle(Ref ref) => ref.watch(
+  appTextStylesFontSizeProvider.select(
+    (s) => s.titleTextStyle.copyWith(color: Colors.white),
+  ),
+);

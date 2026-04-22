@@ -15,7 +15,7 @@ class SizeCacheDirNotifier extends _$SizeCacheDirNotifier {
   Future<void> clear() async {
     state = const AsyncLoading();
     await ref.read(clearDataProvider.future);
-    state = await AsyncValue.guard(() => _getSizeCacheDir());
+    state = await AsyncValue.guard(_getSizeCacheDir);
 
     MoclLogger.log('clear cache = $state');
   }
@@ -24,7 +24,7 @@ class SizeCacheDirNotifier extends _$SizeCacheDirNotifier {
       await NickImageWidget.getSizeCacheDir();
 }
 
-@riverpod
+@Riverpod(keepAlive: true)
 class ShowNickImageNotifier extends _$ShowNickImageNotifier {
   @override
   bool build() {

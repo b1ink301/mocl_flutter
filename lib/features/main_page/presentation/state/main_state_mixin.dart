@@ -25,7 +25,7 @@ mixin class MainState {
   bool isSiteType(WidgetRef ref, SiteType siteType) =>
       ref.watch(isCurrentSiteTypeProvider(siteType));
 
-  TextStyle titleTextStyleSate(WidgetRef ref) => ref.watch(
+  TextStyle titleTextStyleState(WidgetRef ref) => ref.watch(
     appTextStylesFontSizeProvider.select((state) => state.titleTextStyle),
   );
 }

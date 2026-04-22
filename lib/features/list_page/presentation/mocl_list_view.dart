@@ -31,7 +31,7 @@ class MoclListView extends ConsumerWidget with ListEvent {
           return false;
         },
         child: const CustomScrollView(
-          cacheExtent: 200,
+          cacheExtent: 1000,
           slivers: <Widget>[_ListAppBar(), _ListBody()],
         ),
       ),
@@ -57,7 +57,7 @@ class _ListBody extends ConsumerWidget with ListState, ListEvent {
       padding: .only(bottom: MediaQuery.of(context).padding.bottom),
       sliver: SliverList.separated(
         // addRepaintBoundaries: false,
-        addAutomaticKeepAlives: false,
+        // addAutomaticKeepAlives: false,
         addSemanticIndexes: false,
         itemCount: count + 1,
         itemBuilder: (context, index) => (count == index)
@@ -90,23 +90,12 @@ class _ListFooter extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bottomPadding = MediaQuery.of(context).padding.bottom;
     if (error != null) {
-      return _ListError(
-        errorMessage: error!,
-        onRetry: retry,
-        bottomPadding: bottomPadding,
-      );
+      return _ListError(errorMessage: error!, onRetry: retry);
     } else if (hasReachedMax) {
-      return Padding(
-        padding: .only(bottom: bottomPadding),
-        child: const SizedBox.shrink(),
-      );
+      return const SizedBox.shrink();
     } else {
-      return Padding(
-        padding: .only(bottom: bottomPadding),
-        child: const Column(children: [LoadingWidget(), DividerWidget()]),
-      );
+      return const Column(children: [LoadingWidget(), DividerWidget()]);
     }
   }
 }
@@ -114,17 +103,12 @@ class _ListFooter extends StatelessWidget {
 class _ListError extends StatelessWidget {
   final String errorMessage;
   final VoidCallback onRetry;
-  final double bottomPadding;
 
-  const _ListError({
-    required this.errorMessage,
-    required this.onRetry,
-    required this.bottomPadding,
-  });
+  const _ListError({required this.errorMessage, required this.onRetry});
 
   @override
   Widget build(BuildContext context) => Padding(
-    padding: .fromLTRB(16, 16, 16, 16 + bottomPadding),
+    padding: .all(16),
     child: Column(
       mainAxisAlignment: .center,
       children: [

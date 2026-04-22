@@ -3,7 +3,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
@@ -70,7 +69,6 @@ mixin class MainEvent {
     double width,
   ) => [
     screenWidthProvider.overrideWithValue(width),
-    appTextStylesProvider.overrideWithValue(AppTextStyles.of(context)),
   ];
 
   void handlePop(WidgetRef ref, bool didPop) {

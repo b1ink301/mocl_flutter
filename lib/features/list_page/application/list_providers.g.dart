@@ -154,7 +154,13 @@ final class TitleHeightProvider
        );
 
   static final $allTransitiveDependencies0 = appbarTextStyleProvider;
-  static final $allTransitiveDependencies1 = screenWidthProvider;
+  static final $allTransitiveDependencies1 =
+      AppbarTextStyleProvider.$allTransitiveDependencies0;
+  static final $allTransitiveDependencies2 =
+      AppbarTextStyleProvider.$allTransitiveDependencies1;
+  static final $allTransitiveDependencies3 =
+      AppbarTextStyleProvider.$allTransitiveDependencies2;
+  static final $allTransitiveDependencies4 = screenWidthProvider;
 
   @override
   String debugGetCreateSourceHash() => _$titleHeightHash();
@@ -208,10 +214,13 @@ final class TitleHeightFamily extends $Family
           appbarTextStyleProvider,
           screenWidthProvider,
         ],
-        $allTransitiveDependencies: <ProviderOrFamily>[
+        $allTransitiveDependencies: <ProviderOrFamily>{
           TitleHeightProvider.$allTransitiveDependencies0,
           TitleHeightProvider.$allTransitiveDependencies1,
-        ],
+          TitleHeightProvider.$allTransitiveDependencies2,
+          TitleHeightProvider.$allTransitiveDependencies3,
+          TitleHeightProvider.$allTransitiveDependencies4,
+        },
         isAutoDispose: true,
       );
 

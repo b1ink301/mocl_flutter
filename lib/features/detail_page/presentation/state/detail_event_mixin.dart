@@ -1,10 +1,6 @@
-import 'dart:io';
-
-import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
-import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/core/util/utilities.dart';
@@ -15,14 +11,11 @@ mixin class DetailEvent {
   void handleRefresh(WidgetRef ref) =>
       ref.read(detailsProvider.notifier).refresh();
 
-  void increaseFontSize(WidgetRef ref) =>
-      ref.read(appTextStylesFontSizeProvider.notifier).increaseFontSize();
+  void adjustFontSize(WidgetRef ref, double step) =>
+      ref.read(appTextStylesFontSizeProvider.notifier).adjustFontSize(step);
 
-  void decreaseFontSize(WidgetRef ref) =>
-      ref.read(appTextStylesFontSizeProvider.notifier).decreaseFontSize();
-
-  void initFontSize(WidgetRef ref) =>
-      ref.read(appTextStylesFontSizeProvider.notifier).initFontSize();
+  void resetFontSize(WidgetRef ref) =>
+      ref.read(appTextStylesFontSizeProvider.notifier).resetFontSize();
 
   Future<bool> handleOpenBrowser(WidgetRef ref) =>
       ref.read(detailUrlProvider).openBrowser();
@@ -34,11 +27,7 @@ mixin class DetailEvent {
     BuildContext context,
     ListItem item,
   ) => [
-    appTextStylesProvider.overrideWithValue(AppTextStyles.of(context)),
     listItemProvider.overrideWithValue(item),
     screenWidthProvider.overrideWithValue(MediaQuery.of(context).size.width),
-    appbarTextStyleProvider.overrideWithValue(
-      AppTextStyles.of(context).titleTextStyle.copyWith(color: Colors.white),
-    ),
   ];
 }

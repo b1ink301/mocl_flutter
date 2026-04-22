@@ -397,8 +397,13 @@ final class DetailAppbarHeightProvider
        );
 
   static final $allTransitiveDependencies0 = appbarTextStyleProvider;
-  static final $allTransitiveDependencies1 = screenWidthProvider;
-  static final $allTransitiveDependencies2 = fontSizeDeltaProvider;
+  static final $allTransitiveDependencies1 =
+      AppbarTextStyleProvider.$allTransitiveDependencies0;
+  static final $allTransitiveDependencies2 =
+      AppbarTextStyleProvider.$allTransitiveDependencies1;
+  static final $allTransitiveDependencies3 =
+      AppbarTextStyleProvider.$allTransitiveDependencies2;
+  static final $allTransitiveDependencies4 = screenWidthProvider;
 
   @override
   String debugGetCreateSourceHash() => _$detailAppbarHeightHash();
@@ -441,7 +446,7 @@ final class DetailAppbarHeightProvider
 }
 
 String _$detailAppbarHeightHash() =>
-    r'649cc3cc3639c49da9d4a39656a2b3a466844740';
+    r'2f73d594e6c0849c43ef3bd712ba748a47c6fa52';
 
 final class DetailAppbarHeightFamily extends $Family
     with $FunctionalFamilyOverride<double, String> {
@@ -452,13 +457,14 @@ final class DetailAppbarHeightFamily extends $Family
         dependencies: <ProviderOrFamily>[
           appbarTextStyleProvider,
           screenWidthProvider,
-          fontSizeDeltaProvider,
         ],
-        $allTransitiveDependencies: <ProviderOrFamily>[
+        $allTransitiveDependencies: <ProviderOrFamily>{
           DetailAppbarHeightProvider.$allTransitiveDependencies0,
           DetailAppbarHeightProvider.$allTransitiveDependencies1,
           DetailAppbarHeightProvider.$allTransitiveDependencies2,
-        ],
+          DetailAppbarHeightProvider.$allTransitiveDependencies3,
+          DetailAppbarHeightProvider.$allTransitiveDependencies4,
+        },
         isAutoDispose: true,
       );
 

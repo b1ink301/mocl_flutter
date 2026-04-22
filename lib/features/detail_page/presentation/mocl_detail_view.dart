@@ -5,6 +5,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
@@ -43,7 +44,7 @@ class DetailView extends ConsumerWidget with DetailState {
       );
 }
 
-class _DetailView extends ConsumerWidget with DetailEvent, AppFontState {
+class _DetailView extends ConsumerWidget with DetailEvent {
   final Details detail;
 
   const _DetailView({required this.detail});
@@ -51,7 +52,9 @@ class _DetailView extends ConsumerWidget with DetailEvent, AppFontState {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final String hexColor = Theme.of(context).focusColor.stringHexColor;
-    final (bodySmall, bodyMedium) = smallTitleAndTitleTextStyleSate(ref);
+    final AppTextStyles styles = ref.watch(appTextStylesFontSizeProvider);
+    final TextStyle bodySmall = styles.smallTextStyle;
+    final TextStyle bodyMedium = styles.titleTextStyle;
     final totalComments =
         detail.extraData?['totalComments'] as int? ?? detail.comments.length;
     final comments = detail.comments.isNotEmpty
@@ -73,6 +76,7 @@ class _DetailView extends ConsumerWidget with DetailEvent, AppFontState {
           ]
         : null;
 
+    final bottom = MediaQuery.of(context).padding.bottom;
     return SliverPadding(
       padding: const EdgeInsets.only(left: 16, right: 8),
       sliver: MultiSliver(
@@ -100,9 +104,7 @@ class _DetailView extends ConsumerWidget with DetailEvent, AppFontState {
             bodyMedium: bodyMedium,
           ),
           const _DividerWidget(),
-          SliverPadding(
-            padding: .only(bottom: MediaQuery.of(context).padding.bottom),
-          ),
+          if (bottom > 0) SliverPadding(padding: .only(bottom: bottom)),
         ],
       ),
     );
