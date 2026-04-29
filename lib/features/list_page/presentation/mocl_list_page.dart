@@ -11,7 +11,7 @@ import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mi
 
 import 'mocl_list_view.dart';
 
-class MoclListPage extends ConsumerWidget {
+class MoclListPage extends StatelessWidget {
   const MoclListPage({super.key});
 
   static Widget init(BuildContext context, MainItem item) =>
@@ -24,7 +24,7 @@ class MoclListPage extends ConsumerWidget {
       );
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(BuildContext context) {
     final child = Container(
       color: Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor,
       child: SafeArea(

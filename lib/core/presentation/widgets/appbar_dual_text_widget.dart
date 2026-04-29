@@ -53,7 +53,7 @@ class AppbarDualTextWidget extends ConsumerWidget {
             : NavigationToolbar.kMiddleSpacing,
         automaticallyImplyLeading: automaticallyImplyLeading,
         centerTitle: false,
-        floating: true,
+        floating: false,
         pinned: false,
         toolbarHeight: _toolbarHeight,
         actions: actions,

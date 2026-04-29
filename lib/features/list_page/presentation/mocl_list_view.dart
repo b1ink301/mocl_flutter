@@ -20,7 +20,7 @@ class MoclListView extends ConsumerWidget with ListEvent {
       child: NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification notification) {
           if (notification is ScrollEndNotification &&
-              notification.metrics.extentAfter < 300) {
+              notification.metrics.extentAfter < 100) {
             EasyThrottle.throttle(
               'list-fetch-throttle',
               const Duration(milliseconds: 1000),
@@ -32,7 +32,7 @@ class MoclListView extends ConsumerWidget with ListEvent {
         },
         child: const CustomScrollView(
           cacheExtent: 1000,
-          slivers: <Widget>[_ListAppBar(), _ListBody()],
+          slivers: <Widget>[_ListAppBar(), _ListBody(), _ListFooter()],
         ),
       ),
     );
@@ -50,39 +50,42 @@ class _ListBody extends ConsumerWidget with ListState, ListEvent {
   const _ListBody();
 
   @override
+  Widget build(BuildContext context, WidgetRef ref) => SliverList.separated(
+    itemCount: listState(ref),
+    itemBuilder: (_, index) => ProviderScope(
+      overrides: ListEvent.overridesProviderScopeForRow(index),
+      child: const MoclListItem(),
+    ),
+    separatorBuilder: (_, _) => const DividerWidget(),
+  );
+}
+
+class _ListFooter extends ConsumerWidget with ListState, ListEvent {
+  const _ListFooter();
+
+  @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final (count, hasReachedMax, error) = listState(ref);
+    final (hasReachedMax, error) = listFooterState(ref); // 에러와 최대 도달 여부만 구독
 
     return SliverPadding(
-      padding: .only(bottom: MediaQuery.of(context).padding.bottom),
-      sliver: SliverList.separated(
-        // addRepaintBoundaries: false,
-        // addAutomaticKeepAlives: false,
-        addSemanticIndexes: false,
-        itemCount: count + 1,
-        itemBuilder: (context, index) => (count == index)
-            ? _ListFooter(
-                error: error,
-                hasReachedMax: hasReachedMax,
-                retry: () => handleRetry(ref),
-              )
-            : ProviderScope(
-                key: ValueKey(index),
-                overrides: ListEvent.overridesProviderScopeForRow(index),
-                child: const MoclListItem(),
-              ),
-        separatorBuilder: (_, _) => const DividerWidget(),
+      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
+      sliver: SliverToBoxAdapter(
+        child: _ListFooterBody(
+          error: error,
+          hasReachedMax: hasReachedMax,
+          retry: () => handleRetry(ref),
+        ),
       ),
     );
   }
 }
 
-class _ListFooter extends StatelessWidget {
+class _ListFooterBody extends StatelessWidget {
   final String? error;
   final bool hasReachedMax;
   final VoidCallback retry;
 
-  const _ListFooter({
+  const _ListFooterBody({
     required this.error,
     required this.hasReachedMax,
     required this.retry,
@@ -91,20 +94,20 @@ class _ListFooter extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (error != null) {
-      return _ListError(errorMessage: error!, onRetry: retry);
+      return _ListFooterError(errorMessage: error!, onRetry: retry);
     } else if (hasReachedMax) {
       return const SizedBox.shrink();
     } else {
-      return const Column(children: [LoadingWidget(), DividerWidget()]);
+      return const Column(children: [DividerWidget(), LoadingWidget()]);
     }
   }
 }
 
-class _ListError extends StatelessWidget {
+class _ListFooterError extends StatelessWidget {
   final String errorMessage;
   final VoidCallback onRetry;
 
-  const _ListError({required this.errorMessage, required this.onRetry});
+  const _ListFooterError({required this.errorMessage, required this.onRetry});
 
   @override
   Widget build(BuildContext context) => Padding(
