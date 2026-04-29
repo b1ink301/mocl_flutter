@@ -13,7 +13,6 @@ class ListAppBar extends ConsumerWidget with ListState, ListEvent {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => AppbarDualTextWidget(
-    key: const ValueKey('List-MaterialAppBar'),
     title: titleState(ref),
     smallTitle: smallTitleState(ref),
     automaticallyImplyLeading: Platform.isMacOS,
@@ -29,12 +28,12 @@ class ListAppBar extends ConsumerWidget with ListState, ListEvent {
           CheckedPopupMenuItem<SortType>(
             value: .recent,
             checked: isRecentState(ref),
-            child: Text('최신순'),
+            child: const Text('최신순'),
           ),
           CheckedPopupMenuItem<SortType>(
             value: .recommend,
             checked: isRecommendState(ref),
-            child: Text('추천순'),
+            child: const Text('추천순'),
           ),
         ],
       ),
@@ -48,7 +47,7 @@ class ListAppBar extends ConsumerWidget with ListState, ListEvent {
           }
         },
         itemBuilder: (BuildContext context) => [
-          PopupMenuItem(value: 0, child: Text('새로고침')),
+          PopupMenuItem(value: 0, child: const Text('새로고침')),
         ],
       ),
     ],

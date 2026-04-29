@@ -113,6 +113,6 @@ class NickImageWidget extends StatelessWidget {
   }
 
   static Future<void> removeFile(String url) async {
-    await _cacheManager.removeFile(url.hashCode.toString());
+    await _cacheManager.removeFile(url);
   }
 }

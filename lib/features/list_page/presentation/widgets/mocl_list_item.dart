@@ -13,7 +13,7 @@ class MoclListItem extends ConsumerWidget with ListState, ListEvent {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => ListTile(
-    minVerticalPadding: 6,
+    minVerticalPadding: 8,
     contentPadding: _aosPadding,
     onTap: () => handleItemTap(ref, context),
     title: const _TitleView(),
@@ -39,14 +39,8 @@ class _BottomView extends StatelessWidget {
     padding: .only(top: 8.0),
     child: Row(
       children: [
-        Expanded(
-          child: Row(
-            children: [
-              _NickImage(),
-              Flexible(child: _InfoText()),
-            ],
-          ),
-        ),
+        _NickImage(),
+        Expanded(child: _InfoText()),
         _ReplyText(),
       ],
     ),
@@ -58,8 +52,8 @@ class _ReplyText extends ConsumerWidget with ListState {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final (reply, textStyle) = replyViewState(ref, context);
-    return reply.isNotEmpty && reply != '0'
+    final (reply, isShow, textStyle) = replyViewState(ref, context);
+    return isShow
         ? RoundTextWidget(text: reply, textStyle: textStyle)
         : const SizedBox.shrink();
   }
@@ -81,8 +75,6 @@ class _InfoText extends ConsumerWidget with ListState {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final (info, textStyle) = infoViewState(ref);
-    return info.isEmpty
-        ? const SizedBox.shrink()
-        : Text(info, maxLines: 1, overflow: .ellipsis, style: textStyle);
+    return Text(info, maxLines: 1, overflow: .ellipsis, style: textStyle);
   }
 }

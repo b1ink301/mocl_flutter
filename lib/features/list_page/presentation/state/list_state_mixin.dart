@@ -7,12 +7,22 @@ import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import '../../application/list_providers.dart';
 
 mixin class ListState {
-  (int, bool, String?) listState(WidgetRef ref) => ref.watch(
+  int listState(WidgetRef ref) => ref.watch(
     pageStateProvider.select(
       (value) => value.when(
-        data: (state) => (state.items.length, state.hasReachedMax, state.error),
-        loading: () => (0, false, null),
-        error: (err, stack) => (0, false, err.toString()),
+        data: (state) => state.items.length,
+        loading: () => 0,
+        error: (err, stack) => 0,
+      ),
+    ),
+  );
+
+  (bool, String?) listFooterState(WidgetRef ref) => ref.watch(
+    pageStateProvider.select(
+          (value) => value.when(
+        data: (state) => (state.hasReachedMax, state.error),
+        loading: () => (false, null),
+        error: (err, stack) => (false, err.toString()),
       ),
     ),
   );
@@ -58,14 +68,18 @@ mixin class ListState {
     ),
   );
 
-  (String, TextStyle) replyViewState(WidgetRef ref, BuildContext context) {
-    final (reply, isRead) = ref.watch(
+  (String, bool, TextStyle) replyViewState(WidgetRef ref, BuildContext context) {
+    final (reply, isShow, isRead) = ref.watch(
       listItemProvider.select(
-        (item) => (item?.reply ?? "", (item?.isRead ?? false)),
+        (item) => (
+          item?.reply ?? "",
+          item?.reply.isNotEmpty == true && item?.reply != '0',
+          (item?.isRead ?? false),
+        ),
       ),
     );
     final textStyle = badgeTextStyleState(ref, isRead);
-    return (reply, textStyle);
+    return (reply, isShow, textStyle);
   }
 
   String nickImageState(WidgetRef ref) => ref.watch(
