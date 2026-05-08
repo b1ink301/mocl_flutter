@@ -29,7 +29,7 @@ class AppPages {
             SwipeablePage(
               builder: (BuildContext context) {
                 final width = MediaQuery.of(context).size.width;
-                return MainPage.init(context, width);
+                return MainPage.init(width);
               },
             ),
         routes: [
@@ -49,7 +49,8 @@ class AppPages {
               builder: (BuildContext context) {
                 final MainItem item =
                     GoRouterState.of(context).extra as MainItem;
-                return MoclListPage.init(context, item);
+                final width = MediaQuery.of(context).size.width;
+                return MoclListPage.init(width, item);
               },
             ),
       ),
@@ -60,7 +61,8 @@ class AppPages {
               builder: (BuildContext context) {
                 final ListItem item =
                     GoRouterState.of(context).extra as ListItem;
-                return DetailPage.init(context, item);
+                final width = MediaQuery.of(context).size.width;
+                return DetailPage.init(width, item);
               },
             ),
         routes: [

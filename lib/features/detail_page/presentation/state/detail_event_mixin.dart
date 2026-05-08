@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
@@ -23,11 +22,8 @@ mixin class DetailEvent {
   Future<bool> handleShareUrl(WidgetRef ref) =>
       ref.read(detailUrlProvider).shareUrl();
 
-  static List<Override> overridesProviderScope(
-    BuildContext context,
-    ListItem item,
-  ) => [
+  static List<Override> overridesProviderScope(double width, ListItem item) => [
     listItemProvider.overrideWithValue(item),
-    screenWidthProvider.overrideWithValue(MediaQuery.of(context).size.width),
+    screenWidthProvider.overrideWithValue(width),
   ];
 }

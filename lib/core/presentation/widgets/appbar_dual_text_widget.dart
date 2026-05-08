@@ -4,62 +4,61 @@ import 'package:mocl_flutter/core/application/app_provider.dart';
 
 import 'message_widget.dart';
 
-class AppbarDualTextWidget extends ConsumerWidget {
-  final String _smallTitle;
-  final String _title;
-  final double _toolbarHeight;
+class AppbarDualTextWidget extends StatelessWidget {
+  final String smallTitle;
+  final String title;
+  final double toolbarHeight;
   final bool automaticallyImplyLeading;
   final List<Widget>? actions;
 
   const AppbarDualTextWidget({
     super.key,
-    required String smallTitle,
-    required String title,
-    double toolbarHeight = 64,
+    required this.smallTitle,
+    required this.title,
+    this.toolbarHeight = 64,
     this.automaticallyImplyLeading = false,
     this.actions,
-  })
-      : _smallTitle = smallTitle,
-        _title = title,
-        _toolbarHeight = toolbarHeight;
+  });
 
-  Widget _buildTitle(BuildContext context, WidgetRef ref) {
-    final adjustedStyle = ref.watch(
-      appTextStylesFontSizeProvider.select((s) => s.titleTextStyle),
-    ).copyWith(color: Colors.white);
+  @override
+  Widget build(BuildContext context) => SliverAppBar(
+    title: _DualTitle(smallTitle: smallTitle, title: title),
+    scrolledUnderElevation: 0,
+    titleSpacing: automaticallyImplyLeading
+        ? 0
+        : NavigationToolbar.kMiddleSpacing,
+    automaticallyImplyLeading: automaticallyImplyLeading,
+    centerTitle: false,
+    floating: true,
+    pinned: false,
+    toolbarHeight: toolbarHeight,
+    actions: actions,
+  );
+}
+
+class _DualTitle extends ConsumerWidget {
+  final String smallTitle;
+  final String title;
+
+  const _DualTitle({required this.smallTitle, required this.title});
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final titleStyle = ref
+        .watch(appTextStylesFontSizeProvider.select((s) => s.titleTextStyle))
+        .copyWith(color: Colors.white);
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisSize: MainAxisSize.min,
       children: [
         MessageWidget(
-          message: _smallTitle,
+          message: smallTitle,
           textStyle: Theme.of(context).textTheme.labelSmall,
         ),
         const SizedBox(height: 4),
-        MessageWidget(
-          textStyle: adjustedStyle,
-          message: _title,
-        ),
+        MessageWidget(textStyle: titleStyle, message: title),
       ],
     );
   }
-
-  Widget _buildAppbar(BuildContext context, WidgetRef ref) =>
-      SliverAppBar(
-        title: _buildTitle(context, ref),
-        scrolledUnderElevation: 0,
-        titleSpacing: automaticallyImplyLeading
-            ? 0
-            : NavigationToolbar.kMiddleSpacing,
-        automaticallyImplyLeading: automaticallyImplyLeading,
-        centerTitle: false,
-        floating: false,
-        pinned: false,
-        toolbarHeight: _toolbarHeight,
-        actions: actions,
-      );
-
-  @override
-  Widget build(BuildContext context, WidgetRef ref) =>
-      _buildAppbar(context, ref);
 }

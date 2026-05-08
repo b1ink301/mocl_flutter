@@ -13,6 +13,7 @@ https://play.google.com/store/apps/details?id=kr.b1ink.mocl
 - **네트워크**: dio + cookie_jar
 - **코드 생성**: freezed, json_serializable, riverpod_generator
 - **빌드 플레이버**: dev, prd
+- **데이터베이스**: sembast
 
 ## 프로젝트 구조
 

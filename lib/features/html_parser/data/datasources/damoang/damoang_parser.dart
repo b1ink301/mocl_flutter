@@ -16,6 +16,8 @@ import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_ext.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_parser.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_isolate_client.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_isolate_message.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class DamoangParser implements BaseParser {
@@ -376,61 +378,29 @@ class DamoangParser implements BaseParser {
     String boardTitle,
     Future<List<int>> Function(SiteType, List<int>) isReads,
   ) async {
-    final receivePort = ReceivePort();
-    final errorPort = ReceivePort();
-    final completer = Completer<List<ListItem>>();
-
-    receivePort.listen((message) async {
-      if (message is ReadStatusRequest) {
-        final statuses = await isReads(siteType, message.ids);
-        message.responsePort.send(ReadStatusResponse(statuses));
-      } else if (message is List<ListItem>) {
-        if (!completer.isCompleted) {
-          completer.complete(message);
-        }
-        receivePort.close();
-        errorPort.close();
-      }
-    });
-
-    errorPort.listen((message) {
-      if (!completer.isCompleted) {
-        completer.completeError(message);
-      }
-      receivePort.close();
-      errorPort.close();
-    });
-
     try {
       final responseData = response.data is String
           ? response.data as String
           : response.data.toString();
 
-      await Isolate.spawn(
-        _parseListInIsolate,
-        IsolateMessage<String>(
-          receivePort.sendPort,
-          responseData,
-          lastId.intId,
-          boardTitle,
-          baseUrl,
-          isShowNickImage,
-        ),
-        onError: errorPort.sendPort,
-        onExit: errorPort.sendPort,
+      final items = await ParserIsolateClient.instance.parseList(
+        siteType: siteType,
+        responseData: responseData,
+        lastId: lastId,
+        boardTitle: boardTitle,
+        baseUrl: baseUrl,
+        isShowNickImage: isShowNickImage,
+        isReads: isReads,
       );
-
-      return Right(await completer.future);
+      return Right(items);
     } catch (e) {
-      receivePort.close();
-      errorPort.close();
       return Left(GetListFailure(message: e.toString()));
     }
   }
 
-  static void _parseListInIsolate(IsolateMessage<String> message) async {
+  static Future<void> parseListInWorker(ParseListMessage message) async {
     final replyPort = message.replyPort;
-    final String responseData = message.responseData;
+    final String responseData = message.responseData as String;
     final lastId = message.lastId;
     final String boardTitle = message.boardTitle;
     final String baseUrl = message.baseUrl;
@@ -438,8 +408,6 @@ class DamoangParser implements BaseParser {
 
     final List<Map<String, dynamic>> parsedItems = <Map<String, dynamic>>[];
     final List<int> ids = <int>[];
-
-    timeago.setLocaleMessages('ko', timeago.KoMessages());
 
     try {
       final lines = _parseLines(responseData);

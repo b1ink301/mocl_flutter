@@ -3,7 +3,6 @@ import 'dart:io';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/presentation/widgets/message_widget.dart';
@@ -13,58 +12,65 @@ import 'settings_view.dart';
 class SettingsPage extends StatelessWidget {
   const SettingsPage({super.key});
 
-  static Widget init(BuildContext context) =>
-      AnnotatedRegion<SystemUiOverlayStyle>(
-        value: Theme.of(context).appBarTheme.systemOverlayStyle!,
-        child: const SettingsPage(),
-      );
+  static Widget init(BuildContext context) => const SettingsPage();
 
   @override
   Widget build(BuildContext context) {
+    final appBarTheme = Theme.of(context).appBarTheme;
+    final systemOverlayStyle = appBarTheme.systemOverlayStyle;
+
     final child = Container(
-      color: Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor,
-      child: const SafeArea(
+      color: systemOverlayStyle?.statusBarColor,
+      child: SafeArea(
         bottom: false,
-        child: Scaffold(
-          body: CustomScrollView(
-            slivers: <Widget>[_SettingsAppBar(), SettingsView()],
+        child: AnnotatedRegion<SystemUiOverlayStyle>(
+          value: systemOverlayStyle ??
+              (Theme.of(context).brightness == Brightness.dark
+                  ? SystemUiOverlayStyle.light
+                  : SystemUiOverlayStyle.dark),
+          child: const Scaffold(
+            body: CustomScrollView(
+              slivers: <Widget>[
+                _SettingsAppBar(),
+                SettingsView(),
+              ],
+            ),
           ),
         ),
       ),
     );
 
-    return Platform.isMacOS
-        ? Listener(
-            onPointerDown: (event) {
-              if (event.buttons == kSecondaryMouseButton) {
-                GoRouter.of(context).pop();
-              }
-            },
-            child: child,
-          )
-        : child;
+    if (Platform.isMacOS) {
+      return Listener(
+        onPointerDown: (event) {
+          if (event.buttons == kSecondaryMouseButton) {
+            context.pop();
+          }
+        },
+        child: child,
+      );
+    }
+
+    return child;
   }
 }
 
-class _SettingsAppBar extends ConsumerWidget {
-  const _SettingsAppBar({super.key});
+class _SettingsAppBar extends StatelessWidget {
+  const _SettingsAppBar();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final backgroundColor = Theme.of(context).appBarTheme.backgroundColor;
+  Widget build(BuildContext context) {
+    final appBarTheme = Theme.of(context).appBarTheme;
     return SliverAppBar(
-      backgroundColor: backgroundColor,
-      flexibleSpace: Container(color: backgroundColor),
+      backgroundColor: appBarTheme.backgroundColor,
       titleSpacing: 0,
       pinned: true,
       centerTitle: false,
       toolbarHeight: 64,
-      title: _buildTitle(context, SiteType.settings.title),
+      title: MessageWidget(
+        message: SiteType.settings.title,
+        textStyle: Theme.of(context).textTheme.labelMedium,
+      ),
     );
   }
-
-  Widget _buildTitle(BuildContext context, String title) => MessageWidget(
-    message: title,
-    textStyle: Theme.of(context).textTheme.labelMedium,
-  );
 }

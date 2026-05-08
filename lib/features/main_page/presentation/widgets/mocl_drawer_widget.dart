@@ -12,57 +12,56 @@ class DrawerWidget extends ConsumerWidget with MainEvent {
   const DrawerWidget({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => Drawer(
-    backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-    child: Column(
-      children: [
-        Container(
-          color: Theme.of(context).primaryColor,
-          padding: .only(top: MediaQuery.of(context).padding.top),
-          height: 220 + MediaQuery.of(context).padding.top,
-          child: Center(
-            child: ClipOval(
-              child: Image.asset('assets/icon.png', width: 80, height: 80),
+  Widget build(BuildContext context, WidgetRef ref) => SafeArea(
+    bottom: false,
+    child: Drawer(
+      backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+      child: Column(
+        children: [
+          const _DrawerHeader(),
+          Expanded(
+            child: ListView.builder(
+              padding: EdgeInsets.zero,
+              itemCount: SiteType.values.length,
+              itemBuilder: (context, index) {
+                final siteType = SiteType.values[index];
+                return _DrawerSiteItem(
+                  siteType: siteType,
+                  onTap: () => _handleSiteTap(context, ref, siteType),
+                );
+              },
             ),
           ),
-        ),
-        Expanded(
-          child: ListView(
-            shrinkWrap: true,
-            padding: .zero,
-            children: SiteType.values
-                .map(
-                  (SiteType siteType) => _DrawerSiteItem(
-                    siteType: siteType,
-                    onTap: () => _changeSiteType(
-                      context,
-                      siteType,
-                      () => changeSiteType(ref, siteType),
-                    ),
-                  ),
-                )
-                .toList(),
-          ),
-        ),
-        const AppVersionWidget(),
-        SizedBox(height: MediaQuery.of(context).padding.bottom),
-      ],
+          const SafeArea(child: AppVersionWidget()),
+        ],
+      ),
     ),
   );
 
-  void _changeSiteType(
-    BuildContext context,
-    SiteType siteType,
-    VoidCallback onChangeSiteType,
-  ) {
+  void _handleSiteTap(BuildContext context, WidgetRef ref, SiteType siteType) {
     context.pop();
 
-    if (siteType == .settings) {
+    if (siteType == SiteType.settings) {
       context.push(Routes.settings);
     } else {
-      onChangeSiteType();
+      changeSiteType(ref, siteType);
     }
   }
+}
+
+class _DrawerHeader extends StatelessWidget {
+  const _DrawerHeader();
+
+  @override
+  Widget build(BuildContext context) => Container(
+    color: Theme.of(context).primaryColor,
+    height: 220,
+    child: Center(
+      child: ClipOval(
+        child: Image.asset('assets/icon.png', width: 80, height: 80),
+      ),
+    ),
+  );
 }
 
 class _DrawerSiteItem extends ConsumerWidget with MainState {
@@ -72,17 +71,21 @@ class _DrawerSiteItem extends ConsumerWidget with MainState {
   final VoidCallback onTap;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => Column(
-    children: [
-      ListTile(
-        title: Text(siteType.title),
-        titleTextStyle: titleTextStyleState(ref),
-        onTap: onTap,
-        trailing: isSiteType(ref, siteType)
-            ? Icon(Icons.check_outlined, color: Theme.of(context).focusColor)
-            : null,
-      ),
-      const Divider(height: 1, thickness: 1, indent: 12, endIndent: 8),
-    ],
-  );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isSelected = isSiteType(ref, siteType);
+
+    return Column(
+      children: [
+        ListTile(
+          title: Text(siteType.title),
+          titleTextStyle: titleTextStyleState(ref),
+          onTap: onTap,
+          trailing: isSelected
+              ? Icon(Icons.check_outlined, color: Theme.of(context).focusColor)
+              : null,
+        ),
+        const Divider(height: 1, thickness: 1, indent: 12, endIndent: 8),
+      ],
+    );
+  }
 }

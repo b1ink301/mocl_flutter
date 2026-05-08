@@ -84,3 +84,20 @@
 -keep public class com.navercorp.nid.** {
     public *;
 }
+
+-dontwarn com.github.dart_lang.jni.JniPlugin
+-dontwarn com.github.dart_lang.jni_flutter.JniFlutterPlugin
+-dontwarn com.ryanheise.audio_session.AudioSessionPlugin
+-dontwarn com.ryanheise.just_audio.JustAudioPlugin
+-dontwarn com.tekartik.sqflite.SqflitePlugin
+-dontwarn dev.fluttercommunity.plus.packageinfo.PackageInfoPlugin
+-dontwarn dev.fluttercommunity.plus.share.SharePlusPlugin
+-dontwarn dev.fluttercommunity.plus.wakelock.WakelockPlusPlugin
+-dontwarn io.flutter.plugins.firebase.core.FlutterFirebaseCorePlugin
+-dontwarn io.flutter.plugins.firebase.crashlytics.FlutterFirebaseCrashlyticsPlugin
+-dontwarn io.flutter.plugins.googlesignin.GoogleSignInPlugin
+-dontwarn io.flutter.plugins.sharedpreferences.SharedPreferencesPlugin
+-dontwarn io.flutter.plugins.urllauncher.UrlLauncherPlugin
+-dontwarn io.flutter.plugins.videoplayer.VideoPlayerPlugin
+-dontwarn io.flutter.plugins.webviewflutter.WebViewFlutterPlugin
+-dontwarn io.github.ponnamkarthik.toast.fluttertoast.FlutterToastPlugin

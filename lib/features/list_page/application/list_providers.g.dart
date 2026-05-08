@@ -359,7 +359,7 @@ final class PageStateNotifierProvider
   PageStateNotifier create() => PageStateNotifier();
 }
 
-String _$pageStateNotifierHash() => r'baccb495292e766215366c3fb050b9f73eeb6a80';
+String _$pageStateNotifierHash() => r'26a07b502929328dee1251b0cc1da7bc1bd376f2';
 
 abstract class _$PageStateNotifier extends $AsyncNotifier<PageState> {
   FutureOr<PageState> build();
@@ -582,6 +582,99 @@ final class ListItemProvider
 }
 
 String _$listItemHash() => r'cfa14f06c2d46a8696f395988a6e6969451ef49d';
+
+@ProviderFor(itemForIndex)
+final itemForIndexProvider = ItemForIndexFamily._();
+
+final class ItemForIndexProvider
+    extends $FunctionalProvider<ListItem?, ListItem?, ListItem?>
+    with $Provider<ListItem?> {
+  ItemForIndexProvider._({
+    required ItemForIndexFamily super.from,
+    required int super.argument,
+  }) : super(
+         retry: null,
+         name: r'itemForIndexProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  static final $allTransitiveDependencies0 = getListItemProvider;
+  static final $allTransitiveDependencies1 =
+      GetListItemProvider.$allTransitiveDependencies0;
+  static final $allTransitiveDependencies2 =
+      GetListItemProvider.$allTransitiveDependencies1;
+  static final $allTransitiveDependencies3 =
+      GetListItemProvider.$allTransitiveDependencies2;
+  static final $allTransitiveDependencies4 =
+      GetListItemProvider.$allTransitiveDependencies3;
+
+  @override
+  String debugGetCreateSourceHash() => _$itemForIndexHash();
+
+  @override
+  String toString() {
+    return r'itemForIndexProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<ListItem?> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  ListItem? create(Ref ref) {
+    final argument = this.argument as int;
+    return itemForIndex(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ListItem? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ListItem?>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is ItemForIndexProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$itemForIndexHash() => r'dd7a9e3efa91d0659f4f5e60754d861708435378';
+
+final class ItemForIndexFamily extends $Family
+    with $FunctionalFamilyOverride<ListItem?, int> {
+  ItemForIndexFamily._()
+    : super(
+        retry: null,
+        name: r'itemForIndexProvider',
+        dependencies: <ProviderOrFamily>[getListItemProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>{
+          ItemForIndexProvider.$allTransitiveDependencies0,
+          ItemForIndexProvider.$allTransitiveDependencies1,
+          ItemForIndexProvider.$allTransitiveDependencies2,
+          ItemForIndexProvider.$allTransitiveDependencies3,
+          ItemForIndexProvider.$allTransitiveDependencies4,
+        },
+        isAutoDispose: true,
+      );
+
+  ItemForIndexProvider call(int index) =>
+      ItemForIndexProvider._(argument: index, from: this);
+
+  @override
+  String toString() => r'itemForIndexProvider';
+}
 
 @ProviderFor(listItemIndex)
 final listItemIndexProvider = ListItemIndexProvider._();

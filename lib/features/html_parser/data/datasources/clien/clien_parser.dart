@@ -15,6 +15,8 @@ import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_ext.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_isolate_client.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_isolate_message.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import '../base/base_parser.dart';
@@ -390,48 +392,31 @@ class ClienParser implements BaseParser {
     String boardTitle,
     Future<List<int>> Function(SiteType, List<int>) isReads,
   ) async {
-    final receivePort = ReceivePort();
-    final completer = Completer<List<ListItem>>();
-
-    receivePort.listen((message) async {
-      if (message is ReadStatusRequest) {
-        final statuses = await isReads(siteType, message.ids);
-        message.responsePort.send(ReadStatusResponse(statuses));
-      } else if (message is List<ListItem>) {
-        completer.complete(message);
-      }
-    });
-
     try {
-      await Isolate.spawn(
-        _parseListInIsolate,
-        IsolateMessage<String>(
-          receivePort.sendPort,
-          response.data,
-          lastId.intId,
-          boardTitle,
-          baseUrl,
-          isShowNickImage,
-        ),
+      final items = await ParserIsolateClient.instance.parseList(
+        siteType: siteType,
+        responseData: response.data is String
+            ? response.data as String
+            : response.data.toString(),
+        lastId: lastId,
+        boardTitle: boardTitle,
+        baseUrl: baseUrl,
+        isShowNickImage: isShowNickImage,
+        isReads: isReads,
       );
-
-      return Right(await completer.future);
+      return Right(items);
     } catch (e) {
       return Left(GetListFailure(message: e.toString()));
-    } finally {
-      receivePort.close();
     }
   }
 
-  static void _parseListInIsolate(IsolateMessage<String> message) async {
+  static Future<void> parseListInWorker(ParseListMessage message) async {
     final replyPort = message.replyPort;
-    final responseData = message.responseData;
+    final responseData = message.responseData as String;
     final lastId = message.lastId;
     final boardTitle = message.boardTitle;
     final baseUrl = message.baseUrl;
     final isShowNickImage = message.isShowNickImage;
-
-    timeago.setLocaleMessages('ko', timeago.KoMessages());
 
     final parsedItems = <Map<String, dynamic>>[];
     final ids = <int>[];

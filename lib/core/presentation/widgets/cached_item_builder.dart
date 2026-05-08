@@ -2,8 +2,13 @@ import 'package:flutter/material.dart';
 
 class CachedItemBuilder extends StatefulWidget {
   final Widget Function() builder;
+  final bool wantKeepAlive;
 
-  const CachedItemBuilder({super.key, required this.builder});
+  const CachedItemBuilder({
+    super.key,
+    required this.builder,
+    required this.wantKeepAlive,
+  });
 
   @override
   State<CachedItemBuilder> createState() => _CachedItemBuilderState();
@@ -26,5 +31,5 @@ class _CachedItemBuilderState extends State<CachedItemBuilder>
   }
 
   @override
-  bool get wantKeepAlive => true;
+  bool get wantKeepAlive => widget.wantKeepAlive;
 }

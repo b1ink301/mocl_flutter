@@ -46,6 +46,10 @@ mixin class ListState {
 
   ListItem? listItemState(WidgetRef ref) => ref.watch(listItemProvider);
 
+  ListItem? itemState(WidgetRef ref, int index) {
+    return ref.watch(itemForIndexProvider(index));
+  }
+
   (String, TextStyle) titleViewState(WidgetRef ref) {
     final (title, isRead) = ref.watch(
       listItemProvider.select(

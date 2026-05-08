@@ -13,6 +13,8 @@ import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_isolate_client.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_isolate_message.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import '../base/base_parser.dart';
@@ -182,19 +184,6 @@ class NaverCafeParser implements BaseParser {
     String boardTitle,
     Future<List<int>> Function(SiteType, List<int>) isReads,
   ) async {
-    final receivePort = ReceivePort();
-    final completer = Completer<List<ListItem>>();
-
-    receivePort.listen((message) async {
-      if (message is ReadStatusRequest) {
-        final statuses = await isReads(siteType, message.ids);
-        message.responsePort.send(ReadStatusResponse(statuses));
-      } else if (message is List<ListItem>) {
-        completer.complete(message);
-        receivePort.close();
-      }
-    });
-
     try {
       final message = response.data['message'];
       final status = message['status'].toString();
@@ -202,37 +191,29 @@ class NaverCafeParser implements BaseParser {
         throw Exception("status is not 200!");
       }
 
-      await Isolate.spawn(
-        _parseListInIsolate,
-        IsolateMessage<Map<String, dynamic>>(
-          receivePort.sendPort,
-          message['result'],
-          lastId.intId,
-          boardTitle,
-          baseUrl,
-          false,
-        ),
+      final items = await ParserIsolateClient.instance.parseList(
+        siteType: siteType,
+        responseData: message['result'] as Map<String, dynamic>,
+        lastId: lastId,
+        boardTitle: boardTitle,
+        baseUrl: baseUrl,
+        isShowNickImage: false,
+        isReads: isReads,
       );
-
-      return Right(await completer.future);
+      return Right(items);
     } catch (e) {
-      receivePort.close();
       return Left(GetListFailure(message: e.toString()));
     }
   }
 
-  static void _parseListInIsolate(
-    IsolateMessage<Map<String, dynamic>> message,
-  ) async {
+  static Future<void> parseListInWorker(ParseListMessage message) async {
     final replyPort = message.replyPort;
-    final responseData = message.responseData;
+    final dynamic responseData = message.responseData;
     final lastId = message.lastId;
     final boardTitle = message.boardTitle;
 
     final parsedItems = <Map<String, dynamic>>[];
     final ids = <int>[];
-
-    timeago.setLocaleMessages('ko', timeago.KoMessages());
 
     final List<dynamic> articleList = responseData['articleList'];
 

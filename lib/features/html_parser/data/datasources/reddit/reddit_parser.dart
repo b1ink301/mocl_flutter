@@ -17,6 +17,8 @@ import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_ext.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_isolate_client.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_isolate_message.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import '../base/base_parser.dart';
@@ -137,42 +139,25 @@ class RedditParser implements BaseParser {
     String boardTitle,
     Future<List<int>> Function(SiteType p1, List<int> p2) isReads,
   ) async {
-    final receivePort = ReceivePort();
-    final completer = Completer<List<ListItem>>();
-
-    receivePort.listen((message) async {
-      if (message is ReadStatusRequest) {
-        final statuses = await isReads(siteType, message.ids);
-        message.responsePort.send(ReadStatusResponse(statuses));
-      } else if (message is List<ListItem>) {
-        completer.complete(message);
-        receivePort.close();
-      }
-    });
-
     try {
-      await Isolate.spawn(
-        _parseListInIsolate,
-        IsolateMessage(
-          receivePort.sendPort,
-          response.data,
-          -1,
-          boardTitle,
-          baseUrl,
-          false,
-        ),
+      final items = await ParserIsolateClient.instance.parseList(
+        siteType: siteType,
+        responseData: response.data as Object,
+        lastId: const LastId(intId: -1),
+        boardTitle: boardTitle,
+        baseUrl: baseUrl,
+        isShowNickImage: false,
+        isReads: isReads,
       );
-
-      return Right(await completer.future);
+      return Right(items);
     } catch (e) {
-      receivePort.close();
       return Left(GetListFailure(message: e.toString()));
     }
   }
 
-  static void _parseListInIsolate(IsolateMessage message) async {
+  static Future<void> parseListInWorker(ParseListMessage message) async {
     final replyPort = message.replyPort;
-    final json = message.responseData;
+    final dynamic json = message.responseData;
     final boardTitle = message.boardTitle;
 
     final list = json['data']['children'] as List<dynamic>?;
@@ -183,7 +168,6 @@ class RedditParser implements BaseParser {
     }
 
     final htmlUnescape = HtmlUnescape();
-    timeago.setLocaleMessages('ko', timeago.KoMessages());
 
     final items = list
         .map((element) {
