@@ -14,27 +14,14 @@ import 'mocl_list_view.dart';
 class MoclListPage extends StatelessWidget {
   const MoclListPage({super.key});
 
-  static Widget init(BuildContext context, MainItem item) =>
-      AnnotatedRegion<SystemUiOverlayStyle>(
-        value: Theme.of(context).appBarTheme.systemOverlayStyle!,
-        child: ProviderScope(
-          overrides: ListEvent.overridesProviderScope(context, item),
-          child: const MoclListPage(),
-        ),
+  static Widget init(double width, MainItem item) => ProviderScope(
+        overrides: ListEvent.overridesProviderScope(width, item),
+        child: const MoclListPage(),
       );
 
   @override
   Widget build(BuildContext context) {
-    final child = Container(
-      color: Theme.of(context).appBarTheme.systemOverlayStyle?.statusBarColor,
-      child: SafeArea(
-        bottom: false,
-        child: Scaffold(
-          backgroundColor: Theme.of(context).scaffoldBackgroundColor,
-          body: const MoclListView(),
-        ),
-      ),
-    );
+    const child = _MoclListScaffold();
 
     return !kIsWeb && Platform.isMacOS
         ? Listener(
@@ -46,5 +33,30 @@ class MoclListPage extends StatelessWidget {
             child: child,
           )
         : child;
+  }
+}
+
+class _MoclListScaffold extends StatelessWidget {
+  const _MoclListScaffold();
+
+  @override
+  Widget build(BuildContext context) {
+    final systemOverlayStyle =
+        Theme.of(context).appBarTheme.systemOverlayStyle ??
+            SystemUiOverlayStyle.light;
+
+    return AnnotatedRegion<SystemUiOverlayStyle>(
+      value: systemOverlayStyle,
+      child: Container(
+        color: systemOverlayStyle.statusBarColor,
+        child: SafeArea(
+          bottom: false,
+          child: Scaffold(
+            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            body: const MoclListView(),
+          ),
+        ),
+      ),
+    );
   }
 }

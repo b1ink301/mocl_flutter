@@ -65,7 +65,6 @@ mixin class MainEvent {
       ref.read(currentSiteTypeProvider.notifier).changeSiteType(siteType);
 
   static List<Override> overridesProviderScope(
-    BuildContext context,
     double width,
   ) => [
     screenWidthProvider.overrideWithValue(width),

@@ -19,17 +19,12 @@ class RoundTextWidget extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => _buildRoundText(context);
-
-  Widget _buildRoundText(
-    BuildContext context,
-  ) {
+  Widget build(BuildContext context) {
     final effectiveTextStyle = textStyle ?? DefaultTextStyle.of(context).style;
     final effectiveBorderColor =
-        borderColor ?? effectiveTextStyle.color ?? const Color(0xFF000000);
+        borderColor ?? effectiveTextStyle.color ?? Colors.black;
 
     return Container(
-      key: ValueKey("RoundTextWidget-$text"),
       padding: padding,
       decoration: BoxDecoration(
         color: backgroundColor,
@@ -39,6 +34,7 @@ class RoundTextWidget extends StatelessWidget {
       child: Text(
         text,
         maxLines: 1,
+        overflow: TextOverflow.ellipsis,
         style: effectiveTextStyle,
       ),
     );

@@ -8,6 +8,7 @@ import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/features/list_page/presentation/list_search_delegate.dart';
 
+import '../../../../core/domain/entities/mocl_list_item.dart';
 import '../../../../core/util/mocl_logger.dart';
 import '../../application/list_providers.dart';
 
@@ -39,11 +40,11 @@ mixin class ListEvent {
     });
   }
 
-  void handleItemTap(WidgetRef ref, BuildContext context) {
-    final item = ref.read(listItemProvider);
-    if (item == null) return;
+  void handleItemTap(WidgetRef ref, BuildContext context, [ListItem? item]) {
+    final targetItem = item ?? ref.read(listItemProvider);
+    if (targetItem == null) return;
     try {
-      GoRouter.of(context).push(Routes.detail, extra: item);
+      GoRouter.of(context).push(Routes.detail, extra: targetItem);
     } catch (e) {
       MoclLogger.log('_handleItemTap = $e');
     }
@@ -53,11 +54,8 @@ mixin class ListEvent {
     listItemIndexProvider.overrideWithValue(index),
   ];
 
-  static List<Override> overridesProviderScope(
-    BuildContext context,
-    MainItem item,
-  ) => [
-    screenWidthProvider.overrideWithValue(MediaQuery.of(context).size.width),
+  static List<Override> overridesProviderScope(double width, MainItem item) => [
+    screenWidthProvider.overrideWithValue(width),
     mainItemProvider.overrideWithValue(item),
   ];
 }

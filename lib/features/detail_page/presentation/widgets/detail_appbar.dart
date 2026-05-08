@@ -6,8 +6,8 @@ import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/presentation/widgets/adaptive_popup_menu.dart';
 import 'package:mocl_flutter/core/presentation/widgets/appbar_dual_text_widget.dart';
 
-import 'state/detail_event_mixin.dart';
-import 'state/detail_state_mixin.dart';
+import '../state/detail_event_mixin.dart';
+import '../state/detail_state_mixin.dart';
 
 class DetailAppBar extends ConsumerWidget with DetailState, DetailEvent {
   const DetailAppBar({super.key});

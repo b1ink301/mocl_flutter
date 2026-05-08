@@ -24,11 +24,8 @@ class MainView extends ConsumerWidget with MainEvent {
       RefreshIndicator.adaptive(
         color: Theme.of(context).focusColor,
         onRefresh: () async => handleRefresh(ref),
-        child: CustomScrollView(
-          slivers: <Widget>[
-            const _MainAppBar(),
-            const _MainBody(),
-          ],
+        child: const CustomScrollView(
+          slivers: <Widget>[_MainAppBar(), _MainBody()],
         ),
       );
 }

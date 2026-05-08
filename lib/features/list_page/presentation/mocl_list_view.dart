@@ -19,8 +19,8 @@ class MoclListView extends ConsumerWidget with ListEvent {
       onRefresh: () async => handleRefresh(ref),
       child: NotificationListener<ScrollNotification>(
         onNotification: (ScrollNotification notification) {
-          if (notification is ScrollEndNotification &&
-              notification.metrics.extentAfter < 100) {
+          if (notification is ScrollUpdateNotification &&
+              notification.metrics.extentAfter < 600) {
             EasyThrottle.throttle(
               'list-fetch-throttle',
               const Duration(milliseconds: 1000),
@@ -52,10 +52,8 @@ class _ListBody extends ConsumerWidget with ListState, ListEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) => SliverList.separated(
     itemCount: listState(ref),
-    itemBuilder: (_, index) => ProviderScope(
-      overrides: ListEvent.overridesProviderScopeForRow(index),
-      child: const MoclListItem(),
-    ),
+    itemBuilder: (_, index) =>
+        ItemIndex(index: index, child: const MoclListItem()),
     separatorBuilder: (_, _) => const DividerWidget(),
   );
 }
@@ -67,9 +65,9 @@ class _ListFooter extends ConsumerWidget with ListState, ListEvent {
   Widget build(BuildContext context, WidgetRef ref) {
     final (hasReachedMax, error) = listFooterState(ref); // 에러와 최대 도달 여부만 구독
 
-    return SliverPadding(
-      padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
-      sliver: SliverToBoxAdapter(
+    return SliverToBoxAdapter(
+      child: Padding(
+        padding: EdgeInsets.only(bottom: MediaQuery.of(context).padding.bottom),
         child: _ListFooterBody(
           error: error,
           hasReachedMax: hasReachedMax,
@@ -98,7 +96,9 @@ class _ListFooterBody extends StatelessWidget {
     } else if (hasReachedMax) {
       return const SizedBox.shrink();
     } else {
-      return const Column(children: [DividerWidget(), LoadingWidget()]);
+      return const Column(
+        children: [DividerWidget(), LoadingWidget(), DividerWidget()],
+      );
     }
   }
 }
@@ -123,4 +123,16 @@ class _ListFooterError extends StatelessWidget {
       ],
     ),
   );
+}
+
+class ItemIndex extends InheritedWidget {
+  final int index;
+
+  const ItemIndex({required this.index, required super.child, super.key});
+
+  static int of(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<ItemIndex>()!.index;
+
+  @override
+  bool updateShouldNotify(ItemIndex oldWidget) => index != oldWidget.index;
 }
