@@ -30,34 +30,34 @@ class ListSearchDelegate extends SearchDelegate {
 
   @override
   List<Widget>? buildActions(BuildContext context) => [
-    IconButton(
-      icon: const Icon(Icons.clear),
-      onPressed: () {
-        query = ''; // 검색어 초기화
-      },
-    ),
-  ];
+        IconButton(
+          icon: const Icon(Icons.clear),
+          onPressed: () {
+            query = ''; // 검색어 초기화
+          },
+        ),
+      ];
 
   @override
   Widget? buildLeading(BuildContext context) => IconButton(
-    icon: const Icon(Icons.arrow_back),
-    onPressed: () {
-      close(context, ''); // 검색 종료
-    },
-  );
+        icon: const Icon(Icons.arrow_back),
+        onPressed: () {
+          close(context, ''); // 검색 종료
+        },
+      );
 
   @override
-  Widget buildResults(BuildContext context) {
+  Widget buildResults(BuildContext context) => _buildResultView(query);
+
+  @override
+  Widget buildSuggestions(BuildContext context) => _buildResultView(query);
+
+  Widget _buildResultView(String query) {
     final String searchText = query.trim();
     return ProviderScope(
       overrides: ListSearchEvent.overridesProviderScope(item),
       child: SearchResultView(searchText: searchText),
     );
-  }
-
-  @override
-  Widget buildSuggestions(BuildContext context) {
-    return SizedBox.shrink();
   }
 }
 
@@ -75,28 +75,75 @@ class SearchResultViewState extends ConsumerState<SearchResultView>
   @override
   void initState() {
     super.initState();
+    _triggerSearch();
+  }
+
+  @override
+  void didUpdateWidget(SearchResultView oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.searchText != widget.searchText) {
+      _triggerSearch();
+    }
+  }
+
+  void _triggerSearch() {
     WidgetsBinding.instance.addPostFrameCallback(
       (_) => handleSearch(ref, widget.searchText),
     );
   }
 
   @override
-  Widget build(BuildContext context) => listState(ref).when(
-    data: (Either<Failure, List<ListItem>> data) => data.fold(
-      (Failure f) =>
-          Text(f.message, style: const TextStyle(color: Colors.black)),
-      (List<ListItem> items) => ListView.separated(
-        itemBuilder: (BuildContext context, int index) => ProviderScope(
-          overrides: ListSearchEvent.overridesProviderScopeForRow(ref, index),
-          child: const MoclListItem(),
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return listState(ref).when(
+      data: (Either<Failure, List<ListItem>> data) => data.fold(
+        (Failure f) => Center(
+          child: Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: Text(
+              f.message,
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: theme.colorScheme.error,
+              ),
+              textAlign: TextAlign.center,
+            ),
+          ),
         ),
-        separatorBuilder: (BuildContext context, int index) =>
-            const DividerWidget(),
-        itemCount: items.length,
+        (List<ListItem> items) {
+          if (items.isEmpty) {
+            if (widget.searchText.isEmpty) {
+              return const SizedBox.shrink();
+            }
+            return const Center(child: Text('검색 결과가 없습니다.'));
+          }
+
+          return ListView.separated(
+            keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
+            itemBuilder: (BuildContext context, int index) {
+              final item = items[index];
+              return ProviderScope(
+                key: ValueKey(item.id),
+                overrides: ListSearchEvent.overridesProviderScopeForItem(item),
+                child: const MoclListItem(),
+              );
+            },
+            separatorBuilder: (BuildContext context, int index) =>
+                const DividerWidget(),
+            itemCount: items.length,
+          );
+        },
       ),
-    ),
-    error: (e, s) =>
-        Text(e.toString(), style: const TextStyle(color: Colors.black)),
-    loading: () => const LoadingWidget(),
-  );
+      error: (e, s) => Center(
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Text(
+            e.toString(),
+            style: TextStyle(color: theme.colorScheme.error),
+          ),
+        ),
+      ),
+      loading: () => const LoadingWidget(),
+    );
+  }
 }

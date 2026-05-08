@@ -1,5 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 
 import '../../application/list_providers.dart';
@@ -18,4 +19,8 @@ mixin class ListSearchEvent {
     WidgetRef ref,
     int index,
   ) => ListEvent.overridesProviderScopeForRow(index);
+
+  static List<Override> overridesProviderScopeForItem(ListItem item) => [
+    listItemProvider.overrideWithValue(item),
+  ];
 }

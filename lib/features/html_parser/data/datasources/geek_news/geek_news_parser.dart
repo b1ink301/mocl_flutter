@@ -14,6 +14,8 @@ import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/util/mocl_logger.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_isolate_client.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_isolate_message.dart';
 
 import '../base/base_parser.dart';
 
@@ -58,7 +60,7 @@ class GeekNewsParser implements BaseParser {
 
       // Author
       final authorEl =
-          document.querySelector('div.topicinfo a[href^="/user"]');
+          document.querySelector('div.topicinfo a[href^="/@"]');
       final String author = authorEl?.text.trim() ?? '';
 
       // Time - span with title attribute has exact datetime
@@ -82,11 +84,12 @@ class GeekNewsParser implements BaseParser {
       int commentIdx = 0;
 
       for (final row in commentRows) {
-        final cAuthorEl = row.querySelector('div.commentinfo a[href^="/user"]');
+        final cAuthorEl = row.querySelector('div.commentinfo a[href^="/@"]');
         final String cAuthor = cAuthorEl?.text.trim() ?? '';
 
         final cTimeEl =
-            row.querySelector('div.commentinfo a[href^="comment?id="]');
+            row.querySelector('div.commentinfo a[href^="comment?id="]') ??
+            row.querySelector('div.commentinfo a[href^="/comment?id="]');
         final String cTime = cTimeEl?.text.trim() ?? '';
 
         final cBodyEl = row.querySelector('span.comment_contents');
@@ -145,61 +148,29 @@ class GeekNewsParser implements BaseParser {
     String boardTitle,
     Future<List<int>> Function(SiteType, List<int>) isReads,
   ) async {
-    final receivePort = ReceivePort();
-    final errorPort = ReceivePort();
-    final completer = Completer<List<ListItem>>();
-
-    receivePort.listen((message) async {
-      if (message is ReadStatusRequest) {
-        final statuses = await isReads(siteType, message.ids);
-        message.responsePort.send(ReadStatusResponse(statuses));
-      } else if (message is List<ListItem>) {
-        if (!completer.isCompleted) {
-          completer.complete(message);
-        }
-        receivePort.close();
-        errorPort.close();
-      }
-    });
-
-    errorPort.listen((message) {
-      if (!completer.isCompleted) {
-        completer.completeError(message);
-      }
-      receivePort.close();
-      errorPort.close();
-    });
-
     try {
       final responseData = response.data is String
           ? response.data as String
           : response.data.toString();
 
-      await Isolate.spawn(
-        _parseListInIsolate,
-        IsolateMessage<String>(
-          receivePort.sendPort,
-          responseData,
-          lastId.intId,
-          boardTitle,
-          baseUrl,
-          false,
-        ),
-        onError: errorPort.sendPort,
-        onExit: errorPort.sendPort,
+      final items = await ParserIsolateClient.instance.parseList(
+        siteType: siteType,
+        responseData: responseData,
+        lastId: lastId,
+        boardTitle: boardTitle,
+        baseUrl: baseUrl,
+        isShowNickImage: false,
+        isReads: isReads,
       );
-
-      return Right(await completer.future);
+      return Right(items);
     } catch (e) {
-      receivePort.close();
-      errorPort.close();
       return Left(GetListFailure(message: e.toString()));
     }
   }
 
-  static void _parseListInIsolate(IsolateMessage<String> message) async {
+  static Future<void> parseListInWorker(ParseListMessage message) async {
     final replyPort = message.replyPort;
-    final String responseData = message.responseData;
+    final String responseData = message.responseData as String;
     final String boardTitle = message.boardTitle;
     final String baseUrl = message.baseUrl;
 
@@ -238,18 +209,22 @@ class GeekNewsParser implements BaseParser {
 
         // Author
         final authorEl =
-            row.querySelector('div.topicinfo a[href^="/user"]');
+            row.querySelector('div.topicinfo a[href^="/@"]');
         final String author = authorEl?.text.trim() ?? '';
 
-        // Time - text content in topicinfo
-        final infoEl = row.querySelector('div.topicinfo');
+        // Time - prefer span[title] when available, fallback to regex on infoText
         String timeText = '';
-        if (infoEl != null) {
-          // Time is a bare text node after author link
-          final infoText = infoEl.text;
-          final timeMatch = RegExp(r'(\d+[일시분초]전|방금)').firstMatch(infoText);
-          if (timeMatch != null) {
-            timeText = timeMatch.group(0)!;
+        final timeSpan = row.querySelector('div.topicinfo span[title]');
+        if (timeSpan != null) {
+          timeText = timeSpan.text.trim();
+        } else {
+          final infoEl = row.querySelector('div.topicinfo');
+          if (infoEl != null) {
+            final timeMatch =
+                RegExp(r'(\d+(?:일|시간|분|초)전|방금)').firstMatch(infoEl.text);
+            if (timeMatch != null) {
+              timeText = timeMatch.group(0)!;
+            }
           }
         }
 
