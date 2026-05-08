@@ -105,9 +105,28 @@ class PageStateNotifier extends _$PageStateNotifier {
   }) async {
     MoclLogger.logWithTag('_fetchData', '#1 page=$page, state=$state');
 
-    final result = await ref.read(
-      reqListDataProvider(mainItem, sortType, page, lastId).future,
-    );
+    final Either<Failure, List<ListItem>> result;
+    try {
+      result = await ref.read(
+        reqListDataProvider(mainItem, sortType, page, lastId).future,
+      );
+    } catch (e, st) {
+      MoclLogger.logWithTag('_fetchData', '#exception = $e\n$st');
+      final String message = e.toString();
+      if (existingItems.isNotEmpty) {
+        return PageState(
+          items: existingItems,
+          currentPage: page,
+          lastId: lastId,
+          isLoading: false,
+          hasReachedMax: state.value?.hasReachedMax ?? false,
+          error: message,
+        );
+      }
+      return PageState.initial(
+        page,
+      ).copyWith(error: message, isLoading: false);
+    }
     return result.fold(
       (Failure failure) {
         // 기존 아이템이 있다면 기존 상태를 유지하면서 에러만 추가
@@ -260,6 +279,11 @@ class SortTypeNotifier extends _$SortTypeNotifier {
 @Riverpod(dependencies: [listItemIndex, getListItem])
 ListItem? listItem(Ref ref) {
   final index = ref.watch(listItemIndexProvider);
+  return ref.watch(getListItemProvider(index));
+}
+
+@Riverpod(dependencies: [getListItem])
+ListItem? itemForIndex(Ref ref, int index) {
   return ref.watch(getListItemProvider(index));
 }
 
