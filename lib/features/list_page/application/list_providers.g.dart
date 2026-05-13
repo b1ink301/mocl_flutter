@@ -323,17 +323,31 @@ final class ReqListDataFamily extends $Family
   String toString() => r'reqListDataProvider';
 }
 
-@ProviderFor(PageStateNotifier)
-final pageStateProvider = PageStateNotifierProvider._();
+/// infinite_scroll_pagination 의 PagingController 를 Riverpod 으로 감싼다.
+/// build() 는 mainItem/sortType 이 바뀔 때만 새 컨트롤러를 생성한다.
+/// 이전 컨트롤러의 dispose 는 Riverpod 의 ref.onDispose 가 자동 처리.
 
-final class PageStateNotifierProvider
-    extends $AsyncNotifierProvider<PageStateNotifier, PageState> {
-  PageStateNotifierProvider._()
+@ProviderFor(ListPagingController)
+final listPagingControllerProvider = ListPagingControllerProvider._();
+
+/// infinite_scroll_pagination 의 PagingController 를 Riverpod 으로 감싼다.
+/// build() 는 mainItem/sortType 이 바뀔 때만 새 컨트롤러를 생성한다.
+/// 이전 컨트롤러의 dispose 는 Riverpod 의 ref.onDispose 가 자동 처리.
+final class ListPagingControllerProvider
+    extends
+        $NotifierProvider<
+          ListPagingController,
+          PagingController<int, ListItem>
+        > {
+  /// infinite_scroll_pagination 의 PagingController 를 Riverpod 으로 감싼다.
+  /// build() 는 mainItem/sortType 이 바뀔 때만 새 컨트롤러를 생성한다.
+  /// 이전 컨트롤러의 dispose 는 Riverpod 의 ref.onDispose 가 자동 처리.
+  ListPagingControllerProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'pageStateProvider',
+        name: r'listPagingControllerProvider',
         isAutoDispose: true,
         dependencies: <ProviderOrFamily>[
           mainItemProvider,
@@ -341,9 +355,9 @@ final class PageStateNotifierProvider
           sortTypeProvider,
         ],
         $allTransitiveDependencies: <ProviderOrFamily>[
-          PageStateNotifierProvider.$allTransitiveDependencies0,
-          PageStateNotifierProvider.$allTransitiveDependencies1,
-          PageStateNotifierProvider.$allTransitiveDependencies2,
+          ListPagingControllerProvider.$allTransitiveDependencies0,
+          ListPagingControllerProvider.$allTransitiveDependencies1,
+          ListPagingControllerProvider.$allTransitiveDependencies2,
         ],
       );
 
@@ -352,26 +366,50 @@ final class PageStateNotifierProvider
   static final $allTransitiveDependencies2 = sortTypeProvider;
 
   @override
-  String debugGetCreateSourceHash() => _$pageStateNotifierHash();
+  String debugGetCreateSourceHash() => _$listPagingControllerHash();
 
   @$internal
   @override
-  PageStateNotifier create() => PageStateNotifier();
+  ListPagingController create() => ListPagingController();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(PagingController<int, ListItem> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<PagingController<int, ListItem>>(
+        value,
+      ),
+    );
+  }
 }
 
-String _$pageStateNotifierHash() => r'26a07b502929328dee1251b0cc1da7bc1bd376f2';
+String _$listPagingControllerHash() =>
+    r'c0142ec86d31d4293496411f4a2d5f03572a5490';
 
-abstract class _$PageStateNotifier extends $AsyncNotifier<PageState> {
-  FutureOr<PageState> build();
+/// infinite_scroll_pagination 의 PagingController 를 Riverpod 으로 감싼다.
+/// build() 는 mainItem/sortType 이 바뀔 때만 새 컨트롤러를 생성한다.
+/// 이전 컨트롤러의 dispose 는 Riverpod 의 ref.onDispose 가 자동 처리.
+
+abstract class _$ListPagingController
+    extends $Notifier<PagingController<int, ListItem>> {
+  PagingController<int, ListItem> build();
   @$mustCallSuper
   @override
   void runBuild() {
-    final ref = this.ref as $Ref<AsyncValue<PageState>, PageState>;
+    final ref =
+        this.ref
+            as $Ref<
+              PagingController<int, ListItem>,
+              PagingController<int, ListItem>
+            >;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AsyncValue<PageState>, PageState>,
-              AsyncValue<PageState>,
+              AnyNotifier<
+                PagingController<int, ListItem>,
+                PagingController<int, ListItem>
+              >,
+              PagingController<int, ListItem>,
               Object?,
               Object?
             >;
@@ -379,37 +417,114 @@ abstract class _$PageStateNotifier extends $AsyncNotifier<PageState> {
   }
 }
 
-@ProviderFor(getListItem)
-final getListItemProvider = GetListItemFamily._();
+/// 컨트롤러가 보유한 flat items 를 Riverpod 상태로 노출.
+/// detail/리스트 row 등 비-paging 영역에서 인덱스 기반 접근에 사용.
 
-final class GetListItemProvider
+@ProviderFor(PagingItems)
+final pagingItemsProvider = PagingItemsProvider._();
+
+/// 컨트롤러가 보유한 flat items 를 Riverpod 상태로 노출.
+/// detail/리스트 row 등 비-paging 영역에서 인덱스 기반 접근에 사용.
+final class PagingItemsProvider
+    extends $NotifierProvider<PagingItems, List<ListItem>> {
+  /// 컨트롤러가 보유한 flat items 를 Riverpod 상태로 노출.
+  /// detail/리스트 row 등 비-paging 영역에서 인덱스 기반 접근에 사용.
+  PagingItemsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'pagingItemsProvider',
+        isAutoDispose: true,
+        dependencies: <ProviderOrFamily>[listPagingControllerProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>{
+          PagingItemsProvider.$allTransitiveDependencies0,
+          PagingItemsProvider.$allTransitiveDependencies1,
+          PagingItemsProvider.$allTransitiveDependencies2,
+          PagingItemsProvider.$allTransitiveDependencies3,
+        },
+      );
+
+  static final $allTransitiveDependencies0 = listPagingControllerProvider;
+  static final $allTransitiveDependencies1 =
+      ListPagingControllerProvider.$allTransitiveDependencies0;
+  static final $allTransitiveDependencies2 =
+      ListPagingControllerProvider.$allTransitiveDependencies1;
+  static final $allTransitiveDependencies3 =
+      ListPagingControllerProvider.$allTransitiveDependencies2;
+
+  @override
+  String debugGetCreateSourceHash() => _$pagingItemsHash();
+
+  @$internal
+  @override
+  PagingItems create() => PagingItems();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(List<ListItem> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<List<ListItem>>(value),
+    );
+  }
+}
+
+String _$pagingItemsHash() => r'c8ef6859bc86dca4c6c749b6e3fd4cef0e8a37ed';
+
+/// 컨트롤러가 보유한 flat items 를 Riverpod 상태로 노출.
+/// detail/리스트 row 등 비-paging 영역에서 인덱스 기반 접근에 사용.
+
+abstract class _$PagingItems extends $Notifier<List<ListItem>> {
+  List<ListItem> build();
+  @$mustCallSuper
+  @override
+  void runBuild() {
+    final ref = this.ref as $Ref<List<ListItem>, List<ListItem>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<List<ListItem>, List<ListItem>>,
+              List<ListItem>,
+              Object?,
+              Object?
+            >;
+    element.handleCreate(ref, build);
+  }
+}
+
+@ProviderFor(itemAtIndex)
+final itemAtIndexProvider = ItemAtIndexFamily._();
+
+final class ItemAtIndexProvider
     extends $FunctionalProvider<ListItem?, ListItem?, ListItem?>
     with $Provider<ListItem?> {
-  GetListItemProvider._({
-    required GetListItemFamily super.from,
+  ItemAtIndexProvider._({
+    required ItemAtIndexFamily super.from,
     required int super.argument,
   }) : super(
          retry: null,
-         name: r'getListItemProvider',
+         name: r'itemAtIndexProvider',
          isAutoDispose: true,
          dependencies: null,
          $allTransitiveDependencies: null,
        );
 
-  static final $allTransitiveDependencies0 = pageStateProvider;
+  static final $allTransitiveDependencies0 = pagingItemsProvider;
   static final $allTransitiveDependencies1 =
-      PageStateNotifierProvider.$allTransitiveDependencies0;
+      PagingItemsProvider.$allTransitiveDependencies0;
   static final $allTransitiveDependencies2 =
-      PageStateNotifierProvider.$allTransitiveDependencies1;
+      PagingItemsProvider.$allTransitiveDependencies1;
   static final $allTransitiveDependencies3 =
-      PageStateNotifierProvider.$allTransitiveDependencies2;
+      PagingItemsProvider.$allTransitiveDependencies2;
+  static final $allTransitiveDependencies4 =
+      PagingItemsProvider.$allTransitiveDependencies3;
 
   @override
-  String debugGetCreateSourceHash() => _$getListItemHash();
+  String debugGetCreateSourceHash() => _$itemAtIndexHash();
 
   @override
   String toString() {
-    return r'getListItemProvider'
+    return r'itemAtIndexProvider'
         ''
         '($argument)';
   }
@@ -422,7 +537,7 @@ final class GetListItemProvider
   @override
   ListItem? create(Ref ref) {
     final argument = this.argument as int;
-    return getListItem(ref, argument);
+    return itemAtIndex(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -435,7 +550,7 @@ final class GetListItemProvider
 
   @override
   bool operator ==(Object other) {
-    return other is GetListItemProvider && other.argument == argument;
+    return other is ItemAtIndexProvider && other.argument == argument;
   }
 
   @override
@@ -444,29 +559,30 @@ final class GetListItemProvider
   }
 }
 
-String _$getListItemHash() => r'7989487e8b24ef20cc5289b6d5867a16b4f5d79e';
+String _$itemAtIndexHash() => r'd36eceb99789717d9f2f8684e917ef1374b992cd';
 
-final class GetListItemFamily extends $Family
+final class ItemAtIndexFamily extends $Family
     with $FunctionalFamilyOverride<ListItem?, int> {
-  GetListItemFamily._()
+  ItemAtIndexFamily._()
     : super(
         retry: null,
-        name: r'getListItemProvider',
-        dependencies: <ProviderOrFamily>[pageStateProvider],
+        name: r'itemAtIndexProvider',
+        dependencies: <ProviderOrFamily>[pagingItemsProvider],
         $allTransitiveDependencies: <ProviderOrFamily>{
-          GetListItemProvider.$allTransitiveDependencies0,
-          GetListItemProvider.$allTransitiveDependencies1,
-          GetListItemProvider.$allTransitiveDependencies2,
-          GetListItemProvider.$allTransitiveDependencies3,
+          ItemAtIndexProvider.$allTransitiveDependencies0,
+          ItemAtIndexProvider.$allTransitiveDependencies1,
+          ItemAtIndexProvider.$allTransitiveDependencies2,
+          ItemAtIndexProvider.$allTransitiveDependencies3,
+          ItemAtIndexProvider.$allTransitiveDependencies4,
         },
         isAutoDispose: true,
       );
 
-  GetListItemProvider call(int index) =>
-      GetListItemProvider._(argument: index, from: this);
+  ItemAtIndexProvider call(int index) =>
+      ItemAtIndexProvider._(argument: index, from: this);
 
   @override
-  String toString() => r'getListItemProvider';
+  String toString() => r'itemAtIndexProvider';
 }
 
 @ProviderFor(SortTypeNotifier)
@@ -520,198 +636,3 @@ abstract class _$SortTypeNotifier extends $Notifier<SortType> {
     element.handleCreate(ref, build);
   }
 }
-
-@ProviderFor(listItem)
-final listItemProvider = ListItemProvider._();
-
-final class ListItemProvider
-    extends $FunctionalProvider<ListItem?, ListItem?, ListItem?>
-    with $Provider<ListItem?> {
-  ListItemProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'listItemProvider',
-        isAutoDispose: true,
-        dependencies: <ProviderOrFamily>[
-          listItemIndexProvider,
-          getListItemProvider,
-        ],
-        $allTransitiveDependencies: <ProviderOrFamily>{
-          ListItemProvider.$allTransitiveDependencies0,
-          ListItemProvider.$allTransitiveDependencies1,
-          ListItemProvider.$allTransitiveDependencies2,
-          ListItemProvider.$allTransitiveDependencies3,
-          ListItemProvider.$allTransitiveDependencies4,
-          ListItemProvider.$allTransitiveDependencies5,
-        },
-      );
-
-  static final $allTransitiveDependencies0 = listItemIndexProvider;
-  static final $allTransitiveDependencies1 = getListItemProvider;
-  static final $allTransitiveDependencies2 =
-      GetListItemProvider.$allTransitiveDependencies0;
-  static final $allTransitiveDependencies3 =
-      GetListItemProvider.$allTransitiveDependencies1;
-  static final $allTransitiveDependencies4 =
-      GetListItemProvider.$allTransitiveDependencies2;
-  static final $allTransitiveDependencies5 =
-      GetListItemProvider.$allTransitiveDependencies3;
-
-  @override
-  String debugGetCreateSourceHash() => _$listItemHash();
-
-  @$internal
-  @override
-  $ProviderElement<ListItem?> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  ListItem? create(Ref ref) {
-    return listItem(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(ListItem? value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<ListItem?>(value),
-    );
-  }
-}
-
-String _$listItemHash() => r'cfa14f06c2d46a8696f395988a6e6969451ef49d';
-
-@ProviderFor(itemForIndex)
-final itemForIndexProvider = ItemForIndexFamily._();
-
-final class ItemForIndexProvider
-    extends $FunctionalProvider<ListItem?, ListItem?, ListItem?>
-    with $Provider<ListItem?> {
-  ItemForIndexProvider._({
-    required ItemForIndexFamily super.from,
-    required int super.argument,
-  }) : super(
-         retry: null,
-         name: r'itemForIndexProvider',
-         isAutoDispose: true,
-         dependencies: null,
-         $allTransitiveDependencies: null,
-       );
-
-  static final $allTransitiveDependencies0 = getListItemProvider;
-  static final $allTransitiveDependencies1 =
-      GetListItemProvider.$allTransitiveDependencies0;
-  static final $allTransitiveDependencies2 =
-      GetListItemProvider.$allTransitiveDependencies1;
-  static final $allTransitiveDependencies3 =
-      GetListItemProvider.$allTransitiveDependencies2;
-  static final $allTransitiveDependencies4 =
-      GetListItemProvider.$allTransitiveDependencies3;
-
-  @override
-  String debugGetCreateSourceHash() => _$itemForIndexHash();
-
-  @override
-  String toString() {
-    return r'itemForIndexProvider'
-        ''
-        '($argument)';
-  }
-
-  @$internal
-  @override
-  $ProviderElement<ListItem?> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  ListItem? create(Ref ref) {
-    final argument = this.argument as int;
-    return itemForIndex(ref, argument);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(ListItem? value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<ListItem?>(value),
-    );
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is ItemForIndexProvider && other.argument == argument;
-  }
-
-  @override
-  int get hashCode {
-    return argument.hashCode;
-  }
-}
-
-String _$itemForIndexHash() => r'dd7a9e3efa91d0659f4f5e60754d861708435378';
-
-final class ItemForIndexFamily extends $Family
-    with $FunctionalFamilyOverride<ListItem?, int> {
-  ItemForIndexFamily._()
-    : super(
-        retry: null,
-        name: r'itemForIndexProvider',
-        dependencies: <ProviderOrFamily>[getListItemProvider],
-        $allTransitiveDependencies: <ProviderOrFamily>{
-          ItemForIndexProvider.$allTransitiveDependencies0,
-          ItemForIndexProvider.$allTransitiveDependencies1,
-          ItemForIndexProvider.$allTransitiveDependencies2,
-          ItemForIndexProvider.$allTransitiveDependencies3,
-          ItemForIndexProvider.$allTransitiveDependencies4,
-        },
-        isAutoDispose: true,
-      );
-
-  ItemForIndexProvider call(int index) =>
-      ItemForIndexProvider._(argument: index, from: this);
-
-  @override
-  String toString() => r'itemForIndexProvider';
-}
-
-@ProviderFor(listItemIndex)
-final listItemIndexProvider = ListItemIndexProvider._();
-
-final class ListItemIndexProvider extends $FunctionalProvider<int, int, int>
-    with $Provider<int> {
-  ListItemIndexProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'listItemIndexProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$listItemIndexHash();
-
-  @$internal
-  @override
-  $ProviderElement<int> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  int create(Ref ref) {
-    return listItemIndex(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(int value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<int>(value),
-    );
-  }
-}
-
-String _$listItemIndexHash() => r'70b52c3cc678f4bd8e917a5b7a17378665040e04';

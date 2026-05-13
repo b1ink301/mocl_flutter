@@ -43,10 +43,10 @@
             android:value="assets" />
 <!--        <meta-data-->
 <!--            android:name="io.flutter.embedding.android.EnableSurfaceControl"-->
-<!--            android:value="false" />-->
+<!--            android:value="true" />-->
 <!--        <meta-data-->
 <!--            android:name="io.flutter.embedding.android.EnableImpeller"-->
-<!--            android:value="false" />-->
+<!--            android:value="true" />-->
 <!--        <meta-data-->
 <!--            android:name="io.flutter.embedding.android.DisableSurfaceControl"-->
 <!--            android:value="true" />-->

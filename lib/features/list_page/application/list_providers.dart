@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/domain/entities/last_id.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
@@ -12,8 +13,6 @@ import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/list_page/application/use_case_provider.dart';
 import 'package:mocl_flutter/features/list_page/domain/usecases/get_list.dart';
-import 'package:mocl_flutter/features/list_page/presentation/models/page_state.dart';
-import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'list_providers.g.dart';
@@ -85,187 +84,129 @@ Future<Either<Failure, List<ListItem>>> reqListData(
   return ref.read(getListUseCaseProvider)(params);
 }
 
+/// infinite_scroll_pagination 의 PagingController 를 Riverpod 으로 감싼다.
+/// build() 는 mainItem/sortType 이 바뀔 때만 새 컨트롤러를 생성한다.
+/// 이전 컨트롤러의 dispose 는 Riverpod 의 ref.onDispose 가 자동 처리.
 @Riverpod(dependencies: [mainItem, reqListData, SortTypeNotifier])
-class PageStateNotifier extends _$PageStateNotifier {
+class ListPagingController extends _$ListPagingController {
   @override
-  Future<PageState> build() async {
-    final initialPage = _initialPage();
-    final mainItem = ref.watch(mainItemProvider);
-    final sortType = ref.watch(sortTypeProvider);
+  PagingController<int, ListItem> build() {
+    final MainItem mainItem = ref.watch(mainItemProvider);
+    final SortType sortType = ref.watch(sortTypeProvider);
+    final int initialPage = _initialPage();
+    final bool singlePageBoard = _isSinglePageBoard(mainItem);
+    late final PagingController<int, ListItem> controller;
 
-    return _fetchData(mainItem, sortType, initialPage, const LastId());
-  }
-
-  Future<PageState> _fetchData(
-    MainItem mainItem,
-    SortType sortType,
-    int page,
-    LastId lastId, {
-    List<ListItem> existingItems = const [], // 추가 로딩 시 기존 아이템
-  }) async {
-    MoclLogger.logWithTag('_fetchData', '#1 page=$page, state=$state');
-
-    final Either<Failure, List<ListItem>> result;
-    try {
-      result = await ref.read(
-        reqListDataProvider(mainItem, sortType, page, lastId).future,
-      );
-    } catch (e, st) {
-      MoclLogger.logWithTag('_fetchData', '#exception = $e\n$st');
-      final String message = e.toString();
-      if (existingItems.isNotEmpty) {
-        return PageState(
-          items: existingItems,
-          currentPage: page,
-          lastId: lastId,
-          isLoading: false,
-          hasReachedMax: state.value?.hasReachedMax ?? false,
-          error: message,
-        );
-      }
-      return PageState.initial(
-        page,
-      ).copyWith(error: message, isLoading: false);
-    }
-    return result.fold(
-      (Failure failure) {
-        // 기존 아이템이 있다면 기존 상태를 유지하면서 에러만 추가
-
-        MoclLogger.logWithTag('_fetchData', '#2 = $failure');
-        if (existingItems.isNotEmpty) {
-          return PageState(
-            items: existingItems,
-            currentPage: page,
-            // 실패했으므로 페이지는 이전 페이지 유지 또는 현재 요청 페이지
-            lastId: lastId,
-            // 실패했으므로 lastId도 이전 값 유지 또는 현재 요청 lastId
-            isLoading: false,
-            hasReachedMax: state.value?.hasReachedMax ?? false,
-            error: failure.message,
-          );
+    controller = PagingController<int, ListItem>(
+      getNextPageKey: (state) {
+        // 단일 페이지 게시판: 한 번 fetch 후 종료
+        if (singlePageBoard && (state.keys?.isNotEmpty ?? false)) {
+          return null;
         }
-        // 초기 로딩 실패 시
-        return PageState.initial(
-          page,
-        ).copyWith(error: failure.message, isLoading: false);
+        // 마지막 페이지가 비어있으면 종료
+        if (state.lastPageIsEmpty) return null;
+
+        final int? lastKey = state.keys?.lastOrNull;
+        return lastKey == null ? initialPage : lastKey + 1;
       },
-      (List<ListItem> newItems) {
-        final bool hasReachedMax = _checkIfReachedMax(
-          mainItem,
-          newItems.isEmpty,
-        );
-        final allItems = existingItems + newItems;
+      fetchPage: (pageKey) async {
+        // LastId 가 필요한 사이트를 위해 직전 아이템에서 추출
+        final ListItem? lastItem = controller.value.items?.lastOrNull;
+        final LastId lastId = lastItem != null
+            ? LastId(intId: lastItem.id, stringId: lastItem.url)
+            : const LastId();
 
-        MoclLogger.logWithTag(
-          '_fetchData',
-          '#2 currentPage=${state.value?.currentPage}, allItems=${allItems.length}',
+        final result = await ref.read(
+          reqListDataProvider(mainItem, sortType, pageKey, lastId).future,
         );
-
-        return PageState(
-          items: allItems,
-          currentPage: hasReachedMax ? page : page + 1,
-          lastId: LastId(
-            intId:
-                newItems.lastOrNull?.id ??
-                (allItems.isNotEmpty ? allItems.last.id : -1),
-            stringId:
-                newItems.lastOrNull?.url ??
-                (allItems.isNotEmpty ? allItems.last.url : ''),
-          ),
-          isLoading: false,
-          hasReachedMax: hasReachedMax,
-          error: null,
+        return result.fold(
+          (failure) => throw _PagingFailure(failure.message),
+          (items) => items,
         );
       },
     );
-  }
 
-  Future<void> loadMore() async {
-    final PageState? currentStateValue = state.value;
-    if (state.isLoading ||
-        currentStateValue == null ||
-        currentStateValue.hasReachedMax) {
-      return;
-    }
-
-    state = AsyncData(
-      currentStateValue.copyWith(isLoading: true, error: null),
-    ); // 에러 초기화
-
-    final MainItem mainItem = ref.read(mainItemProvider);
-    final SortType sortType = ref.read(sortTypeProvider);
-
-    final PageState newState = await _fetchData(
-      mainItem,
-      sortType,
-      currentStateValue.currentPage,
-      currentStateValue.lastId,
-      existingItems: currentStateValue.items,
-    );
-    state = AsyncData(newState);
+    ref.onDispose(controller.dispose);
+    return controller;
   }
 
   int _initialPage() {
     final siteType = ref.read(currentSiteTypeProvider);
-    final int page = siteType == SiteType.clien ? 0 : 1;
-    return page;
+    return siteType == SiteType.clien ? 0 : 1;
   }
 
-  bool _checkIfReachedMax(MainItem mainItem, bool isEmpty) {
-    // if (isEmpty) return true;
+  bool _isSinglePageBoard(MainItem mainItem) =>
+      mainItem.siteType == SiteType.clien && mainItem.board == 'recommend';
 
-    // if (mainItem.siteType == SiteType.reddit) return true;
-    if (mainItem.siteType != SiteType.clien) return false;
-    return mainItem.board == "recommend";
-  }
+  void refresh() => state.refresh();
 
   void retry() {
-    final PageState? currentStateValue = state.value;
-    if (currentStateValue != null && !state.isLoading) {
-      // loadMore 실패 후 재시도 시나리오
-      if (currentStateValue.error != null) {
-        loadMore(); // 마지막 loadMore를 재시도
-      } else {
-        refresh();
-      }
+    final ctrl = state;
+    if (ctrl.value.error != null) {
+      // 에러 클리어 후 같은 키로 재시도
+      ctrl.value = ctrl.value.copyWith(error: null);
+      ctrl.fetchNextPage();
     } else {
-      // build 실패 시 (state가 AsyncError일 때)
-      refresh();
+      ctrl.refresh();
     }
   }
 
-  void refresh() {
-    state = AsyncData(PageState.initial(_initialPage()));
-    ref.invalidateSelf();
-  }
+  void loadMore() => state.fetchNextPage();
 
   void markAsReadById(int id) {
-    final currentStateValue = state.value;
-    if (currentStateValue == null) return;
+    final ctrl = state;
+    final pages = ctrl.value.pages;
+    if (pages == null) return;
 
-    final idx = currentStateValue.items.indexWhere((e) => e.id == id);
-    if (idx < 0) return;
-    if (currentStateValue.items[idx].isRead) return;
+    for (int p = 0; p < pages.length; p++) {
+      final page = pages[p];
+      final idx = page.indexWhere((e) => e.id == id);
+      if (idx < 0) continue;
+      if (page[idx].isRead) return;
 
-    final List<ListItem> updatedItems = [...currentStateValue.items];
-    updatedItems[idx] = currentStateValue.items[idx].copyWith(isRead: true);
+      final newPage = List<ListItem>.from(page);
+      newPage[idx] = page[idx].copyWith(isRead: true);
+      final newPages = List<List<ListItem>>.from(pages);
+      newPages[p] = newPage;
 
-    state = AsyncData(currentStateValue.copyWith(items: updatedItems));
+      ctrl.value = ctrl.value.copyWith(pages: newPages);
+      return;
+    }
   }
 }
 
-@Riverpod(dependencies: [PageStateNotifier])
-ListItem? getListItem(Ref ref, int index) {
-  final item = ref.watch(
-    pageStateProvider.select((state) {
-      try {
-        return state.value?.items[index];
-      } catch (e) {
-        return null;
-      }
+/// 컨트롤러가 보유한 flat items 를 Riverpod 상태로 노출.
+/// detail/리스트 row 등 비-paging 영역에서 인덱스 기반 접근에 사용.
+@Riverpod(dependencies: [ListPagingController])
+class PagingItems extends _$PagingItems {
+  @override
+  List<ListItem> build() {
+    final controller = ref.watch(listPagingControllerProvider);
+
+    void listener() {
+      state = _flatten(controller.value.pages);
+    }
+
+    controller.addListener(listener);
+    ref.onDispose(() => controller.removeListener(listener));
+
+    return _flatten(controller.value.pages);
+  }
+
+  static List<ListItem> _flatten(List<List<ListItem>>? pages) {
+    if (pages == null) return const <ListItem>[];
+    return List<ListItem>.unmodifiable([for (final p in pages) ...p]);
+  }
+}
+
+@Riverpod(dependencies: [PagingItems])
+ListItem? itemAtIndex(Ref ref, int index) {
+  return ref.watch(
+    pagingItemsProvider.select((items) {
+      if (index >= 0 && index < items.length) return items[index];
+      return null;
     }),
   );
-  return item;
 }
 
 @riverpod
@@ -276,16 +217,11 @@ class SortTypeNotifier extends _$SortTypeNotifier {
   void changeSortType(SortType sortType) => state = sortType;
 }
 
-@Riverpod(dependencies: [listItemIndex, getListItem])
-ListItem? listItem(Ref ref) {
-  final index = ref.watch(listItemIndexProvider);
-  return ref.watch(getListItemProvider(index));
-}
+class _PagingFailure implements Exception {
+  final String message;
 
-@Riverpod(dependencies: [getListItem])
-ListItem? itemForIndex(Ref ref, int index) {
-  return ref.watch(getListItemProvider(index));
-}
+  _PagingFailure(this.message);
 
-@riverpod
-int listItemIndex(Ref ref) => throw UnimplementedError();
+  @override
+  String toString() => message;
+}

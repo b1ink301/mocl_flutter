@@ -35,7 +35,7 @@ final class AddListDlgNotifierProvider
 }
 
 String _$addListDlgNotifierHash() =>
-    r'385972035378bd160bddb4cc98c64ba3578a6648';
+    r'de174bb8d88574ed9306d0a1241ec86a816d232e';
 
 abstract class _$AddListDlgNotifier
     extends $AsyncNotifier<List<CheckableMainItem>> {

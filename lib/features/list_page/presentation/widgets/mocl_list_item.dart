@@ -1,49 +1,37 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/round_text_widget.dart';
 import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mixin.dart';
-import 'package:mocl_flutter/features/list_page/presentation/state/list_state_mixin.dart';
 
 import '../mocl_list_view.dart';
 
-class MoclListItem extends ConsumerWidget with ListState, ListEvent {
+class MoclListItem extends StatelessWidget with ListEvent {
   const MoclListItem({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // 1. InheritedWidget을 통해 index를 가져옴 (const 유지 가능)
-    final index = ItemIndex.of(context);
-
-    // 2. 해당 인덱스의 아이템을 직접 구독
-    final item = itemState(ref, index);
-
-    if (item == null) {
-      return const SizedBox.shrink();
-    }
-
-    // 3. 스타일 정보를 한 번에 가져옴 (여러 ConsumerWidget의 오버헤드 제거)
-    final styles = ref.watch(appTextStylesFontSizeProvider);
+  Widget build(BuildContext context) {
+    // InheritedWidget 으로부터 item 직접 획득 (Riverpod 경유 없음)
+    final item = ItemScope.of(context);
+    // 스타일은 폰트 크기 등 글로벌 설정이라 Riverpod 으로 watch
+    final styles = StyleScope.of(context);
     final isRead = item.isRead;
 
-    final titleStyle = isRead
-        ? styles.readTitleTextStyle
-        : styles.titleTextStyle;
-    final infoStyle = isRead
-        ? styles.readSmallTextStyle
-        : styles.smallTextStyle;
-    final badgeStyle = isRead
-        ? styles.readBadgeTextStyle
-        : styles.badgeTextStyle;
+    final titleStyle = styles.title(isRead);
+    final infoStyle = styles.smallTitle(isRead);
+    final badgeStyle = styles.badge(isRead);
 
     final hasNickImage = item.userInfo.nickImage.isNotEmpty;
     final hasReply = item.reply.isNotEmpty && item.reply != '0';
 
     return InkWell(
-      onTap: () => handleItemTap(ref, context, item),
+      onTap: () => handleItemTap(context, item),
       child: Padding(
-        padding: const EdgeInsets.only(left: 16, right: 12, top: 8, bottom: 8),
+        padding: const EdgeInsets.only(
+          left: 16,
+          right: 10,
+          top: 16,
+          bottom: 16,
+        ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -75,7 +63,10 @@ class MoclListItem extends ConsumerWidget with ListState, ListEvent {
                       ),
                     ),
                     if (hasReply)
-                      RoundTextWidget(text: item.reply, textStyle: badgeStyle),
+                      RoundTextWidget(
+                        text: item.reply,
+                        textStyle: badgeStyle,
+                      ),
                   ],
                 ),
               ),

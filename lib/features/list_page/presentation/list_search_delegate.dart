@@ -6,6 +6,7 @@ import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
+import 'package:mocl_flutter/features/list_page/presentation/mocl_list_view.dart';
 import 'package:mocl_flutter/features/list_page/presentation/state/list_search_event_mixin.dart';
 import 'package:mocl_flutter/features/list_page/presentation/state/list_search_state_mixin.dart';
 import 'package:mocl_flutter/features/list_page/presentation/widgets/mocl_list_item.dart';
@@ -30,21 +31,21 @@ class ListSearchDelegate extends SearchDelegate {
 
   @override
   List<Widget>? buildActions(BuildContext context) => [
-        IconButton(
-          icon: const Icon(Icons.clear),
-          onPressed: () {
-            query = ''; // 검색어 초기화
-          },
-        ),
-      ];
+    IconButton(
+      icon: const Icon(Icons.clear),
+      onPressed: () {
+        query = ''; // 검색어 초기화
+      },
+    ),
+  ];
 
   @override
   Widget? buildLeading(BuildContext context) => IconButton(
-        icon: const Icon(Icons.arrow_back),
-        onPressed: () {
-          close(context, ''); // 검색 종료
-        },
-      );
+    icon: const Icon(Icons.arrow_back),
+    onPressed: () {
+      close(context, ''); // 검색 종료
+    },
+  );
 
   @override
   Widget buildResults(BuildContext context) => _buildResultView(query);
@@ -120,14 +121,8 @@ class SearchResultViewState extends ConsumerState<SearchResultView>
 
           return ListView.separated(
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
-            itemBuilder: (BuildContext context, int index) {
-              final item = items[index];
-              return ProviderScope(
-                key: ValueKey(item.id),
-                overrides: ListSearchEvent.overridesProviderScopeForItem(item),
-                child: const MoclListItem(),
-              );
-            },
+            itemBuilder: (BuildContext context, int index) =>
+                ItemScope(item: items[index], child: const MoclListItem()),
             separatorBuilder: (BuildContext context, int index) =>
                 const DividerWidget(),
             itemCount: items.length,

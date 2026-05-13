@@ -92,13 +92,13 @@ class _MainAppBar extends ConsumerWidget with MainState, MainEvent {
       titleTextStyle: titleStyle,
       titleSpacing: 0,
       floating: true,
-      snap: true,
+      // snap: true,
       toolbarHeight: 62,
       actions: [
         if (showAddButtonState(ref))
           IconButton(
             onPressed: () => handleAddButton(ref, context),
-            icon: const Icon(Icons.add),
+            icon: const PlainIcon(Icons.add),
           ),
         AdaptivePopupMenu(
           options: [
@@ -107,8 +107,7 @@ class _MainAppBar extends ConsumerWidget with MainState, MainEvent {
               onTap: () => handleLogin(ref, context),
             ),
           ],
-          icon: Icon(
-            size: 24,
+          icon: PlainIcon(
             isCupertino() ? CupertinoIcons.ellipsis : Icons.more_vert_rounded,
           ),
         ),

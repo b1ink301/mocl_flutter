@@ -20,22 +20,29 @@ class RoundTextWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final effectiveTextStyle = textStyle ?? DefaultTextStyle.of(context).style;
-    final effectiveBorderColor =
-        borderColor ?? effectiveTextStyle.color ?? Colors.black;
+    // 1. textStyle이 주입되었다면 context 조회를 생략합니다.
+    final TextStyle effectiveTextStyle = textStyle ?? DefaultTextStyle.of(context).style;
+    
+    // 2. 테두리 색상 결정
+    final Color effectiveBorderColor = borderColor 
+        ?? effectiveTextStyle.color 
+        ?? const Color(0xFF000000);
 
-    return Container(
-      padding: padding,
+    // 3. Container 대신 DecoratedBox + Padding 조합으로 위젯 트리 깊이를 최소화합니다.
+    return DecoratedBox(
       decoration: BoxDecoration(
         color: backgroundColor,
         border: Border.all(color: effectiveBorderColor),
         borderRadius: BorderRadius.circular(borderRadius),
       ),
-      child: Text(
-        text,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: effectiveTextStyle,
+      child: Padding(
+        padding: padding,
+        child: Text(
+          text,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: effectiveTextStyle,
+        ),
       ),
     );
   }
