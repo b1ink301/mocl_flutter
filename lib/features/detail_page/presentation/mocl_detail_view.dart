@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
-import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
@@ -20,62 +19,64 @@ import 'package:mocl_flutter/features/detail_page/presentation/state/detail_stat
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../../core/presentation/widgets/cached_item_builder.dart';
-
 const _kHeaderHeight = 48.0;
 
-class DetailView extends ConsumerWidget with DetailState {
+class DetailView extends ConsumerWidget with DetailState, DetailEvent {
   const DetailView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) =>
-      detailState(ref).maybeMap(
-        data: (state) => _DetailView(detail: state.value),
-        error: (state) => SliverFillRemaining(
-          hasScrollBody: false,
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Center(
-              child: MessageWidget(message: state.error.toString()),
-            ),
-          ),
-        ),
-        orElse: () => const SliverToBoxAdapter(
-          child: Column(children: [LoadingWidget(), DividerWidget()]),
-        ),
-      );
+  Widget build(
+    BuildContext context,
+    WidgetRef ref,
+  ) => detailState(ref).maybeMap(
+    data: (state) =>
+        _DetailView(detail: state.value, onRefresh: () => handleRefresh(ref)),
+    error: (state) => SliverFillRemaining(
+      hasScrollBody: false,
+      child: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Center(child: MessageWidget(message: state.error.toString())),
+      ),
+    ),
+    orElse: () => const _LoadingView(),
+  );
 }
 
-class _DetailView extends ConsumerWidget with DetailEvent {
-  final Details detail;
-
-  const _DetailView({required this.detail});
-
-  // 댓글 리스트를 평탄화하는 헬퍼 함수
-  List<(CommentItem, int)> _flattenComments(
-    List<CommentItem> comments, [
-    int depth = 0,
-  ]) {
-    final List<(CommentItem, int)> flattened = [];
-    for (final comment in comments) {
-      flattened.add((comment, depth));
-      if (comment.replies.isNotEmpty) {
-        flattened.addAll(_flattenComments(comment.replies, depth + 1));
-      }
-    }
-    return flattened;
-  }
+class _LoadingView extends StatelessWidget {
+  const _LoadingView();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final String hexColor = Theme.of(context).focusColor.stringHexColor;
-    final AppTextStyles styles = ref.watch(appTextStylesFontSizeProvider);
+  Widget build(BuildContext context) {
+    final style = StyleScope.of(context).$1.smallTextStyle;
+
+    return SliverFillRemaining(
+      hasScrollBody: false,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        spacing: 8,
+        children: [
+          const LoadingWidget(),
+          Text('로딩 중...', style: style),
+        ],
+      ),
+    );
+  }
+}
+
+class _DetailView extends StatelessWidget with DetailEvent {
+  final Details detail;
+  final VoidCallback onRefresh;
+
+  const _DetailView({required this.detail, required this.onRefresh});
+
+  @override
+  Widget build(BuildContext context) {
+    final (styles, hexColor) = StyleScope.of(context);
     final TextStyle bodySmall = styles.smallTextStyle;
     final TextStyle bodyMedium = styles.titleTextStyle;
     final totalComments =
         detail.extraData?['totalComments'] as int? ?? detail.comments.length;
-
-    final flattenedComments = _flattenComments(detail.comments);
 
     final bottom = MediaQuery.of(context).padding.bottom;
 
@@ -87,7 +88,7 @@ class _DetailView extends ConsumerWidget with DetailEvent {
             pinned: true,
             delegate: _HeaderSectionDelegate(
               detail: detail,
-              bodyMedium: bodyMedium.copyWith(color: bodySmall.color),
+              bodyMedium: bodySmall,
               backgroundColor: Theme.of(context).scaffoldBackgroundColor,
             ),
           ),
@@ -95,7 +96,6 @@ class _DetailView extends ConsumerWidget with DetailEvent {
           // 본문은 RepaintBoundary로 감싸 스크롤 시 불필요한 페인팅 방지
           RepaintBoundary(
             child: _Body(
-              key: ValueKey('body-${detail.title.hashCode}'),
               detail: detail,
               hexColor: hexColor,
               bodyMedium: bodyMedium,
@@ -108,11 +108,11 @@ class _DetailView extends ConsumerWidget with DetailEvent {
             _CommentHeader(
               commentCount: detail.comments.length,
               totalCount: totalComments,
-              bodyMedium: bodyMedium,
+              bodyMedium: bodySmall,
             ),
             const _DividerWidget(),
             _CommentList(
-              flattenedComments: flattenedComments,
+              comments: detail.comments,
               bodySmall: bodySmall,
               bodyMedium: bodyMedium,
               hexColor: hexColor,
@@ -120,10 +120,7 @@ class _DetailView extends ConsumerWidget with DetailEvent {
             ),
           ],
           const _DividerWidget(),
-          _RefreshButton(
-            onRefresh: () => handleRefresh(ref),
-            bodyMedium: bodyMedium,
-          ),
+          _RefreshButton(onRefresh: onRefresh, bodyMedium: bodyMedium),
           const _DividerWidget(),
           if (bottom > 0)
             SliverPadding(padding: EdgeInsets.only(bottom: bottom)),
@@ -134,14 +131,14 @@ class _DetailView extends ConsumerWidget with DetailEvent {
 }
 
 class _CommentList extends StatelessWidget {
-  final List<(CommentItem, int)> flattenedComments;
+  final List<CommentItem> comments;
   final TextStyle? bodySmall;
   final TextStyle? bodyMedium;
   final String hexColor;
   final void Function(String) openUrl;
 
   const _CommentList({
-    required this.flattenedComments,
+    required this.comments,
     required this.bodySmall,
     required this.bodyMedium,
     required this.hexColor,
@@ -153,20 +150,16 @@ class _CommentList extends StatelessWidget {
     addSemanticIndexes: false,
     separatorBuilder: (_, index) =>
         const DividerWidget(indent: 0, endIndent: 0),
-    itemCount: flattenedComments.length,
+    itemCount: comments.length,
     itemBuilder: (_, int index) {
-      final (comment, depth) = flattenedComments[index];
-      return CachedItemBuilder(
-        key: ValueKey('comment-${comment.id}'),
-        builder: () => _CommentItem(
-          comment: comment,
-          bodySmall: bodySmall,
-          bodyMedium: bodyMedium,
-          hexColor: hexColor,
-          depth: depth,
-          openUrl: openUrl,
-        ),
-        wantKeepAlive: true,
+      final comment = comments[index];
+      return _CommentItem(
+        comment: comment,
+        bodySmall: bodySmall,
+        bodyMedium: bodyMedium,
+        hexColor: hexColor,
+        depth: comment.isReply ? 1 : 0,
+        openUrl: openUrl,
       );
     },
   );
@@ -241,7 +234,9 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
 
   @override
   bool shouldRebuild(covariant _HeaderSectionDelegate oldDelegate) =>
-      oldDelegate.detail != detail || oldDelegate.bodyMedium != bodyMedium;
+      oldDelegate.detail.info != detail.info ||
+      oldDelegate.bodyMedium != bodyMedium ||
+      oldDelegate.backgroundColor != backgroundColor;
 
   @override
   double get maxExtent => _kHeaderHeight + 1;
@@ -265,15 +260,12 @@ class _Body extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => CachedItemBuilder(
-    wantKeepAlive: true,
-    builder: () => _HtmlWidget(
-      html: detail.bodyHtml,
-      textStyle: bodyMedium,
-      hexColor: hexColor,
-      openUrl: onTapUrl,
-      // renderMode: RenderMode.sliverList,
-    ),
+  Widget build(BuildContext context) => _HtmlWidget(
+    html: detail.bodyHtml,
+    textStyle: bodyMedium,
+    hexColor: hexColor,
+    openUrl: onTapUrl,
+    // renderMode: RenderMode.sliverList,
   );
 }
 
@@ -335,7 +327,6 @@ class _CommentItem extends StatelessWidget {
     final List<Widget>? likeView =
         comment.likeCount.isNotEmpty && comment.likeCount != '0'
         ? [
-            const Spacer(),
             Icon(Icons.favorite_outline, color: bodySmall!.color, size: 17),
             const SizedBox(width: 4),
             Text(comment.likeCount, style: bodySmall),
@@ -346,33 +337,29 @@ class _CommentItem extends StatelessWidget {
     final isEmptyBody = comment.bodyHtml.isEmpty;
 
     return Padding(
-      padding: EdgeInsets.only(left: leftPadding),
+      padding: EdgeInsets.only(left: leftPadding, top: 10, bottom: 10),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 4),
-            child: Row(
-              children: [
-                if (userInfo.nickImage.isNotEmpty)
-                  NickImageWidget(url: userInfo.nickImage),
-                if (comment.info.isNotEmpty)
-                  Flexible(
-                    child: Text(
-                      comment.info,
-                      style: bodySmall,
-                      overflow: TextOverflow.ellipsis,
-                    ),
+          Row(
+            children: [
+              if (userInfo.nickImage.isNotEmpty)
+                NickImageWidget(url: userInfo.nickImage),
+              if (comment.info.isNotEmpty)
+                Expanded(
+                  child: Text(
+                    comment.info,
+                    style: bodySmall,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ...?likeView,
-              ],
-            ),
+                ),
+              ...?likeView,
+            ],
           ),
           if (!isEmptyBody)
             Padding(
-              padding: const EdgeInsets.only(left: 4, bottom: 8),
+              padding: const EdgeInsets.only(top: 8),
               child: _HtmlWidget(
-                key: ValueKey('html-${comment.id}'),
                 html: comment.bodyHtml,
                 textStyle: bodyMedium,
                 hexColor: hexColor,
@@ -440,7 +427,6 @@ class _HtmlWidget extends StatelessWidget {
       onLoadingBuilder: (context, element, progress) {
         final src = element.attributes['src'] ?? '';
         return _HtmlLoadingWidget(
-          key: ValueKey(src),
           src: src,
           textStyle: textStyle?.copyWith(fontSize: 12),
           progress: progress,
@@ -581,4 +567,25 @@ class _MoclWidgetFactory extends WidgetFactory {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
   }
+}
+
+class StyleScope extends InheritedWidget {
+  final AppTextStyles styles;
+  final String hexColor;
+
+  const StyleScope({
+    required this.styles,
+    required this.hexColor,
+    required super.child,
+    super.key,
+  });
+
+  static (AppTextStyles, String) of(BuildContext context) => (
+    context.dependOnInheritedWidgetOfExactType<StyleScope>()!.styles,
+    context.dependOnInheritedWidgetOfExactType<StyleScope>()!.hexColor,
+  );
+
+  @override
+  bool updateShouldNotify(StyleScope oldWidget) =>
+      styles != oldWidget.styles || hexColor != oldWidget.hexColor;
 }

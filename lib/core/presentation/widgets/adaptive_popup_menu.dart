@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mocl_flutter/core/presentation/widgets/plain_popup_menu_button.dart';
 
 class AdaptivePopupMenu extends StatelessWidget {
   final Widget icon;
@@ -11,7 +12,7 @@ class AdaptivePopupMenu extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => PopupMenuButton<int>(
+  Widget build(BuildContext context) => PlainPopupMenuButton<int>(
           icon: icon,
           onSelected: (index) => options[index].onTap?.call(),
           itemBuilder: (_) => options

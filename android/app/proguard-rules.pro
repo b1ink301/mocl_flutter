@@ -11,6 +11,9 @@
 -keep class com.google.firebase.** { *; }
 -dontwarn com.google.firebase.**
 
+# Pigeon 관련 규칙 (Firebase 등에서 사용)
+-keep class dev.flutter.pigeon.** { *; }
+
 # Retrofit 관련 규칙
 -keep class retrofit2.** { *; }
 -keepattributes Signature

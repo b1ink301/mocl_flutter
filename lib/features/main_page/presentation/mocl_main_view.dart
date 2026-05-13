@@ -14,6 +14,8 @@ import 'package:mocl_flutter/core/util/platform_util.dart';
 import 'package:mocl_flutter/features/main_page/presentation/state/main_event_mixin.dart';
 import 'package:mocl_flutter/features/main_page/presentation/state/main_state_mixin.dart';
 
+import '../../../core/presentation/widgets/plain_icon.dart';
+
 part 'widgets/mocl_main_widgets.dart';
 
 class MainView extends ConsumerWidget with MainEvent {

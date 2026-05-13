@@ -84,7 +84,7 @@ android {
         }
         getByName("profile") {
             signingConfig = signingConfigs.getByName("key")
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }

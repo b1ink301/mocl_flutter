@@ -5,7 +5,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/presentation/widgets/adaptive_popup_menu.dart';
 import 'package:mocl_flutter/core/presentation/widgets/appbar_dual_text_widget.dart';
+import 'package:mocl_flutter/features/detail_page/presentation/mocl_detail_view.dart';
 
+import '../../../../core/presentation/widgets/plain_icon.dart';
 import '../state/detail_event_mixin.dart';
 import '../state/detail_state_mixin.dart';
 
@@ -17,9 +19,16 @@ class DetailAppBar extends ConsumerWidget with DetailState, DetailEvent {
     final String title = titleState(ref);
     final double height = appbarHeight(ref, title);
 
+    final titleStyle = StyleScope.of(
+      context,
+    ).$1.titleTextStyle.copyWith(color: Colors.white);
+    final smallTitleStyle = Theme.of(context).textTheme.labelSmall!;
+
     return AppbarDualTextWidget(
       title: title,
       smallTitle: smallTitleState(ref),
+      titleStyle: titleStyle,
+      smallTitleStyle: smallTitleStyle,
       automaticallyImplyLeading: Platform.isMacOS,
       toolbarHeight: height,
       actions: [
@@ -58,7 +67,7 @@ class _DetailPopupMenuButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => AdaptivePopupMenu(
-    icon: Icon(size: 24, Icons.more_vert_rounded),
+    icon: PlainIcon(Icons.more_vert_rounded),
     options: [
       AdaptiveMenuOption(label: '새로고침', onTap: onRefresh),
       AdaptiveMenuOption(label: '브라우저로 열기', onTap: onOpenBrowser),
@@ -105,7 +114,7 @@ class _FontSizeDialog extends ConsumerWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           IconButton(
-            icon: Icon(Icons.exposure_minus_1, color: focusColor),
+            icon: PlainIcon(Icons.exposure_minus_1, color: focusColor),
             onPressed: onDecrease,
           ),
           Text(
@@ -113,7 +122,7 @@ class _FontSizeDialog extends ConsumerWidget {
             style: Theme.of(context).textTheme.headlineMedium,
           ),
           IconButton(
-            icon: Icon(Icons.exposure_plus_1, color: focusColor),
+            icon: PlainIcon(Icons.exposure_plus_1, color: focusColor),
             onPressed: onIncrease,
           ),
         ],
@@ -123,9 +132,9 @@ class _FontSizeDialog extends ConsumerWidget {
           onPressed: onReset,
           child: Text(
             '초기화',
-            style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-              color: focusColor,
-            ),
+            style: Theme.of(
+              context,
+            ).textTheme.headlineMedium?.copyWith(color: focusColor),
           ),
         ),
       ],

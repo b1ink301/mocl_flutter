@@ -14,7 +14,7 @@ class AddListDlgNotifier extends _$AddListDlgNotifier {
     state = const AsyncValue.loading();
 
     final siteType = ref.watch(currentSiteTypeProvider);
-    final getMainListFromJson = ref.read(getMainListFromJsonProvider);
+    final getMainListFromJson = ref.watch(getMainListFromJsonProvider);
     final result = await getMainListFromJson(siteType);
 
     return result.fold(
