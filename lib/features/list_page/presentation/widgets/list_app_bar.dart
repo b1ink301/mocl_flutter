@@ -7,6 +7,7 @@ import 'package:mocl_flutter/core/presentation/widgets/appbar_dual_text_widget.d
 import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mixin.dart';
 
 import '../../../../core/presentation/widgets/plain_icon.dart';
+import '../../../../core/presentation/widgets/plain_icon_button.dart';
 import '../../../../core/presentation/widgets/plain_popup_menu_button.dart';
 import '../mocl_list_view.dart';
 import '../state/list_state_mixin.dart';
@@ -33,17 +34,15 @@ class ListAppBar extends ConsumerWidget with ListState {
   }
 }
 
-// 2. 검색 버튼 분리
+// 2. 검색 버튼 분리 (Theme/IconTheme 의존 없는 PlainIconButton 사용)
 class _SearchButton extends ConsumerWidget with ListEvent {
   const _SearchButton();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return IconButton(
-      icon: const PlainIcon(Icons.search),
-      onPressed: () => handleShowSearch(ref, context),
-    );
-  }
+  Widget build(BuildContext context, WidgetRef ref) => PlainIconButton(
+    icon: const PlainIcon(Icons.search),
+    onPressed: () => handleShowSearch(ref, context),
+  );
 }
 
 // 3. 정렬 버튼 분리 (상태 변화에만 반응하도록 함)
@@ -70,18 +69,19 @@ class _SortButton extends ConsumerWidget with ListState, ListEvent {
       );
 }
 
-// 4. 더보기 버튼 분리
+// 4. 더보기 버튼 분리 (PlainPopupMenuButton 사용)
 class _MoreButton extends ConsumerWidget with ListEvent {
   const _MoreButton();
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => PopupMenuButton<int>(
-    icon: const PlainIcon(Icons.more_vert),
-    onSelected: (int value) {
-      handleRefresh(ref);
-    },
-    itemBuilder: (BuildContext context) => [
-      const PopupMenuItem(value: 0, child: Text('새로고침')),
-    ],
-  );
+  Widget build(BuildContext context, WidgetRef ref) =>
+      PlainPopupMenuButton<int>(
+        icon: const PlainIcon(Icons.more_vert),
+        onSelected: (int value) {
+          if (value == 0) handleRefresh(ref);
+        },
+        itemBuilder: (BuildContext context) => [
+          const PopupMenuItem(value: 0, child: Text('새로고침')),
+        ],
+      );
 }

@@ -252,7 +252,6 @@ class _Body extends StatelessWidget {
   final FutureOr<bool> Function(String url) onTapUrl;
 
   const _Body({
-    super.key,
     required this.detail,
     required this.hexColor,
     required this.bodyMedium,
@@ -309,7 +308,6 @@ class _CommentItem extends StatelessWidget {
   final void Function(String) openUrl;
 
   const _CommentItem({
-    super.key,
     required this.comment,
     required this.bodySmall,
     required this.bodyMedium,
@@ -378,7 +376,6 @@ class _HtmlLoadingWidget extends StatelessWidget {
   final double? progress;
 
   const _HtmlLoadingWidget({
-    super.key,
     required this.src,
     this.textStyle,
     this.progress,
@@ -409,15 +406,12 @@ class _HtmlWidget extends StatelessWidget {
   final TextStyle? textStyle;
   final String hexColor;
   final void Function(String) openUrl;
-  final RenderMode renderMode;
 
   const _HtmlWidget({
-    super.key,
     required this.html,
     required this.textStyle,
     required this.hexColor,
     required this.openUrl,
-    this.renderMode = RenderMode.column,
   });
 
   @override
@@ -440,7 +434,6 @@ class _HtmlWidget extends StatelessWidget {
         }
         return null;
       },
-      renderMode: renderMode,
       onTapImage: (data) => openUrl(data.sources.first.url),
     );
 
