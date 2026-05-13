@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
-import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
@@ -16,6 +15,7 @@ import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/core/util/utilities.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/state/detail_event_mixin.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/state/detail_state_mixin.dart';
+import 'package:mocl_flutter/features/detail_page/presentation/widgets/detail_scope.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -47,7 +47,7 @@ class _LoadingView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final style = StyleScope.of(context).$1.smallTextStyle;
+    final style = DetailStyleScope.of(context).$1.smallTextStyle;
 
     return SliverFillRemaining(
       hasScrollBody: false,
@@ -72,7 +72,7 @@ class _DetailView extends StatelessWidget with DetailEvent {
 
   @override
   Widget build(BuildContext context) {
-    final (styles, hexColor) = StyleScope.of(context);
+    final (styles, hexColor) = DetailStyleScope.of(context);
     final TextStyle bodySmall = styles.smallTextStyle;
     final TextStyle bodyMedium = styles.titleTextStyle;
     final totalComments =
@@ -335,7 +335,7 @@ class _CommentItem extends StatelessWidget {
     final isEmptyBody = comment.bodyHtml.isEmpty;
 
     return Padding(
-      padding: EdgeInsets.only(left: leftPadding, top: 10, bottom: 10),
+      padding: EdgeInsets.only(left: leftPadding, top: 12, bottom: 12),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -560,25 +560,4 @@ class _MoclWidgetFactory extends WidgetFactory {
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     }
   }
-}
-
-class StyleScope extends InheritedWidget {
-  final AppTextStyles styles;
-  final String hexColor;
-
-  const StyleScope({
-    required this.styles,
-    required this.hexColor,
-    required super.child,
-    super.key,
-  });
-
-  static (AppTextStyles, String) of(BuildContext context) => (
-    context.dependOnInheritedWidgetOfExactType<StyleScope>()!.styles,
-    context.dependOnInheritedWidgetOfExactType<StyleScope>()!.hexColor,
-  );
-
-  @override
-  bool updateShouldNotify(StyleScope oldWidget) =>
-      styles != oldWidget.styles || hexColor != oldWidget.hexColor;
 }
