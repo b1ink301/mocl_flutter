@@ -9,7 +9,7 @@ import 'package:mocl_flutter/features/list_page/presentation/state/list_state_mi
 import 'package:mocl_flutter/features/list_page/presentation/widgets/list_app_bar.dart';
 import 'package:mocl_flutter/features/list_page/presentation/widgets/mocl_list_item.dart';
 
-import '../../../config/mocl_text_styles.dart';
+import 'widgets/list_scope.dart';
 
 class MoclListView extends ConsumerWidget with ListEvent, ListState {
   const MoclListView({super.key});
@@ -34,7 +34,7 @@ class MoclListView extends ConsumerWidget with ListEvent, ListState {
         controller: controller,
         builder: (context, state, fetchNextPage) {
           final styles = appTextStyles(ref);
-          return StyleScope(
+          return ListStyleScope(
             styles: styles,
             child: CustomScrollView(
               slivers: <Widget>[
@@ -47,7 +47,7 @@ class MoclListView extends ConsumerWidget with ListEvent, ListState {
                   fetchNextPage: fetchNextPage,
                   builderDelegate: PagedChildBuilderDelegate<ListItem>(
                     itemBuilder: (context, item, index) =>
-                        ItemScope(item: item, child: const MoclListItem()),
+                        ListItemScope(item: item, child: const MoclListItem()),
                     firstPageProgressIndicatorBuilder: (_) =>
                         const _FirstPageLoading(),
                     newPageProgressIndicatorBuilder: (_) =>
@@ -76,7 +76,7 @@ class _FirstPageLoading extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final textStyle = StyleScope.of(context).smallTextStyle;
+    final textStyle = ListStyleScope.of(context).smallTextStyle;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.center,
       mainAxisAlignment: MainAxisAlignment.center,
@@ -133,31 +133,4 @@ class _ListError extends StatelessWidget {
       ],
     ),
   );
-}
-
-/// 행에 해당하는 [ListItem] 을 InheritedWidget 으로 전달.
-/// MoclListItem 이 `const` 로 유지되면서, item 이 바뀐 행만 리빌드된다.
-class ItemScope extends InheritedWidget {
-  final ListItem item;
-
-  const ItemScope({required this.item, required super.child, super.key});
-
-  static ListItem of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<ItemScope>()!.item;
-
-  @override
-  bool updateShouldNotify(ItemScope oldWidget) =>
-      item.id != oldWidget.item.id || item.isRead != oldWidget.item.isRead;
-}
-
-class StyleScope extends InheritedWidget {
-  final AppTextStyles styles;
-
-  const StyleScope({required this.styles, required super.child, super.key});
-
-  static AppTextStyles of(BuildContext context) =>
-      context.dependOnInheritedWidgetOfExactType<StyleScope>()!.styles;
-
-  @override
-  bool updateShouldNotify(StyleScope oldWidget) => styles != oldWidget.styles;
 }

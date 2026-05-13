@@ -6,6 +6,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/features/detail_page/presentation/widgets/detail_scope.dart';
 
 import '../../../config/mocl_text_styles.dart';
 import '../../../core/application/app_provider.dart';
@@ -57,7 +58,7 @@ class _DetailScaffold extends ConsumerWidget with DetailEvent {
       value: systemOverlayStyle,
       child: Container(
         color: systemOverlayStyle.statusBarColor,
-        child: StyleScope(
+        child: DetailStyleScope(
           styles: styles,
           hexColor: hexColor,
           child: SafeArea(

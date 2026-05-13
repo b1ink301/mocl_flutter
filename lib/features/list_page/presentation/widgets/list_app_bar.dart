@@ -9,15 +9,15 @@ import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mi
 import '../../../../core/presentation/widgets/plain_icon.dart';
 import '../../../../core/presentation/widgets/plain_icon_button.dart';
 import '../../../../core/presentation/widgets/plain_popup_menu_button.dart';
-import '../mocl_list_view.dart';
 import '../state/list_state_mixin.dart';
+import 'list_scope.dart';
 
 class ListAppBar extends ConsumerWidget with ListState {
   const ListAppBar({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final titleStyle = StyleScope.of(
+    final titleStyle = ListStyleScope.of(
       context,
     ).titleTextStyle.copyWith(color: Colors.white);
     final smallTitleStyle = Theme.of(context).textTheme.labelSmall!;

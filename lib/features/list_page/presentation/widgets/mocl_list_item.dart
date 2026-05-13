@@ -3,7 +3,7 @@ import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/round_text_widget.dart';
 import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mixin.dart';
 
-import '../mocl_list_view.dart';
+import 'list_scope.dart';
 
 class MoclListItem extends StatelessWidget with ListEvent {
   const MoclListItem({super.key});
@@ -11,9 +11,9 @@ class MoclListItem extends StatelessWidget with ListEvent {
   @override
   Widget build(BuildContext context) {
     // InheritedWidget 으로부터 item 직접 획득 (Riverpod 경유 없음)
-    final item = ItemScope.of(context);
+    final item = ListItemScope.of(context);
     // 스타일은 폰트 크기 등 글로벌 설정이라 Riverpod 으로 watch
-    final styles = StyleScope.of(context);
+    final styles = ListStyleScope.of(context);
     final isRead = item.isRead;
 
     final titleStyle = styles.title(isRead);
@@ -29,8 +29,8 @@ class MoclListItem extends StatelessWidget with ListEvent {
         padding: const EdgeInsets.only(
           left: 16,
           right: 10,
-          top: 16,
-          bottom: 16,
+          top: 12,
+          bottom: 12,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

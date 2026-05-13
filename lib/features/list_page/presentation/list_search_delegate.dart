@@ -6,9 +6,9 @@ import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
-import 'package:mocl_flutter/features/list_page/presentation/mocl_list_view.dart';
 import 'package:mocl_flutter/features/list_page/presentation/state/list_search_event_mixin.dart';
 import 'package:mocl_flutter/features/list_page/presentation/state/list_search_state_mixin.dart';
+import 'package:mocl_flutter/features/list_page/presentation/widgets/list_scope.dart';
 import 'package:mocl_flutter/features/list_page/presentation/widgets/mocl_list_item.dart';
 
 class ListSearchDelegate extends SearchDelegate {
@@ -122,7 +122,7 @@ class SearchResultViewState extends ConsumerState<SearchResultView>
           return ListView.separated(
             keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
             itemBuilder: (BuildContext context, int index) =>
-                ItemScope(item: items[index], child: const MoclListItem()),
+                ListItemScope(item: items[index], child: const MoclListItem()),
             separatorBuilder: (BuildContext context, int index) =>
                 const DividerWidget(),
             itemCount: items.length,

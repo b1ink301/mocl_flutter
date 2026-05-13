@@ -11,6 +11,8 @@ import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../services/file_download_service.dart';
+
 class PhotoViewDialog extends StatelessWidget {
   final ImageProvider? imageProvider;
   final String? imageUrl;
@@ -109,20 +111,20 @@ class PhotoViewDialog extends StatelessWidget {
   }
 
   Future<void> _saveImage(BuildContext context) async {
-    final bytes = await _downloadImage();
-    if (bytes == null) {
+    if (imageUrl == null) {
       if (context.mounted) _showSnackBar(context, '이미지 다운로드에 실패했습니다.');
       return;
     }
 
     try {
-      final dir = await getApplicationDocumentsDirectory();
       final fileName = _getFileName();
-      final savePath = p.join(dir.path, fileName);
-      final file = File(savePath);
-      await file.writeAsBytes(bytes);
-
-      if (context.mounted) _showSnackBar(context, '저장되었습니다: $fileName');
+      final result = await FileDownloadService.downloadFromUrl(
+        url: imageUrl!,
+        fileName: fileName,
+      );
+      if (result['success'] == true && context.mounted) {
+        _showSnackBar(context, '저장되었습니다: $fileName');
+      }
     } catch (e) {
       MoclLogger.log('Image save failed: $e');
       if (context.mounted) _showSnackBar(context, '저장에 실패했습니다.');
@@ -143,9 +145,7 @@ class PhotoViewDialog extends StatelessWidget {
       final file = File(filePath);
       await file.writeAsBytes(bytes);
 
-      await SharePlus.instance.share(
-        ShareParams(files: [XFile(filePath)]),
-      );
+      await Share.shareXFiles([XFile(filePath)]);
     } catch (e) {
       MoclLogger.log('Image share failed: $e');
       if (context.mounted) _showSnackBar(context, '공유에 실패했습니다.');
@@ -154,10 +154,7 @@ class PhotoViewDialog extends StatelessWidget {
 
   void _showSnackBar(BuildContext context, String message) {
     ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(message),
-        duration: const Duration(seconds: 2),
-      ),
+      SnackBar(content: Text(message), duration: const Duration(seconds: 2)),
     );
   }
 

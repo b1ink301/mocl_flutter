@@ -5,11 +5,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/presentation/widgets/adaptive_popup_menu.dart';
 import 'package:mocl_flutter/core/presentation/widgets/appbar_dual_text_widget.dart';
-import 'package:mocl_flutter/features/detail_page/presentation/mocl_detail_view.dart';
+import 'package:mocl_flutter/core/presentation/widgets/plain_icon_button.dart';
 
 import '../../../../core/presentation/widgets/plain_icon.dart';
 import '../state/detail_event_mixin.dart';
 import '../state/detail_state_mixin.dart';
+import 'detail_scope.dart';
 
 class DetailAppBar extends ConsumerWidget with DetailState, DetailEvent {
   const DetailAppBar({super.key});
@@ -19,7 +20,7 @@ class DetailAppBar extends ConsumerWidget with DetailState, DetailEvent {
     final String title = titleState(ref);
     final double height = appbarHeight(ref, title);
 
-    final titleStyle = StyleScope.of(
+    final titleStyle = DetailStyleScope.of(
       context,
     ).$1.titleTextStyle.copyWith(color: Colors.white);
     final smallTitleStyle = Theme.of(context).textTheme.labelSmall!;
@@ -113,7 +114,7 @@ class _FontSizeDialog extends ConsumerWidget {
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          IconButton(
+          PlainIconButton(
             icon: PlainIcon(Icons.exposure_minus_1, color: focusColor),
             onPressed: onDecrease,
           ),
@@ -121,7 +122,7 @@ class _FontSizeDialog extends ConsumerWidget {
             _label(delta),
             style: Theme.of(context).textTheme.headlineMedium,
           ),
-          IconButton(
+          PlainIconButton(
             icon: PlainIcon(Icons.exposure_plus_1, color: focusColor),
             onPressed: onIncrease,
           ),
