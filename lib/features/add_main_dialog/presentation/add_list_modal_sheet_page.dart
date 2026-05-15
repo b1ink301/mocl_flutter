@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/core/presentation/widgets/check_box_list_title_widget.dart';
-import 'package:mocl_flutter/core/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
+import 'package:mocl_flutter/core/presentation/widgets/plain_divider_widget.dart';
 
+import '../../../core/presentation/widgets/plain_icon_button.dart';
 import 'state/add_event_mixin.dart';
 import 'state/add_state_mixin.dart';
 
@@ -31,13 +32,13 @@ class AddListBottomSheet extends ConsumerWidget with AddState, AddEvent {
                 height: 62,
                 child: Row(
                   children: [
-                    IconButton(
+                    PlainIconButton(
                       padding: const .all(10),
                       icon: const Icon(Icons.close),
                       onPressed: () => context.pop(),
                     ),
                     const Expanded(child: Center(child: Text('게시판 선택'))),
-                    IconButton(
+                    PlainIconButton(
                       padding: const .all(10),
                       icon: const Icon(Icons.check),
                       onPressed: () => pop(ref, context),
@@ -46,7 +47,7 @@ class AddListBottomSheet extends ConsumerWidget with AddState, AddEvent {
                 ),
               ),
             ),
-            const DividerWidget(),
+            const PlainDividerWidget(),
             // 콘텐츠
             Expanded(
               child: addState(ref).maybeWhen(
@@ -63,7 +64,7 @@ class AddListBottomSheet extends ConsumerWidget with AddState, AddEvent {
                           onChanged(ref, isChecked, index),
                     );
                   },
-                  separatorBuilder: (_, _) => const DividerWidget(),
+                  separatorBuilder: (_, _) => const PlainDividerWidget(),
                 ),
                 error: (error, _) => Padding(
                   padding: const .all(8.0),

@@ -8,9 +8,7 @@ import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
-import 'package:mocl_flutter/core/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
-import 'package:mocl_flutter/core/presentation/widgets/message_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/core/util/utilities.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/state/detail_event_mixin.dart';
@@ -19,49 +17,57 @@ import 'package:mocl_flutter/features/detail_page/presentation/widgets/detail_sc
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/presentation/widgets/plain_divider_widget.dart';
+import '../../../core/presentation/widgets/plain_icon.dart';
+import '../../../core/presentation/widgets/plain_text.dart';
+
 const _kHeaderHeight = 48.0;
 
 class DetailView extends ConsumerWidget with DetailState, DetailEvent {
   const DetailView({super.key});
 
   @override
-  Widget build(
-    BuildContext context,
-    WidgetRef ref,
-  ) => detailState(ref).maybeMap(
-    data: (state) =>
-        _DetailView(detail: state.value, onRefresh: () => handleRefresh(ref)),
-    error: (state) => SliverFillRemaining(
-      hasScrollBody: false,
-      child: Padding(
-        padding: const EdgeInsets.all(12.0),
-        child: Center(child: MessageWidget(message: state.error.toString())),
-      ),
-    ),
-    orElse: () => const _LoadingView(),
-  );
+  Widget build(BuildContext context, WidgetRef ref) =>
+      detailState(ref).maybeMap(
+        data: (state) => _DetailView(
+          detail: state.value,
+          onRefresh: () => handleRefresh(ref),
+        ),
+        error: (state) => SliverFillRemaining(
+          hasScrollBody: false,
+          child: Padding(
+            padding: const EdgeInsets.all(12.0),
+            child: Center(
+              child: PlainText(
+                state.error.toString(),
+                style: DetailStyleScope.of(context).$1.smallTextStyle,
+              ),
+            ),
+          ),
+        ),
+        orElse: () => const _LoadingView(),
+      );
 }
 
 class _LoadingView extends StatelessWidget {
   const _LoadingView();
 
   @override
-  Widget build(BuildContext context) {
-    final style = DetailStyleScope.of(context).$1.smallTextStyle;
-
-    return SliverFillRemaining(
-      hasScrollBody: false,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        mainAxisAlignment: MainAxisAlignment.center,
-        spacing: 8,
-        children: [
-          const LoadingWidget(),
-          Text('로딩 중...', style: style),
-        ],
-      ),
-    );
-  }
+  Widget build(BuildContext context) => SliverFillRemaining(
+    hasScrollBody: false,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      spacing: 8,
+      children: [
+        const LoadingWidget(),
+        PlainText(
+          '로딩 중...',
+          style: DetailStyleScope.of(context).$1.smallTextStyle,
+        ),
+      ],
+    ),
+  );
 }
 
 class _DetailView extends StatelessWidget with DetailEvent {
@@ -104,13 +110,13 @@ class _DetailView extends StatelessWidget with DetailEvent {
           ),
           const _SpaceWidget(),
           if (detail.comments.isNotEmpty) ...[
-            const _DividerWidget(),
+            const PlainDividerWidget(indent: 0, endIndent: 0),
             _CommentHeader(
               commentCount: detail.comments.length,
               totalCount: totalComments,
               bodyMedium: bodySmall,
             ),
-            const _DividerWidget(),
+            const PlainDividerWidget(indent: 0, endIndent: 0),
             _CommentList(
               comments: detail.comments,
               bodySmall: bodySmall,
@@ -119,9 +125,9 @@ class _DetailView extends StatelessWidget with DetailEvent {
               openUrl: (String url) => url.openUrl(context),
             ),
           ],
-          const _DividerWidget(),
+          const PlainDividerWidget(indent: 0, endIndent: 0),
           _RefreshButton(onRefresh: onRefresh, bodyMedium: bodyMedium),
-          const _DividerWidget(),
+          const PlainDividerWidget(indent: 0, endIndent: 0),
           if (bottom > 0)
             SliverPadding(padding: EdgeInsets.only(bottom: bottom)),
         ],
@@ -149,7 +155,7 @@ class _CommentList extends StatelessWidget {
   Widget build(BuildContext context) => SliverList.separated(
     addSemanticIndexes: false,
     separatorBuilder: (_, index) =>
-        const DividerWidget(indent: 0, endIndent: 0),
+        const PlainDividerWidget(indent: 0, endIndent: 0),
     itemCount: comments.length,
     itemBuilder: (_, int index) {
       final comment = comments[index];
@@ -173,14 +179,6 @@ class _SpaceWidget extends StatelessWidget {
       const SliverPadding(padding: EdgeInsets.only(top: 10));
 }
 
-class _DividerWidget extends StatelessWidget {
-  const _DividerWidget();
-
-  @override
-  Widget build(BuildContext context) =>
-      const SliverToBoxAdapter(child: Divider(indent: 0, endIndent: 0));
-}
-
 class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
   final Details detail;
   final TextStyle? bodyMedium;
@@ -196,9 +194,9 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
       detail.likeCount.isNotEmpty && detail.likeCount != '0'
       ? [
           const SizedBox(width: 10),
-          Icon(Icons.favorite_outline, color: bodyMedium.color, size: 17),
+          PlainIcon(Icons.favorite_outline, color: bodyMedium.color!, size: 17),
           const SizedBox(width: 4),
-          Text(detail.likeCount, style: bodyMedium),
+          PlainText(detail.likeCount, style: bodyMedium),
           const SizedBox(width: 10),
         ]
       : null;
@@ -222,12 +220,12 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
             children: [
               if (nickImage.isNotEmpty)
                 NickImageWidget(url: detail.userInfo.nickImage),
-              Expanded(child: Text(detail.info, style: bodyMedium)),
+              Expanded(child: PlainText(detail.info, style: bodyMedium!)),
               ...?likeView,
             ],
           ),
         ),
-        const DividerWidget(indent: 0, endIndent: 0),
+        const PlainDividerWidget(indent: 0, endIndent: 0),
       ],
     );
   }
@@ -289,9 +287,9 @@ class _CommentHeader extends StatelessWidget {
       delegate: SliverChildListDelegate([
         Align(
           alignment: Alignment.centerLeft,
-          child: Text(
+          child: PlainText(
             label,
-            style: bodyMedium?.copyWith(color: Theme.of(context).focusColor),
+            style: bodyMedium!.copyWith(color: Theme.of(context).focusColor),
           ),
         ),
       ]),
@@ -325,9 +323,13 @@ class _CommentItem extends StatelessWidget {
     final List<Widget>? likeView =
         comment.likeCount.isNotEmpty && comment.likeCount != '0'
         ? [
-            Icon(Icons.favorite_outline, color: bodySmall!.color, size: 17),
+            PlainIcon(
+              Icons.favorite_outline,
+              color: bodySmall!.color!,
+              size: 17,
+            ),
             const SizedBox(width: 4),
-            Text(comment.likeCount, style: bodySmall),
+            PlainText(comment.likeCount, style: bodySmall!),
             const SizedBox(width: 4),
           ]
         : null;
@@ -345,9 +347,9 @@ class _CommentItem extends StatelessWidget {
                 NickImageWidget(url: userInfo.nickImage),
               if (comment.info.isNotEmpty)
                 Expanded(
-                  child: Text(
+                  child: PlainText(
                     comment.info,
-                    style: bodySmall,
+                    style: bodySmall!,
                     overflow: TextOverflow.ellipsis,
                   ),
                 ),
@@ -375,11 +377,7 @@ class _HtmlLoadingWidget extends StatelessWidget {
   final TextStyle? textStyle;
   final double? progress;
 
-  const _HtmlLoadingWidget({
-    required this.src,
-    this.textStyle,
-    this.progress,
-  });
+  const _HtmlLoadingWidget({required this.src, this.textStyle, this.progress});
 
   @override
   Widget build(BuildContext context) => src.isEmpty || progress == null
@@ -388,7 +386,7 @@ class _HtmlLoadingWidget extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 4.0),
           child: Column(
             children: [
-              Text(src, style: textStyle),
+              PlainText(src, style: textStyle!),
               LinearProgressIndicator(
                 value: progress,
                 backgroundColor: Theme.of(context).dividerTheme.color,
@@ -452,16 +450,15 @@ class _RefreshButton extends StatelessWidget {
   const _RefreshButton({required this.onRefresh, required this.bodyMedium});
 
   @override
-  Widget build(BuildContext context) => SliverToBoxAdapter(
-    child: InkWell(
-      onTap: onRefresh,
-      child: Container(
-        width: double.infinity,
-        height: 58,
-        alignment: Alignment.center,
-        child: Text(
+  Widget build(BuildContext context) => InkWell(
+    onTap: onRefresh,
+    child: SizedBox(
+      width: double.infinity,
+      height: 58,
+      child: Center(
+        child: PlainText(
           '새로고침',
-          style: bodyMedium?.copyWith(color: Theme.of(context).focusColor),
+          style: bodyMedium!.copyWith(color: Theme.of(context).focusColor),
         ),
       ),
     ),
@@ -519,7 +516,7 @@ class _MoclWidgetFactory extends WidgetFactory {
                 )
               else
                 Container(color: const Color(0xFF000000)),
-              const Icon(
+              const PlainIcon(
                 Icons.play_circle_fill,
                 size: 64,
                 color: Color(0xCCFFFFFF),

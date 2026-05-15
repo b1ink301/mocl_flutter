@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mocl_flutter/core/presentation/widgets/plain_text.dart';
 
 class AppbarDualTextWidget extends StatelessWidget {
   final String smallTitle;
@@ -61,9 +62,9 @@ class _DualTitle extends ConsumerWidget {
     crossAxisAlignment: CrossAxisAlignment.start,
     mainAxisSize: MainAxisSize.min,
     children: [
-      Text(smallTitle, style: smallTitleStyle),
+      PlainText(smallTitle, style: smallTitleStyle),
       const SizedBox(height: 4),
-      Text(title, style: titleStyle, maxLines: 3, overflow: .ellipsis),
+      PlainText(title, style: titleStyle, maxLines: 3, overflow: .ellipsis),
     ],
   );
 }

@@ -13,10 +13,12 @@ class DetailStyleScope extends InheritedWidget {
     super.key,
   });
 
-  static (AppTextStyles, String) of(BuildContext context) => (
-  context.dependOnInheritedWidgetOfExactType<DetailStyleScope>()!.styles,
-  context.dependOnInheritedWidgetOfExactType<DetailStyleScope>()!.hexColor,
-  );
+  static (AppTextStyles, String) of(BuildContext context) {
+    final scope = context
+        .dependOnInheritedWidgetOfExactType<DetailStyleScope>()!;
+
+    return (scope.styles, scope.hexColor);
+  }
 
   @override
   bool updateShouldNotify(DetailStyleScope oldWidget) =>

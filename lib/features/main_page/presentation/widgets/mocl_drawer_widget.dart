@@ -5,6 +5,9 @@ import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/presentation/widgets/app_version_widget.dart';
 
+import '../../../../core/presentation/widgets/plain_divider_widget.dart';
+import '../../../../core/presentation/widgets/plain_icon.dart';
+import '../../../../core/presentation/widgets/plain_text.dart';
 import '../state/main_event_mixin.dart';
 import '../state/main_state_mixin.dart';
 
@@ -77,14 +80,16 @@ class _DrawerSiteItem extends ConsumerWidget with MainState {
     return Column(
       children: [
         ListTile(
-          title: Text(siteType.title),
-          titleTextStyle: titleTextStyleState(ref),
+          title: PlainText(siteType.title, style: titleTextStyleState(ref)),
           onTap: onTap,
           trailing: isSelected
-              ? Icon(Icons.check_outlined, color: Theme.of(context).focusColor)
+              ? PlainIcon(
+                  Icons.check_outlined,
+                  color: Theme.of(context).focusColor,
+                )
               : null,
         ),
-        const Divider(height: 1, thickness: 1, indent: 12, endIndent: 8),
+        const PlainDividerWidget(indent: 12, endIndent: 8),
       ],
     );
   }

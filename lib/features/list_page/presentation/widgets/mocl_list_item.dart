@@ -3,6 +3,7 @@ import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/round_text_widget.dart';
 import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mixin.dart';
 
+import '../../../../core/presentation/widgets/plain_text.dart';
 import 'list_scope.dart';
 
 class MoclListItem extends StatelessWidget with ListEvent {
@@ -36,7 +37,7 @@ class MoclListItem extends StatelessWidget with ListEvent {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Title
-            Text(
+            PlainText(
               item.title,
               maxLines: 3,
               overflow: TextOverflow.ellipsis,
@@ -55,7 +56,7 @@ class MoclListItem extends StatelessWidget with ListEvent {
                         child: NickImageWidget(url: item.userInfo.nickImage),
                       ),
                     Expanded(
-                      child: Text(
+                      child: PlainText(
                         item.info,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,

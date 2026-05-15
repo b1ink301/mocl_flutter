@@ -68,7 +68,7 @@ class _DetailScaffold extends ConsumerWidget with DetailEvent {
                 color: Theme.of(context).focusColor,
                 onRefresh: () async => handleRefresh(ref),
                 child: const CustomScrollView(
-                  cacheExtent: 500,
+                  // cacheExtent: 500,
                   slivers: [DetailAppBar(), DetailView()],
                 ),
               ),
