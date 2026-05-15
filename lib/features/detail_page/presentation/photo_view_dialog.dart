@@ -157,7 +157,9 @@ class PhotoViewDialog extends StatelessWidget {
       final file = File(filePath);
       await file.writeAsBytes(bytes);
 
-      await Share.shareXFiles([XFile(filePath)]);
+      await SharePlus.instance.share(
+        ShareParams(files: [XFile(filePath)]),
+      );
     } catch (e) {
       MoclLogger.log('Image share failed: $e');
       if (context.mounted) _showSnackBar(context, '공유에 실패했습니다.');
