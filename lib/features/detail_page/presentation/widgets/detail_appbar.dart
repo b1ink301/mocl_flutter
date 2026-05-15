@@ -8,6 +8,7 @@ import 'package:mocl_flutter/core/presentation/widgets/appbar_dual_text_widget.d
 import 'package:mocl_flutter/core/presentation/widgets/plain_icon_button.dart';
 
 import '../../../../core/presentation/widgets/plain_icon.dart';
+import '../../../../core/presentation/widgets/plain_text.dart';
 import '../state/detail_event_mixin.dart';
 import '../state/detail_state_mixin.dart';
 import 'detail_scope.dart';
@@ -108,8 +109,10 @@ class _FontSizeDialog extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final double delta = ref.watch(fontSizeDeltaProvider);
+    final textStyle = Theme.of(context).textTheme.headlineMedium!;
+
     return AlertDialog.adaptive(
-      title: const Text('글자 크기 변경'),
+      title: PlainText('글자 크기 변경', style: textStyle),
       content: Row(
         mainAxisSize: MainAxisSize.min,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -118,10 +121,7 @@ class _FontSizeDialog extends ConsumerWidget {
             icon: PlainIcon(Icons.exposure_minus_1, color: focusColor),
             onPressed: onDecrease,
           ),
-          Text(
-            _label(delta),
-            style: Theme.of(context).textTheme.headlineMedium,
-          ),
+          PlainText(_label(delta), style: textStyle),
           PlainIconButton(
             icon: PlainIcon(Icons.exposure_plus_1, color: focusColor),
             onPressed: onIncrease,
@@ -131,12 +131,7 @@ class _FontSizeDialog extends ConsumerWidget {
       actions: [
         TextButton(
           onPressed: onReset,
-          child: Text(
-            '초기화',
-            style: Theme.of(
-              context,
-            ).textTheme.headlineMedium?.copyWith(color: focusColor),
-          ),
+          child: PlainText('초기화', style: textStyle.copyWith(color: focusColor)),
         ),
       ],
     );

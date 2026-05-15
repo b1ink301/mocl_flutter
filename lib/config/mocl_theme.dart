@@ -38,6 +38,7 @@ class MoclTheme {
         TextStyle(color: Color(0xFF111111), fontSize: 15),
       ),
     ),
+    dividerColor: const Color(0xFFC9CAC5),
     dividerTheme: const DividerThemeData(
       color: Color(0xFFC9CAC5),
       space: 1,
@@ -70,6 +71,7 @@ class MoclTheme {
         systemNavigationBarContrastEnforced: false,
       ),
     ),
+    dividerColor: const Color(0xFF222222),
     dividerTheme: const DividerThemeData(
       color: Color(0xFF222222),
       space: 1,

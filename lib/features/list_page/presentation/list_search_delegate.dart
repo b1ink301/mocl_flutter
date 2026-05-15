@@ -11,6 +11,10 @@ import 'package:mocl_flutter/features/list_page/presentation/state/list_search_s
 import 'package:mocl_flutter/features/list_page/presentation/widgets/list_scope.dart';
 import 'package:mocl_flutter/features/list_page/presentation/widgets/mocl_list_item.dart';
 
+import '../../../core/presentation/widgets/plain_icon.dart';
+import '../../../core/presentation/widgets/plain_icon_button.dart';
+import '../../../core/presentation/widgets/plain_text.dart';
+
 class ListSearchDelegate extends SearchDelegate {
   final MainItem item;
 
@@ -31,8 +35,8 @@ class ListSearchDelegate extends SearchDelegate {
 
   @override
   List<Widget>? buildActions(BuildContext context) => [
-    IconButton(
-      icon: const Icon(Icons.clear),
+    PlainIconButton(
+      icon: const PlainIcon(Icons.clear),
       onPressed: () {
         query = ''; // 검색어 초기화
       },
@@ -40,8 +44,8 @@ class ListSearchDelegate extends SearchDelegate {
   ];
 
   @override
-  Widget? buildLeading(BuildContext context) => IconButton(
-    icon: const Icon(Icons.arrow_back),
+  Widget? buildLeading(BuildContext context) => PlainIconButton(
+    icon: const PlainIcon(Icons.arrow_back),
     onPressed: () {
       close(context, ''); // 검색 종료
     },
@@ -102,9 +106,9 @@ class SearchResultViewState extends ConsumerState<SearchResultView>
         (Failure f) => Center(
           child: Padding(
             padding: const EdgeInsets.all(16.0),
-            child: Text(
+            child: PlainText(
               f.message,
-              style: theme.textTheme.bodyMedium?.copyWith(
+              style: theme.textTheme.bodyMedium!.copyWith(
                 color: theme.colorScheme.error,
               ),
               textAlign: TextAlign.center,

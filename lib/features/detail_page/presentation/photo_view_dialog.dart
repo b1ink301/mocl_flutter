@@ -11,6 +11,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:photo_view/photo_view.dart';
 import 'package:share_plus/share_plus.dart';
 
+import '../../../core/presentation/widgets/plain_icon.dart';
+import '../../../core/presentation/widgets/plain_icon_button.dart';
+import '../../../core/presentation/widgets/plain_text.dart';
 import '../services/file_download_service.dart';
 
 class PhotoViewDialog extends StatelessWidget {
@@ -70,18 +73,27 @@ class PhotoViewDialog extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               if (imageUrl != null) ...[
-                IconButton(
+                PlainIconButton(
                   onPressed: () => _saveImage(context),
-                  icon: const Icon(Icons.save_alt),
+                  icon: PlainIcon(
+                    Icons.save_alt,
+                    color: Theme.of(context).focusColor,
+                  ),
                 ),
-                IconButton(
+                PlainIconButton(
                   onPressed: () => _shareImage(context),
-                  icon: const Icon(Icons.share),
+                  icon: PlainIcon(
+                    Icons.share,
+                    color: Theme.of(context).focusColor,
+                  ),
                 ),
               ],
-              IconButton(
+              PlainIconButton(
                 onPressed: () => context.pop(),
-                icon: const Icon(Icons.close),
+                icon: PlainIcon(
+                  Icons.close,
+                  color: Theme.of(context).focusColor,
+                ),
               ),
             ],
           ),
@@ -169,9 +181,9 @@ class PhotoViewDialog extends StatelessWidget {
 
     final percentage = (100 * value).floor();
     return Center(
-      child: Text(
+      child: PlainText(
         "$percentage%",
-        style: Theme.of(context).textTheme.bodyMedium,
+        style: Theme.of(context).textTheme.bodyMedium!,
       ),
     );
   }

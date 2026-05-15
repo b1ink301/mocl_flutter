@@ -15,8 +15,20 @@ class _MainBody extends ConsumerWidget with MainState, MainEvent {
         key: ValueKey(error.hashCode),
         message: error is Failure ? error.message : error.toString(),
       ),
-      loading: () => const SliverToBoxAdapter(
-        child: Column(children: [LoadingWidget(), DividerWidget()]),
+      loading: () => SliverFillRemaining(
+        hasScrollBody: false,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
+          spacing: 8,
+          children: [
+            const LoadingWidget(),
+            PlainText(
+              '로딩 중...',
+              style: ref.watch(appTextStylesFontSizeProvider).smallTextStyle,
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -36,7 +48,7 @@ class _BodyList extends ConsumerWidget with MainState {
             itemCount: items.length,
             itemBuilder: (context, index) =>
                 _buildListItem(context, items[index], textStyle),
-            separatorBuilder: (_, _) => const DividerWidget(),
+            separatorBuilder: (_, _) => const PlainDividerWidget(),
           );
   }
 
@@ -50,9 +62,8 @@ class _BodyList extends ConsumerWidget with MainState {
     MainItem item,
     TextStyle? textStyle,
   ) => ListTile(
-    key: ValueKey(item.board),
     leading: item.icon.isEmpty ? null : _buildIconView(item.icon),
-    title: Text(item.text, style: textStyle),
+    title: PlainText(item.text, style: textStyle!),
     onTap: () => context.push(Routes.list, extra: item),
     contentPadding: const .fromLTRB(16, 4, 8, 4),
   );
@@ -72,7 +83,7 @@ class _ErrorWidget extends StatelessWidget {
   Widget build(BuildContext context) => SliverPadding(
     padding: const .all(12.0),
     sliver: SliverToBoxAdapter(
-      child: Text(
+      child: PlainText(
         message,
         style: TextStyle(fontSize: 16, color: Theme.of(context).focusColor),
       ),
@@ -88,7 +99,7 @@ class _MainAppBar extends ConsumerWidget with MainState, MainEvent {
     final titleStyle = ref.watch(appbarTextStyleProvider);
     return SliverAppBar(
       scrolledUnderElevation: 0,
-      title: Text(titleState(ref)),
+      title: PlainText(titleState(ref), style: titleStyle),
       titleTextStyle: titleStyle,
       titleSpacing: 0,
       floating: true,
@@ -96,7 +107,7 @@ class _MainAppBar extends ConsumerWidget with MainState, MainEvent {
       toolbarHeight: 62,
       actions: [
         if (showAddButtonState(ref))
-          IconButton(
+          PlainIconButton(
             onPressed: () => handleAddButton(ref, context),
             icon: const PlainIcon(Icons.add),
           ),

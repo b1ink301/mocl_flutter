@@ -15,6 +15,8 @@ import 'package:mocl_flutter/features/list_page/application/use_case_provider.da
 import 'package:mocl_flutter/features/list_page/domain/usecases/get_list.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
+import '../../../config/mocl_text_styles.dart';
+
 part 'list_providers.g.dart';
 
 @riverpod
@@ -93,6 +95,7 @@ class ListPagingController extends _$ListPagingController {
   PagingController<int, ListItem> build() {
     final MainItem mainItem = ref.watch(mainItemProvider);
     final SortType sortType = ref.watch(sortTypeProvider);
+
     final int initialPage = _initialPage();
     final bool singlePageBoard = _isSinglePageBoard(mainItem);
     late final PagingController<int, ListItem> controller;
