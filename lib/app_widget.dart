@@ -15,6 +15,7 @@ class AppWidget extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textStyles = ref.watch(appTextStylesFontSizeProvider);
+
     useEffect(() {
       // 위젯이 처음 붙을 때 실행
       WidgetsBinding.instance.addPostFrameCallback((_) async {

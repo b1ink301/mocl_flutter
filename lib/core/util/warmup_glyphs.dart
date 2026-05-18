@@ -82,7 +82,7 @@ class Glyphs {
     AppTextStyles textStyles, {
     bool Function()? shouldAbort, // 중단 여부를 확인할 콜백 추가
   }) async {
-    // 현대 한글 음절 전체 (가~힣)
+    // 현대 한글 음절 전체 (가~힣), 중복 제거 됨
     final uniqueChars = <int>{
       ..._frequentKoreanSyllables.runes,
       ..._commonAscii.runes,
@@ -108,29 +108,27 @@ class Glyphs {
             : (start + chunkSize);
         final chunk = text.substring(start, end);
 
-        // idle 우선순위로 예약 → 사용자 인터랙션/스크롤/애니메이션 중에는 대기.
-        // 한 청크의 layout/paint 가 끝나야 다음이 시작되며, 그 사이 프레임 워크가
-        // 더 중요한 작업을 처리할 수 있다.
-        await SchedulerBinding.instance.scheduleTask<void>(() async {
-          final tp = TextPainter(
-            text: TextSpan(text: chunk, style: style),
-            textDirection: TextDirection.ltr,
-          )..layout(maxWidth: maxWidth);
+        final tp = TextPainter(
+          text: TextSpan(text: chunk, style: style),
+          textDirection: TextDirection.ltr,
+        )..layout(maxWidth: maxWidth);
 
-          final recorder = PictureRecorder();
-          final canvas = Canvas(recorder);
-          tp.paint(canvas, Offset.zero);
-          final picture = recorder.endRecording();
+        final recorder = PictureRecorder();
+        final canvas = Canvas(recorder);
+        tp.paint(canvas, Offset.zero);
+        final picture = recorder.endRecording();
 
-          // 실제 텍스트 영역에 맞춰 rasterize 해야 glyph 가 atlas 에 업로드됨.
-          // 1x1 로 하면 Impeller 가 화면 밖 draw 를 컬링해 워밍업 효과가 사라진다.
-          final int w = tp.width.ceil().clamp(8, 2048);
-          final int h = tp.height.ceil().clamp(8, 2048);
-          final image = await picture.toImage(w, h);
-          image.dispose();
-          picture.dispose();
-          tp.dispose();
-        }, Priority.idle);
+        // 실제 텍스트 영역에 맞춰 rasterize 해야 glyph 가 atlas 에 업로드됨.
+        // 1x1 로 하면 Impeller 가 화면 밖 draw 를 컬링해 워밍업 효과가 사라진다.
+        final int w = tp.width.ceil().clamp(8, 2048);
+        final int h = tp.height.ceil().clamp(8, 2048);
+        final image = await picture.toImage(w, h);
+        image.dispose();
+        picture.dispose();
+        tp.dispose();
+
+        // 다음 프레임까지 양보 → 사용자 인터랙션/애니메이션이 우선 처리됨.
+        await SchedulerBinding.instance.endOfFrame;
       }
     }
   }
