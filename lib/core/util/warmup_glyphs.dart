@@ -95,8 +95,8 @@ class Glyphs {
       textStyles.smallTextStyle,
     ];
 
-    const int chunkSize = 150; // 청크당 문자 수 (작을수록 한 번에 점유하는 UI 시간 짧음)
-    const double maxWidth = 2048; // layout 최대 너비
+    const int chunkSize = 80; // 청크당 문자 수 (작을수록 한 번에 점유하는 UI 시간 짧음)
+    const double maxWidth = 1024; // layout 최대 너비
 
     for (final style in styles) {
       for (int start = 0; start < text.length; start += chunkSize) {
@@ -124,8 +124,8 @@ class Glyphs {
 
           // 실제 텍스트 영역에 맞춰 rasterize 해야 glyph 가 atlas 에 업로드됨.
           // 1x1 로 하면 Impeller 가 화면 밖 draw 를 컬링해 워밍업 효과가 사라진다.
-          final int w = tp.width.ceil().clamp(1, 4096);
-          final int h = tp.height.ceil().clamp(1, 4096);
+          final int w = tp.width.ceil().clamp(8, 2048);
+          final int h = tp.height.ceil().clamp(8, 2048);
           final image = await picture.toImage(w, h);
           image.dispose();
           picture.dispose();

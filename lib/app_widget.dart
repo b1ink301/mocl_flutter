@@ -17,7 +17,10 @@ class AppWidget extends HookConsumerWidget {
     final textStyles = ref.watch(appTextStylesFontSizeProvider);
     useEffect(() {
       // 위젯이 처음 붙을 때 실행
-      GlyphWarmupManager.instance.init(textStyles);
+      WidgetsBinding.instance.addPostFrameCallback((_) async {
+        await Future.delayed(const Duration(milliseconds: 500));
+        GlyphWarmupManager.instance.init(textStyles);
+      });
 
       // 위젯이 제거될 때 실행 (dispose 역할)
       return () => GlyphWarmupManager.instance.dispose();

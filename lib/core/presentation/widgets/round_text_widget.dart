@@ -13,7 +13,7 @@ class RoundTextWidget extends StatelessWidget {
     super.key,
     required this.text,
     this.textStyle,
-    this.padding = const EdgeInsets.symmetric(horizontal: 3.6, vertical: 0),
+    this.padding = const EdgeInsets.symmetric(horizontal: 4.1, vertical: 0.6),
     this.borderColor,
     this.backgroundColor,
     this.borderRadius = 10.0,
