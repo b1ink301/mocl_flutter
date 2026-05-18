@@ -25,7 +25,7 @@ class MoclListView extends ConsumerWidget with ListEvent, ListState {
 
     // 에러 인디케이터 빌더 (중복 제거)
     Widget buildErrorIndicator(dynamic error) => _ListError(
-      errorMessage: error?.toString() ?? '오류가 발생했습니다',
+      errorMessage: '로딩 중 오류가 발생했습니다',
       onRetry: () => handleRetry(ref),
       textStyle: styles.smallTextStyle,
     );
@@ -131,7 +131,7 @@ class _ListError extends StatelessWidget {
       children: [
         PlainText(
           errorMessage,
-          maxLines: 4,
+          maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: textStyle,
         ),
@@ -140,8 +140,6 @@ class _ListError extends StatelessWidget {
           onPressed: onRetry,
           child: PlainText('재시도', style: textStyle),
         ),
-        const SizedBox(height: 8),
-        const PlainDividerWidget(),
       ],
     ),
   );
