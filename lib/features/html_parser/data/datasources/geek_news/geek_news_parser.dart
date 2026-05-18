@@ -194,8 +194,11 @@ class GeekNewsParser implements BaseParser {
         }
         if (id <= 0) continue;
 
-        // Title
-        final titleEl = row.querySelector('div.topictitle a > h1');
+        // Title (사이트가 h1 -> h2.topic-title-heading 로 변경됨, 폴백 유지)
+        final titleEl =
+            row.querySelector('div.topictitle a h2.topic-title-heading') ??
+            row.querySelector('div.topictitle a > h2') ??
+            row.querySelector('div.topictitle a > h1');
         final String title = titleEl?.text.trim() ?? '';
         if (title.isEmpty) continue;
 
