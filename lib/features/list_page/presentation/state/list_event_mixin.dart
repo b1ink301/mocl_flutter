@@ -24,6 +24,10 @@ mixin class ListEvent {
   void handleLoadMore(WidgetRef ref) =>
       ref.read(listPagingControllerProvider.notifier).loadMore();
 
+  /// 백그라운드 → 포그라운드 복귀 시 호출. 멈춘 fetch 가 있으면 강제 재시작.
+  void handleAppResumed(WidgetRef ref) =>
+      ref.read(listPagingControllerProvider.notifier).kickIfStale();
+
   Future<void> handleShowSearch(WidgetRef ref, BuildContext context) =>
       showSearch(
         context: context,

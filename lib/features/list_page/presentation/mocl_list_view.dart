@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
@@ -12,13 +13,22 @@ import '../../../core/presentation/widgets/plain_divider_widget.dart';
 import '../../../core/presentation/widgets/plain_text.dart';
 import 'widgets/list_scope.dart';
 
-class MoclListView extends ConsumerWidget with ListEvent, ListState {
+class MoclListView extends HookConsumerWidget with ListEvent, ListState {
   const MoclListView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // 리스트 아이템 읽음 처리 리스너 등록
     bindReadListener(ref);
+
+    // 백그라운드 → 포그라운드 복귀 시 멈춘 fetch 강제 재시작.
+    // (Doze 등으로 in-flight 요청이 영영 resolve 되지 않아 isLoading 이
+    //  영구 true 가 되는 케이스 복구)
+    useOnAppLifecycleStateChange((previous, current) {
+      if (current == AppLifecycleState.resumed) {
+        handleAppResumed(ref);
+      }
+    });
 
     final controller = listPageController(ref);
     final styles = appTextStyles(ref);
