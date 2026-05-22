@@ -13,15 +13,25 @@ import '../../html_parser/data/datasources/clien/clien_api.dart';
 
 part 'network_provider.g.dart';
 
+/// 백그라운드 → 포그라운드 복귀 후 소켓이 죽어 요청이 영영 끝나지 않는 문제 방지.
+/// 모든 Dio 인스턴스가 동일한 timeout 정책을 갖도록 일원화.
+Dio _buildDio() => Dio(
+  BaseOptions(
+    connectTimeout: const Duration(seconds: 15),
+    receiveTimeout: const Duration(seconds: 15),
+    sendTimeout: const Duration(seconds: 15),
+  ),
+);
+
 @riverpod
-Dio dio(Ref ref) => Dio();
+Dio dio(Ref ref) => _buildDio();
 
 @riverpod
 CookieJar cookieJar(Ref ref) => CookieJar();
 
 @riverpod
 BaseApi theQooApiClient(Ref ref) {
-  return TheQooApi(Dio(), userAgentMobile);
+  return TheQooApi(_buildDio(), userAgentMobile);
 }
 
 @riverpod
@@ -54,7 +64,7 @@ BaseApi redditApiClient(Ref ref) {
 
 @riverpod
 BaseApi geekNewsApiClient(Ref ref) {
-  return GeekNewsApi(Dio(), userAgentPc);
+  return GeekNewsApi(_buildDio(), userAgentPc);
 }
 
 @riverpod

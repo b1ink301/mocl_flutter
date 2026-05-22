@@ -11,11 +11,10 @@ import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/list_page/application/use_case_provider.dart';
 import 'package:mocl_flutter/features/list_page/domain/usecases/get_list.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
-
-import '../../../config/mocl_text_styles.dart';
 
 part 'list_providers.g.dart';
 
@@ -155,6 +154,23 @@ class ListPagingController extends _$ListPagingController {
   }
 
   void loadMore() => state.fetchNextPage();
+
+  /// 백그라운드 → 포그라운드 복귀 후 fetch 가 멈춰 있을 때 강제로 재시작.
+  ///
+  /// PagingController 는 isLoading==true 면 fetchNextPage 호출을 무시한다.
+  /// 백그라운드 중 in-flight 였던 요청은 소켓이 죽어 영영 resolve 되지 않고,
+  /// 그 결과 isLoading 이 영구 true 로 박혀 스크롤해도 다음 페이지가
+  /// 로드되지 않는 증상이 발생한다.
+  ///
+  /// 이를 감지해서 상태를 리셋 후 다시 fetch 를 시도.
+  void kickIfStale() {
+    final ctrl = state;
+    final value = ctrl.value;
+    if (!value.isLoading) return;
+    MoclLogger.log('[ListPagingController] kickIfStale: 멈춘 fetch 강제 재시작');
+    ctrl.value = value.copyWith(isLoading: false, error: null);
+    ctrl.fetchNextPage();
+  }
 
   void markAsReadById(int id) {
     final ctrl = state;
