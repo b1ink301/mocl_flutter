@@ -47,7 +47,7 @@ final class DioProvider extends $FunctionalProvider<Dio, Dio, Dio>
   }
 }
 
-String _$dioHash() => r'088d5c03610503c2407a8d7429b0e9f3ee76406f';
+String _$dioHash() => r'426f53783e39ce0a7f038449591bc45fc9b47b21';
 
 @ProviderFor(cookieJar)
 final cookieJarProvider = CookieJarProvider._();
@@ -129,7 +129,7 @@ final class TheQooApiClientProvider
   }
 }
 
-String _$theQooApiClientHash() => r'98a4b9cff27d9e12f74f1705ee1ad837a05d877f';
+String _$theQooApiClientHash() => r'a3b1448e260f1548b209deeb727b6a40116bd609';
 
 @ProviderFor(clienApiClient)
 final clienApiClientProvider = ClienApiClientProvider._();
@@ -335,7 +335,7 @@ final class GeekNewsApiClientProvider
   }
 }
 
-String _$geekNewsApiClientHash() => r'26eba0317737b043d259c64410a97a416ca445af';
+String _$geekNewsApiClientHash() => r'd81b05a79ef57be9630dea51327e79fe03398ea5';
 
 @ProviderFor(meecoApiClient)
 final meecoApiClientProvider = MeecoApiClientProvider._();

@@ -104,3 +104,11 @@
 -dontwarn io.flutter.plugins.videoplayer.VideoPlayerPlugin
 -dontwarn io.flutter.plugins.webviewflutter.WebViewFlutterPlugin
 -dontwarn io.github.ponnamkarthik.toast.fluttertoast.FlutterToastPlugin
+
+-keepattributes *
+-keepattributes *Annotation*
+-keepattributes *Invisible*
+
+-keepattributes RuntimeInvisibleAnnotations,
+                RuntimeInvisibleParameterAnnotations,
+                RuntimeInvisibleTypeAnnotations

@@ -51,8 +51,14 @@ class GlyphWarmupManager with WidgetsBindingObserver {
 
     MoclLogger.logWithTag('GlyphWarmupManager', '_runWarmup#1 start');
 
+    final styles = <TextStyle>[
+      // 실제 앱에서 사용하는 스타일과 동일하게
+      _styles.titleTextStyle,
+      _styles.smallTextStyle,
+    ];
+
     // 이전에 만든 warmupKoreanGlyphs 함수 호출
-    await Glyphs.warmupKoreanGlyphs(_styles, shouldAbort: () => _stopRequested);
+    await Glyphs.warmupKoreanGlyphs(styles, shouldAbort: () => _stopRequested);
 
     _isWarmingUp = false;
 

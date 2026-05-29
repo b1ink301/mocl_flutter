@@ -19,7 +19,7 @@ class AppWidget extends HookConsumerWidget {
     useEffect(() {
       // 위젯이 처음 붙을 때 실행
       WidgetsBinding.instance.addPostFrameCallback((_) async {
-        await Future.delayed(const Duration(milliseconds: 500));
+        await Future.delayed(const Duration(milliseconds: 300));
         GlyphWarmupManager.instance.init(textStyles);
       });
 
