@@ -51,4 +51,6 @@ ios/build/
 macos/build/
 
 # FVM (Flutter Version Management)
-.fvm/flutter_sdk
+
+# FVM Version Cache
+.fvm/

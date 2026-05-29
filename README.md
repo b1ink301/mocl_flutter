@@ -138,7 +138,7 @@ dart run build_runner build --delete-conflicting-outputs
 # 개발
 flutter run --flavor dev
 
-# 프로덕션
+# 프로덕션z2
 flutter run --flavor prd
 
 # 프로파일
