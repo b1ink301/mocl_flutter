@@ -1,16 +1,19 @@
 # mocl_flutter
 
-간단한 눈팅 앱으로 Clien, Damoang, NaverCafe, Meeco, Reddit, TheKoo 사이트를 제한적으로 지원합니다.
+간단한 눈팅 앱으로 Clien, Damoang, GeekNews, NaverCafe, Meeco, Reddit, TheKoo 사이트를 제한적으로 지원합니다.
 
 https://play.google.com/store/apps/details?id=kr.b1ink.mocl
 
 ## 기술 스택
 
-- **Flutter** >= 3.38.0 / **Dart** >= 3.10.0
+- **Flutter** >= 3.44.0 / **Dart** ^3.12.0
+- **Android 빌드**: Gradle 9.5 / AGP 9.2 / Kotlin 2.3
+- **버전 관리**: FVM (`.fvmrc` 로 Flutter 버전 고정)
 - **상태관리 & DI**: flutter_riverpod + riverpod_annotation (code gen)
 - **아키텍처**: Clean Architecture (domain → data → application → presentation)
 - **라우팅**: go_router
-- **네트워크**: dio + cookie_jar
+- **네트워크**: dio + cookie_jar (timeout 15s 통일)
+- **HTML 파서**: html 패키지 (워커 isolate 분리)
 - **코드 생성**: freezed, json_serializable, riverpod_generator
 - **빌드 플레이버**: dev, prd
 - **데이터베이스**: sembast
@@ -126,43 +129,74 @@ dart run tool/check_provider_imports.dart
 
 ## 개발 환경 설정
 
+### Flutter 버전 (FVM)
+
+이 프로젝트는 `.fvmrc` 로 Flutter 버전을 고정합니다.
+
+```bash
+# fvm 설치
+brew tap leoafarias/fvm
+brew install fvm
+
+# 프로젝트 사용 버전 설치
+fvm install
+
+# 이후 모든 flutter / dart 명령에 fvm 접두사 사용
+fvm flutter pub get
+fvm dart run build_runner build
+```
+
+`fvm` 미설치 환경에서는 시스템 Flutter 가 `>=3.44.0` 인지 확인.
+
 ### 코드 생성 (build_runner)
 
 ```bash
-dart run build_runner build --delete-conflicting-outputs
+fvm dart run build_runner build --delete-conflicting-outputs
 ```
 
 ### 실행
 
 ```bash
 # 개발
-flutter run --flavor dev
+fvm flutter run --flavor dev
 
-# 프로덕션z2
-flutter run --flavor prd
+# 프로덕션
+fvm flutter run --flavor prd
 
 # 프로파일
-flutter run --profile --flavor prd
+fvm flutter run --profile --flavor prd
 ```
 
 ### 빌드
 
 ```bash
 # Android
-flutter build apk --flavor prd
-flutter build appbundle --flavor prd
+fvm flutter build apk --flavor prd
+fvm flutter build appbundle --flavor prd
 
 # iOS (XCode에서 인증서 세팅 필요)
 cd ios && pod install && cd ..
-flutter build ipa --flavor prd
+fvm flutter build ipa --flavor prd
 ```
 
 ### 정적 분석
 
 ```bash
 # Dart 분석
-flutter analyze
+fvm flutter analyze
 
-# Provider import 규칙 검사
-dart run tool/check_provider_imports.dart
+# Provider import 규칙 검사 (pre-commit hook 에서도 자동 실행)
+fvm dart run tool/check_provider_imports.dart
 ```
+
+## 운영 메모
+
+- **Dio timeout**: 백그라운드 → 포그라운드 복귀 시 소켓 사망으로 멈추는 현상을
+  방지하기 위해 connect/receive/send timeout 모두 15 초로 통일.
+  `_buildDio()` ([network_provider.dart](lib/features/network/application/network_provider.dart)) 참고.
+- **PagingController 복구**: 리스트 화면은 `AppLifecycleState.resumed` 시
+  `ListPagingController.kickIfStale()` 을 호출해 멈춘 fetch 를 강제 재시작
+  ([mocl_list_view.dart](lib/features/list_page/presentation/mocl_list_view.dart)).
+- **사이트별 파서**: `lib/features/html_parser/data/datasources/{site}/`
+  하위에 `*_api.dart` (HTTP) 와 `*_parser.dart` (HTML → Entity) 가 한 쌍.
+  파서는 워커 isolate (`ParserIsolateClient`) 에서 실행되어 메인 isolate 를 차단하지 않음.
