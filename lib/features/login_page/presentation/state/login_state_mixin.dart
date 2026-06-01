@@ -57,7 +57,6 @@ mixin class LoginState {
     isInspectable: kDebugMode,
     sharedCookiesEnabled: true,
     safeBrowsingEnabled: false,
-    clearCache: false,
     cacheEnabled: false,
     supportMultipleWindows: true,
     disableContextMenu: false,
