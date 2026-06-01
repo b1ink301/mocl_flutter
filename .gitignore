@@ -47,6 +47,7 @@ app.*.map.json
 # Native build artifacts
 android/app/.cxx/
 android/build/
+android/.kotlin/
 ios/build/
 macos/build/
 
