@@ -155,6 +155,103 @@ class DamoangParser implements BaseParser {
   }
 
   // ──────────────────────────────────────────────────────────────────
+  // Attachments
+  // ──────────────────────────────────────────────────────────────────
+
+  /// post 의 videos / downloads / link1 / link2 를 본문 뒤에 붙일 HTML 로 변환.
+  /// 첨부가 없으면 빈 문자열.
+  static String _buildAttachmentsHtml(
+    Map<String, dynamic> post,
+    List<dynamic> postNodeData,
+  ) {
+    final List<Map<String, String>> files = [];
+
+    void collect(dynamic indexList) {
+      if (indexList is! List) return;
+      for (final idx in indexList) {
+        if (idx is! int || idx < 0 || idx >= postNodeData.length) continue;
+        final resolved = _resolveObject(postNodeData, idx);
+        final url = (resolved['url'] ?? '').toString();
+        if (url.isEmpty) continue;
+        final filename = (resolved['filename'] ?? '').toString();
+        final size = resolved['size'];
+        files.add({
+          'url': url,
+          'filename': filename.isEmpty ? url.split('/').last : filename,
+          'size': (size is int && size > 0) ? _formatBytes(size) : '',
+        });
+      }
+    }
+
+    collect(post['videos']);
+    collect(post['downloads']);
+
+    // URL 기준 dedupe — videos 와 downloads 는 동일 파일을 가리키는 경우가 많음
+    final Map<String, Map<String, String>> uniqueByUrl = {};
+    for (final f in files) {
+      uniqueByUrl.putIfAbsent(f['url']!, () => f);
+    }
+
+    // 외부 링크 (link1, link2)
+    final List<String> externalLinks = [];
+    for (final key in const ['link1', 'link2']) {
+      final v = (post[key] ?? '').toString().trim();
+      if (v.isNotEmpty) externalLinks.add(v);
+    }
+
+    if (uniqueByUrl.isEmpty && externalLinks.isEmpty) return '';
+
+    final buf = StringBuffer();
+
+    if (uniqueByUrl.isNotEmpty) {
+      buf.write('<hr><p><b>📎 첨부파일</b></p>');
+      for (final f in uniqueByUrl.values) {
+        final url = f['url']!;
+        final name = f['filename']!;
+        final size = f['size']!;
+        final label = size.isEmpty ? name : '$name ($size)';
+        final lower = url.toLowerCase();
+        if (lower.endsWith('.mp4') ||
+            lower.endsWith('.webm') ||
+            lower.endsWith('.mov') ||
+            lower.endsWith('.m4v')) {
+          buf.write('<p><video controls src="$url"></video></p>');
+          buf.write('<p><a href="$url">$label</a></p>');
+        } else if (lower.endsWith('.jpg') ||
+            lower.endsWith('.jpeg') ||
+            lower.endsWith('.png') ||
+            lower.endsWith('.gif') ||
+            lower.endsWith('.webp')) {
+          buf.write('<p><img src="$url" alt="$name"></p>');
+          buf.write('<p><a href="$url">$label</a></p>');
+        } else {
+          buf.write('<p><a href="$url">$label</a></p>');
+        }
+      }
+    }
+
+    if (externalLinks.isNotEmpty) {
+      buf.write('<hr><p><b>🔗 링크</b></p>');
+      for (final url in externalLinks) {
+        buf.write('<p><a href="$url">$url</a></p>');
+      }
+    }
+
+    return buf.toString();
+  }
+
+  static String _formatBytes(int bytes) {
+    if (bytes < 1024) return '${bytes}B';
+    if (bytes < 1024 * 1024) {
+      return '${(bytes / 1024).toStringAsFixed(1)}KB';
+    }
+    if (bytes < 1024 * 1024 * 1024) {
+      return '${(bytes / (1024 * 1024)).toStringAsFixed(1)}MB';
+    }
+    return '${(bytes / (1024 * 1024 * 1024)).toStringAsFixed(1)}GB';
+  }
+
+  // ──────────────────────────────────────────────────────────────────
   // Detail parsing
   // ──────────────────────────────────────────────────────────────────
 
@@ -232,6 +329,16 @@ class DamoangParser implements BaseParser {
             );
           }
         }
+      }
+
+      // 2-1. 첨부파일 / 외부 링크 추가
+      //      transformedPostContent 에는 본문 텍스트만 들어가고,
+      //      에디터로 업로드된 첨부(videos/downloads)와 link1/link2 가
+      //      누락되므로 본문 뒤에 명시적으로 append.
+      final String attachmentsHtml =
+          _buildAttachmentsHtml(post, postNodeData);
+      if (attachmentsHtml.isNotEmpty) {
+        bodyHtml = '$bodyHtml$attachmentsHtml';
       }
 
       // 3. Extract comments
