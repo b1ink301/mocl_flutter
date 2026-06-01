@@ -34,6 +34,7 @@ class _ScaffoldWidget extends ConsumerWidget with MainState, MainEvent {
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: systemOverlayStyle,
+      sized: false,
       child: Container(
         color: systemOverlayStyle.statusBarColor,
         child: SafeArea(
