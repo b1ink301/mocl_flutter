@@ -6,8 +6,7 @@ import '../../domain/repositories/settings_repository.dart';
 class SettingsRepositoryImpl implements SettingsRepository {
   final SharedPreferences _prefs;
 
-  const SettingsRepositoryImpl({required SharedPreferences prefs})
-    : _prefs = prefs;
+  const SettingsRepositoryImpl({required this._prefs});
 
   @override
   SiteType getSiteType() {
