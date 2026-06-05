@@ -47,7 +47,9 @@ class RedditParser implements BaseParser {
     final detailData =
         (json[0]['data']['children'] as List<dynamic>).first['data'];
 
-    final bodyHtml = detailData['selftext_html'].toString();
+    // selftext_html 은 링크/이미지 게시물에선 null → "null" 문자열 방지.
+    final rawBody = detailData['selftext_html'];
+    final bodyHtml = rawBody is String ? htmlUnescape.convert(rawBody) : '';
     final title = detailData['title'].toString();
     final viewCount = '';
     final likeCount = detailData['ups'].toString();
@@ -81,7 +83,7 @@ class RedditParser implements BaseParser {
       info: info,
       userInfo: UserInfo(id: userId, nickName: nickName, nickImage: nickImage),
       comments: comments,
-      bodyHtml: htmlUnescape.convert(bodyHtml),
+      bodyHtml: bodyHtml,
     );
 
     return Right<Failure, Details>(detail);
@@ -92,14 +94,17 @@ class RedditParser implements BaseParser {
     HtmlUnescape htmlUnescape,
   ) {
     final json = element as Map<String, dynamic>;
+    // "more"(더보기 placeholder) 등 실제 댓글(t1)이 아닌 노드는 건너뛴다.
+    if (json['kind'] != 't1') return null;
     final data = json['data'] as Map<String, dynamic>;
-    final bodyHtml = data['body_html'].toString();
+    final rawBody = data['body_html'];
+    final bodyHtml = rawBody is String ? htmlUnescape.convert(rawBody) : '';
     final id = data['id'].toString();
     final likeCount = data['ups'].toString();
     final userId = data['author_fullname'].toString();
     final nickName = data['author'].toString();
-    final double created = data['created'];
-    final int depth = data['depth'];
+    final double created = (data['created'] as num?)?.toDouble() ?? 0;
+    final int depth = (data['depth'] as num?)?.toInt() ?? 0;
     final replies = data['replies'];
 
     final int milliseconds = (created * 1000).toInt();
@@ -120,7 +125,7 @@ class RedditParser implements BaseParser {
     return CommentItem(
       id: id.hashCode,
       isReply: depth > 0,
-      bodyHtml: htmlUnescape.convert(bodyHtml),
+      bodyHtml: bodyHtml,
       likeCount: likeCount,
       mediaHtml: '',
       isVideo: false,
