@@ -85,7 +85,7 @@ class _FirstPageLoading extends StatelessWidget {
   Widget build(BuildContext context) => Column(
     crossAxisAlignment: CrossAxisAlignment.center,
     mainAxisAlignment: MainAxisAlignment.center,
-    spacing: 8,
+    spacing: 4,
     children: [
       const LoadingWidget(),
       PlainText(

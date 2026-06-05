@@ -53,7 +53,6 @@ class _TitleHeightCache {
       _lastStyle = style;
       _lastWidth = availableWidth;
     }
-
     return _cache.putIfAbsent(text, () {
       final textPainter = TextPainter(
         text: TextSpan(text: text, style: style),
@@ -106,7 +105,7 @@ class ListPagingController extends _$ListPagingController {
           return null;
         }
         // 마지막 페이지가 비어있으면 종료
-        if (state.lastPageIsEmpty) return null;
+        // if (state.lastPageIsEmpty) return null;
 
         final int? lastKey = state.keys?.lastOrNull;
         return lastKey == null ? initialPage : lastKey + 1;

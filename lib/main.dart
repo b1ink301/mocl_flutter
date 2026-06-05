@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:flutter_riverpod/misc.dart';
 import 'package:mocl_flutter/app_widget.dart';
 import 'package:mocl_flutter/firebase_options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -30,6 +31,7 @@ Future<void> main() async {
 
   runApp(
     ProviderScope(
+      retry: retry,
       observers: [if (kDebugMode) Logger()],
       overrides: [
         sharedPreferencesProvider.overrideWithValue(sharedPrefs),
@@ -53,4 +55,13 @@ final class Logger extends ProviderObserver {
       'Provider: ${context.provider.name ?? context.provider.runtimeType}, error: $error, stackTrace: $stackTrace',
     );
   }
+}
+
+Duration? retry(int retryCount, Object error) {
+  // Stop retrying on ProviderException
+  if (retryCount >= 3) return null;
+  // Ignore ProviderException
+  if (error is ProviderException) return null;
+
+  return Duration(milliseconds: 300 * (1 << retryCount)); // Exponential backoff
 }
