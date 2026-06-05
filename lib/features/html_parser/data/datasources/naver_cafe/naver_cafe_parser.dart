@@ -17,6 +17,7 @@ import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_i
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_isolate_message.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
+import '../../../../../core/util/mocl_logger.dart';
 import '../base/base_parser.dart';
 
 class NaverCafeParser implements BaseParser {
@@ -74,13 +75,32 @@ class NaverCafeParser implements BaseParser {
 
     final detail = responseData.first['result'];
     final article = detail['article'];
+    if (article is! Map) {
+      final errorCode = detail['errorCode']?.toString();
+      final reason = detail['reason']?.toString() ?? '본문을 불러오지 못했습니다.';
+      return errorCode == '0004'
+          ? Left(NotLoginFailure(message: reason))
+          : Left(GetDetailFailure(message: reason));
+    }
 
-    final bodyHtml = article['contentHtml'].toString();
-    final writer = article['writer'];
+    // contentHtml 은 구형 에디터 글에만 채워진다. 비어 있으면(마켓/플리마켓 글 등)
+    // 본문이 다른 필드에 있으므로 글 종류별 폴백으로 본문 HTML 을 만든다.
+    final rawBody = article['contentHtml'];
+    var bodyHtml = rawBody is String ? rawBody : '';
+    if (bodyHtml.isEmpty) {
+      bodyHtml = _buildMarketBodyHtml(article);
+      if (bodyHtml.isEmpty) {
+        MoclLogger.log(
+          '[detail] empty body. isMarket=${article['isMarket']} '
+          'editorVersion=${article['editorVersion']}',
+        );
+      }
+    }
+    final writer = article['writer'] as Map? ?? const {};
     final title = article['subject'].toString().trim();
     // final id = writer['id'] ?? '';
     final nickName = writer['nick'].toString();
-    final nickImage = writer['image']['url'].toString();
+    final nickImage = ''; //writer['image']['url'].toString();
     final time = article['writeDate'] ?? 0;
     final viewCount = (article['readCount'] ?? 0).toString();
     // final commentCount = writer['commentCount'];
@@ -93,13 +113,13 @@ class NaverCafeParser implements BaseParser {
     final commentItems = comments
         .map((comment) {
           final id = comment['id'] ?? -1;
-          final writer = comment['writer'];
+          final writer = comment['writer'] as Map? ?? const {};
           final replyMember = comment['replyMember'];
           var body = comment['content'].toString();
           final userId = writer['memberKey'].toString();
           final nickImage = ''; //writer['image']['url'] ?? '';
           final nickName = writer['nick'].toString();
-          final isReply = comment['isRef'];
+          final isReply = comment['isRef'] ?? false;
           final time = comment['updateDate'] ?? 0;
           final likeCount = '0';
           final image = comment['image'];
@@ -175,6 +195,64 @@ class NaverCafeParser implements BaseParser {
     );
 
     return Right<Failure, Details>(details);
+  }
+
+  /// 중고거래(네이버 플리마켓) 글은 contentHtml/contentElements 가 비어 있고
+  /// 본문이 nfleaProduct.saleProduct 에 들어 있다. 가격/상태/설명/사진을 HTML 로 합친다.
+  static String _buildMarketBodyHtml(Map article) {
+    final nflea = article['nfleaProduct'];
+    if (nflea is! Map) return '';
+    final sale = nflea['saleProduct'];
+    if (sale is! Map) return '';
+
+    final buffer = StringBuffer();
+
+    final price = sale['price'];
+    if (price is num) {
+      buffer.write('<p><strong>가격: ${_formatPrice(price.toInt())}원</strong></p>');
+    }
+
+    const statusLabels = {
+      'SALE': '판매중',
+      'RESERVED': '예약중',
+      'SOLD_OUT': '판매완료',
+    };
+    final status = statusLabels[sale['saleStatus']];
+    if (status != null) {
+      buffer.write('<p>거래상태: $status</p>');
+    }
+
+    final content = sale['content'];
+    if (content is String && content.isNotEmpty) {
+      final escaped = content
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('\n', '<br>');
+      buffer.write('<p>$escaped</p>');
+    }
+
+    final images = sale['productImages'];
+    if (images is List) {
+      for (final image in images) {
+        final url = image is Map ? image['url'] : null;
+        if (url is String && url.isNotEmpty) {
+          buffer.write('<img src="$url" width="100%"><br>');
+        }
+      }
+    }
+
+    return buffer.toString();
+  }
+
+  static String _formatPrice(int price) {
+    final digits = price.toString();
+    final buffer = StringBuffer();
+    for (var i = 0; i < digits.length; i++) {
+      if (i > 0 && (digits.length - i) % 3 == 0) buffer.write(',');
+      buffer.write(digits[i]);
+    }
+    return buffer.toString();
   }
 
   @override
