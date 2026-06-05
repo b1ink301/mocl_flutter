@@ -83,16 +83,16 @@ abstract class BaseApi with BaseAction {
       url: uri,
     );
 
-    final List<cookiejar.Cookie> dioCookies = cookies
-        .map((cookie) => cookiejar.Cookie(cookie.name, cookie.value))
-        .toList();
+    // cookiejar.Cookie 생성자는 RFC 6265 검증을 하므로 값에 큰따옴표(예: Reddit
+    // 의 JSON 쿠키)가 들어가면 FormatException 을 던진다. 어차피 Cookie 헤더
+    // 문자열로만 쓰이므로 WebView 원본 name/value 로 직접 헤더를 구성한다.
+    final String cookieHeader = cookies
+        .map((cookie) => '${cookie.name}=${cookie.value}')
+        .join('; ');
 
     final InterceptorsWrapper interceptor = InterceptorsWrapper(
       onRequest: (options, handler) {
-        options.headers['Cookie'] = dioCookies
-            .map((cookie) => '${cookie.name}=${cookie.value}')
-            .join('; ');
-        // MoclLogger.log('options.headers[Cookie]=${options.headers['Cookie']}');
+        options.headers['Cookie'] = cookieHeader;
         return handler.next(options);
       },
     );
