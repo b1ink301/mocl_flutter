@@ -20,7 +20,7 @@ import 'package:timeago/timeago.dart' as timeago;
 import '../../../../../core/util/mocl_logger.dart';
 import '../base/base_parser.dart';
 
-class NaverCafeParser implements BaseParser {
+class NaverCafeParser extends BaseParser {
   const NaverCafeParser();
 
   @override
@@ -292,8 +292,7 @@ class NaverCafeParser implements BaseParser {
     final lastId = message.lastId;
     final boardTitle = message.boardTitle;
 
-    final parsedItems = <Map<String, dynamic>>[];
-    final ids = <int>[];
+    final items = <ListItem>[];
 
     final List<dynamic> articleList =
         responseData['articleList'] as List<dynamic>;
@@ -323,57 +322,31 @@ class NaverCafeParser implements BaseParser {
         hit.toString(),
       );
 
-      final parsedItem = {
-        'id': id,
-        'title': parse(title).body?.text,
-        'reply': commentCount.toString(),
-        'category': category,
-        'time': time.toString(),
-        'info': info,
-        'url': '',
-        'board': board.toString(),
-        'boardTitle': boardTitle,
-        'like': like.toString(),
-        'hit': hit.toString(),
-        'userInfo': UserInfo(
-          id: userId,
-          nickName: nickName,
-          nickImage: nickImage,
+      items.add(
+        ListItem(
+          id: id,
+          title: parse(title).body?.text ?? '',
+          reply: commentCount.toString(),
+          category: category,
+          time: time.toString(),
+          info: info,
+          url: '',
+          board: board.toString(),
+          boardTitle: boardTitle,
+          like: like.toString(),
+          hit: hit.toString(),
+          userInfo: UserInfo(
+            id: userId,
+            nickName: nickName,
+            nickImage: nickImage,
+          ),
+          hasImage: hasImage,
+          isRead: false,
         ),
-        'hasImage': hasImage,
-      };
-
-      parsedItems.add(parsedItem);
-      ids.add(id);
+      );
     }
 
-    final readStatusPort = ReceivePort();
-    replyPort.send(ReadStatusRequest(ids, readStatusPort.sendPort));
-    final readStatusResponse = await readStatusPort.first as ReadStatusResponse;
-    readStatusPort.close();
-
-    final resultList = parsedItems
-        .map(
-          (item) => ListItem(
-            id: item['id'] as int,
-            title: item['title'] as String,
-            reply: item['reply'] as String,
-            category: item['category'] as String,
-            time: item['time'] as String,
-            url: item['url'] as String,
-            info: item['info'] as String,
-            board: item['board'] as String,
-            boardTitle: item['boardTitle'] as String,
-            like: item['like'] as String,
-            hit: item['hit'] as String,
-            userInfo: item['userInfo'] as UserInfo,
-            hasImage: item['hasImage'] as bool,
-            isRead: readStatusResponse.statuses.contains(item['id']),
-          ),
-        )
-        .toList();
-
-    replyPort.send(resultList);
+    await sendListWithReadStatus(replyPort, items);
   }
 
 
@@ -402,31 +375,6 @@ class NaverCafeParser implements BaseParser {
   }
 
   @override
-  String urlBySearchList(
-    String url,
-    String board,
-    int page,
-    String keyword,
-    LastId lastId,
-  ) {
-    throw UnimplementedError('urlBySearchList');
-  }
-
-  @override
   String urlByMain() =>
       'https://apis.naver.com/cafe-home-web/cafe-home/v1/cafes/join?perPage=100';
-
-  @override
-  Future<Either<Failure, List<CommentItem>>> comments(
-    Response<dynamic> response,
-  ) {
-    // TODO: implement comments
-    throw UnimplementedError();
-  }
-
-  @override
-  String urlByComments(String url, String board, int id, int page) {
-    // TODO: implement urlByComments
-    throw UnimplementedError();
-  }
 }

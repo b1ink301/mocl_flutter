@@ -1,3 +1,5 @@
+import 'package:timeago/timeago.dart' as timeago;
+
 /// 사이트별 파서들이 공통으로 사용하는 날짜 문자열 파서.
 ///
 /// 지원 형식:
@@ -92,5 +94,15 @@ class ParserDateTime {
     } catch (_) {
       throw FormatException('지원하지 않는 날짜 형식', input);
     }
+  }
+}
+
+/// `try { timeago.format(ParserDateTime.parse(raw)) } catch { raw }` 패턴을 한 줄로.
+/// 파싱 실패 시 원본 문자열을 그대로 돌려준다.
+String formatTimeago(String raw) {
+  try {
+    return timeago.format(ParserDateTime.parse(raw), locale: 'ko');
+  } catch (_) {
+    return raw;
   }
 }

@@ -120,4 +120,4 @@ final class ClearDataProvider
   }
 }
 
-String _$clearDataHash() => r'b0a541fc4f6aa6a9fbb014c67f22badd76ecc31c';
+String _$clearDataHash() => r'f52c14d0ff8d5113ba65cc120ef48bde21cb0ec3';

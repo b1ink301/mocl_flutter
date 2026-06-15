@@ -8,7 +8,6 @@ import 'package:mocl_flutter/core/domain/entities/last_id.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
@@ -20,7 +19,7 @@ import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_i
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_isolate_message.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-class DamoangParser implements BaseParser {
+class DamoangParser extends BaseParser {
   final bool isShowNickImage;
 
   const DamoangParser(this.isShowNickImage);
@@ -30,10 +29,6 @@ class DamoangParser implements BaseParser {
 
   @override
   String get baseUrl => 'https://damoang.net';
-
-  @override
-  Future<Either<Failure, List<MainItem>>> main(Response<dynamic> response) =>
-      throw UnimplementedError('main');
 
   // ──────────────────────────────────────────────────────────────────
   // SvelteKit Devalue helpers
@@ -513,8 +508,7 @@ class DamoangParser implements BaseParser {
     final String baseUrl = message.baseUrl;
     // final isShowNickImage = message.isShowNickImage;
 
-    final List<Map<String, dynamic>> parsedItems = <Map<String, dynamic>>[];
-    final List<int> ids = <int>[];
+    final List<ListItem> items = <ListItem>[];
 
     try {
       final lines = _parseLines(responseData);
@@ -609,57 +603,30 @@ class DamoangParser implements BaseParser {
           hit,
         );
 
-        final Map<String, Object> parsedItem = {
-          'id': id,
-          'title': title,
-          'reply': reply,
-          'category': category,
-          'time': createdAt,
-          'info': info,
-          'url': url,
-          'board': board,
-          'boardTitle': boardTitle,
-          'like': like,
-          'hit': hit,
-          'userInfo': UserInfo(id: authorId, nickName: author, nickImage: ''),
-          'hasImage': thumbnail.isNotEmpty,
-        };
-
-        parsedItems.add(parsedItem);
-        ids.add(id);
+        items.add(
+          ListItem(
+            id: id,
+            title: title,
+            reply: reply,
+            category: category,
+            time: createdAt,
+            info: info,
+            url: url,
+            board: board,
+            boardTitle: boardTitle,
+            like: like,
+            hit: hit,
+            userInfo: UserInfo(id: authorId, nickName: author, nickImage: ''),
+            hasImage: thumbnail.isNotEmpty,
+            isRead: false,
+          ),
+        );
       }
     } catch (e) {
       MoclLogger.log('[DamoangParser] Error parsing list: $e');
     }
 
-    final ReceivePort readStatusPort = ReceivePort();
-    replyPort.send(ReadStatusRequest(ids, readStatusPort.sendPort));
-    final ReadStatusResponse readStatusResponse =
-        await readStatusPort.first as ReadStatusResponse;
-    readStatusPort.close();
-
-    final List<ListItem> resultList = parsedItems
-        .map(
-          (item) => ListItem(
-            id: item['id'] as int,
-            title: item['title'] as String,
-            reply: item['reply'] as String,
-            category: item['category'] as String,
-            time: item['time'] as String,
-            url: item['url'] as String,
-            info: item['info'] as String,
-            board: item['board'] as String,
-            boardTitle: item['boardTitle'] as String,
-            like: item['like'] as String,
-            hit: item['hit'] as String,
-            userInfo: item['userInfo'] as UserInfo,
-            hasImage: item['hasImage'] as bool,
-            isRead: readStatusResponse.statuses.contains(item['id']),
-          ),
-        )
-        .toList();
-
-    replyPort.send(resultList);
+    await sendListWithReadStatus(replyPort, items);
   }
 
   // ──────────────────────────────────────────────────────────────────
@@ -695,20 +662,4 @@ class DamoangParser implements BaseParser {
   ) =>
       '$url/__data.json?page=$page&sfl=wr_subject&sop=and&stx=$keyword&x-sveltekit-invalidated=101';
 
-  @override
-  String urlByMain() {
-    throw UnimplementedError('urlByMain');
-  }
-
-  @override
-  Future<Either<Failure, List<CommentItem>>> comments(
-    Response<dynamic> response,
-  ) {
-    throw UnimplementedError();
-  }
-
-  @override
-  String urlByComments(String url, String board, int id, int page) {
-    throw UnimplementedError();
-  }
 }

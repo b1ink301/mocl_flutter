@@ -8,7 +8,6 @@ import 'package:mocl_flutter/core/domain/entities/last_id.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
@@ -22,7 +21,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 import '../base/base_parser.dart';
 
-class ClienParser implements BaseParser {
+class ClienParser extends BaseParser {
   final bool isShowNickImage;
 
   const ClienParser(this.isShowNickImage);
@@ -32,10 +31,6 @@ class ClienParser implements BaseParser {
 
   @override
   String get baseUrl => 'https://m.clien.net';
-
-  @override
-  Future<Either<Failure, List<MainItem>>> main(Response<dynamic> response) =>
-      throw UnimplementedError('main');
 
   @override
   Future<Either<Failure, Details>> detail(Response<dynamic> response) async {
@@ -57,25 +52,19 @@ class ClienParser implements BaseParser {
     );
     // document.querySelector('body > div.nav_container > div.nav_body > div.nav_content > div.content_view');
 
-    final csrf =
-        document
-            .querySelector(
-              "body > nav.navigation > div.dropdown-menu > form > input[name=_csrf]",
-            )
-            ?.attributes['value'] ??
-        '';
-    final title =
-        container
-            ?.querySelector("div.post_title > div.post_subject > span")
-            ?.text
-            .trim() ??
-        '';
+    final csrf = document.qAttr(
+      "body > nav.navigation > div.dropdown-menu > form > input[name=_csrf]",
+      'value',
+    );
+    final title = container.qText(
+      "div.post_title > div.post_subject > span",
+    );
     final timeElement = container?.querySelector(
       "div.post_information > div.post_time > div.post_date",
     );
 
     // MoclLogger.log('timeElement = ${timeElement?.outerHtml}');
-    timeElement?.querySelectorAll('.fa').forEach((element) => element.remove());
+    timeElement.removeAll('.fa');
     var time = timeElement?.text.trim() ?? '';
     final tmp = time.split('수정일 :');
     final times = tmp.map((item) => item.trim()).toList();
@@ -84,9 +73,7 @@ class ClienParser implements BaseParser {
     final bodyHtmlElement = container?.querySelector(
       "div.post_view > div.post_content > article > div.post_article",
     );
-    bodyHtmlElement
-        ?.querySelectorAll('input, button')
-        .forEach((element) => element.remove());
+    bodyHtmlElement.removeAll('input, button');
     final linkHtml =
         container
             ?.querySelector("div.post_view > div.attached_link > div.link_list")
@@ -97,9 +84,7 @@ class ClienParser implements BaseParser {
       "div.post_view > div.market_product",
     );
 
-    marketHtmlElement
-        ?.querySelectorAll('div.product_address')
-        .forEach((element) => element.remove());
+    marketHtmlElement.removeAll('div.product_address');
 
     final recentsElement = container?.querySelector("div.writer_board");
 
@@ -113,70 +98,32 @@ class ClienParser implements BaseParser {
     final viewCountElement = container?.querySelector(
       "div.post_information > div.post_time > div.view_count",
     );
-    viewCountElement
-        ?.querySelectorAll('.fa')
-        .forEach((element) => element.remove());
+    viewCountElement.removeAll('.fa');
     final viewCount = viewCountElement?.text.trim() ?? '';
 
     final authorIpElement = container?.querySelector(
       "div.post_view > div.post_information > div.author_ip",
     );
-    authorIpElement
-        ?.querySelectorAll('.fa')
-        .forEach((element) => element.remove());
+    authorIpElement.removeAll('.fa');
 
-    final user =
-        container
-            ?.querySelector(
-              "div.post_view > div.post_contact > span.contact_note > div.post_memo > div.memo_box > button.button_input",
-            )
-            ?.attributes['onclick'] ??
-        '';
-    var nickName = '';
+    final user = container.qAttr(
+      "div.post_view > div.post_contact > span.contact_note > div.post_memo > div.memo_box > button.button_input",
+      'onclick',
+    );
+    const nickNameSel =
+        "div.post_view > div.post_contact > span.contact_name > span.nickname";
+    const nickImgSel =
+        "div.post_view > div.post_contact > span.contact_name > span.nickimg > img";
+    var nickName = container.qText(nickNameSel);
     var nickImage = '';
     if (isShowNickImage) {
-      nickName =
-          container
-              ?.querySelector(
-                "div.post_view > div.post_contact > span.contact_name > span.nickname",
-              )
-              ?.text
-              .trim() ??
-          '';
-      nickImage =
-          container
-              ?.querySelector(
-                "div.post_view > div.post_contact > span.contact_name > span.nickimg > img",
-              )
-              ?.attributes['src'] ??
-          '';
-    } else {
-      nickName =
-          container
-              ?.querySelector(
-                "div.post_view > div.post_contact > span.contact_name > span.nickname",
-              )
-              ?.text
-              .trim() ??
-          '';
-      if (nickName.isEmpty) {
-        nickName =
-            container
-                ?.querySelector(
-                  "div.post_view > div.post_contact > span.contact_name > span.nickimg > img",
-                )
-                ?.attributes['alt'] ??
-            '';
-      }
+      nickImage = container.qAttr(nickImgSel, 'src');
+    } else if (nickName.isEmpty) {
+      nickName = container.qAttr(nickImgSel, 'alt');
     }
-    final likeCount =
-        container
-            ?.querySelector(
-              "div.post_button > div.symph_area > button.symph_count > strong",
-            )
-            ?.text
-            .trim() ??
-        '';
+    final likeCount = container.qText(
+      "div.post_button > div.symph_area > button.symph_count > strong",
+    );
 
     var parsedTime = '';
     try {
@@ -210,72 +157,32 @@ class ClienParser implements BaseParser {
               timeElement?.querySelector("span.timestamp")?.remove();
               final time = timeElement?.text.trim() ?? '';
 
-              var nickName = '';
+              const nickNameSel =
+                  "div.comment_info > div.post_contact > span.contact_name > span.nickname";
+              const nickImgSel =
+                  "div.comment_info > div.post_contact > span.contact_name > span.nickimg > img";
+              var nickName = element.qText(nickNameSel);
               var nickImage = '';
-
               if (isShowNickImage) {
-                nickName =
-                    element
-                        .querySelector(
-                          "div.comment_info > div.post_contact > span.contact_name > span.nickname",
-                        )
-                        ?.text
-                        .trim() ??
-                    '';
-                nickImage =
-                    element
-                        .querySelector(
-                          "div.comment_info > div.post_contact > span.contact_name > span.nickimg > img",
-                        )
-                        ?.attributes['src'] ??
-                    '';
-              } else {
-                nickName =
-                    element
-                        .querySelector(
-                          "div.comment_info > div.post_contact > span.contact_name > span.nickname",
-                        )
-                        ?.text
-                        .trim() ??
-                    '';
-                if (nickName.isEmpty) {
-                  nickName =
-                      element
-                          .querySelector(
-                            "div.comment_info > div.post_contact > span.contact_name > span.nickimg > img",
-                          )
-                          ?.attributes['alt'] ??
-                      '';
-                }
+                nickImage = element.qAttr(nickImgSel, 'src');
+              } else if (nickName.isEmpty) {
+                nickName = element.qAttr(nickImgSel, 'alt');
               }
 
-              final likeCount =
-                  element
-                      .querySelector(
-                        "div.comment_content_symph > button > strong",
-                      )
-                      ?.text
-                      .trim() ??
-                  '';
+              final likeCount = element.qText(
+                "div.comment_content_symph > button > strong",
+              );
               final bodyElements = element.querySelectorAll(
                 "div.comment_content > div.comment_view, div.comment-img, div.comment-video",
               );
               for (final tmp in bodyElements) {
-                tmp
-                    .querySelectorAll('input, span.name, button')
-                    .forEach((element) => element.remove());
+                tmp.removeAll('input, span.name, button');
               }
 
               final body = bodyElements
                   .map((item) => item.innerHtml.trim())
                   .join();
-              var parsedTime = '';
-              try {
-                var dateTime = ParserDateTime.parse(time);
-                parsedTime = timeago.format(dateTime, locale: 'ko');
-              } catch (e) {
-                parsedTime = time;
-              }
+              final parsedTime = formatTimeago(time);
               final info = nickName.isNotEmpty
                   ? '$nickNameㆍ$parsedTime'
                   : parsedTime;
@@ -365,11 +272,10 @@ class ClienParser implements BaseParser {
     final baseUrl = message.baseUrl;
     final isShowNickImage = message.isShowNickImage;
 
-    final parsedItems = <Map<String, dynamic>>[];
-    final ids = <int>[];
-
     final document = parse(responseData);
     final elementList = document.querySelectorAll("a.list_item.symph-row");
+
+    final items = <ListItem>[];
 
     for (final element in elementList) {
       final id = int.tryParse(element.attributes['data-board-sn'] ?? '') ?? 0;
@@ -393,47 +299,22 @@ class ClienParser implements BaseParser {
         continue;
       }
 
-      final category =
-          element
-              .querySelector(
-                'div.list_infomation > div.list_number > span.category',
-              )
-              ?.text
-              .trim() ??
-          '';
+      final category = element.qText(
+        'div.list_infomation > div.list_number > span.category',
+      );
       if (category == '공지') continue;
 
-      final title =
-          element
-              .querySelector(
-                'div.list_title > div.list_subject > span[data-role=list-title-text]',
-              )
-              ?.text
-              .trim() ??
-          '';
-      final time =
-          element
-              .querySelector(
-                'div.list_infomation > div.list_number > div.list_time > span',
-              )
-              ?.text
-              .trim() ??
-          '';
+      final title = element.qText(
+        'div.list_title > div.list_subject > span[data-role=list-title-text]',
+      );
+      final time = element.qText(
+        'div.list_infomation > div.list_number > div.list_time > span',
+      );
+      final hit = element.qText(
+        'div.list_infomation > div.list_number > div.list_hit > span',
+      );
+      final like = element.qText('div.list_title > div.list_symph > span');
 
-      final hit =
-          element
-              .querySelector(
-                'div.list_infomation > div.list_number > div.list_hit > span',
-              )
-              ?.text
-              .trim() ??
-          '';
-      final like =
-          element
-              .querySelector('div.list_title > div.list_symph > span')
-              ?.text
-              .trim() ??
-          '';
       final author = element.querySelector(
         'div.list_infomation > div.list_author',
       );
@@ -447,14 +328,7 @@ class ClienParser implements BaseParser {
       final hasImage =
           element.querySelector('div.list_title > span.fa-picture-o') != null;
 
-      var parsedTime = '';
-      try {
-        final dateTime = ParserDateTime.parse(time);
-        parsedTime = timeago.format(dateTime, locale: 'ko');
-      } catch (e) {
-        parsedTime = time;
-      }
-
+      final parsedTime = formatTimeago(time);
       final info = BaseParser.parserInfo(
         nickImage.isNotEmpty,
         nickName,
@@ -462,57 +336,31 @@ class ClienParser implements BaseParser {
         hit,
       );
 
-      final parsedItem = {
-        'id': id,
-        'title': title,
-        'reply': reply,
-        'category': category,
-        'time': time,
-        'info': info,
-        'url': url,
-        'board': board,
-        'boardTitle': boardTitle,
-        'like': like,
-        'hit': hit,
-        'userInfo': UserInfo(
-          id: userId,
-          nickName: nickName,
-          nickImage: nickImage,
+      items.add(
+        ListItem(
+          id: id,
+          title: title,
+          reply: reply,
+          category: category,
+          time: time,
+          info: info,
+          url: url,
+          board: board,
+          boardTitle: boardTitle,
+          like: like,
+          hit: hit,
+          userInfo: UserInfo(
+            id: userId,
+            nickName: nickName,
+            nickImage: nickImage,
+          ),
+          hasImage: hasImage,
+          isRead: false,
         ),
-        'hasImage': hasImage,
-      };
-
-      parsedItems.add(parsedItem);
-      ids.add(id);
+      );
     }
 
-    final readStatusPort = ReceivePort();
-    replyPort.send(ReadStatusRequest(ids, readStatusPort.sendPort));
-    final readStatusResponse = await readStatusPort.first as ReadStatusResponse;
-    readStatusPort.close();
-
-    final resultList = parsedItems
-        .map(
-          (item) => ListItem(
-            id: item['id'] as int,
-            title: item['title'] as String,
-            reply: item['reply'] as String,
-            category: item['category'] as String,
-            time: item['time'] as String,
-            info: item['info'] as String,
-            url: item['url'] as String,
-            board: item['board'] as String,
-            boardTitle: item['boardTitle'] as String,
-            like: item['like'] as String,
-            hit: item['hit'] as String,
-            userInfo: item['userInfo'] as UserInfo,
-            hasImage: item['hasImage'] as bool,
-            isRead: readStatusResponse.statuses.contains(item['id']),
-          ),
-        )
-        .toList();
-
-    replyPort.send(resultList);
+    await sendListWithReadStatus(replyPort, items);
   }
 
   @override
@@ -544,18 +392,4 @@ class ClienParser implements BaseParser {
     return '$searchUrl?sk=title&sv=$keyword&po=$page';
   }
 
-  @override
-  String urlByMain() {
-    throw UnimplementedError('urlByMain');
-  }
-
-  @override
-  Future<Either<Failure, List<CommentItem>>> comments(Response<dynamic> response) {
-    throw UnimplementedError();
-  }
-
-  @override
-  String urlByComments(String url, String board, int id, int page) {
-    throw UnimplementedError();
-  }
 }

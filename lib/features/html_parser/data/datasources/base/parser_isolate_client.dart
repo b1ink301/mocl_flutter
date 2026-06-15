@@ -19,6 +19,21 @@ import 'package:mocl_flutter/features/html_parser/data/datasources/theqoo/theqoo
 
 typedef IsReadsFn = Future<List<int>> Function(SiteType, List<int>);
 
+/// 워커 isolate 안에서 사이트별 list 파싱을 수행하는 함수 시그니처.
+typedef ParseListWorkerFn = Future<void> Function(ParseListMessage message);
+
+/// siteType → list 워커 매핑. 새 사이트 추가 시 여기 한 줄만 등록하면 된다.
+/// (settings 는 list 파싱 대상이 아니므로 등록하지 않는다.)
+final Map<SiteType, ParseListWorkerFn> _listWorkers = {
+  SiteType.clien: ClienParser.parseListInWorker,
+  SiteType.damoang: DamoangParser.parseListInWorker,
+  SiteType.geekNews: GeekNewsParser.parseListInWorker,
+  SiteType.meeco: MeecoParser.parseListInWorker,
+  SiteType.naverCafe: NaverCafeParser.parseListInWorker,
+  SiteType.reddit: RedditParser.parseListInWorker,
+  SiteType.theqoo: TheQooParser.parseListInWorker,
+};
+
 class ParserIsolateClient {
   ParserIsolateClient._();
 
@@ -134,34 +149,14 @@ void _workerEntry(SendPort mainPort) {
     if (request is! ParseListRequest) return;
     final ParseListMessage msg = request.message;
     try {
-      switch (request.siteType) {
-        case SiteType.clien:
-          await ClienParser.parseListInWorker(msg);
-          break;
-        case SiteType.damoang:
-          await DamoangParser.parseListInWorker(msg);
-          break;
-        case SiteType.geekNews:
-          await GeekNewsParser.parseListInWorker(msg);
-          break;
-        case SiteType.meeco:
-          await MeecoParser.parseListInWorker(msg);
-          break;
-        case SiteType.naverCafe:
-          await NaverCafeParser.parseListInWorker(msg);
-          break;
-        case SiteType.reddit:
-          await RedditParser.parseListInWorker(msg);
-          break;
-        case SiteType.theqoo:
-          await TheQooParser.parseListInWorker(msg);
-          break;
-        case SiteType.settings:
-          msg.replyPort.send(
-            const ParseListError('settings는 list 파싱 대상이 아닙니다.'),
-          );
-          break;
+      final ParseListWorkerFn? worker = _listWorkers[request.siteType];
+      if (worker == null) {
+        msg.replyPort.send(
+          ParseListError('${request.siteType.name}는 list 파싱 대상이 아닙니다.'),
+        );
+        return;
       }
+      await worker(msg);
     } catch (e, st) {
       MoclLogger.log('[ParserWorker] dispatch error: $e\n$st');
       msg.replyPort.send(ParseListError(e.toString()));

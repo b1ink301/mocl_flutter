@@ -8,7 +8,6 @@ import 'package:mocl_flutter/core/domain/entities/last_id.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
@@ -22,7 +21,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 import '../base/base_parser.dart';
 
-class MeecoParser implements BaseParser {
+class MeecoParser extends BaseParser {
   final bool isShowNickImage;
 
   const MeecoParser(this.isShowNickImage);
@@ -32,10 +31,6 @@ class MeecoParser implements BaseParser {
 
   @override
   String get baseUrl => 'https://meeco.kr';
-
-  @override
-  Future<Either<Failure, List<MainItem>>> main(Response<dynamic> response) =>
-      throw UnimplementedError('main');
 
   @override
   Future<Either<Failure, Details>> detail(Response<dynamic> response) async {
@@ -56,8 +51,7 @@ class MeecoParser implements BaseParser {
     final document = parse(responseData);
     final container = document.querySelector('article.atc');
 
-    final title =
-        container?.querySelector('header.atc_hd > h1 > a')?.text.trim() ?? '';
+    final title = container.qText('header.atc_hd > h1 > a');
 
     final infoElement = container?.querySelector(
       'header.atc_hd > div.atc_info',
@@ -68,17 +62,13 @@ class MeecoParser implements BaseParser {
         infoElement?.querySelector('span.nickname')?.text.trim() ??
         '';
 
-    final tmpUrl =
-        infoElement?.querySelector('span.pf > img.pf_img')?.attributes['src'] ??
-        '';
+    final tmpUrl = infoElement.qAttr('span.pf > img.pf_img', 'src');
     final nickImage = isShowNickImage ? tmpUrl.toUrl(baseUrl) : '';
     // final nickName =
     //     infoElement?.querySelector('span.nickname')?.text.trim() ?? '';
 
     final bodyHtml = container?.querySelector('div.atc_body');
-    bodyHtml
-        ?.querySelectorAll('input, button')
-        .forEach((element) => element.remove());
+    bodyHtml.removeAll('input, button');
 
     final time = infoElement?.querySelectorAll('ul > li')[0].text.trim() ?? '';
 
@@ -106,30 +96,17 @@ class MeecoParser implements BaseParser {
               final tmpUrl = profileElement?.attributes['src']?.trim() ?? '';
               final nickImage = isShowNickImage ? tmpUrl.toUrl(baseUrl) : '';
 
-              final time =
-                  element.querySelector('span.date')?.text.trim() ?? '';
-              final likeCount =
-                  element
-                      .querySelector('div.cmt_vote > span.cmt_vote_up > b.num')
-                      ?.text
-                      .trim() ??
-                  '';
+              final time = element.qText('span.date');
+              final likeCount = element.qText(
+                'div.cmt_vote > span.cmt_vote_up > b.num',
+              );
 
-              final cmtTo =
-                  headerElement?.querySelector('div.cmt_to')?.text.trim() ?? '';
+              final cmtTo = headerElement.qText('div.cmt_to');
               
               final body = element.querySelector('div.xe_content');
-              body
-                  ?.querySelectorAll('input, span.name, button')
-                  .forEach((e) => e.remove());
+              body.removeAll('input, span.name, button');
 
-              var parsedTime = '';
-              try {
-                var dateTime = ParserDateTime.parse(time);
-                parsedTime = timeago.format(dateTime, locale: 'ko');
-              } catch (e) {
-                parsedTime = time;
-              }
+              final parsedTime = formatTimeago(time);
 
               final isSecret =
                   element.querySelector('div.cmt_secret_ctn') != null;
@@ -193,13 +170,7 @@ class MeecoParser implements BaseParser {
             .toList() ??
         [];
 
-    var parsedTime = '';
-    try {
-      var dateTime = ParserDateTime.parse(time);
-      parsedTime = timeago.format(dateTime, locale: 'ko');
-    } on Exception {
-      parsedTime = time;
-    }
+    final parsedTime = formatTimeago(time);
 
     final info = BaseParser.parserInfo(false, nickName, parsedTime, viewCount);
 
@@ -255,9 +226,6 @@ class MeecoParser implements BaseParser {
     final baseUrl = message.baseUrl;
     // final isShowNickImage = message.isShowNickImage;
 
-    final parsedItems = <Map<String, dynamic>>[];
-    final ids = <int>[];
-
     final document = parse(responseData).body;
     if (document == null) {
       return;
@@ -267,13 +235,10 @@ class MeecoParser implements BaseParser {
       'div.wrap > section[id=container] > div > section.ctt > section.neon_board > div[id=list_swipe_area] > div.list_ctt > div.list_document > div.list_d > ul > li',
     );
 
+    final items = <ListItem>[];
+
     for (final element in elementList) {
-      final category =
-          element
-              .querySelector('span.hot_text, span.notice_text')
-              ?.text
-              .trim() ??
-          '';
+      final category = element.qText('span.hot_text, span.notice_text');
 
       if (category == "공지" || category == "핫글") continue;
 
@@ -288,14 +253,10 @@ class MeecoParser implements BaseParser {
       final id = int.tryParse(idString) ?? -1;
       if (id <= 0 || lastId > 0 && id >= lastId) continue;
 
-      final nickName =
-          element
-              .querySelector('div.list_info > div:first-child')
-              ?.text
-              .trim() ??
-          ''; //:first-child, div:nth-child(2)
+      //:first-child, div:nth-child(2)
+      final nickName = element.qText('div.list_info > div:first-child');
       final userId = nickName;
-      final reply = element.querySelector("a.list_cmt")?.text.trim() ?? '';
+      final reply = element.qText("a.list_cmt");
 
       var board = '';
       final end = url.lastIndexOf("/");
@@ -306,78 +267,34 @@ class MeecoParser implements BaseParser {
         }
       }
 
-      final time =
-          element
-              .querySelector('div.list_info > div:nth-child(1)')
-              ?.text
-              .trim() ??
-          '';
+      final time = element.qText('div.list_info > div:nth-child(1)');
       final parsedTime = time;
-      final nickImage = '';
-      final hit =
-          element
-              .querySelector('div.list_info > div:nth-child(2)')
-              ?.text
-              .trim() ??
-          '';
-      final like =
-          element.querySelector('div.list_info > div.list_vote')?.text.trim() ??
-          '';
+      final hit = element.qText('div.list_info > div:nth-child(2)');
+      final like = element.qText('div.list_info > div.list_vote');
 
-      final hasImage = false;
       final info = BaseParser.parserInfo(false, nickName, parsedTime, hit);
 
-      final parsedItem = {
-        'id': id,
-        'title': title,
-        'reply': reply,
-        'category': category,
-        'time': time,
-        'info': info,
-        'url': url,
-        'board': board,
-        'boardTitle': boardTitle,
-        'like': like,
-        'hit': hit,
-        'userInfo': UserInfo(
-          id: userId,
-          nickName: nickName,
-          nickImage: nickImage,
+      items.add(
+        ListItem(
+          id: id,
+          title: title,
+          reply: reply,
+          category: category,
+          time: time,
+          info: info,
+          url: url,
+          board: board,
+          boardTitle: boardTitle,
+          like: like,
+          hit: hit,
+          userInfo: UserInfo(id: userId, nickName: nickName, nickImage: ''),
+          hasImage: false,
+          isRead: false,
         ),
-        'hasImage': hasImage,
-      };
-
-      parsedItems.add(parsedItem);
-      ids.add(id);
+      );
     }
 
-    final readStatusPort = ReceivePort();
-    replyPort.send(ReadStatusRequest(ids, readStatusPort.sendPort));
-    final readStatusResponse = await readStatusPort.first as ReadStatusResponse;
-    readStatusPort.close();
-
-    final resultList = parsedItems
-        .map(
-          (item) => ListItem(
-            id: item['id'] as int,
-            title: item['title'] as String,
-            reply: item['reply'] as String,
-            category: item['category'] as String,
-            time: item['time'] as String,
-            url: item['url'] as String,
-            info: item['info'] as String,
-            board: item['board'] as String,
-            boardTitle: item['boardTitle'] as String,
-            like: item['like'] as String,
-            hit: item['hit'] as String,
-            userInfo: item['userInfo'] as UserInfo,
-            hasImage: item['hasImage'] as bool,
-            isRead: readStatusResponse.statuses.contains(item['id']),
-          ),
-        )
-        .toList();
-
-    replyPort.send(resultList);
+    await sendListWithReadStatus(replyPort, items);
   }
 
 
@@ -393,31 +310,4 @@ class MeecoParser implements BaseParser {
     LastId lastId,
   ) => '$url?page=$page${sortType.toQuery(siteType)}';
 
-  @override
-  String urlBySearchList(
-    String url,
-    String board,
-    int page,
-    String keyword,
-    LastId lastId,
-  ) {
-    throw UnimplementedError('urlBySearchList');
-  }
-
-  @override
-  String urlByMain() {
-    throw UnimplementedError('urlByMain');
-  }
-
-  @override
-  Future<Either<Failure, List<CommentItem>>> comments(Response<dynamic> response) {
-    // TODO: implement comments
-    throw UnimplementedError();
-  }
-
-  @override
-  String urlByComments(String url, String board, int id, int page) {
-    // TODO: implement urlByComments
-    throw UnimplementedError();
-  }
 }
