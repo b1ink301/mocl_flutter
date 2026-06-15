@@ -395,7 +395,7 @@ abstract class _$ListPagingController
   PagingController<int, ListItem> build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref =
         this.ref
             as $Ref<
@@ -413,7 +413,7 @@ abstract class _$ListPagingController
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -478,7 +478,7 @@ abstract class _$PagingItems extends $Notifier<List<ListItem>> {
   List<ListItem> build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<List<ListItem>, List<ListItem>>;
     final element =
         ref.element
@@ -488,7 +488,7 @@ abstract class _$PagingItems extends $Notifier<List<ListItem>> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -623,7 +623,7 @@ abstract class _$SortTypeNotifier extends $Notifier<SortType> {
   SortType build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<SortType, SortType>;
     final element =
         ref.element
@@ -633,6 +633,6 @@ abstract class _$SortTypeNotifier extends $Notifier<SortType> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }

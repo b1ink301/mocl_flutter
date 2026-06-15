@@ -95,7 +95,7 @@ abstract class _$DetailsNotifier extends $AsyncNotifier<Details> {
   FutureOr<Details> build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<AsyncValue<Details>, Details>;
     final element =
         ref.element
@@ -105,7 +105,7 @@ abstract class _$DetailsNotifier extends $AsyncNotifier<Details> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -270,7 +270,7 @@ abstract class _$DetailTitleStateNotifier extends $Notifier<String> {
   String build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<String, String>;
     final element =
         ref.element
@@ -280,7 +280,7 @@ abstract class _$DetailTitleStateNotifier extends $Notifier<String> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 

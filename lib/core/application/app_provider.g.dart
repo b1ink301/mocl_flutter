@@ -48,7 +48,7 @@ abstract class _$CurrentSiteTypeNotifier extends $Notifier<SiteType> {
   SiteType build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<SiteType, SiteType>;
     final element =
         ref.element
@@ -58,7 +58,7 @@ abstract class _$CurrentSiteTypeNotifier extends $Notifier<SiteType> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -101,7 +101,7 @@ abstract class _$ReadableStateNotifier extends $Notifier<int> {
   int build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<int, int>;
     final element =
         ref.element
@@ -111,7 +111,7 @@ abstract class _$ReadableStateNotifier extends $Notifier<int> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -200,7 +200,7 @@ abstract class _$CurrentBrightness extends $Notifier<Brightness> {
   Brightness build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<Brightness, Brightness>;
     final element =
         ref.element
@@ -210,7 +210,7 @@ abstract class _$CurrentBrightness extends $Notifier<Brightness> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -262,7 +262,7 @@ abstract class _$FontSizeDelta extends $Notifier<double> {
   double build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<double, double>;
     final element =
         ref.element
@@ -272,7 +272,7 @@ abstract class _$FontSizeDelta extends $Notifier<double> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
@@ -335,7 +335,7 @@ abstract class _$AppTextStylesFontSizeNotifier
   AppTextStyles build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<AppTextStyles, AppTextStyles>;
     final element =
         ref.element
@@ -345,7 +345,7 @@ abstract class _$AppTextStylesFontSizeNotifier
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
 
