@@ -7,7 +7,7 @@ import 'package:mocl_flutter/features/main_page/presentation/widgets/mocl_drawer
 import 'mocl_main_view.dart';
 import 'state/main_event_mixin.dart';
 
-class MainPage extends ConsumerWidget with MainEvent {
+class MainPage extends ConsumerWidget with MainEvent, MainState {
   const MainPage({super.key});
 
   static Widget init(double width) => ProviderScope(
@@ -17,7 +17,7 @@ class MainPage extends ConsumerWidget with MainEvent {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) => PopScope(
-    canPop: true,
+    canPop: !isSidebarExpanded(ref),
     onPopInvokedWithResult: (bool didPop, _) => handlePop(ref, didPop),
     child: const _ScaffoldWidget(),
   );
@@ -34,7 +34,6 @@ class _ScaffoldWidget extends ConsumerWidget with MainState, MainEvent {
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: systemOverlayStyle,
-      sized: false,
       child: Container(
         color: systemOverlayStyle.statusBarColor,
         child: SafeArea(
@@ -42,6 +41,8 @@ class _ScaffoldWidget extends ConsumerWidget with MainState, MainEvent {
           child: Scaffold(
             key: scaffoldState(ref),
             drawer: const DrawerWidget(),
+            onDrawerChanged: (isOpen) =>
+                isOpen ? sidebarOpen(ref) : sidebarClose(ref),
             drawerEdgeDragWidth: screenWidth(ref),
             drawerEnableOpenDragGesture: true,
             body: const MainView(),
