@@ -47,7 +47,7 @@ abstract class _$AutoSyncNotifier extends $Notifier<SyncAction> {
   SyncAction build();
   @$mustCallSuper
   @override
-  void runBuild() {
+  WhenComplete runBuild() {
     final ref = this.ref as $Ref<SyncAction, SyncAction>;
     final element =
         ref.element
@@ -57,6 +57,6 @@ abstract class _$AutoSyncNotifier extends $Notifier<SyncAction> {
               Object?,
               Object?
             >;
-    element.handleCreate(ref, build);
+    return element.handleCreate(ref, build);
   }
 }
