@@ -22,17 +22,17 @@ class NaverCafeApi extends BaseApi {
       withSyncCookie(parser.baseUrl, () async {
         final String url = parser.urlByDetail(item.url, item.board, item.id);
         final Map<String, String> headers = {'User-Agent': userAgent};
-        final Future<Response> commentFuture = get(
+        final Future<Response<dynamic>> commentFuture = get(
           '$url/comments',
           headers: headers,
           responseType: ResponseType.json,
         );
-        final Future<Response> detailFuture = get(
+        final Future<Response<dynamic>> detailFuture = get(
           url,
           headers: headers,
           responseType: ResponseType.json,
         );
-        final List<Response> responses = await Future.wait([
+        final List<Response<dynamic>> responses = await Future.wait([
           detailFuture,
           commentFuture,
         ]);
@@ -42,8 +42,10 @@ class NaverCafeApi extends BaseApi {
           throw GetDetailFailure(message: 'response.statusCode = not 200');
         }
 
-        final List data = responses.map((response) => response.data).toList();
-        final Response<List> result = Response<List<dynamic>>(
+        final List<dynamic> data = responses
+            .map((response) => response.data)
+            .toList();
+        final Response<List<dynamic>> result = Response<List<dynamic>>(
           data: data,
           requestOptions: RequestOptions(),
         );
@@ -69,7 +71,7 @@ class NaverCafeApi extends BaseApi {
     );
     final String host = Uri.parse(parser.baseUrl).host;
     final Map<String, String> headers = {'Host': host, 'User-Agent': userAgent};
-    final Response response = await get(url, headers: headers);
+    final Response<dynamic> response = await get(url, headers: headers);
     log('[getList] $url, $headers response = ${response.statusCode}');
 
     return response.statusCode == 200
@@ -104,7 +106,7 @@ class NaverCafeApi extends BaseApi {
       'Referer': item.url,
       'User-Agent': userAgent,
     };
-    final Response response = await get(url, headers: headers);
+    final Response<dynamic> response = await get(url, headers: headers);
     log('[searchList] $url, $headers response = ${response.statusCode}');
 
     return response.statusCode == 200
@@ -121,7 +123,7 @@ class NaverCafeApi extends BaseApi {
       withSyncCookie(parser.baseUrl, () async {
         final String url = parser.urlByMain();
         final Map<String, String> headers = {'User-Agent': userAgent};
-        final Response response = await get(url, headers: headers);
+        final Response<dynamic> response = await get(url, headers: headers);
         log('[getMain] $url, $headers response = ${response.statusCode}');
         return response.statusCode == 200
             ? parser.main(response)

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:go_router/go_router.dart';
@@ -15,7 +14,8 @@ import '../../application/main_providers.dart';
 mixin class MainEvent {
   void listenNotLoginFailure(WidgetRef ref, BuildContext context) {
     ref.listen(mainItemsProvider, (previous, next) {
-      if (next case AsyncError error when error.error is NotLoginFailure) {
+      if (next case AsyncError<List<MainItem>> error
+          when error.error is NotLoginFailure) {
         context.push<bool>(Routes.login).then((result) {
           if (context.mounted && result == true) {
             handleRefresh(ref);
@@ -58,15 +58,16 @@ mixin class MainEvent {
   void handleSideBarToggle(WidgetRef ref) =>
       ref.read(mainSidebarProvider.notifier).toggle();
 
+  void sidebarOpen(WidgetRef ref) =>
+      ref.read(mainSidebarProvider.notifier).open();
+
   void sidebarClose(WidgetRef ref) =>
       ref.read(mainSidebarProvider.notifier).close();
 
   void changeSiteType(WidgetRef ref, SiteType siteType) =>
       ref.read(currentSiteTypeProvider.notifier).changeSiteType(siteType);
 
-  static List<Override> overridesProviderScope(
-    double width,
-  ) => [
+  static List<Override> overridesProviderScope(double width) => [
     screenWidthProvider.overrideWithValue(width),
   ];
 
@@ -74,13 +75,10 @@ mixin class MainEvent {
     if (didPop) {
       return;
     }
-    final state = ref.read(mainScaffoldStateProvider);
-    final scaffoldState = state.currentState;
+    final scaffoldState = ref.read(mainScaffoldStateProvider).currentState;
 
     if (scaffoldState?.isDrawerOpen == true) {
       scaffoldState?.closeDrawer();
-    } else {
-      SystemNavigator.pop();
     }
   }
 }

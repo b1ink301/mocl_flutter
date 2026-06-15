@@ -1,0 +1,67 @@
+[
+  {
+    "kind": "Listing",
+    "data": {
+      "children": [
+        {
+          "kind": "t3",
+          "data": {
+            "id": "abc123",
+            "title": "Post title",
+            "selftext_html": "&lt;div&gt;&lt;p&gt;body text&lt;/p&gt;&lt;/div&gt;",
+            "author": "op_user",
+            "author_fullname": "t2_op",
+            "ups": 99,
+            "created": 1765500000.0
+          }
+        }
+      ]
+    }
+  },
+  {
+    "kind": "Listing",
+    "data": {
+      "children": [
+        {
+          "kind": "t1",
+          "data": {
+            "id": "c1",
+            "body_html": "&lt;p&gt;top comment&lt;/p&gt;",
+            "author": "commenter1",
+            "author_fullname": "t2_c1",
+            "ups": 10,
+            "created": 1765510000.0,
+            "depth": 0,
+            "replies": {
+              "kind": "Listing",
+              "data": {
+                "children": [
+                  {
+                    "kind": "t1",
+                    "data": {
+                      "id": "c2",
+                      "body_html": "&lt;p&gt;reply comment&lt;/p&gt;",
+                      "author": "commenter2",
+                      "author_fullname": "t2_c2",
+                      "ups": 2,
+                      "created": 1765520000.0,
+                      "depth": 1,
+                      "replies": ""
+                    }
+                  }
+                ]
+              }
+            }
+          }
+        },
+        {
+          "kind": "more",
+          "data": {
+            "count": 5,
+            "children": ["x1", "x2"]
+          }
+        }
+      ]
+    }
+  }
+]

@@ -26,7 +26,7 @@ class GeekNewsApi extends BaseApi {
     try {
       final String url = parser.urlByDetail(item.url, item.board, item.id);
       final Map<String, String> headers = {'User-Agent': userAgent};
-      final Response response = await get(
+      final Response<dynamic> response = await get(
         url,
         headers: headers,
         responseType: ResponseType.plain,
@@ -64,7 +64,7 @@ class GeekNewsApi extends BaseApi {
         lastId,
       );
       final Map<String, String> headers = {'User-Agent': userAgent};
-      final Response response = await get(
+      final Response<dynamic> response = await get(
         url,
         headers: headers,
         responseType: ResponseType.plain,

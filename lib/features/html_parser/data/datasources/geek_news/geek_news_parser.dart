@@ -29,7 +29,7 @@ class GeekNewsParser implements BaseParser {
   String get baseUrl => 'https://news.hada.io';
 
   @override
-  Future<Either<Failure, List<MainItem>>> main(Response response) =>
+  Future<Either<Failure, List<MainItem>>> main(Response<dynamic> response) =>
       throw UnimplementedError('main');
 
   // ──────────────────────────────────────────────────────────────────
@@ -37,7 +37,7 @@ class GeekNewsParser implements BaseParser {
   // ──────────────────────────────────────────────────────────────────
 
   @override
-  Future<Either<Failure, Details>> detail(Response response) async {
+  Future<Either<Failure, Details>> detail(Response<dynamic> response) async {
     final responseData = response.data as String;
     return Isolate.run(() => _parseDetail(responseData));
   }
@@ -63,8 +63,11 @@ class GeekNewsParser implements BaseParser {
           document.querySelector('div.topicinfo a[href^="/@"]');
       final String author = authorEl?.text.trim() ?? '';
 
-      // Time - span with title attribute has exact datetime
-      final timeEl = document.querySelector('div.topicinfo span[title]');
+      // Time - 사이트가 <span title> -> <time class="js-relative-time" title>
+      // 로 마이그레이션됨. 폴백 유지.
+      final timeEl =
+          document.querySelector('div.topicinfo time') ??
+          document.querySelector('div.topicinfo span[title]');
       final String timeText = timeEl?.text.trim() ?? '';
       final String timeTitle = timeEl?.attributes['title'] ?? '';
 
@@ -74,8 +77,7 @@ class GeekNewsParser implements BaseParser {
 
       // If there's an external URL, prepend it as a link
       if (externalUrl.isNotEmpty && externalUrl.startsWith('http')) {
-        bodyHtml =
-            '<p><a href="$externalUrl">$externalUrl</a></p>$bodyHtml';
+        bodyHtml = '<p><a href="$externalUrl">$externalUrl</a></p>$bodyHtml';
       }
 
       // Comments
@@ -87,7 +89,9 @@ class GeekNewsParser implements BaseParser {
         final cAuthorEl = row.querySelector('div.commentinfo a[href^="/@"]');
         final String cAuthor = cAuthorEl?.text.trim() ?? '';
 
+        // 시간 노드는 <time> 으로 바뀜. 기존 a[href^=comment?id=] 폴백 유지.
         final cTimeEl =
+            row.querySelector('div.commentinfo time') ??
             row.querySelector('div.commentinfo a[href^="comment?id="]') ??
             row.querySelector('div.commentinfo a[href^="/comment?id="]');
         final String cTime = cTimeEl?.text.trim() ?? '';
@@ -98,23 +102,26 @@ class GeekNewsParser implements BaseParser {
         // Depth from style="--depth:N"
         final String style = row.attributes['style'] ?? '';
         final depthMatch = RegExp(r'--depth:\s*(\d+)').firstMatch(style);
-        final int depth =
-            depthMatch != null ? int.parse(depthMatch.group(1)!) : 0;
+        final int depth = depthMatch != null
+            ? int.parse(depthMatch.group(1)!)
+            : 0;
 
         final String cInfo = '$cAuthorㆍ$cTime';
 
-        comments.add(CommentItem(
-          id: commentIdx++,
-          isReply: depth > 0,
-          bodyHtml: cBody,
-          likeCount: '',
-          mediaHtml: '',
-          isVideo: false,
-          time: cTime,
-          info: cInfo,
-          userInfo: UserInfo(id: cAuthor, nickName: cAuthor, nickImage: ''),
-          authorId: '',
-        ));
+        comments.add(
+          CommentItem(
+            id: commentIdx++,
+            isReply: depth > 0,
+            bodyHtml: cBody,
+            likeCount: '',
+            mediaHtml: '',
+            isVideo: false,
+            time: cTime,
+            info: cInfo,
+            userInfo: UserInfo(id: cAuthor, nickName: cAuthor, nickImage: ''),
+            authorId: '',
+          ),
+        );
       }
 
       final String info = '$authorㆍ$timeTextㆍ${points}P';
@@ -143,7 +150,7 @@ class GeekNewsParser implements BaseParser {
 
   @override
   Future<Either<Failure, List<ListItem>>> list(
-    Response response,
+    Response<dynamic> response,
     LastId lastId,
     String boardTitle,
     Future<List<int>> Function(SiteType, List<int>) isReads,
@@ -215,21 +222,24 @@ class GeekNewsParser implements BaseParser {
             row.querySelector('div.topicinfo a[href^="/@"]');
         final String author = authorEl?.text.trim() ?? '';
 
-        // Time - prefer span[title] when available, fallback to regex on infoText
-        String timeText = '';
-        final timeSpan = row.querySelector('div.topicinfo span[title]');
-        if (timeSpan != null) {
-          timeText = timeSpan.text.trim();
-        } else {
-          final infoEl = row.querySelector('div.topicinfo');
-          if (infoEl != null) {
-            final timeMatch =
-                RegExp(r'(\d+(?:일|시간|분|초)전|방금)').firstMatch(infoEl.text);
-            if (timeMatch != null) {
-              timeText = timeMatch.group(0)!;
-            }
+      // Time - <time> 우선, 구버전 span[title] 폴백, 그래도 없으면 텍스트 regex.
+      String timeText = '';
+      final timeEl =
+          row.querySelector('div.topicinfo time') ??
+          row.querySelector('div.topicinfo span[title]');
+      if (timeEl != null) {
+        timeText = timeEl.text.trim();
+      } else {
+        final infoEl = row.querySelector('div.topicinfo');
+        if (infoEl != null) {
+          final timeMatch = RegExp(
+            r'(\d+(?:일|시간|분|초)전|방금)',
+          ).firstMatch(infoEl.text);
+          if (timeMatch != null) {
+            timeText = timeMatch.group(0)!;
           }
         }
+      }
 
         // Comment count
         final commentLink =
@@ -265,7 +275,10 @@ class GeekNewsParser implements BaseParser {
         ids.add(id);
       }
     } catch (e) {
+      // 구조 파손 등 치명 오류는 삼키지 않고 워커 디스패처가
+      // ParseListError 로 보고하도록 전파한다.
       MoclLogger.log('[GeekNewsParser] Error parsing list: $e');
+      rethrow;
     }
 
     final ReceivePort readStatusPort = ReceivePort();
@@ -277,19 +290,19 @@ class GeekNewsParser implements BaseParser {
     final List<ListItem> resultList = parsedItems
         .map(
           (item) => ListItem(
-            id: item['id'],
-            title: item['title'],
-            reply: item['reply'],
-            category: item['category'],
-            time: item['time'],
-            url: item['url'],
-            info: item['info'],
-            board: item['board'],
-            boardTitle: item['boardTitle'],
-            like: item['like'],
-            hit: item['hit'],
-            userInfo: item['userInfo'],
-            hasImage: item['hasImage'],
+            id: item['id'] as int,
+            title: item['title'] as String,
+            reply: item['reply'] as String,
+            category: item['category'] as String,
+            time: item['time'] as String,
+            url: item['url'] as String,
+            info: item['info'] as String,
+            board: item['board'] as String,
+            boardTitle: item['boardTitle'] as String,
+            like: item['like'] as String,
+            hit: item['hit'] as String,
+            userInfo: item['userInfo'] as UserInfo,
+            hasImage: item['hasImage'] as bool,
             isRead: readStatusResponse.statuses.contains(item['id']),
           ),
         )
@@ -335,7 +348,9 @@ class GeekNewsParser implements BaseParser {
   String urlByMain() => throw UnimplementedError('urlByMain');
 
   @override
-  Future<Either<Failure, List<CommentItem>>> comments(Response response) =>
+  Future<Either<Failure, List<CommentItem>>> comments(
+    Response<dynamic> response,
+  ) =>
       throw UnimplementedError();
 
   @override

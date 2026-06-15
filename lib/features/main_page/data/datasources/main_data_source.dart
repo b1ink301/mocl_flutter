@@ -57,10 +57,12 @@ class MainDataSourceImpl implements MainDataSource {
   Future<List<MainItemModel>> getAllFromJson(SiteType siteType) async {
     try {
       final String jsonPath = '${siteType.name.toLowerCase()}/board_link.json';
-      final List decodedData = await readJsonFromAssets<List<dynamic>>(
+      final List<dynamic> decodedData = await readJsonFromAssets<List<dynamic>>(
         jsonPath,
       );
-      return decodedData.map((item) => MainItemModel.fromJson(item)).toList();
+      return decodedData
+          .map((item) => MainItemModel.fromJson(item as Map<String, dynamic>))
+          .toList();
     } on Exception catch (e) {
       MoclLogger.log("getAllFromJson - ${e.toString()}");
       return const [];

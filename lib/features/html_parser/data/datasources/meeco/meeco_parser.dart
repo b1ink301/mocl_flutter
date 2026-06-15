@@ -17,6 +17,7 @@ import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_ext.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_isolate_client.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_isolate_message.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_date_time.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 import '../base/base_parser.dart';
@@ -33,12 +34,12 @@ class MeecoParser implements BaseParser {
   String get baseUrl => 'https://meeco.kr';
 
   @override
-  Future<Either<Failure, List<MainItem>>> main(Response response) =>
+  Future<Either<Failure, List<MainItem>>> main(Response<dynamic> response) =>
       throw UnimplementedError('main');
 
   @override
-  Future<Either<Failure, Details>> detail(Response response) async {
-    final responseData = response.data;
+  Future<Either<Failure, Details>> detail(Response<dynamic> response) async {
+    final responseData = response.data as String;
     final url = baseUrl;
     final showNickImage = isShowNickImage;
     return Isolate.run(() => _parseDetail(url, responseData, showNickImage));
@@ -124,7 +125,7 @@ class MeecoParser implements BaseParser {
 
               var parsedTime = '';
               try {
-                var dateTime = parseDateTime(time);
+                var dateTime = ParserDateTime.parse(time);
                 parsedTime = timeago.format(dateTime, locale: 'ko');
               } catch (e) {
                 parsedTime = time;
@@ -194,7 +195,7 @@ class MeecoParser implements BaseParser {
 
     var parsedTime = '';
     try {
-      var dateTime = parseDateTime(time);
+      var dateTime = ParserDateTime.parse(time);
       parsedTime = timeago.format(dateTime, locale: 'ko');
     } on Exception {
       parsedTime = time;
@@ -223,7 +224,7 @@ class MeecoParser implements BaseParser {
 
   @override
   Future<Either<Failure, List<ListItem>>> list(
-    Response response,
+    Response<dynamic> response,
     LastId lastId,
     String boardTitle,
     Future<List<int>> Function(SiteType, List<int>) isReads,
@@ -358,19 +359,19 @@ class MeecoParser implements BaseParser {
     final resultList = parsedItems
         .map(
           (item) => ListItem(
-            id: item['id'],
-            title: item['title'],
-            reply: item['reply'],
-            category: item['category'],
-            time: item['time'],
-            url: item['url'],
-            info: item['info'],
-            board: item['board'],
-            boardTitle: item['boardTitle'],
-            like: item['like'],
-            hit: item['hit'],
-            userInfo: item['userInfo'],
-            hasImage: item['hasImage'],
+            id: item['id'] as int,
+            title: item['title'] as String,
+            reply: item['reply'] as String,
+            category: item['category'] as String,
+            time: item['time'] as String,
+            url: item['url'] as String,
+            info: item['info'] as String,
+            board: item['board'] as String,
+            boardTitle: item['boardTitle'] as String,
+            like: item['like'] as String,
+            hit: item['hit'] as String,
+            userInfo: item['userInfo'] as UserInfo,
+            hasImage: item['hasImage'] as bool,
             isRead: readStatusResponse.statuses.contains(item['id']),
           ),
         )
@@ -379,58 +380,6 @@ class MeecoParser implements BaseParser {
     replyPort.send(resultList);
   }
 
-  static DateTime parseDateTime(String dateTimeString) {
-    if (dateTimeString.contains(' ')) {
-      // 년.월.일 형식
-      final parts = dateTimeString.split(' ');
-      final dateParts = parts[0].split('.');
-      final timeParts = parts[1].split(':');
-      if (dateParts.length == 4) {
-        return DateTime(
-          int.parse(dateParts[0]),
-          int.parse(dateParts[1]),
-          int.parse(dateParts[2]),
-          int.parse(timeParts[0]),
-          int.parse(timeParts[1]),
-        );
-      } else if (dateParts.length == 3) {
-        return DateTime(
-          int.parse(dateParts[0]),
-          int.parse(dateParts[1]),
-          int.parse(dateParts[2]),
-          int.parse(timeParts[0]),
-          int.parse(timeParts[1]),
-        );
-      } else if (dateParts.length == 2) {
-        final now = DateTime.now();
-        return DateTime(
-          now.year,
-          int.parse(dateParts[0]),
-          int.parse(dateParts[1]),
-          int.parse(timeParts[0]),
-          int.parse(timeParts[1]),
-        );
-      } else {
-        throw Exception('Error parsing $dateTimeString');
-      }
-    } else if (dateTimeString.contains(':')) {
-      final now = DateTime.now();
-      // 시:분 형식
-      var timeParts = dateTimeString.split(':');
-      return DateTime(
-        now.year,
-        now.month,
-        now.day,
-        int.parse(timeParts[0]),
-        int.parse(timeParts[1]),
-      );
-    } else if (dateTimeString == '어제') {
-      final now = DateTime.now();
-      return now.subtract(const Duration(days: 1));
-    } else {
-      throw Exception('Error parsing $dateTimeString');
-    }
-  }
 
   @override
   String urlByDetail(String url, String board, int id) => url;
@@ -461,7 +410,7 @@ class MeecoParser implements BaseParser {
   }
 
   @override
-  Future<Either<Failure, List<CommentItem>>> comments(Response response) {
+  Future<Either<Failure, List<CommentItem>>> comments(Response<dynamic> response) {
     // TODO: implement comments
     throw UnimplementedError();
   }
