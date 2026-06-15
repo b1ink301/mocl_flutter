@@ -45,5 +45,5 @@ abstract class ListItem with _$ListItem {
 }
 
 extension ListItemExtension on ListItem {
-  ValueKey get key => ValueKey(Object.hash(id, isRead));
+  ValueKey<int> get key => ValueKey<int>(Object.hash(id, isRead));
 }

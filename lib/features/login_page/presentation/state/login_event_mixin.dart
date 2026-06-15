@@ -10,7 +10,7 @@ mixin class LoginEvent {
       await cookieManager.setCookie(
         url: url,
         name: cookie.name,
-        value: cookie.value,
+        value: cookie.value as String,
         domain: cookie.domain,
         path: cookie.path ?? '/',
         expiresDate: cookie.expiresDate,

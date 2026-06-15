@@ -25,5 +25,5 @@ class ReadableListItem extends Equatable {
 }
 
 extension ReadableListItemExtension on ReadableListItem {
-  ValueKey get key => item.key;
+  ValueKey<int> get key => item.key;
 }

@@ -42,19 +42,19 @@ abstract class BaseParser {
   String urlByComments(String url, String board, int id, int page) =>
       throw UnimplementedError('urlByComments');
 
-  Future<Either<Failure, List<MainItem>>> main(Response response) =>
+  Future<Either<Failure, List<MainItem>>> main(Response<dynamic> response) =>
       throw UnimplementedError('main');
 
   Future<Either<Failure, List<ListItem>>> list(
-    Response response,
+    Response<dynamic> response,
     LastId lastId,
     String boardTitle,
     Future<List<int>> Function(SiteType, List<int>) isReads,
   );
 
-  Future<Either<Failure, Details>> detail(Response response);
+  Future<Either<Failure, Details>> detail(Response<dynamic> response);
 
-  Future<Either<Failure, List<CommentItem>>> comments(Response response);
+  Future<Either<Failure, List<CommentItem>>> comments(Response<dynamic> response);
 
   static String parserInfo(
     bool isShowNickImage,
@@ -112,24 +112,6 @@ abstract class BaseParser {
     }
     return nick;
   }
-}
-
-class IsolateMessage<T> {
-  final SendPort replyPort;
-  final T responseData;
-  final int lastId;
-  final String boardTitle;
-  final String baseUrl;
-  final bool isShowNickImage;
-
-  const IsolateMessage(
-    this.replyPort,
-    this.responseData,
-    this.lastId,
-    this.boardTitle,
-    this.baseUrl,
-    this.isShowNickImage,
-  );
 }
 
 class ReadStatusRequest {

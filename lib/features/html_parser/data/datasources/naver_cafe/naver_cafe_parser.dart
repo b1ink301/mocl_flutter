@@ -30,20 +30,21 @@ class NaverCafeParser implements BaseParser {
   String get baseUrl => 'https://m.cafe.naver.com';
 
   @override
-  Future<Either<Failure, List<MainItem>>> main(Response response) async {
-    final Map<String, dynamic> json = response.data['message'];
-    final String status = json['status'];
+  Future<Either<Failure, List<MainItem>>> main(Response<dynamic> response) async {
+    final Map<String, dynamic> json =
+        response.data['message'] as Map<String, dynamic>;
+    final String status = json['status'] as String;
     if (status != '200') {
-      final Map<String, dynamic> error = json['error'];
-      final String code = error['code'];
-      final String msg = error['msg'];
+      final Map<String, dynamic> error = json['error'] as Map<String, dynamic>;
+      final String code = error['code'] as String;
+      final String msg = error['msg'] as String;
       if (code == '0004') {
         return Left(NotLoginFailure(message: msg));
       } else {
         return Left(GetMainFailure(message: msg));
       }
     } else {
-      final List<dynamic> cafes = json['result']['cafes'];
+      final List<dynamic> cafes = json['result']['cafes'] as List<dynamic>;
       var orderBy = 0;
       final List<MainItem> data = cafes.map((cafe) {
         Map<String, dynamic> json = {
@@ -64,7 +65,7 @@ class NaverCafeParser implements BaseParser {
   }
 
   @override
-  Future<Either<Failure, Details>> detail(Response response) async {
+  Future<Either<Failure, Details>> detail(Response<dynamic> response) async {
     final responseData = response.data as List<dynamic>;
     return Isolate.run(() => _parseDetail(responseData));
   }
@@ -108,7 +109,8 @@ class NaverCafeParser implements BaseParser {
 
     final comment = responseData.last['result'];
 
-    final List<dynamic> comments = comment['comments']['items'];
+    final List<dynamic> comments =
+        comment['comments']['items'] as List<dynamic>;
 
     final commentItems = comments
         .map((comment) {
@@ -141,7 +143,7 @@ class NaverCafeParser implements BaseParser {
 
           var parsedTime = '';
           try {
-            final dateTime = DateTime.fromMillisecondsSinceEpoch(time);
+            final dateTime = DateTime.fromMillisecondsSinceEpoch(time as int);
             parsedTime = timeago.format(dateTime, locale: 'ko');
           } catch (e) {
             parsedTime = time.toString();
@@ -149,8 +151,8 @@ class NaverCafeParser implements BaseParser {
           final info = '$nickNameㆍ$parsedTime';
 
           return CommentItem(
-            id: id,
-            isReply: isReply,
+            id: id as int,
+            isReply: isReply as bool,
             bodyHtml: body,
             likeCount: likeCount,
             mediaHtml: '',
@@ -171,7 +173,7 @@ class NaverCafeParser implements BaseParser {
     String parsedTime = '';
 
     try {
-      final dateTime = DateTime.fromMillisecondsSinceEpoch(time);
+      final dateTime = DateTime.fromMillisecondsSinceEpoch(time as int);
       parsedTime = timeago.format(dateTime, locale: 'ko');
     } catch (e) {
       parsedTime = time.toString();
@@ -199,7 +201,7 @@ class NaverCafeParser implements BaseParser {
 
   /// 중고거래(네이버 플리마켓) 글은 contentHtml/contentElements 가 비어 있고
   /// 본문이 nfleaProduct.saleProduct 에 들어 있다. 가격/상태/설명/사진을 HTML 로 합친다.
-  static String _buildMarketBodyHtml(Map article) {
+  static String _buildMarketBodyHtml(Map<dynamic, dynamic> article) {
     final nflea = article['nfleaProduct'];
     if (nflea is! Map) return '';
     final sale = nflea['saleProduct'];
@@ -257,7 +259,7 @@ class NaverCafeParser implements BaseParser {
 
   @override
   Future<Either<Failure, List<ListItem>>> list(
-    Response response,
+    Response<dynamic> response,
     LastId lastId,
     String boardTitle,
     Future<List<int>> Function(SiteType, List<int>) isReads,
@@ -293,22 +295,23 @@ class NaverCafeParser implements BaseParser {
     final parsedItems = <Map<String, dynamic>>[];
     final ids = <int>[];
 
-    final List<dynamic> articleList = responseData['articleList'];
+    final List<dynamic> articleList =
+        responseData['articleList'] as List<dynamic>;
 
-    for (final Map<String, dynamic> article in articleList) {
-      final int id = article['articleId'] ?? -1;
+    for (final article in articleList.cast<Map<String, dynamic>>()) {
+      final int id = article['articleId'] as int? ?? -1;
 
       if (id <= 0 || lastId > 0 && id >= lastId) continue;
 
-      final int board = article['cafeId'] ?? -2;
+      final int board = article['cafeId'] as int? ?? -2;
       final String nickName = article['writerNickname'].toString();
       final String category = article['menuName'].toString();
       final String title = article['subject'].toString();
       final String nickImage = article['profileImage'].toString();
-      final int hit = article['readCount'] ?? 0;
-      final int like = article['likeItCount'] ?? 0;
-      final int commentCount = article['commentCount'] ?? 0;
-      final int time = article['writeDateTimestamp'] ?? 0;
+      final int hit = article['readCount'] as int? ?? 0;
+      final int like = article['likeItCount'] as int? ?? 0;
+      final int commentCount = article['commentCount'] as int? ?? 0;
+      final int time = article['writeDateTimestamp'] as int? ?? 0;
       final String userId = article['memberKey'].toString();
       final bool hasImage = article['attachImage'] as bool? ?? false;
       final dateTime = DateTime.fromMillisecondsSinceEpoch(time);
@@ -352,19 +355,19 @@ class NaverCafeParser implements BaseParser {
     final resultList = parsedItems
         .map(
           (item) => ListItem(
-            id: item['id'],
-            title: item['title'],
-            reply: item['reply'],
-            category: item['category'],
-            time: item['time'],
-            url: item['url'],
-            info: item['info'],
-            board: item['board'],
-            boardTitle: item['boardTitle'],
-            like: item['like'],
-            hit: item['hit'],
-            userInfo: item['userInfo'],
-            hasImage: item['hasImage'],
+            id: item['id'] as int,
+            title: item['title'] as String,
+            reply: item['reply'] as String,
+            category: item['category'] as String,
+            time: item['time'] as String,
+            url: item['url'] as String,
+            info: item['info'] as String,
+            board: item['board'] as String,
+            boardTitle: item['boardTitle'] as String,
+            like: item['like'] as String,
+            hit: item['hit'] as String,
+            userInfo: item['userInfo'] as UserInfo,
+            hasImage: item['hasImage'] as bool,
             isRead: readStatusResponse.statuses.contains(item['id']),
           ),
         )
@@ -373,50 +376,6 @@ class NaverCafeParser implements BaseParser {
     replyPort.send(resultList);
   }
 
-  static DateTime parseDateTime(String dateTimeString) {
-    if (dateTimeString.contains(' ')) {
-      // 년.월.일 형식
-      var parts = dateTimeString.split(' ');
-      var dateParts = parts[0].split('.');
-      var timeParts = parts[1].split(':');
-      if (dateParts.length == 3) {
-        return DateTime(
-          int.parse(dateParts[0]),
-          int.parse(dateParts[1]),
-          int.parse(dateParts[2]),
-          int.parse(timeParts[0]),
-          int.parse(timeParts[1]),
-        );
-      } else if (dateParts.length == 2) {
-        final now = DateTime.now();
-        return DateTime(
-          now.year,
-          int.parse(dateParts[0]),
-          int.parse(dateParts[1]),
-          int.parse(timeParts[0]),
-          int.parse(timeParts[1]),
-        );
-      } else {
-        throw Exception('Error parsing $dateTimeString');
-      }
-    } else if (dateTimeString.contains(':')) {
-      final now = DateTime.now();
-      // 시:분 형식
-      var timeParts = dateTimeString.split(':');
-      return DateTime(
-        now.year,
-        now.month,
-        now.day,
-        int.parse(timeParts[0]),
-        int.parse(timeParts[1]),
-      );
-    } else if (dateTimeString == '어제') {
-      final now = DateTime.now();
-      return now.subtract(const Duration(days: 1));
-    } else {
-      throw Exception('Error parsing $dateTimeString');
-    }
-  }
 
   @override
   String urlByDetail(String url, String board, int id) =>
@@ -458,7 +417,9 @@ class NaverCafeParser implements BaseParser {
       'https://apis.naver.com/cafe-home-web/cafe-home/v1/cafes/join?perPage=100';
 
   @override
-  Future<Either<Failure, List<CommentItem>>> comments(Response response) {
+  Future<Either<Failure, List<CommentItem>>> comments(
+    Response<dynamic> response,
+  ) {
     // TODO: implement comments
     throw UnimplementedError();
   }

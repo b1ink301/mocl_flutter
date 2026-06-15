@@ -31,7 +31,7 @@ class TheQooApi extends BaseApi {
         'origin': 'https://theqoo.net',
       };
 
-      final Future<Response> commentFuture = postUri(
+      final Future<Response<dynamic>> commentFuture = postUri(
         commentUrl,
         data: {
           'act': 'dispTheqooContentCommentListTheqoo',
@@ -41,8 +41,8 @@ class TheQooApi extends BaseApi {
         headers: headers,
         responseType: ResponseType.json,
       );
-      final Future<Response> detailFuture = get(url, headers: headers);
-      final List<Response> responses = await Future.wait([
+      final Future<Response<dynamic>> detailFuture = get(url, headers: headers);
+      final List<Response<dynamic>> responses = await Future.wait([
         detailFuture,
         commentFuture,
       ]);
@@ -51,8 +51,10 @@ class TheQooApi extends BaseApi {
 
       if (responses.first.statusCode == 200 &&
           responses.last.statusCode == 200) {
-        final List data = responses.map((response) => response.data).toList();
-        final Response<List> result = Response<List<dynamic>>(
+        final List<dynamic> data = responses
+            .map((response) => response.data)
+            .toList();
+        final Response<List<dynamic>> result = Response<List<dynamic>>(
           data: data,
           requestOptions: RequestOptions(),
         );
@@ -91,7 +93,7 @@ class TheQooApi extends BaseApi {
         'Host': host,
         'User-Agent': userAgent,
       };
-      final Response response = await get(url, headers: headers);
+      final Response<dynamic> response = await get(url, headers: headers);
       log('[getList] $url, $headers response = ${response.statusCode}');
 
       return response.statusCode == 200
@@ -136,7 +138,7 @@ class TheQooApi extends BaseApi {
         'Referer': item.url,
         'User-Agent': userAgent,
       };
-      final Response response = await get(url, headers: headers);
+      final Response<dynamic> response = await get(url, headers: headers);
       log('[searchList] $url, $headers response = ${response.statusCode}');
 
       return response.statusCode == 200

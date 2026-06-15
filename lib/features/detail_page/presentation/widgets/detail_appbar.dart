@@ -76,7 +76,7 @@ class _DetailPopupMenuButton extends StatelessWidget {
       AdaptiveMenuOption(label: '공유하기', onTap: onShareUrl),
       AdaptiveMenuOption(
         label: '글자 크기 변경',
-        onTap: () => showAdaptiveDialog(
+        onTap: () => showAdaptiveDialog<void>(
           context: context,
           builder: (dialogContext) => _FontSizeDialog(
             focusColor: focusColor,

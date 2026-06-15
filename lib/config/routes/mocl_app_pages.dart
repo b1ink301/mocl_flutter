@@ -44,6 +44,9 @@ class AppPages {
       ),
       GoRoute(
         path: Routes.list,
+        // 딥링크/상태 복원 등으로 extra 가 없거나 타입이 다르면 메인으로 보낸다.
+        redirect: (BuildContext context, GoRouterState state) =>
+            state.extra is MainItem ? null : Routes.main,
         pageBuilder: (BuildContext context, GoRouterState state) =>
             SwipeablePage(
               builder: (BuildContext context) {
@@ -56,6 +59,8 @@ class AppPages {
       ),
       GoRoute(
         path: Routes.detail,
+        redirect: (BuildContext context, GoRouterState state) =>
+            state.extra is ListItem ? null : Routes.main,
         pageBuilder: (BuildContext context, GoRouterState state) =>
             SwipeablePage(
               builder: (BuildContext context) {
@@ -68,6 +73,8 @@ class AppPages {
         routes: [
           GoRoute(
             path: Routes.viewPhotoDlg,
+            redirect: (BuildContext context, GoRouterState state) =>
+                state.extra is String ? null : Routes.main,
             pageBuilder: (BuildContext context, GoRouterState state) =>
                 CupertinoModalPopupPage(
                   builder: (BuildContext context) {

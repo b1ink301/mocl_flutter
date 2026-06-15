@@ -18,6 +18,7 @@ import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_ext
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_parser.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_isolate_client.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_isolate_message.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_date_time.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
 class TheQooParser extends BaseParser {
@@ -33,7 +34,9 @@ class TheQooParser extends BaseParser {
   String urlByMain() => 'https://theqoo.net/';
 
   @override
-  Future<Either<Failure, List<CommentItem>>> comments(Response response) {
+  Future<Either<Failure, List<CommentItem>>> comments(
+    Response<dynamic> response,
+  ) {
     throw UnimplementedError('comments');
   }
 
@@ -41,7 +44,7 @@ class TheQooParser extends BaseParser {
   String urlByDetail(String url, String board, int id) => url;
 
   @override
-  Future<Either<Failure, Details>> detail(Response response) async {
+  Future<Either<Failure, Details>> detail(Response<dynamic> response) async {
     final responseData = response.data as List<dynamic>;
     return Isolate.run(() => _parseDetail(responseData));
   }
@@ -76,20 +79,20 @@ class TheQooParser extends BaseParser {
 
     int nowCommentPage = 0;
     if (json != null) {
-      nowCommentPage = json['now_comment_page'] ?? 0;
+      nowCommentPage = json['now_comment_page'] as int? ?? 0;
       final addedNumber = json['added_number'];
       // final documentSrl = json['document_srl'];
 
       MoclLogger.log('nowCommentPage=$nowCommentPage, addedNumber=$addedNumber');
 
-      final List<dynamic> list = json['comment_list'];
+      final List<dynamic> list = json['comment_list'] as List<dynamic>;
       var index = 1;
       for (final element in list) {
         final String body = element['ct']?.toString() ?? '';
         final String time = element['rd']?.toString() ?? '';
-        final int id = element['srl'] ?? -1;
+        final int id = element['srl'] as int? ?? -1;
 
-        final int commentIndex = addedNumber + index++;
+        final int commentIndex = (addedNumber as int) + index++;
         final nickName = '$commentIndex. 무명의 더쿠';
         final info = nickName;
 
@@ -116,7 +119,7 @@ class TheQooParser extends BaseParser {
 
     var parsedTime = '';
     try {
-      var dateTime = parseDateTime(time);
+      var dateTime = ParserDateTime.parse(time);
       parsedTime = timeago.format(dateTime, locale: 'ko');
     } catch (e) {
       parsedTime = time;
@@ -145,7 +148,7 @@ class TheQooParser extends BaseParser {
 
   @override
   Future<Either<Failure, List<ListItem>>> list(
-    Response response,
+    Response<dynamic> response,
     LastId lastId,
     String boardTitle,
     Future<List<int>> Function(SiteType, List<int>) isReads,
@@ -234,7 +237,7 @@ class TheQooParser extends BaseParser {
       final hasImage = false;
       // var parsedTime = '';
       // try {
-      //   final dateTime = parseDateTime(time);
+      //   final dateTime = ParserDateTime.parse(time);
       //   parsedTime = timeago.format(dateTime, locale: 'ko');
       // } catch (e) {
       //   parsedTime = time;
@@ -274,19 +277,19 @@ class TheQooParser extends BaseParser {
     final resultList = parsedItems
         .map(
           (item) => ListItem(
-            id: item['id'],
-            title: item['title'],
-            reply: item['reply'],
-            category: item['category'],
-            time: item['time'],
-            info: item['info'],
-            url: item['url'],
-            board: item['board'],
-            boardTitle: item['boardTitle'],
-            like: item['like'],
-            hit: item['hit'],
-            userInfo: item['userInfo'],
-            hasImage: item['hasImage'],
+            id: item['id'] as int,
+            title: item['title'] as String,
+            reply: item['reply'] as String,
+            category: item['category'] as String,
+            time: item['time'] as String,
+            info: item['info'] as String,
+            url: item['url'] as String,
+            board: item['board'] as String,
+            boardTitle: item['boardTitle'] as String,
+            like: item['like'] as String,
+            hit: item['hit'] as String,
+            userInfo: item['userInfo'] as UserInfo,
+            hasImage: item['hasImage'] as bool,
             isRead: readStatusResponse.statuses.contains(item['id']),
           ),
         )
@@ -296,7 +299,9 @@ class TheQooParser extends BaseParser {
   }
 
   @override
-  Future<Either<Failure, List<MainItem>>> main(Response response) async {
+  Future<Either<Failure, List<MainItem>>> main(
+    Response<dynamic> response,
+  ) async {
     final responseData = response.data;
     final document = parse(responseData);
     final container = document.querySelector(
@@ -343,57 +348,4 @@ class TheQooParser extends BaseParser {
     return '$url${separator}page=$page';
   }
 
-  static DateTime parseDateTime(String dateTimeString) {
-    final times = dateTimeString.split(' ');
-
-    final now = DateTime.now();
-    if (times.length == 2) {
-      var date = times[0].split('-');
-
-      var year = now.year;
-      var month = now.month;
-      var day = now.day;
-      var hour = now.hour;
-      var minute = now.minute;
-      var second = now.second;
-
-      if (date.length == 3) {
-        year = int.parse(date[0]);
-        month = int.parse(date[1]);
-        day = int.parse(date[2]);
-      } else {
-        throw Exception('Error parsing $dateTimeString');
-      }
-
-      var time = times[1].split(':');
-      if (time.length == 3) {
-        hour = int.parse(time[0]);
-        minute = int.parse(time[1]);
-        second = int.parse(time[2]);
-      } else {
-        throw Exception('Error parsing $dateTimeString');
-      }
-
-      return DateTime(year, month, day, hour, minute, second);
-    } else {
-      var times = dateTimeString.split(':');
-
-      if (times.length == 2) {
-        final hour = int.parse(times[0]);
-        final minute = int.parse(times[1]);
-        return DateTime(now.year, now.month, now.day, hour, minute);
-      } else {
-        times = dateTimeString.split('-');
-        if (times.length == 3) {
-          final year = int.parse(times[0]);
-          final tmp = now.year - year;
-          final month = int.parse(times[1]);
-          final day = int.parse(times[2]);
-          return DateTime(year + tmp, month, day, now.hour, now.minute);
-        } else {
-          throw Exception('Error parsing $dateTimeString');
-        }
-      }
-    }
-  }
 }

@@ -27,7 +27,7 @@ class DamoangApi extends BaseApi {
         final String url = parser.urlByDetail(item.url, item.board, item.id);
         final Map<String, String> headers = {};//{'User-Agent': userAgent};
 
-        final Response response = await get(
+        final Response<dynamic> response = await get(
           url,
           headers: headers,
           responseType: ResponseType.plain,
@@ -81,7 +81,8 @@ class DamoangApi extends BaseApi {
   static List<CommentItem> _parseCommentsJson(String jsonStr) {
     try {
       timeago.setLocaleMessages('ko', timeago.KoMessages());
-      final Map<String, dynamic> body = jsonDecode(jsonStr);
+      final Map<String, dynamic> body =
+          jsonDecode(jsonStr) as Map<String, dynamic>;
       final List<dynamic>? data = body['data'] as List<dynamic>?;
       if (data == null) return [];
 
@@ -141,7 +142,7 @@ class DamoangApi extends BaseApi {
     // final String host = Uri.parse(parser.baseUrl).host;
     final Map<String, String> headers = {};//{'User-Agent': userAgent};
 
-    final Response response = await get(
+    final Response<dynamic> response = await get(
       url,
       headers: headers,
       responseType: ResponseType.plain,
@@ -185,7 +186,7 @@ class DamoangApi extends BaseApi {
       'Referer': item.url,
       'User-Agent': userAgent,
     };
-    final Response response = await get(
+    final Response<dynamic> response = await get(
       url,
       headers: headers,
       responseType: ResponseType.plain,

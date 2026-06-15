@@ -15,7 +15,7 @@ import '../../../core/presentation/widgets/plain_icon.dart';
 import '../../../core/presentation/widgets/plain_icon_button.dart';
 import '../../../core/presentation/widgets/plain_text.dart';
 
-class ListSearchDelegate extends SearchDelegate {
+class ListSearchDelegate extends SearchDelegate<dynamic> {
   final MainItem item;
 
   ListSearchDelegate({required this.item});

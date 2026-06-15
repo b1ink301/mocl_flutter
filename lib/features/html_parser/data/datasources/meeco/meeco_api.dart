@@ -23,7 +23,7 @@ class MeecoApi extends BaseApi {
         final String url = parser.urlByDetail(item.url, item.board, item.id);
         final Map<String, String> headers = {'User-Agent': userAgent};
 
-        final Response response = await get(url, headers: headers);
+        final Response<dynamic> response = await get(url, headers: headers);
         log('[detail] $url, $headers response = ${response.statusCode}');
         return response.statusCode == 200
             ? parser.detail(response)
@@ -53,7 +53,7 @@ class MeecoApi extends BaseApi {
 
     final String host = Uri.parse(parser.baseUrl).host;
     final Map<String, String> headers = {'Host': host, 'User-Agent': userAgent};
-    final Response response = await get(url, headers: headers);
+    final Response<dynamic> response = await get(url, headers: headers);
     log('[getList] $url, $headers response = ${response.statusCode}');
 
     return response.statusCode == 200
@@ -93,7 +93,7 @@ class MeecoApi extends BaseApi {
       'Referer': item.url,
       'User-Agent': userAgent,
     };
-    final Response response = await get(url, headers: headers);
+    final Response<dynamic> response = await get(url, headers: headers);
     log('[getList] $url, $headers response = ${response.statusCode}');
 
     return response.statusCode == 200

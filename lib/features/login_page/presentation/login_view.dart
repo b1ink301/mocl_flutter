@@ -38,7 +38,7 @@ class LoginView extends ConsumerWidget with LoginState, LoginEvent {
         if (createWindowAction.request.url.toString().contains(
           "login/google",
         )) {
-          showDialog(
+          showDialog<void>(
             context: context,
             builder: (context) => InAppWebView(
               initialUrlRequest: createWindowAction.request,

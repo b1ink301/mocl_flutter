@@ -30,7 +30,7 @@ class RedditParser implements BaseParser {
   String get baseUrl => 'https://www.reddit.com';
 
   @override
-  Future<Either<Failure, Details>> detail(Response response) async {
+  Future<Either<Failure, Details>> detail(Response<dynamic> response) async {
     final responseData = response.data;
     return Isolate.run(() => _parseDetail(responseData));
   }
@@ -56,7 +56,7 @@ class RedditParser implements BaseParser {
     final nickImage = '';
     final userId = detailData['author_fullname'].toString();
     final nickName = detailData['author'].toString();
-    final double created = detailData['created'];
+    final double created = detailData['created'] as double;
     final int milliseconds = (created * 1000).toInt();
     final date = DateTime.fromMillisecondsSinceEpoch(milliseconds).toLocal();
     final parsedTime = timeago.format(date, locale: 'ko');
@@ -139,7 +139,7 @@ class RedditParser implements BaseParser {
 
   @override
   Future<Either<Failure, List<ListItem>>> list(
-    Response response,
+    Response<dynamic> response,
     LastId lastId,
     String boardTitle,
     Future<List<int>> Function(SiteType p1, List<int> p2) isReads,
@@ -179,7 +179,7 @@ class RedditParser implements BaseParser {
           final data = element['data'];
           if (data == null) return null;
 
-          final double created = data['created'];
+          final double created = data['created'] as double;
           final int milliseconds = (created * 1000).toInt();
           final date = DateTime.fromMillisecondsSinceEpoch(
             milliseconds,
@@ -219,7 +219,7 @@ class RedditParser implements BaseParser {
   }
 
   @override
-  Future<Either<Failure, List<MainItem>>> main(Response response) async {
+  Future<Either<Failure, List<MainItem>>> main(Response<dynamic> response) async {
     final responseData = response.data;
     final document = parse(responseData).body;
     final container = document?.querySelector(
@@ -233,7 +233,7 @@ class RedditParser implements BaseParser {
     if (initialStateJson == null || initialStateJson == "[]") {
       return Left(NotLoginFailure(message: '로그인하지 않았습니다. #2'));
     }
-    final list = jsonDecode(initialStateJson);
+    final list = jsonDecode(initialStateJson) as List<dynamic>;
     var orderBy = 0;
     final List<MainItem> result = list
         .map((item) {
@@ -291,7 +291,7 @@ class RedditParser implements BaseParser {
   ) => url;
 
   @override
-  Future<Either<Failure, List<CommentItem>>> comments(Response response) {
+  Future<Either<Failure, List<CommentItem>>> comments(Response<dynamic> response) {
     throw UnimplementedError();
   }
 

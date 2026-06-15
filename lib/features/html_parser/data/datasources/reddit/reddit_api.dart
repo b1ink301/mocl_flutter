@@ -24,7 +24,7 @@ class RedditApi extends BaseApi {
         final String url = parser.urlByDetail(item.url, item.board, item.id);
         final Map<String, String> headers = {'User-Agent': userAgent};
 
-        final Response response = await get(url, headers: headers);
+        final Response<dynamic> response = await get(url, headers: headers);
         log('[detail] $url, $headers response = ${response.statusCode}');
         if (response.statusCode != 200) {
           return Left(
@@ -147,7 +147,7 @@ class RedditApi extends BaseApi {
           '?api_type=json&link_id=$linkFullname'
           '&children=${ids.join(',')}&limit_children=false';
       final Map<String, String> headers = {'User-Agent': userAgent};
-      final Response response = await get(url, headers: headers);
+      final Response<dynamic> response = await get(url, headers: headers);
       if (response.statusCode != 200) return const [];
 
       final body = response.data is String
@@ -179,7 +179,7 @@ class RedditApi extends BaseApi {
     );
     final String host = Uri.parse(parser.baseUrl).host;
     final Map<String, String> headers = {'Host': host, 'User-Agent': userAgent};
-    final Response response = await get(url, headers: headers);
+    final Response<dynamic> response = await get(url, headers: headers);
     log('[getList] $url, $headers response = ${response.statusCode}');
 
     return response.statusCode == 200
@@ -199,7 +199,7 @@ class RedditApi extends BaseApi {
           'User-Agent': userAgent,
           'Host': 'www.reddit.com',
         };
-        final Response response = await get(url, headers: headers);
+        final Response<dynamic> response = await get(url, headers: headers);
         log('[getMain] $url, $headers response = ${response.statusCode}');
         return response.statusCode == 200
             ? parser.main(response)
@@ -233,7 +233,7 @@ class RedditApi extends BaseApi {
       'Referer': item.url,
       'User-Agent': userAgent,
     };
-    final Response response = await get(url, headers: headers);
+    final Response<dynamic> response = await get(url, headers: headers);
     log('[searchList] $url, $headers response = ${response.statusCode}');
 
     return response.statusCode == 200

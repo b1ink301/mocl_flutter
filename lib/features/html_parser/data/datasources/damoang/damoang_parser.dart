@@ -32,7 +32,7 @@ class DamoangParser implements BaseParser {
   String get baseUrl => 'https://damoang.net';
 
   @override
-  Future<Either<Failure, List<MainItem>>> main(Response response) =>
+  Future<Either<Failure, List<MainItem>>> main(Response<dynamic> response) =>
       throw UnimplementedError('main');
 
   // ──────────────────────────────────────────────────────────────────
@@ -256,7 +256,7 @@ class DamoangParser implements BaseParser {
   // ──────────────────────────────────────────────────────────────────
 
   @override
-  Future<Either<Failure, Details>> detail(Response response) async {
+  Future<Either<Failure, Details>> detail(Response<dynamic> response) async {
     final responseData = response.data is String
         ? response.data as String
         : response.data.toString();
@@ -480,7 +480,7 @@ class DamoangParser implements BaseParser {
 
   @override
   Future<Either<Failure, List<ListItem>>> list(
-    Response response,
+    Response<dynamic> response,
     LastId lastId,
     String boardTitle,
     Future<List<int>> Function(SiteType, List<int>) isReads,
@@ -641,19 +641,19 @@ class DamoangParser implements BaseParser {
     final List<ListItem> resultList = parsedItems
         .map(
           (item) => ListItem(
-            id: item['id'],
-            title: item['title'],
-            reply: item['reply'],
-            category: item['category'],
-            time: item['time'],
-            url: item['url'],
-            info: item['info'],
-            board: item['board'],
-            boardTitle: item['boardTitle'],
-            like: item['like'],
-            hit: item['hit'],
-            userInfo: item['userInfo'],
-            hasImage: item['hasImage'],
+            id: item['id'] as int,
+            title: item['title'] as String,
+            reply: item['reply'] as String,
+            category: item['category'] as String,
+            time: item['time'] as String,
+            url: item['url'] as String,
+            info: item['info'] as String,
+            board: item['board'] as String,
+            boardTitle: item['boardTitle'] as String,
+            like: item['like'] as String,
+            hit: item['hit'] as String,
+            userInfo: item['userInfo'] as UserInfo,
+            hasImage: item['hasImage'] as bool,
             isRead: readStatusResponse.statuses.contains(item['id']),
           ),
         )
@@ -666,71 +666,6 @@ class DamoangParser implements BaseParser {
   // Date parsing
   // ──────────────────────────────────────────────────────────────────
 
-  static DateTime parseDateTime(String dateTimeString) {
-    // ISO 8601 (e.g. "2026-03-13T11:04:59+09:00")
-    try {
-      return DateTime.parse(dateTimeString);
-    } catch (_) {}
-
-    // Korean format: "2026년 3월 12일 오후 03:10"
-    final koreanDateRegex = RegExp(
-      r'(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일\s*(오전|오후)\s*(\d{1,2}):(\d{2})',
-    );
-    final koreanMatch = koreanDateRegex.firstMatch(dateTimeString);
-    if (koreanMatch != null) {
-      final year = int.parse(koreanMatch.group(1)!);
-      final month = int.parse(koreanMatch.group(2)!);
-      final day = int.parse(koreanMatch.group(3)!);
-      final isPm = koreanMatch.group(4) == '오후';
-      var hour = int.parse(koreanMatch.group(5)!);
-      final minute = int.parse(koreanMatch.group(6)!);
-      if (isPm && hour < 12) hour += 12;
-      if (!isPm && hour == 12) hour = 0;
-      return DateTime(year, month, day, hour, minute);
-    }
-
-    // Legacy: "년.월.일 시:분" or "월.일 시:분"
-    if (dateTimeString.contains(' ')) {
-      final parts = dateTimeString.split(' ');
-      final dateParts = parts[0].split('.');
-      final timeParts = parts[1].split(':');
-      if (dateParts.length == 3) {
-        return DateTime(
-          int.parse(dateParts[0]),
-          int.parse(dateParts[1]),
-          int.parse(dateParts[2]),
-          int.parse(timeParts[0]),
-          int.parse(timeParts[1]),
-        );
-      } else if (dateParts.length == 2) {
-        final now = DateTime.now();
-        return DateTime(
-          now.year,
-          int.parse(dateParts[0]),
-          int.parse(dateParts[1]),
-          int.parse(timeParts[0]),
-          int.parse(timeParts[1]),
-        );
-      } else {
-        throw Exception('Error parsing $dateTimeString');
-      }
-    } else if (dateTimeString.contains(':')) {
-      final now = DateTime.now();
-      final timeParts = dateTimeString.split(':');
-      return DateTime(
-        now.year,
-        now.month,
-        now.day,
-        int.parse(timeParts[0]),
-        int.parse(timeParts[1]),
-      );
-    } else if (dateTimeString == '어제') {
-      final now = DateTime.now();
-      return now.subtract(const Duration(days: 1));
-    } else {
-      throw Exception('Error parsing $dateTimeString');
-    }
-  }
 
   // ──────────────────────────────────────────────────────────────────
   // URL builders
@@ -766,7 +701,9 @@ class DamoangParser implements BaseParser {
   }
 
   @override
-  Future<Either<Failure, List<CommentItem>>> comments(Response response) {
+  Future<Either<Failure, List<CommentItem>>> comments(
+    Response<dynamic> response,
+  ) {
     throw UnimplementedError();
   }
 

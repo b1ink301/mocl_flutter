@@ -1,5 +1,4 @@
 import 'dart:developer';
-import 'dart:io';
 
 import 'package:cookie_jar/cookie_jar.dart' as cookiejar;
 import 'package:dio/dio.dart';
@@ -26,10 +25,7 @@ abstract class BaseApi with BaseAction {
   const BaseApi(this._dio, this.userAgent);
 
   void init(cookiejar.CookieJar cookieJar) {
-    _dio.httpClientAdapter = IOHttpClientAdapter(
-      createHttpClient: () =>
-          HttpClient()..badCertificateCallback = (_, _, _) => true,
-    );
+    _dio.httpClientAdapter = IOHttpClientAdapter();
 
     if (!kIsWeb) {
       _dio.interceptors.clear();
@@ -37,10 +33,10 @@ abstract class BaseApi with BaseAction {
     }
   }
 
-  Future<Response> getUri(Uri uri, {Map<String, String>? headers}) => _dio
+  Future<Response<dynamic>> getUri(Uri uri, {Map<String, String>? headers}) => _dio
       .getUri(uri, options: headers != null ? Options(headers: headers) : null);
 
-  Future<Response> get(
+  Future<Response<dynamic>> get(
     String url, {
     Map<String, String>? headers,
     ResponseType? responseType,
@@ -56,7 +52,7 @@ abstract class BaseApi with BaseAction {
         : null,
   );
 
-  Future<Response> postUri(
+  Future<Response<dynamic>> postUri(
     String url, {
     Map<String, String>? headers,
     Object? data,

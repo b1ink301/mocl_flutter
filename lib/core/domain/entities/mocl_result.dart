@@ -4,7 +4,7 @@ import 'package:mocl_flutter/core/error/failures.dart';
 part 'mocl_result.freezed.dart';
 
 @freezed
-sealed class Result<T> with _$Result {
+sealed class Result<T> with _$Result<T> {
   const factory Result.initial() = ResultInitial;
 
   const factory Result.loading() = ResultLoading;

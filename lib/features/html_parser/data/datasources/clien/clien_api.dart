@@ -21,7 +21,7 @@ class ClienApi extends BaseApi {
       withSyncCookie(parser.baseUrl, () async {
         final String url = parser.urlByDetail(item.url, item.board, item.id);
         final Map<String, String> headers = {'User-Agent': userAgent};
-        final Response response = await get(url, headers: headers);
+        final Response<dynamic> response = await get(url, headers: headers);
         log('[detail] $url, $headers response = ${response.statusCode}');
         return response.statusCode == 200
             ? parser.detail(response)
@@ -52,7 +52,7 @@ class ClienApi extends BaseApi {
     final Map<String, String> headers = {'Host': host, 'User-Agent': userAgent};
 
     log('[getList] url=$url, headers=$headers');
-    final Response response = await get(url, headers: headers);
+    final Response<dynamic> response = await get(url, headers: headers);
 
     return response.statusCode == 200
         ? parser.list(response, lastId, item.text, isReads)
@@ -90,7 +90,7 @@ class ClienApi extends BaseApi {
       'Referer': item.url,
       'User-Agent': userAgent,
     };
-    final Response response = await get(url, headers: headers);
+    final Response<dynamic> response = await get(url, headers: headers);
     log('[searchList] $url, $headers response = ${response.statusCode}');
 
     return response.statusCode == 200

@@ -108,7 +108,7 @@ class NickImageWidget extends StatelessWidget {
     if (libCacheDir.existsSync()) {
       await libCacheDir.delete(recursive: true);
     } else {
-      await Future.delayed(Duration(milliseconds: 300));
+      await Future<void>.delayed(Duration(milliseconds: 300));
     }
   }
 
