@@ -34,13 +34,6 @@ class TheQooParser extends BaseParser {
   String urlByMain() => 'https://theqoo.net/';
 
   @override
-  Future<Either<Failure, List<CommentItem>>> comments(
-    Response<dynamic> response,
-  ) {
-    throw UnimplementedError('comments');
-  }
-
-  @override
   String urlByDetail(String url, String board, int id) => url;
 
   @override
@@ -58,18 +51,15 @@ class TheQooParser extends BaseParser {
       'html > body > div[id=container] > div.content > section > article',
     );
 
-    final title =
-        container?.querySelector('div.title-wrap > h3')?.text.trim() ?? '';
+    final title = container.qText('div.title-wrap > h3');
     final infoElement = container?.querySelector(
       'div.title-wrap > div.under-title',
     );
-    final nickName = infoElement?.querySelector('span.name')?.text.trim() ?? '';
-    final time = infoElement?.querySelector('span.date')?.text.trim() ?? '';
-    var viewCount = infoElement?.querySelector('span.hit')?.text.trim() ?? '';
+    final nickName = infoElement.qText('span.name');
+    final time = infoElement.qText('span.date');
+    final viewCount = infoElement.qText('span.hit');
     final bodyHtml = container?.querySelector('div.read-body > div');
-    bodyHtml
-        ?.querySelectorAll('input, button')
-        .forEach((element) => element.remove());
+    bodyHtml.removeAll('input, button');
 
     var likeCount = '';
     final nickImage = '';
@@ -117,13 +107,7 @@ class TheQooParser extends BaseParser {
       }
     }
 
-    var parsedTime = '';
-    try {
-      var dateTime = ParserDateTime.parse(time);
-      parsedTime = timeago.format(dateTime, locale: 'ko');
-    } catch (e) {
-      parsedTime = time;
-    }
+    final parsedTime = formatTimeago(time);
     final info = BaseParser.parserInfo(false, nickName, parsedTime, viewCount);
 
     final detail = Details(
@@ -178,13 +162,12 @@ class TheQooParser extends BaseParser {
     final boardTitle = message.boardTitle;
     final baseUrl = message.baseUrl;
 
-    final parsedItems = <Map<String, dynamic>>[];
-    final ids = <int>[];
-
     final document = parse(responseData);
     final elementList = document.querySelectorAll(
       "div[id=container] > div.content > section.flatBoard > div.m-list > ul.list > li",
     );
+
+    final items = <ListItem>[];
 
     for (final element in elementList) {
       final tmpUrl = element.querySelector('a.list-link')?.attributes['href'];
@@ -199,24 +182,12 @@ class TheQooParser extends BaseParser {
       if (id <= 0 || lastId > 0 && id >= lastId) continue;
 
       final board = pathList[1];
-      final reply = element.querySelector('a.reply')?.text.trim() ?? '';
-      final category =
-          element
-              .querySelector('ul.list-element > li:last-child')
-              ?.text
-              .trim() ??
-          '';
+      final reply = element.qText('a.reply');
+      final category = element.qText('ul.list-element > li:last-child');
       if (category == '공지') continue;
 
-      final title =
-          element
-              .querySelector('ul.list-element > li.title > span.title_span')
-              ?.text
-              .trim() ??
-          '';
-      final time =
-          element.querySelector('ul.list-element > li.date')?.text.trim() ?? '';
-      final nickImage = '';
+      final title = element.qText('ul.list-element > li.title > span.title_span');
+      final time = element.qText('ul.list-element > li.date');
 
       final hit =
           element
@@ -226,76 +197,31 @@ class TheQooParser extends BaseParser {
               .split(' ')
               .lastOrNull ??
           '';
-      final like =
-          element
-              .querySelector('div.list_title > div.list_symph > span')
-              ?.text
-              .trim() ??
-          '';
-
-      final nickName = '';
-      final hasImage = false;
-      // var parsedTime = '';
-      // try {
-      //   final dateTime = ParserDateTime.parse(time);
-      //   parsedTime = timeago.format(dateTime, locale: 'ko');
-      // } catch (e) {
-      //   parsedTime = time;
-      // }
+      final like = element.qText('div.list_title > div.list_symph > span');
 
       final info = '$hit 읽음';
 
-      final parsedItem = {
-        'id': id,
-        'title': title,
-        'reply': reply,
-        'category': category,
-        'time': time,
-        'info': info,
-        'url': url,
-        'board': board,
-        'boardTitle': boardTitle,
-        'like': like,
-        'hit': hit,
-        'userInfo': UserInfo(
-          id: userId,
-          nickName: nickName,
-          nickImage: nickImage,
+      items.add(
+        ListItem(
+          id: id,
+          title: title,
+          reply: reply,
+          category: category,
+          time: time,
+          info: info,
+          url: url,
+          board: board,
+          boardTitle: boardTitle,
+          like: like,
+          hit: hit,
+          userInfo: UserInfo(id: userId, nickName: '', nickImage: ''),
+          hasImage: false,
+          isRead: false,
         ),
-        'hasImage': hasImage,
-      };
-
-      parsedItems.add(parsedItem);
-      ids.add(id);
+      );
     }
 
-    final readStatusPort = ReceivePort();
-    replyPort.send(ReadStatusRequest(ids, readStatusPort.sendPort));
-    final readStatusResponse = await readStatusPort.first as ReadStatusResponse;
-    readStatusPort.close();
-
-    final resultList = parsedItems
-        .map(
-          (item) => ListItem(
-            id: item['id'] as int,
-            title: item['title'] as String,
-            reply: item['reply'] as String,
-            category: item['category'] as String,
-            time: item['time'] as String,
-            info: item['info'] as String,
-            url: item['url'] as String,
-            board: item['board'] as String,
-            boardTitle: item['boardTitle'] as String,
-            like: item['like'] as String,
-            hit: item['hit'] as String,
-            userInfo: item['userInfo'] as UserInfo,
-            hasImage: item['hasImage'] as bool,
-            isRead: readStatusResponse.statuses.contains(item['id']),
-          ),
-        )
-        .toList();
-
-    replyPort.send(resultList);
+    await sendListWithReadStatus(replyPort, items);
   }
 
   @override

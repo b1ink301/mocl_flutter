@@ -54,7 +54,9 @@ abstract class BaseParser {
 
   Future<Either<Failure, Details>> detail(Response<dynamic> response);
 
-  Future<Either<Failure, List<CommentItem>>> comments(Response<dynamic> response);
+  Future<Either<Failure, List<CommentItem>>> comments(
+    Response<dynamic> response,
+  ) => throw UnimplementedError('comments');
 
   static String parserInfo(
     bool isShowNickImage,
@@ -125,4 +127,28 @@ class ReadStatusResponse {
   final List<int> statuses;
 
   const ReadStatusResponse(this.statuses);
+}
+
+/// 워커에서 파싱한 [items] 의 id 들로 읽음 여부를 메인 isolate 에 질의하고,
+/// 그 결과를 `isRead` 에 반영한 리스트를 [replyPort] 로 돌려준다.
+///
+/// 기존엔 각 파서가 `Map<String,dynamic>` 중간 표현으로 한 번 쌓았다가
+/// 읽음 조회 후 `ListItem` 으로 다시 빌드하느라 필드를 두 번 나열했는데,
+/// 이 헬퍼로 `ListItem` 을 바로 만들고 `copyWith(isRead:)` 만 적용하면 된다.
+Future<void> sendListWithReadStatus(
+  SendPort replyPort,
+  List<ListItem> items,
+) async {
+  final List<int> ids = items.map((item) => item.id).toList();
+
+  final ReceivePort readStatusPort = ReceivePort();
+  replyPort.send(ReadStatusRequest(ids, readStatusPort.sendPort));
+  final ReadStatusResponse response =
+      await readStatusPort.first as ReadStatusResponse;
+  readStatusPort.close();
+
+  final Set<int> read = response.statuses.toSet();
+  replyPort.send(
+    items.map((item) => item.copyWith(isRead: read.contains(item.id))).toList(),
+  );
 }

@@ -23,7 +23,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 import '../base/base_parser.dart';
 
-class RedditParser implements BaseParser {
+class RedditParser extends BaseParser {
   const RedditParser();
 
   @override
@@ -289,14 +289,4 @@ class RedditParser implements BaseParser {
     String keyword,
     LastId lastId,
   ) => url;
-
-  @override
-  Future<Either<Failure, List<CommentItem>>> comments(Response<dynamic> response) {
-    throw UnimplementedError();
-  }
-
-  @override
-  String urlByComments(String url, String board, int id, int page) {
-    throw UnimplementedError();
-  }
 }

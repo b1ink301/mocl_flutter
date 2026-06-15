@@ -8,18 +8,18 @@ import 'package:mocl_flutter/core/domain/entities/last_id.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/util/mocl_logger.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_ext.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_isolate_client.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_isolate_message.dart';
 
 import '../base/base_parser.dart';
 
-class GeekNewsParser implements BaseParser {
+class GeekNewsParser extends BaseParser {
   const GeekNewsParser();
 
   @override
@@ -27,10 +27,6 @@ class GeekNewsParser implements BaseParser {
 
   @override
   String get baseUrl => 'https://news.hada.io';
-
-  @override
-  Future<Either<Failure, List<MainItem>>> main(Response<dynamic> response) =>
-      throw UnimplementedError('main');
 
   // ──────────────────────────────────────────────────────────────────
   // Detail parsing
@@ -47,21 +43,17 @@ class GeekNewsParser implements BaseParser {
       final document = html_parser.parse(responseData);
 
       // Title
-      final titleEl = document.querySelector('div.topictitle a > h1');
-      final String title = titleEl?.text.trim() ?? '';
+      final String title = document.qText('div.topictitle a > h1');
 
       // External URL
-      final titleLink = document.querySelector('div.topictitle a');
-      final String externalUrl = titleLink?.attributes['href'] ?? '';
+      final String externalUrl = document.qAttr('div.topictitle a', 'href');
 
       // Points
       final pointsEl = document.querySelector('div.topicinfo span[id^="tp"]');
       final String points = pointsEl?.text.trim() ?? '0';
 
       // Author
-      final authorEl =
-          document.querySelector('div.topicinfo a[href^="/@"]');
-      final String author = authorEl?.text.trim() ?? '';
+      final String author = document.qText('div.topicinfo a[href^="/@"]');
 
       // Time - 사이트가 <span title> -> <time class="js-relative-time" title>
       // 로 마이그레이션됨. 폴백 유지.
@@ -86,8 +78,7 @@ class GeekNewsParser implements BaseParser {
       int commentIdx = 0;
 
       for (final row in commentRows) {
-        final cAuthorEl = row.querySelector('div.commentinfo a[href^="/@"]');
-        final String cAuthor = cAuthorEl?.text.trim() ?? '';
+        final String cAuthor = row.qText('div.commentinfo a[href^="/@"]');
 
         // 시간 노드는 <time> 으로 바뀜. 기존 a[href^=comment?id=] 폴백 유지.
         final cTimeEl =
@@ -181,8 +172,7 @@ class GeekNewsParser implements BaseParser {
     final String boardTitle = message.boardTitle;
     final String baseUrl = message.baseUrl;
 
-    final List<Map<String, dynamic>> parsedItems = [];
-    final List<int> ids = [];
+    final List<ListItem> items = [];
 
     try {
       final document = html_parser.parse(responseData);
@@ -257,22 +247,24 @@ class GeekNewsParser implements BaseParser {
         final String url = '$baseUrl/topic?id=$id';
         final String info = '$authorㆍ$timeTextㆍ${points}P';
 
-        parsedItems.add({
-          'id': id,
-          'title': title,
-          'reply': reply,
-          'category': category,
-          'time': timeText,
-          'info': info,
-          'url': url,
-          'board': '',
-          'boardTitle': boardTitle,
-          'like': points,
-          'hit': '',
-          'userInfo': UserInfo(id: author, nickName: author, nickImage: ''),
-          'hasImage': false,
-        });
-        ids.add(id);
+        items.add(
+          ListItem(
+            id: id,
+            title: title,
+            reply: reply,
+            category: category,
+            time: timeText,
+            url: url,
+            info: info,
+            board: '',
+            boardTitle: boardTitle,
+            like: points,
+            hit: '',
+            userInfo: UserInfo(id: author, nickName: author, nickImage: ''),
+            hasImage: false,
+            isRead: false,
+          ),
+        );
       }
     } catch (e) {
       // 구조 파손 등 치명 오류는 삼키지 않고 워커 디스패처가
@@ -281,34 +273,7 @@ class GeekNewsParser implements BaseParser {
       rethrow;
     }
 
-    final ReceivePort readStatusPort = ReceivePort();
-    replyPort.send(ReadStatusRequest(ids, readStatusPort.sendPort));
-    final ReadStatusResponse readStatusResponse =
-        await readStatusPort.first as ReadStatusResponse;
-    readStatusPort.close();
-
-    final List<ListItem> resultList = parsedItems
-        .map(
-          (item) => ListItem(
-            id: item['id'] as int,
-            title: item['title'] as String,
-            reply: item['reply'] as String,
-            category: item['category'] as String,
-            time: item['time'] as String,
-            url: item['url'] as String,
-            info: item['info'] as String,
-            board: item['board'] as String,
-            boardTitle: item['boardTitle'] as String,
-            like: item['like'] as String,
-            hit: item['hit'] as String,
-            userInfo: item['userInfo'] as UserInfo,
-            hasImage: item['hasImage'] as bool,
-            isRead: readStatusResponse.statuses.contains(item['id']),
-          ),
-        )
-        .toList();
-
-    replyPort.send(resultList);
+    await sendListWithReadStatus(replyPort, items);
   }
 
   // ──────────────────────────────────────────────────────────────────
@@ -334,26 +299,4 @@ class GeekNewsParser implements BaseParser {
     return '$baseUrl/$board?day=$day';
   }
 
-  @override
-  String urlBySearchList(
-    String url,
-    String board,
-    int page,
-    String keyword,
-    LastId lastId,
-  ) =>
-      throw UnimplementedError('urlBySearchList');
-
-  @override
-  String urlByMain() => throw UnimplementedError('urlByMain');
-
-  @override
-  Future<Either<Failure, List<CommentItem>>> comments(
-    Response<dynamic> response,
-  ) =>
-      throw UnimplementedError();
-
-  @override
-  String urlByComments(String url, String board, int id, int page) =>
-      throw UnimplementedError();
 }

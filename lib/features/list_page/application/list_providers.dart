@@ -143,7 +143,11 @@ class ListPagingController extends _$ListPagingController {
 
   void retry() {
     final ctrl = state;
-    if (ctrl.value.error != null) {
+    // hasNextPage 가 false 인 상태(completed)에서는 fetchNextPage 가
+    // 내부 가드(`if (!state.hasNextPage) return`)에 막혀 no-op 이 된다.
+    // 에러가 살아있고 다음 페이지가 있을 때만 같은 키로 재시도하고,
+    // 그 외(completed / firstPageError 등)는 전체 리프레시로 복구한다.
+    if (ctrl.value.error != null && ctrl.value.hasNextPage) {
       // 에러 클리어 후 같은 키로 재시도
       ctrl.value = ctrl.value.copyWith(error: null);
       ctrl.fetchNextPage();
@@ -164,10 +168,12 @@ class ListPagingController extends _$ListPagingController {
   /// 이를 감지해서 상태를 리셋 후 다시 fetch 를 시도.
   void kickIfStale() {
     final ctrl = state;
-    final value = ctrl.value;
-    if (!value.isLoading) return;
+    if (!ctrl.value.isLoading) return;
     MoclLogger.log('[ListPagingController] kickIfStale: 멈춘 fetch 강제 재시작');
-    ctrl.value = value.copyWith(isLoading: false, error: null);
+    // PagingController 의 mutex 가드는 isLoading 이 아니라 내부 `operation`
+    // 필드다. isLoading 만 내려서는 다음 fetchNextPage 가 `operation != null`
+    // 에 막혀 no-op 이 되므로, operation 까지 비워주는 cancel() 을 호출한다.
+    ctrl.cancel();
     ctrl.fetchNextPage();
   }
 
