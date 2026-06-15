@@ -51,6 +51,9 @@ android/.kotlin/
 ios/build/
 macos/build/
 
+# Rust (native/mocl_parser) — 소스만 추적, 빌드 산출물 제외
+native/**/target/
+
 # FVM (Flutter Version Management)
 
 # FVM Version Cache
