@@ -15,6 +15,9 @@ abstract class MainItem with _$MainItem {
     @Default(0) int type,
     @Default(false) bool hasItem,
     @Default('') String icon,
+    // 게시판 추가 다이얼로그에서 카테고리 그룹핑에 쓰는 표시 전용 값.
+    // DB 에는 저장하지 않는다(매퍼가 매핑하지 않으면 기본값 '').
+    @Default('') String category,
   }) = _MainItem;
 
   factory MainItem.fromJson(Map<String, dynamic> json) =>

@@ -1,10 +1,17 @@
 import 'package:cookie_jar/cookie_jar.dart';
 import 'package:dio/dio.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/arcalive/arcalive_api.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/bobaedream/bobaedream_api.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/cook82/cook82_api.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/dcinside/dcinside_api.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/damoang/damoang_api.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/geek_news/geek_news_api.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/inven/inven_api.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/meeco/meeco_api.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/naver_cafe/naver_cafe_api.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/ppomppu/ppomppu_api.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/reddit/reddit_api.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/ruliweb/ruliweb_api.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/theqoo/theqoo_api.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -32,6 +39,43 @@ CookieJar cookieJar(Ref ref) => CookieJar();
 @riverpod
 BaseApi theQooApiClient(Ref ref) {
   return TheQooApi(_buildDio(), userAgentMobile);
+}
+
+@riverpod
+BaseApi ruliwebApiClient(Ref ref) {
+  return RuliwebApi(_buildDio(), userAgentMobile);
+}
+
+@riverpod
+BaseApi ppomppuApiClient(Ref ref) {
+  return PpomppuApi(_buildDio(), userAgentMobile);
+}
+
+@riverpod
+BaseApi invenApiClient(Ref ref) {
+  return InvenApi(_buildDio(), userAgentMobile);
+}
+
+@riverpod
+BaseApi bobaedreamApiClient(Ref ref) {
+  return BobaedreamApi(_buildDio(), userAgentMobile);
+}
+
+@riverpod
+BaseApi cook82ApiClient(Ref ref) {
+  return Cook82Api(_buildDio(), userAgentMobile);
+}
+
+@riverpod
+BaseApi dcinsideApiClient(Ref ref) {
+  return DcinsideApi(_buildDio(), userAgentMobile);
+}
+
+@riverpod
+BaseApi arcaliveApiClient(Ref ref) {
+  final Dio dio = ref.watch(dioProvider);
+  final CookieJar cookieJar = ref.watch(cookieJarProvider);
+  return ArcaliveApi(dio, userAgentMobile)..init(cookieJar);
 }
 
 @riverpod

@@ -131,6 +131,294 @@ final class TheQooApiClientProvider
 
 String _$theQooApiClientHash() => r'a3b1448e260f1548b209deeb727b6a40116bd609';
 
+@ProviderFor(ruliwebApiClient)
+final ruliwebApiClientProvider = RuliwebApiClientProvider._();
+
+final class RuliwebApiClientProvider
+    extends $FunctionalProvider<BaseApi, BaseApi, BaseApi>
+    with $Provider<BaseApi> {
+  RuliwebApiClientProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'ruliwebApiClientProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$ruliwebApiClientHash();
+
+  @$internal
+  @override
+  $ProviderElement<BaseApi> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  BaseApi create(Ref ref) {
+    return ruliwebApiClient(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(BaseApi value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<BaseApi>(value),
+    );
+  }
+}
+
+String _$ruliwebApiClientHash() => r'049c77d7ede03cf37547e87b8407782fc81f1145';
+
+@ProviderFor(ppomppuApiClient)
+final ppomppuApiClientProvider = PpomppuApiClientProvider._();
+
+final class PpomppuApiClientProvider
+    extends $FunctionalProvider<BaseApi, BaseApi, BaseApi>
+    with $Provider<BaseApi> {
+  PpomppuApiClientProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'ppomppuApiClientProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$ppomppuApiClientHash();
+
+  @$internal
+  @override
+  $ProviderElement<BaseApi> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  BaseApi create(Ref ref) {
+    return ppomppuApiClient(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(BaseApi value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<BaseApi>(value),
+    );
+  }
+}
+
+String _$ppomppuApiClientHash() => r'2e8312e127bd7ddf0520be5226351897c48d5e13';
+
+@ProviderFor(invenApiClient)
+final invenApiClientProvider = InvenApiClientProvider._();
+
+final class InvenApiClientProvider
+    extends $FunctionalProvider<BaseApi, BaseApi, BaseApi>
+    with $Provider<BaseApi> {
+  InvenApiClientProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'invenApiClientProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$invenApiClientHash();
+
+  @$internal
+  @override
+  $ProviderElement<BaseApi> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  BaseApi create(Ref ref) {
+    return invenApiClient(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(BaseApi value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<BaseApi>(value),
+    );
+  }
+}
+
+String _$invenApiClientHash() => r'2761ef15d823e04365e0dc952b051c04d4873d42';
+
+@ProviderFor(bobaedreamApiClient)
+final bobaedreamApiClientProvider = BobaedreamApiClientProvider._();
+
+final class BobaedreamApiClientProvider
+    extends $FunctionalProvider<BaseApi, BaseApi, BaseApi>
+    with $Provider<BaseApi> {
+  BobaedreamApiClientProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'bobaedreamApiClientProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$bobaedreamApiClientHash();
+
+  @$internal
+  @override
+  $ProviderElement<BaseApi> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  BaseApi create(Ref ref) {
+    return bobaedreamApiClient(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(BaseApi value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<BaseApi>(value),
+    );
+  }
+}
+
+String _$bobaedreamApiClientHash() =>
+    r'9e8e104a670e18a287422c9cddcf29b034c6530b';
+
+@ProviderFor(cook82ApiClient)
+final cook82ApiClientProvider = Cook82ApiClientProvider._();
+
+final class Cook82ApiClientProvider
+    extends $FunctionalProvider<BaseApi, BaseApi, BaseApi>
+    with $Provider<BaseApi> {
+  Cook82ApiClientProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'cook82ApiClientProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$cook82ApiClientHash();
+
+  @$internal
+  @override
+  $ProviderElement<BaseApi> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  BaseApi create(Ref ref) {
+    return cook82ApiClient(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(BaseApi value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<BaseApi>(value),
+    );
+  }
+}
+
+String _$cook82ApiClientHash() => r'5a6f148252a2c636e48077975af34e6046d1134d';
+
+@ProviderFor(dcinsideApiClient)
+final dcinsideApiClientProvider = DcinsideApiClientProvider._();
+
+final class DcinsideApiClientProvider
+    extends $FunctionalProvider<BaseApi, BaseApi, BaseApi>
+    with $Provider<BaseApi> {
+  DcinsideApiClientProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'dcinsideApiClientProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$dcinsideApiClientHash();
+
+  @$internal
+  @override
+  $ProviderElement<BaseApi> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  BaseApi create(Ref ref) {
+    return dcinsideApiClient(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(BaseApi value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<BaseApi>(value),
+    );
+  }
+}
+
+String _$dcinsideApiClientHash() => r'7b4995872b6d4bc38551df845d319046de1902a1';
+
+@ProviderFor(arcaliveApiClient)
+final arcaliveApiClientProvider = ArcaliveApiClientProvider._();
+
+final class ArcaliveApiClientProvider
+    extends $FunctionalProvider<BaseApi, BaseApi, BaseApi>
+    with $Provider<BaseApi> {
+  ArcaliveApiClientProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'arcaliveApiClientProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$arcaliveApiClientHash();
+
+  @$internal
+  @override
+  $ProviderElement<BaseApi> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  BaseApi create(Ref ref) {
+    return arcaliveApiClient(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(BaseApi value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<BaseApi>(value),
+    );
+  }
+}
+
+String _$arcaliveApiClientHash() => r'f68fe5be8c34774978a4d4778c1172cdb3926c03';
+
 @ProviderFor(clienApiClient)
 final clienApiClientProvider = ClienApiClientProvider._();
 

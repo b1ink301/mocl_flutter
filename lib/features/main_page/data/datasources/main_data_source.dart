@@ -15,6 +15,10 @@ abstract class MainDataSource {
 
   Future<List<int>> set(SiteType siteType, List<MainItem> list);
 
+  /// 사이트에서 실시간으로 전체 게시판 목록을 파싱해 온다(main()).
+  /// main() 미구현 사이트는 UnimplementedError 를 던진다.
+  Future<List<MainItem>> getAllLive(SiteType siteType);
+
   Future<List<MainItemModel>> getAllFromJson(SiteType siteType);
 
   Future<void> deleteAll(SiteType siteType);
@@ -52,6 +56,10 @@ class MainDataSourceImpl implements MainDataSource {
     await localDatabase.deleteAll(siteType);
     return localDatabase.setMainData(siteType, entities);
   }
+
+  @override
+  Future<List<MainItem>> getAllLive(SiteType siteType) async =>
+      (await apiClient.main(parser)).getOrElse((Failure f) => throw f);
 
   @override
   Future<List<MainItemModel>> getAllFromJson(SiteType siteType) async {

@@ -230,35 +230,39 @@ class TheQooParser extends BaseParser {
   ) async {
     final responseData = response.data;
     final document = parse(responseData);
-    final container = document.querySelector(
-      'html > body > div[id=container] > div.content > div.bd > div[id=cate_index_mobile]',
-    );
+    final container = document.querySelector('div[id=cate_index_mobile]');
     if (container == null) {
       return Left(GetMainFailure(message: 'Container is null'));
     }
-    final data = container.querySelectorAll('a');
+    // blockquote 단위로 카테고리(p.header) + 게시판(a) 구성.
     var orderBy = 0;
-    final result = data
-        .map((element) {
-          final title = element.text;
-          final board = element.attributes['href'].toString().substring(1);
-          if (element.attributes['class'] != null) return null;
-
-          // print('{\'title\'=\'$title\', \'board\'=\'$board\', \'type\'=0, \'url\'=\'$baseUrl$board\', \'no\'=$orderBy},');
-
-          return MainItem(
-            siteType: SiteType.damoang,
+    final result = <MainItem>[];
+    final seen = <String>{};
+    for (final block in container.querySelectorAll('blockquote')) {
+      final category = block.qText('p.header');
+      for (final element in block.querySelectorAll('a')) {
+        if (element.attributes['class'] != null) continue;
+        final href = element.attributes['href']?.toString() ?? '';
+        if (!href.startsWith('#') && !href.startsWith('/')) continue;
+        final board = href.startsWith('#') ? href.substring(1) : href;
+        if (board.isEmpty || !seen.add(board)) continue;
+        final title = element.text.trim();
+        if (title.isEmpty) continue;
+        result.add(
+          MainItem(
+            siteType: SiteType.theqoo,
             board: board,
             text: title,
             url: baseUrl + board,
             orderBy: orderBy++,
-            hasItem: false,
-            type: 0,
-          );
-        })
-        .whereType<MainItem>()
-        .toList();
-
+            category: category,
+          ),
+        );
+      }
+    }
+    if (result.isEmpty) {
+      return Left(GetMainFailure(message: '게시판 목록을 찾지 못했습니다.'));
+    }
     return Right(result);
   }
 

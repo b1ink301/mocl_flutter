@@ -32,6 +32,7 @@ class _CheckBoxListTitleState extends State<CheckBoxListTitleWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final focusColor = Theme.of(context).focusColor;
     final trailing = Checkbox.adaptive(
       onChanged: (value) {
         if (value != null) {
@@ -39,7 +40,7 @@ class _CheckBoxListTitleState extends State<CheckBoxListTitleWidget> {
           widget.onChanged?.call(_isChecked);
         }
       },
-      activeColor: Theme.of(context).focusColor,
+      activeColor: focusColor,
       checkColor: Colors.white,
       value: _isChecked,
     );

@@ -34,10 +34,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final backgroundColor = Theme.of(context).appBarTheme.backgroundColor;
     return Container(
       padding: const EdgeInsets.all(16.0), // 예시 padding 값
       decoration: BoxDecoration(
-        color: Theme.of(context).appBarTheme.backgroundColor,
+        color: backgroundColor,
         boxShadow: const [
           // AppBar 그림자 효과 추가 (선택 사항)
           // ...

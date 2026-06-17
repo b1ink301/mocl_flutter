@@ -47,11 +47,12 @@ class _DetailScaffold extends ConsumerWidget with DetailEvent {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
     final systemOverlayStyle =
-        Theme.of(context).appBarTheme.systemOverlayStyle ??
-        SystemUiOverlayStyle.light;
+        theme.appBarTheme.systemOverlayStyle ?? SystemUiOverlayStyle.light;
 
-    final String hexColor = Theme.of(context).focusColor.stringHexColor;
+    final String hexColor = theme.focusColor.stringHexColor;
+    final focusColor = theme.focusColor;
     final AppTextStyles styles = ref.watch(appTextStylesFontSizeProvider);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
@@ -65,7 +66,7 @@ class _DetailScaffold extends ConsumerWidget with DetailEvent {
             bottom: false,
             child: Scaffold(
               body: RefreshIndicator.adaptive(
-                color: Theme.of(context).focusColor,
+                color: focusColor,
                 onRefresh: () async => handleRefresh(ref),
                 child: const CustomScrollView(
                   // cacheExtent: 500,

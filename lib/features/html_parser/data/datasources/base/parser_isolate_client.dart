@@ -9,12 +9,19 @@ import 'package:timeago/timeago.dart' as timeago;
 
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_parser.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_isolate_message.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/arcalive/arcalive_parser.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/bobaedream/bobaedream_parser.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/clien/clien_parser.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/cook82/cook82_parser.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/damoang/damoang_parser.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/dcinside/dcinside_parser.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/geek_news/geek_news_parser.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/inven/inven_parser.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/meeco/meeco_parser.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/naver_cafe/naver_cafe_parser.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/ppomppu/ppomppu_parser.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/reddit/reddit_parser.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/ruliweb/ruliweb_parser.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/theqoo/theqoo_parser.dart';
 
 typedef IsReadsFn = Future<List<int>> Function(SiteType, List<int>);
@@ -25,12 +32,19 @@ typedef ParseListWorkerFn = Future<void> Function(ParseListMessage message);
 /// siteType → list 워커 매핑. 새 사이트 추가 시 여기 한 줄만 등록하면 된다.
 /// (settings 는 list 파싱 대상이 아니므로 등록하지 않는다.)
 final Map<SiteType, ParseListWorkerFn> _listWorkers = {
+  SiteType.arcalive: ArcaliveParser.parseListInWorker,
+  SiteType.bobaedream: BobaedreamParser.parseListInWorker,
   SiteType.clien: ClienParser.parseListInWorker,
+  SiteType.cook82: Cook82Parser.parseListInWorker,
   SiteType.damoang: DamoangParser.parseListInWorker,
+  SiteType.dcinside: DcinsideParser.parseListInWorker,
   SiteType.geekNews: GeekNewsParser.parseListInWorker,
+  SiteType.inven: InvenParser.parseListInWorker,
   SiteType.meeco: MeecoParser.parseListInWorker,
   SiteType.naverCafe: NaverCafeParser.parseListInWorker,
+  SiteType.ppomppu: PpomppuParser.parseListInWorker,
   SiteType.reddit: RedditParser.parseListInWorker,
+  SiteType.ruliweb: RuliwebParser.parseListInWorker,
   SiteType.theqoo: TheQooParser.parseListInWorker,
 };
 

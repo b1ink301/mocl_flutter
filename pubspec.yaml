@@ -21,6 +21,9 @@ dependencies:
   # HTML 파서
   html: ^0.15.6
 
+  # 레거시 EUC-KR/CP949 사이트(뽐뿌·보배드림·82쿡) 디코딩용 (순수 Dart)
+  cp949_codec: ^1.0.2
+
   # HTML Widget
   flutter_widget_from_html: ^0.17.2
 
@@ -47,7 +50,7 @@ dependencies:
   json_annotation: ^4.12.0
 
   # Path
-  path_provider: ^2.1.5
+  path_provider: ^2.1.6
   path: ^1.9.1
 
   # Google Sign In & Drive
@@ -179,11 +182,18 @@ flutter:
   generate: true
   assets:
     - assets/
+    - assets/arcalive/
+    - assets/bobaedream/
     - assets/damoang/
     - assets/clien/
+    - assets/cook82/
+    - assets/dcinside/
     - assets/geeknews/
+    - assets/inven/
     - assets/meeco/
+    - assets/ppomppu/
     - assets/reddit/
+    - assets/ruliweb/
     - assets/theqoo/
 
 

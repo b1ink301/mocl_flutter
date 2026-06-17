@@ -45,10 +45,14 @@ class PhotoViewDialog extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) => SafeArea(
-    left: false,
-    right: false,
-    child: Stack(
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final focusColor = theme.focusColor;
+    final top = MediaQuery.of(context).padding.top;
+
+    MoclLogger.log('top = $top');
+
+    return Stack(
       children: [
         Positioned.fill(
           child: PhotoView(
@@ -56,7 +60,7 @@ class PhotoViewDialog extends StatelessWidget {
             loadingBuilder: loadingBuilder ?? defaultLoading,
             backgroundDecoration:
                 backgroundDecoration ??
-                BoxDecoration(color: Theme.of(context).scaffoldBackgroundColor),
+                BoxDecoration(color: Colors.black),
             minScale: minScale,
             maxScale: maxScale,
             initialScale: initialScale,
@@ -67,7 +71,7 @@ class PhotoViewDialog extends StatelessWidget {
           ),
         ),
         Positioned(
-          top: 10.0,
+          top: 10.0 + top,
           right: 10.0,
           child: Row(
             mainAxisSize: MainAxisSize.min,
@@ -75,32 +79,23 @@ class PhotoViewDialog extends StatelessWidget {
               if (imageUrl != null) ...[
                 PlainIconButton(
                   onPressed: () => _saveImage(context),
-                  icon: PlainIcon(
-                    Icons.save_alt,
-                    color: Theme.of(context).focusColor,
-                  ),
+                  icon: PlainIcon(Icons.save_alt, color: focusColor),
                 ),
                 PlainIconButton(
                   onPressed: () => _shareImage(context),
-                  icon: PlainIcon(
-                    Icons.share,
-                    color: Theme.of(context).focusColor,
-                  ),
+                  icon: PlainIcon(Icons.share, color: focusColor),
                 ),
               ],
               PlainIconButton(
                 onPressed: () => context.pop(),
-                icon: PlainIcon(
-                  Icons.close,
-                  color: Theme.of(context).focusColor,
-                ),
+                icon: PlainIcon(Icons.close, color: focusColor),
               ),
             ],
           ),
         ),
       ],
-    ),
-  );
+    );
+  }
 
   Future<Uint8List?> _downloadImage() async {
     if (imageUrl == null) return null;
@@ -157,9 +152,7 @@ class PhotoViewDialog extends StatelessWidget {
       final file = File(filePath);
       await file.writeAsBytes(bytes);
 
-      await SharePlus.instance.share(
-        ShareParams(files: [XFile(filePath)]),
-      );
+      await SharePlus.instance.share(ShareParams(files: [XFile(filePath)]));
     } catch (e) {
       MoclLogger.log('Image share failed: $e');
       if (context.mounted) _showSnackBar(context, '공유에 실패했습니다.');
@@ -180,13 +173,9 @@ class PhotoViewDialog extends StatelessWidget {
     final value =
         event.cumulativeBytesLoaded /
         (event.expectedTotalBytes ?? event.cumulativeBytesLoaded);
+    final style = Theme.of(context).textTheme.bodyMedium!;
 
     final percentage = (100 * value).floor();
-    return Center(
-      child: PlainText(
-        "$percentage%",
-        style: Theme.of(context).textTheme.bodyMedium!,
-      ),
-    );
+    return Center(child: PlainText("$percentage%", style: style));
   }
 }

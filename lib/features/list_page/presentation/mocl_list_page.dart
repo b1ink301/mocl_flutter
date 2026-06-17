@@ -15,9 +15,9 @@ class MoclListPage extends StatelessWidget {
   const MoclListPage({super.key});
 
   static Widget init(double width, MainItem item) => ProviderScope(
-        overrides: ListEvent.overridesProviderScope(width, item),
-        child: const MoclListPage(),
-      );
+    overrides: ListEvent.overridesProviderScope(width, item),
+    child: const MoclListPage(),
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -41,9 +41,9 @@ class _MoclListScaffold extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
     final systemOverlayStyle =
-        Theme.of(context).appBarTheme.systemOverlayStyle ??
-            SystemUiOverlayStyle.light;
+        theme.appBarTheme.systemOverlayStyle ?? SystemUiOverlayStyle.light;
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: systemOverlayStyle,
@@ -52,7 +52,7 @@ class _MoclListScaffold extends StatelessWidget {
         child: SafeArea(
           bottom: false,
           child: Scaffold(
-            backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+            backgroundColor: theme.scaffoldBackgroundColor,
             body: const MoclListView(),
           ),
         ),

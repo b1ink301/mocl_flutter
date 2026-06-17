@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -9,6 +10,8 @@ import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
+import 'package:mocl_flutter/features/network/data/datasources/base_api.dart'
+    show userAgentMobile;
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/core/util/utilities.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/state/detail_event_mixin.dart';
@@ -27,47 +30,44 @@ class DetailView extends ConsumerWidget with DetailState, DetailEvent {
   const DetailView({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) =>
-      detailState(ref).maybeMap(
-        data: (state) => _DetailView(
-          detail: state.value,
-          onRefresh: () => handleRefresh(ref),
-        ),
-        error: (state) => SliverFillRemaining(
-          hasScrollBody: false,
-          child: Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: Center(
-              child: PlainText(
-                state.error.toString(),
-                style: DetailStyleScope.of(context).$1.smallTextStyle,
-              ),
-            ),
+  Widget build(BuildContext context, WidgetRef ref) {
+    final smallTextStyle = DetailStyleScope.of(context).$1.smallTextStyle;
+    return detailState(ref).maybeMap(
+      data: (state) =>
+          _DetailView(detail: state.value, onRefresh: () => handleRefresh(ref)),
+      error: (state) => SliverFillRemaining(
+        hasScrollBody: false,
+        child: Padding(
+          padding: const EdgeInsets.all(12.0),
+          child: Center(
+            child: PlainText(state.error.toString(), style: smallTextStyle),
           ),
         ),
-        orElse: () => const _LoadingView(),
-      );
+      ),
+      orElse: () => const _LoadingView(),
+    );
+  }
 }
 
 class _LoadingView extends StatelessWidget {
   const _LoadingView();
 
   @override
-  Widget build(BuildContext context) => SliverFillRemaining(
-    hasScrollBody: false,
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.center,
-      mainAxisAlignment: MainAxisAlignment.center,
-      spacing: 8,
-      children: [
-        const LoadingWidget(),
-        PlainText(
-          '로딩 중...',
-          style: DetailStyleScope.of(context).$1.smallTextStyle,
-        ),
-      ],
-    ),
-  );
+  Widget build(BuildContext context) {
+    final smallTextStyle = DetailStyleScope.of(context).$1.smallTextStyle;
+    return SliverFillRemaining(
+      hasScrollBody: false,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
+        spacing: 8,
+        children: [
+          const LoadingWidget(),
+          PlainText('로딩 중...', style: smallTextStyle),
+        ],
+      ),
+    );
+  }
 }
 
 class _DetailView extends StatelessWidget with DetailEvent {
@@ -78,6 +78,7 @@ class _DetailView extends StatelessWidget with DetailEvent {
 
   @override
   Widget build(BuildContext context) {
+    final scaffoldBackgroundColor = Theme.of(context).scaffoldBackgroundColor;
     final (styles, hexColor) = DetailStyleScope.of(context);
     final TextStyle bodySmall = styles.smallTextStyle;
     final TextStyle bodyMedium = styles.titleTextStyle;
@@ -95,7 +96,7 @@ class _DetailView extends StatelessWidget with DetailEvent {
             delegate: _HeaderSectionDelegate(
               detail: detail,
               bodyMedium: bodySmall,
-              backgroundColor: Theme.of(context).scaffoldBackgroundColor,
+              backgroundColor: scaffoldBackgroundColor,
             ),
           ),
           const _SpaceWidget(),
@@ -279,6 +280,9 @@ class _CommentHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final focusColor = Theme.of(context).focusColor;
+    final bodyMedium_ = bodyMedium!.copyWith(color: focusColor);
+
     final label = totalCount > commentCount
         ? '댓글 ($commentCount/$totalCount)'
         : '댓글 ($commentCount)';
@@ -287,10 +291,7 @@ class _CommentHeader extends StatelessWidget {
       delegate: SliverChildListDelegate([
         Align(
           alignment: Alignment.centerLeft,
-          child: PlainText(
-            label,
-            style: bodyMedium!.copyWith(color: Theme.of(context).focusColor),
-          ),
+          child: PlainText(label, style: bodyMedium_),
         ),
       ]),
     );
@@ -380,26 +381,30 @@ class _HtmlLoadingWidget extends StatelessWidget {
   const _HtmlLoadingWidget({required this.src, this.textStyle, this.progress});
 
   @override
-  Widget build(BuildContext context) => src.isEmpty || progress == null
-      ? const SizedBox.shrink()
-      : Padding(
-          padding: const EdgeInsets.symmetric(vertical: 4.0),
-          child: Column(
-            children: [
-              PlainText(src, style: textStyle!),
-              LinearProgressIndicator(
-                value: progress,
-                backgroundColor: Theme.of(context).dividerTheme.color,
-                valueColor: AlwaysStoppedAnimation<Color>(
-                  Theme.of(context).focusColor,
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final dividerColor = theme.dividerTheme.color;
+    final focusColor = theme.focusColor;
+
+    return src.isEmpty || progress == null
+        ? const SizedBox.shrink()
+        : Padding(
+            padding: const EdgeInsets.symmetric(vertical: 4.0),
+            child: Column(
+              children: [
+                PlainText(src, style: textStyle!),
+                LinearProgressIndicator(
+                  value: progress,
+                  backgroundColor: dividerColor,
+                  valueColor: AlwaysStoppedAnimation<Color>(focusColor),
                 ),
-              ),
-            ],
-          ),
-        );
+              ],
+            ),
+          );
+  }
 }
 
-class _HtmlWidget extends StatelessWidget {
+class _HtmlWidget extends ConsumerWidget with DetailState {
   final String html;
   final TextStyle? textStyle;
   final String hexColor;
@@ -413,7 +418,11 @@ class _HtmlWidget extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
+    // 이미지 Referer 는 "현재 보고 있는 사이트"의 baseUrl(파서 단일 출처)을 쓴다.
+    // application provider 직접 참조 대신 DetailState mixin 을 통해 가져온다.
+    final referer = imageRefererState(ref);
+
     final htmlWidget = HtmlWidget(
       html,
       onLoadingBuilder: (context, element, progress) {
@@ -424,7 +433,7 @@ class _HtmlWidget extends StatelessWidget {
           progress: progress,
         );
       },
-      factoryBuilder: () => _MoclWidgetFactory(openUrl: openUrl),
+      factoryBuilder: () => _MoclWidgetFactory(openUrl: openUrl, referer: referer),
       textStyle: textStyle,
       customStylesBuilder: (element) {
         if (element.localName == 'a') {
@@ -450,26 +459,58 @@ class _RefreshButton extends StatelessWidget {
   const _RefreshButton({required this.onRefresh, required this.bodyMedium});
 
   @override
-  Widget build(BuildContext context) => InkWell(
-    onTap: onRefresh,
-    child: SizedBox(
-      width: double.infinity,
-      height: 58,
-      child: Center(
-        child: PlainText(
-          '새로고침',
-          style: bodyMedium!.copyWith(color: Theme.of(context).focusColor),
-        ),
+  Widget build(BuildContext context) {
+    final focusColor = Theme.of(context).focusColor;
+    final bodyMedium_ = bodyMedium!.copyWith(color: focusColor);
+
+    return InkWell(
+      onTap: onRefresh,
+      child: SizedBox(
+        width: double.infinity,
+        height: 58,
+        child: Center(child: PlainText('새로고침', style: bodyMedium_)),
       ),
-    ),
-  );
+    );
+  }
 }
 
 /// YouTube iframe을 외부 앱으로 열고, 일반 미디어는 인라인 재생을 허용하는 WidgetFactory.
 class _MoclWidgetFactory extends WidgetFactory {
   final void Function(String) openUrl;
 
-  _MoclWidgetFactory({required this.openUrl});
+  /// 본문 이미지 로드 시 보낼 Referer. 보통 현재 사이트의 baseUrl.
+  /// (디시 등 일부 CDN 은 Referer 가 사이트 도메인이어야 이미지를 준다.)
+  final String referer;
+
+  _MoclWidgetFactory({required this.openUrl, required this.referer});
+
+  /// fwfh 의 CachedNetworkImageFactory mixin 은 buildImageWidget 에서
+  /// CachedNetworkImage 를 직접 만들며 httpHeaders 를 넣지 않아서, Referer 가
+  /// 필요한 CDN(디시 등)은 403→alt(해시)만 보였다. 여기서 buildImageWidget 을
+  /// 오버라이드해 현재 사이트의 Referer 와 앱 공용 모바일 UA 를 실어 로드한다.
+  @override
+  Widget? buildImageWidget(BuildTree tree, ImageSource src) {
+    final String url = src.url;
+    if (referer.isNotEmpty && url.startsWith(RegExp('https?://'))) {
+      return CachedNetworkImage(
+        imageUrl: url,
+        httpHeaders: {'Referer': referer, 'User-Agent': userAgentMobile},
+        fit: BoxFit.fill,
+        errorWidget: (context, _, error) =>
+            onErrorBuilder(context, tree, error, src) ??
+            const SizedBox.shrink(),
+        progressIndicatorBuilder: (context, _, progress) {
+          final total = progress.totalSize;
+          final v = total != null && total > 0
+              ? progress.downloaded / total
+              : null;
+          return onLoadingBuilder(context, tree, v, src) ??
+              const SizedBox.shrink();
+        },
+      );
+    }
+    return super.buildImageWidget(tree, src);
+  }
 
   static final _youtubePattern = RegExp(
     r'youtube\.com|youtu\.be|youtube-nocookie\.com',

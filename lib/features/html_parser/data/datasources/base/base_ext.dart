@@ -5,6 +5,14 @@ import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 extension SortTypeExtension on SortType {
   String toQuery(SiteType siteType) {
     switch (siteType) {
+      case SiteType.arcalive:
+        return '';
+      case SiteType.bobaedream:
+        return '';
+      case SiteType.cook82:
+        return '';
+      case SiteType.dcinside:
+        return '';
       case SiteType.clien:
         return switch (this) {
           SortType.recent => '&od=T31',
@@ -22,7 +30,11 @@ extension SortTypeExtension on SortType {
         }
       case SiteType.meeco:
         return '';
+      case SiteType.inven:
+        return '';
       case SiteType.naverCafe:
+        return '';
+      case SiteType.ppomppu:
         return '';
       case SiteType.settings:
         return '';
@@ -32,6 +44,8 @@ extension SortTypeExtension on SortType {
           SortType.recommend => 'hot',
         };
       case SiteType.theqoo:
+        return '';
+      case SiteType.ruliweb:
         return '';
       case SiteType.geekNews:
         return '';

@@ -27,12 +27,19 @@ Map<String, dynamic> _$MainItemDataToJson(_MainItemData instance) =>
     };
 
 const _$SiteTypeEnumMap = {
+  SiteType.arcalive: 'arcalive',
+  SiteType.bobaedream: 'bobaedream',
   SiteType.clien: 'clien',
+  SiteType.cook82: 'cook82',
   SiteType.damoang: 'damoang',
+  SiteType.dcinside: 'dcinside',
   SiteType.geekNews: 'geekNews',
+  SiteType.inven: 'inven',
   SiteType.meeco: 'meeco',
   SiteType.naverCafe: 'naverCafe',
+  SiteType.ppomppu: 'ppomppu',
   SiteType.reddit: 'reddit',
+  SiteType.ruliweb: 'ruliweb',
   SiteType.theqoo: 'theqoo',
   SiteType.settings: 'settings',
 };

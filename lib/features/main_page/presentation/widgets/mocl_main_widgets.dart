@@ -6,9 +6,11 @@ class _MainBody extends ConsumerWidget with MainState, MainEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     listenNotLoginFailure(ref, context);
+    final bottom = MediaQuery.of(context).padding.bottom;
+
     return mainState(ref).when(
       data: (data) => SliverPadding(
-        padding: .only(bottom: MediaQuery.of(context).padding.bottom),
+        padding: .only(bottom: bottom),
         sliver: _BodyList(key: ValueKey(data.hashCode), items: data),
       ),
       error: (error, _) => _ErrorWidget(
@@ -80,15 +82,18 @@ class _ErrorWidget extends StatelessWidget {
   const _ErrorWidget({super.key, required this.message});
 
   @override
-  Widget build(BuildContext context) => SliverPadding(
-    padding: const .all(12.0),
-    sliver: SliverToBoxAdapter(
-      child: PlainText(
-        message,
-        style: TextStyle(fontSize: 16, color: Theme.of(context).focusColor),
+  Widget build(BuildContext context) {
+    final focusColor = Theme.of(context).focusColor;
+    return SliverPadding(
+      padding: const .all(12.0),
+      sliver: SliverToBoxAdapter(
+        child: PlainText(
+          message,
+          style: TextStyle(fontSize: 16, color: focusColor),
+        ),
       ),
-    ),
-  );
+    );
+  }
 }
 
 class _MainAppBar extends ConsumerWidget with MainState, MainEvent {
@@ -103,7 +108,6 @@ class _MainAppBar extends ConsumerWidget with MainState, MainEvent {
       titleTextStyle: titleStyle,
       titleSpacing: 0,
       floating: true,
-      // snap: true,
       toolbarHeight: 62,
       actions: [
         if (showAddButtonState(ref))

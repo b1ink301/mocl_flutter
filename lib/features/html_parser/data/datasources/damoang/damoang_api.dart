@@ -159,8 +159,34 @@ class DamoangApi extends BaseApi {
   });
 
   @override
-  Future<Either<Failure, List<MainItem>>> main(BaseParser parser) {
-    throw UnimplementedError();
+  Future<Either<Failure, List<MainItem>>> main(BaseParser parser) async {
+    try {
+      final String url = parser.urlByMain();
+      // 다모앙은 비브라우저 요청을 403 으로 막으므로 헤드리스 웹뷰로 렌더.
+      // 일반 게시판은 홈 사이드바, 소모임은 /groups/__data.json(JSON) 에서 받는다.
+      // '자유게시판'(텍스트)은 하이드레이션 전 임베디드 데이터에도 있어 너무 일찍
+      // 반환될 수 있으므로, 실제 렌더된 사이드바 링크가 나타날 때까지 기다린다.
+      final String? homeHtml = await fetchRenderedHtml(
+        url,
+        readyMarkers: const ['href="/free"'],
+      );
+      final String? groupsJson = await fetchRenderedHtml(
+        'https://damoang.net/groups/__data.json',
+        readyMarkers: const ['당"', 'board_path'],
+      );
+      log('[getMain] home=${homeHtml?.length} groups=${groupsJson?.length}');
+      if (homeHtml == null && groupsJson == null) {
+        return Left(GetMainFailure(message: '게시판 목록 로드 실패'));
+      }
+      final Response<List<dynamic>> response = Response<List<dynamic>>(
+        data: [homeHtml ?? '', groupsJson ?? ''],
+        requestOptions: RequestOptions(path: url),
+        statusCode: 200,
+      );
+      return parser.main(response);
+    } catch (e) {
+      return Left(GetMainFailure(message: e.toString()));
+    }
   }
 
   @override

@@ -8,6 +8,7 @@ import 'package:mocl_flutter/core/domain/entities/last_id.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
@@ -365,6 +366,50 @@ class ClienParser extends BaseParser {
 
   @override
   String urlByDetail(String url, String board, int id) => url;
+
+  @override
+  String urlByMain() => 'https://m.clien.net/service';
+
+  /// `/service` 좌측 메뉴(`div.navmenu_group`)를 카테고리(`a.navmenu_title`) +
+  /// 게시판(`a.navmenu_menu`) 단위로 파싱한다.
+  @override
+  Future<Either<Failure, List<MainItem>>> main(Response<dynamic> response) {
+    final responseData = response.data as String;
+    return Isolate.run(() => _parseMain(responseData));
+  }
+
+  static Either<Failure, List<MainItem>> _parseMain(String responseData) {
+    final document = parse(responseData);
+    final items = <MainItem>[];
+    final seen = <String>{};
+    var orderBy = 0;
+    for (final group in document.querySelectorAll('div.navmenu_group')) {
+      final category = group.qText('a.navmenu_title');
+      for (final a in group.querySelectorAll('a.navmenu_menu')) {
+        final href = a.attributes['href']?.trim() ?? '';
+        final match = RegExp(r'/service/board/([a-zA-Z0-9_]+)').firstMatch(href);
+        if (match == null) continue;
+        final board = match.group(1)!;
+        if (!seen.add(board)) continue;
+        final name = a.text.trim();
+        if (name.isEmpty) continue;
+        items.add(
+          MainItem(
+            siteType: SiteType.clien,
+            board: board,
+            text: name,
+            url: 'https://m.clien.net/service/board/$board',
+            orderBy: orderBy++,
+            category: category,
+          ),
+        );
+      }
+    }
+    if (items.isEmpty) {
+      return Left(GetMainFailure(message: '게시판 메뉴를 찾지 못했습니다.'));
+    }
+    return Right(items);
+  }
 
   @override
   String urlByList(
