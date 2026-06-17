@@ -65,7 +65,19 @@ class ClienApi extends BaseApi {
 
   @override
   Future<Either<Failure, List<MainItem>>> main(BaseParser parser) =>
-      throw UnimplementedError();
+      withSyncCookie(parser.baseUrl, () async {
+        final String url = parser.urlByMain();
+        final Map<String, String> headers = {'User-Agent': userAgent};
+        final Response<dynamic> response = await get(url, headers: headers);
+        log('[getMain] $url response = ${response.statusCode}');
+        return response.statusCode == 200
+            ? parser.main(response)
+            : Left(
+                GetMainFailure(
+                  message: 'response.statusCode = ${response.statusCode}',
+                ),
+              );
+      });
 
   @override
   Future<Either<Failure, List<ListItem>>> searchList(

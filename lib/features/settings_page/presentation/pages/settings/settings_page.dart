@@ -16,7 +16,8 @@ class SettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appBarTheme = Theme.of(context).appBarTheme;
+    final theme = Theme.of(context);
+    final appBarTheme = theme.appBarTheme;
     final systemOverlayStyle = appBarTheme.systemOverlayStyle;
 
     final child = Container(
@@ -24,16 +25,14 @@ class SettingsPage extends StatelessWidget {
       child: SafeArea(
         bottom: false,
         child: AnnotatedRegion<SystemUiOverlayStyle>(
-          value: systemOverlayStyle ??
-              (Theme.of(context).brightness == Brightness.dark
+          value:
+              systemOverlayStyle ??
+              (theme.brightness == Brightness.dark
                   ? SystemUiOverlayStyle.light
                   : SystemUiOverlayStyle.dark),
           child: const Scaffold(
             body: CustomScrollView(
-              slivers: <Widget>[
-                _SettingsAppBar(),
-                SettingsView(),
-              ],
+              slivers: <Widget>[_SettingsAppBar(), SettingsView()],
             ),
           ),
         ),
@@ -60,7 +59,9 @@ class _SettingsAppBar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appBarTheme = Theme.of(context).appBarTheme;
+    final theme = Theme.of(context);
+    final appBarTheme = theme.appBarTheme;
+    final textStyle = theme.textTheme.labelMedium;
     return SliverAppBar(
       backgroundColor: appBarTheme.backgroundColor,
       titleSpacing: 0,
@@ -69,7 +70,7 @@ class _SettingsAppBar extends StatelessWidget {
       toolbarHeight: 64,
       title: MessageWidget(
         message: SiteType.settings.title,
-        textStyle: Theme.of(context).textTheme.labelMedium,
+        textStyle: textStyle,
       ),
     );
   }

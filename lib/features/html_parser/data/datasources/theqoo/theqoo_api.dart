@@ -111,8 +111,29 @@ class TheQooApi extends BaseApi {
   }
 
   @override
-  Future<Either<Failure, List<MainItem>>> main(BaseParser parser) =>
-      throw UnimplementedError();
+  Future<Either<Failure, List<MainItem>>> main(BaseParser parser) async {
+    try {
+      final String url = parser.urlByMain();
+      final String host = Uri.parse(parser.baseUrl).host;
+      final Map<String, String> headers = {
+        'Host': host,
+        'User-Agent': userAgent,
+      };
+      final Response<dynamic> response = await get(url, headers: headers);
+      log('[getMain] $url response = ${response.statusCode}');
+      return response.statusCode == 200
+          ? parser.main(response)
+          : Left(
+              GetMainFailure(
+                message: 'response.statusCode = ${response.statusCode}',
+              ),
+            );
+    } on DioException catch (e) {
+      return Left(NetworkFailure(message: e.message ?? 'Unknown Error'));
+    } catch (e) {
+      return Left(GetMainFailure(message: e.toString()));
+    }
+  }
 
   @override
   Future<Either<Failure, List<ListItem>>> searchList(

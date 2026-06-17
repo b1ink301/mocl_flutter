@@ -118,4 +118,52 @@ abstract class BaseApi with BaseAction {
       _dio.interceptors.remove(interceptor);
     }
   }
+
+  /// 헤드리스 웹뷰로 [url] 을 로드해 JS 렌더링/Cloudflare 통과 후의 전체 HTML 을
+  /// 반환한다. [readyMarkers] 중 하나가 HTML 에 나타날 때까지(또는 타임아웃까지)
+  /// 폴링한다. 직접 HTTP 로 받기 어려운 메뉴/디렉터리 파싱에 사용.
+  Future<String?> fetchRenderedHtml(
+    String url, {
+    List<String> readyMarkers = const [],
+    int maxTries = 25,
+    Duration interval = const Duration(milliseconds: 800),
+  }) async {
+    if (kIsWeb) return null;
+    webview.HeadlessInAppWebView? headless;
+    try {
+      headless = webview.HeadlessInAppWebView(
+        initialUrlRequest: webview.URLRequest(url: webview.WebUri(url)),
+        initialSettings: webview.InAppWebViewSettings(
+          userAgent: userAgent,
+          javaScriptEnabled: true,
+          cacheEnabled: true,
+          incognito: false,
+          sharedCookiesEnabled: true,
+          thirdPartyCookiesEnabled: true,
+        ),
+      );
+      await headless.run();
+      final controller = headless.webViewController;
+      String? last;
+      for (int i = 0; i < maxTries; i++) {
+        await Future<void>.delayed(interval);
+        final result = await controller?.evaluateJavascript(
+          source: 'document.documentElement.outerHTML',
+        );
+        if (result is! String || result.isEmpty) continue;
+        last = result;
+        final bool blocked = result.contains('Just a moment');
+        final bool ready = readyMarkers.isEmpty
+            ? !blocked
+            : readyMarkers.any(result.contains);
+        if (ready) return result;
+      }
+      return last;
+    } catch (e) {
+      log('[fetchRenderedHtml] $url error: $e');
+      return null;
+    } finally {
+      await headless?.dispose();
+    }
+  }
 }

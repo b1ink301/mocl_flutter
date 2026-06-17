@@ -32,6 +32,8 @@ class MoclListView extends HookConsumerWidget with ListEvent, ListState {
 
     final controller = listPageController(ref);
     final styles = appTextStyles(ref);
+    final focusColor = Theme.of(context).focusColor;
+    final bottom = MediaQuery.of(context).padding.bottom;
 
     // 에러 인디케이터 빌더 (중복 제거)
     Widget buildErrorIndicator(dynamic error) => _ListError(
@@ -43,11 +45,12 @@ class MoclListView extends HookConsumerWidget with ListEvent, ListState {
     return ListStyleScope(
       styles: styles,
       child: RefreshIndicator.adaptive(
-        color: Theme.of(context).focusColor,
+        color: focusColor,
         onRefresh: () async => handleRefresh(ref),
         child: PagingListener<int, ListItem>(
           controller: controller,
           builder: (context, state, fetchNextPage) => CustomScrollView(
+            shrinkWrap: false,
             slivers: <Widget>[
               const ListAppBar(),
               PagedSliverList<int, ListItem>.separated(
@@ -66,7 +69,7 @@ class MoclListView extends HookConsumerWidget with ListEvent, ListState {
                       buildErrorIndicator(state.error),
                   noItemsFoundIndicatorBuilder: (_) => const _NoItemsFound(),
                   noMoreItemsIndicatorBuilder: (context) =>
-                      SizedBox(height: MediaQuery.of(context).padding.bottom),
+                      SizedBox(height: bottom),
                 ),
                 separatorBuilder: (_, _) => const PlainDividerWidget(),
               ),
@@ -82,20 +85,23 @@ class _FirstPageLoading extends StatelessWidget {
   const _FirstPageLoading();
 
   @override
-  Widget build(BuildContext context) => Column(
-    crossAxisAlignment: CrossAxisAlignment.center,
-    mainAxisAlignment: MainAxisAlignment.center,
-    spacing: 4,
-    children: [
-      const LoadingWidget(),
-      PlainText(
-        '로딩 중...',
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: ListStyleScope.of(context).smallTextStyle,
-      ),
-    ],
-  );
+  Widget build(BuildContext context) {
+    final smallTextStyle = ListStyleScope.of(context).smallTextStyle;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      spacing: 4,
+      children: [
+        const LoadingWidget(),
+        PlainText(
+          '로딩 중...',
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+          style: smallTextStyle,
+        ),
+      ],
+    );
+  }
 }
 
 class _NewPageLoading extends StatelessWidget {
@@ -111,15 +117,13 @@ class _NoItemsFound extends StatelessWidget {
   const _NoItemsFound();
 
   @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.all(32),
-    child: Center(
-      child: PlainText(
-        '항목이 없습니다',
-        style: ListStyleScope.of(context).smallTextStyle,
-      ),
-    ),
-  );
+  Widget build(BuildContext context) {
+    final smallTextStyle = ListStyleScope.of(context).smallTextStyle;
+    return Padding(
+      padding: const EdgeInsets.all(32),
+      child: Center(child: PlainText('항목이 없습니다', style: smallTextStyle)),
+    );
+  }
 }
 
 class _ListError extends StatelessWidget {

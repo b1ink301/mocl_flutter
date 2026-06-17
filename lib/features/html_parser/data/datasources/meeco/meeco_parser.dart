@@ -8,6 +8,7 @@ import 'package:mocl_flutter/core/domain/entities/last_id.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
@@ -300,6 +301,52 @@ class MeecoParser extends BaseParser {
 
   @override
   String urlByDetail(String url, String board, int id) => url;
+
+  @override
+  String urlByMain() => 'https://meeco.kr/';
+
+  // 게시판이 아닌 슬러그(메뉴/기능 링크) 제외 목록.
+  static const Set<String> _notBoards = {
+    'adminonly', 'attendance', 'contact', 'sticker', 'login', 'logout',
+    'signup', 'member', 'mypage', 'search', 'index', 'home', 'point',
+  };
+
+  /// 미코 홈의 게시판 슬러그 링크(`/news`, `/free` 등)를 파싱한다.
+  /// 별도 카테고리 구분이 없어 평면 목록으로 구성한다.
+  @override
+  Future<Either<Failure, List<MainItem>>> main(Response<dynamic> response) {
+    final responseData = response.data as String;
+    return Isolate.run(() => _parseMain(responseData));
+  }
+
+  static Either<Failure, List<MainItem>> _parseMain(String responseData) {
+    final document = parse(responseData);
+    final items = <MainItem>[];
+    final seen = <String>{};
+    var orderBy = 0;
+    for (final a in document.querySelectorAll('a[href]')) {
+      final href = a.attributes['href']?.trim() ?? '';
+      final match = RegExp(r'^/([a-z0-9_]+)$').firstMatch(href);
+      if (match == null) continue;
+      final board = match.group(1)!;
+      if (_notBoards.contains(board) || !seen.add(board)) continue;
+      final name = a.text.trim();
+      if (name.isEmpty || name.length > 20) continue;
+      items.add(
+        MainItem(
+          siteType: SiteType.meeco,
+          board: board,
+          text: name,
+          url: 'https://meeco.kr/$board',
+          orderBy: orderBy++,
+        ),
+      );
+    }
+    if (items.isEmpty) {
+      return Left(GetMainFailure(message: '게시판 목록을 찾지 못했습니다.'));
+    }
+    return Right(items);
+  }
 
   @override
   String urlByList(

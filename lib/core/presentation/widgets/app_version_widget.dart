@@ -8,12 +8,13 @@ class AppVersionWidget extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final versionAsync = ref.watch(getAppVersionProvider);
-
+    final bodySmall = Theme.of(context).textTheme.bodySmall;
     return versionAsync.maybeWhen(
-      data: (version) => ListTile(
-        title: Text(version, textAlign: TextAlign.center),
-        titleTextStyle: Theme.of(context).textTheme.bodySmall,
-      ),
+      data: (version) =>
+          Padding(
+            padding: const EdgeInsets.all(4.0),
+            child: Text(version, textAlign: TextAlign.center, style: bodySmall),
+          ),
       orElse: () => const SizedBox.shrink(),
     );
   }

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$MainItem {
 
- SiteType get siteType; String get board; String get text; String get url; int get orderBy; int get type; bool get hasItem; String get icon;
+ SiteType get siteType; String get board; String get text; String get url; int get orderBy; int get type; bool get hasItem; String get icon; String get category;
 /// Create a copy of MainItem
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -28,16 +28,16 @@ $MainItemCopyWith<MainItem> get copyWith => _$MainItemCopyWithImpl<MainItem>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MainItem&&(identical(other.siteType, siteType) || other.siteType == siteType)&&(identical(other.board, board) || other.board == board)&&(identical(other.text, text) || other.text == text)&&(identical(other.url, url) || other.url == url)&&(identical(other.orderBy, orderBy) || other.orderBy == orderBy)&&(identical(other.type, type) || other.type == type)&&(identical(other.hasItem, hasItem) || other.hasItem == hasItem)&&(identical(other.icon, icon) || other.icon == icon));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MainItem&&(identical(other.siteType, siteType) || other.siteType == siteType)&&(identical(other.board, board) || other.board == board)&&(identical(other.text, text) || other.text == text)&&(identical(other.url, url) || other.url == url)&&(identical(other.orderBy, orderBy) || other.orderBy == orderBy)&&(identical(other.type, type) || other.type == type)&&(identical(other.hasItem, hasItem) || other.hasItem == hasItem)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.category, category) || other.category == category));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,siteType,board,text,url,orderBy,type,hasItem,icon);
+int get hashCode => Object.hash(runtimeType,siteType,board,text,url,orderBy,type,hasItem,icon,category);
 
 @override
 String toString() {
-  return 'MainItem(siteType: $siteType, board: $board, text: $text, url: $url, orderBy: $orderBy, type: $type, hasItem: $hasItem, icon: $icon)';
+  return 'MainItem(siteType: $siteType, board: $board, text: $text, url: $url, orderBy: $orderBy, type: $type, hasItem: $hasItem, icon: $icon, category: $category)';
 }
 
 
@@ -48,7 +48,7 @@ abstract mixin class $MainItemCopyWith<$Res>  {
   factory $MainItemCopyWith(MainItem value, $Res Function(MainItem) _then) = _$MainItemCopyWithImpl;
 @useResult
 $Res call({
- SiteType siteType, String board, String text, String url, int orderBy, int type, bool hasItem, String icon
+ SiteType siteType, String board, String text, String url, int orderBy, int type, bool hasItem, String icon, String category
 });
 
 
@@ -65,7 +65,7 @@ class _$MainItemCopyWithImpl<$Res>
 
 /// Create a copy of MainItem
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? siteType = null,Object? board = null,Object? text = null,Object? url = null,Object? orderBy = null,Object? type = null,Object? hasItem = null,Object? icon = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? siteType = null,Object? board = null,Object? text = null,Object? url = null,Object? orderBy = null,Object? type = null,Object? hasItem = null,Object? icon = null,Object? category = null,}) {
   return _then(_self.copyWith(
 siteType: null == siteType ? _self.siteType : siteType // ignore: cast_nullable_to_non_nullable
 as SiteType,board: null == board ? _self.board : board // ignore: cast_nullable_to_non_nullable
@@ -75,6 +75,7 @@ as String,orderBy: null == orderBy ? _self.orderBy : orderBy // ignore: cast_nul
 as int,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as int,hasItem: null == hasItem ? _self.hasItem : hasItem // ignore: cast_nullable_to_non_nullable
 as bool,icon: null == icon ? _self.icon : icon // ignore: cast_nullable_to_non_nullable
+as String,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }
@@ -160,10 +161,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( SiteType siteType,  String board,  String text,  String url,  int orderBy,  int type,  bool hasItem,  String icon)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( SiteType siteType,  String board,  String text,  String url,  int orderBy,  int type,  bool hasItem,  String icon,  String category)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MainItem() when $default != null:
-return $default(_that.siteType,_that.board,_that.text,_that.url,_that.orderBy,_that.type,_that.hasItem,_that.icon);case _:
+return $default(_that.siteType,_that.board,_that.text,_that.url,_that.orderBy,_that.type,_that.hasItem,_that.icon,_that.category);case _:
   return orElse();
 
 }
@@ -181,10 +182,10 @@ return $default(_that.siteType,_that.board,_that.text,_that.url,_that.orderBy,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( SiteType siteType,  String board,  String text,  String url,  int orderBy,  int type,  bool hasItem,  String icon)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( SiteType siteType,  String board,  String text,  String url,  int orderBy,  int type,  bool hasItem,  String icon,  String category)  $default,) {final _that = this;
 switch (_that) {
 case _MainItem():
-return $default(_that.siteType,_that.board,_that.text,_that.url,_that.orderBy,_that.type,_that.hasItem,_that.icon);case _:
+return $default(_that.siteType,_that.board,_that.text,_that.url,_that.orderBy,_that.type,_that.hasItem,_that.icon,_that.category);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +202,10 @@ return $default(_that.siteType,_that.board,_that.text,_that.url,_that.orderBy,_t
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( SiteType siteType,  String board,  String text,  String url,  int orderBy,  int type,  bool hasItem,  String icon)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( SiteType siteType,  String board,  String text,  String url,  int orderBy,  int type,  bool hasItem,  String icon,  String category)?  $default,) {final _that = this;
 switch (_that) {
 case _MainItem() when $default != null:
-return $default(_that.siteType,_that.board,_that.text,_that.url,_that.orderBy,_that.type,_that.hasItem,_that.icon);case _:
+return $default(_that.siteType,_that.board,_that.text,_that.url,_that.orderBy,_that.type,_that.hasItem,_that.icon,_that.category);case _:
   return null;
 
 }
@@ -216,7 +217,7 @@ return $default(_that.siteType,_that.board,_that.text,_that.url,_that.orderBy,_t
 @JsonSerializable()
 
 class _MainItem implements MainItem {
-  const _MainItem({required this.siteType, required this.board, required this.text, required this.url, required this.orderBy, this.type = 0, this.hasItem = false, this.icon = ''});
+  const _MainItem({required this.siteType, required this.board, required this.text, required this.url, required this.orderBy, this.type = 0, this.hasItem = false, this.icon = '', this.category = ''});
   factory _MainItem.fromJson(Map<String, dynamic> json) => _$MainItemFromJson(json);
 
 @override final  SiteType siteType;
@@ -227,6 +228,7 @@ class _MainItem implements MainItem {
 @override@JsonKey() final  int type;
 @override@JsonKey() final  bool hasItem;
 @override@JsonKey() final  String icon;
+@override@JsonKey() final  String category;
 
 /// Create a copy of MainItem
 /// with the given fields replaced by the non-null parameter values.
@@ -241,16 +243,16 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MainItem&&(identical(other.siteType, siteType) || other.siteType == siteType)&&(identical(other.board, board) || other.board == board)&&(identical(other.text, text) || other.text == text)&&(identical(other.url, url) || other.url == url)&&(identical(other.orderBy, orderBy) || other.orderBy == orderBy)&&(identical(other.type, type) || other.type == type)&&(identical(other.hasItem, hasItem) || other.hasItem == hasItem)&&(identical(other.icon, icon) || other.icon == icon));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MainItem&&(identical(other.siteType, siteType) || other.siteType == siteType)&&(identical(other.board, board) || other.board == board)&&(identical(other.text, text) || other.text == text)&&(identical(other.url, url) || other.url == url)&&(identical(other.orderBy, orderBy) || other.orderBy == orderBy)&&(identical(other.type, type) || other.type == type)&&(identical(other.hasItem, hasItem) || other.hasItem == hasItem)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.category, category) || other.category == category));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,siteType,board,text,url,orderBy,type,hasItem,icon);
+int get hashCode => Object.hash(runtimeType,siteType,board,text,url,orderBy,type,hasItem,icon,category);
 
 @override
 String toString() {
-  return 'MainItem(siteType: $siteType, board: $board, text: $text, url: $url, orderBy: $orderBy, type: $type, hasItem: $hasItem, icon: $icon)';
+  return 'MainItem(siteType: $siteType, board: $board, text: $text, url: $url, orderBy: $orderBy, type: $type, hasItem: $hasItem, icon: $icon, category: $category)';
 }
 
 
@@ -261,7 +263,7 @@ abstract mixin class _$MainItemCopyWith<$Res> implements $MainItemCopyWith<$Res>
   factory _$MainItemCopyWith(_MainItem value, $Res Function(_MainItem) _then) = __$MainItemCopyWithImpl;
 @override @useResult
 $Res call({
- SiteType siteType, String board, String text, String url, int orderBy, int type, bool hasItem, String icon
+ SiteType siteType, String board, String text, String url, int orderBy, int type, bool hasItem, String icon, String category
 });
 
 
@@ -278,7 +280,7 @@ class __$MainItemCopyWithImpl<$Res>
 
 /// Create a copy of MainItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? siteType = null,Object? board = null,Object? text = null,Object? url = null,Object? orderBy = null,Object? type = null,Object? hasItem = null,Object? icon = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? siteType = null,Object? board = null,Object? text = null,Object? url = null,Object? orderBy = null,Object? type = null,Object? hasItem = null,Object? icon = null,Object? category = null,}) {
   return _then(_MainItem(
 siteType: null == siteType ? _self.siteType : siteType // ignore: cast_nullable_to_non_nullable
 as SiteType,board: null == board ? _self.board : board // ignore: cast_nullable_to_non_nullable
@@ -288,6 +290,7 @@ as String,orderBy: null == orderBy ? _self.orderBy : orderBy // ignore: cast_nul
 as int,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as int,hasItem: null == hasItem ? _self.hasItem : hasItem // ignore: cast_nullable_to_non_nullable
 as bool,icon: null == icon ? _self.icon : icon // ignore: cast_nullable_to_non_nullable
+as String,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
 as String,
   ));
 }

@@ -4,10 +4,12 @@ import 'dart:isolate';
 
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:html/parser.dart';
 import 'package:mocl_flutter/core/domain/entities/last_id.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
@@ -641,6 +643,84 @@ class DamoangParser extends BaseParser {
   @override
   String urlByDetail(String url, String board, int id) =>
       '$baseUrl/$board/$id/__data.json?x-sveltekit-invalidated=1001';
+
+  @override
+  String urlByMain() => 'https://damoang.net/';
+
+  /// 다모앙 게시판 목록을 구성한다. [DamoangApi] 가 `[홈HTML, 소모임JSON]`을 넘긴다.
+  /// - 일반 게시판: 홈(Svelte) 사이드바의 `/{slug}` 링크 중 이름이 단축키 문자로
+  ///   끝나는 것(예: "자유게시판 F")만 추림 → 상점/포인트 등 기능 링크 제외.
+  /// - 소모임: `/groups/__data.json` 의 `"슬러그","이름당"` 쌍(이름이 "~당").
+  @override
+  Future<Either<Failure, List<MainItem>>> main(Response<dynamic> response) {
+    final dynamic data = response.data;
+    return Isolate.run(() => _parseMain(data));
+  }
+
+  static final RegExp _boardName = RegExp(r'^(.*)\s([A-Z])$');
+  static final RegExp _groupPair = RegExp(r'"([a-z][a-z0-9_]{1,20})","([^"]{1,16}당)"');
+
+  static Either<Failure, List<MainItem>> _parseMain(dynamic data) {
+    String homeHtml = '';
+    String groupsJson = '';
+    if (data is List) {
+      homeHtml = data.isNotEmpty ? (data[0] as String? ?? '') : '';
+      groupsJson = data.length > 1 ? (data[1] as String? ?? '') : '';
+    } else if (data is String) {
+      homeHtml = data;
+    }
+
+    final items = <MainItem>[];
+    final seen = <String>{};
+    var orderBy = 0;
+
+    // 일반 게시판(홈 사이드바)
+    if (homeHtml.isNotEmpty) {
+      final document = parse(homeHtml);
+      for (final a in document.querySelectorAll('a[href]')) {
+        final href = a.attributes['href']?.trim() ?? '';
+        final slug = RegExp(r'^/([a-z0-9_]+)$').firstMatch(href)?.group(1);
+        if (slug == null || !seen.add(slug)) continue;
+        final raw = a.text.trim();
+        final match = _boardName.firstMatch(raw);
+        if (match == null) continue;
+        final name = match.group(1)!.trim();
+        if (name.isEmpty || name.length > 20) continue;
+        items.add(
+          MainItem(
+            siteType: SiteType.damoang,
+            board: slug,
+            text: name,
+            url: 'https://damoang.net/$slug',
+            orderBy: orderBy++,
+            category: '게시판',
+          ),
+        );
+      }
+    }
+
+    // 소모임(/groups/__data.json)
+    for (final m in _groupPair.allMatches(groupsJson)) {
+      final slug = m.group(1)!;
+      if (!seen.add(slug)) continue;
+      final name = m.group(2)!.trim();
+      items.add(
+        MainItem(
+          siteType: SiteType.damoang,
+          board: slug,
+          text: name,
+          url: 'https://damoang.net/$slug',
+          orderBy: orderBy++,
+          category: '소모임',
+        ),
+      );
+    }
+
+    if (items.isEmpty) {
+      return Left(GetMainFailure(message: '게시판 목록을 찾지 못했습니다.'));
+    }
+    return Right(items);
+  }
 
   @override
   String urlByList(

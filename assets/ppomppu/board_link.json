@@ -1,0 +1,13 @@
+[
+  {"board":"ppomppu","title":"뽐뿌게시판(핫딜)","type":0,"url":"https://m.ppomppu.co.kr/new/bbs_list.php?id=ppomppu","no":0},
+  {"board":"ppomppu4","title":"해외뽐뿌","type":0,"url":"https://m.ppomppu.co.kr/new/bbs_list.php?id=ppomppu4","no":1},
+  {"board":"coupon","title":"쿠폰게시판","type":0,"url":"https://m.ppomppu.co.kr/new/bbs_list.php?id=coupon","no":2},
+  {"board":"ppomppu7","title":"메디컬뽐뿌","type":0,"url":"https://m.ppomppu.co.kr/new/bbs_list.php?id=ppomppu7","no":3},
+  {"board":"freeboard","title":"자유게시판","type":0,"url":"https://m.ppomppu.co.kr/new/bbs_list.php?id=freeboard","no":4},
+  {"board":"humor","title":"유머/감동","type":0,"url":"https://m.ppomppu.co.kr/new/bbs_list.php?id=humor","no":5},
+  {"board":"issue","title":"정치자유게시판","type":0,"url":"https://m.ppomppu.co.kr/new/bbs_list.php?id=issue","no":6},
+  {"board":"phone","title":"휴대폰포럼","type":0,"url":"https://m.ppomppu.co.kr/new/bbs_list.php?id=phone","no":7},
+  {"board":"car","title":"자동차포럼","type":0,"url":"https://m.ppomppu.co.kr/new/bbs_list.php?id=car","no":8},
+  {"board":"game","title":"게임/오락","type":0,"url":"https://m.ppomppu.co.kr/new/bbs_list.php?id=game","no":9},
+  {"board":"stock","title":"증권포럼","type":0,"url":"https://m.ppomppu.co.kr/new/bbs_list.php?id=stock","no":10}
+]

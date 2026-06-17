@@ -65,12 +65,15 @@ extension StringExtension on String {
   );
 
   Future<bool> openUrl(BuildContext context) async {
-    final Uri uri = Uri.parse(this);
+    // 프로토콜 상대 경로(`//cdn.../x.webp`)는 스킴이 없어 이미지 뷰어가
+    // 로드하지 못하므로 https 로 정규화한다.
+    final String normalized = startsWith('//') ? 'https:$this' : this;
+    final Uri uri = Uri.parse(normalized);
     final String? last = uri.pathSegments.lastOrNull;
     if (last != null && last.isImageUrl()) {
-      context.push(Routes.viewPhotoDlgFull, extra: this);
+      context.push(Routes.viewPhotoDlgFull, extra: normalized);
       return true;
     }
-    return openBrowser();
+    return normalized.openBrowser();
   }
 }

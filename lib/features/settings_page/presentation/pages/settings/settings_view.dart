@@ -13,7 +13,10 @@ class SettingsView extends ConsumerWidget with SettingsState, SettingsEvent {
     listenSyncStatus(ref);
 
     final isSyncing = isSyncingState(ref);
-    final bodyMedium = Theme.of(context).textTheme.bodyMedium;
+    final theme = Theme.of(context);
+    final bodyMedium = theme.textTheme.bodyMedium;
+    final focusColor = theme.focusColor;
+    final bottom = MediaQuery.of(context).padding.bottom;
 
     return SliverToBoxAdapter(
       child: Column(
@@ -48,7 +51,7 @@ class SettingsView extends ConsumerWidget with SettingsState, SettingsEvent {
                 Text('닉 이미지 보기', style: bodyMedium),
                 Checkbox(
                   value: showNickImageState(ref),
-                  activeColor: Theme.of(context).focusColor,
+                  activeColor: focusColor,
                   onChanged: (bool? value) => handleToggleNickImage(ref),
                 ),
               ],
@@ -60,9 +63,7 @@ class SettingsView extends ConsumerWidget with SettingsState, SettingsEvent {
               padding: const EdgeInsets.all(16.0),
               child: Column(
                 children: [
-                  CircularProgressIndicator(
-                    color: Theme.of(context).focusColor,
-                  ),
+                  CircularProgressIndicator(color: focusColor),
                   const SizedBox(height: 8),
                   Text('Google Drive와 동기화 중...', style: bodyMedium),
                 ],
@@ -93,18 +94,17 @@ class SettingsView extends ConsumerWidget with SettingsState, SettingsEvent {
               ],
             ),
           const DividerWidget(),
-          Padding(
-            padding: .only(bottom: MediaQuery.of(context).padding.bottom),
-          ),
+          Padding(padding: .only(bottom: bottom)),
         ],
       ),
     );
   }
 
-  Widget _buildLoadingView(BuildContext context) => Padding(
-    padding: const .symmetric(horizontal: 0, vertical: 10),
-    child: Center(
-      child: CircularProgressIndicator(color: Theme.of(context).focusColor),
-    ),
-  );
+  Widget _buildLoadingView(BuildContext context) {
+    final focusColor = Theme.of(context).focusColor;
+    return Padding(
+      padding: const .symmetric(horizontal: 0, vertical: 10),
+      child: Center(child: CircularProgressIndicator(color: focusColor)),
+    );
+  }
 }

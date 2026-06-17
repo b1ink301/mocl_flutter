@@ -24,7 +24,9 @@ class DetailAppBar extends ConsumerWidget with DetailState, DetailEvent {
     final titleStyle = DetailStyleScope.of(
       context,
     ).$1.titleTextStyle.copyWith(color: Colors.white);
-    final smallTitleStyle = Theme.of(context).textTheme.labelSmall!;
+    final theme = Theme.of(context);
+    final smallTitleStyle = theme.textTheme.labelSmall!;
+    final focusColor = theme.focusColor;
 
     return AppbarDualTextWidget(
       title: title,
@@ -35,7 +37,7 @@ class DetailAppBar extends ConsumerWidget with DetailState, DetailEvent {
       toolbarHeight: height,
       actions: [
         _DetailPopupMenuButton(
-          focusColor: Theme.of(context).focusColor,
+          focusColor: focusColor,
           onRefresh: () => handleRefresh(ref),
           onOpenBrowser: () => handleOpenBrowser(ref),
           onShareUrl: () => handleShareUrl(ref),

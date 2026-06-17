@@ -21,7 +21,7 @@ class AddListDialog extends ConsumerWidget with AddState, AddEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final state = addState(ref);
-    final size = MediaQuery.of(context).size;
+    final size = MediaQuery.sizeOf(context);
 
     return AlertDialog(
       elevation: 8,
@@ -33,14 +33,17 @@ class AddListDialog extends ConsumerWidget with AddState, AddEvent {
     );
   }
 
-  Widget _buildTitle(BuildContext context) => Column(
-    children: [
-      const SizedBox(height: 20),
-      Text('게시판 선택', style: Theme.of(context).textTheme.headlineMedium),
-      const SizedBox(height: 20),
-      const DividerWidget(thickness: 1, indent: 16, endIndent: 16),
-    ],
-  );
+  Widget _buildTitle(BuildContext context) {
+    final style = Theme.of(context).textTheme.headlineMedium;
+    return Column(
+      children: [
+        const SizedBox(height: 20),
+        Text('게시판 선택', style: style),
+        const SizedBox(height: 20),
+        const DividerWidget(thickness: 1, indent: 16, endIndent: 16),
+      ],
+    );
+  }
 
   Widget _buildContent(
     BuildContext context,
@@ -62,39 +65,69 @@ class AddListDialog extends ConsumerWidget with AddState, AddEvent {
           final titleStyle = ref.watch(
             appTextStylesFontSizeProvider.select((s) => s.titleTextStyle),
           );
-          return ListView.separated(
+          final headerStyle = Theme.of(context).textTheme.titleSmall?.copyWith(
+            color: Theme.of(context).focusColor,
+            fontWeight: FontWeight.bold,
+          );
+          return ListView.builder(
             padding: EdgeInsets.zero,
             itemCount: items.length,
-            separatorBuilder: (_, _) =>
-                const DividerWidget(indent: 0, endIndent: 0),
             itemBuilder: (context, index) {
               final item = items[index];
-              return CheckBoxListTitleWidget(
+              final category = item.mainItem.category;
+              // 카테고리가 바뀌는 첫 항목 위에 섹션 헤더를 표시.
+              final bool showHeader =
+                  category.isNotEmpty &&
+                  (index == 0 ||
+                      items[index - 1].mainItem.category != category);
+              final tile = CheckBoxListTitleWidget(
                 text: item.mainItem.text,
                 isChecked: item.isChecked,
                 textStyle: titleStyle,
                 onChanged: (isChecked) => onChanged(ref, isChecked, index),
+              );
+              if (!showHeader) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const DividerWidget(indent: 0, endIndent: 0),
+                    tile,
+                  ],
+                );
+              }
+              return Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(4, 14, 4, 6),
+                    child: Text(category, style: headerStyle),
+                  ),
+                  tile,
+                ],
               );
             },
           );
         },
       );
 
-  List<Widget> _buildActions(BuildContext context) => [
-    TextButton(
-      onPressed: context.pop,
-      child: Text('취소', style: Theme.of(context).textTheme.headlineMedium),
-    ),
-    Consumer(
-      builder: (context, ref, _) => TextButton(
-        onPressed: () => pop(ref, context),
-        child: Text(
-          '적용',
-          style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-            color: Theme.of(context).focusColor,
-          ),
+  List<Widget> _buildActions(BuildContext context) {
+    final theme = Theme.of(context);
+    final focusColor = theme.focusColor;
+    final cancelStyle = theme.textTheme.headlineMedium;
+    final applyStyle = cancelStyle?.copyWith(color: focusColor);
+
+    return [
+      TextButton(
+        onPressed: context.pop,
+        child: Text('취소', style: cancelStyle),
+      ),
+      Consumer(
+        builder: (context, ref, _) => TextButton(
+          onPressed: () => pop(ref, context),
+          child: Text('적용', style: applyStyle),
         ),
       ),
-    ),
-  ];
+    ];
+  }
 }

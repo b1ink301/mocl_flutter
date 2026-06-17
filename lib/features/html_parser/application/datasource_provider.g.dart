@@ -9,6 +9,172 @@ part of 'datasource_provider.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
+@ProviderFor(_arcaliveParser)
+final _arcaliveParserProvider = _ArcaliveParserFamily._();
+
+final class _ArcaliveParserProvider
+    extends
+        $FunctionalProvider<
+          (BaseParser, BaseApi),
+          (BaseParser, BaseApi),
+          (BaseParser, BaseApi)
+        >
+    with $Provider<(BaseParser, BaseApi)> {
+  _ArcaliveParserProvider._({
+    required _ArcaliveParserFamily super.from,
+    required bool super.argument,
+  }) : super(
+         retry: null,
+         name: r'_arcaliveParserProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$_arcaliveParserHash();
+
+  @override
+  String toString() {
+    return r'_arcaliveParserProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<(BaseParser, BaseApi)> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  (BaseParser, BaseApi) create(Ref ref) {
+    final argument = this.argument as bool;
+    return _arcaliveParser(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue((BaseParser, BaseApi) value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<(BaseParser, BaseApi)>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is _ArcaliveParserProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$_arcaliveParserHash() => r'037b889cef8065e3810ec8e989514299e331f676';
+
+final class _ArcaliveParserFamily extends $Family
+    with $FunctionalFamilyOverride<(BaseParser, BaseApi), bool> {
+  _ArcaliveParserFamily._()
+    : super(
+        retry: null,
+        name: r'_arcaliveParserProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  _ArcaliveParserProvider call(bool isShowNickImage) =>
+      _ArcaliveParserProvider._(argument: isShowNickImage, from: this);
+
+  @override
+  String toString() => r'_arcaliveParserProvider';
+}
+
+@ProviderFor(_bobaedreamParser)
+final _bobaedreamParserProvider = _BobaedreamParserFamily._();
+
+final class _BobaedreamParserProvider
+    extends
+        $FunctionalProvider<
+          (BaseParser, BaseApi),
+          (BaseParser, BaseApi),
+          (BaseParser, BaseApi)
+        >
+    with $Provider<(BaseParser, BaseApi)> {
+  _BobaedreamParserProvider._({
+    required _BobaedreamParserFamily super.from,
+    required bool super.argument,
+  }) : super(
+         retry: null,
+         name: r'_bobaedreamParserProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$_bobaedreamParserHash();
+
+  @override
+  String toString() {
+    return r'_bobaedreamParserProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<(BaseParser, BaseApi)> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  (BaseParser, BaseApi) create(Ref ref) {
+    final argument = this.argument as bool;
+    return _bobaedreamParser(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue((BaseParser, BaseApi) value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<(BaseParser, BaseApi)>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is _BobaedreamParserProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$_bobaedreamParserHash() => r'4e32b44d798b4fc5dcd00a236ec4f1bfc98f834c';
+
+final class _BobaedreamParserFamily extends $Family
+    with $FunctionalFamilyOverride<(BaseParser, BaseApi), bool> {
+  _BobaedreamParserFamily._()
+    : super(
+        retry: null,
+        name: r'_bobaedreamParserProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  _BobaedreamParserProvider call(bool isShowNickImage) =>
+      _BobaedreamParserProvider._(argument: isShowNickImage, from: this);
+
+  @override
+  String toString() => r'_bobaedreamParserProvider';
+}
+
 @ProviderFor(_clienParser)
 final _clienParserProvider = _ClienParserFamily._();
 
@@ -90,6 +256,172 @@ final class _ClienParserFamily extends $Family
 
   @override
   String toString() => r'_clienParserProvider';
+}
+
+@ProviderFor(_dcinsideParser)
+final _dcinsideParserProvider = _DcinsideParserFamily._();
+
+final class _DcinsideParserProvider
+    extends
+        $FunctionalProvider<
+          (BaseParser, BaseApi),
+          (BaseParser, BaseApi),
+          (BaseParser, BaseApi)
+        >
+    with $Provider<(BaseParser, BaseApi)> {
+  _DcinsideParserProvider._({
+    required _DcinsideParserFamily super.from,
+    required bool super.argument,
+  }) : super(
+         retry: null,
+         name: r'_dcinsideParserProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$_dcinsideParserHash();
+
+  @override
+  String toString() {
+    return r'_dcinsideParserProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<(BaseParser, BaseApi)> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  (BaseParser, BaseApi) create(Ref ref) {
+    final argument = this.argument as bool;
+    return _dcinsideParser(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue((BaseParser, BaseApi) value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<(BaseParser, BaseApi)>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is _DcinsideParserProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$_dcinsideParserHash() => r'32a91755a22aa0efc280a6111ddd64662a696598';
+
+final class _DcinsideParserFamily extends $Family
+    with $FunctionalFamilyOverride<(BaseParser, BaseApi), bool> {
+  _DcinsideParserFamily._()
+    : super(
+        retry: null,
+        name: r'_dcinsideParserProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  _DcinsideParserProvider call(bool isShowNickImage) =>
+      _DcinsideParserProvider._(argument: isShowNickImage, from: this);
+
+  @override
+  String toString() => r'_dcinsideParserProvider';
+}
+
+@ProviderFor(_cook82Parser)
+final _cook82ParserProvider = _Cook82ParserFamily._();
+
+final class _Cook82ParserProvider
+    extends
+        $FunctionalProvider<
+          (BaseParser, BaseApi),
+          (BaseParser, BaseApi),
+          (BaseParser, BaseApi)
+        >
+    with $Provider<(BaseParser, BaseApi)> {
+  _Cook82ParserProvider._({
+    required _Cook82ParserFamily super.from,
+    required bool super.argument,
+  }) : super(
+         retry: null,
+         name: r'_cook82ParserProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$_cook82ParserHash();
+
+  @override
+  String toString() {
+    return r'_cook82ParserProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<(BaseParser, BaseApi)> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  (BaseParser, BaseApi) create(Ref ref) {
+    final argument = this.argument as bool;
+    return _cook82Parser(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue((BaseParser, BaseApi) value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<(BaseParser, BaseApi)>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is _Cook82ParserProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$_cook82ParserHash() => r'f47b939e5d8ce88d5d6ae03ba52ea7d659d937d4';
+
+final class _Cook82ParserFamily extends $Family
+    with $FunctionalFamilyOverride<(BaseParser, BaseApi), bool> {
+  _Cook82ParserFamily._()
+    : super(
+        retry: null,
+        name: r'_cook82ParserProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  _Cook82ParserProvider call(bool isShowNickImage) =>
+      _Cook82ParserProvider._(argument: isShowNickImage, from: this);
+
+  @override
+  String toString() => r'_cook82ParserProvider';
 }
 
 @ProviderFor(_damoangParser)
@@ -507,6 +839,172 @@ final class _TheqooParserFamily extends $Family
   String toString() => r'_theqooParserProvider';
 }
 
+@ProviderFor(_ruliwebParser)
+final _ruliwebParserProvider = _RuliwebParserFamily._();
+
+final class _RuliwebParserProvider
+    extends
+        $FunctionalProvider<
+          (BaseParser, BaseApi),
+          (BaseParser, BaseApi),
+          (BaseParser, BaseApi)
+        >
+    with $Provider<(BaseParser, BaseApi)> {
+  _RuliwebParserProvider._({
+    required _RuliwebParserFamily super.from,
+    required bool super.argument,
+  }) : super(
+         retry: null,
+         name: r'_ruliwebParserProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$_ruliwebParserHash();
+
+  @override
+  String toString() {
+    return r'_ruliwebParserProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<(BaseParser, BaseApi)> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  (BaseParser, BaseApi) create(Ref ref) {
+    final argument = this.argument as bool;
+    return _ruliwebParser(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue((BaseParser, BaseApi) value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<(BaseParser, BaseApi)>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is _RuliwebParserProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$_ruliwebParserHash() => r'784228ce8bff9010c804df13928f58046d7c4791';
+
+final class _RuliwebParserFamily extends $Family
+    with $FunctionalFamilyOverride<(BaseParser, BaseApi), bool> {
+  _RuliwebParserFamily._()
+    : super(
+        retry: null,
+        name: r'_ruliwebParserProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  _RuliwebParserProvider call(bool isShowNickImage) =>
+      _RuliwebParserProvider._(argument: isShowNickImage, from: this);
+
+  @override
+  String toString() => r'_ruliwebParserProvider';
+}
+
+@ProviderFor(_ppomppuParser)
+final _ppomppuParserProvider = _PpomppuParserFamily._();
+
+final class _PpomppuParserProvider
+    extends
+        $FunctionalProvider<
+          (BaseParser, BaseApi),
+          (BaseParser, BaseApi),
+          (BaseParser, BaseApi)
+        >
+    with $Provider<(BaseParser, BaseApi)> {
+  _PpomppuParserProvider._({
+    required _PpomppuParserFamily super.from,
+    required bool super.argument,
+  }) : super(
+         retry: null,
+         name: r'_ppomppuParserProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$_ppomppuParserHash();
+
+  @override
+  String toString() {
+    return r'_ppomppuParserProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<(BaseParser, BaseApi)> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  (BaseParser, BaseApi) create(Ref ref) {
+    final argument = this.argument as bool;
+    return _ppomppuParser(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue((BaseParser, BaseApi) value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<(BaseParser, BaseApi)>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is _PpomppuParserProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$_ppomppuParserHash() => r'8a75e4db6540130fd67480bf38ed1b3ab3a8b556';
+
+final class _PpomppuParserFamily extends $Family
+    with $FunctionalFamilyOverride<(BaseParser, BaseApi), bool> {
+  _PpomppuParserFamily._()
+    : super(
+        retry: null,
+        name: r'_ppomppuParserProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  _PpomppuParserProvider call(bool isShowNickImage) =>
+      _PpomppuParserProvider._(argument: isShowNickImage, from: this);
+
+  @override
+  String toString() => r'_ppomppuParserProvider';
+}
+
 @ProviderFor(_geekNewsParser)
 final _geekNewsParserProvider = _GeekNewsParserFamily._();
 
@@ -590,6 +1088,89 @@ final class _GeekNewsParserFamily extends $Family
   String toString() => r'_geekNewsParserProvider';
 }
 
+@ProviderFor(_invenParser)
+final _invenParserProvider = _InvenParserFamily._();
+
+final class _InvenParserProvider
+    extends
+        $FunctionalProvider<
+          (BaseParser, BaseApi),
+          (BaseParser, BaseApi),
+          (BaseParser, BaseApi)
+        >
+    with $Provider<(BaseParser, BaseApi)> {
+  _InvenParserProvider._({
+    required _InvenParserFamily super.from,
+    required bool super.argument,
+  }) : super(
+         retry: null,
+         name: r'_invenParserProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$_invenParserHash();
+
+  @override
+  String toString() {
+    return r'_invenParserProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<(BaseParser, BaseApi)> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  (BaseParser, BaseApi) create(Ref ref) {
+    final argument = this.argument as bool;
+    return _invenParser(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue((BaseParser, BaseApi) value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<(BaseParser, BaseApi)>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is _InvenParserProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$_invenParserHash() => r'4c18ff248f6d972934cfb7e24d6f8b569255f0d6';
+
+final class _InvenParserFamily extends $Family
+    with $FunctionalFamilyOverride<(BaseParser, BaseApi), bool> {
+  _InvenParserFamily._()
+    : super(
+        retry: null,
+        name: r'_invenParserProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  _InvenParserProvider call(bool isShowNickImage) =>
+      _InvenParserProvider._(argument: isShowNickImage, from: this);
+
+  @override
+  String toString() => r'_invenParserProvider';
+}
+
 @ProviderFor(currentParser)
 final currentParserProvider = CurrentParserFamily._();
 
@@ -653,7 +1234,7 @@ final class CurrentParserProvider
   }
 }
 
-String _$currentParserHash() => r'a8f5165777d51c81a190856c45de7b525f199eec';
+String _$currentParserHash() => r'848a3904300a6f63caa6cb13b1c75287d7843212';
 
 final class CurrentParserFamily extends $Family
     with $FunctionalFamilyOverride<(BaseParser, BaseApi), SiteType> {

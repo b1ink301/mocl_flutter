@@ -1,0 +1,10 @@
+[
+  {"board":"best","title":"베스트글","type":0,"url":"https://m.bobaedream.co.kr/board/new_writing/best","no":0},
+  {"board":"freeb","title":"자유게시판","type":0,"url":"https://m.bobaedream.co.kr/board/new_writing/freeb","no":1},
+  {"board":"cnews","title":"자동차뉴스/토론","type":0,"url":"https://m.bobaedream.co.kr/board/new_writing/cnews","no":2},
+  {"board":"politic","title":"정치·시사","type":0,"url":"https://m.bobaedream.co.kr/board/new_writing/politic","no":3},
+  {"board":"battle","title":"시승기/배틀/목격담","type":0,"url":"https://m.bobaedream.co.kr/board/new_writing/battle","no":4},
+  {"board":"famous","title":"유명인의차","type":0,"url":"https://m.bobaedream.co.kr/board/new_writing/famous","no":5},
+  {"board":"nnews","title":"자동차뉴스","type":0,"url":"https://m.bobaedream.co.kr/board/new_writing/nnews","no":6},
+  {"board":"bbstory","title":"보배드림이야기","type":0,"url":"https://m.bobaedream.co.kr/board/new_writing/bbstory","no":7}
+]

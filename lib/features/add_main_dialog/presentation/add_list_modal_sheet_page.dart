@@ -14,14 +14,22 @@ class AddListBottomSheet extends ConsumerWidget with AddState, AddEvent {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final color = Theme.of(context).scaffoldBackgroundColor;
+    final theme = Theme.of(context);
+    final color = theme.scaffoldBackgroundColor;
+    final textStyle = theme.textTheme.bodyMedium;
+    final headerStyle = theme.textTheme.titleSmall?.copyWith(
+      color: theme.focusColor,
+      fontWeight: FontWeight.bold,
+    );
 
     return DraggableScrollableSheet(
       initialChildSize: 0.9,
       minChildSize: 0.3,
       maxChildSize: 0.9,
       expand: false,
-      builder: (context, scrollController) => Container(
+      // ListTile 이 ink/배경을 가장 가까운 Material 에 그리므로, 배경색은
+      // Container 가 아니라 Material 에 줘서 assertion(배경/잉크 가림)을 막는다.
+      builder: (context, scrollController) => Material(
         color: color,
         child: Column(
           children: [
@@ -51,20 +59,42 @@ class AddListBottomSheet extends ConsumerWidget with AddState, AddEvent {
             // 콘텐츠
             Expanded(
               child: addState(ref).maybeWhen(
-                data: (data) => ListView.separated(
+                data: (data) => ListView.builder(
                   controller: scrollController,
                   itemCount: data.length,
                   itemBuilder: (context, index) {
                     final item = data[index];
-                    return CheckBoxListTitleWidget(
+                    final category = item.mainItem.category;
+                    // 카테고리가 바뀌는 첫 항목 위에 섹션 헤더 표시.
+                    final bool showHeader =
+                        category.isNotEmpty &&
+                        (index == 0 ||
+                            data[index - 1].mainItem.category != category);
+                    final tile = CheckBoxListTitleWidget(
                       text: item.mainItem.text,
                       isChecked: item.isChecked,
-                      textStyle: Theme.of(context).textTheme.bodyMedium,
+                      textStyle: textStyle,
                       onChanged: (isChecked) =>
                           onChanged(ref, isChecked, index),
                     );
+                    if (!showHeader) {
+                      return Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [const PlainDividerWidget(), tile],
+                      );
+                    }
+                    return Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.fromLTRB(16, 14, 16, 6),
+                          child: Text(category, style: headerStyle),
+                        ),
+                        tile,
+                      ],
+                    );
                   },
-                  separatorBuilder: (_, _) => const PlainDividerWidget(),
                 ),
                 error: (error, _) => Padding(
                   padding: const .all(8.0),

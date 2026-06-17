@@ -1,0 +1,10 @@
+[
+  {"board":"best","title":"전체 베스트","type":0,"url":"https://m.ruliweb.com/best/best","no":0},
+  {"board":"humor_only","title":"유머 베스트","type":0,"url":"https://m.ruliweb.com/best/humor_only","no":1},
+  {"board":"humor","title":"유게 베스트","type":0,"url":"https://m.ruliweb.com/best/humor","no":2},
+  {"board":"game","title":"게임 베스트","type":0,"url":"https://m.ruliweb.com/best/game","no":3},
+  {"board":"300143","title":"유머 게시판","type":0,"url":"https://m.ruliweb.com/community/board/300143","no":4},
+  {"board":"300018","title":"사회·정치 게시판","type":0,"url":"https://m.ruliweb.com/community/board/300018","no":5},
+  {"board":"300148","title":"정치·시사 유머","type":0,"url":"https://m.ruliweb.com/community/board/300148","no":6},
+  {"board":"300147","title":"고민상담 게시판","type":0,"url":"https://m.ruliweb.com/community/board/300147","no":7}
+]

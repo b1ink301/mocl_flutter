@@ -7,15 +7,20 @@ class LoginPage extends ConsumerWidget {
   const LoginPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) => Scaffold(
-    appBar: AppBar(
-      title: Text('로그인', style: Theme.of(context).textTheme.labelMedium),
-      backgroundColor: Theme.of(context).appBarTheme.backgroundColor,
-      titleSpacing: 0,
-      scrolledUnderElevation: 0,
-      centerTitle: false,
-      toolbarHeight: 64,
-    ),
-    body: const SafeArea(child: LoginView()),
-  );
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final style = theme.textTheme.labelMedium;
+    final backgroundColor = theme.appBarTheme.backgroundColor;
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('로그인', style: style),
+        backgroundColor: backgroundColor,
+        titleSpacing: 0,
+        scrolledUnderElevation: 0,
+        centerTitle: false,
+        toolbarHeight: 64,
+      ),
+      body: const SafeArea(child: LoginView()),
+    );
+  }
 }
