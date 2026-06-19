@@ -1,6 +1,16 @@
 [
   {"board":"2097","title":"오픈이슈갤러리","type":0,"url":"https://m.inven.co.kr/board/webzine/2097","no":0},
-  {"board":"2417","title":"IT 자유게시판","type":0,"url":"https://m.inven.co.kr/board/it/2417","no":1},
-  {"board":"3146","title":"FC온라인 자유게시판","type":0,"url":"https://m.inven.co.kr/board/lol/3146","no":2},
-  {"board":"2304","title":"메이플 팁과노하우","type":0,"url":"https://m.inven.co.kr/board/maple/2304","no":3}
+  {"board":"2887","title":"카툰갤러리","type":0,"url":"https://m.inven.co.kr/board/webzine/2887","no":1},
+  {"board":"3068","title":"동영상갤러리","type":0,"url":"https://m.inven.co.kr/board/webzine/3068","no":2},
+  {"board":"2898","title":"코스프레갤러리","type":0,"url":"https://m.inven.co.kr/board/webzine/2898","no":3},
+  {"board":"3715","title":"지름·개봉갤러리","type":0,"url":"https://m.inven.co.kr/board/webzine/3715","no":4},
+  {"board":"1565","title":"게이머 토론장","type":0,"url":"https://m.inven.co.kr/board/webzine/1565","no":5},
+  {"board":"1288","title":"게임소감이야기","type":0,"url":"https://m.inven.co.kr/board/webzine/1288","no":6},
+  {"board":"1292","title":"이벤트·공지사항","type":0,"url":"https://m.inven.co.kr/board/webzine/1292","no":7},
+  {"board":"2417","title":"IT 자유게시판","type":0,"url":"https://m.inven.co.kr/board/it/2417","no":8},
+  {"board":"2631","title":"PC 견적 게시판","type":0,"url":"https://m.inven.co.kr/board/it/2631","no":9},
+  {"board":"2778","title":"리그오브레전드 유저정보","type":0,"url":"https://m.inven.co.kr/board/lol/2778","no":10},
+  {"board":"3146","title":"FC온라인 자유게시판","type":0,"url":"https://m.inven.co.kr/board/fifaonline4/3146","no":11},
+  {"board":"2304","title":"메이플 팁과노하우","type":0,"url":"https://m.inven.co.kr/board/maple/2304","no":12},
+  {"board":"5165","title":"라그나로크 제로 자유게시판","type":0,"url":"https://m.inven.co.kr/board/ro/5165","no":13}
 ]
