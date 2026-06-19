@@ -12,6 +12,7 @@ include: package:flutter_lints/flutter.yaml
 linter:
   rules:
     - no_wildcard_variable_uses
+    - parameter_assignments
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options

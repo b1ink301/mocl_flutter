@@ -72,6 +72,18 @@ Future<Either<Failure, List<int>>> setMainItems(Ref ref, List<MainItem> list) {
 GlobalKey<ScaffoldState> mainScaffoldState(Ref ref) =>
     GlobalKey<ScaffoldState>();
 
+/// 메인 항목 '정렬 모드' 토글. 켜져 있을 때만 드래그 핸들이 노출되고
+/// 드래그로 순서를 바꿀 수 있다(평소엔 탭으로 게시판 이동).
+@riverpod
+class MainReorderMode extends _$MainReorderMode {
+  @override
+  bool build() => false;
+
+  void toggle() => state = !state;
+
+  void off() => state = false;
+}
+
 @riverpod
 class MainSidebarNotifier extends _$MainSidebarNotifier {
   @override

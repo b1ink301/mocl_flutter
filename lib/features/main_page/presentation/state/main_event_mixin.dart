@@ -40,6 +40,10 @@ mixin class MainEvent {
   void handleReorder(WidgetRef ref, int oldIndex, int newIndex) =>
       ref.read(mainItemsProvider.notifier).reorder(oldIndex, newIndex);
 
+  /// '정렬 모드' 토글(켜질 때만 드래그 핸들 노출).
+  void handleToggleReorder(WidgetRef ref) =>
+      ref.read(mainReorderModeProvider.notifier).toggle();
+
   Future<void> handleAddButton(WidgetRef ref, BuildContext context) async {
     List<MainItem>? result = await context.push<List<MainItem>>(
       Routes.setMainDlgFull,

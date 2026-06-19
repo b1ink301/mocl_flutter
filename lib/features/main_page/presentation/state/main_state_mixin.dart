@@ -32,4 +32,6 @@ mixin class MainState {
   TextStyle smallTextStyleState(WidgetRef ref) => ref.watch(
     appTextStylesFontSizeProvider.select((state) => state.smallTextStyle),
   );
+
+  bool reorderModeState(WidgetRef ref) => ref.watch(mainReorderModeProvider);
 }
