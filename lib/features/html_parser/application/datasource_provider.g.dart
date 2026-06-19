@@ -507,6 +507,89 @@ final class _DogdripParserFamily extends $Family
   String toString() => r'_dogdripParserProvider';
 }
 
+@ProviderFor(_instizParser)
+final _instizParserProvider = _InstizParserFamily._();
+
+final class _InstizParserProvider
+    extends
+        $FunctionalProvider<
+          (BaseParser, BaseApi),
+          (BaseParser, BaseApi),
+          (BaseParser, BaseApi)
+        >
+    with $Provider<(BaseParser, BaseApi)> {
+  _InstizParserProvider._({
+    required _InstizParserFamily super.from,
+    required bool super.argument,
+  }) : super(
+         retry: null,
+         name: r'_instizParserProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$_instizParserHash();
+
+  @override
+  String toString() {
+    return r'_instizParserProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<(BaseParser, BaseApi)> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  (BaseParser, BaseApi) create(Ref ref) {
+    final argument = this.argument as bool;
+    return _instizParser(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue((BaseParser, BaseApi) value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<(BaseParser, BaseApi)>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is _InstizParserProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$_instizParserHash() => r'd9edececfa2dd31692563024d6753a24c37b883b';
+
+final class _InstizParserFamily extends $Family
+    with $FunctionalFamilyOverride<(BaseParser, BaseApi), bool> {
+  _InstizParserFamily._()
+    : super(
+        retry: null,
+        name: r'_instizParserProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  _InstizParserProvider call(bool isShowNickImage) =>
+      _InstizParserProvider._(argument: isShowNickImage, from: this);
+
+  @override
+  String toString() => r'_instizParserProvider';
+}
+
 @ProviderFor(_mlbparkParser)
 final _mlbparkParserProvider = _MlbparkParserFamily._();
 
@@ -1400,7 +1483,7 @@ final class CurrentParserProvider
   }
 }
 
-String _$currentParserHash() => r'1cf64305ea65a533b2c56325ec2b5513ec5bf19c';
+String _$currentParserHash() => r'0924116f52d1489d7581e1a618158f0618abc148';
 
 final class CurrentParserFamily extends $Family
     with $FunctionalFamilyOverride<(BaseParser, BaseApi), SiteType> {

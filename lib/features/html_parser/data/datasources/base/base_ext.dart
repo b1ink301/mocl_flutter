@@ -34,6 +34,8 @@ extension SortTypeExtension on SortType {
         return '';
       case SiteType.mlbpark:
         return '';
+      case SiteType.instiz:
+        return '';
       case SiteType.inven:
         return '';
       case SiteType.naverCafe:

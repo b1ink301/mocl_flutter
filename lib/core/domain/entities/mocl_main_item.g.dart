@@ -39,6 +39,7 @@ const _$SiteTypeEnumMap = {
   SiteType.dcinside: 'dcinside',
   SiteType.dogdrip: 'dogdrip',
   SiteType.geekNews: 'geekNews',
+  SiteType.instiz: 'instiz',
   SiteType.inven: 'inven',
   SiteType.meeco: 'meeco',
   SiteType.mlbpark: 'mlbpark',
