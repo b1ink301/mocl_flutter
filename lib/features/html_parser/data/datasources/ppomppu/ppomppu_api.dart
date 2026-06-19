@@ -17,7 +17,8 @@ import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 import '../base/base_parser.dart';
 
 /// 뽐뿌는 EUC-KR(CP949) 인코딩이므로 응답을 bytes 로 받아 CP949 로 디코딩한 뒤
-/// UTF-8 String 으로 파서에 넘긴다. 로그인/쿠키는 글 읽기에 불필요하다.
+/// UTF-8 String 으로 파서에 넘긴다. 로그인 시 회원 전용 글 열람을 위해
+/// [getWithCookies] 로 로그인 쿠키를 함께 보낸다.
 class PpomppuApi extends BaseApi {
   const PpomppuApi(super.dio, super.userAgent);
 
@@ -26,8 +27,9 @@ class PpomppuApi extends BaseApi {
     String url,
     Map<String, String> headers,
   ) async {
-    final Response<dynamic> response = await get(
+    final Response<dynamic> response = await getWithCookies(
       url,
+      'https://m.ppomppu.co.kr',
       headers: headers,
       responseType: ResponseType.bytes,
     );

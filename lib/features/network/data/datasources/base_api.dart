@@ -10,12 +10,12 @@ import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_action.dart';
 
+// 차단 회피를 위해 최신 Chrome(2026.06 기준 150) UA 로 맞춘다. 웹뷰 식별
+// 토큰(`; wv`)을 빼 일반 모바일 Chrome 으로 보이게 해 차단률을 낮춘다.
 const String userAgentMobile =
-    'Mozilla/5.0 (Linux; Android 14; Pixel 8 Build/AP2A.240905.003; wv) '
-    'AppleWebKit/537.36 (KHTML, like Gecko) Version/4.0 Chrome/130.0.6723.58 Mobile '
-    'Safari/537.36 Yappli/1673b203.20240919 (Linux; Android 14; Google Build/Pixel 8)';
+    'Mozilla/5.0 (Linux; Android 16; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Mobile Safari/537.36';
 const String userAgentPc =
-    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/139.0.0.0 Safari/537.36';
+    'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36';
 
 abstract class BaseApi with BaseAction {
   final Dio _dio;
@@ -93,6 +93,40 @@ abstract class BaseApi with BaseAction {
       },
     );
     return interceptor;
+  }
+
+  /// 웹뷰 쿠키스토어의 로그인 쿠키를 [cookieUrl] 도메인 기준으로 주입해 GET 한다.
+  /// 비로그인 상태에선 쿠키가 비어 단순 GET 과 동일하게 동작하므로, 로그인이
+  /// 선택적인 사이트의 읽기 요청에 그대로 적용해도 안전하다.
+  Future<Response<dynamic>> getWithCookies(
+    String url,
+    String cookieUrl, {
+    Map<String, String>? headers,
+    ResponseType? responseType,
+    String? contentType,
+  }) async {
+    if (kIsWeb) {
+      return get(
+        url,
+        headers: headers,
+        responseType: responseType,
+        contentType: contentType,
+      );
+    }
+    final InterceptorsWrapper interceptor = await _buildInterceptorCookie(
+      cookieUrl,
+    );
+    try {
+      _dio.interceptors.add(interceptor);
+      return await get(
+        url,
+        headers: headers,
+        responseType: responseType,
+        contentType: contentType,
+      );
+    } finally {
+      _dio.interceptors.remove(interceptor);
+    }
   }
 
   Future<Either<Failure, T>> withSyncCookie<T>(

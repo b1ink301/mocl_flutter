@@ -14,7 +14,8 @@ import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 
 import '../base/base_parser.dart';
 
-/// 더쿠는 쿠키/로그인이 불필요하므로 withSyncCookie를 사용하지 않습니다.
+/// 더쿠 읽기는 비로그인도 가능하지만, 로그인 시 회원 전용 글 열람을 위해
+/// [getWithCookies] 로 로그인 쿠키를 함께 보낸다.
 class TheQooApi extends BaseApi {
   const TheQooApi(super.dio, super.userAgent);
 
@@ -41,7 +42,11 @@ class TheQooApi extends BaseApi {
         headers: headers,
         responseType: ResponseType.json,
       );
-      final Future<Response<dynamic>> detailFuture = get(url, headers: headers);
+      final Future<Response<dynamic>> detailFuture = getWithCookies(
+        url,
+        parser.baseUrl,
+        headers: headers,
+      );
       final List<Response<dynamic>> responses = await Future.wait([
         detailFuture,
         commentFuture,
@@ -93,7 +98,11 @@ class TheQooApi extends BaseApi {
         'Host': host,
         'User-Agent': userAgent,
       };
-      final Response<dynamic> response = await get(url, headers: headers);
+      final Response<dynamic> response = await getWithCookies(
+        url,
+        parser.baseUrl,
+        headers: headers,
+      );
       log('[getList] $url, $headers response = ${response.statusCode}');
 
       return response.statusCode == 200
@@ -119,7 +128,11 @@ class TheQooApi extends BaseApi {
         'Host': host,
         'User-Agent': userAgent,
       };
-      final Response<dynamic> response = await get(url, headers: headers);
+      final Response<dynamic> response = await getWithCookies(
+        url,
+        parser.baseUrl,
+        headers: headers,
+      );
       log('[getMain] $url response = ${response.statusCode}');
       return response.statusCode == 200
           ? parser.main(response)
@@ -159,7 +172,11 @@ class TheQooApi extends BaseApi {
         'Referer': item.url,
         'User-Agent': userAgent,
       };
-      final Response<dynamic> response = await get(url, headers: headers);
+      final Response<dynamic> response = await getWithCookies(
+        url,
+        parser.baseUrl,
+        headers: headers,
+      );
       log('[searchList] $url, $headers response = ${response.statusCode}');
 
       return response.statusCode == 200
