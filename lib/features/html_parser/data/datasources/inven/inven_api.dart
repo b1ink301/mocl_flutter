@@ -14,7 +14,8 @@ import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 
 import '../base/base_parser.dart';
 
-/// 인벤은 글 읽기에 로그인/쿠키가 불필요하므로 단순 GET 으로 처리한다.
+/// 인벤 읽기는 비로그인도 가능하지만, 로그인 시 회원 전용 글을 보려면 쿠키가
+/// 필요하므로 [getWithCookies] 로 로그인 쿠키를 함께 보낸다.
 /// 댓글은 본문 HTML 에 없고 `comment.json.php` 로 비동기 로드되므로, 상세 요청 시
 /// 본문 HTML 과 댓글 JSON 을 동시에 받아 `[html, json]` 으로 파서에 넘긴다.
 class InvenApi extends BaseApi {
@@ -33,7 +34,11 @@ class InvenApi extends BaseApi {
       final String host = Uri.parse(parser.baseUrl).host;
       final Map<String, String> headers = {'Host': host, 'User-Agent': userAgent};
 
-      final Future<Response<dynamic>> htmlFuture = get(url, headers: headers);
+      final Future<Response<dynamic>> htmlFuture = getWithCookies(
+        url,
+        parser.baseUrl,
+        headers: headers,
+      );
       final Future<Response<dynamic>> commentFuture = postUri(
         _commentUrl,
         data: {
@@ -106,7 +111,11 @@ class InvenApi extends BaseApi {
       );
       final String host = Uri.parse(parser.baseUrl).host;
       final Map<String, String> headers = {'Host': host, 'User-Agent': userAgent};
-      final Response<dynamic> response = await get(url, headers: headers);
+      final Response<dynamic> response = await getWithCookies(
+        url,
+        parser.baseUrl,
+        headers: headers,
+      );
       log('[getList] $url response = ${response.statusCode}');
       return response.statusCode == 200
           ? parser.list(response, lastId, item.text, isReads)
@@ -150,7 +159,11 @@ class InvenApi extends BaseApi {
         'Referer': item.url,
         'User-Agent': userAgent,
       };
-      final Response<dynamic> response = await get(url, headers: headers);
+      final Response<dynamic> response = await getWithCookies(
+        url,
+        parser.baseUrl,
+        headers: headers,
+      );
       log('[searchList] $url response = ${response.statusCode}');
       return response.statusCode == 200
           ? parser.list(response, lastId, item.text, isReads)

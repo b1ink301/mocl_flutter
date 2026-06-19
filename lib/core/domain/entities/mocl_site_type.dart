@@ -34,4 +34,11 @@ extension SiteTypeExtension on SiteType {
         SiteType.ruliweb => '루리웹',
         SiteType.theqoo => '더쿠',
       };
+
+  /// 로그인(계정) 연동을 지원하는 사이트인지. 긱뉴스는 계정이 없고,
+  /// settings 는 사이트가 아니므로 제외한다.
+  bool get supportsLogin => switch (this) {
+        SiteType.geekNews || SiteType.settings => false,
+        _ => true,
+      };
 }

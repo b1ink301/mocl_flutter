@@ -14,7 +14,8 @@ import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 
 import '../base/base_parser.dart';
 
-/// 디시인사이드은 글 읽기에 로그인/쿠키가 불필요하므로 단순 GET 으로 처리한다.
+/// 디시인사이드 읽기는 비로그인도 가능하지만, 로그인 시 회원/연령 제한 글
+/// 열람을 위해 [getWithCookies] 로 로그인 쿠키를 함께 보낸다.
 class DcinsideApi extends BaseApi {
   const DcinsideApi(super.dio, super.userAgent);
 
@@ -27,7 +28,11 @@ class DcinsideApi extends BaseApi {
       final String url = parser.urlByDetail(item.url, item.board, item.id);
       final String host = Uri.parse(parser.baseUrl).host;
       final Map<String, String> headers = {'Host': host, 'User-Agent': userAgent};
-      final Response<dynamic> response = await get(url, headers: headers);
+      final Response<dynamic> response = await getWithCookies(
+        url,
+        parser.baseUrl,
+        headers: headers,
+      );
       log('[detail] $url response = ${response.statusCode}');
       return response.statusCode == 200
           ? parser.detail(response)
@@ -62,7 +67,11 @@ class DcinsideApi extends BaseApi {
       );
       final String host = Uri.parse(parser.baseUrl).host;
       final Map<String, String> headers = {'Host': host, 'User-Agent': userAgent};
-      final Response<dynamic> response = await get(url, headers: headers);
+      final Response<dynamic> response = await getWithCookies(
+        url,
+        parser.baseUrl,
+        headers: headers,
+      );
       log('[getList] $url response = ${response.statusCode}');
       return response.statusCode == 200
           ? parser.list(response, lastId, item.text, isReads)
@@ -87,7 +96,11 @@ class DcinsideApi extends BaseApi {
         'Host': host,
         'User-Agent': userAgent,
       };
-      final Response<dynamic> response = await get(url, headers: headers);
+      final Response<dynamic> response = await getWithCookies(
+        url,
+        parser.baseUrl,
+        headers: headers,
+      );
       log('[getMain] $url response = ${response.statusCode}');
       return response.statusCode == 200
           ? parser.main(response)
@@ -127,7 +140,11 @@ class DcinsideApi extends BaseApi {
         'Referer': item.url,
         'User-Agent': userAgent,
       };
-      final Response<dynamic> response = await get(url, headers: headers);
+      final Response<dynamic> response = await getWithCookies(
+        url,
+        parser.baseUrl,
+        headers: headers,
+      );
       log('[searchList] $url response = ${response.statusCode}');
       return response.statusCode == 200
           ? parser.list(response, lastId, item.text, isReads)
