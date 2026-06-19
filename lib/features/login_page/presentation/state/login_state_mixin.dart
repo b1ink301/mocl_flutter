@@ -58,7 +58,7 @@ mixin class LoginState {
       SiteType.ruliweb => 'https://m.ruliweb.com/member/login',
       SiteType.theqoo =>
         'https://theqoo.net/index.php?mid=hot&act=dispMemberLoginForm',
-      SiteType.geekNews || SiteType.settings => '',
+      SiteType.geekNews || SiteType.nate || SiteType.settings => '',
     };
 
     return URLRequest(

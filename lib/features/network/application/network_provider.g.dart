@@ -501,6 +501,47 @@ final class InstizApiClientProvider
 
 String _$instizApiClientHash() => r'66b8b2e81039726075dd332b9d261b630aa8da0c';
 
+@ProviderFor(nateApiClient)
+final nateApiClientProvider = NateApiClientProvider._();
+
+final class NateApiClientProvider
+    extends $FunctionalProvider<BaseApi, BaseApi, BaseApi>
+    with $Provider<BaseApi> {
+  NateApiClientProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'nateApiClientProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$nateApiClientHash();
+
+  @$internal
+  @override
+  $ProviderElement<BaseApi> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  BaseApi create(Ref ref) {
+    return nateApiClient(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(BaseApi value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<BaseApi>(value),
+    );
+  }
+}
+
+String _$nateApiClientHash() => r'088b8b3eb51c43bd137c7cb4fe149daa8d70aa58';
+
 @ProviderFor(arcaliveApiClient)
 final arcaliveApiClientProvider = ArcaliveApiClientProvider._();
 

@@ -6,6 +6,7 @@ import 'package:mocl_flutter/features/html_parser/data/datasources/cook82/cook82
 import 'package:mocl_flutter/features/html_parser/data/datasources/dogdrip/dogdrip_api.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/instiz/instiz_api.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/mlbpark/mlbpark_api.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/nate/nate_api.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/dcinside/dcinside_api.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/damoang/damoang_api.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/geek_news/geek_news_api.dart';
@@ -87,6 +88,11 @@ BaseApi mlbparkApiClient(Ref ref) {
 @riverpod
 BaseApi instizApiClient(Ref ref) {
   return InstizApi(_buildDio(), userAgentMobile);
+}
+
+@riverpod
+BaseApi nateApiClient(Ref ref) {
+  return NateApi(_buildDio(), userAgentMobile);
 }
 
 @riverpod
