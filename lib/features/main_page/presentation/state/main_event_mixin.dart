@@ -36,6 +36,10 @@ mixin class MainEvent {
   void handleRefresh(WidgetRef ref) =>
       ref.read(mainItemsProvider.notifier).refresh();
 
+  /// 메인 항목 드래그 재정렬을 notifier 에 위임한다.
+  void handleReorder(WidgetRef ref, int oldIndex, int newIndex) =>
+      ref.read(mainItemsProvider.notifier).reorder(oldIndex, newIndex);
+
   Future<void> handleAddButton(WidgetRef ref, BuildContext context) async {
     List<MainItem>? result = await context.push<List<MainItem>>(
       Routes.setMainDlgFull,
