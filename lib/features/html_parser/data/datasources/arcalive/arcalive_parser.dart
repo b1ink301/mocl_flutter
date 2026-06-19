@@ -157,9 +157,12 @@ class ArcaliveParser extends BaseParser {
       final cls = row.className;
       if (cls.contains('head') || cls.contains('notice')) continue;
 
-      final titleAnchor = row.querySelector('a.title');
-      final href = (titleAnchor?.attributes['href'] ?? row.attributes['href'])
-          ?.trim();
+      // .vrow 자체가 앵커(<a class="vrow column" href="/b/{board}/{id}">).
+      // 구버전 레이아웃(a.title) 도 폴백으로 지원.
+      final href =
+          (row.attributes['href'] ??
+                  row.querySelector('a.title')?.attributes['href'])
+              ?.trim();
       if (href == null) continue;
       final match = _readPath.firstMatch(href);
       if (match == null) continue;
@@ -169,14 +172,18 @@ class ArcaliveParser extends BaseParser {
       if (!seen.add(id)) continue;
       final url = href.startsWith('http') ? href : '$baseUrl$href';
 
-      final titleEl = titleAnchor ?? row;
+      // 제목: 현재 레이아웃은 `.col-title .title`(span), 구버전은 `a.title`.
+      // (광고 행은 `<b id="textad">` 뿐이라 제목 요소가 없어 스킵된다.)
+      final titleEl =
+          row.querySelector('.col-title .title') ??
+          row.querySelector('a.title');
+      if (titleEl == null) continue;
       final String reply = titleEl
           .qText('.comment-count')
           .replaceAll(RegExp(r'[\[\]]'), '')
           .trim();
-      // 제목: 미디어 아이콘/댓글수/뱃지 span 제거 후 텍스트.
-      final titleClone = titleEl.querySelector('a.title') ?? titleEl;
-      final String title = _titleText(titleClone);
+      // 미디어 아이콘/댓글수/뱃지 span 제거 후 순수 텍스트.
+      final String title = _titleText(titleEl);
       if (title.isEmpty) continue;
 
       final authorEl = row.querySelector('.col-author .user-info');
@@ -220,7 +227,9 @@ class ArcaliveParser extends BaseParser {
   /// 제목 앵커에서 자식 span(아이콘/댓글수/뱃지)을 빼고 순수 텍스트만.
   static String _titleText(Element el) {
     final clone = el.clone(true);
-    clone.querySelectorAll('span').forEach((e) => e.remove());
+    clone
+        .querySelectorAll('span, img, svg, time, i')
+        .forEach((e) => e.remove());
     return clone.text.trim();
   }
 

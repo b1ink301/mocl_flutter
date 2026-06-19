@@ -104,8 +104,10 @@ class ListPagingController extends _$ListPagingController {
         if (singlePageBoard && (state.keys?.isNotEmpty ?? false)) {
           return null;
         }
-        // 마지막 페이지가 비어있으면 종료
-        // if (state.lastPageIsEmpty) return null;
+        // 마지막 페이지가 비어있으면 종료(중복 필터로 0건이 된 경우 포함).
+        // 보배드림처럼 끝 페이지를 넘겨도 빈 응답 대신 마지막 페이지를 다시 주는
+        // 사이트는, lastId 중복 필터가 전부 걸러 빈 페이지가 되며 여기서 멈춘다.
+        if (state.lastPageIsEmpty) return null;
 
         final int? lastKey = state.keys?.lastOrNull;
         return lastKey == null ? initialPage : lastKey + 1;
