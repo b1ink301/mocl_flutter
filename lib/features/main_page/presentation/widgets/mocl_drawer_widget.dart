@@ -5,7 +5,6 @@ import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/presentation/widgets/app_version_widget.dart';
 
-import '../../../../core/presentation/widgets/plain_icon.dart';
 import '../../../../core/presentation/widgets/plain_text.dart';
 import '../state/main_event_mixin.dart';
 import '../state/main_state_mixin.dart';
@@ -38,7 +37,7 @@ class DrawerWidget extends ConsumerWidget with MainEvent {
             child: GridView.builder(
               padding: EdgeInsets.zero,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 2,
+                crossAxisCount: 3,
                 mainAxisExtent: 56,
               ),
               itemCount: siteTypes.length,
@@ -76,7 +75,7 @@ class _DrawerHeader extends StatelessWidget {
     final primaryColor = Theme.of(context).primaryColor;
     return Container(
       color: primaryColor,
-      height: 200,
+      height: 210,
       child: Stack(
         children: [
           Center(
@@ -85,14 +84,12 @@ class _DrawerHeader extends StatelessWidget {
             ),
           ),
           Positioned(
-            top: 0,
-            right: 0,
-            child: SafeArea(
-              child: IconButton(
-                tooltip: '설정',
-                icon: const Icon(Icons.settings_outlined, color: Colors.white),
-                onPressed: onSettingsTap,
-              ),
+            bottom: 5,
+            right: 5,
+            child: IconButton(
+              tooltip: '설정',
+              icon: const Icon(Icons.settings_outlined, color: Colors.white),
+              onPressed: onSettingsTap,
             ),
           ),
         ],
@@ -115,14 +112,14 @@ class _DrawerSiteItem extends ConsumerWidget with MainState {
   final VoidCallback onTap;
 
   // 가로선 좌우 인셋, 라인 두께.
-  static const double _hInset = 12;
+  static const double _hInset = 10;
   static const double _lineThickness = 1;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final isSelected = isSiteType(ref, siteType);
     final theme = Theme.of(context);
-    final baseStyle = titleTextStyleState(ref);
+    final baseStyle = smallTextStyleState(ref);
     final dividerColor = theme.dividerColor;
 
     // Border 는 끝까지 그려져 인셋을 줄 수 없으므로 라인을 직접 배치한다.
@@ -131,45 +128,27 @@ class _DrawerSiteItem extends ConsumerWidget with MainState {
       children: [
         InkWell(
           onTap: onTap,
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 12),
-            child: Row(
-              children: [
-                Expanded(
-                  child: PlainText(
-                    siteType.title,
-                    style: baseStyle.copyWith(
-                      color: isSelected ? focusColor : baseStyle.color,
-                      fontWeight: isSelected
-                          ? FontWeight.bold
-                          : FontWeight.normal,
-                    ),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-                if (isSelected)
-                  PlainIcon(Icons.check_outlined, color: focusColor, size: 20),
-              ],
+          child: Center(
+            child: PlainText(
+              textAlign: .center,
+              siteType.title,
+              style: baseStyle.copyWith(
+                color: isSelected ? focusColor : baseStyle.color,
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+              ),
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
             ),
           ),
         ),
         // 하단 가로 라인 (좌우 패딩)
         Positioned(
           left: _hInset,
-          right: _hInset + 2,
+          right: _hInset,
           bottom: 0,
           height: _lineThickness,
           child: ColoredBox(color: dividerColor),
         ),
-        // 두 열 사이 세로 라인 (왼쪽 열에만, 위아래 패딩)
-        // if (isLeftColumn)
-        //   Positioned(
-        //     top: _vInset,
-        //     bottom: _vInset,
-        //     right: 0,
-        //     width: _lineThickness,
-        //     child: ColoredBox(color: dividerColor),
-        //   ),
       ],
     );
   }

@@ -28,4 +28,8 @@ mixin class MainState {
   TextStyle titleTextStyleState(WidgetRef ref) => ref.watch(
     appTextStylesFontSizeProvider.select((state) => state.titleTextStyle),
   );
+
+  TextStyle smallTextStyleState(WidgetRef ref) => ref.watch(
+    appTextStylesFontSizeProvider.select((state) => state.smallTextStyle),
+  );
 }
