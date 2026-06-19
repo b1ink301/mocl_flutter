@@ -507,6 +507,89 @@ final class _DogdripParserFamily extends $Family
   String toString() => r'_dogdripParserProvider';
 }
 
+@ProviderFor(_mlbparkParser)
+final _mlbparkParserProvider = _MlbparkParserFamily._();
+
+final class _MlbparkParserProvider
+    extends
+        $FunctionalProvider<
+          (BaseParser, BaseApi),
+          (BaseParser, BaseApi),
+          (BaseParser, BaseApi)
+        >
+    with $Provider<(BaseParser, BaseApi)> {
+  _MlbparkParserProvider._({
+    required _MlbparkParserFamily super.from,
+    required bool super.argument,
+  }) : super(
+         retry: null,
+         name: r'_mlbparkParserProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$_mlbparkParserHash();
+
+  @override
+  String toString() {
+    return r'_mlbparkParserProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<(BaseParser, BaseApi)> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  (BaseParser, BaseApi) create(Ref ref) {
+    final argument = this.argument as bool;
+    return _mlbparkParser(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue((BaseParser, BaseApi) value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<(BaseParser, BaseApi)>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is _MlbparkParserProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$_mlbparkParserHash() => r'4f32f1a151474a65ee551d827478173bcec3cb35';
+
+final class _MlbparkParserFamily extends $Family
+    with $FunctionalFamilyOverride<(BaseParser, BaseApi), bool> {
+  _MlbparkParserFamily._()
+    : super(
+        retry: null,
+        name: r'_mlbparkParserProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  _MlbparkParserProvider call(bool isShowNickImage) =>
+      _MlbparkParserProvider._(argument: isShowNickImage, from: this);
+
+  @override
+  String toString() => r'_mlbparkParserProvider';
+}
+
 @ProviderFor(_damoangParser)
 final _damoangParserProvider = _DamoangParserFamily._();
 
@@ -1317,7 +1400,7 @@ final class CurrentParserProvider
   }
 }
 
-String _$currentParserHash() => r'fd9b0d6bd15dadc05e57a49e909d53f63fec3c2a';
+String _$currentParserHash() => r'1cf64305ea65a533b2c56325ec2b5513ec5bf19c';
 
 final class CurrentParserFamily extends $Family
     with $FunctionalFamilyOverride<(BaseParser, BaseApi), SiteType> {

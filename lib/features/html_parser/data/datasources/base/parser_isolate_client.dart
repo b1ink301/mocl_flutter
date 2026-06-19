@@ -19,6 +19,7 @@ import 'package:mocl_flutter/features/html_parser/data/datasources/dogdrip/dogdr
 import 'package:mocl_flutter/features/html_parser/data/datasources/geek_news/geek_news_parser.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/inven/inven_parser.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/meeco/meeco_parser.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/mlbpark/mlbpark_parser.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/naver_cafe/naver_cafe_parser.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/ppomppu/ppomppu_parser.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/reddit/reddit_parser.dart';
@@ -43,6 +44,7 @@ final Map<SiteType, ParseListWorkerFn> _listWorkers = {
   SiteType.geekNews: GeekNewsParser.parseListInWorker,
   SiteType.inven: InvenParser.parseListInWorker,
   SiteType.meeco: MeecoParser.parseListInWorker,
+  SiteType.mlbpark: MlbparkParser.parseListInWorker,
   SiteType.naverCafe: NaverCafeParser.parseListInWorker,
   SiteType.ppomppu: PpomppuParser.parseListInWorker,
   SiteType.reddit: RedditParser.parseListInWorker,

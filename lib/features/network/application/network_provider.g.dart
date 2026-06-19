@@ -419,6 +419,47 @@ final class DogdripApiClientProvider
 
 String _$dogdripApiClientHash() => r'4eb013504fda099d7241f02c26224a33573020bb';
 
+@ProviderFor(mlbparkApiClient)
+final mlbparkApiClientProvider = MlbparkApiClientProvider._();
+
+final class MlbparkApiClientProvider
+    extends $FunctionalProvider<BaseApi, BaseApi, BaseApi>
+    with $Provider<BaseApi> {
+  MlbparkApiClientProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'mlbparkApiClientProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$mlbparkApiClientHash();
+
+  @$internal
+  @override
+  $ProviderElement<BaseApi> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  BaseApi create(Ref ref) {
+    return mlbparkApiClient(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(BaseApi value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<BaseApi>(value),
+    );
+  }
+}
+
+String _$mlbparkApiClientHash() => r'a691bbe5deafe3ad6b5912bf4716d8481e184ffd';
+
 @ProviderFor(arcaliveApiClient)
 final arcaliveApiClientProvider = ArcaliveApiClientProvider._();
 

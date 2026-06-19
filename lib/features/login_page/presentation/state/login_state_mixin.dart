@@ -48,6 +48,7 @@ mixin class LoginState {
       SiteType.inven => 'https://member.inven.co.kr/user/scorpio/mlogin',
       SiteType.meeco =>
         'https://meeco.kr/index.php?mid=index&act=dispMemberLoginForm',
+      SiteType.mlbpark => 'https://mlbpark.donga.com/mp/login.php',
       SiteType.naverCafe =>
         'https://nid.naver.com/mobile/user/help/naverProfile.nhn?lang=ko_KR',
       SiteType.ppomppu => 'https://m.ppomppu.co.kr/new/login.php',

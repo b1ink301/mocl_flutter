@@ -4,6 +4,7 @@ import 'package:mocl_flutter/features/html_parser/data/datasources/arcalive/arca
 import 'package:mocl_flutter/features/html_parser/data/datasources/bobaedream/bobaedream_api.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/cook82/cook82_api.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/dogdrip/dogdrip_api.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/mlbpark/mlbpark_api.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/dcinside/dcinside_api.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/damoang/damoang_api.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/geek_news/geek_news_api.dart';
@@ -75,6 +76,11 @@ BaseApi dcinsideApiClient(Ref ref) {
 @riverpod
 BaseApi dogdripApiClient(Ref ref) {
   return DogdripApi(_buildDio(), userAgentMobile);
+}
+
+@riverpod
+BaseApi mlbparkApiClient(Ref ref) {
+  return MlbparkApi(_buildDio(), userAgentMobile);
 }
 
 @riverpod
