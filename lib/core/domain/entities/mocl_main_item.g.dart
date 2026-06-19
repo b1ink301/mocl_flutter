@@ -37,6 +37,7 @@ const _$SiteTypeEnumMap = {
   SiteType.cook82: 'cook82',
   SiteType.damoang: 'damoang',
   SiteType.dcinside: 'dcinside',
+  SiteType.dogdrip: 'dogdrip',
   SiteType.geekNews: 'geekNews',
   SiteType.inven: 'inven',
   SiteType.meeco: 'meeco',

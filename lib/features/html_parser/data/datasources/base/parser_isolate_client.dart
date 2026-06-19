@@ -15,6 +15,7 @@ import 'package:mocl_flutter/features/html_parser/data/datasources/clien/clien_p
 import 'package:mocl_flutter/features/html_parser/data/datasources/cook82/cook82_parser.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/damoang/damoang_parser.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/dcinside/dcinside_parser.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/dogdrip/dogdrip_parser.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/geek_news/geek_news_parser.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/inven/inven_parser.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/meeco/meeco_parser.dart';
@@ -38,6 +39,7 @@ final Map<SiteType, ParseListWorkerFn> _listWorkers = {
   SiteType.cook82: Cook82Parser.parseListInWorker,
   SiteType.damoang: DamoangParser.parseListInWorker,
   SiteType.dcinside: DcinsideParser.parseListInWorker,
+  SiteType.dogdrip: DogdripParser.parseListInWorker,
   SiteType.geekNews: GeekNewsParser.parseListInWorker,
   SiteType.inven: InvenParser.parseListInWorker,
   SiteType.meeco: MeecoParser.parseListInWorker,

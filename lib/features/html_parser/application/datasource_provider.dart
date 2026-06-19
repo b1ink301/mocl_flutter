@@ -11,6 +11,7 @@ import '../data/datasources/bobaedream/bobaedream_parser.dart';
 import '../data/datasources/clien/clien_parser.dart';
 import '../data/datasources/cook82/cook82_parser.dart';
 import '../data/datasources/dcinside/dcinside_parser.dart';
+import '../data/datasources/dogdrip/dogdrip_parser.dart';
 import '../data/datasources/damoang/damoang_parser.dart';
 import '../data/datasources/geek_news/geek_news_parser.dart';
 import '../data/datasources/inven/inven_parser.dart';
@@ -51,6 +52,12 @@ part 'datasource_provider.g.dart';
 (BaseParser, BaseApi) _cook82Parser(Ref ref, bool isShowNickImage) {
   final baseApi = ref.watch(cook82ApiClientProvider);
   return (const Cook82Parser(), baseApi);
+}
+
+@riverpod
+(BaseParser, BaseApi) _dogdripParser(Ref ref, bool isShowNickImage) {
+  final baseApi = ref.watch(dogdripApiClientProvider);
+  return (const DogdripParser(), baseApi);
 }
 
 @riverpod
@@ -120,6 +127,7 @@ part 'datasource_provider.g.dart';
     SiteType.clien => ref.watch(_clienParserProvider(isShowNickImage)),
     SiteType.cook82 => ref.watch(_cook82ParserProvider(isShowNickImage)),
     SiteType.dcinside => ref.watch(_dcinsideParserProvider(isShowNickImage)),
+    SiteType.dogdrip => ref.watch(_dogdripParserProvider(isShowNickImage)),
     SiteType.damoang => ref.watch(_damoangParserProvider(isShowNickImage)),
     SiteType.geekNews => ref.watch(_geekNewsParserProvider(isShowNickImage)),
     SiteType.inven => ref.watch(_invenParserProvider(isShowNickImage)),
