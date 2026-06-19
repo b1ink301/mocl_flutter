@@ -32,6 +32,8 @@ extension SortTypeExtension on SortType {
         }
       case SiteType.meeco:
         return '';
+      case SiteType.mlbpark:
+        return '';
       case SiteType.inven:
         return '';
       case SiteType.naverCafe:

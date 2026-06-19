@@ -41,6 +41,7 @@ const _$SiteTypeEnumMap = {
   SiteType.geekNews: 'geekNews',
   SiteType.inven: 'inven',
   SiteType.meeco: 'meeco',
+  SiteType.mlbpark: 'mlbpark',
   SiteType.naverCafe: 'naverCafe',
   SiteType.ppomppu: 'ppomppu',
   SiteType.reddit: 'reddit',
