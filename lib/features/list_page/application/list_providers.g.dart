@@ -384,7 +384,7 @@ final class ListPagingControllerProvider
 }
 
 String _$listPagingControllerHash() =>
-    r'22b6bf2d4cf8507dd34c2419c6fb733413d844fc';
+    r'8d152450840ffe5ef92b749c908bfb1dec106cf3';
 
 /// infinite_scroll_pagination 의 PagingController 를 Riverpod 으로 감싼다.
 /// build() 는 mainItem/sortType 이 바뀔 때만 새 컨트롤러를 생성한다.

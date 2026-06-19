@@ -33,7 +33,7 @@ final class MainItemsNotifierProvider
   MainItemsNotifier create() => MainItemsNotifier();
 }
 
-String _$mainItemsNotifierHash() => r'052f5fc945faf9c173e9197ab798aa27996de491';
+String _$mainItemsNotifierHash() => r'3af8ea7d2f7988029315558d4d643a8e582bf6f1';
 
 abstract class _$MainItemsNotifier extends $AsyncNotifier<List<MainItem>> {
   FutureOr<List<MainItem>> build();
@@ -338,6 +338,68 @@ final class MainScaffoldStateProvider
 }
 
 String _$mainScaffoldStateHash() => r'e08ed879718fe9af8a42c31c3df1fbd7c053b5eb';
+
+/// 메인 항목 '정렬 모드' 토글. 켜져 있을 때만 드래그 핸들이 노출되고
+/// 드래그로 순서를 바꿀 수 있다(평소엔 탭으로 게시판 이동).
+
+@ProviderFor(MainReorderMode)
+final mainReorderModeProvider = MainReorderModeProvider._();
+
+/// 메인 항목 '정렬 모드' 토글. 켜져 있을 때만 드래그 핸들이 노출되고
+/// 드래그로 순서를 바꿀 수 있다(평소엔 탭으로 게시판 이동).
+final class MainReorderModeProvider
+    extends $NotifierProvider<MainReorderMode, bool> {
+  /// 메인 항목 '정렬 모드' 토글. 켜져 있을 때만 드래그 핸들이 노출되고
+  /// 드래그로 순서를 바꿀 수 있다(평소엔 탭으로 게시판 이동).
+  MainReorderModeProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'mainReorderModeProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$mainReorderModeHash();
+
+  @$internal
+  @override
+  MainReorderMode create() => MainReorderMode();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$mainReorderModeHash() => r'6f50304e1ddaeeeac19f36b258cf5f1c0aec4734';
+
+/// 메인 항목 '정렬 모드' 토글. 켜져 있을 때만 드래그 핸들이 노출되고
+/// 드래그로 순서를 바꿀 수 있다(평소엔 탭으로 게시판 이동).
+
+abstract class _$MainReorderMode extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
 
 @ProviderFor(MainSidebarNotifier)
 final mainSidebarProvider = MainSidebarNotifierProvider._();

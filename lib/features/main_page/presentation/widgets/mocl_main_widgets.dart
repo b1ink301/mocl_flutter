@@ -45,12 +45,22 @@ class _BodyList extends ConsumerWidget with MainState, MainEvent {
   Widget build(BuildContext context, WidgetRef ref) {
     final textStyle = titleTextStyleState(ref);
     if (items.isEmpty) return _buildEmptyView(textStyle);
-    return SliverReorderableList(
+
+    final bool reorderMode = reorderModeState(ref);
+    // 정렬 모드일 때만 드래그로 순서 변경. 평소엔 일반 목록(탭=이동).
+    if (reorderMode) {
+      return SliverReorderableList(
+        itemCount: items.length,
+        onReorderItem: (oldIndex, newIndex) =>
+            handleReorder(ref, oldIndex, newIndex),
+        itemBuilder: (context, index) =>
+            _buildListItem(context, items[index], textStyle, index, true),
+      );
+    }
+    return SliverList.builder(
       itemCount: items.length,
-      onReorderItem: (oldIndex, newIndex) =>
-          handleReorder(ref, oldIndex, newIndex),
       itemBuilder: (context, index) =>
-          _buildListItem(context, items[index], textStyle, index),
+          _buildListItem(context, items[index], textStyle, index, false),
     );
   }
 
@@ -65,6 +75,7 @@ class _BodyList extends ConsumerWidget with MainState, MainEvent {
     MainItem item,
     TextStyle? textStyle,
     int index,
+    bool reorderMode,
   ) {
     final primaryColor = Theme.of(context).primaryColor;
     return Material(
@@ -78,11 +89,16 @@ class _BodyList extends ConsumerWidget with MainState, MainEvent {
           ListTile(
             leading: item.icon.isEmpty ? null : _buildIconView(item.icon),
             title: PlainText(item.text, style: textStyle!),
-            trailing: ReorderableDragStartListener(
-              index: index,
-              child: PlainIcon(Icons.drag_handle, color: primaryColor),
-            ),
-            onTap: () => context.push(Routes.list, extra: item),
+            // 정렬 모드에서만 드래그 핸들 노출 + 탭 이동 비활성화.
+            trailing: reorderMode
+                ? ReorderableDragStartListener(
+                    index: index,
+                    child: PlainIcon(Icons.drag_handle, color: primaryColor),
+                  )
+                : null,
+            onTap: reorderMode
+                ? null
+                : () => context.push(Routes.list, extra: item),
             contentPadding: const .fromLTRB(16, 4, 18, 4),
           ),
           const PlainDividerWidget(),
@@ -130,25 +146,39 @@ class _MainAppBar extends ConsumerWidget with MainState, MainEvent {
       titleSpacing: 0,
       floating: true,
       toolbarHeight: 62,
-      actions: [
-        if (showAddButtonState(ref))
-          PlainIconButton(
-            onPressed: () => handleAddButton(ref, context),
-            icon: const PlainIcon(Icons.add),
-          ),
-        if (currentSiteType(ref).supportsLogin)
-          AdaptivePopupMenu(
-            options: [
-              AdaptiveMenuOption(
-                label: '로그인',
-                onTap: () => handleLogin(ref, context),
+      actions: reorderModeState(ref)
+          // 정렬 모드: '완료' 로 빠져나간다.
+          ? [
+              PlainIconButton(
+                onPressed: () => handleToggleReorder(ref),
+                icon: const PlainIcon(Icons.check),
+              ),
+            ]
+          : [
+              if (showAddButtonState(ref))
+                PlainIconButton(
+                  onPressed: () => handleAddButton(ref, context),
+                  icon: const PlainIcon(Icons.add),
+                ),
+              AdaptivePopupMenu(
+                options: [
+                  AdaptiveMenuOption(
+                    label: '항목 정렬',
+                    onTap: () => handleToggleReorder(ref),
+                  ),
+                  if (currentSiteType(ref).supportsLogin)
+                    AdaptiveMenuOption(
+                      label: '로그인',
+                      onTap: () => handleLogin(ref, context),
+                    ),
+                ],
+                icon: PlainIcon(
+                  isCupertino()
+                      ? CupertinoIcons.ellipsis
+                      : Icons.more_vert_rounded,
+                ),
               ),
             ],
-            icon: PlainIcon(
-              isCupertino() ? CupertinoIcons.ellipsis : Icons.more_vert_rounded,
-            ),
-          ),
-      ],
     );
   }
 }
