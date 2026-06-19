@@ -14,6 +14,7 @@ import '../data/datasources/dcinside/dcinside_parser.dart';
 import '../data/datasources/dogdrip/dogdrip_parser.dart';
 import '../data/datasources/instiz/instiz_parser.dart';
 import '../data/datasources/mlbpark/mlbpark_parser.dart';
+import '../data/datasources/nate/nate_parser.dart';
 import '../data/datasources/damoang/damoang_parser.dart';
 import '../data/datasources/geek_news/geek_news_parser.dart';
 import '../data/datasources/inven/inven_parser.dart';
@@ -72,6 +73,12 @@ part 'datasource_provider.g.dart';
 (BaseParser, BaseApi) _mlbparkParser(Ref ref, bool isShowNickImage) {
   final baseApi = ref.watch(mlbparkApiClientProvider);
   return (const MlbparkParser(), baseApi);
+}
+
+@riverpod
+(BaseParser, BaseApi) _nateParser(Ref ref, bool isShowNickImage) {
+  final baseApi = ref.watch(nateApiClientProvider);
+  return (const NateParser(), baseApi);
 }
 
 @riverpod
@@ -148,6 +155,7 @@ part 'datasource_provider.g.dart';
     SiteType.inven => ref.watch(_invenParserProvider(isShowNickImage)),
     SiteType.meeco => ref.watch(_meecoParserProvider(isShowNickImage)),
     SiteType.mlbpark => ref.watch(_mlbparkParserProvider(isShowNickImage)),
+    SiteType.nate => ref.watch(_nateParserProvider(isShowNickImage)),
     SiteType.naverCafe => ref.watch(_naverCafeParserProvider(isShowNickImage)),
     SiteType.ppomppu => ref.watch(_ppomppuParserProvider(isShowNickImage)),
     SiteType.reddit => ref.watch(_redditParserProvider(isShowNickImage)),

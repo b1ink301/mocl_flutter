@@ -38,6 +38,8 @@ extension SortTypeExtension on SortType {
         return '';
       case SiteType.inven:
         return '';
+      case SiteType.nate:
+        return '';
       case SiteType.naverCafe:
         return '';
       case SiteType.ppomppu:

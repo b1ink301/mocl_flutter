@@ -673,6 +673,89 @@ final class _MlbparkParserFamily extends $Family
   String toString() => r'_mlbparkParserProvider';
 }
 
+@ProviderFor(_nateParser)
+final _nateParserProvider = _NateParserFamily._();
+
+final class _NateParserProvider
+    extends
+        $FunctionalProvider<
+          (BaseParser, BaseApi),
+          (BaseParser, BaseApi),
+          (BaseParser, BaseApi)
+        >
+    with $Provider<(BaseParser, BaseApi)> {
+  _NateParserProvider._({
+    required _NateParserFamily super.from,
+    required bool super.argument,
+  }) : super(
+         retry: null,
+         name: r'_nateParserProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$_nateParserHash();
+
+  @override
+  String toString() {
+    return r'_nateParserProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<(BaseParser, BaseApi)> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  (BaseParser, BaseApi) create(Ref ref) {
+    final argument = this.argument as bool;
+    return _nateParser(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue((BaseParser, BaseApi) value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<(BaseParser, BaseApi)>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is _NateParserProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$_nateParserHash() => r'4aa0285ed4b56c6f6e1b7c2b52169b5a298311ca';
+
+final class _NateParserFamily extends $Family
+    with $FunctionalFamilyOverride<(BaseParser, BaseApi), bool> {
+  _NateParserFamily._()
+    : super(
+        retry: null,
+        name: r'_nateParserProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  _NateParserProvider call(bool isShowNickImage) =>
+      _NateParserProvider._(argument: isShowNickImage, from: this);
+
+  @override
+  String toString() => r'_nateParserProvider';
+}
+
 @ProviderFor(_damoangParser)
 final _damoangParserProvider = _DamoangParserFamily._();
 
@@ -1483,7 +1566,7 @@ final class CurrentParserProvider
   }
 }
 
-String _$currentParserHash() => r'0924116f52d1489d7581e1a618158f0618abc148';
+String _$currentParserHash() => r'190621a1c1404d7c9097e4e20a97f1c1d991c4a1';
 
 final class CurrentParserFamily extends $Family
     with $FunctionalFamilyOverride<(BaseParser, BaseApi), SiteType> {

@@ -11,6 +11,7 @@ enum SiteType {
   inven,
   meeco,
   mlbpark,
+  nate,
   naverCafe,
   ppomppu,
   reddit,
@@ -34,6 +35,7 @@ extension SiteTypeExtension on SiteType {
         SiteType.settings => '설정',
         SiteType.meeco => '미코',
         SiteType.mlbpark => 'MLBPARK',
+        SiteType.nate => '네이트판',
         SiteType.naverCafe => '네이버카페',
         SiteType.ppomppu => '뽐뿌',
         SiteType.reddit => '레딧',
@@ -44,7 +46,7 @@ extension SiteTypeExtension on SiteType {
   /// 로그인(계정) 연동을 지원하는 사이트인지. 긱뉴스는 계정이 없고,
   /// settings 는 사이트가 아니므로 제외한다.
   bool get supportsLogin => switch (this) {
-        SiteType.geekNews || SiteType.settings => false,
+        SiteType.geekNews || SiteType.nate || SiteType.settings => false,
         _ => true,
       };
 }

@@ -139,7 +139,9 @@ class ListPagingController extends _$ListPagingController {
   }
 
   bool _isSinglePageBoard(MainItem mainItem) =>
-      mainItem.siteType == SiteType.clien && mainItem.board == 'recommend';
+      (mainItem.siteType == SiteType.clien && mainItem.board == 'recommend') ||
+      // 네이트판은 고정 랭킹 목록이라 페이지네이션이 없다.
+      mainItem.siteType == SiteType.nate;
 
   void refresh() => state.refresh();
 
