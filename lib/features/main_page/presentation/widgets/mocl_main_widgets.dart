@@ -36,7 +36,7 @@ class _MainBody extends ConsumerWidget with MainState, MainEvent {
   }
 }
 
-class _BodyList extends ConsumerWidget with MainState {
+class _BodyList extends ConsumerWidget with MainState, MainEvent {
   final List<MainItem> items;
 
   const _BodyList({super.key, required this.items});
@@ -44,14 +44,14 @@ class _BodyList extends ConsumerWidget with MainState {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textStyle = titleTextStyleState(ref);
-    return items.isEmpty
-        ? _buildEmptyView(textStyle)
-        : SliverList.separated(
-            itemCount: items.length,
-            itemBuilder: (context, index) =>
-                _buildListItem(context, items[index], textStyle),
-            separatorBuilder: (_, _) => const PlainDividerWidget(),
-          );
+    if (items.isEmpty) return _buildEmptyView(textStyle);
+    return SliverReorderableList(
+      itemCount: items.length,
+      onReorderItem: (oldIndex, newIndex) =>
+          handleReorder(ref, oldIndex, newIndex),
+      itemBuilder: (context, index) =>
+          _buildListItem(context, items[index], textStyle, index),
+    );
   }
 
   Widget _buildEmptyView(TextStyle? textStyle) => SliverFillRemaining(
@@ -59,16 +59,37 @@ class _BodyList extends ConsumerWidget with MainState {
     child: Center(child: Text('항목이 없습니다.\n항목을 추가해 주세요!', style: textStyle)),
   );
 
+  // 항목마다 고유 Key 가 필요하다(siteType+board 조합으로 유일).
   Widget _buildListItem(
     BuildContext context,
     MainItem item,
     TextStyle? textStyle,
-  ) => ListTile(
-    leading: item.icon.isEmpty ? null : _buildIconView(item.icon),
-    title: PlainText(item.text, style: textStyle!),
-    onTap: () => context.push(Routes.list, extra: item),
-    contentPadding: const .fromLTRB(16, 4, 8, 4),
-  );
+    int index,
+  ) {
+    final primaryColor = Theme.of(context).primaryColor;
+    return Material(
+      // ReorderableList 항목은 Material 조상을 상속받지 못해 ListTile 이 assert 됨.
+      // 항목마다 투명 Material 을 둬 ListTile/잉크 효과가 동작하게 한다.
+      key: ValueKey('${item.siteType.name}_${item.board}'),
+      type: MaterialType.transparency,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          ListTile(
+            leading: item.icon.isEmpty ? null : _buildIconView(item.icon),
+            title: PlainText(item.text, style: textStyle!),
+            trailing: ReorderableDragStartListener(
+              index: index,
+              child: PlainIcon(Icons.drag_handle, color: primaryColor),
+            ),
+            onTap: () => context.push(Routes.list, extra: item),
+            contentPadding: const .fromLTRB(16, 4, 18, 4),
+          ),
+          const PlainDividerWidget(),
+        ],
+      ),
+    );
+  }
 
   Widget _buildIconView(String url) => CircleAvatar(
     radius: 20,
@@ -115,17 +136,18 @@ class _MainAppBar extends ConsumerWidget with MainState, MainEvent {
             onPressed: () => handleAddButton(ref, context),
             icon: const PlainIcon(Icons.add),
           ),
-        AdaptivePopupMenu(
-          options: [
-            AdaptiveMenuOption(
-              label: '로그인',
-              onTap: () => handleLogin(ref, context),
+        if (currentSiteType(ref).supportsLogin)
+          AdaptivePopupMenu(
+            options: [
+              AdaptiveMenuOption(
+                label: '로그인',
+                onTap: () => handleLogin(ref, context),
+              ),
+            ],
+            icon: PlainIcon(
+              isCupertino() ? CupertinoIcons.ellipsis : Icons.more_vert_rounded,
             ),
-          ],
-          icon: PlainIcon(
-            isCupertino() ? CupertinoIcons.ellipsis : Icons.more_vert_rounded,
           ),
-        ),
       ],
     );
   }

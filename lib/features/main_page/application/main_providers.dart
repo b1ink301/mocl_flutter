@@ -22,6 +22,28 @@ class MainItemsNotifier extends _$MainItemsNotifier {
   }
 
   void refresh() => ref.invalidateSelf();
+
+  /// 메인 항목을 드래그로 재정렬한다. 낙관적으로 화면을 먼저 갱신한 뒤
+  /// orderBy 를 0..n 으로 재부여해 DB 에 저장한다(저장 순서가 곧 표시 순서).
+  Future<void> reorder(int oldIndex, int newIndex) async {
+    final List<MainItem>? current = state.asData?.value;
+    if (current == null || oldIndex == newIndex) return;
+    // onReorderItem 콜백은 제거 후 인덱스를 이미 보정해 넘겨준다(별도 -1 불필요).
+
+    final List<MainItem> list = List<MainItem>.of(current);
+    final MainItem moved = list.removeAt(oldIndex);
+    list.insert(newIndex, moved);
+
+    final List<MainItem> reordered = [
+      for (int i = 0; i < list.length; i++) list[i].copyWith(orderBy: i),
+    ];
+    state = AsyncData(reordered);
+
+    final SiteType siteType = ref.read(currentSiteTypeProvider);
+    await ref.read(setMainListProvider)(
+      SetMainParams(siteType: siteType, list: reordered),
+    );
+  }
 }
 
 @riverpod
