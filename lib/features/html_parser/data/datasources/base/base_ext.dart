@@ -13,6 +13,8 @@ extension SortTypeExtension on SortType {
         return '';
       case SiteType.dcinside:
         return '';
+      case SiteType.dogdrip:
+        return '';
       case SiteType.clien:
         return switch (this) {
           SortType.recent => '&od=T31',

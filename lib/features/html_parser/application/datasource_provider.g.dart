@@ -424,6 +424,89 @@ final class _Cook82ParserFamily extends $Family
   String toString() => r'_cook82ParserProvider';
 }
 
+@ProviderFor(_dogdripParser)
+final _dogdripParserProvider = _DogdripParserFamily._();
+
+final class _DogdripParserProvider
+    extends
+        $FunctionalProvider<
+          (BaseParser, BaseApi),
+          (BaseParser, BaseApi),
+          (BaseParser, BaseApi)
+        >
+    with $Provider<(BaseParser, BaseApi)> {
+  _DogdripParserProvider._({
+    required _DogdripParserFamily super.from,
+    required bool super.argument,
+  }) : super(
+         retry: null,
+         name: r'_dogdripParserProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$_dogdripParserHash();
+
+  @override
+  String toString() {
+    return r'_dogdripParserProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<(BaseParser, BaseApi)> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  (BaseParser, BaseApi) create(Ref ref) {
+    final argument = this.argument as bool;
+    return _dogdripParser(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue((BaseParser, BaseApi) value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<(BaseParser, BaseApi)>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is _DogdripParserProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$_dogdripParserHash() => r'd9dea28a1733a89cdb34885edaa8cece14540ea9';
+
+final class _DogdripParserFamily extends $Family
+    with $FunctionalFamilyOverride<(BaseParser, BaseApi), bool> {
+  _DogdripParserFamily._()
+    : super(
+        retry: null,
+        name: r'_dogdripParserProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  _DogdripParserProvider call(bool isShowNickImage) =>
+      _DogdripParserProvider._(argument: isShowNickImage, from: this);
+
+  @override
+  String toString() => r'_dogdripParserProvider';
+}
+
 @ProviderFor(_damoangParser)
 final _damoangParserProvider = _DamoangParserFamily._();
 
@@ -1234,7 +1317,7 @@ final class CurrentParserProvider
   }
 }
 
-String _$currentParserHash() => r'848a3904300a6f63caa6cb13b1c75287d7843212';
+String _$currentParserHash() => r'fd9b0d6bd15dadc05e57a49e909d53f63fec3c2a';
 
 final class CurrentParserFamily extends $Family
     with $FunctionalFamilyOverride<(BaseParser, BaseApi), SiteType> {

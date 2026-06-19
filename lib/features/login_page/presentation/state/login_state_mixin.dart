@@ -44,6 +44,7 @@ mixin class LoginState {
       SiteType.cook82 => 'https://www.82cook.com/',
       SiteType.damoang => 'https://damoang.net/bbs/login.php?url=/bbs/memo.php',
       SiteType.dcinside => 'https://m.dcinside.com/auth/login',
+      SiteType.dogdrip => 'https://www.dogdrip.net/login',
       SiteType.inven => 'https://member.inven.co.kr/user/scorpio/mlogin',
       SiteType.meeco =>
         'https://meeco.kr/index.php?mid=index&act=dispMemberLoginForm',
