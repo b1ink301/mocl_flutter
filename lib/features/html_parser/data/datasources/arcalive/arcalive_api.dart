@@ -70,15 +70,33 @@ class ArcaliveApi extends BaseApi {
     final Map<String, String> headers = {'Host': host, 'User-Agent': userAgent};
 
     log('[getList] url=$url, headers=$headers');
-    final Response<dynamic> response = await get(url, headers: headers);
+    Response<dynamic>? response;
+    try {
+      response = await get(url, headers: headers);
+    } on DioException catch (e) {
+      // 일부 채널(예: breaking/hotdeal)은 단순 GET 이 Cloudflare 403 을 받는다.
+      log('[getList] dio ${e.response?.statusCode} → 웹뷰 폴백');
+      response = null;
+    }
 
-    return response.statusCode == 200
-        ? parser.list(response, lastId, item.text, isReads)
-        : Left(
-            GetListFailure(
-              message: 'response.statusCode = ${response.statusCode}',
-            ),
-          );
+    if (response?.statusCode == 200) {
+      return parser.list(response!, lastId, item.text, isReads);
+    }
+
+    // Cloudflare 차단(403 등) → 헤드리스 웹뷰로 렌더된 목록 HTML 을 받아 파싱.
+    final String? html = await fetchRenderedHtml(
+      url,
+      readyMarkers: const ['vrow'],
+    );
+    if (html == null) {
+      return Left(GetListFailure(message: 'Cloudflare 챌린지 통과 실패(timeout)'));
+    }
+    final Response<String> rendered = Response<String>(
+      data: html,
+      requestOptions: RequestOptions(path: url),
+      statusCode: 200,
+    );
+    return parser.list(rendered, lastId, item.text, isReads);
   });
 
   @override

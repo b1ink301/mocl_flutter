@@ -127,8 +127,16 @@ class BobaedreamParser extends BaseParser {
     SortType sortType,
     LastId lastId,
   ) {
-    final String separator = url.contains('?') ? '&' : '?';
-    return '$url${separator}page=$page';
+    // 모바일 보배드림은 `?page=N` 을 무시하고 경로 세그먼트로 페이지를 받는다.
+    // 예: `/board/new_writing/freeb/2` (info3 등 쿼리는 그대로 보존).
+    final Uri uri = Uri.parse(url);
+    final List<String> segments = List<String>.from(uri.pathSegments);
+    if (segments.isNotEmpty && int.tryParse(segments.last) != null) {
+      segments[segments.length - 1] = '$page';
+    } else {
+      segments.add('$page');
+    }
+    return uri.replace(pathSegments: segments).toString();
   }
 
   @override

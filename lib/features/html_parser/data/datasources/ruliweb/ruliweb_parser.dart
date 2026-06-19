@@ -147,6 +147,10 @@ class RuliwebParser extends BaseParser {
     final items = <ListItem>[];
 
     for (final element in elementList) {
+      // 인기글(베스트) 미리보기 행은 작성자/시간/조회 컬럼 없이 렌더되는 중복
+      // 행이라(아래 일반 목록에 다시 등장) 스킵해 메타 없는 항목을 거른다.
+      if (element.className.contains('best')) continue;
+
       final anchor = element.querySelector('a.subject_link');
       final tmpUrl = anchor?.attributes['href']?.trim();
       if (anchor == null || tmpUrl == null || tmpUrl.isEmpty) continue;
@@ -161,8 +165,10 @@ class RuliwebParser extends BaseParser {
       // 위치하므로 앵커를 정리하기 전에 먼저 읽는다.
       final String reply = element.qText('span.replycount span.num');
 
-      // 제목 텍스트만 남기고 댓글 수 뱃지/아이콘 제거.
-      anchor.removeAll('span, i');
+      // 제목 텍스트만 남기고 댓글 수 뱃지/아이콘만 제거.
+      // 일부 게시판(정보/모바일)은 제목을 `<span class="deco">` 로 감싸므로
+      // span 전체를 지우면 제목이 사라진다 → 댓글수/아이콘 span 만 선택 제거한다.
+      anchor.removeAll('span.num_reply, span.replycount, i');
       final String title = anchor.text.trim();
 
       final String category = element
