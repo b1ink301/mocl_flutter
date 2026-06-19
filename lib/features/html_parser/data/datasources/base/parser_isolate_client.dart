@@ -17,6 +17,7 @@ import 'package:mocl_flutter/features/html_parser/data/datasources/damoang/damoa
 import 'package:mocl_flutter/features/html_parser/data/datasources/dcinside/dcinside_parser.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/dogdrip/dogdrip_parser.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/geek_news/geek_news_parser.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/instiz/instiz_parser.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/inven/inven_parser.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/meeco/meeco_parser.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/mlbpark/mlbpark_parser.dart';
@@ -42,6 +43,7 @@ final Map<SiteType, ParseListWorkerFn> _listWorkers = {
   SiteType.dcinside: DcinsideParser.parseListInWorker,
   SiteType.dogdrip: DogdripParser.parseListInWorker,
   SiteType.geekNews: GeekNewsParser.parseListInWorker,
+  SiteType.instiz: InstizParser.parseListInWorker,
   SiteType.inven: InvenParser.parseListInWorker,
   SiteType.meeco: MeecoParser.parseListInWorker,
   SiteType.mlbpark: MlbparkParser.parseListInWorker,
