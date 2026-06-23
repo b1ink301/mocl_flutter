@@ -1,6 +1,3 @@
-import 'dart:math';
-
-import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -28,44 +25,6 @@ String listSmallTitle(Ref ref) =>
 @Riverpod(dependencies: [mainItem])
 String listTitle(Ref ref) =>
     ref.watch(mainItemProvider.select((MainItem item) => item.text));
-
-@Riverpod(dependencies: [appbarTextStyle, screenWidth])
-double titleHeight(Ref ref, String text) {
-  final TextStyle style = ref.watch(appbarTextStyleProvider);
-  final double screenWidth = ref.watch(screenWidthProvider);
-  final double availableWidth = screenWidth - 16 - 12;
-
-  return _titleHeightCache.getOrCalculate(text, style, availableWidth);
-}
-
-/// TextPainter layout 결과 캐시.
-/// 스타일이나 화면 너비가 변경되면 자동 무효화됩니다.
-final _titleHeightCache = _TitleHeightCache();
-
-class _TitleHeightCache {
-  final Map<String, double> _cache = {};
-  TextStyle? _lastStyle;
-  double? _lastWidth;
-
-  double getOrCalculate(String text, TextStyle style, double availableWidth) {
-    if (_lastStyle != style || _lastWidth != availableWidth) {
-      _cache.clear();
-      _lastStyle = style;
-      _lastWidth = availableWidth;
-    }
-    return _cache.putIfAbsent(text, () {
-      final textPainter = TextPainter(
-        text: TextSpan(text: text, style: style),
-        maxLines: 3,
-        textDirection: TextDirection.ltr,
-      )..layout(minWidth: 0, maxWidth: availableWidth);
-
-      final double height = max(49.0, textPainter.height) + 27;
-      textPainter.dispose();
-      return height;
-    });
-  }
-}
 
 @Riverpod(dependencies: [mainItem])
 Future<Either<Failure, List<ListItem>>> reqListData(
