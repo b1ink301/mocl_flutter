@@ -1,5 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mocl_flutter/features/google_drive/presentation/providers/google_drive_providers.dart';
+import 'package:mocl_flutter/features/google_drive/application/google_drive_providers.dart';
 
 import '../../application/settings_providers.dart';
 

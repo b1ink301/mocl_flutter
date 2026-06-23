@@ -1,5 +1,5 @@
 import 'package:mocl_flutter/features/google_drive/domain/entities/sync_action.dart';
-import 'package:mocl_flutter/features/google_drive/presentation/providers/google_drive_providers.dart';
+import 'package:mocl_flutter/features/google_drive/application/google_drive_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'auto_sync_provider.g.dart';
