@@ -136,101 +136,6 @@ final class ListTitleProvider
 
 String _$listTitleHash() => r'334015293ab03a204a6f3c31553fea624aaf7120';
 
-@ProviderFor(titleHeight)
-final titleHeightProvider = TitleHeightFamily._();
-
-final class TitleHeightProvider
-    extends $FunctionalProvider<double, double, double>
-    with $Provider<double> {
-  TitleHeightProvider._({
-    required TitleHeightFamily super.from,
-    required String super.argument,
-  }) : super(
-         retry: null,
-         name: r'titleHeightProvider',
-         isAutoDispose: true,
-         dependencies: null,
-         $allTransitiveDependencies: null,
-       );
-
-  static final $allTransitiveDependencies0 = appbarTextStyleProvider;
-  static final $allTransitiveDependencies1 =
-      AppbarTextStyleProvider.$allTransitiveDependencies0;
-  static final $allTransitiveDependencies2 =
-      AppbarTextStyleProvider.$allTransitiveDependencies1;
-  static final $allTransitiveDependencies3 =
-      AppbarTextStyleProvider.$allTransitiveDependencies2;
-  static final $allTransitiveDependencies4 = screenWidthProvider;
-
-  @override
-  String debugGetCreateSourceHash() => _$titleHeightHash();
-
-  @override
-  String toString() {
-    return r'titleHeightProvider'
-        ''
-        '($argument)';
-  }
-
-  @$internal
-  @override
-  $ProviderElement<double> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  double create(Ref ref) {
-    final argument = this.argument as String;
-    return titleHeight(ref, argument);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(double value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<double>(value),
-    );
-  }
-
-  @override
-  bool operator ==(Object other) {
-    return other is TitleHeightProvider && other.argument == argument;
-  }
-
-  @override
-  int get hashCode {
-    return argument.hashCode;
-  }
-}
-
-String _$titleHeightHash() => r'b3ac5f226f086bdf6c69eb2b3e0571faac67a2f3';
-
-final class TitleHeightFamily extends $Family
-    with $FunctionalFamilyOverride<double, String> {
-  TitleHeightFamily._()
-    : super(
-        retry: null,
-        name: r'titleHeightProvider',
-        dependencies: <ProviderOrFamily>[
-          appbarTextStyleProvider,
-          screenWidthProvider,
-        ],
-        $allTransitiveDependencies: <ProviderOrFamily>{
-          TitleHeightProvider.$allTransitiveDependencies0,
-          TitleHeightProvider.$allTransitiveDependencies1,
-          TitleHeightProvider.$allTransitiveDependencies2,
-          TitleHeightProvider.$allTransitiveDependencies3,
-          TitleHeightProvider.$allTransitiveDependencies4,
-        },
-        isAutoDispose: true,
-      );
-
-  TitleHeightProvider call(String text) =>
-      TitleHeightProvider._(argument: text, from: this);
-
-  @override
-  String toString() => r'titleHeightProvider';
-}
-
 @ProviderFor(reqListData)
 final reqListDataProvider = ReqListDataFamily._();
 
@@ -384,7 +289,7 @@ final class ListPagingControllerProvider
 }
 
 String _$listPagingControllerHash() =>
-    r'8d152450840ffe5ef92b749c908bfb1dec106cf3';
+    r'edebb814a11bb60af3ac22d8dd261112e385c3ad';
 
 /// infinite_scroll_pagination 의 PagingController 를 Riverpod 으로 감싼다.
 /// build() 는 mainItem/sortType 이 바뀔 때만 새 컨트롤러를 생성한다.
