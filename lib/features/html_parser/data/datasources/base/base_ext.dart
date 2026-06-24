@@ -44,8 +44,6 @@ extension SortTypeExtension on SortType {
         return '';
       case SiteType.ppomppu:
         return '';
-      case SiteType.settings:
-        return '';
       case SiteType.reddit:
         return switch (this) {
           SortType.recent => 'new',
