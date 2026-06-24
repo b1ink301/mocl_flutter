@@ -45,5 +45,4 @@ const _$SiteTypeEnumMap = {
   SiteType.reddit: 'reddit',
   SiteType.ruliweb: 'ruliweb',
   SiteType.theqoo: 'theqoo',
-  SiteType.settings: 'settings',
 };

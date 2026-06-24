@@ -161,6 +161,5 @@ part 'datasource_provider.g.dart';
     SiteType.reddit => ref.watch(_redditParserProvider(isShowNickImage)),
     SiteType.ruliweb => ref.watch(_ruliwebParserProvider(isShowNickImage)),
     SiteType.theqoo => ref.watch(_theqooParserProvider(isShowNickImage)),
-    SiteType.settings => throw UnimplementedError(),
   };
 }

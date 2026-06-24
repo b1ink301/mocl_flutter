@@ -19,9 +19,7 @@ class DrawerWidget extends ConsumerWidget with MainEvent {
 
     // 설정은 콘텐츠 소스가 아니라 앱 네비게이션이므로 사이트 그리드에서 제외하고
     // 헤더 우측 톱니 아이콘으로 분리한다. (enum 멤버 자체는 배선 때문에 유지)
-    final siteTypes = SiteType.values
-        .where((s) => s != SiteType.settings)
-        .toList(growable: false);
+    final siteTypes = SiteType.values.toList(growable: false);
 
     return Drawer(
       backgroundColor: scaffoldBackgroundColor,
@@ -38,7 +36,7 @@ class DrawerWidget extends ConsumerWidget with MainEvent {
               padding: EdgeInsets.zero,
               gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
                 crossAxisCount: 3,
-                mainAxisExtent: 56,
+                mainAxisExtent: 54,
               ),
               itemCount: siteTypes.length,
               itemBuilder: (context, index) {

@@ -4,7 +4,6 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/presentation/widgets/message_widget.dart';
 
 import 'settings_view.dart';
@@ -68,10 +67,7 @@ class _SettingsAppBar extends StatelessWidget {
       pinned: true,
       centerTitle: false,
       toolbarHeight: 64,
-      title: MessageWidget(
-        message: SiteType.settings.title,
-        textStyle: textStyle,
-      ),
+      title: MessageWidget(message: '설정', textStyle: textStyle),
     );
   }
 }

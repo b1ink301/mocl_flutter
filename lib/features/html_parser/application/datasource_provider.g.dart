@@ -1566,7 +1566,7 @@ final class CurrentParserProvider
   }
 }
 
-String _$currentParserHash() => r'190621a1c1404d7c9097e4e20a97f1c1d991c4a1';
+String _$currentParserHash() => r'd6c91a9a7a0c00a3b6b4411edc5d48d4cd46c3f9';
 
 final class CurrentParserFamily extends $Family
     with $FunctionalFamilyOverride<(BaseParser, BaseApi), SiteType> {
