@@ -11,6 +11,14 @@
 -keep class com.google.firebase.** { *; }
 -dontwarn com.google.firebase.**
 
+# Google Sign-In v7 (Credential Manager / Google Identity) 관련 규칙
+-keep class com.google.android.gms.auth.** { *; }
+-keep class com.google.android.gms.common.** { *; }
+-keep class com.google.android.libraries.identity.googleid.** { *; }
+-keep class androidx.credentials.** { *; }
+-dontwarn com.google.android.gms.**
+-dontwarn androidx.credentials.**
+
 # Pigeon 관련 규칙 (Firebase 등에서 사용)
 -keep class dev.flutter.pigeon.** { *; }
 
