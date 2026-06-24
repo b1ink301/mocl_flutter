@@ -1,7 +1,7 @@
 name: mocl_flutter
 description: "Mocl Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.4.1+378
+version: 1.4.1+379
 
 environment:
   sdk: ^3.12.0
@@ -198,4 +198,4 @@ flutter:
     - assets/theqoo/
 
 
-#flutter pub upgrade --major-versions     # 메이저 업그레이드
+#fvm flutter pub upgrade --major-versions     # 메이저 업그레이드
