@@ -14,7 +14,12 @@ class GoogleDriveRepositoryImpl implements GoogleDriveRepository {
   Future<bool> backupDatabase() => remoteDataSource.uploadDb();
 
   @override
-  Future<bool> restoreDatabase() => remoteDataSource.downloadDb();
+  Future<String?> downloadDatabaseToTemp() =>
+      remoteDataSource.downloadDbToTemp();
+
+  @override
+  Future<bool> applyDownloadedDatabase(String tmpPath) =>
+      remoteDataSource.applyDownloadedDb(tmpPath);
 
   @override
   Future<void> signIn() => remoteDataSource.signIn();

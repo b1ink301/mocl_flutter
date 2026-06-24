@@ -5,9 +5,23 @@ import 'package:mocl_flutter/features/database/domain/entities/main_item_data.da
 import 'package:sembast/sembast.dart';
 
 class LocalDatabase {
-  final Database _db;
+  Database _db;
+  final Future<Database> Function() _opener;
 
-  const LocalDatabase({required Database database}) : _db = database;
+  LocalDatabase({
+    required Database database,
+    required Future<Database> Function() opener,
+  }) : _db = database,
+       // ignore: prefer_initializing_formals
+       _opener = opener;
+
+  /// 현재 메모리에 적재된 DB 연결을 닫는다.
+  /// Drive 복원 시 파일 교체(rename) 전에 호출해 파일 핸들 충돌을 막는다.
+  Future<void> close() async => await _db.close();
+
+  /// 교체된 DB 파일을 다시 연다. Sembast 는 open 시점에 파일 전체를
+  /// 메모리로 읽어오므로, 파일을 덮어쓴 뒤 close→reopen 해야 새 데이터가 반영된다.
+  Future<void> reopen() async => _db = await _opener();
 
   Future<List<MainItemData>> getMainData(SiteType siteType) async {
     final StoreRef<int, Map<String, Object?>> store = intMapStoreFactory.store(

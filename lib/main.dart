@@ -18,7 +18,10 @@ import 'flavors.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge, overlays: [.top, .bottom]);
+  await SystemChrome.setEnabledSystemUIMode(
+    SystemUiMode.edgeToEdge,
+    overlays: [.top, .bottom],
+  );
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
@@ -36,7 +39,7 @@ Future<void> main() async {
       overrides: [
         sharedPreferencesProvider.overrideWithValue(sharedPrefs),
         localDatabaseProvider.overrideWithValue(
-          LocalDatabase(database: database),
+          LocalDatabase(database: database, opener: openAppDatabase),
         ),
       ],
       child: const AppWidget(),
