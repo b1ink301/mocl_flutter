@@ -133,14 +133,14 @@ abstract class BaseApi with BaseAction {
     String baseUrl,
     Future<Either<Failure, T>> Function() action,
   ) async {
-    if (kIsWeb) return action();
+    if (kIsWeb) return await action();
 
     final InterceptorsWrapper interceptor = await _buildInterceptorCookie(
       baseUrl,
     );
     try {
       _dio.interceptors.add(interceptor);
-      return action();
+      return await action();
     } on DioException catch (e) {
       log('DioException: $e');
       final String message = e.message ?? 'Unknown Error';

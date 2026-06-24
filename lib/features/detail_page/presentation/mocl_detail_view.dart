@@ -335,7 +335,7 @@ class _CommentItem extends StatelessWidget {
           ]
         : null;
 
-    final isEmptyBody = comment.bodyHtml.isEmpty;
+    final isEmptyBody = comment.bodyHtml.trim().isEmpty;
 
     return Padding(
       padding: EdgeInsets.only(left: leftPadding, top: 12, bottom: 12),
