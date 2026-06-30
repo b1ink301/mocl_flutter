@@ -3,55 +3,97 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/core/presentation/widgets/app_version_widget.dart';
 
 import '../../../../core/presentation/widgets/plain_text.dart';
 import '../state/main_event_mixin.dart';
 import '../state/main_state_mixin.dart';
+
+/// 드로어 사이트 목록을 카테고리로 묶는다. 각 그룹은 라벨과 사이트 목록을
+/// 가지며, 정의된 순서대로 표시된다. (전체 18개 사이트를 모두 포함)
+typedef _SiteGroup = ({String label, List<SiteType> sites});
+
+const List<_SiteGroup> _siteGroups = [
+  (
+    label: '커뮤니티',
+    sites: [
+      SiteType.clien,
+      SiteType.damoang,
+      SiteType.arcalive,
+      SiteType.cook82,
+      SiteType.ppomppu,
+      SiteType.instiz,
+      SiteType.theqoo,
+      SiteType.meeco,
+      SiteType.nate,
+      SiteType.naverCafe,
+    ],
+  ),
+  (
+    label: '취미 · 자동차 · 게임',
+    sites: [
+      SiteType.bobaedream,
+      SiteType.inven,
+      SiteType.ruliweb,
+      SiteType.dogdrip,
+    ],
+  ),
+  (
+    label: '뉴스 · IT · 스포츠',
+    sites: [SiteType.geekNews, SiteType.dcinside, SiteType.mlbpark],
+  ),
+  (label: '해외', sites: [SiteType.reddit]),
+];
 
 class DrawerWidget extends ConsumerWidget with MainEvent {
   const DrawerWidget({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final scaffoldBackgroundColor = Theme.of(context).scaffoldBackgroundColor;
-    final focusColor = Theme.of(context).focusColor;
-
-    // 설정은 콘텐츠 소스가 아니라 앱 네비게이션이므로 사이트 그리드에서 제외하고
-    // 헤더 우측 톱니 아이콘으로 분리한다. (enum 멤버 자체는 배선 때문에 유지)
-    final siteTypes = SiteType.values.toList(growable: false);
+    final theme = Theme.of(context);
+    final scaffoldBackgroundColor = theme.scaffoldBackgroundColor;
+    final focusColor = theme.focusColor;
+    final bottomPadding = MediaQuery.of(context).padding.bottom;
 
     return Drawer(
       backgroundColor: scaffoldBackgroundColor,
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _DrawerHeader(
+            onBookmarksTap: () {
+              context.pop();
+              context.push(Routes.bookmarks);
+            },
             onSettingsTap: () {
               context.pop();
               context.push(Routes.settings);
             },
           ),
           Expanded(
-            child: GridView.builder(
-              padding: EdgeInsets.zero,
-              gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                crossAxisCount: 3,
-                mainAxisExtent: 54,
+            child: SingleChildScrollView(
+              padding: EdgeInsets.fromLTRB(18, 4, 18, 18 + bottomPadding),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  for (final group in _siteGroups) ...[
+                    _SectionHeader(group.label),
+                    Wrap(
+                      spacing: 10,
+                      runSpacing: 10,
+                      children: [
+                        for (final siteType in group.sites)
+                          _DrawerSiteTag(
+                            siteType: siteType,
+                            focusColor: focusColor,
+                            onTap: () => _handleSiteTap(context, ref, siteType),
+                          ),
+                      ],
+                    ),
+                  ],
+                ],
               ),
-              itemCount: siteTypes.length,
-              itemBuilder: (context, index) {
-                final siteType = siteTypes[index];
-                return _DrawerSiteItem(
-                  siteType: siteType,
-                  focusColor: focusColor,
-                  // 왼쪽 열 셀에만 오른쪽 세로 라인을 그려 두 열 사이를 구분.
-                  isLeftColumn: index.isEven,
-                  onTap: () => _handleSiteTap(context, ref, siteType),
-                );
-              },
             ),
           ),
-          const SafeArea(child: AppVersionWidget()),
         ],
       ),
     );
@@ -63,32 +105,92 @@ class DrawerWidget extends ConsumerWidget with MainEvent {
   }
 }
 
-class _DrawerHeader extends StatelessWidget {
-  const _DrawerHeader({required this.onSettingsTap});
+class _SectionHeader extends StatelessWidget {
+  const _SectionHeader(this.label);
 
-  final VoidCallback onSettingsTap;
+  final String label;
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final color = theme.textTheme.bodySmall?.color;
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(4, 18, 4, 10),
+      child: PlainText(
+        label,
+        style: TextStyle(
+          fontSize: 11.5,
+          fontWeight: FontWeight.w700,
+          letterSpacing: 0.5,
+          color: color,
+        ),
+      ),
+    );
+  }
+}
+
+class _DrawerHeader extends ConsumerWidget with MainState {
+  const _DrawerHeader({
+    required this.onBookmarksTap,
+    required this.onSettingsTap,
+  });
+
+  final VoidCallback onBookmarksTap;
+  final VoidCallback onSettingsTap;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
     final primaryColor = Theme.of(context).primaryColor;
+    final top = MediaQuery.of(context).padding.top;
+    final versionAsync = appVersionState(ref);
+
     return Container(
       color: primaryColor,
-      height: 210,
-      child: Stack(
+      padding: EdgeInsets.fromLTRB(20, 16 + top, 8, 16),
+      child: Row(
         children: [
-          Center(
+          SizedBox(
+            width: 52,
+            height: 52,
             child: ClipOval(
-              child: Image.asset('assets/icon.png', width: 76, height: 76),
+              child: Image.asset('assets/icon.png', fit: BoxFit.cover),
             ),
           ),
-          Positioned(
-            bottom: 5,
-            right: 5,
-            child: IconButton(
-              tooltip: '설정',
-              icon: const Icon(Icons.settings_outlined, color: Colors.white),
-              onPressed: onSettingsTap,
+          const SizedBox(width: 14),
+          Expanded(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                const PlainText(
+                  'Mocl',
+                  style: TextStyle(
+                    color: Colors.white,
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    letterSpacing: 0.3,
+                  ),
+                ),
+                const SizedBox(height: 3),
+                versionAsync.maybeWhen(
+                  data: (version) => PlainText(
+                    version,
+                    style: const TextStyle(color: Colors.white70, fontSize: 12),
+                  ),
+                  orElse: () => const SizedBox.shrink(),
+                ),
+              ],
             ),
+          ),
+          IconButton(
+            tooltip: '스크랩 보기',
+            icon: const Icon(Icons.bookmark_border, color: Colors.white),
+            onPressed: onBookmarksTap,
+          ),
+          IconButton(
+            tooltip: '설정',
+            icon: const Icon(Icons.settings_outlined, color: Colors.white),
+            onPressed: onSettingsTap,
           ),
         ],
       ),
@@ -96,58 +198,61 @@ class _DrawerHeader extends StatelessWidget {
   }
 }
 
-class _DrawerSiteItem extends ConsumerWidget with MainState {
-  const _DrawerSiteItem({
+class _DrawerSiteTag extends ConsumerWidget with MainState {
+  const _DrawerSiteTag({
     required this.siteType,
-    required this.onTap,
     required this.focusColor,
-    required this.isLeftColumn,
+    required this.onTap,
   });
 
   final SiteType siteType;
   final Color focusColor;
-  final bool isLeftColumn;
   final VoidCallback onTap;
 
-  // 가로선 좌우 인셋, 라인 두께.
-  static const double _hInset = 10;
-  static const double _lineThickness = 1;
+  // 흰색 대신 헤더(#595D66) 와 같은 쿨 슬레이트 계열을 태그 배경으로 사용해
+  // 드로어 전체 팔레트를 통일한다. (라이트/다크 각각)
+  static const Color _tagBgLight = Color(0xFFE2E4E8);
+  static const Color _tagBorderLight = Color(0xFFD2D5DA);
+  static const Color _tagBgDark = Color(0xFF3C4046);
+  static const Color _tagBorderDark = Color(0xFF4A4E55);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final isSelected = isSiteType(ref, siteType);
     final theme = Theme.of(context);
+    final isDark = theme.brightness == Brightness.dark;
+    final isSelected = isSiteType(ref, siteType);
     final baseStyle = smallTextStyleState(ref);
-    final dividerColor = theme.dividerColor;
 
-    // Border 는 끝까지 그려져 인셋을 줄 수 없으므로 라인을 직접 배치한다.
-    return Stack(
-      fit: StackFit.expand,
-      children: [
-        InkWell(
-          onTap: onTap,
-          child: Center(
-            child: PlainText(
-              textAlign: .center,
-              siteType.title,
-              style: baseStyle.copyWith(
-                color: isSelected ? focusColor : baseStyle.color,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
+    final Color bg = isSelected
+        ? focusColor
+        : (isDark ? _tagBgDark : _tagBgLight);
+    final Color borderColor = isSelected
+        ? focusColor
+        : (isDark ? _tagBorderDark : _tagBorderLight);
+    final Color textColor = isSelected
+        ? Colors.white
+        : (baseStyle.color ?? theme.textTheme.bodyMedium!.color!);
+
+    return Material(
+      color: bg,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(20),
+        side: BorderSide(color: borderColor),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 9),
+          child: PlainText(
+            siteType.title,
+            style: baseStyle.copyWith(
+              color: textColor,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
             ),
           ),
         ),
-        // 하단 가로 라인 (좌우 패딩)
-        Positioned(
-          left: _hInset,
-          right: _hInset,
-          bottom: 0,
-          height: _lineThickness,
-          child: ColoredBox(color: dividerColor),
-        ),
-      ],
+      ),
     );
   }
 }

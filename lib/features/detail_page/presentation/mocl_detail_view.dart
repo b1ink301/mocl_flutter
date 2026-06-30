@@ -6,6 +6,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
+import 'package:go_router/go_router.dart';
+import 'package:html/parser.dart' as html_parser;
+import 'package:mocl_flutter/config/routes/mocl_app_pages.dart' show Routes;
+import 'package:mocl_flutter/features/detail_page/presentation/photo_view_dialog.dart'
+    show GalleryArgs;
 import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
@@ -16,6 +21,7 @@ import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/core/util/utilities.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/state/detail_event_mixin.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/state/detail_state_mixin.dart';
+import 'package:mocl_flutter/features/detail_page/presentation/widgets/bookmark_icon_button.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/widgets/detail_scope.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -26,15 +32,63 @@ import '../../../core/presentation/widgets/plain_text.dart';
 
 const _kHeaderHeight = 48.0;
 
+/// 프로토콜 상대 경로(`//cdn.../x.webp`)는 스킴이 없어 뷰어가 로드하지 못하므로
+/// https 로 정규화한다.
+String _normalizeImageUrl(String url) =>
+    url.startsWith('//') ? 'https:$url' : url;
+
+/// [html] 본문 안의 모든 `<img>` src 를 등장 순서대로 수집해 정규화한다.
+List<String> _extractImageUrls(String html) {
+  try {
+    return html_parser
+        .parse(html)
+        .querySelectorAll('img')
+        .map((e) => e.attributes['src'] ?? '')
+        .where((s) => s.isNotEmpty)
+        .map(_normalizeImageUrl)
+        .toList(growable: false);
+  } catch (_) {
+    return const [];
+  }
+}
+
+/// 탭한 이미지를 기준으로 같은 본문의 모든 이미지를 좌우 스와이프할 수 있는
+/// 갤러리 뷰어를 띄운다. 추출 목록에서 탭한 이미지를 찾지 못하면 해당 한 장만
+/// 보여준다.
+void _openGallery(
+  BuildContext context,
+  String html,
+  String tappedUrl,
+  String referer,
+) {
+  final String normalized = _normalizeImageUrl(tappedUrl);
+  final List<String> urls = _extractImageUrls(html);
+  final int found = urls.indexOf(normalized);
+  final List<String> list = found >= 0 ? urls : [normalized];
+  final int index = found >= 0 ? found : 0;
+
+  context.push(
+    Routes.viewPhotoDlgFull,
+    extra: GalleryArgs(urls: list, index: index, referer: referer),
+  );
+}
+
 class DetailView extends ConsumerWidget with DetailState, DetailEvent {
   const DetailView({super.key});
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final smallTextStyle = DetailStyleScope.of(context).$1.smallTextStyle;
+    // 헤더는 앱바 바로 아래 첫 슬리버이므로, 헤더가 상단에 닿아 '핀' 되는
+    // 스크롤 오프셋 = 앱바의 스크롤 높이다. 이 값을 헤더에 넘겨 그림자 토글
+    // 기준으로 쓴다(floating 앱바의 밀림/오버레이와 무관하게 일정).
+    final double pinThreshold = appbarHeight(ref, titleState(ref));
     return detailState(ref).maybeMap(
-      data: (state) =>
-          _DetailView(detail: state.value, onRefresh: () => handleRefresh(ref)),
+      data: (state) => _DetailView(
+        detail: state.value,
+        onRefresh: () => handleRefresh(ref),
+        pinThreshold: pinThreshold,
+      ),
       error: (state) => SliverFillRemaining(
         hasScrollBody: false,
         child: Padding(
@@ -73,8 +127,13 @@ class _LoadingView extends StatelessWidget {
 class _DetailView extends StatelessWidget with DetailEvent {
   final Details detail;
   final VoidCallback onRefresh;
+  final double pinThreshold;
 
-  const _DetailView({required this.detail, required this.onRefresh});
+  const _DetailView({
+    required this.detail,
+    required this.onRefresh,
+    required this.pinThreshold,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -87,52 +146,59 @@ class _DetailView extends StatelessWidget with DetailEvent {
 
     final bottom = MediaQuery.of(context).padding.bottom;
 
-    return SliverPadding(
-      padding: const EdgeInsets.only(left: 16, right: 8),
-      sliver: MultiSliver(
-        children: [
-          SliverPersistentHeader(
-            pinned: true,
-            delegate: _HeaderSectionDelegate(
-              detail: detail,
-              bodyMedium: bodySmall,
-              backgroundColor: scaffoldBackgroundColor,
-            ),
+    // 헤더는 풀폭(그림자가 좌우 가장자리까지 이어지도록)이라 좌우 패딩 밖에
+    // 두고, 나머지 본문/댓글만 하나의 SliverPadding 으로 묶는다.
+    return MultiSliver(
+      children: [
+        SliverPersistentHeader(
+          pinned: true,
+          delegate: _HeaderSectionDelegate(
+            detail: detail,
+            bodyMedium: bodySmall,
+            backgroundColor: scaffoldBackgroundColor,
+            pinThreshold: pinThreshold,
           ),
-          const _SpaceWidget(),
-          // 본문은 RepaintBoundary로 감싸 스크롤 시 불필요한 페인팅 방지
-          RepaintBoundary(
-            child: _Body(
-              detail: detail,
-              hexColor: hexColor,
-              bodyMedium: bodyMedium,
-              onTapUrl: (url) => url.openUrl(context),
-            ),
+        ),
+        SliverPadding(
+          padding: const EdgeInsets.only(left: 16, right: 8),
+          sliver: MultiSliver(
+            children: [
+              const _SpaceWidget(),
+              // 본문은 RepaintBoundary로 감싸 스크롤 시 불필요한 페인팅 방지
+              RepaintBoundary(
+                child: _Body(
+                  detail: detail,
+                  hexColor: hexColor,
+                  bodyMedium: bodyMedium,
+                  onTapUrl: (url) => url.openUrl(context),
+                ),
+              ),
+              const _SpaceWidget(),
+              if (detail.comments.isNotEmpty) ...[
+                const PlainDividerWidget(indent: 0, endIndent: 0),
+                _CommentHeader(
+                  commentCount: detail.comments.length,
+                  totalCount: totalComments,
+                  bodyMedium: bodySmall,
+                ),
+                const PlainDividerWidget(indent: 0, endIndent: 0),
+                _CommentList(
+                  comments: detail.comments,
+                  bodySmall: bodySmall,
+                  bodyMedium: bodyMedium,
+                  hexColor: hexColor,
+                  openUrl: (String url) => url.openUrl(context),
+                ),
+              ],
+              const PlainDividerWidget(indent: 0, endIndent: 0),
+              _RefreshButton(onRefresh: onRefresh, bodyMedium: bodyMedium),
+              const PlainDividerWidget(indent: 0, endIndent: 0),
+              if (bottom > 0)
+                SliverPadding(padding: EdgeInsets.only(bottom: bottom)),
+            ],
           ),
-          const _SpaceWidget(),
-          if (detail.comments.isNotEmpty) ...[
-            const PlainDividerWidget(indent: 0, endIndent: 0),
-            _CommentHeader(
-              commentCount: detail.comments.length,
-              totalCount: totalComments,
-              bodyMedium: bodySmall,
-            ),
-            const PlainDividerWidget(indent: 0, endIndent: 0),
-            _CommentList(
-              comments: detail.comments,
-              bodySmall: bodySmall,
-              bodyMedium: bodyMedium,
-              hexColor: hexColor,
-              openUrl: (String url) => url.openUrl(context),
-            ),
-          ],
-          const PlainDividerWidget(indent: 0, endIndent: 0),
-          _RefreshButton(onRefresh: onRefresh, bodyMedium: bodyMedium),
-          const PlainDividerWidget(indent: 0, endIndent: 0),
-          if (bottom > 0)
-            SliverPadding(padding: EdgeInsets.only(bottom: bottom)),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }
@@ -185,10 +251,14 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
   final TextStyle? bodyMedium;
   final Color backgroundColor;
 
+  /// 헤더가 상단에 '핀' 되는 스크롤 오프셋(= 위 앱바의 스크롤 높이).
+  final double pinThreshold;
+
   const _HeaderSectionDelegate({
     required this.detail,
     required this.bodyMedium,
     required this.backgroundColor,
+    required this.pinThreshold,
   });
 
   List<Widget>? _buildLikeView(BuildContext context, TextStyle bodyMedium) =>
@@ -208,26 +278,70 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
     double shrinkOffset,
     bool overlapsContent,
   ) {
+    // minExtent==maxExtent 라 shrinkOffset 은 항상 0 이고, overlapsContent 는
+    // 스크롤 방향에 따라 한 박자 늦게 갱신돼 신뢰할 수 없다. 그래서 스크롤
+    // 위치(ScrollPosition)를 직접 구독해 매 프레임 다시 빌드한다.
+    final ScrollPosition? position = Scrollable.maybeOf(context)?.position;
+    if (position == null) {
+      return _buildHeaderContent(context, overlapsContent);
+    }
+    return ListenableBuilder(
+      listenable: position,
+      builder: (context, _) =>
+          _buildHeaderContent(context, _isPinned(position)),
+    );
+  }
+
+  /// 헤더가 (스크롤로 사라지는 앱바 아래) 최상단에 도달해 '핀' 되었는지 판단.
+  ///
+  /// 헤더의 화면 위치로 비교하면 floating 앱바가 역방향 스크롤 때 헤더를 밀어
+  /// 핀이 풀리기 전에 그림자가 사라진다. 그래서 화면 위치 대신, 헤더가 상단에
+  /// 닿는 스크롤 오프셋(= 앱바의 스크롤 높이 [pinThreshold])과 현재 스크롤
+  /// 오프셋을 직접 비교한다. 이 값은 플로팅 앱바의 밀림/오버레이와 무관하게
+  /// 일정하다.
+  bool _isPinned(ScrollPosition position) =>
+      position.hasPixels && position.pixels >= pinThreshold - 0.5;
+
+  /// 헤더 본체. [isScrolled] 가 true 면 elevation 으로 하단 그림자를 준다.
+  Widget _buildHeaderContent(BuildContext context, bool isScrolled) {
     final likeView = _buildLikeView(context, bodyMedium!);
     final nickImage = detail.userInfo.nickImage;
 
-    return Column(
-      children: [
-        Container(
-          height: _kHeaderHeight,
-          alignment: .centerLeft,
-          color: backgroundColor,
-          child: Row(
-            children: [
-              if (nickImage.isNotEmpty)
-                NickImageWidget(url: detail.userInfo.nickImage),
-              Expanded(child: PlainText(detail.info, style: bodyMedium!)),
-              ...?likeView,
-            ],
-          ),
+    // Material(배경/그림자)은 풀폭으로 두고, 내부 콘텐츠에만 본문과 동일한
+    // 좌우 패딩을 줘 정렬을 맞춘다. 이렇게 해야 그림자가 좌우 가장자리까지
+    // 이어지고 하단 그림자에 좌우 마진이 생기지 않는다.
+    return Material(
+      color: backgroundColor,
+      // Material 은 elevation 변경을 자동으로 부드럽게 애니메이션한다.
+      elevation: isScrolled ? 4 : 0,
+      // M3 surfaceTint 로 색이 변하지 않도록 끄고 순수 그림자만 사용.
+      surfaceTintColor: Colors.transparent,
+      child: Padding(
+        padding: const EdgeInsets.only(left: 16, right: 8),
+        child: Column(
+          children: [
+            Container(
+              height: _kHeaderHeight,
+              alignment: .centerLeft,
+              child: Row(
+                children: [
+                  if (nickImage.isNotEmpty)
+                    NickImageWidget(url: detail.userInfo.nickImage),
+                  Expanded(child: PlainText(detail.info, style: bodyMedium!)),
+                  ...?likeView,
+                  BookmarkIconButton(color: bodyMedium!.color!),
+                ],
+              ),
+            ),
+            // 스크롤 전에는 구분선, 스크롤 후에는 그림자가 경계를 표현하므로
+            // 구분선을 숨겨(높이 1 유지) 이중선을 피한다.
+            if (isScrolled)
+              const SizedBox(height: 1)
+            else
+              const PlainDividerWidget(indent: 0, endIndent: 0),
+          ],
         ),
-        const PlainDividerWidget(indent: 0, endIndent: 0),
-      ],
+      ),
     );
   }
 
@@ -235,7 +349,8 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
   bool shouldRebuild(covariant _HeaderSectionDelegate oldDelegate) =>
       oldDelegate.detail.info != detail.info ||
       oldDelegate.bodyMedium != bodyMedium ||
-      oldDelegate.backgroundColor != backgroundColor;
+      oldDelegate.backgroundColor != backgroundColor ||
+      oldDelegate.pinThreshold != pinThreshold;
 
   @override
   double get maxExtent => _kHeaderHeight + 1;
@@ -441,7 +556,10 @@ class _HtmlWidget extends ConsumerWidget with DetailState {
         }
         return null;
       },
-      onTapImage: (data) => openUrl(data.sources.first.url),
+      onTapImage: (data) {
+        if (data.sources.isEmpty) return;
+        _openGallery(context, html, data.sources.first.url, referer);
+      },
     );
 
     if (kIsWeb || Platform.isMacOS) {

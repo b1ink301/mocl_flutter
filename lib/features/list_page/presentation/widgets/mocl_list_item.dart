@@ -30,8 +30,8 @@ class MoclListItem extends StatelessWidget with ListEvent {
         padding: const EdgeInsets.only(
           left: 16,
           right: 10,
-          top: 12,
-          bottom: 12,
+          top: 14,
+          bottom: 14,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,

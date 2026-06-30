@@ -43,7 +43,7 @@ class _ScaffoldWidget extends ConsumerWidget with MainState, MainEvent {
             drawer: const DrawerWidget(),
             onDrawerChanged: (isOpen) =>
                 isOpen ? sidebarOpen(ref) : sidebarClose(ref),
-            drawerEdgeDragWidth: screenWidth(ref),
+            drawerEdgeDragWidth: screenWidth(ref) / 2,
             drawerEnableOpenDragGesture: true,
             body: const MainView(),
           ),

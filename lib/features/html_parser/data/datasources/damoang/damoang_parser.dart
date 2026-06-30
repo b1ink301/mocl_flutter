@@ -332,8 +332,7 @@ class DamoangParser extends BaseParser {
       //      transformedPostContent 에는 본문 텍스트만 들어가고,
       //      에디터로 업로드된 첨부(videos/downloads)와 link1/link2 가
       //      누락되므로 본문 뒤에 명시적으로 append.
-      final String attachmentsHtml =
-          _buildAttachmentsHtml(post, postNodeData);
+      final String attachmentsHtml = _buildAttachmentsHtml(post, postNodeData);
       if (attachmentsHtml.isNotEmpty) {
         bodyHtml = '$bodyHtml$attachmentsHtml';
       }
@@ -376,10 +375,8 @@ class DamoangParser extends BaseParser {
             final commentsObjMap = commentsNodeData[commentsObjIndex];
             if (commentsObjMap is Map) {
               final totalIndex = commentsObjMap['total'];
-              if (totalIndex is int &&
-                  totalIndex < commentsNodeData.length) {
-                totalComments =
-                    commentsNodeData[totalIndex] as int? ?? 0;
+              if (totalIndex is int && totalIndex < commentsNodeData.length) {
+                totalComments = commentsNodeData[totalIndex] as int? ?? 0;
               }
               final itemsIndex = commentsObjMap['items'];
               if (itemsIndex is int &&
@@ -390,29 +387,25 @@ class DamoangParser extends BaseParser {
                 int commentIdx = 0;
                 for (final cIndex in commentIndices) {
                   if (cIndex is! int) continue;
-                  final comment =
-                      _resolveObject(commentsNodeData, cIndex);
+                  final comment = _resolveObject(commentsNodeData, cIndex);
 
-                  final String cAuthor =
-                      (comment['author'] ?? '').toString();
-                  final String cAuthorImage =
-                      (comment['author_image'] ?? '').toString();
-                  final String cContent =
-                      (comment['content'] ?? '').toString();
+                  final String cAuthor = (comment['author'] ?? '').toString();
+                  final String cAuthorImage = (comment['author_image'] ?? '')
+                      .toString();
+                  final String cContent = (comment['content'] ?? '').toString();
                   final int cLikes = (comment['likes'] is int)
                       ? comment['likes'] as int
                       : 0;
                   final int cDepth = (comment['depth'] is int)
                       ? comment['depth'] as int
                       : 0;
-                  final String cCreatedAt =
-                      (comment['created_at'] ?? '').toString();
+                  final String cCreatedAt = (comment['created_at'] ?? '')
+                      .toString();
 
                   String cParsedTime = '';
                   try {
                     final dateTime = DateTime.parse(cCreatedAt);
-                    cParsedTime =
-                        timeago.format(dateTime, locale: 'ko');
+                    cParsedTime = timeago.format(dateTime, locale: 'ko');
                   } catch (e) {
                     cParsedTime = cCreatedAt;
                   }
@@ -424,8 +417,7 @@ class DamoangParser extends BaseParser {
                       id: commentIdx++,
                       isReply: cDepth > 0,
                       bodyHtml: cContent,
-                      likeCount:
-                          cLikes > 0 ? cLikes.toString() : '',
+                      likeCount: cLikes > 0 ? cLikes.toString() : '',
                       mediaHtml: '',
                       isVideo: false,
                       time: cCreatedAt,
@@ -433,8 +425,7 @@ class DamoangParser extends BaseParser {
                       userInfo: UserInfo(
                         id: cAuthor,
                         nickName: cAuthor,
-                        nickImage:
-                            isShowNickImage ? cAuthorImage : '',
+                        nickImage: isShowNickImage ? cAuthorImage : '',
                       ),
                       authorId: '',
                     ),
@@ -635,7 +626,6 @@ class DamoangParser extends BaseParser {
   // Date parsing
   // ──────────────────────────────────────────────────────────────────
 
-
   // ──────────────────────────────────────────────────────────────────
   // URL builders
   // ──────────────────────────────────────────────────────────────────
@@ -658,12 +648,16 @@ class DamoangParser extends BaseParser {
   }
 
   static final RegExp _boardName = RegExp(r'^(.*)\s([A-Z])$');
-  static final RegExp _groupPair = RegExp(r'"([a-z][a-z0-9_]{1,20})","([^"]{1,16}당)"');
+  static final RegExp _groupPair = RegExp(
+    r'"([a-z][a-z0-9_]{1,20})","([^"]{1,16}당)"',
+  );
 
   static Either<Failure, List<MainItem>> _parseMain(dynamic data) {
+    MoclLogger.log('_parseMain data=${data.runtimeType}');
     String homeHtml = '';
     String groupsJson = '';
     if (data is List) {
+      MoclLogger.log('_parseMain #2 data=${data.length}');
       homeHtml = data.isNotEmpty ? (data[0] as String? ?? '') : '';
       groupsJson = data.length > 1 ? (data[1] as String? ?? '') : '';
     } else if (data is String) {
@@ -677,26 +671,47 @@ class DamoangParser extends BaseParser {
     // 일반 게시판(홈 사이드바)
     if (homeHtml.isNotEmpty) {
       final document = parse(homeHtml);
-      for (final a in document.querySelectorAll('a[href]')) {
-        final href = a.attributes['href']?.trim() ?? '';
-        final slug = RegExp(r'^/([a-z0-9_]+)$').firstMatch(href)?.group(1);
-        if (slug == null || !seen.add(slug)) continue;
-        final raw = a.text.trim();
-        final match = _boardName.firstMatch(raw);
-        if (match == null) continue;
-        final name = match.group(1)!.trim();
-        if (name.isEmpty || name.length > 20) continue;
-        items.add(
-          MainItem(
-            siteType: SiteType.damoang,
-            board: slug,
-            text: name,
-            url: 'https://damoang.net/$slug',
-            orderBy: orderBy++,
-            category: '게시판',
-          ),
-        );
+      for (final nav in document.querySelectorAll('nav')) {
+        for (final a in nav.querySelectorAll('a[href]')) {
+          MoclLogger.log('_parseMain a=${a.outerHtml}');
+          final href = a.attributes['href']?.trim() ?? '';
+          final slug = RegExp(r'^/([a-z0-9_]+)$').firstMatch(href)?.group(1);
+          if (slug == null || !seen.add(slug)) continue;
+          final name = a.text;
+
+          items.add(
+            MainItem(
+              siteType: SiteType.damoang,
+              board: slug,
+              text: name,
+              url: 'https://damoang.net/$slug',
+              orderBy: orderBy++,
+              category: '게시판',
+            ),
+          );
+        }
       }
+
+      // for (final a in document.querySelectorAll('a[href]')) {
+      //   final href = a.attributes['href']?.trim() ?? '';
+      //   final slug = RegExp(r'^/([a-z0-9_]+)$').firstMatch(href)?.group(1);
+      //   if (slug == null || !seen.add(slug)) continue;
+      //   final raw = a.text.trim();
+      //   final match = _boardName.firstMatch(raw);
+      //   if (match == null) continue;
+      //   final name = match.group(1)!.trim();
+      //   if (name.isEmpty || name.length > 20) continue;
+      //   items.add(
+      //     MainItem(
+      //       siteType: SiteType.damoang,
+      //       board: slug,
+      //       text: name,
+      //       url: 'https://damoang.net/$slug',
+      //       orderBy: orderBy++,
+      //       category: '게시판',
+      //     ),
+      //   );
+      // }
     }
 
     // 소모임(/groups/__data.json)
@@ -741,5 +756,4 @@ class DamoangParser extends BaseParser {
     LastId lastId,
   ) =>
       '$url/__data.json?page=$page&sfl=wr_subject&sop=and&stx=$keyword&x-sveltekit-invalidated=101';
-
 }

@@ -1,7 +1,7 @@
 name: mocl_flutter
 description: "Mocl Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.4.1+379
+version: 1.4.1+380
 
 environment:
   sdk: ^3.12.0
@@ -36,7 +36,7 @@ dependencies:
   # Remote API
   #  internet_connection_checker_plus: ^2.4.2
   # Http Client
-  dio: ^5.9.2
+  dio: ^5.10.0
   http: ^1.6.0
 
   # cookie
@@ -94,11 +94,11 @@ dependencies:
   #  flutter_isolate: ^2.0.4
 
   # share
-  share_plus: ^13.1.0
+  share_plus: ^13.2.0
   #  share_plus_platform_interface: ^5.0.2
 
   # package info
-  package_info_plus: ^10.1.0
+  package_info_plus: ^10.2.0
 
   # time format
   timeago: ^3.7.1
@@ -142,8 +142,8 @@ dependencies:
   #  rearch: ^1.16.0
 
   # nosql
-  sembast: ^3.8.9
-  sembast_web: ^2.4.4+1
+  sembast: ^3.8.9+1
+  sembast_web: ^2.4.5+1
 
 #  cupertino_sidebar: ^1.0.1
 

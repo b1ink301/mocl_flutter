@@ -15,6 +15,7 @@ class AppWidget extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textStyles = ref.watch(appTextStylesFontSizeProvider);
+    final themeMode = ref.watch(themeModeProvider);
 
     useEffect(() {
       // 위젯이 처음 붙을 때 실행
@@ -28,7 +29,7 @@ class AppWidget extends HookConsumerWidget {
     }, [textStyles]);
 
     return MaterialApp.router(
-      themeMode: ThemeMode.system,
+      themeMode: themeMode,
       theme: MoclTheme.lightTheme,
       darkTheme: MoclTheme.darkTheme,
       localizationsDelegates: AppLocalizations.localizationsDelegates,

@@ -213,3 +213,85 @@ final class InitFontSizeProvider
 }
 
 String _$initFontSizeHash() => r'088adcfd83eb0530da68b956bee9fe809962cd88';
+
+@ProviderFor(getThemeMode)
+final getThemeModeProvider = GetThemeModeProvider._();
+
+final class GetThemeModeProvider
+    extends $FunctionalProvider<GetThemeMode, GetThemeMode, GetThemeMode>
+    with $Provider<GetThemeMode> {
+  GetThemeModeProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'getThemeModeProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$getThemeModeHash();
+
+  @$internal
+  @override
+  $ProviderElement<GetThemeMode> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  GetThemeMode create(Ref ref) {
+    return getThemeMode(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(GetThemeMode value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<GetThemeMode>(value),
+    );
+  }
+}
+
+String _$getThemeModeHash() => r'597894ff3ae9c30837ff9677f287ba1702edee03';
+
+@ProviderFor(setThemeMode)
+final setThemeModeProvider = SetThemeModeProvider._();
+
+final class SetThemeModeProvider
+    extends $FunctionalProvider<SetThemeMode, SetThemeMode, SetThemeMode>
+    with $Provider<SetThemeMode> {
+  SetThemeModeProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'setThemeModeProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$setThemeModeHash();
+
+  @$internal
+  @override
+  $ProviderElement<SetThemeMode> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  SetThemeMode create(Ref ref) {
+    return setThemeMode(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SetThemeMode value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SetThemeMode>(value),
+    );
+  }
+}
+
+String _$setThemeModeHash() => r'cef4b89a9fcff6ffa5c5c8f739565f898015e7bf';

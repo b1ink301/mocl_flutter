@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -9,8 +10,10 @@ import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/util/mocl_logger.dart';
+import 'package:mocl_flutter/features/database/domain/entities/mute_rule.dart';
 import 'package:mocl_flutter/features/list_page/application/use_case_provider.dart';
 import 'package:mocl_flutter/features/list_page/domain/usecases/get_list.dart';
+import 'package:mocl_flutter/features/mute/application/mute_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'list_providers.g.dart';
@@ -53,6 +56,22 @@ class ListPagingController extends _$ListPagingController {
     final MainItem mainItem = ref.watch(mainItemProvider);
     final SortType sortType = ref.watch(sortTypeProvider);
 
+    // 뮤트 규칙은 전역. 비동기 로딩(로딩→데이터)을 watch 하면 콜드 스타트의
+    // 첫 fetch 도중 컨트롤러가 재생성되어 첫 페이지가 영영 '로딩 중'에 박힌다.
+    // 따라서 컨트롤러 수명주기는 뮤트 로딩과 분리하고, 규칙은 fetchPage 에서
+    // future 로 정착된 값을 읽어 적용한다(아래 appliedMutes 에 기록).
+    // 규칙이 실제로 바뀐 경우(이미 적용한 규칙과 달라진 경우)에만 기존
+    // 컨트롤러를 refresh 한다 — 재생성하지 않으므로 첫 fetch 유실이 없다.
+    List<MuteRule>? appliedMutes;
+    ref.listen<AsyncValue<List<MuteRule>>>(muteRulesProvider, (prev, next) {
+      final List<MuteRule>? nextRules = next.asData?.value;
+      if (appliedMutes != null &&
+          nextRules != null &&
+          !listEquals(appliedMutes, nextRules)) {
+        state.refresh();
+      }
+    });
+
     final int initialPage = _initialPage();
     final bool singlePageBoard = _isSinglePageBoard(mainItem);
     late final PagingController<int, ListItem> controller;
@@ -78,12 +97,16 @@ class ListPagingController extends _$ListPagingController {
             ? LastId(intId: lastItem.id, stringId: lastItem.url)
             : const LastId();
 
+        // 정착된 뮤트 규칙을 사용(첫 fetch 도 로딩 완료 후 필터 적용).
+        final List<MuteRule> mutes = await ref.read(muteRulesProvider.future);
+        appliedMutes = mutes;
+
         final result = await ref.read(
           reqListDataProvider(mainItem, sortType, pageKey, lastId).future,
         );
         return result.fold(
           (failure) => throw _PagingFailure(failure.message),
-          (items) => items,
+          (items) => _applyMute(items, mutes),
         );
       },
     );
@@ -202,6 +225,22 @@ class SortTypeNotifier extends _$SortTypeNotifier {
   SortType build() => SortType.recent;
 
   void changeSortType(SortType sortType) => state = sortType;
+}
+
+/// 뮤트 규칙에 걸리는 항목을 제거한다(제목 키워드 / 작성자 닉네임).
+List<ListItem> _applyMute(List<ListItem> items, List<MuteRule> mutes) {
+  if (mutes.isEmpty) return items;
+  return items.where((item) {
+    for (final MuteRule m in mutes) {
+      final bool hit = switch (m.type) {
+        MuteType.keyword => item.title.contains(m.pattern),
+        MuteType.user =>
+          item.userInfo.nickName == m.pattern || item.info.contains(m.pattern),
+      };
+      if (hit) return false;
+    }
+    return true;
+  }).toList();
 }
 
 class _PagingFailure implements Exception {
