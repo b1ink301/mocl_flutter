@@ -12,7 +12,7 @@ class AppVersionWidget extends ConsumerWidget {
     return versionAsync.maybeWhen(
       data: (version) =>
           Padding(
-            padding: const EdgeInsets.all(4.0),
+            padding: const EdgeInsets.only(bottom:  4),
             child: Text(version, textAlign: TextAlign.center, style: bodySmall),
           ),
       orElse: () => const SizedBox.shrink(),

@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart' show ThemeMode;
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -33,7 +34,21 @@ class SettingsRepositoryImpl implements SettingsRepository {
   void setShowNickImage(bool showNickImage) =>
       _prefs.setBool(_extraShowNickImage, showNickImage);
 
+  @override
+  ThemeMode getThemeMode() {
+    final String? name = _prefs.getString(_extraThemeMode);
+    return ThemeMode.values.firstWhere(
+      (e) => e.name == name,
+      orElse: () => ThemeMode.system,
+    );
+  }
+
+  @override
+  void setThemeMode(ThemeMode mode) =>
+      _prefs.setString(_extraThemeMode, mode.name);
+
   static final String _extraSiteType = 'site_type';
   static final String _extraFontSize = 'font_size';
   static final String _extraShowNickImage = 'show_nick_image';
+  static final String _extraThemeMode = 'theme_mode';
 }

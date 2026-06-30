@@ -8,6 +8,8 @@ abstract class Routes {
   static const list = '/list';
   static const detail = '/detail';
   static const settings = '/settings';
+  static const bookmarks = '/bookmarks';
+  static const mute = '/mute';
   static const login = '/login';
   static const viewPhotoDlg = 'viewPhotoDlg';
   static const viewPhotoDlgFull = '$detail/$viewPhotoDlg';

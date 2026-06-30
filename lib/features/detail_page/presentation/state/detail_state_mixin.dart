@@ -1,5 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/bookmark/application/bookmark_providers.dart';
 
 import '../../../../config/mocl_text_styles.dart';
 import '../../../../core/application/app_provider.dart';
@@ -26,4 +29,14 @@ mixin class DetailState {
 
   double appbarHeight(WidgetRef ref, String title) =>
       ref.watch(detailAppbarHeightProvider(title));
+
+  /// 현재 상세 게시물(ProviderScope 로 주입된 listItemProvider).
+  ListItem listItemState(WidgetRef ref) => ref.watch(listItemProvider);
+
+  SiteType currentSiteTypeState(WidgetRef ref) =>
+      ref.watch(currentSiteTypeProvider);
+
+  /// 현재 게시물의 스크랩(북마크) 여부. 북마크 버튼이 사용한다.
+  bool isBookmarkedState(WidgetRef ref, SiteType siteType, int id) =>
+      ref.watch(bookmarkButtonProvider(siteType, id)).asData?.value ?? false;
 }

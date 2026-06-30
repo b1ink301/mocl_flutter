@@ -3,9 +3,11 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../domain/usecases/get_font_size.dart';
 import '../domain/usecases/get_site_type.dart';
+import '../domain/usecases/get_theme_mode.dart';
 import '../domain/usecases/init_font_size.dart';
 import '../domain/usecases/set_font_size.dart';
 import '../domain/usecases/set_site_type.dart';
+import '../domain/usecases/set_theme_mode.dart';
 
 part 'use_case_provider.g.dart';
 
@@ -28,3 +30,11 @@ GetFontSize getFontSize(Ref ref) =>
 @riverpod
 InitFontSize initFontSize(Ref ref) =>
     InitFontSize(settingsRepository: ref.watch(settingsRepositoryProvider));
+
+@riverpod
+GetThemeMode getThemeMode(Ref ref) =>
+    GetThemeMode(settingsRepository: ref.watch(settingsRepositoryProvider));
+
+@riverpod
+SetThemeMode setThemeMode(Ref ref) =>
+    SetThemeMode(settingsRepository: ref.watch(settingsRepositoryProvider));

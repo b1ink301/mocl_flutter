@@ -24,7 +24,7 @@ class MoclColors {
 /// Flutter의 Text 위젯이 시스템 폰트 설정을 자동으로 반영하므로 기준값만 정의합니다.
 class _AppFontSizes {
   static const double title = 15.6;
-  static const double small = 14.0;
+  static const double small = 13.2;
   static const double badge = 11.0;
 }
 

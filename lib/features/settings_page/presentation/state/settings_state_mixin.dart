@@ -1,4 +1,7 @@
+import 'package:flutter/material.dart' show ThemeMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mocl_flutter/config/mocl_text_styles.dart';
+import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/features/google_drive/application/google_drive_providers.dart';
 
 import '../../application/datasource_provider.dart';
@@ -12,6 +15,15 @@ mixin class SettingsState {
       ref.watch(sizeCacheDirProvider);
 
   bool showNickImageState(WidgetRef ref) => ref.watch(showNickImageProvider);
+
+  ThemeMode themeModeState(WidgetRef ref) => ref.watch(themeModeProvider);
+
+  double fontSizeDeltaState(WidgetRef ref) => ref.watch(fontSizeDeltaProvider);
+
+  /// 폰트 크기 델타가 반영된 앱 텍스트 스타일. 설정 화면 텍스트도 이 스타일을
+  /// 사용해 글자 크기 변경에 함께 반응하도록 한다.
+  AppTextStyles appTextStylesState(WidgetRef ref) =>
+      ref.watch(appTextStylesFontSizeProvider);
 
   SyncStatus syncStatusState(WidgetRef ref) =>
       ref.watch(googleDriveSyncProvider);

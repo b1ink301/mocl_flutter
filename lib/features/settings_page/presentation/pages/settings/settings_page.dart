@@ -3,9 +3,11 @@ import 'dart:io';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mocl_flutter/core/presentation/widgets/message_widget.dart';
 
+import '../../../../../core/application/app_provider.dart';
+import '../../../../../core/presentation/widgets/plain_text.dart';
 import 'settings_view.dart';
 
 class SettingsPage extends StatelessWidget {
@@ -53,21 +55,25 @@ class SettingsPage extends StatelessWidget {
   }
 }
 
-class _SettingsAppBar extends StatelessWidget {
+class _SettingsAppBar extends ConsumerWidget {
   const _SettingsAppBar();
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final appBarTheme = theme.appBarTheme;
-    final textStyle = theme.textTheme.labelMedium;
+    final titleStyle = ref.watch(appbarTextStyleProvider);
+
     return SliverAppBar(
       backgroundColor: appBarTheme.backgroundColor,
-      titleSpacing: 0,
+      automaticallyImplyLeading: Platform.isMacOS,
+      scrolledUnderElevation: 0,
+      titleSpacing: Platform.isMacOS ? 0 : NavigationToolbar.kMiddleSpacing,
+      floating: true,
+      toolbarHeight: 62,
       pinned: true,
-      centerTitle: false,
-      toolbarHeight: 64,
-      title: MessageWidget(message: '설정', textStyle: textStyle),
+      centerTitle: true,
+      title: PlainText('설정', style: titleStyle),
     );
   }
 }

@@ -278,4 +278,18 @@ class TheQooParser extends BaseParser {
     return '$url${separator}page=$page';
   }
 
+  // Rhymix 표준 검색: 게시판 URL 에 제목 검색 파라미터를 붙인다. 결과 페이지는
+  // 일반 목록과 동일한 레이아웃이라 [list] 파서가 그대로 파싱한다.
+  @override
+  String urlBySearchList(
+    String url,
+    String board,
+    int page,
+    String keyword,
+    LastId lastId,
+  ) {
+    final separator = url.contains('?') ? '&' : '?';
+    return '$url${separator}_filter=search'
+        '&search_target=title&search_keyword=$keyword&page=$page';
+  }
 }

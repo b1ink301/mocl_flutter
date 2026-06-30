@@ -1,7 +1,9 @@
 import 'dart:async';
 
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/database/domain/entities/bookmark_data.dart';
 import 'package:mocl_flutter/features/database/domain/entities/main_item_data.dart';
+import 'package:mocl_flutter/features/database/domain/entities/mute_rule.dart';
 import 'package:sembast/sembast.dart';
 
 class LocalDatabase {
@@ -101,6 +103,79 @@ class LocalDatabase {
       '${siteType.name}_read',
     );
     return store.add(_db, id);
+  }
+
+  // ===== 북마크(스크랩) — 전역 `bookmarks` 스토어 =====
+
+  StoreRef<int, Map<String, Object?>> get _bookmarkStore =>
+      intMapStoreFactory.store('bookmarks');
+
+  Finder _bookmarkFinder(SiteType siteType, int id) => Finder(
+    filter: Filter.and([
+      Filter.equals('siteType', siteType.name),
+      Filter.equals('id', id),
+    ]),
+  );
+
+  Future<void> setBookmark(BookmarkData data) async {
+    final existing = await _bookmarkStore.find(
+      _db,
+      finder: _bookmarkFinder(data.siteType, data.id),
+    );
+    if (existing.isEmpty) {
+      await _bookmarkStore.add(_db, data.toJson());
+    }
+  }
+
+  Future<void> removeBookmark(SiteType siteType, int id) async {
+    await _bookmarkStore.delete(_db, finder: _bookmarkFinder(siteType, id));
+  }
+
+  Future<bool> isBookmarked(SiteType siteType, int id) async {
+    final found = await _bookmarkStore.find(
+      _db,
+      finder: _bookmarkFinder(siteType, id),
+    );
+    return found.isNotEmpty;
+  }
+
+  Future<List<BookmarkData>> getBookmarks() async {
+    final records = await _bookmarkStore.find(
+      _db,
+      finder: Finder(sortOrders: [SortOrder('savedAt', false)]),
+    );
+    return records.map((r) => BookmarkData.fromJson(r.value)).toList();
+  }
+
+  // ===== 뮤트(키워드/작성자 차단) — 전역 `mutes` 스토어 =====
+
+  StoreRef<int, Map<String, Object?>> get _muteStore =>
+      intMapStoreFactory.store('mutes');
+
+  Finder _muteFinder(MuteRule rule) => Finder(
+    filter: Filter.and([
+      Filter.equals('pattern', rule.pattern),
+      Filter.equals('type', rule.type.name),
+    ]),
+  );
+
+  Future<void> addMute(MuteRule rule) async {
+    final existing = await _muteStore.find(_db, finder: _muteFinder(rule));
+    if (existing.isEmpty) {
+      await _muteStore.add(_db, rule.toJson());
+    }
+  }
+
+  Future<void> removeMute(MuteRule rule) async {
+    await _muteStore.delete(_db, finder: _muteFinder(rule));
+  }
+
+  Future<List<MuteRule>> getMutes() async {
+    final records = await _muteStore.find(
+      _db,
+      finder: Finder(sortOrders: [SortOrder('createdAt', false)]),
+    );
+    return records.map((r) => MuteRule.fromJson(r.value)).toList();
   }
 
   Future<void> dispose() async => await _db.close();
