@@ -66,13 +66,12 @@ class _SettingsAppBar extends ConsumerWidget {
 
     return SliverAppBar(
       backgroundColor: appBarTheme.backgroundColor,
-      automaticallyImplyLeading: Platform.isMacOS,
+      // automaticallyImplyLeading: Platform.isMacOS,
       scrolledUnderElevation: 0,
-      titleSpacing: Platform.isMacOS ? 0 : NavigationToolbar.kMiddleSpacing,
+      titleSpacing: 0,
       floating: true,
-      toolbarHeight: 62,
+      toolbarHeight: kToolbarHeight,
       pinned: true,
-      centerTitle: true,
       title: PlainText('설정', style: titleStyle),
     );
   }

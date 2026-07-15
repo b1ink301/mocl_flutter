@@ -7,6 +7,15 @@ import 'use_case_provider.dart';
 
 part 'add_list_dlg_providers.g.dart';
 
+/// 게시판 선택 다이얼로그의 검색어. 다이얼로그가 닫히면 자동으로 초기화된다.
+@riverpod
+class AddListSearchQuery extends _$AddListSearchQuery {
+  @override
+  String build() => '';
+
+  void update(String query) => state = query;
+}
+
 @riverpod
 class AddListDlgNotifier extends _$AddListDlgNotifier {
   @override
@@ -28,10 +37,14 @@ class AddListDlgNotifier extends _$AddListDlgNotifier {
     );
   }
 
-  void onChanged(bool isChecked, int index) {
-    if (state.value != null) {
-      state.value![index] = state.value![index].copyWith(isChecked: isChecked);
-    }
+  /// 검색으로 목록이 필터링되면 화면상의 인덱스와 전체 목록의 인덱스가
+  /// 어긋나므로, 항목 자체로 위치를 찾아 갱신한다.
+  void onChanged(bool isChecked, MainItem item) {
+    final list = state.value;
+    if (list == null) return;
+    final index = list.indexWhere((e) => e.mainItem == item);
+    if (index < 0) return;
+    list[index] = list[index].copyWith(isChecked: isChecked);
   }
 
   List<MainItem> selectedItems() => state.value == null
