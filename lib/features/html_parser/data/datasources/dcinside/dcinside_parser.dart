@@ -220,7 +220,7 @@ class DcinsideParser extends BaseParser {
       final bool hasImage = lnktb.querySelector('div.thum-img') != null;
 
       final String parsedTime = formatTimeago(time);
-      final String info = BaseParser.parserInfo(false, nickName, parsedTime, hit);
+      final String info = BaseParser.parserInfo(parsedTime, hit);
 
       items.add(
         ListItem(
@@ -305,7 +305,7 @@ class DcinsideParser extends BaseParser {
     final bodyHtml = bodyEl?.innerHtml ?? '';
 
     final parsedTime = formatTimeago(time);
-    final info = BaseParser.parserInfo(false, nickName, parsedTime, viewCount);
+    final info = BaseParser.parserInfo(parsedTime, viewCount);
 
     final comments = <CommentItem>[];
     for (final li in document.querySelectorAll('li.comment, li.comment-add')) {
@@ -318,7 +318,7 @@ class DcinsideParser extends BaseParser {
       final cTime = li.qText('span.date');
       final int cId = int.tryParse(li.attributes['no'] ?? '') ?? comments.length;
       final cParsedTime = formatTimeago(cTime);
-      final cInfo = cNick.isNotEmpty ? '$cNickㆍ$cParsedTime' : cParsedTime;
+      final cInfo = cParsedTime;
 
       comments.add(
         CommentItem(

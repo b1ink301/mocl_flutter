@@ -97,7 +97,7 @@ class GeekNewsParser extends BaseParser {
             ? int.parse(depthMatch.group(1)!)
             : 0;
 
-        final String cInfo = '$cAuthorㆍ$cTime';
+        final String cInfo = cTime;
 
         comments.add(
           CommentItem(
@@ -115,7 +115,7 @@ class GeekNewsParser extends BaseParser {
         );
       }
 
-      final String info = '$authorㆍ$timeTextㆍ${points}P';
+      final String info = '$timeTextㆍ${points}P';
 
       final detail = Details(
         title: title,
@@ -245,7 +245,7 @@ class GeekNewsParser extends BaseParser {
         }
 
         final String url = '$baseUrl/topic?id=$id';
-        final String info = '$authorㆍ$timeTextㆍ${points}P';
+        final String info = '$timeTextㆍ${points}P';
 
         items.add(
           ListItem(

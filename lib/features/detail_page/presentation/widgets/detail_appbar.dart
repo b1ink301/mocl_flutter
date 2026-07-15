@@ -23,7 +23,7 @@ class DetailAppBar extends ConsumerWidget with DetailState, DetailEvent {
 
     final titleStyle = DetailStyleScope.of(
       context,
-    ).$1.titleTextStyle.copyWith(color: Colors.white);
+    ).$1.titleTextStyle.copyWith(fontWeight: FontWeight.w800);
     final theme = Theme.of(context);
     final smallTitleStyle = theme.textTheme.labelSmall!;
     final focusColor = theme.focusColor;

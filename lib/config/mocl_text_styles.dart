@@ -1,34 +1,56 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/material.dart';
 
-/// 앱 내에서 사용되는 시맨틱 컬러 정의
+/// 앱 내에서 사용되는 시맨틱 컬러 정의 — "Paper" 디자인 시스템.
+///
+/// 웜 뉴트럴(종이) 배경 위에 단일 강조색(코랄)을 쓰는 읽기 중심 팔레트.
 class MoclColors {
-  // Light Theme Colors
-  static const Color title = Color(0xFF111111);
-  static const Color readTitle = Color(0xFFAAAAAA);
-  static const Color small = Color(0xFF888888);
-  static const Color readSmall = Color(0xFFAAAAAA);
-  static const Color badge = Color(0xFF888888);
-  static const Color readBadge = Color(0xFFAAAAAA);
+  // ── Paper 공용 토큰 (Light) ──
+  static const Color bgLight = Color(0xFFFBFAF9); // 배경(종이)
+  static const Color surfaceLight = Color(0xFFFFFFFF); // 카드/표면
+  static const Color accentLight = Color(0xFFE8552D); // 강조(코랄)
+  static const Color accentWeakLight = Color(0xFFFCEBE5); // 강조 약(칩 배경)
+  static const Color inkLight = Color(0xFF181A1F); // 본문 잉크
+  static const Color subLight = Color(0xFF8B8F98); // 보조 텍스트
+  static const Color faintLight = Color(0xFFB7BBC2); // 읽음/비활성
+  static const Color lineLight = Color(0xFFEDEAE5); // 구분선
 
-  // Dark Theme Colors
-  static const Color darkTitle = Color(0xFFEEEEEE);
-  static const Color darkReadTitle = Color(0xFF888888);
-  static const Color darkSmall = Color(0xFFAAAAAA);
-  static const Color darkReadSmall = Color(0xFF888888);
-  static const Color darkBadge = Color(0xFFAAAAAA);
-  static const Color darkReadBadge = Color(0xFF888888);
+  // ── Paper 공용 토큰 (Dark) ──
+  static const Color bgDark = Color(0xFF121316);
+  static const Color surfaceDark = Color(0xFF1B1D22);
+  static const Color accentDark = Color(0xFFFF7A57);
+  static const Color accentWeakDark = Color(0xFF2A211D);
+  static const Color inkDark = Color(0xFFECECEE);
+  static const Color subDark = Color(0xFF8E929C);
+  static const Color faintDark = Color(0xFF5C606A);
+  static const Color lineDark = Color(0xFF26282E);
+
+  // Light Theme Colors (시맨틱)
+  static const Color title = inkLight;
+  static const Color readTitle = faintLight;
+  static const Color small = subLight;
+  static const Color readSmall = faintLight;
+  static const Color badge = accentLight;
+  static const Color readBadge = faintLight;
+
+  // Dark Theme Colors (시맨틱)
+  static const Color darkTitle = inkDark;
+  static const Color darkReadTitle = faintDark;
+  static const Color darkSmall = subDark;
+  static const Color darkReadSmall = faintDark;
+  static const Color darkBadge = accentDark;
+  static const Color darkReadBadge = faintDark;
 }
 
 /// 기본 폰트 사이즈 정의
 /// Flutter의 Text 위젯이 시스템 폰트 설정을 자동으로 반영하므로 기준값만 정의합니다.
 class _AppFontSizes {
-  static const double title = 15.6;
-  static const double small = 13.2;
+  static const double title = 16.0;
+  static const double small = 12.5;
   static const double badge = 11.0;
 }
 
-class AppTextStyles extends ThemeExtension<AppTextStyles> with EquatableMixin {
+class AppTextStyles extends ThemeExtension<AppTextStyles> with Equatable {
   final TextStyle titleTextStyle;
   final TextStyle readTitleTextStyle;
   final TextStyle smallTextStyle;

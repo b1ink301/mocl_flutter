@@ -129,7 +129,7 @@ class MlbparkParser extends BaseParser {
       final String hit = row.qText('span.hit');
       final String reply = row.qText('span.reply, span.cnt');
 
-      final String info = BaseParser.parserInfo(false, nickName, time, hit);
+      final String info = BaseParser.parserInfo(time, hit);
 
       items.add(
         ListItem(
@@ -198,7 +198,7 @@ class MlbparkParser extends BaseParser {
         final int cId =
             int.tryParse((c.id).replaceAll(RegExp(r'[^0-9]'), '')) ??
             comments.length;
-        final cInfo = cNick.isNotEmpty ? '$cNickㆍ$cTime' : cTime;
+        final cInfo = cTime;
 
         comments.add(
           CommentItem(
@@ -217,7 +217,7 @@ class MlbparkParser extends BaseParser {
       }
     }
 
-    final info = BaseParser.parserInfo(false, nickName, time, viewCount);
+    final info = BaseParser.parserInfo(time, viewCount);
 
     final detail = Details(
       title: title,

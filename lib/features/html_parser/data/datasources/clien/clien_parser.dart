@@ -133,12 +133,7 @@ class ClienParser extends BaseParser {
     } catch (e) {
       parsedTime = time;
     }
-    final info = BaseParser.parserInfo(
-      nickImage.isNotEmpty,
-      nickName,
-      parsedTime,
-      viewCount,
-    );
+    final info = BaseParser.parserInfo(parsedTime, viewCount);
 
     final comments =
         container
@@ -184,9 +179,7 @@ class ClienParser extends BaseParser {
                   .map((item) => item.innerHtml.trim())
                   .join();
               final parsedTime = formatTimeago(time);
-              final info = nickName.isNotEmpty
-                  ? '$nickNameㆍ$parsedTime'
-                  : parsedTime;
+              final info = parsedTime;
 
               return CommentItem(
                 id: index++,
@@ -330,12 +323,7 @@ class ClienParser extends BaseParser {
           element.querySelector('div.list_title > span.fa-picture-o') != null;
 
       final parsedTime = formatTimeago(time);
-      final info = BaseParser.parserInfo(
-        nickImage.isNotEmpty,
-        nickName,
-        parsedTime,
-        hit,
-      );
+      final info = BaseParser.parserInfo(parsedTime, hit);
 
       items.add(
         ListItem(

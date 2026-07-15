@@ -188,7 +188,7 @@ class RuliwebParser extends BaseParser {
       final bool hasImage = element.querySelector('i.icon-picture') != null;
 
       final String parsedTime = formatTimeago(time);
-      final String info = BaseParser.parserInfo(false, nickName, parsedTime, hit);
+      final String info = BaseParser.parserInfo(parsedTime, hit);
 
       items.add(
         ListItem(
@@ -238,7 +238,7 @@ class RuliwebParser extends BaseParser {
     final bodyHtml = bodyEl?.innerHtml ?? '';
 
     final parsedTime = formatTimeago(time);
-    final info = BaseParser.parserInfo(false, nickName, parsedTime, viewCount);
+    final info = BaseParser.parserInfo(parsedTime, viewCount);
 
     final commentEls = document.querySelectorAll('tr.comment_element');
     final comments = <CommentItem>[];
@@ -265,7 +265,7 @@ class RuliwebParser extends BaseParser {
       index++;
 
       final cParsedTime = formatTimeago(cTime);
-      final cInfo = cNick.isNotEmpty ? '$cNickㆍ$cParsedTime' : cParsedTime;
+      final cInfo = cParsedTime;
 
       comments.add(
         CommentItem(

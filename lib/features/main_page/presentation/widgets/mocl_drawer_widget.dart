@@ -140,42 +140,51 @@ class _DrawerHeader extends ConsumerWidget with MainState {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final primaryColor = Theme.of(context).primaryColor;
+    final theme = Theme.of(context);
     final top = MediaQuery.of(context).padding.top;
     final versionAsync = appVersionState(ref);
+    final Color inkColor = theme.textTheme.bodyMedium!.color!;
+    final Color subColor = theme.textTheme.bodySmall!.color!;
 
+    // 헤더는 드로어 본문과 같은 종이 배경을 그대로 쓰고(별도 색 없음),
+    // 하단 헤어라인으로만 경계를 준다. 강조색은 선택된 사이트 칩에만.
     return Container(
-      color: primaryColor,
-      padding: EdgeInsets.fromLTRB(20, 16 + top, 8, 16),
+      padding: EdgeInsets.fromLTRB(20, 14 + top, 8, 14),
+      decoration: BoxDecoration(
+        border: Border(bottom: BorderSide(color: theme.dividerColor)),
+      ),
       child: Row(
         children: [
-          SizedBox(
-            width: 52,
-            height: 52,
-            child: ClipOval(
-              child: Image.asset('assets/icon.png', fit: BoxFit.cover),
+          Container(
+            width: 46,
+            height: 46,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(13),
+              border: Border.all(color: theme.dividerColor),
             ),
+            clipBehavior: Clip.antiAlias,
+            child: Image.asset('assets/icon.png', fit: BoxFit.cover),
           ),
-          const SizedBox(width: 14),
+          const SizedBox(width: 13),
           Expanded(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const PlainText(
+                PlainText(
                   'Mocl',
                   style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 16,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.3,
+                    color: inkColor,
+                    fontSize: 18,
+                    fontWeight: FontWeight.w800,
+                    letterSpacing: 0.2,
                   ),
                 ),
-                const SizedBox(height: 3),
+                const SizedBox(height: 2),
                 versionAsync.maybeWhen(
                   data: (version) => PlainText(
                     version,
-                    style: const TextStyle(color: Colors.white70, fontSize: 12),
+                    style: TextStyle(color: subColor, fontSize: 12),
                   ),
                   orElse: () => const SizedBox.shrink(),
                 ),
@@ -184,12 +193,12 @@ class _DrawerHeader extends ConsumerWidget with MainState {
           ),
           IconButton(
             tooltip: '스크랩 보기',
-            icon: const Icon(Icons.bookmark_border, color: Colors.white),
+            icon: Icon(Icons.bookmark_border, color: inkColor),
             onPressed: onBookmarksTap,
           ),
           IconButton(
             tooltip: '설정',
-            icon: const Icon(Icons.settings_outlined, color: Colors.white),
+            icon: Icon(Icons.settings_outlined, color: inkColor),
             onPressed: onSettingsTap,
           ),
         ],
@@ -209,12 +218,11 @@ class _DrawerSiteTag extends ConsumerWidget with MainState {
   final Color focusColor;
   final VoidCallback onTap;
 
-  // 흰색 대신 헤더(#595D66) 와 같은 쿨 슬레이트 계열을 태그 배경으로 사용해
-  // 드로어 전체 팔레트를 통일한다. (라이트/다크 각각)
-  static const Color _tagBgLight = Color(0xFFE2E4E8);
-  static const Color _tagBorderLight = Color(0xFFD2D5DA);
-  static const Color _tagBgDark = Color(0xFF3C4046);
-  static const Color _tagBorderDark = Color(0xFF4A4E55);
+  // Paper 팔레트에 맞춘 웜 뉴트럴 칩(비선택). 선택 시엔 강조색(코랄)으로 채운다.
+  static const Color _tagBgLight = Color(0xFFF1EEEA);
+  static const Color _tagBorderLight = Color(0xFFE4E1DB);
+  static const Color _tagBgDark = Color(0xFF24262B);
+  static const Color _tagBorderDark = Color(0xFF31343B);
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {

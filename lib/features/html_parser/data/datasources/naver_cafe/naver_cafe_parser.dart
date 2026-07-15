@@ -148,7 +148,7 @@ class NaverCafeParser extends BaseParser {
           } catch (e) {
             parsedTime = time.toString();
           }
-          final info = '$nickNameㆍ$parsedTime';
+          final info = parsedTime;
 
           return CommentItem(
             id: id as int,
@@ -178,7 +178,7 @@ class NaverCafeParser extends BaseParser {
     } catch (e) {
       parsedTime = time.toString();
     }
-    final info = BaseParser.parserInfo(false, nickName, parsedTime, viewCount);
+    final info = BaseParser.parserInfo(parsedTime, viewCount);
 
     final details = Details(
       title: title,
@@ -315,12 +315,7 @@ class NaverCafeParser extends BaseParser {
       final bool hasImage = article['attachImage'] as bool? ?? false;
       final dateTime = DateTime.fromMillisecondsSinceEpoch(time);
       final parsedTime = timeago.format(dateTime, locale: 'ko');
-      final info = BaseParser.parserInfo(
-        false,
-        nickName,
-        parsedTime,
-        hit.toString(),
-      );
+      final info = BaseParser.parserInfo(parsedTime, hit.toString());
 
       items.add(
         ListItem(

@@ -112,7 +112,7 @@ class DamoangApi extends BaseApi {
           mediaHtml: '',
           isVideo: false,
           time: createdAt,
-          info: '$authorㆍ$parsedTime',
+          info: parsedTime,
           userInfo: UserInfo(id: authorId, nickName: author, nickImage: ''),
           authorId: authorId,
         );

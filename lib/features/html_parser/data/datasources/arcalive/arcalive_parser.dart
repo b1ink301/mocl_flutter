@@ -198,7 +198,7 @@ class ArcaliveParser extends BaseParser {
       final String like = row.qText('.col-rate');
 
       final String parsedTime = formatTimeago(time);
-      final String info = BaseParser.parserInfo(false, nickName, parsedTime, hit);
+      final String info = BaseParser.parserInfo(parsedTime, hit);
 
       items.add(
         ListItem(
@@ -285,12 +285,7 @@ class ArcaliveParser extends BaseParser {
     final bodyHtml = bodyEl?.innerHtml ?? '';
 
     final parsedTime = formatTimeago(time);
-    final infoStr = BaseParser.parserInfo(
-      false,
-      nickName,
-      parsedTime,
-      viewCount,
-    );
+    final infoStr = BaseParser.parserInfo(parsedTime, viewCount);
 
     final comments = <CommentItem>[];
     for (final el in document.querySelectorAll('.comment-item')) {
@@ -308,7 +303,7 @@ class ArcaliveParser extends BaseParser {
           int.tryParse((el.id).replaceAll(RegExp(r'[^0-9]'), '')) ??
           comments.length;
       final cParsedTime = formatTimeago(cTime);
-      final cInfo = cNick.isNotEmpty ? '$cNickㆍ$cParsedTime' : cParsedTime;
+      final cInfo = cParsedTime;
 
       comments.add(
         CommentItem(

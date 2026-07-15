@@ -128,7 +128,7 @@ class InvenParser extends BaseParser {
           element.querySelector('span.icon_mt, .hasImage') != null;
 
       final String parsedTime = formatTimeago(time);
-      final String info = BaseParser.parserInfo(false, nickName, parsedTime, hit);
+      final String info = BaseParser.parserInfo(parsedTime, hit);
 
       items.add(
         ListItem(
@@ -193,7 +193,7 @@ class InvenParser extends BaseParser {
     final bodyHtml = bodyEl?.innerHtml ?? '';
 
     final parsedTime = formatTimeago(time);
-    final info = BaseParser.parserInfo(false, nickName, parsedTime, viewCount);
+    final info = BaseParser.parserInfo(parsedTime, viewCount);
 
     final comments = _parseComments(commentJson);
 
@@ -254,7 +254,7 @@ class InvenParser extends BaseParser {
       if (body.isEmpty && nick.isEmpty) continue;
 
       final String parsedTime = formatTimeago(time);
-      final String info = nick.isNotEmpty ? '$nickㆍ$parsedTime' : parsedTime;
+      final String info = parsedTime;
 
       comments.add(
         CommentItem(

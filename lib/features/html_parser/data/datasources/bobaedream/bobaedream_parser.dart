@@ -248,12 +248,7 @@ class BobaedreamParser extends BaseParser {
       if (category == '공지') continue;
 
       final String parsedTime = formatTimeago(time);
-      final String info = BaseParser.parserInfo(
-        false,
-        nickName,
-        parsedTime,
-        hit,
-      );
+      final String info = BaseParser.parserInfo(parsedTime, hit);
 
       items.add(
         ListItem(
@@ -310,7 +305,7 @@ class BobaedreamParser extends BaseParser {
     final bodyHtml = bodyEl?.innerHtml ?? '';
 
     final parsedTime = formatTimeago(time);
-    final info = BaseParser.parserInfo(false, nickName, parsedTime, viewCount);
+    final info = BaseParser.parserInfo(parsedTime, viewCount);
 
     // 댓글 영역(reple_body)은 article 바깥 형제에 위치하므로 문서 전체에서 조회.
     final comments = <CommentItem>[];
@@ -335,7 +330,7 @@ class BobaedreamParser extends BaseParser {
       final cLike = element.qText('div.util2 div.util3 button.good');
 
       final cParsedTime = formatTimeago(cTime);
-      final cInfo = cNick.isNotEmpty ? '$cNickㆍ$cParsedTime' : cParsedTime;
+      final cInfo = cParsedTime;
 
       comments.add(
         CommentItem(

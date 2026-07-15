@@ -113,10 +113,11 @@ class AppTextStylesFontSizeNotifier extends _$AppTextStylesFontSizeNotifier {
   }
 }
 
-/// 앱바 타이틀용 흰색 스타일(폰트 크기 반영).
+/// 앱바 타이틀 스타일(폰트 크기 반영). Paper 테마에서 앱바는 밝은 배경 +
+/// 잉크 텍스트라 별도 색 지정 없이 기본 잉크색을 굵게 쓴다.
 @Riverpod(keepAlive: true, dependencies: [AppTextStylesFontSizeNotifier])
 TextStyle appbarTextStyle(Ref ref) => ref.watch(
   appTextStylesFontSizeProvider.select(
-    (s) => s.titleTextStyle.copyWith(color: Colors.white),
+    (s) => s.titleTextStyle.copyWith(fontWeight: FontWeight.w800),
   ),
 );
