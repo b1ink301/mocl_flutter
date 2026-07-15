@@ -1,0 +1,10 @@
+# 런처 아이콘 재생성: dart pub global run flutter_launcher_icons:main -f flutter_launcher_icons.yaml
+# (iOS dev/prd 플레이버 세트는 생성 후 AppIcon.appiconset 내용을 dev/prdAppIcon.appiconset 으로 복사)
+flutter_launcher_icons:
+  android: true
+  ios: true
+  image_path: "branding/launcher_source.png"
+  adaptive_icon_background: "#E8552D"
+  adaptive_icon_foreground: "branding/launcher_foreground.png"
+  remove_alpha_ios: true
+  min_sdk_android: 21
