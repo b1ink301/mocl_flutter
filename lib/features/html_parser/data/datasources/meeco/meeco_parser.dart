@@ -124,7 +124,7 @@ class MeecoParser extends BaseParser {
                   .forEach((element) => element.remove());
               final nickName = nickNameElement?.text.trim() ?? '';
 
-              final info = '$nickNameㆍ$parsedTime';
+              final info = parsedTime;
               var bodyHtml = isSecret ? '비밀글입니다.' : body?.innerHtml;
 
               if (cmtTo.isNotEmpty) {
@@ -173,7 +173,7 @@ class MeecoParser extends BaseParser {
 
     final parsedTime = formatTimeago(time);
 
-    final info = BaseParser.parserInfo(false, nickName, parsedTime, viewCount);
+    final info = BaseParser.parserInfo(parsedTime, viewCount);
 
     final detail = Details(
       title: title,
@@ -273,7 +273,7 @@ class MeecoParser extends BaseParser {
       final hit = element.qText('div.list_info > div:nth-child(2)');
       final like = element.qText('div.list_info > div.list_vote');
 
-      final info = BaseParser.parserInfo(false, nickName, parsedTime, hit);
+      final info = BaseParser.parserInfo(parsedTime, hit);
 
       items.add(
         ListItem(

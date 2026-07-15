@@ -195,12 +195,7 @@ class PpomppuParser extends BaseParser {
           null;
 
       final String parsedTime = formatTimeago(time);
-      final String info = BaseParser.parserInfo(
-        false,
-        nickName,
-        parsedTime,
-        hit,
-      );
+      final String info = BaseParser.parserInfo(parsedTime, hit);
 
       items.add(
         ListItem(
@@ -256,7 +251,7 @@ class PpomppuParser extends BaseParser {
     final bodyHtml = bodyEl?.innerHtml ?? '';
 
     final parsedTime = formatTimeago(time);
-    final info = BaseParser.parserInfo(false, nickName, parsedTime, viewCount);
+    final info = BaseParser.parserInfo(parsedTime, viewCount);
 
     final comments = <CommentItem>[];
     var index = 0;
@@ -278,7 +273,7 @@ class PpomppuParser extends BaseParser {
       index++;
 
       final cParsedTime = formatTimeago(cTime);
-      final cInfo = cNick.isNotEmpty ? '$cNickㆍ$cParsedTime' : cParsedTime;
+      final cInfo = cParsedTime;
 
       comments.add(
         CommentItem(

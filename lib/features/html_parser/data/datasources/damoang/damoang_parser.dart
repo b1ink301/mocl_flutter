@@ -308,7 +308,7 @@ class DamoangParser extends BaseParser {
       }
 
       // damoang has no nick images — always show author as text
-      final info = BaseParser.parserInfo(false, author, parsedTime, viewCount);
+      final info = BaseParser.parserInfo(parsedTime, viewCount);
 
       // 2. Get transformedPostContent from auxiliary chunk (id=1)
       //    This has plugins applied (emoticons, auto-embed, etc.)
@@ -410,7 +410,7 @@ class DamoangParser extends BaseParser {
                     cParsedTime = cCreatedAt;
                   }
 
-                  final String cInfo = '$cAuthorㆍ$cParsedTime';
+                  final String cInfo = cParsedTime;
 
                   comments.add(
                     CommentItem(
@@ -589,12 +589,7 @@ class DamoangParser extends BaseParser {
         final String like = likes > 0 ? likes.toString() : '';
 
         // damoang has no nick images — always show author as text
-        final String info = BaseParser.parserInfo(
-          false,
-          author,
-          parsedTime,
-          hit,
-        );
+        final String info = BaseParser.parserInfo(parsedTime, hit);
 
         items.add(
           ListItem(
@@ -647,7 +642,7 @@ class DamoangParser extends BaseParser {
     return Isolate.run(() => _parseMain(data));
   }
 
-  static final RegExp _boardName = RegExp(r'^(.*)\s([A-Z])$');
+  // static final RegExp _boardName = RegExp(r'^(.*)\s([A-Z])$');
   static final RegExp _groupPair = RegExp(
     r'"([a-z][a-z0-9_]{1,20})","([^"]{1,16}당)"',
   );

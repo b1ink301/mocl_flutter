@@ -108,7 +108,7 @@ class TheQooParser extends BaseParser {
     }
 
     final parsedTime = formatTimeago(time);
-    final info = BaseParser.parserInfo(false, nickName, parsedTime, viewCount);
+    final info = BaseParser.parserInfo(parsedTime, viewCount);
 
     final detail = Details(
       title: title,

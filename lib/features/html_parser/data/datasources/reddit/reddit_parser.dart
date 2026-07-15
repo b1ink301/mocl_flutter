@@ -60,7 +60,7 @@ class RedditParser extends BaseParser {
     final int milliseconds = (created * 1000).toInt();
     final date = DateTime.fromMillisecondsSinceEpoch(milliseconds).toLocal();
     final parsedTime = timeago.format(date, locale: 'ko');
-    final info = BaseParser.parserInfo(false, nickName, parsedTime, viewCount);
+    final info = BaseParser.parserInfo(parsedTime, viewCount);
 
     final comment = json[1]['data']['children'] as List<dynamic>?;
     final comments =
@@ -110,7 +110,7 @@ class RedditParser extends BaseParser {
     final int milliseconds = (created * 1000).toInt();
     final date = DateTime.fromMillisecondsSinceEpoch(milliseconds).toLocal();
     final parsedTime = timeago.format(date, locale: 'ko');
-    final info = BaseParser.parserInfo(false, nickName, parsedTime, '');
+    final info = BaseParser.parserInfo(parsedTime, '');
 
     List<CommentItem> repliesList = [];
     if (replies is Map<String, dynamic>) {
@@ -187,7 +187,7 @@ class RedditParser extends BaseParser {
           final parsedTime = timeago.format(date, locale: 'ko');
           final hit = '';
           final nickName = data['author'].toString();
-          final info = BaseParser.parserInfo(false, nickName, parsedTime, hit);
+          final info = BaseParser.parserInfo(parsedTime, hit);
           final id = data['id'].toString();
           final title = data['title'].toString();
           final category = data['link_flair_text'].toString();

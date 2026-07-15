@@ -19,7 +19,7 @@ class ListAppBar extends ConsumerWidget with ListState {
   Widget build(BuildContext context, WidgetRef ref) {
     final titleStyle = ListStyleScope.of(
       context,
-    ).titleTextStyle.copyWith(color: Colors.white);
+    ).titleTextStyle.copyWith(fontWeight: FontWeight.w800);
     final smallTitleStyle = Theme.of(context).textTheme.labelSmall!;
 
     return AppbarDualTextWidget(

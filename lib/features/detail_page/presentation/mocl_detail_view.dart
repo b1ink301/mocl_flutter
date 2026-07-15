@@ -26,6 +26,7 @@ import 'package:mocl_flutter/features/detail_page/presentation/widgets/detail_sc
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import '../../../core/presentation/widgets/author_info_text.dart';
 import '../../../core/presentation/widgets/plain_divider_widget.dart';
 import '../../../core/presentation/widgets/plain_icon.dart';
 import '../../../core/presentation/widgets/plain_text.dart';
@@ -184,6 +185,8 @@ class _DetailView extends StatelessWidget with DetailEvent {
                 const PlainDividerWidget(indent: 0, endIndent: 0),
                 _CommentList(
                   comments: detail.comments,
+                  authorId: detail.userInfo.id,
+                  authorNick: detail.userInfo.nickName,
                   bodySmall: bodySmall,
                   bodyMedium: bodyMedium,
                   hexColor: hexColor,
@@ -205,6 +208,10 @@ class _DetailView extends StatelessWidget with DetailEvent {
 
 class _CommentList extends StatelessWidget {
   final List<CommentItem> comments;
+
+  /// 원글 작성자(OP) 식별용. 댓글 작성자가 이와 같으면 닉네임을 강조색으로 칠한다.
+  final String authorId;
+  final String authorNick;
   final TextStyle? bodySmall;
   final TextStyle? bodyMedium;
   final String hexColor;
@@ -212,6 +219,8 @@ class _CommentList extends StatelessWidget {
 
   const _CommentList({
     required this.comments,
+    required this.authorId,
+    required this.authorNick,
     required this.bodySmall,
     required this.bodyMedium,
     required this.hexColor,
@@ -228,6 +237,7 @@ class _CommentList extends StatelessWidget {
       final comment = comments[index];
       return _CommentItem(
         comment: comment,
+        isAuthor: _isOp(comment.userInfo, authorId, authorNick),
         bodySmall: bodySmall,
         bodyMedium: bodyMedium,
         hexColor: hexColor,
@@ -236,6 +246,13 @@ class _CommentList extends StatelessWidget {
       );
     },
   );
+
+  /// 댓글 작성자가 원글 작성자인지 판별. id 우선, 없으면 닉네임으로 비교.
+  static bool _isOp(UserInfo u, String authorId, String authorNick) {
+    if (authorId.isNotEmpty && u.id == authorId) return true;
+    if (authorNick.isNotEmpty && u.nickName == authorNick) return true;
+    return false;
+  }
 }
 
 class _SpaceWidget extends StatelessWidget {
@@ -313,7 +330,7 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
     return Material(
       color: backgroundColor,
       // Material 은 elevation 변경을 자동으로 부드럽게 애니메이션한다.
-      elevation: isScrolled ? 4 : 0,
+      elevation: isScrolled ? 1 : 0,
       // M3 surfaceTint 로 색이 변하지 않도록 끄고 순수 그림자만 사용.
       surfaceTintColor: Colors.transparent,
       child: Padding(
@@ -322,12 +339,19 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
           children: [
             Container(
               height: _kHeaderHeight,
-              alignment: .centerLeft,
+              alignment: .centerStart,
               child: Row(
                 children: [
                   if (nickImage.isNotEmpty)
                     NickImageWidget(url: detail.userInfo.nickImage),
-                  Expanded(child: PlainText(detail.info, style: bodyMedium!)),
+                  Expanded(
+                    child: AuthorInfoText(
+                      info: detail.info,
+                      nickName: detail.userInfo.nickName,
+                      isAuthor: true,
+                      style: bodyMedium!,
+                    ),
+                  ),
                   ...?likeView,
                   BookmarkIconButton(color: bodyMedium!.color!),
                 ],
@@ -375,7 +399,8 @@ class _Body extends StatelessWidget {
   @override
   Widget build(BuildContext context) => _HtmlWidget(
     html: detail.bodyHtml,
-    textStyle: bodyMedium,
+    // 본문은 읽기 중심으로 행간을 넓혀(1.7) 가독성을 높인다.
+    textStyle: bodyMedium?.copyWith(height: 1.7),
     hexColor: hexColor,
     openUrl: onTapUrl,
     // renderMode: RenderMode.sliverList,
@@ -396,11 +421,15 @@ class _CommentHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final focusColor = Theme.of(context).focusColor;
-    final bodyMedium_ = bodyMedium!.copyWith(color: focusColor);
+    // "댓글 N" 은 볼드 코랄 라벨로 강조해 본문/댓글 섹션 경계를 명확히 한다.
+    final bodyMedium_ = bodyMedium!.copyWith(
+      color: focusColor,
+      fontWeight: FontWeight.w800,
+    );
 
     final label = totalCount > commentCount
-        ? '댓글 ($commentCount/$totalCount)'
-        : '댓글 ($commentCount)';
+        ? '댓글 $commentCount/$totalCount'
+        : '댓글 $commentCount';
     return SliverFixedExtentList(
       itemExtent: _kHeaderHeight,
       delegate: SliverChildListDelegate([
@@ -415,6 +444,7 @@ class _CommentHeader extends StatelessWidget {
 
 class _CommentItem extends StatelessWidget {
   final CommentItem comment;
+  final bool isAuthor;
   final TextStyle? bodySmall;
   final TextStyle? bodyMedium;
   final String hexColor;
@@ -423,6 +453,7 @@ class _CommentItem extends StatelessWidget {
 
   const _CommentItem({
     required this.comment,
+    required this.isAuthor,
     required this.bodySmall,
     required this.bodyMedium,
     required this.hexColor,
@@ -453,7 +484,7 @@ class _CommentItem extends StatelessWidget {
     final isEmptyBody = comment.bodyHtml.trim().isEmpty;
 
     return Padding(
-      padding: EdgeInsets.only(left: leftPadding, top: 12, bottom: 12),
+      padding: EdgeInsets.only(left: leftPadding, top: 14, bottom: 14),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -463,10 +494,11 @@ class _CommentItem extends StatelessWidget {
                 NickImageWidget(url: userInfo.nickImage),
               if (comment.info.isNotEmpty)
                 Expanded(
-                  child: PlainText(
-                    comment.info,
+                  child: AuthorInfoText(
+                    info: comment.info,
+                    nickName: userInfo.nickName,
+                    isAuthor: isAuthor,
                     style: bodySmall!,
-                    overflow: TextOverflow.ellipsis,
                   ),
                 ),
               ...?likeView,
@@ -548,7 +580,8 @@ class _HtmlWidget extends ConsumerWidget with DetailState {
           progress: progress,
         );
       },
-      factoryBuilder: () => _MoclWidgetFactory(openUrl: openUrl, referer: referer),
+      factoryBuilder: () =>
+          _MoclWidgetFactory(openUrl: openUrl, referer: referer),
       textStyle: textStyle,
       customStylesBuilder: (element) {
         if (element.localName == 'a') {

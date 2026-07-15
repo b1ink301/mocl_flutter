@@ -132,7 +132,7 @@ class InstizParser extends BaseParser {
       final hitMatch = RegExp(r'조회\s*([0-9,]+)').firstMatch(meta);
       final String hit = hitMatch?.group(1) ?? '';
 
-      final String info = BaseParser.parserInfo(false, '', time, hit);
+      final String info = BaseParser.parserInfo(time, hit);
 
       items.add(
         ListItem(
@@ -187,7 +187,7 @@ class InstizParser extends BaseParser {
       final String cBody = bodyClone?.innerHtml.trim() ?? '';
       if (cBody.isEmpty && cNick.isEmpty) continue;
 
-      final cInfo = cNick.isNotEmpty ? '$cNickㆍ$cTime' : cTime;
+      final cInfo = cTime;
 
       comments.add(
         CommentItem(
@@ -205,7 +205,7 @@ class InstizParser extends BaseParser {
       );
     }
 
-    final info = BaseParser.parserInfo(false, '', '', '');
+    final info = BaseParser.parserInfo('', '');
 
     final detail = Details(
       title: title,

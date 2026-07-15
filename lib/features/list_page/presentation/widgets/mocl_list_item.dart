@@ -3,6 +3,7 @@ import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/round_text_widget.dart';
 import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mixin.dart';
 
+import '../../../../core/presentation/widgets/author_info_text.dart';
 import '../../../../core/presentation/widgets/plain_text.dart';
 import 'list_scope.dart';
 
@@ -17,9 +18,14 @@ class MoclListItem extends StatelessWidget with ListEvent {
     final styles = ListStyleScope.of(context);
     final isRead = item.isRead;
 
-    final titleStyle = styles.title(isRead);
+    final titleStyle = styles
+        .title(isRead)
+        .copyWith(fontWeight: isRead ? FontWeight.w500 : FontWeight.w600);
     final infoStyle = styles.smallTitle(isRead);
-    final badgeStyle = styles.badge(isRead);
+    final badgeStyle = styles.badge(isRead).copyWith(fontWeight: FontWeight.w700);
+    // 답글 배지는 코랄 톤의 필드 칩으로 표현(강조색 12% 배경, 테두리 없음).
+    final Color badgeBg = (badgeStyle.color ?? const Color(0xFFE8552D))
+        .withValues(alpha: 0.12);
 
     final hasNickImage = item.userInfo.nickImage.isNotEmpty;
     final hasReply = item.reply.isNotEmpty && item.reply != '0';
@@ -56,10 +62,9 @@ class MoclListItem extends StatelessWidget with ListEvent {
                         child: NickImageWidget(url: item.userInfo.nickImage),
                       ),
                     Expanded(
-                      child: PlainText(
-                        item.info,
-                        maxLines: 1,
-                        overflow: TextOverflow.ellipsis,
+                      child: AuthorInfoText(
+                        info: item.info,
+                        nickName: item.userInfo.nickName,
                         style: infoStyle,
                       ),
                     ),
@@ -67,6 +72,13 @@ class MoclListItem extends StatelessWidget with ListEvent {
                       RoundTextWidget(
                         text: item.reply,
                         textStyle: badgeStyle,
+                        backgroundColor: badgeBg,
+                        borderColor: Colors.transparent,
+                        borderRadius: 999,
+                        padding: const EdgeInsets.symmetric(
+                          horizontal: 7,
+                          vertical: 1.5,
+                        ),
                       ),
                   ],
                 ),

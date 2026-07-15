@@ -139,7 +139,7 @@ class DogdripParser extends BaseParser {
           row?.querySelector('a[class*="member_"]')?.text.trim() ?? '';
       final bool hasImage = row?.querySelector('img.webzine-thumbnail') != null;
 
-      final String info = BaseParser.parserInfo(false, nickName, time, like);
+      final String info = BaseParser.parserInfo(time, like);
 
       items.add(
         ListItem(
@@ -218,7 +218,7 @@ class DogdripParser extends BaseParser {
       final String body = cBody?.innerHtml.trim() ?? '';
       if (body.isEmpty && cNick.isEmpty) continue;
 
-      final cInfo = cNick.isNotEmpty ? '$cNickㆍ$cTime' : cTime;
+      final cInfo = cTime;
 
       comments.add(
         CommentItem(
@@ -236,7 +236,7 @@ class DogdripParser extends BaseParser {
       );
     }
 
-    final info = BaseParser.parserInfo(false, nickName, '', '');
+    final info = BaseParser.parserInfo('', '');
 
     final detail = Details(
       title: title,

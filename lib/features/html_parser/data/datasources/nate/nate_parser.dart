@@ -110,7 +110,7 @@ class NateParser extends BaseParser {
       final String like = nums.length > 1 ? nums[1] : '';
       final String url = '$baseUrl/talk/$id';
 
-      final String info = BaseParser.parserInfo(false, '', '', hit);
+      final String info = BaseParser.parserInfo('', hit);
 
       items.add(
         ListItem(
@@ -185,9 +185,7 @@ class NateParser extends BaseParser {
       final String body = dd.text.trim();
       if (body.isEmpty) continue;
 
-      final cInfo = cNick.isNotEmpty
-          ? '${isBest ? '[베플] ' : ''}$cNickㆍ$cTime'
-          : cTime;
+      final cInfo = '${isBest ? '[베플] ' : ''}$cTime';
 
       comments.add(
         CommentItem(
@@ -205,7 +203,7 @@ class NateParser extends BaseParser {
       );
     }
 
-    final info = BaseParser.parserInfo(false, nickName, '', '');
+    final info = BaseParser.parserInfo('', '');
 
     final detail = Details(
       title: title,

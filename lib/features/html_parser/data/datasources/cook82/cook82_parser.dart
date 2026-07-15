@@ -194,7 +194,7 @@ class Cook82Parser extends BaseParser {
       final String hit = rowTds.isNotEmpty ? rowTds.last.text.trim() : '';
 
       final String parsedTime = formatTimeago(time);
-      final String info = BaseParser.parserInfo(false, nickName, parsedTime, hit);
+      final String info = BaseParser.parserInfo(parsedTime, hit);
 
       items.add(
         ListItem(
@@ -251,7 +251,7 @@ class Cook82Parser extends BaseParser {
     final bodyHtml = bodyEl?.innerHtml ?? '';
 
     final parsedTime = formatTimeago(time);
-    final info = BaseParser.parserInfo(false, nickName, parsedTime, viewCount);
+    final info = BaseParser.parserInfo(parsedTime, viewCount);
 
     final int totalComments =
         int.tryParse(document.qText('strong.total_reple')) ?? 0;

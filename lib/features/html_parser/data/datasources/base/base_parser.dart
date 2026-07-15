@@ -58,61 +58,17 @@ abstract class BaseParser {
     Response<dynamic> response,
   ) => throw UnimplementedError('comments');
 
-  static String parserInfo(
-    bool isShowNickImage,
-    String nickName,
-    String parsedTime,
-    String viewCount,
-  ) {
+  /// 메타 문자열을 만든다. 닉네임은 [UserInfo.nickName] 으로 UI 에서 별도 렌더하므로
+  /// 여기서는 시간ㆍ조회수만 조합한다(닉네임 제외).
+  static String parserInfo(String parsedTime, String viewCount) {
     var info = '';
-    if (!isShowNickImage && nickName.isNotEmpty) {
-      info = _truncateNickname(nickName);
-    }
     if (parsedTime.isNotEmpty) {
-      if (info.isNotEmpty) {
-        info += "ㆍ$parsedTime";
-      } else {
-        info = parsedTime;
-      }
+      info = parsedTime;
     }
     if (viewCount.isNotEmpty) {
-      if (info.isNotEmpty) {
-        info += "ㆍ$viewCount 읽음";
-      } else {
-        info = "$viewCount 읽음";
-      }
+      info = info.isNotEmpty ? "$infoㆍ$viewCount 읽음" : "$viewCount 읽음";
     }
     return info;
-  }
-
-  /// 닉네임을 표시 폭 기준으로 자른다.
-  /// 한글(및 CJK)은 폭 2, 그 외 ASCII는 폭 1로 계산하여 총 폭 20을 넘지 않게 한다.
-  /// 결과: 한글만 → 최대 10자, 영문만 → 최대 20자, 혼합도 비율에 따라 자연스럽게 처리.
-  static String _truncateNickname(String nick) {
-    const int maxWidth = 20;
-    int width = 0;
-    for (int i = 0; i < nick.length; i++) {
-      final code = nick.codeUnitAt(i);
-      final isWide =
-          // 한글 음절 (가-힣)
-          (code >= 0xAC00 && code <= 0xD7A3) ||
-          // 한글 자모
-          (code >= 0x1100 && code <= 0x11FF) ||
-          (code >= 0x3130 && code <= 0x318F) ||
-          // CJK 한자/일본어 등
-          (code >= 0x3000 && code <= 0x33FF) ||
-          (code >= 0x3400 && code <= 0x9FFF) ||
-          (code >= 0xF900 && code <= 0xFAFF) ||
-          // 전각 ASCII
-          (code >= 0xFF00 && code <= 0xFF60);
-
-      final charWidth = isWide ? 2 : 1;
-      if (width + charWidth > maxWidth) {
-        return '${nick.substring(0, i)}...';
-      }
-      width += charWidth;
-    }
-    return nick;
   }
 }
 
