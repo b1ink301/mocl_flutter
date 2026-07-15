@@ -309,15 +309,13 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
     );
   }
 
-  /// 헤더가 (스크롤로 사라지는 앱바 아래) 최상단에 도달해 '핀' 되었는지 판단.
-  ///
-  /// 헤더의 화면 위치로 비교하면 floating 앱바가 역방향 스크롤 때 헤더를 밀어
-  /// 핀이 풀리기 전에 그림자가 사라진다. 그래서 화면 위치 대신, 헤더가 상단에
-  /// 닿는 스크롤 오프셋(= 앱바의 스크롤 높이 [pinThreshold])과 현재 스크롤
-  /// 오프셋을 직접 비교한다. 이 값은 플로팅 앱바의 밀림/오버레이와 무관하게
-  /// 일정하다.
+  /// 그림자를 켤지 판단. 스크롤이 조금이라도 시작되면(= floating 앱바가 밀려
+  /// 올라가기 시작하면) 바로 그림자를 준다. 앱바가 '완전히' 사라질 때까지
+  /// 기다리지 않으므로, 앱바가 숨겨지는 과정에서 헤더 경계가 즉시 드러난다.
+  /// (화면 위치가 아니라 스크롤 오프셋으로 판단해 floating 앱바 재등장 시에도
+  /// 깜빡이지 않는다.)
   bool _isPinned(ScrollPosition position) =>
-      position.hasPixels && position.pixels >= pinThreshold - 0.5;
+      position.hasPixels && position.pixels > 0.5;
 
   /// 헤더 본체. [isScrolled] 가 true 면 elevation 으로 하단 그림자를 준다.
   Widget _buildHeaderContent(BuildContext context, bool isScrolled) {

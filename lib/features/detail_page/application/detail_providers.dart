@@ -88,7 +88,7 @@ String detailUrl(Ref ref) {
 const double _kMoreIconSize = 48.0; // more 아이콘의 크기
 const double _kHorizontalPadding = 16.0; // 좌우 패딩
 double _kMinTextHeight = !Platform.isIOS ? 30 : 10; // 최소 텍스트 높이
-double _kExtraVerticalSpace = !Platform.isIOS ? 36 : 0; // 추가 수직 공간
+double _kExtraVerticalSpace = !Platform.isIOS ? 28 : 0; // 추가 수직 공간(크럼브+여백)
 
 /// 상세 화면 앱바 높이 캐시.
 /// text, style, width가 동일하면 TextPainter.layout()을 생략합니다.
