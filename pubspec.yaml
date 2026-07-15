@@ -1,7 +1,7 @@
 name: mocl_flutter
 description: "Mocl Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.4.1+380
+version: 1.4.1+382
 
 environment:
   sdk: ^3.12.0
@@ -28,7 +28,7 @@ dependencies:
   flutter_widget_from_html: ^0.17.2
 
   # Value equality
-  equatable: ^2.0.8
+  equatable: ^2.1.0
 
   # Functional programming thingies
   fpdart: ^1.2.0
@@ -56,7 +56,7 @@ dependencies:
   # Google Sign In & Drive
   google_sign_in: ^7.2.0
   googleapis: ^16.0.0
-  googleapis_auth: ^2.3.2
+  googleapis_auth: ^2.3.3
 
   # class 자동화
   freezed_annotation: ^3.1.0
@@ -83,8 +83,8 @@ dependencies:
   go_router: ^17.3.0
 
   # firebase
-  firebase_core: ^4.11.0
-  firebase_crashlytics: ^5.2.4
+  firebase_core: ^4.12.1
+  firebase_crashlytics: ^5.2.6
 
   # async
   async: ^2.13.1

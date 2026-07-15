@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/login_page/presentation/state/login_event_mixin.dart';
 import 'package:mocl_flutter/features/login_page/presentation/state/login_state_mixin.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -28,9 +29,11 @@ class LoginView extends ConsumerWidget with LoginState, LoginEvent {
         // intent://, market://, 커스텀 스킴 등은 외부 앱으로 전달
         try {
           final uri = _resolveUri(url);
-          if (await canLaunchUrl(uri)) {
+
+          MoclLogger.log('[shouldOverrideUrlLoading] url=$url, uri=$uri');
+          // if (await canLaunchUrl(uri)) {
             await launchUrl(uri, mode: LaunchMode.externalApplication);
-          }
+          // }
         } catch (_) {}
         return NavigationActionPolicy.CANCEL;
       },

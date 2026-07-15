@@ -46,8 +46,8 @@ class AppPages {
       GoRoute(
         path: Routes.list,
         // 딥링크/상태 복원 등으로 extra 가 없거나 타입이 다르면 메인으로 보낸다.
-        redirect: (BuildContext context, GoRouterState state) =>
-            state.extra is MainItem ? null : Routes.main,
+        // redirect: (BuildContext context, GoRouterState state) =>
+        //     state.extra is MainItem ? null : Routes.main,
         pageBuilder: (BuildContext context, GoRouterState state) =>
             SwipeablePage(
               builder: (BuildContext context) {
@@ -66,12 +66,12 @@ class AppPages {
         // 문제가 있어 두 타입도 통과시킨다. (메인으로 튕기면 이미 스택에 있는
         // MainPage 가 재생성되어 mainScaffoldState 의 GlobalKey 가 중복된다.)
         // (딥링크/상태 복원 등 extra 가 없거나 타입이 다르면 메인으로 보낸다.)
-        redirect: (BuildContext context, GoRouterState state) =>
-            (state.extra is ListItem ||
-                state.extra is String ||
-                state.extra is GalleryArgs)
-            ? null
-            : Routes.main,
+        // redirect: (BuildContext context, GoRouterState state) =>
+        //     (state.extra is ListItem ||
+        //         state.extra is String ||
+        //         state.extra is GalleryArgs)
+        //     ? null
+        //     : Routes.main,
         pageBuilder: (BuildContext context, GoRouterState state) =>
             SwipeablePage(
               builder: (BuildContext context) {

@@ -11,6 +11,7 @@ import 'package:mocl_flutter/core/presentation/widgets/message_widget.dart';
 import 'models/checkable_main_item.dart';
 import 'state/add_event_mixin.dart';
 import 'state/add_state_mixin.dart';
+import 'widgets/board_search_field.dart';
 
 class AddListDialog extends ConsumerWidget with AddState, AddEvent {
   @Preview(name: 'AddListDialog')
@@ -53,22 +54,44 @@ class AddListDialog extends ConsumerWidget with AddState, AddEvent {
     width: size.width * 0.7,
     height: size.height * 0.6,
     child: state.when(
-      data: (data) => _buildListView(context, data),
+      data: (data) => Column(
+        children: [
+          const BoardSearchField(),
+          Expanded(child: _buildListView(context, data)),
+        ],
+      ),
       error: (failure, _) => MessageWidget(message: failure.toString()),
       loading: () => const LoadingWidget(),
     ),
   );
 
-  Widget _buildListView(BuildContext context, List<CheckableMainItem> items) =>
-      Consumer(
+  Widget _buildListView(
+    BuildContext context,
+    List<CheckableMainItem> allItems,
+  ) => Consumer(
         builder: (_, ref, _) {
           final titleStyle = ref.watch(
             appTextStylesFontSizeProvider.select((s) => s.titleTextStyle),
           );
+          final query = searchQuery(ref).trim().toLowerCase();
+          final items = query.isEmpty
+              ? allItems
+              : allItems
+                    .where(
+                      (e) =>
+                          e.mainItem.text.toLowerCase().contains(query) ||
+                          e.mainItem.category.toLowerCase().contains(query),
+                    )
+                    .toList();
           final headerStyle = Theme.of(context).textTheme.titleSmall?.copyWith(
             color: Theme.of(context).focusColor,
             fontWeight: FontWeight.bold,
           );
+          if (items.isEmpty) {
+            return Center(
+              child: Text("'$query' 검색 결과가 없습니다", style: titleStyle),
+            );
+          }
           return ListView.builder(
             padding: EdgeInsets.zero,
             itemCount: items.length,
@@ -81,10 +104,14 @@ class AddListDialog extends ConsumerWidget with AddState, AddEvent {
                   (index == 0 ||
                       items[index - 1].mainItem.category != category);
               final tile = CheckBoxListTitleWidget(
+                // 필터링으로 순서가 바뀌어도 체크 상태가 섞이지 않도록
+                // 항목 고유값을 키로 지정한다.
+                key: ValueKey(item.mainItem.url),
                 text: item.mainItem.text,
                 isChecked: item.isChecked,
                 textStyle: titleStyle,
-                onChanged: (isChecked) => onChanged(ref, isChecked, index),
+                onChanged: (isChecked) =>
+                    onChanged(ref, isChecked, item.mainItem),
               );
               if (!showHeader) {
                 return Column(
