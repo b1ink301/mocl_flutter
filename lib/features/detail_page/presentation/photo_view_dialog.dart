@@ -84,8 +84,13 @@ class _PhotoViewDialogState extends State<PhotoViewDialog> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final focusColor = theme.focusColor;
-    final top = MediaQuery.of(context).padding.top;
-    final bottom = MediaQuery.of(context).padding.bottom;
+    // 모달 바텀시트(useSafeArea:false)는 콘텐츠를 MediaQuery.removePadding(removeTop:true)
+    // 로 감싸 padding.top 을 0 으로 만든다. removePadding 은 viewPadding 도 함께 깎기
+    // 때문에 이 컨텍스트에서는 viewPadding·SafeArea 도 소용없다. removePadding 래퍼보다
+    // 위에 있는 원본 View 의 인셋을 직접 읽어 상태바/제스처 영역을 피한다.
+    final rootPadding = MediaQueryData.fromView(View.of(context)).padding;
+    final top = rootPadding.top;
+    final bottom = rootPadding.bottom;
     final total = widget.imageUrls.length;
 
     return Stack(
@@ -94,8 +99,7 @@ class _PhotoViewDialogState extends State<PhotoViewDialog> {
           child: PhotoViewGallery.builder(
             itemCount: total,
             pageController: _pageController,
-            onPageChanged: (int index) =>
-                setState(() => _currentIndex = index),
+            onPageChanged: (int index) => setState(() => _currentIndex = index),
             loadingBuilder: defaultLoading,
             backgroundDecoration: const BoxDecoration(color: Colors.black),
             builder: (BuildContext context, int index) =>
@@ -244,9 +248,9 @@ class _PhotoViewDialogState extends State<PhotoViewDialog> {
     final value =
         event.cumulativeBytesLoaded /
         (event.expectedTotalBytes ?? event.cumulativeBytesLoaded);
-    final style = Theme.of(context).textTheme.bodyMedium!.copyWith(
-      color: Colors.white,
-    );
+    final style = Theme.of(
+      context,
+    ).textTheme.bodyMedium!.copyWith(color: Colors.white);
 
     final percentage = (100 * value).floor();
     return Center(child: PlainText('$percentage%', style: style));
