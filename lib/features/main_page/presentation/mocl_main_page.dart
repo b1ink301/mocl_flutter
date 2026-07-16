@@ -34,20 +34,14 @@ class _ScaffoldWidget extends ConsumerWidget with MainState, MainEvent {
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: systemOverlayStyle,
-      child: Container(
-        color: systemOverlayStyle.statusBarColor,
-        child: SafeArea(
-          bottom: false,
-          child: Scaffold(
-            key: scaffoldState(ref),
-            drawer: const DrawerWidget(),
-            onDrawerChanged: (isOpen) =>
-                isOpen ? sidebarOpen(ref) : sidebarClose(ref),
-            drawerEdgeDragWidth: screenWidth(ref) / 2,
-            drawerEnableOpenDragGesture: true,
-            body: const MainView(),
-          ),
-        ),
+      child: Scaffold(
+        key: scaffoldState(ref),
+        drawer: const DrawerWidget(),
+        onDrawerChanged: (isOpen) =>
+            isOpen ? sidebarOpen(ref) : sidebarClose(ref),
+        drawerEdgeDragWidth: screenWidth(ref) / 2,
+        drawerEnableOpenDragGesture: true,
+        body: const MainView(),
       ),
     );
   }

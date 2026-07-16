@@ -17,7 +17,7 @@ class AppbarDualTextWidget extends StatelessWidget {
     required this.title,
     required this.titleStyle,
     required this.smallTitleStyle,
-    this.toolbarHeight = 64,
+    this.toolbarHeight = 62,
     this.automaticallyImplyLeading = false,
     this.actions,
   });
@@ -30,7 +30,7 @@ class AppbarDualTextWidget extends StatelessWidget {
       smallTitle: smallTitle,
       smallTitleStyle: smallTitleStyle,
     ),
-    scrolledUnderElevation: 0,
+    scrolledUnderElevation: 1,
     titleSpacing: automaticallyImplyLeading
         ? 0
         : NavigationToolbar.kMiddleSpacing,
@@ -63,8 +63,8 @@ class _DualTitle extends ConsumerWidget {
     mainAxisSize: MainAxisSize.min,
     children: [
       PlainText(smallTitle, style: smallTitleStyle),
-      const SizedBox(height: 4),
       PlainText(title, style: titleStyle, maxLines: 3, overflow: .ellipsis),
+      const SizedBox(height: 2),
     ],
   );
 }
