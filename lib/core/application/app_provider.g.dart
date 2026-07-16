@@ -407,17 +407,20 @@ abstract class _$AppTextStylesFontSizeNotifier
   }
 }
 
-/// 앱바 타이틀용 흰색 스타일(폰트 크기 반영).
+/// 앱바 타이틀 스타일(폰트 크기 반영). Paper 테마에서 앱바는 밝은 배경 +
+/// 잉크 텍스트라 별도 색 지정 없이 기본 잉크색을 굵게 쓴다.
 
 @ProviderFor(appbarTextStyle)
 final appbarTextStyleProvider = AppbarTextStyleProvider._();
 
-/// 앱바 타이틀용 흰색 스타일(폰트 크기 반영).
+/// 앱바 타이틀 스타일(폰트 크기 반영). Paper 테마에서 앱바는 밝은 배경 +
+/// 잉크 텍스트라 별도 색 지정 없이 기본 잉크색을 굵게 쓴다.
 
 final class AppbarTextStyleProvider
     extends $FunctionalProvider<TextStyle, TextStyle, TextStyle>
     with $Provider<TextStyle> {
-  /// 앱바 타이틀용 흰색 스타일(폰트 크기 반영).
+  /// 앱바 타이틀 스타일(폰트 크기 반영). Paper 테마에서 앱바는 밝은 배경 +
+  /// 잉크 텍스트라 별도 색 지정 없이 기본 잉크색을 굵게 쓴다.
   AppbarTextStyleProvider._()
     : super(
         from: null,
@@ -461,4 +464,4 @@ final class AppbarTextStyleProvider
   }
 }
 
-String _$appbarTextStyleHash() => r'eefda67e76c6c62d6eed748d6b6cda4f22d6916c';
+String _$appbarTextStyleHash() => r'0fcdbf7ae43262ea80b412c8da3a30fa49928792';

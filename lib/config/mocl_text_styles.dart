@@ -46,7 +46,7 @@ class MoclColors {
 /// Flutter의 Text 위젯이 시스템 폰트 설정을 자동으로 반영하므로 기준값만 정의합니다.
 class _AppFontSizes {
   static const double title = 16.0;
-  static const double small = 12.5;
+  static const double small = 13.0;
   static const double badge = 11.0;
 }
 
@@ -85,12 +85,24 @@ class AppTextStyles extends ThemeExtension<AppTextStyles> with Equatable {
 
   /// Light Theme 인스턴스
   static final AppTextStyles light = AppTextStyles(
-    titleTextStyle: _create(MoclColors.title, _AppFontSizes.title),
+    titleTextStyle: _create(
+      MoclColors.title,
+      _AppFontSizes.title,
+    ).copyWith(fontWeight: FontWeight.w400),
     readTitleTextStyle: _create(MoclColors.readTitle, _AppFontSizes.title),
-    smallTextStyle: _create(MoclColors.small, _AppFontSizes.small),
+    smallTextStyle: _create(
+      MoclColors.small,
+      _AppFontSizes.small,
+    ).copyWith(fontWeight: FontWeight.w300),
     readSmallTextStyle: _create(MoclColors.readSmall, _AppFontSizes.small),
-    badgeTextStyle: _create(MoclColors.badge, _AppFontSizes.badge),
-    readBadgeTextStyle: _create(MoclColors.readBadge, _AppFontSizes.badge),
+    badgeTextStyle: _create(
+      MoclColors.badge,
+      _AppFontSizes.badge,
+    ).copyWith(fontWeight: FontWeight.w500),
+    readBadgeTextStyle: _create(
+      MoclColors.readBadge,
+      _AppFontSizes.badge,
+    ).copyWith(fontWeight: FontWeight.w300),
   );
 
   /// Dark Theme 인스턴스

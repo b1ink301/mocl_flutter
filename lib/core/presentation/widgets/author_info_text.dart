@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:mocl_flutter/core/presentation/widgets/plain_text.dart';
 
 /// 닉네임과 메타([info]: 시간ㆍ조회수 등)를 한 줄로 조합해 보여준다.
 ///
@@ -29,7 +30,7 @@ class AuthorInfoText extends StatelessWidget {
   Widget build(BuildContext context) {
     // 닉네임이 없으면(닉을 이미지로만 표시하는 사이트 등) 메타만 보여준다.
     if (nickName.isEmpty) {
-      return Text(
+      return PlainText(
         info,
         maxLines: maxLines,
         overflow: TextOverflow.ellipsis,
@@ -37,16 +38,17 @@ class AuthorInfoText extends StatelessWidget {
       );
     }
 
+    // final nickColor = Theme.of(context).focusColor;
     final Color nickColor = isAuthor
         ? Theme.of(context).focusColor
         : (style.color ?? const Color(0xFF181A1F));
     final TextStyle nickStyle = style.copyWith(
-      fontWeight: FontWeight.w700,
+      fontWeight: FontWeight.w500,
       color: nickColor,
     );
 
     if (info.isEmpty) {
-      return Text(
+      return PlainText(
         nickName,
         maxLines: maxLines,
         overflow: TextOverflow.ellipsis,
@@ -54,11 +56,17 @@ class AuthorInfoText extends StatelessWidget {
       );
     }
 
+    final TextStyle infoStyle = style.copyWith(
+      fontWeight: FontWeight.w400,
+      fontSize: style.fontSize! - 1.4,
+    );
+
     return Row(
+      crossAxisAlignment: .center,
       children: [
         // 닉네임은 남는 폭 안에서 말줄임.
         Flexible(
-          child: Text(
+          child: PlainText(
             nickName,
             maxLines: 1,
             overflow: TextOverflow.ellipsis,
@@ -66,7 +74,7 @@ class AuthorInfoText extends StatelessWidget {
           ),
         ),
         // 시간ㆍ조회수는 잘리지 않고 항상 노출.
-        Text('$_sep$info', maxLines: 1, style: style),
+        PlainText('님$_sep$info', maxLines: 1, style: infoStyle),
       ],
     );
   }
