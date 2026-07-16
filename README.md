@@ -1,6 +1,8 @@
 # mocl_flutter
 
-간단한 눈팅 앱으로 Clien, Damoang, GeekNews, NaverCafe, Meeco, Reddit, TheKoo 사이트를 제한적으로 지원합니다.
+간단한 눈팅 앱으로 Arcalive, Bobaedream, Clien, Cook82, DCInside, Damoang, Dogdrip,
+GeekNews, Instiz, Inven, Meeco, MLBPark, Nate, NaverCafe, Ppomppu, Reddit, Ruliweb, TheQoo
+사이트를 제한적으로 지원합니다.
 
 https://play.google.com/store/apps/details?id=kr.b1ink.mocl
 
@@ -17,6 +19,7 @@ https://play.google.com/store/apps/details?id=kr.b1ink.mocl
 - **코드 생성**: freezed, json_serializable, riverpod_generator
 - **빌드 플레이버**: dev, prd
 - **데이터베이스**: sembast
+- **앱 아이콘/스플래시**: flutter_launcher_icons + flutter_native_splash (소스: `branding/`)
 
 ## 프로젝트 구조
 
@@ -188,6 +191,35 @@ fvm flutter analyze
 # Provider import 규칙 검사 (pre-commit hook 에서도 자동 실행)
 fvm dart run tool/check_provider_imports.dart
 ```
+
+## 앱 아이콘 / 스플래시
+
+아이콘·스플래시는 `flutter_launcher_icons` / `flutter_native_splash` 로 자동 생성합니다.
+밀도별 리소스(`android/.../mipmap-*`, `drawable-*`, iOS AppIcon 등)를 **직접 수정하지 말고**,
+아래 소스 이미지를 교체한 뒤 재생성하세요.
+
+### 소스 이미지 (`branding/`)
+
+| 파일 | 용도 |
+|------|------|
+| `app_icon.png` | 앱 아이콘 (오렌지 배경 + 흰 m) — iOS/레거시 |
+| `icon_foreground.png` | 적응형 아이콘 전경 (투명 + 흰 m) |
+| `icon_monochrome.png` | Android 13+ 테마(모노크롬) 아이콘 실루엣 |
+| `splash.png` | 스플래시 중앙 아이콘 (투명 + 오렌지 m) |
+
+설정 파일: [`flutter_launcher_icons.yaml`](flutter_launcher_icons.yaml), [`flutter_native_splash.yaml`](flutter_native_splash.yaml)
+
+### 재생성
+
+```bash
+fvm dart run flutter_launcher_icons -f flutter_launcher_icons.yaml
+fvm dart run flutter_native_splash:create --path=flutter_native_splash.yaml
+```
+
+### 동작
+
+- **스플래시 배경**: 라이트 `#FBFAF9` / 다크 `#121316` (m 은 오렌지 공통, 배경색만 테마별 분기)
+- **런처 아이콘**: 적응형(Android 8+) + 모노크롬(Android 13+ 테마 아이콘) 지원
 
 ## 운영 메모
 
