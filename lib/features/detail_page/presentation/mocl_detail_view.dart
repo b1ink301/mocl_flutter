@@ -194,7 +194,7 @@ class _DetailView extends StatelessWidget with DetailEvent {
                 ),
               ],
               const PlainDividerWidget(indent: 0, endIndent: 0),
-              _RefreshButton(onRefresh: onRefresh, bodyMedium: bodyMedium),
+              _RefreshButton(onRefresh: onRefresh, textStyle: bodySmall),
               const PlainDividerWidget(indent: 0, endIndent: 0),
               if (bottom > 0)
                 SliverPadding(padding: EdgeInsets.only(bottom: bottom)),
@@ -603,21 +603,21 @@ class _HtmlWidget extends ConsumerWidget with DetailState {
 
 class _RefreshButton extends StatelessWidget {
   final VoidCallback onRefresh;
-  final TextStyle? bodyMedium;
+  final TextStyle? textStyle;
 
-  const _RefreshButton({required this.onRefresh, required this.bodyMedium});
+  const _RefreshButton({required this.onRefresh, required this.textStyle});
 
   @override
   Widget build(BuildContext context) {
     final focusColor = Theme.of(context).focusColor;
-    final bodyMedium_ = bodyMedium!.copyWith(color: focusColor);
+    final textStyle = this.textStyle!.copyWith(color: focusColor);
 
     return InkWell(
       onTap: onRefresh,
       child: SizedBox(
         width: double.infinity,
         height: 58,
-        child: Center(child: PlainText('새로고침', style: bodyMedium_)),
+        child: Center(child: PlainText('새로고침', style: textStyle)),
       ),
     );
   }
