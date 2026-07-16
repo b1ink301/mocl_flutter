@@ -47,15 +47,9 @@ class _MoclListScaffold extends StatelessWidget {
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: systemOverlayStyle,
-      child: Container(
-        color: systemOverlayStyle.statusBarColor,
-        child: SafeArea(
-          bottom: false,
-          child: Scaffold(
-            backgroundColor: theme.scaffoldBackgroundColor,
-            body: const MoclListView(),
-          ),
-        ),
+      child: Scaffold(
+        backgroundColor: theme.scaffoldBackgroundColor,
+        body: const MoclListView(),
       ),
     );
   }

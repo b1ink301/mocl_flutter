@@ -31,7 +31,7 @@ import '../../../core/presentation/widgets/plain_divider_widget.dart';
 import '../../../core/presentation/widgets/plain_icon.dart';
 import '../../../core/presentation/widgets/plain_text.dart';
 
-const _kHeaderHeight = 48.0;
+const _kHeaderHeight = 38.0;
 
 /// 프로토콜 상대 경로(`//cdn.../x.webp`)는 스킴이 없어 뷰어가 로드하지 못하므로
 /// https 로 정규화한다.
@@ -152,7 +152,7 @@ class _DetailView extends StatelessWidget with DetailEvent {
     return MultiSliver(
       children: [
         SliverPersistentHeader(
-          pinned: true,
+          floating: true,
           delegate: _HeaderSectionDelegate(
             detail: detail,
             bodyMedium: bodySmall,
@@ -298,15 +298,17 @@ class _HeaderSectionDelegate extends SliverPersistentHeaderDelegate {
     // minExtent==maxExtent 라 shrinkOffset 은 항상 0 이고, overlapsContent 는
     // 스크롤 방향에 따라 한 박자 늦게 갱신돼 신뢰할 수 없다. 그래서 스크롤
     // 위치(ScrollPosition)를 직접 구독해 매 프레임 다시 빌드한다.
-    final ScrollPosition? position = Scrollable.maybeOf(context)?.position;
-    if (position == null) {
-      return _buildHeaderContent(context, overlapsContent);
-    }
-    return ListenableBuilder(
-      listenable: position,
-      builder: (context, _) =>
-          _buildHeaderContent(context, _isPinned(position)),
-    );
+    // final ScrollPosition? position = Scrollable.maybeOf(context)?.position;
+    // if (position == null) {
+    //   return _buildHeaderContent(context, overlapsContent);
+    // }
+    // return ListenableBuilder(
+    //   listenable: position,
+    //   builder: (context, _) =>
+    //       _buildHeaderContent(context, _isPinned(position)),
+    // );
+
+    return _buildHeaderContent(context, false);
   }
 
   /// 그림자를 켤지 판단. 스크롤이 조금이라도 시작되면(= floating 앱바가 밀려
@@ -482,7 +484,7 @@ class _CommentItem extends StatelessWidget {
     final isEmptyBody = comment.bodyHtml.trim().isEmpty;
 
     return Padding(
-      padding: EdgeInsets.only(left: leftPadding, top: 14, bottom: 14),
+      padding: EdgeInsets.only(left: leftPadding, top: 16, bottom: 16),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -504,7 +506,7 @@ class _CommentItem extends StatelessWidget {
           ),
           if (!isEmptyBody)
             Padding(
-              padding: const EdgeInsets.only(top: 8),
+              padding: const EdgeInsets.only(top: 10),
               child: _HtmlWidget(
                 html: comment.bodyHtml,
                 textStyle: bodyMedium,

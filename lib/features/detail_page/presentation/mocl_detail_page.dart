@@ -57,22 +57,16 @@ class _DetailScaffold extends ConsumerWidget with DetailEvent {
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: systemOverlayStyle,
-      child: Container(
-        color: systemOverlayStyle.statusBarColor,
-        child: DetailStyleScope(
-          styles: styles,
-          hexColor: hexColor,
-          child: SafeArea(
-            bottom: false,
-            child: Scaffold(
-              body: RefreshIndicator.adaptive(
-                color: focusColor,
-                onRefresh: () async => handleRefresh(ref),
-                child: const CustomScrollView(
-                  // cacheExtent: 500,
-                  slivers: [DetailAppBar(), DetailView()],
-                ),
-              ),
+      child: DetailStyleScope(
+        styles: styles,
+        hexColor: hexColor,
+        child: Scaffold(
+          body: RefreshIndicator.adaptive(
+            color: focusColor,
+            onRefresh: () async => handleRefresh(ref),
+            child: const CustomScrollView(
+              // cacheExtent: 500,
+              slivers: [DetailAppBar(), DetailView()],
             ),
           ),
         ),

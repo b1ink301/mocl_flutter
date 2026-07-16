@@ -14,7 +14,8 @@ class MoclTheme {
       foregroundColor: MoclColors.inkLight,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
-      scrolledUnderElevation: 0,
+      shadowColor: Colors.black,
+      scrolledUnderElevation: 1,
       systemOverlayStyle: SystemUiOverlayStyle(
         statusBarColor: MoclColors.bgLight,
         systemNavigationBarColor: MoclColors.bgLight,
@@ -76,7 +77,8 @@ class MoclTheme {
       foregroundColor: MoclColors.inkDark,
       surfaceTintColor: Colors.transparent,
       elevation: 0,
-      scrolledUnderElevation: 0,
+      shadowColor: Colors.black,
+      scrolledUnderElevation: 1,
       systemOverlayStyle: SystemUiOverlayStyle(
         statusBarColor: MoclColors.bgDark,
         systemNavigationBarColor: MoclColors.bgDark,
