@@ -73,7 +73,7 @@ dependencies:
   swipeable_page_route: ^0.4.8
 
   # splash
-  #  flutter_native_splash: ^2.4.4
+#  flutter_native_splash: ^2.4.8
   #  gif: ^2.3.0
   # like room database
   #  floor: ^1.5.0
@@ -94,11 +94,11 @@ dependencies:
   #  flutter_isolate: ^2.0.4
 
   # share
-  share_plus: ^13.2.0
+  share_plus: ^13.2.1
   #  share_plus_platform_interface: ^5.0.2
 
   # package info
-  package_info_plus: ^10.2.0
+  package_info_plus: ^10.2.1
 
   # time format
   timeago: ^3.7.1
@@ -170,6 +170,10 @@ dev_dependencies:
 #  test_api: ^0.7.4
   riverpod_generator: ^4.0.4
   riverpod_lint: ^3.1.4
+
+  # 앱 아이콘 / 스플래시 생성
+  flutter_launcher_icons: ^0.14.4
+  flutter_native_splash: ^2.4.8
 
   # flavor
 #  flutter_flavorizr: ^2.4.1
