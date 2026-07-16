@@ -18,11 +18,9 @@ class MoclListItem extends StatelessWidget with ListEvent {
     final styles = ListStyleScope.of(context);
     final isRead = item.isRead;
 
-    final titleStyle = styles
-        .title(isRead)
-        .copyWith(fontWeight: isRead ? FontWeight.w500 : FontWeight.w600);
+    final titleStyle = styles.title(isRead);
     final infoStyle = styles.smallTitle(isRead);
-    final badgeStyle = styles.badge(isRead).copyWith(fontWeight: FontWeight.w700);
+    final badgeStyle = styles.badge(isRead);
     // 답글 배지는 코랄 톤의 필드 칩으로 표현(강조색 12% 배경, 테두리 없음).
     final Color badgeBg = (badgeStyle.color ?? const Color(0xFFE8552D))
         .withValues(alpha: 0.12);
