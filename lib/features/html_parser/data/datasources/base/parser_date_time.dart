@@ -9,12 +9,17 @@ import 'package:timeago/timeago.dart' as timeago;
 /// - `12-25 14:30`, `12.25 14:30` (월-일 + 시각, 연도는 올해)
 /// - `14:30`, `14:30:05` (시각만, 날짜는 오늘)
 /// - `2026-06-11`, `2026.06.11` (날짜만, 시각은 현재 유지)
+/// - `26.7.20 1:44 PM` (2자리 연도 + 영문 AM/PM)
 /// - ISO 8601 (`2026-03-13T11:04:59+09:00`)
 class ParserDateTime {
   ParserDateTime._();
 
   static final RegExp _korean = RegExp(
     r'(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일\s*(오전|오후)\s*(\d{1,2}):(\d{2})',
+  );
+  static final RegExp _ampm = RegExp(
+    r'^(\d{2,4})[.-](\d{1,2})[.-](\d{1,2})\s+(\d{1,2}):(\d{2})\s*(AM|PM)$',
+    caseSensitive: false,
   );
   static final RegExp _dateOnly = RegExp(
     r'^(\d{4})[.-](\d{1,2})[.-](\d{1,2})\.?$',
@@ -39,6 +44,24 @@ class ParserDateTime {
         int.parse(koreanMatch.group(3)!),
         hour,
         int.parse(koreanMatch.group(6)!),
+      );
+    }
+
+    // `26.7.20 1:44 PM` — 2자리 연도 허용 + 영문 AM/PM 12시간제
+    final ampmMatch = _ampm.firstMatch(s);
+    if (ampmMatch != null) {
+      final bool isPm = ampmMatch.group(6)!.toUpperCase() == 'PM';
+      int year = int.parse(ampmMatch.group(1)!);
+      if (year < 100) year += 2000;
+      int hour = int.parse(ampmMatch.group(4)!);
+      if (isPm && hour < 12) hour += 12;
+      if (!isPm && hour == 12) hour = 0;
+      return DateTime(
+        year,
+        int.parse(ampmMatch.group(2)!),
+        int.parse(ampmMatch.group(3)!),
+        hour,
+        int.parse(ampmMatch.group(5)!),
       );
     }
 
