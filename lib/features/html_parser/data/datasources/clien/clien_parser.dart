@@ -57,9 +57,7 @@ class ClienParser extends BaseParser {
       "body > nav.navigation > div.dropdown-menu > form > input[name=_csrf]",
       'value',
     );
-    final title = container.qText(
-      "div.post_title > div.post_subject > span",
-    );
+    final title = container.qText("div.post_title > div.post_subject > span");
     final timeElement = container?.querySelector(
       "div.post_information > div.post_time > div.post_date",
     );
@@ -313,11 +311,14 @@ class ClienParser extends BaseParser {
         'div.list_infomation > div.list_author',
       );
       final nickImg = author?.querySelector('span.nickimg > img');
-      final nickName =
-          author?.querySelector('span.nickname')?.text.trim() ??
-          nickImg?.attributes['alt'] ??
-          '';
       final nickImage = isShowNickImage ? nickImg?.attributes['src'] ?? '' : '';
+      var nickName = '';
+      if (nickImage.isEmpty) {
+        nickName =
+            author?.querySelector('span.nickname')?.text.trim() ??
+            nickImg?.attributes['alt'] ??
+            '';
+      }
 
       final hasImage =
           element.querySelector('div.list_title > span.fa-picture-o') != null;
@@ -375,7 +376,9 @@ class ClienParser extends BaseParser {
       final category = group.qText('a.navmenu_title');
       for (final a in group.querySelectorAll('a.navmenu_menu')) {
         final href = a.attributes['href']?.trim() ?? '';
-        final match = RegExp(r'/service/board/([a-zA-Z0-9_]+)').firstMatch(href);
+        final match = RegExp(
+          r'/service/board/([a-zA-Z0-9_]+)',
+        ).firstMatch(href);
         if (match == null) continue;
         final board = match.group(1)!;
         if (!seen.add(board)) continue;
@@ -424,5 +427,4 @@ class ClienParser extends BaseParser {
     final String searchUrl = url.replaceFirst('board', 'search/board');
     return '$searchUrl?sk=title&sv=$keyword&po=$page';
   }
-
 }

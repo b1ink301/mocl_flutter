@@ -14,6 +14,7 @@ import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_ext.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_date_time.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_isolate_client.dart';
@@ -267,6 +268,14 @@ class Cook82Parser extends BaseParser {
         cTime = em.text.trim();
         break;
       }
+      if (cTime.startsWith('\'')) {
+        cTime = cTime.substring(1);
+      }
+      final parsedTime = formatTimeago(cTime);
+
+      MoclLogger.log('cTime=$cTime, parsedTime=$parsedTime');
+      final info = BaseParser.parserInfo(parsedTime, '');
+
       final bodyP = li.querySelector('p');
       bodyP.removeAll('script, input, button');
       final cBody = bodyP?.innerHtml.trim() ?? '';
@@ -282,7 +291,7 @@ class Cook82Parser extends BaseParser {
           likeCount: '',
           mediaHtml: '',
           isVideo: false,
-          info: cNick,
+          info: info,
           time: cTime,
           userInfo: UserInfo(id: cNick, nickName: cNick, nickImage: ''),
           authorId: '',
