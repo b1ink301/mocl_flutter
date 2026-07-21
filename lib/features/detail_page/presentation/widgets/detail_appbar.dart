@@ -11,6 +11,7 @@ import '../../../../core/presentation/widgets/plain_icon.dart';
 import '../../../../core/presentation/widgets/plain_text.dart';
 import '../state/detail_event_mixin.dart';
 import '../state/detail_state_mixin.dart';
+import 'detail_header_bar.dart';
 import 'detail_scope.dart';
 
 class DetailAppBar extends ConsumerWidget with DetailState, DetailEvent {
@@ -21,12 +22,17 @@ class DetailAppBar extends ConsumerWidget with DetailState, DetailEvent {
     final String title = titleState(ref);
     final double height = appbarHeight(ref, title);
 
-    final titleStyle = DetailStyleScope.of(
-      context,
-    ).$1.titleTextStyle.copyWith(fontWeight: FontWeight.w800);
+    final styles = DetailStyleScope.of(context).$1;
+    final titleStyle = styles.titleTextStyle.copyWith(
+      fontWeight: FontWeight.w800,
+    );
     final theme = Theme.of(context);
     final smallTitleStyle = theme.textTheme.labelSmall!;
     final focusColor = theme.focusColor;
+
+    // 상세 데이터가 로드되면 작성자 헤더를 앱바 확장 영역(bottom)으로 붙여
+    // floating 앱바와 한 몸으로 스크롤/재등장하게 한다.
+    final detail = detailState(ref).asData?.value;
 
     return AppbarDualTextWidget(
       title: title,
@@ -35,6 +41,9 @@ class DetailAppBar extends ConsumerWidget with DetailState, DetailEvent {
       smallTitleStyle: smallTitleStyle,
       automaticallyImplyLeading: Platform.isMacOS,
       toolbarHeight: height,
+      bottom: detail != null
+          ? DetailHeaderBar(detail: detail, style: styles.smallTextStyle)
+          : null,
       actions: [
         _DetailPopupMenuButton(
           focusColor: focusColor,

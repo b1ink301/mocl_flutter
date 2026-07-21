@@ -11,6 +11,10 @@ class AppbarDualTextWidget extends StatelessWidget {
   final bool automaticallyImplyLeading;
   final List<Widget>? actions;
 
+  /// 앱바 하단에 함께 붙어 floating 되는 확장 영역(예: 상세 작성자 헤더).
+  /// floating 앱바이므로 이 영역도 앱바와 한 몸으로 밀려가고 되돌아온다.
+  final PreferredSizeWidget? bottom;
+
   const AppbarDualTextWidget({
     super.key,
     required this.smallTitle,
@@ -20,6 +24,7 @@ class AppbarDualTextWidget extends StatelessWidget {
     this.toolbarHeight = 62,
     this.automaticallyImplyLeading = false,
     this.actions,
+    this.bottom,
   });
 
   @override
@@ -41,6 +46,7 @@ class AppbarDualTextWidget extends StatelessWidget {
     pinned: false,
     toolbarHeight: toolbarHeight,
     actions: actions,
+    bottom: bottom,
   );
 }
 
