@@ -68,9 +68,10 @@ class _DualTitle extends ConsumerWidget {
     crossAxisAlignment: CrossAxisAlignment.start,
     mainAxisSize: MainAxisSize.min,
     children: [
-      PlainText(smallTitle, style: smallTitleStyle),
-      PlainText(title, style: titleStyle, maxLines: 3, overflow: .ellipsis),
       const SizedBox(height: 2),
+      PlainText(smallTitle, style: smallTitleStyle),
+      const SizedBox(height: 2),
+      PlainText(title, style: titleStyle, maxLines: 3, overflow: .ellipsis),
     ],
   );
 }
