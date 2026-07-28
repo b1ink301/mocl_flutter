@@ -36,12 +36,12 @@ dependencies:
   # Remote API
   #  internet_connection_checker_plus: ^2.4.2
   # Http Client
-  dio: ^5.10.0
+  dio: ^5.11.0
   http: ^1.6.0
 
   # cookie
   cookie_jar: ^4.0.9
-  dio_cookie_manager: ^3.4.0
+  dio_cookie_manager: ^3.5.0
 
   # Local cache
   shared_preferences: ^2.5.5
@@ -64,7 +64,7 @@ dependencies:
   # 이미지 캐시
   cached_network_image: ^3.4.1
   # image: ^4.2.0
-  flutter_cache_manager: ^3.4.1
+  flutter_cache_manager: ^3.4.2
 
   # URL 런처
   url_launcher: ^6.3.2
@@ -94,7 +94,7 @@ dependencies:
   #  flutter_isolate: ^2.0.4
 
   # share
-  share_plus: ^13.2.1
+  share_plus: ^13.3.0
   #  share_plus_platform_interface: ^5.0.2
 
   # package info
