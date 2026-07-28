@@ -140,45 +140,51 @@ class _MainAppBar extends ConsumerWidget with MainState, MainEvent {
   Widget build(BuildContext context, WidgetRef ref) {
     final titleStyle = ref.watch(appbarTextStyleProvider);
     return SliverAppBar(
-      scrolledUnderElevation: 0,
+      scrolledUnderElevation: 1,
       title: PlainText(titleState(ref), style: titleStyle),
       titleTextStyle: titleStyle,
       titleSpacing: 0,
       floating: true,
       toolbarHeight: 62,
-      actions: reorderModeState(ref)
-          // 정렬 모드: '완료' 로 빠져나간다.
-          ? [
-              PlainIconButton(
-                onPressed: () => handleToggleReorder(ref),
-                icon: const PlainIcon(Icons.check),
-              ),
-            ]
-          : [
-              if (showAddButtonState(ref))
-                PlainIconButton(
-                  onPressed: () => handleAddButton(ref, context),
-                  icon: const PlainIcon(Icons.add),
-                ),
-              AdaptivePopupMenu(
-                options: [
-                  AdaptiveMenuOption(
-                    label: '항목 정렬',
-                    onTap: () => handleToggleReorder(ref),
+      // floating 앱바의 toolbarOpacity 로 인한 PlainIcon 리빌드 차단.
+      // (AppbarActionsIconTheme 주석 참고)
+      actions: <Widget>[
+        AppbarActionsIconTheme(
+          children: reorderModeState(ref)
+              // 정렬 모드: '완료' 로 빠져나간다.
+              ? [
+                  PlainIconButton(
+                    onPressed: () => handleToggleReorder(ref),
+                    icon: const PlainIcon(Icons.check),
                   ),
-                  if (currentSiteType(ref).supportsLogin)
-                    AdaptiveMenuOption(
-                      label: '로그인',
-                      onTap: () => handleLogin(ref, context),
+                ]
+              : [
+                  if (showAddButtonState(ref))
+                    PlainIconButton(
+                      onPressed: () => handleAddButton(ref, context),
+                      icon: const PlainIcon(Icons.add),
                     ),
+                  AdaptivePopupMenu(
+                    options: [
+                      AdaptiveMenuOption(
+                        label: '항목 정렬',
+                        onTap: () => handleToggleReorder(ref),
+                      ),
+                      if (currentSiteType(ref).supportsLogin)
+                        AdaptiveMenuOption(
+                          label: '로그인',
+                          onTap: () => handleLogin(ref, context),
+                        ),
+                    ],
+                    icon: PlainIcon(
+                      isCupertino()
+                          ? CupertinoIcons.ellipsis
+                          : Icons.more_vert_rounded,
+                    ),
+                  ),
                 ],
-                icon: PlainIcon(
-                  isCupertino()
-                      ? CupertinoIcons.ellipsis
-                      : Icons.more_vert_rounded,
-                ),
-              ),
-            ],
+        ),
+      ],
     );
   }
 }

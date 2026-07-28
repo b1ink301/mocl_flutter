@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mocl_flutter/core/presentation/widgets/appbar_actions_icon_theme.dart';
 import 'package:mocl_flutter/core/presentation/widgets/plain_text.dart';
 
 class AppbarDualTextWidget extends StatelessWidget {
@@ -45,8 +46,32 @@ class AppbarDualTextWidget extends StatelessWidget {
     // snap: true,
     pinned: false,
     toolbarHeight: toolbarHeight,
-    actions: actions,
-    bottom: bottom,
+    actions: actions == null
+        ? null
+        : <Widget>[AppbarActionsIconTheme(children: actions!)],
+    // bottom 슬롯은 bottomOpacity 가 1.0 ↔ <1.0 을 오갈 때 bare ↔ Opacity 로
+    // 트리 구조가 바뀌어(app_bar.dart) 서브트리가 deactivate/activate 되고,
+    // Directionality 등 상속 의존성이 있는 하위 위젯(Padding/Row 포함)이
+    // 앱바 숨김/보임마다 리빌드된다. 실제 콘텐츠는 구조가 안정적인
+    // flexibleSpace 하단에 붙이고, bottom 에는 높이 확보용 sizer 만 둔다.
+    // (flexibleSpace 는 매 프레임 동일 인스턴스가 그대로 전달되어 리빌드 없음.
+    //  트레이드오프: 확장 영역은 앱바 등장 중 페이드되지 않는데, 액션/제목도
+    //  페이드하지 않으므로 오히려 일관적이다.)
+    flexibleSpace: bottom == null
+        ? null
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              SizedBox(height: bottom!.preferredSize.height, child: bottom),
+            ],
+          ),
+    bottom: bottom == null
+        ? null
+        : PreferredSize(
+            preferredSize: bottom!.preferredSize,
+            child: const SizedBox.shrink(),
+          ),
   );
 }
 
@@ -70,7 +95,7 @@ class _DualTitle extends ConsumerWidget {
     children: [
       const SizedBox(height: 2),
       PlainText(smallTitle, style: smallTitleStyle),
-      const SizedBox(height: 2),
+      const SizedBox(height: 4),
       PlainText(title, style: titleStyle, maxLines: 3, overflow: .ellipsis),
     ],
   );
