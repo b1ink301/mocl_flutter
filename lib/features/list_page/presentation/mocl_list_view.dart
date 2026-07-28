@@ -31,6 +31,7 @@ class MoclListView extends HookConsumerWidget with ListEvent, ListState {
     });
 
     final controller = listPageController(ref);
+    final singlePageBoard = isSinglePageBoardState(ref);
     final styles = appTextStyles(ref);
     final focusColor = Theme.of(context).focusColor;
     final bottom = MediaQuery.of(context).padding.bottom;
@@ -68,8 +69,15 @@ class MoclListView extends HookConsumerWidget with ListEvent, ListState {
                   newPageErrorIndicatorBuilder: (_) =>
                       buildErrorIndicator(state.error),
                   noItemsFoundIndicatorBuilder: (_) => const _NoItemsFound(),
-                  noMoreItemsIndicatorBuilder: (context) =>
-                      SizedBox(height: bottom),
+                  // 뮤트/중복 필터로 페이징이 잘못 종료된 경우를 위한 복구 수단.
+                  // 단일 페이지 게시판은 실제로 끝이므로 버튼을 노출하지 않는다.
+                  noMoreItemsIndicatorBuilder: (context) => singlePageBoard
+                      ? SizedBox(height: bottom)
+                      : _NoMoreItems(
+                          bottomPadding: bottom,
+                          onLoadMore: () => handleForceLoadMore(ref),
+                          textStyle: styles.smallTextStyle,
+                        ),
                 ),
                 separatorBuilder: (_, _) => const PlainDividerWidget(),
               ),
@@ -124,6 +132,29 @@ class _NoItemsFound extends StatelessWidget {
       child: Center(child: PlainText('항목이 없습니다', style: smallTextStyle)),
     );
   }
+}
+
+class _NoMoreItems extends StatelessWidget {
+  final double bottomPadding;
+  final VoidCallback onLoadMore;
+  final TextStyle textStyle;
+
+  const _NoMoreItems({
+    required this.bottomPadding,
+    required this.onLoadMore,
+    required this.textStyle,
+  });
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: EdgeInsets.only(top: 8, bottom: bottomPadding + 8),
+    child: Center(
+      child: TextButton(
+        onPressed: onLoadMore,
+        child: PlainText('더 불러오기', style: textStyle),
+      ),
+    ),
+  );
 }
 
 class _ListError extends StatelessWidget {

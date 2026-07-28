@@ -24,6 +24,11 @@ mixin class ListEvent {
   void handleLoadMore(WidgetRef ref) =>
       ref.read(listPagingControllerProvider.notifier).loadMore();
 
+  /// noMoreItems 상태에서 사용자가 명시적으로 다음 페이지 로드를 요청.
+  /// (활성 게시판에서 필터로 인해 페이징이 잘못 종료된 경우의 복구 수단)
+  void handleForceLoadMore(WidgetRef ref) =>
+      ref.read(listPagingControllerProvider.notifier).forceLoadMore();
+
   /// 백그라운드 → 포그라운드 복귀 시 호출. 멈춘 fetch 가 있으면 강제 재시작.
   void handleAppResumed(WidgetRef ref) =>
       ref.read(listPagingControllerProvider.notifier).kickIfStale();

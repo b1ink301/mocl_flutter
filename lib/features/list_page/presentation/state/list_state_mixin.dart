@@ -25,6 +25,10 @@ mixin class ListState {
   PagingController<int, ListItem> listPageController(WidgetRef ref) =>
       ref.watch(listPagingControllerProvider);
 
+  /// 페이지네이션이 없는 게시판 여부 — '더 불러오기' 버튼 노출 판단용.
+  bool isSinglePageBoardState(WidgetRef ref) =>
+      ref.watch(isSinglePageBoardProvider);
+
   AppTextStyles appTextStyles(WidgetRef ref) => ref.watch(appTextStylesFontSizeProvider);
 
   ListItem? itemState(WidgetRef ref, int index) {
