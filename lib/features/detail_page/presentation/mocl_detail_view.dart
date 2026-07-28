@@ -410,6 +410,92 @@ class _HtmlLoadingWidget extends StatelessWidget {
   }
 }
 
+/// 본문 이미지 로드 실패 시 파일이름 + 재시도 버튼을 표시한다.
+///
+/// [CachedNetworkImage] 는 실패 결과도 캐시하므로, 재시도 시 캐시를 비운 뒤
+/// [ValueKey] 를 바꿔 위젯을 재생성해 다시 요청하게 한다.
+class _RetryableCachedImage extends StatefulWidget {
+  final String url;
+  final Map<String, String> headers;
+  final Widget Function(BuildContext context, double? progress) loadingBuilder;
+  final Widget Function(
+    BuildContext context,
+    dynamic error,
+    VoidCallback onRetry,
+  )
+  errorBuilder;
+
+  const _RetryableCachedImage({
+    required this.url,
+    required this.headers,
+    required this.loadingBuilder,
+    required this.errorBuilder,
+  });
+
+  @override
+  State<_RetryableCachedImage> createState() => _RetryableCachedImageState();
+}
+
+class _RetryableCachedImageState extends State<_RetryableCachedImage> {
+  int _attempt = 0;
+
+  Future<void> _retry() async {
+    // 실패 캐시를 제거한 뒤 key 를 바꿔 재요청을 유도한다.
+    await CachedNetworkImage.evictFromCache(widget.url);
+    if (mounted) setState(() => _attempt++);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CachedNetworkImage(
+      key: ValueKey(_attempt),
+      imageUrl: widget.url,
+      httpHeaders: widget.headers,
+      fit: BoxFit.fill,
+      errorWidget: (context, _, error) =>
+          widget.errorBuilder(context, error, _retry),
+      progressIndicatorBuilder: (context, _, progress) {
+        final total = progress.totalSize;
+        final v = total != null && total > 0
+            ? progress.downloaded / total
+            : null;
+        return widget.loadingBuilder(context, v);
+      },
+    );
+  }
+}
+
+/// 이미지 로드 실패 표시: 파일이름(기존 fwfh 위젯) + 재시도 버튼.
+class _HtmlImageErrorWidget extends StatelessWidget {
+  final Widget filename;
+  final VoidCallback onRetry;
+
+  const _HtmlImageErrorWidget({required this.filename, required this.onRetry});
+
+  @override
+  Widget build(BuildContext context) {
+    final focusColor = Theme.of(context).focusColor;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 4.0),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.center,
+        children: [
+          Expanded(child: filename),
+          InkWell(
+            onTap: onRetry,
+            borderRadius: BorderRadius.circular(4.0),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: PlainIcon(Icons.refresh, size: 20, color: focusColor),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
 class _HtmlWidget extends ConsumerWidget with DetailState {
   final String html;
   final TextStyle? textStyle;
@@ -502,21 +588,18 @@ class _MoclWidgetFactory extends WidgetFactory {
   Widget? buildImageWidget(BuildTree tree, ImageSource src) {
     final String url = src.url;
     if (referer.isNotEmpty && url.startsWith(RegExp('https?://'))) {
-      return CachedNetworkImage(
-        imageUrl: url,
-        httpHeaders: {'Referer': referer, 'User-Agent': userAgentMobile},
-        fit: BoxFit.fill,
-        errorWidget: (context, _, error) =>
-            onErrorBuilder(context, tree, error, src) ??
+      return _RetryableCachedImage(
+        url: url,
+        headers: {'Referer': referer, 'User-Agent': userAgentMobile},
+        loadingBuilder: (context, v) =>
+            onLoadingBuilder(context, tree, v, src) ??
             const SizedBox.shrink(),
-        progressIndicatorBuilder: (context, _, progress) {
-          final total = progress.totalSize;
-          final v = total != null && total > 0
-              ? progress.downloaded / total
-              : null;
-          return onLoadingBuilder(context, tree, v, src) ??
-              const SizedBox.shrink();
-        },
+        errorBuilder: (context, error, onRetry) => _HtmlImageErrorWidget(
+          filename:
+              onErrorBuilder(context, tree, error, src) ??
+              const SizedBox.shrink(),
+          onRetry: onRetry,
+        ),
       );
     }
     return super.buildImageWidget(tree, src);
