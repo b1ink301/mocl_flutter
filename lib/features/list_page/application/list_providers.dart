@@ -46,13 +46,33 @@ Future<Either<Failure, List<ListItem>>> reqListData(
   return ref.read(getListUseCaseProvider)(params);
 }
 
+/// 페이지네이션이 없는 게시판(한 번 fetch 후 종료).
+/// 뷰에서 '더 불러오기' 버튼 노출 여부 판단에도 사용한다.
+@Riverpod(dependencies: [mainItem])
+bool isSinglePageBoard(Ref ref) {
+  final MainItem mainItem = ref.watch(mainItemProvider);
+  return (mainItem.siteType == SiteType.clien &&
+          mainItem.board == 'recommend') ||
+      // 네이트판은 고정 랭킹 목록이라 페이지네이션이 없다.
+      mainItem.siteType == SiteType.nate;
+}
+
 /// infinite_scroll_pagination 의 PagingController 를 Riverpod 으로 감싼다.
 /// build() 는 mainItem/sortType 이 바뀔 때만 새 컨트롤러를 생성한다.
 /// 이전 컨트롤러의 dispose 는 Riverpod 의 ref.onDispose 가 자동 처리.
-@Riverpod(dependencies: [mainItem, reqListData, SortTypeNotifier])
+@Riverpod(
+  dependencies: [mainItem, reqListData, SortTypeNotifier, isSinglePageBoard],
+)
 class ListPagingController extends _$ListPagingController {
+  /// forceLoadMore 가 부여하는 추가 fetch 허용량.
+  /// getNextPageKey 의 '연속 빈 페이지 종료' 가드를 이 횟수만큼 무시하고
+  /// 더 깊은 페이지로 전진한다. (같은 페이지 재시도는 offset 이 밀린 상황에서
+  /// 영원히 중복만 반환하므로, 복구는 반드시 새 키로 전진해야 한다)
+  int _forcedFetchAllowance = 0;
+
   @override
   PagingController<int, ListItem> build() {
+    _forcedFetchAllowance = 0;
     final MainItem mainItem = ref.watch(mainItemProvider);
     final SortType sortType = ref.watch(sortTypeProvider);
 
@@ -73,7 +93,7 @@ class ListPagingController extends _$ListPagingController {
     });
 
     final int initialPage = _initialPage();
-    final bool singlePageBoard = _isSinglePageBoard(mainItem);
+    final bool singlePageBoard = ref.watch(isSinglePageBoardProvider);
     late final PagingController<int, ListItem> controller;
 
     controller = PagingController<int, ListItem>(
@@ -82,17 +102,37 @@ class ListPagingController extends _$ListPagingController {
         if (singlePageBoard && (state.keys?.isNotEmpty ?? false)) {
           return null;
         }
-        // 마지막 페이지가 비어있으면 종료(중복 필터로 0건이 된 경우 포함).
-        // 보배드림처럼 끝 페이지를 넘겨도 빈 응답 대신 마지막 페이지를 다시 주는
-        // 사이트는, lastId 중복 필터가 전부 걸러 빈 페이지가 되며 여기서 멈춘다.
-        if (state.lastPageIsEmpty) return null;
+        // 연속 2페이지가 비어있으면 종료. 한 페이지만 빈 경우는 뮤트 규칙이나
+        // lastId 중복 필터가 페이지 전체를 걸러낸 것일 수 있으므로 한 번 더
+        // 다음 키로 시도한다. 보배드림처럼 끝 페이지를 넘겨도 마지막 페이지를
+        // 다시 주는 사이트는 중복 필터로 매번 빈 페이지가 되어 2연속에서 멈춘다.
+        // forceLoadMore('더 불러오기')가 허용량을 부여한 동안은 종료하지 않고
+        // 계속 다음 키로 전진한다(오래 방치 후 offset 이 여러 페이지 밀린 경우).
+        final List<List<ListItem>>? pages = state.pages;
+        if (pages != null &&
+            pages.isNotEmpty &&
+            pages.last.isEmpty &&
+            (pages.length < 2 || pages[pages.length - 2].isEmpty)) {
+          if (_forcedFetchAllowance <= 0) return null;
+          _forcedFetchAllowance--;
+        }
 
         final int? lastKey = state.keys?.lastOrNull;
         return lastKey == null ? initialPage : lastKey + 1;
       },
       fetchPage: (pageKey) async {
-        // LastId 가 필요한 사이트를 위해 직전 아이템에서 추출
-        final ListItem? lastItem = controller.value.items?.lastOrNull;
+        // LastId 의 두 용도: (1) id 내림차순 목록에서 파서의 `id >= lastId`
+        // 중복 필터, (2) reddit 의 after 커서.
+        // 추천순은 목록이 id 순서가 아니므로 (1) 이 정상 글을 오필터한다
+        // (lastId 보다 큰 id 의 저추천 최신 글이 다음 페이지에 올 수 있음).
+        // 따라서 추천순에서는 lastId 를 비워 필터를 끄고, 커서형이라 정렬과
+        // 무관하게 lastId 가 필요한 reddit 만 예외로 유지한다.
+        final bool useLastId =
+            sortType == SortType.recent ||
+            mainItem.siteType == SiteType.reddit;
+        final ListItem? lastItem = useLastId
+            ? controller.value.items?.lastOrNull
+            : null;
         final LastId lastId = lastItem != null
             ? LastId(intId: lastItem.id, stringId: lastItem.url)
             : const LastId();
@@ -104,10 +144,15 @@ class ListPagingController extends _$ListPagingController {
         final result = await ref.read(
           reqListDataProvider(mainItem, sortType, pageKey, lastId).future,
         );
-        return result.fold(
-          (failure) => throw _PagingFailure(failure.message),
-          (items) => _applyMute(items, mutes),
-        );
+        return result.fold((failure) => throw _PagingFailure(failure.message), (
+          items,
+        ) {
+          final List<ListItem> filtered = _applyMute(items, mutes);
+          // 새 항목을 만나면 강제 전진 모드 종료 → 정상 페이징 복귀.
+          // (남은 허용량이 이후의 자연스러운 끝 감지를 늦추지 않도록)
+          if (filtered.isNotEmpty) _forcedFetchAllowance = 0;
+          return filtered;
+        });
       },
     );
 
@@ -119,11 +164,6 @@ class ListPagingController extends _$ListPagingController {
     final siteType = ref.read(currentSiteTypeProvider);
     return siteType == SiteType.clien ? 0 : 1;
   }
-
-  bool _isSinglePageBoard(MainItem mainItem) =>
-      (mainItem.siteType == SiteType.clien && mainItem.board == 'recommend') ||
-      // 네이트판은 고정 랭킹 목록이라 페이지네이션이 없다.
-      mainItem.siteType == SiteType.nate;
 
   void refresh() => state.refresh();
 
@@ -143,6 +183,28 @@ class ListPagingController extends _$ListPagingController {
   }
 
   void loadMore() => state.fetchNextPage();
+
+  /// noMoreItems 로 종료된 상태에서 사용자가 명시적으로 다음 페이지를 요청.
+  ///
+  /// hasNextPage 가 false 면 fetchNextPage 는 내부 가드에 막혀 no-op 이므로,
+  /// hasNextPage 를 되돌린 뒤 fetch 한다. 이미 비어있는 것으로 확인된 페이지를
+  /// 다시 요청해도 offset 이 밀린 상황에서는 계속 중복만 오므로, 허용량을
+  /// 부여해 getNextPageKey 가 더 깊은 새 키로 전진하게 한다. 사용자가 리스트
+  /// 끝에 머무는 동안 허용량만큼(최대 [_forcedFetchBudget] 페이지) 연속으로
+  /// 시도되고, 그 안에 새 항목을 만나면 정상 페이징으로 복귀한다.
+  void forceLoadMore() {
+    final ctrl = state;
+    if (ctrl.value.hasNextPage) {
+      ctrl.fetchNextPage();
+      return;
+    }
+    _forcedFetchAllowance = _forcedFetchBudget;
+    ctrl.value = ctrl.value.copyWith(hasNextPage: true, error: null);
+    ctrl.fetchNextPage();
+  }
+
+  /// '더 불러오기' 한 번당 추가로 전진해 볼 최대 페이지 수.
+  static const int _forcedFetchBudget = 5;
 
   /// 백그라운드 → 포그라운드 복귀 후 fetch 가 멈춰 있을 때 강제로 재시작.
   ///

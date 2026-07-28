@@ -228,6 +228,59 @@ final class ReqListDataFamily extends $Family
   String toString() => r'reqListDataProvider';
 }
 
+/// 페이지네이션이 없는 게시판(한 번 fetch 후 종료).
+/// 뷰에서 '더 불러오기' 버튼 노출 여부 판단에도 사용한다.
+
+@ProviderFor(isSinglePageBoard)
+final isSinglePageBoardProvider = IsSinglePageBoardProvider._();
+
+/// 페이지네이션이 없는 게시판(한 번 fetch 후 종료).
+/// 뷰에서 '더 불러오기' 버튼 노출 여부 판단에도 사용한다.
+
+final class IsSinglePageBoardProvider
+    extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
+  /// 페이지네이션이 없는 게시판(한 번 fetch 후 종료).
+  /// 뷰에서 '더 불러오기' 버튼 노출 여부 판단에도 사용한다.
+  IsSinglePageBoardProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'isSinglePageBoardProvider',
+        isAutoDispose: true,
+        dependencies: <ProviderOrFamily>[mainItemProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          IsSinglePageBoardProvider.$allTransitiveDependencies0,
+        ],
+      );
+
+  static final $allTransitiveDependencies0 = mainItemProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$isSinglePageBoardHash();
+
+  @$internal
+  @override
+  $ProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  bool create(Ref ref) {
+    return isSinglePageBoard(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$isSinglePageBoardHash() => r'9a121c853f79ab65103ec7c10a2b3b88686cdefd';
+
 /// infinite_scroll_pagination 의 PagingController 를 Riverpod 으로 감싼다.
 /// build() 는 mainItem/sortType 이 바뀔 때만 새 컨트롤러를 생성한다.
 /// 이전 컨트롤러의 dispose 는 Riverpod 의 ref.onDispose 가 자동 처리.
@@ -258,17 +311,20 @@ final class ListPagingControllerProvider
           mainItemProvider,
           reqListDataProvider,
           sortTypeProvider,
+          isSinglePageBoardProvider,
         ],
-        $allTransitiveDependencies: <ProviderOrFamily>[
+        $allTransitiveDependencies: <ProviderOrFamily>{
           ListPagingControllerProvider.$allTransitiveDependencies0,
           ListPagingControllerProvider.$allTransitiveDependencies1,
           ListPagingControllerProvider.$allTransitiveDependencies2,
-        ],
+          ListPagingControllerProvider.$allTransitiveDependencies3,
+        },
       );
 
   static final $allTransitiveDependencies0 = mainItemProvider;
   static final $allTransitiveDependencies1 = reqListDataProvider;
   static final $allTransitiveDependencies2 = sortTypeProvider;
+  static final $allTransitiveDependencies3 = isSinglePageBoardProvider;
 
   @override
   String debugGetCreateSourceHash() => _$listPagingControllerHash();
@@ -289,7 +345,7 @@ final class ListPagingControllerProvider
 }
 
 String _$listPagingControllerHash() =>
-    r'f49451989f52afe96b4766c5f7c8a10d8df952c4';
+    r'd8e29810847965dee1a8be05f3f4347f03fb5990';
 
 /// infinite_scroll_pagination 의 PagingController 를 Riverpod 으로 감싼다.
 /// build() 는 mainItem/sortType 이 바뀔 때만 새 컨트롤러를 생성한다.
@@ -347,6 +403,7 @@ final class PagingItemsProvider
           PagingItemsProvider.$allTransitiveDependencies1,
           PagingItemsProvider.$allTransitiveDependencies2,
           PagingItemsProvider.$allTransitiveDependencies3,
+          PagingItemsProvider.$allTransitiveDependencies4,
         },
       );
 
@@ -357,6 +414,8 @@ final class PagingItemsProvider
       ListPagingControllerProvider.$allTransitiveDependencies1;
   static final $allTransitiveDependencies3 =
       ListPagingControllerProvider.$allTransitiveDependencies2;
+  static final $allTransitiveDependencies4 =
+      ListPagingControllerProvider.$allTransitiveDependencies3;
 
   @override
   String debugGetCreateSourceHash() => _$pagingItemsHash();
@@ -423,6 +482,8 @@ final class ItemAtIndexProvider
       PagingItemsProvider.$allTransitiveDependencies2;
   static final $allTransitiveDependencies4 =
       PagingItemsProvider.$allTransitiveDependencies3;
+  static final $allTransitiveDependencies5 =
+      PagingItemsProvider.$allTransitiveDependencies4;
 
   @override
   String debugGetCreateSourceHash() => _$itemAtIndexHash();
@@ -479,6 +540,7 @@ final class ItemAtIndexFamily extends $Family
           ItemAtIndexProvider.$allTransitiveDependencies2,
           ItemAtIndexProvider.$allTransitiveDependencies3,
           ItemAtIndexProvider.$allTransitiveDependencies4,
+          ItemAtIndexProvider.$allTransitiveDependencies5,
         },
         isAutoDispose: true,
       );

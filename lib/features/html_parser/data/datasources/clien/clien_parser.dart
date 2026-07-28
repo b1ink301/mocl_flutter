@@ -411,9 +411,17 @@ class ClienParser extends BaseParser {
     LastId lastId,
   ) {
     final String sort = sortType.toQuery(siteType);
+    // 최신순은 boardSn 커서 페이징 사용. offset(po)만 쓰면 활성 게시판에서
+    // 새 글 유입으로 페이지가 밀려 직전 페이지와 겹치고, 파서의 lastId 중복
+    // 필터가 페이지 전체를 걸러 빈 페이지 → 페이징 조기 종료가 발생한다.
+    // boardSn 에 마지막 글 sn 을 넘기면 서버가 그 이후 글만 반환해 겹침이 없다.
+    // 추천순은 sn 순서가 아니므로 커서를 쓰지 않는다.
+    // (추천순에서는 파서의 `id >= lastId` 필터도 오동작 소지가 있으나 별도 과제)
+    final int boardSn =
+        sortType == SortType.recent && lastId.intId > 0 ? lastId.intId : 0;
     return board == "recommend"
         ? url
-        : 'https://m.clien.net/service/api/board/under/list?category=0&boardSn=0&po=$page$sort&boardCd=$board';
+        : 'https://m.clien.net/service/api/board/under/list?category=0&boardSn=$boardSn&po=$page$sort&boardCd=$board';
   }
 
   @override
