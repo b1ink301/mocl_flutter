@@ -21,11 +21,7 @@ import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_i
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_isolate_message.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-class DamoangParser extends BaseParser {
-  final bool isShowNickImage;
-
-  const DamoangParser(this.isShowNickImage);
-
+class const DamoangParser(final bool isShowNickImage) extends BaseParser {
   @override
   SiteType get siteType => SiteType.damoang;
 
@@ -627,7 +623,8 @@ class DamoangParser extends BaseParser {
 
   @override
   String urlByDetail(String url, String board, int id) =>
-      '$baseUrl/$board/$id/__data.json?x-sveltekit-invalidated=1001';
+      '$baseUrl/$board/$id/__data.json?x-sveltekit-invalidated=1001'
+      '&_ts=$_cacheBustToken';
 
   @override
   String urlByMain() => 'https://damoang.net/';
@@ -732,6 +729,19 @@ class DamoangParser extends BaseParser {
     return Right(items);
   }
 
+  /// 다모앙은 Cloudflare 뒤에 있고 `__data.json` 응답이
+  /// `s-maxage=60, stale-while-revalidate=120` 으로 내려온다. URL 이 매번
+  /// 동일하면 엣지 캐시 키가 고정돼 `cf-cache-status: HIT` 로 10분 넘게 묵은
+  /// 응답이 돌아오고("새로고침해도 최신글이 안 보임"), 요청 헤더의
+  /// `Cache-Control: no-cache` 는 엣지에서 무시된다.
+  /// 그래서 캐시 키를 [_cacheBustBucket] 초 단위로 굴려 최대 staleness 를
+  /// 그 정도로 제한한다. 매 요청 랜덤값은 캐시를 완전히 무력화해 원본 부하가
+  /// 커지므로 쓰지 않는다.
+  static const int _cacheBustBucket = 10;
+
+  static int get _cacheBustToken =>
+      DateTime.now().millisecondsSinceEpoch ~/ (_cacheBustBucket * 1000);
+
   @override
   String urlByList(
     String url,
@@ -740,7 +750,8 @@ class DamoangParser extends BaseParser {
     SortType sortType,
     LastId lastId,
   ) =>
-      '$url/__data.json?page=$page&x-sveltekit-invalidated=101${sortType.toQuery(siteType)}';
+      '$url/__data.json?page=$page&x-sveltekit-invalidated=101'
+      '${sortType.toQuery(siteType)}&_ts=$_cacheBustToken';
 
   @override
   String urlBySearchList(
@@ -750,5 +761,6 @@ class DamoangParser extends BaseParser {
     String keyword,
     LastId lastId,
   ) =>
-      '$url/__data.json?page=$page&sfl=wr_subject&sop=and&stx=$keyword&x-sveltekit-invalidated=101';
+      '$url/__data.json?page=$page&sfl=wr_subject&sop=and&stx=$keyword'
+      '&x-sveltekit-invalidated=101&_ts=$_cacheBustToken';
 }
