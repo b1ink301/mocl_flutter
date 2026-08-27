@@ -17,13 +17,8 @@ const String userAgentMobile =
 const String userAgentPc =
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36';
 
-abstract class BaseApi with BaseAction {
-  final Dio _dio;
-
-  final String userAgent;
-
-  const BaseApi(this._dio, this.userAgent);
-
+abstract class const BaseApi(final Dio _dio, final String userAgent)
+    with BaseAction {
   void init(cookiejar.CookieJar cookieJar) {
     _dio.httpClientAdapter = IOHttpClientAdapter();
 
@@ -33,8 +28,11 @@ abstract class BaseApi with BaseAction {
     }
   }
 
-  Future<Response<dynamic>> getUri(Uri uri, {Map<String, String>? headers}) => _dio
-      .getUri(uri, options: headers != null ? Options(headers: headers) : null);
+  Future<Response<dynamic>> getUri(Uri uri, {Map<String, String>? headers}) =>
+      _dio.getUri(
+        uri,
+        options: headers != null ? Options(headers: headers) : null,
+      );
 
   Future<Response<dynamic>> get(
     String url, {

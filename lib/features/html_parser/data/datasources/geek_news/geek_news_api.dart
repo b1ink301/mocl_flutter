@@ -15,9 +15,7 @@ import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 import '../base/base_parser.dart';
 
 /// 긱뉴스는 쿠키/로그인이 불필요하므로 withSyncCookie를 사용하지 않습니다.
-class GeekNewsApi extends BaseApi {
-  const GeekNewsApi(super.dio, super.userAgent);
-
+class const GeekNewsApi(super.dio, super.userAgent) extends BaseApi {
   @override
   Future<Either<Failure, Details>> detail(
     ListItem item,
@@ -33,7 +31,7 @@ class GeekNewsApi extends BaseApi {
       );
       log('[detail] $url response = ${response.statusCode}');
       return response.statusCode == 200
-          ? parser.detail(response)
+          ? await parser.detail(response)
           : Left(
               GetDetailFailure(
                 message: 'response.statusCode = ${response.statusCode}',
@@ -72,7 +70,7 @@ class GeekNewsApi extends BaseApi {
       log('[getList] $url response = ${response.statusCode}');
 
       return response.statusCode == 200
-          ? parser.list(response, lastId, item.text, isReads)
+          ? await parser.list(response, lastId, item.text, isReads)
           : Left(
               GetListFailure(
                 message: 'response.statusCode = ${response.statusCode}',

@@ -27,9 +27,7 @@ import '../base/base_parser.dart';
 /// 상세 URL: `/board/bbs_view/{code}/{id}/2/1`. 본문/댓글은 단일 응답에 포함된다.
 /// 게시판마다 메타(분류·닉·시간·조회·추천) 노출 항목이 달라 텍스트 패턴으로
 /// 분류해 흡수한다.
-class BobaedreamParser extends BaseParser {
-  const BobaedreamParser();
-
+class const BobaedreamParser() extends BaseParser {
   @override
   SiteType get siteType => SiteType.bobaedream;
 
@@ -298,7 +296,9 @@ class BobaedreamParser extends BaseParser {
         .qText('header.article-tit div.util span.data3')
         .replaceAll('추천', '')
         .trim();
-    final nickName = container.qText('header.article-tit div.util2 div.info span');
+    final nickName = container.qText(
+      'header.article-tit div.util2 div.info span',
+    );
 
     final bodyEl = container.querySelector('div.article-body');
     bodyEl.removeAll('script, style, input, button, textarea');

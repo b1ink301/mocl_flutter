@@ -1,9 +1,5 @@
 import 'package:mocl_flutter/core/error/failures.dart';
 
-class SetMainFailure extends Failure {
-  const SetMainFailure({required super.message});
-}
+class const SetMainFailure({required super.message}) extends Failure;
 
-class CallFunctionFailure extends Failure {
-  const CallFunctionFailure({required super.message});
-}
+class const CallFunctionFailure({required super.message}) extends Failure;

@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/presentation/widgets/adaptive_popup_menu.dart';
@@ -14,9 +14,9 @@ import '../state/detail_state_mixin.dart';
 import 'detail_header_bar.dart';
 import 'detail_scope.dart';
 
-class DetailAppBar extends ConsumerWidget with DetailState, DetailEvent {
-  const DetailAppBar({super.key});
-
+class const DetailAppBar({super.key})
+    extends ConsumerWidget
+    with DetailState, DetailEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final String title = titleState(ref);
@@ -59,25 +59,15 @@ class DetailAppBar extends ConsumerWidget with DetailState, DetailEvent {
   }
 }
 
-class _DetailPopupMenuButton extends StatelessWidget {
-  final Color focusColor;
-  final void Function() onRefresh;
-  final void Function() onOpenBrowser;
-  final void Function() onShareUrl;
-  final void Function() onIncreaseFontSize;
-  final void Function() onDecreaseFontSize;
-  final void Function() onResetFontSize;
-
-  const _DetailPopupMenuButton({
-    required this.focusColor,
-    required this.onRefresh,
-    required this.onOpenBrowser,
-    required this.onShareUrl,
-    required this.onIncreaseFontSize,
-    required this.onDecreaseFontSize,
-    required this.onResetFontSize,
-  });
-
+class const _DetailPopupMenuButton({
+  required final Color focusColor,
+  required final void Function() onRefresh,
+  required final void Function() onOpenBrowser,
+  required final void Function() onShareUrl,
+  required final void Function() onIncreaseFontSize,
+  required final void Function() onDecreaseFontSize,
+  required final void Function() onResetFontSize,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) => AdaptivePopupMenu(
     icon: PlainIcon(Icons.more_vert_rounded),
@@ -104,19 +94,12 @@ class _DetailPopupMenuButton extends StatelessWidget {
   );
 }
 
-class _FontSizeDialog extends ConsumerWidget {
-  final Color focusColor;
-  final VoidCallback onIncrease;
-  final VoidCallback onDecrease;
-  final VoidCallback onReset;
-
-  const _FontSizeDialog({
-    required this.focusColor,
-    required this.onIncrease,
-    required this.onDecrease,
-    required this.onReset,
-  });
-
+class const _FontSizeDialog({
+  required final Color focusColor,
+  required final VoidCallback onIncrease,
+  required final VoidCallback onDecrease,
+  required final VoidCallback onReset,
+}) extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final double delta = ref.watch(fontSizeDeltaProvider);

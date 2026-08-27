@@ -5,8 +5,6 @@ part 'checkable_main_item.freezed.dart';
 
 @freezed
 abstract class CheckableMainItem with _$CheckableMainItem {
-  factory CheckableMainItem({
-    required MainItem mainItem,
-    required bool isChecked,
-  }) = _CheckableMainItem;
+  factory({required MainItem mainItem, required bool isChecked}) =
+      _CheckableMainItem;
 }

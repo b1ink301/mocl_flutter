@@ -6,7 +6,7 @@ part 'page_state.freezed.dart';
 
 @freezed
 abstract class PageState with _$PageState {
-  const factory PageState({
+  const factory({
     required List<ListItem> items,
     required bool isLoading,
     required int currentPage,
@@ -15,7 +15,7 @@ abstract class PageState with _$PageState {
     String? error,
   }) = _PageState;
 
-  factory PageState.initial(int page) => PageState(
+  factory initial(int page) => PageState(
     items: const [],
     isLoading: false,
     currentPage: page,
@@ -23,7 +23,7 @@ abstract class PageState with _$PageState {
     lastId: LastId.empty(),
   );
 
-  factory PageState.empty() => PageState(
+  factory empty() => PageState(
     items: const [],
     isLoading: false,
     currentPage: 0,

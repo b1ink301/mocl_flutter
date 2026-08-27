@@ -13,7 +13,7 @@ BookmarkRepository bookmarkRepository(Ref ref) =>
 
 /// 스크랩 목록(최신순). 추가/삭제 시 invalidate 되어 화면이 갱신된다.
 @riverpod
-class BookmarksNotifier extends _$BookmarksNotifier {
+class BookmarksNotifier() extends _$BookmarksNotifier {
   @override
   Future<List<BookmarkData>> build() =>
       ref.watch(bookmarkRepositoryProvider).getAll();
@@ -26,7 +26,7 @@ class BookmarksNotifier extends _$BookmarksNotifier {
 
 /// 특정 게시물의 북마크 여부 + 토글. 상세 화면 버튼이 사용한다.
 @riverpod
-class BookmarkButton extends _$BookmarkButton {
+class BookmarkButton() extends _$BookmarkButton {
   @override
   Future<bool> build(SiteType siteType, int id) =>
       ref.watch(bookmarkRepositoryProvider).isBookmarked(siteType, id);

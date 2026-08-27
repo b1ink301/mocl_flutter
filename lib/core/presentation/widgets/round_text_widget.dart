@@ -1,24 +1,18 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/core/presentation/widgets/plain_text.dart';
 
-class RoundTextWidget extends StatelessWidget {
-  final String text;
-  final TextStyle? textStyle;
-  final EdgeInsetsGeometry padding;
-  final Color? borderColor;
-  final Color? backgroundColor;
-  final double borderRadius;
-
-  const RoundTextWidget({
-    super.key,
-    required this.text,
-    this.textStyle,
-    this.padding = const EdgeInsets.symmetric(horizontal: 4.1, vertical: 0.6),
-    this.borderColor,
-    this.backgroundColor,
-    this.borderRadius = 10.0,
-  });
-
+class const RoundTextWidget({
+  super.key,
+  required final String text,
+  final TextStyle? textStyle,
+  final EdgeInsetsGeometry padding = const EdgeInsets.symmetric(
+    horizontal: 4.1,
+    vertical: 0.6,
+  ),
+  final Color? borderColor,
+  final Color? backgroundColor,
+  final double borderRadius = 10.0,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     // 1. textStyle이 주입되었다면 context 조회를 생략합니다.

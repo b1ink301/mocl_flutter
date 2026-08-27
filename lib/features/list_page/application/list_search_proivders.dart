@@ -11,7 +11,7 @@ import 'list_providers.dart';
 part 'list_search_proivders.g.dart';
 
 @riverpod
-class KeywordNotifier extends _$KeywordNotifier {
+class KeywordNotifier() extends _$KeywordNotifier {
   @override
   String build() => '';
 

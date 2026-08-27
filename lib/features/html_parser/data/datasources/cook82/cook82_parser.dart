@@ -28,9 +28,7 @@ import '../base/base_parser.dart';
 /// 테이블 기반 리스트(`td.title`), 상세 본문 `#articleBody`,
 /// 댓글 `ul.reples > li.rp` 가 모두 단일 응답에 포함된다.
 /// 리스트의 글 링크는 `read.php?...` 상대경로라 `/entiz/` 기준으로 절대화한다.
-class Cook82Parser extends BaseParser {
-  const Cook82Parser();
-
+class const Cook82Parser() extends BaseParser {
   @override
   SiteType get siteType => SiteType.cook82;
 
@@ -246,7 +244,8 @@ class Cook82Parser extends BaseParser {
             ?.group(0) ??
         '';
 
-    final bodyEl = document.querySelector('#articleBody') ??
+    final bodyEl =
+        document.querySelector('#articleBody') ??
         document.querySelector('#content');
     bodyEl.removeAll('script, style, input, button, ins, iframe');
     final bodyHtml = bodyEl?.innerHtml ?? '';

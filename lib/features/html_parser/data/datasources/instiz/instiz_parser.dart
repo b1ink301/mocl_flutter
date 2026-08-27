@@ -23,9 +23,7 @@ import '../base/base_parser.dart';
 /// 리스트 URL: `/pt`(일상·유머), 페이지는 `?page=N`(카테고리는 `?category=N`).
 /// 상세 URL: `/pt/{id}`. 본문/댓글이 단일 GET 응답에 포함된다.
 /// 상대 시각("14:58", "4시간 전")을 그대로 노출한다.
-class InstizParser extends BaseParser {
-  const InstizParser();
-
+class const InstizParser() extends BaseParser {
   @override
   SiteType get siteType => SiteType.instiz;
 
@@ -106,7 +104,9 @@ class InstizParser extends BaseParser {
       final href = anchor?.attributes['href']?.trim();
       if (anchor == null || href == null) continue;
 
-      int id = int.tryParse(_idClassRe.firstMatch(td.className)?.group(1) ?? '') ?? 0;
+      int id =
+          int.tryParse(_idClassRe.firstMatch(td.className)?.group(1) ?? '') ??
+          0;
       if (id <= 0) {
         id = int.tryParse(_idHrefRe.firstMatch(href)?.group(1) ?? '') ?? 0;
       }
@@ -167,7 +167,9 @@ class InstizParser extends BaseParser {
     final document = parse(responseData);
 
     final String title =
-        document.querySelector('meta[property="og:title"]')?.attributes['content'] ??
+        document
+            .querySelector('meta[property="og:title"]')
+            ?.attributes['content'] ??
         '';
 
     final bodyEl = document.querySelector('div.memo_content');
@@ -179,11 +181,12 @@ class InstizParser extends BaseParser {
     for (final c in document.querySelectorAll('tr.cmt_view')) {
       final String cNick = c.qText('span.href');
       final lineEl = c.querySelector('div.comment_line');
-      final String cTime = lineEl?.querySelector('span.minitext')?.text.trim() ?? '';
+      final String cTime =
+          lineEl?.querySelector('span.minitext')?.text.trim() ?? '';
       final bodyClone = lineEl?.clone(true);
-      bodyClone?.querySelectorAll('span.minitext, script, button').forEach(
-        (e) => e.remove(),
-      );
+      bodyClone
+          ?.querySelectorAll('span.minitext, script, button')
+          .forEach((e) => e.remove());
       final String cBody = bodyClone?.innerHtml.trim() ?? '';
       if (cBody.isEmpty && cNick.isEmpty) continue;
 

@@ -11,9 +11,7 @@ import 'package:timeago/timeago.dart' as timeago;
 /// - `2026-06-11`, `2026.06.11` (날짜만, 시각은 현재 유지)
 /// - `26.7.20 1:44 PM` (2자리 연도 + 영문 AM/PM)
 /// - ISO 8601 (`2026-03-13T11:04:59+09:00`)
-class ParserDateTime {
-  ParserDateTime._();
-
+class ParserDateTime._() {
   static final RegExp _korean = RegExp(
     r'(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일\s*(오전|오후)\s*(\d{1,2}):(\d{2})',
   );

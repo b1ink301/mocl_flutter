@@ -9,8 +9,9 @@ import '../../../../core/application/app_provider.dart';
 import '../../../html_parser/application/datasource_provider.dart';
 import '../../application/detail_providers.dart';
 
-mixin class DetailState {
-  AppTextStyles appTextStyles(WidgetRef ref) => ref.watch(appTextStylesFontSizeProvider);
+mixin class DetailState() {
+  AppTextStyles appTextStyles(WidgetRef ref) =>
+      ref.watch(appTextStylesFontSizeProvider);
 
   AsyncValue<Details> detailState(WidgetRef ref) => ref.watch(detailsProvider);
 

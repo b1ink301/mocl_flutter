@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
@@ -13,9 +13,9 @@ import '../../../core/presentation/widgets/plain_divider_widget.dart';
 import '../../../core/presentation/widgets/plain_text.dart';
 import 'widgets/list_scope.dart';
 
-class MoclListView extends HookConsumerWidget with ListEvent, ListState {
-  const MoclListView({super.key});
-
+class const MoclListView({super.key})
+    extends HookConsumerWidget
+    with ListEvent, ListState {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // 리스트 아이템 읽음 처리 리스너 등록
@@ -89,9 +89,7 @@ class MoclListView extends HookConsumerWidget with ListEvent, ListState {
   }
 }
 
-class _FirstPageLoading extends StatelessWidget {
-  const _FirstPageLoading();
-
+class const _FirstPageLoading() extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final smallTextStyle = ListStyleScope.of(context).smallTextStyle;
@@ -112,18 +110,14 @@ class _FirstPageLoading extends StatelessWidget {
   }
 }
 
-class _NewPageLoading extends StatelessWidget {
-  const _NewPageLoading();
-
+class const _NewPageLoading() extends StatelessWidget {
   @override
   Widget build(BuildContext context) => const Column(
     children: [PlainDividerWidget(), LoadingWidget(), PlainDividerWidget()],
   );
 }
 
-class _NoItemsFound extends StatelessWidget {
-  const _NoItemsFound();
-
+class const _NoItemsFound() extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final smallTextStyle = ListStyleScope.of(context).smallTextStyle;
@@ -134,17 +128,11 @@ class _NoItemsFound extends StatelessWidget {
   }
 }
 
-class _NoMoreItems extends StatelessWidget {
-  final double bottomPadding;
-  final VoidCallback onLoadMore;
-  final TextStyle textStyle;
-
-  const _NoMoreItems({
-    required this.bottomPadding,
-    required this.onLoadMore,
-    required this.textStyle,
-  });
-
+class const _NoMoreItems({
+  required final double bottomPadding,
+  required final VoidCallback onLoadMore,
+  required final TextStyle textStyle,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: EdgeInsets.only(top: 8, bottom: bottomPadding + 8),
@@ -157,17 +145,11 @@ class _NoMoreItems extends StatelessWidget {
   );
 }
 
-class _ListError extends StatelessWidget {
-  final String errorMessage;
-  final VoidCallback onRetry;
-  final TextStyle textStyle;
-
-  const _ListError({
-    required this.errorMessage,
-    required this.onRetry,
-    required this.textStyle,
-  });
-
+class const _ListError({
+  required final String errorMessage,
+  required final VoidCallback onRetry,
+  required final TextStyle textStyle,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) => Padding(
     padding: const EdgeInsets.all(16),

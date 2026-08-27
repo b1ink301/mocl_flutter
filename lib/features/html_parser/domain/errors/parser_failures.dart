@@ -1,13 +1,7 @@
 import 'package:mocl_flutter/core/error/failures.dart';
 
-class GetListFailure extends Failure {
-  const GetListFailure({required super.message});
-}
+class const GetListFailure({required super.message}) extends Failure;
 
-class GetDetailFailure extends Failure {
-  const GetDetailFailure({required super.message});
-}
+class const GetDetailFailure({required super.message}) extends Failure;
 
-class GetMainFailure extends Failure {
-  const GetMainFailure({required super.message});
-}
+class const GetMainFailure({required super.message}) extends Failure;

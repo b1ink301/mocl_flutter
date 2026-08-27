@@ -24,9 +24,7 @@ import '../base/base_parser.dart';
 /// 상세 URL: `/mp/b.php?id={id}&b={board}&m=view`. 본문은 정적 HTML 에 있으나
 /// 댓글은 `&m=reply` 로 별도 로드되므로, API 가 본문+댓글 HTML 을 동시에 받아
 /// `[html, replyHtml]` 로 파서에 넘긴다(인벤과 동일한 구조).
-class MlbparkParser extends BaseParser {
-  const MlbparkParser();
-
+class const MlbparkParser() extends BaseParser {
   @override
   SiteType get siteType => SiteType.mlbpark;
 
@@ -162,18 +160,20 @@ class MlbparkParser extends BaseParser {
     return Isolate.run(() => _parseDetail(html, replyHtml));
   }
 
-  static Either<Failure, Details> _parseDetail(
-    String html,
-    String replyHtml,
-  ) {
+  static Either<Failure, Details> _parseDetail(String html, String replyHtml) {
     final document = parse(html);
 
     final String rawTitle =
-        document.querySelector('meta[property="og:title"]')?.attributes['content'] ??
+        document
+            .querySelector('meta[property="og:title"]')
+            ?.attributes['content'] ??
         document.qText('.tit');
-    final String title = rawTitle.replaceFirst(RegExp(r'\s*:\s*MLBPARK.*$'), '').trim();
+    final String title = rawTitle
+        .replaceFirst(RegExp(r'\s*:\s*MLBPARK.*$'), '')
+        .trim();
 
-    final bodyEl = document.querySelector('div.ar_txt#contentDetail') ??
+    final bodyEl =
+        document.querySelector('div.ar_txt#contentDetail') ??
         document.querySelector('div.ar_txt');
     bodyEl.removeAll('script, style, input, button, ins, iframe');
     final String bodyHtml = bodyEl?.innerHtml ?? '';

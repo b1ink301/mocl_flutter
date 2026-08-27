@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/widget_previews.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -13,9 +13,11 @@ import 'state/add_event_mixin.dart';
 import 'state/add_state_mixin.dart';
 import 'widgets/board_search_field.dart';
 
-class AddListDialog extends ConsumerWidget with AddState, AddEvent {
+class const AddListDialog({super.key})
+    extends ConsumerWidget
+    with AddState, AddEvent {
   @Preview(name: 'AddListDialog')
-  const AddListDialog({super.key});
+  this;
 
   static Widget init(BuildContext context) => const AddListDialog();
 
@@ -69,74 +71,67 @@ class AddListDialog extends ConsumerWidget with AddState, AddEvent {
     BuildContext context,
     List<CheckableMainItem> allItems,
   ) => Consumer(
-        builder: (_, ref, _) {
-          final titleStyle = ref.watch(
-            appTextStylesFontSizeProvider.select((s) => s.titleTextStyle),
+    builder: (_, ref, _) {
+      final titleStyle = ref.watch(
+        appTextStylesFontSizeProvider.select((s) => s.titleTextStyle),
+      );
+      final query = searchQuery(ref).trim().toLowerCase();
+      final items = query.isEmpty
+          ? allItems
+          : allItems
+                .where(
+                  (e) =>
+                      e.mainItem.text.toLowerCase().contains(query) ||
+                      e.mainItem.category.toLowerCase().contains(query),
+                )
+                .toList();
+      final headerStyle = Theme.of(context).textTheme.titleSmall?.copyWith(
+        color: Theme.of(context).focusColor,
+        fontWeight: FontWeight.bold,
+      );
+      if (items.isEmpty) {
+        return Center(child: Text("'$query' 검색 결과가 없습니다", style: titleStyle));
+      }
+      return ListView.builder(
+        padding: EdgeInsets.zero,
+        itemCount: items.length,
+        itemBuilder: (context, index) {
+          final item = items[index];
+          final category = item.mainItem.category;
+          // 카테고리가 바뀌는 첫 항목 위에 섹션 헤더를 표시.
+          final bool showHeader =
+              category.isNotEmpty &&
+              (index == 0 || items[index - 1].mainItem.category != category);
+          final tile = CheckBoxListTitleWidget(
+            // 필터링으로 순서가 바뀌어도 체크 상태가 섞이지 않도록
+            // 항목 고유값을 키로 지정한다.
+            key: ValueKey(item.mainItem.url),
+            text: item.mainItem.text,
+            isChecked: item.isChecked,
+            textStyle: titleStyle,
+            onChanged: (isChecked) => onChanged(ref, isChecked, item.mainItem),
           );
-          final query = searchQuery(ref).trim().toLowerCase();
-          final items = query.isEmpty
-              ? allItems
-              : allItems
-                    .where(
-                      (e) =>
-                          e.mainItem.text.toLowerCase().contains(query) ||
-                          e.mainItem.category.toLowerCase().contains(query),
-                    )
-                    .toList();
-          final headerStyle = Theme.of(context).textTheme.titleSmall?.copyWith(
-            color: Theme.of(context).focusColor,
-            fontWeight: FontWeight.bold,
-          );
-          if (items.isEmpty) {
-            return Center(
-              child: Text("'$query' 검색 결과가 없습니다", style: titleStyle),
+          if (!showHeader) {
+            return Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [const DividerWidget(indent: 0, endIndent: 0), tile],
             );
           }
-          return ListView.builder(
-            padding: EdgeInsets.zero,
-            itemCount: items.length,
-            itemBuilder: (context, index) {
-              final item = items[index];
-              final category = item.mainItem.category;
-              // 카테고리가 바뀌는 첫 항목 위에 섹션 헤더를 표시.
-              final bool showHeader =
-                  category.isNotEmpty &&
-                  (index == 0 ||
-                      items[index - 1].mainItem.category != category);
-              final tile = CheckBoxListTitleWidget(
-                // 필터링으로 순서가 바뀌어도 체크 상태가 섞이지 않도록
-                // 항목 고유값을 키로 지정한다.
-                key: ValueKey(item.mainItem.url),
-                text: item.mainItem.text,
-                isChecked: item.isChecked,
-                textStyle: titleStyle,
-                onChanged: (isChecked) =>
-                    onChanged(ref, isChecked, item.mainItem),
-              );
-              if (!showHeader) {
-                return Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    const DividerWidget(indent: 0, endIndent: 0),
-                    tile,
-                  ],
-                );
-              }
-              return Column(
-                mainAxisSize: MainAxisSize.min,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(4, 14, 4, 6),
-                    child: Text(category, style: headerStyle),
-                  ),
-                  tile,
-                ],
-              );
-            },
+          return Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Padding(
+                padding: const EdgeInsets.fromLTRB(4, 14, 4, 6),
+                child: Text(category, style: headerStyle),
+              ),
+              tile,
+            ],
           );
         },
       );
+    },
+  );
 
   List<Widget> _buildActions(BuildContext context) {
     final theme = Theme.of(context);

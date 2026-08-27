@@ -10,11 +10,9 @@ import 'package:path_provider/path_provider.dart';
 import 'package:mocl_flutter/core/util/mocl_logger.dart';
 
 // GoogleAuthClient for authenticated requests
-class GoogleAuthClient extends http.BaseClient {
-  final Map<String, String> _headers;
+class GoogleAuthClient(final Map<String, String> _headers)
+    extends http.BaseClient {
   final http.Client _client = http.Client();
-
-  GoogleAuthClient(this._headers);
 
   @override
   Future<http.StreamedResponse> send(http.BaseRequest request) {
@@ -23,7 +21,7 @@ class GoogleAuthClient extends http.BaseClient {
   }
 }
 
-class GoogleDriveRemoteDataSource {
+class GoogleDriveRemoteDataSource() {
   static const String _dbFileName = 'mocl-sembast.db';
   static const String _appDataFolderName = 'MoclFlutterApp';
 
@@ -220,12 +218,10 @@ class GoogleDriveRemoteDataSource {
       }
 
       final fileId = listResponse.files!.first.id!;
-      final media =
-          await driveApi.files.get(
-                fileId,
-                downloadOptions: drive.DownloadOptions.fullMedia,
-              )
-              as drive.Media;
+      final media = await driveApi.files.get(
+        fileId,
+        downloadOptions: drive.DownloadOptions.fullMedia,
+      ) as drive.Media;
 
       final dbDirectory = await getApplicationDocumentsDirectory();
       final tmpFile = File(path.join(dbDirectory.path, '$_dbFileName.tmp'));

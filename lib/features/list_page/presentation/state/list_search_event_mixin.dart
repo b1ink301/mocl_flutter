@@ -5,7 +5,7 @@ import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import '../../application/list_providers.dart';
 import '../../application/list_search_proivders.dart';
 
-mixin class ListSearchEvent {
+mixin class ListSearchEvent() {
   void handleSearch(WidgetRef ref, String keyword) =>
       ref.read(keywordProvider.notifier).setKeyword(keyword);
 

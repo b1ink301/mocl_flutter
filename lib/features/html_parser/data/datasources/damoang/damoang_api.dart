@@ -18,14 +18,12 @@ import 'package:timeago/timeago.dart' as timeago;
 
 import '../base/base_parser.dart';
 
-class DamoangApi extends BaseApi {
-  const DamoangApi(super.dio, super.userAgent);
-
+class const DamoangApi(super.dio, super.userAgent) extends BaseApi {
   @override
   Future<Either<Failure, Details>> detail(ListItem item, BaseParser parser) =>
       withSyncCookie(parser.baseUrl, () async {
         final String url = parser.urlByDetail(item.url, item.board, item.id);
-        final Map<String, String> headers = {};//{'User-Agent': userAgent};
+        final Map<String, String> headers = {}; //{'User-Agent': userAgent};
 
         final Response<dynamic> response = await get(
           url,
@@ -45,36 +43,33 @@ class DamoangApi extends BaseApi {
 
         // Fetch comments from dedicated API (site now uses streaming
         // for comments, so __data.json no longer includes them).
-        return detailResult.fold(
-          (failure) => Left(failure),
-          (detail) async {
-            if (detail.comments.isNotEmpty) return Right(detail);
+        return detailResult.fold((failure) => Left(failure), (detail) async {
+          if (detail.comments.isNotEmpty) return Right(detail);
 
-            final commentsUrl =
-                '${parser.baseUrl}/api/v1/boards/${item.board}'
-                '/posts/${item.id}/comments';
-            try {
-              final commentsResponse = await get(
-                commentsUrl,
-                headers: headers,
-                responseType: ResponseType.plain,
+          final commentsUrl =
+              '${parser.baseUrl}/api/v1/boards/${item.board}'
+              '/posts/${item.id}/comments';
+          try {
+            final commentsResponse = await get(
+              commentsUrl,
+              headers: headers,
+              responseType: ResponseType.plain,
+            );
+            if (commentsResponse.statusCode == 200) {
+              final comments = _parseCommentsJson(
+                commentsResponse.data is String
+                    ? commentsResponse.data as String
+                    : commentsResponse.data.toString(),
               );
-              if (commentsResponse.statusCode == 200) {
-                final comments = _parseCommentsJson(
-                  commentsResponse.data is String
-                      ? commentsResponse.data as String
-                      : commentsResponse.data.toString(),
-                );
-                if (comments.isNotEmpty) {
-                  return Right(detail.copyWith(comments: comments));
-                }
+              if (comments.isNotEmpty) {
+                return Right(detail.copyWith(comments: comments));
               }
-            } catch (e) {
-              MoclLogger.log('[DamoangApi] comments API error: $e');
             }
-            return Right(detail);
-          },
-        );
+          } catch (e) {
+            MoclLogger.log('[DamoangApi] comments API error: $e');
+          }
+          return Right(detail);
+        });
       });
 
   /// Parse the JSON response from /api/v1/boards/.../comments.
@@ -140,7 +135,7 @@ class DamoangApi extends BaseApi {
       lastId,
     );
     // final String host = Uri.parse(parser.baseUrl).host;
-    final Map<String, String> headers = {};//{'User-Agent': userAgent};
+    final Map<String, String> headers = {}; //{'User-Agent': userAgent};
 
     final Response<dynamic> response = await get(
       url,
@@ -183,7 +178,7 @@ class DamoangApi extends BaseApi {
         requestOptions: RequestOptions(path: url),
         statusCode: 200,
       );
-      return parser.main(response);
+      return await parser.main(response);
     } catch (e) {
       return Left(GetMainFailure(message: e.toString()));
     }

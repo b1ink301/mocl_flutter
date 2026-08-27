@@ -56,9 +56,7 @@ final Map<SiteType, ParseListWorkerFn> _listWorkers = {
   SiteType.theqoo: TheQooParser.parseListInWorker,
 };
 
-class ParserIsolateClient {
-  ParserIsolateClient._();
-
+class ParserIsolateClient._() {
   static final ParserIsolateClient instance = ParserIsolateClient._();
 
   Isolate? _isolate;

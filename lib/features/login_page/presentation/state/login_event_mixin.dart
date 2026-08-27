@@ -1,7 +1,7 @@
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 
-mixin class LoginEvent {
+mixin class LoginEvent() {
   Future<bool> isLogin(WebUri url, SiteType siteType) async {
     CookieManager cookieManager = CookieManager.instance();
 

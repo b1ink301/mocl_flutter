@@ -29,9 +29,7 @@ import '../base/base_parser.dart';
 ///
 /// 뽐뿌는 EUC-KR(CP949) 인코딩이라 디코딩은 [PpomppuApi] 에서 수행하고
 /// 파서에는 이미 UTF-8 String 으로 전달된다.
-class PpomppuParser extends BaseParser {
-  const PpomppuParser();
-
+class const PpomppuParser() extends BaseParser {
   @override
   SiteType get siteType => SiteType.ppomppu;
 
@@ -58,9 +56,8 @@ class PpomppuParser extends BaseParser {
     final seen = <String>{};
     var orderBy = 0;
     for (final a in document.querySelectorAll('a[href*="id="]')) {
-      final match = RegExp(
-        r'[?&]id=([a-zA-Z0-9_]+)',
-      ).firstMatch(a.attributes['href'] ?? '');
+      final match = RegExp(r'[?&]id=([a-zA-Z0-9_]+)')
+          .firstMatch(a.attributes['href'] ?? '');
       if (match == null) continue;
       final board = match.group(1)!;
       if (!seen.add(board)) continue;

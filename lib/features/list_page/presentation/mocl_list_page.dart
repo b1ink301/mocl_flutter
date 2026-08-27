@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -11,9 +11,7 @@ import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mi
 
 import 'mocl_list_view.dart';
 
-class MoclListPage extends StatelessWidget {
-  const MoclListPage({super.key});
-
+class const MoclListPage({super.key}) extends StatelessWidget {
   static Widget init(double width, MainItem item) => ProviderScope(
     overrides: ListEvent.overridesProviderScope(width, item),
     child: const MoclListPage(),
@@ -36,9 +34,7 @@ class MoclListPage extends StatelessWidget {
   }
 }
 
-class _MoclListScaffold extends StatelessWidget {
-  const _MoclListScaffold();
-
+class const _MoclListScaffold() extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);

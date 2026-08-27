@@ -1,11 +1,9 @@
 import 'dart:ui';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/scheduler.dart';
 
-class Glyphs {
-  const Glyphs._();
-
+class const Glyphs._() {
   /// 한국어 빈도 상위 음절 (국립국어원 사용 빈도 조사 기반)
   /// 누적 빈도 약 99% 커버. 일반 앱 UI 텍스트는 거의 다 포함됨.
   static const String _frequentKoreanSyllables =

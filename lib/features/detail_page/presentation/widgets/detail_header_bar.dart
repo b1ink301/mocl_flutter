@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/core/presentation/widgets/author_info_text.dart';
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
@@ -16,7 +16,11 @@ import 'bookmark_icon_button.dart';
 ///
 /// 높이는 고정이 아니라 [style] 의 폰트 크기에서 계산한다. 사용자가 글자 크기를
 /// 키우면 [preferredSize] 도 함께 커져 헤더 콘텐츠가 잘리지 않는다.
-class DetailHeaderBar extends StatelessWidget implements PreferredSizeWidget {
+class const DetailHeaderBar({
+  super.key,
+  required final Details detail,
+  required final TextStyle style,
+}) extends StatelessWidget implements PreferredSizeWidget {
   /// 북마크 버튼(아이콘 20 + 상하 패딩 4)의 높이. 행 안에서 가장 큰 고정 요소라,
   /// 작은 폰트에서는 이 값이 행 높이의 하한이 된다.
   static const double _kIconRowFloor = 28.0;
@@ -26,15 +30,6 @@ class DetailHeaderBar extends StatelessWidget implements PreferredSizeWidget {
 
   /// 하단 구분선 두께.
   static const double _kDividerHeight = 1.0;
-
-  final Details detail;
-  final TextStyle style;
-
-  const DetailHeaderBar({
-    super.key,
-    required this.detail,
-    required this.style,
-  });
 
   @override
   Size get preferredSize {

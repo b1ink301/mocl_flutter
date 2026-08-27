@@ -1,20 +1,16 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
-class CachedItemBuilder extends StatefulWidget {
-  final Widget Function() builder;
-  final bool wantKeepAlive;
-
-  const CachedItemBuilder({
-    super.key,
-    required this.builder,
-    required this.wantKeepAlive,
-  });
-
+class const CachedItemBuilder({
+  super.key,
+  required final Widget Function() builder,
+  required final bool wantKeepAlive,
+}) extends StatefulWidget {
   @override
   State<CachedItemBuilder> createState() => _CachedItemBuilderState();
 }
 
-class _CachedItemBuilderState extends State<CachedItemBuilder>
+class _CachedItemBuilderState()
+    extends State<CachedItemBuilder>
     with AutomaticKeepAliveClientMixin {
   late Widget _cachedWidget;
 

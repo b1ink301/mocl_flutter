@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/features/database/domain/entities/mute_rule.dart';
@@ -7,14 +7,14 @@ import 'package:mocl_flutter/features/mute/presentation/state/mute_state_mixin.d
 
 import '../../../core/application/app_provider.dart';
 
-class MutePage extends ConsumerStatefulWidget {
-  const MutePage({super.key});
-
+class const MutePage({super.key}) extends ConsumerStatefulWidget {
   @override
   ConsumerState<MutePage> createState() => _MutePageState();
 }
 
-class _MutePageState extends ConsumerState<MutePage> with MuteState, MuteEvent {
+class _MutePageState()
+    extends ConsumerState<MutePage>
+    with MuteState, MuteEvent {
   final TextEditingController _controller = TextEditingController();
   MuteType _type = MuteType.keyword;
 

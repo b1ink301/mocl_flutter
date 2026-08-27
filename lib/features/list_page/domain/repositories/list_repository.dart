@@ -6,7 +6,7 @@ import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 
-abstract class ListRepository {
+abstract class ListRepository() {
   Future<Either<Failure, List<ListItem>>> getList({
     required MainItem item,
     required int page,

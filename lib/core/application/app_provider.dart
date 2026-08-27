@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
@@ -11,7 +11,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'app_provider.g.dart';
 
 @Riverpod(keepAlive: true)
-class CurrentSiteTypeNotifier extends _$CurrentSiteTypeNotifier {
+class CurrentSiteTypeNotifier() extends _$CurrentSiteTypeNotifier {
   @override
   SiteType build() {
     final GetSiteType getSiteType = ref.watch(getSiteTypeProvider);
@@ -28,7 +28,7 @@ class CurrentSiteTypeNotifier extends _$CurrentSiteTypeNotifier {
 }
 
 @riverpod
-class ReadableStateNotifier extends _$ReadableStateNotifier {
+class ReadableStateNotifier() extends _$ReadableStateNotifier {
   @override
   int build() => -1;
 
@@ -46,7 +46,7 @@ double screenWidth(Ref ref) => throw UnimplementedError('screenWidth');
 
 /// 영속화된 테마 모드(시스템/라이트/다크). `AppWidget`의 themeMode 에 연결된다.
 @Riverpod(keepAlive: true)
-class ThemeModeNotifier extends _$ThemeModeNotifier {
+class ThemeModeNotifier() extends _$ThemeModeNotifier {
   @override
   ThemeMode build() => ref.read(getThemeModeProvider)(NoParams());
 
@@ -59,7 +59,7 @@ class ThemeModeNotifier extends _$ThemeModeNotifier {
 
 /// 시스템 밝기. 루트에서 `AppWidget`이 Theme 변경에 맞춰 갱신한다.
 @Riverpod(keepAlive: true)
-class CurrentBrightness extends _$CurrentBrightness {
+class CurrentBrightness() extends _$CurrentBrightness {
   @override
   Brightness build() =>
       WidgetsBinding.instance.platformDispatcher.platformBrightness;
@@ -72,7 +72,7 @@ class CurrentBrightness extends _$CurrentBrightness {
 /// 영속화된 폰트 크기 델타(step 단위).
 /// ProviderScope와 무관하게 앱 전역에서 공유된다.
 @Riverpod(keepAlive: true)
-class FontSizeDelta extends _$FontSizeDelta {
+class FontSizeDelta() extends _$FontSizeDelta {
   @override
   double build() => ref.read(getFontSizeProvider)(NoParams());
 
@@ -90,7 +90,7 @@ class FontSizeDelta extends _$FontSizeDelta {
 /// 폰트 스케일이 적용된 앱 텍스트 스타일.
 /// 밝기/델타 변화에 따라 자동 재계산된다.
 @Riverpod(keepAlive: true, dependencies: [CurrentBrightness, FontSizeDelta])
-class AppTextStylesFontSizeNotifier extends _$AppTextStylesFontSizeNotifier {
+class AppTextStylesFontSizeNotifier() extends _$AppTextStylesFontSizeNotifier {
   /// 한 스텝 = 5%. `exposure_±1` 아이콘 체감과 맞춘 값.
   static const double _kStep = 0.05;
 

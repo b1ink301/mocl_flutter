@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,9 +10,7 @@ import '../../../../../core/application/app_provider.dart';
 import '../../../../../core/presentation/widgets/plain_text.dart';
 import 'settings_view.dart';
 
-class SettingsPage extends StatelessWidget {
-  const SettingsPage({super.key});
-
+class const SettingsPage({super.key}) extends StatelessWidget {
   static Widget init(BuildContext context) => const SettingsPage();
 
   @override
@@ -55,9 +53,7 @@ class SettingsPage extends StatelessWidget {
   }
 }
 
-class _SettingsAppBar extends ConsumerWidget {
-  const _SettingsAppBar();
-
+class const _SettingsAppBar() extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);

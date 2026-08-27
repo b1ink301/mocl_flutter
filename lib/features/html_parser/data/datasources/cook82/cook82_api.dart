@@ -16,9 +16,7 @@ import '../base/base_parser.dart';
 
 /// 82쿡 읽기는 비로그인도 가능하지만, 로그인 시 회원 전용 글 열람을 위해
 /// [getWithCookies] 로 로그인 쿠키를 함께 보낸다.
-class Cook82Api extends BaseApi {
-  const Cook82Api(super.dio, super.userAgent);
-
+class const Cook82Api(super.dio, super.userAgent) extends BaseApi {
   @override
   Future<Either<Failure, Details>> detail(
     ListItem item,
@@ -27,7 +25,10 @@ class Cook82Api extends BaseApi {
     try {
       final String url = parser.urlByDetail(item.url, item.board, item.id);
       final String host = Uri.parse(parser.baseUrl).host;
-      final Map<String, String> headers = {'Host': host, 'User-Agent': userAgent};
+      final Map<String, String> headers = {
+        'Host': host,
+        'User-Agent': userAgent,
+      };
       final Response<dynamic> response = await getWithCookies(
         url,
         parser.baseUrl,
@@ -35,7 +36,7 @@ class Cook82Api extends BaseApi {
       );
       log('[detail] $url response = ${response.statusCode}');
       return response.statusCode == 200
-          ? parser.detail(response)
+          ? await parser.detail(response)
           : Left(
               GetDetailFailure(
                 message: 'response.statusCode = ${response.statusCode}',
@@ -66,7 +67,10 @@ class Cook82Api extends BaseApi {
         lastId,
       );
       final String host = Uri.parse(parser.baseUrl).host;
-      final Map<String, String> headers = {'Host': host, 'User-Agent': userAgent};
+      final Map<String, String> headers = {
+        'Host': host,
+        'User-Agent': userAgent,
+      };
       final Response<dynamic> response = await getWithCookies(
         url,
         parser.baseUrl,
@@ -74,7 +78,7 @@ class Cook82Api extends BaseApi {
       );
       log('[getList] $url response = ${response.statusCode}');
       return response.statusCode == 200
-          ? parser.list(response, lastId, item.text, isReads)
+          ? await parser.list(response, lastId, item.text, isReads)
           : Left(
               GetListFailure(
                 message: 'response.statusCode = ${response.statusCode}',
@@ -103,7 +107,7 @@ class Cook82Api extends BaseApi {
       );
       log('[getMain] $url response = ${response.statusCode}');
       return response.statusCode == 200
-          ? parser.main(response)
+          ? await parser.main(response)
           : Left(
               GetMainFailure(
                 message: 'response.statusCode = ${response.statusCode}',
@@ -147,7 +151,7 @@ class Cook82Api extends BaseApi {
       );
       log('[searchList] $url response = ${response.statusCode}');
       return response.statusCode == 200
-          ? parser.list(response, lastId, item.text, isReads)
+          ? await parser.list(response, lastId, item.text, isReads)
           : Left(
               GetListFailure(
                 message: 'response.statusCode = ${response.statusCode}',

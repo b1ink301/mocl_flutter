@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -10,9 +10,9 @@ import 'package:mocl_flutter/features/bookmark/presentation/state/bookmark_state
 
 import '../../../core/presentation/widgets/plain_text.dart';
 
-class BookmarksPage extends ConsumerWidget with BookmarkState, BookmarkEvent {
-  const BookmarksPage({super.key});
-
+class const BookmarksPage({super.key})
+    extends ConsumerWidget
+    with BookmarkState, BookmarkEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final async = bookmarksState(ref);
@@ -40,8 +40,9 @@ class BookmarksPage extends ConsumerWidget with BookmarkState, BookmarkEvent {
             ),
             body: async.when(
               loading: () => const Center(child: CircularProgressIndicator()),
-              error: (e, _) =>
-                  Center(child: Text('불러오기 실패: $e', style: styles.smallTextStyle)),
+              error: (e, _) => Center(
+                child: Text('불러오기 실패: $e', style: styles.smallTextStyle),
+              ),
               data: (items) {
                 if (items.isEmpty) {
                   return Center(

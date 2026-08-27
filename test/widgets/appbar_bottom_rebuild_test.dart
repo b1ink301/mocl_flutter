@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocl_flutter/core/presentation/widgets/appbar_dual_text_widget.dart';
 
@@ -66,18 +66,16 @@ Widget _buildApp(_Counts counts) => MaterialApp(
   ),
 );
 
-class _Counts {
+class _Counts() {
   int inits = 0;
   int builds = 0;
   int taps = 0;
 }
 
 /// DetailHeaderBar 와 같은 Padding > Row 구조의 빌드/마운트/탭 계측 프로브.
-class _ProbeBar extends StatefulWidget implements PreferredSizeWidget {
-  final _Counts counts;
-
-  const _ProbeBar({super.key, required this.counts});
-
+class const _ProbeBar({required final _Counts counts})
+    extends StatefulWidget
+    implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(40);
 
@@ -85,7 +83,7 @@ class _ProbeBar extends StatefulWidget implements PreferredSizeWidget {
   State<_ProbeBar> createState() => _ProbeBarState();
 }
 
-class _ProbeBarState extends State<_ProbeBar> {
+class _ProbeBarState() extends State<_ProbeBar> {
   @override
   void initState() {
     super.initState();

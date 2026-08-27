@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/core/presentation/widgets/plain_text.dart';
 
 /// 닉네임과 메타([info]: 시간ㆍ조회수 등)를 한 줄로 조합해 보여준다.
@@ -8,23 +8,15 @@ import 'package:mocl_flutter/core/presentation/widgets/plain_text.dart';
 /// [nickName] 으로 별도 전달받아 여기서 조합한다.
 ///
 /// 레이아웃: 닉네임이 길면 말줄임 처리하고, 시간ㆍ조회수는 항상 보이도록 한다.
-class AuthorInfoText extends StatelessWidget {
+class const AuthorInfoText({
+  super.key,
+  required final String nickName,
+  required final String info,
+  required final TextStyle style,
+  final bool isAuthor = false,
+  final int maxLines = 1,
+}) extends StatelessWidget {
   static const String _sep = 'ㆍ';
-
-  final String nickName;
-  final String info;
-  final bool isAuthor;
-  final TextStyle style;
-  final int maxLines;
-
-  const AuthorInfoText({
-    super.key,
-    required this.nickName,
-    required this.info,
-    required this.style,
-    this.isAuthor = false,
-    this.maxLines = 1,
-  });
 
   @override
   Widget build(BuildContext context) {

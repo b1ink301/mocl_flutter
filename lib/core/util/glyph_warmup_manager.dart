@@ -1,13 +1,11 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:mocl_flutter/core/util/warmup_glyphs.dart';
 
 import '../../config/mocl_text_styles.dart';
 
-class GlyphWarmupManager with WidgetsBindingObserver {
+class GlyphWarmupManager._() with WidgetsBindingObserver {
   static final GlyphWarmupManager instance = GlyphWarmupManager._();
-
-  GlyphWarmupManager._();
 
   DateTime? backgroundedAt;
   bool _isWarmingUp = false;

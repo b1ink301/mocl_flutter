@@ -21,9 +21,7 @@ import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_i
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_date_time.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
-class TheQooParser extends BaseParser {
-  const TheQooParser();
-
+class const TheQooParser() extends BaseParser {
   @override
   SiteType get siteType => SiteType.theqoo;
 
@@ -43,7 +41,6 @@ class TheQooParser extends BaseParser {
   }
 
   static Either<Failure, Details> _parseDetail(List<dynamic> responseData) {
-
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
     final document = parse(responseData.first);
@@ -73,7 +70,9 @@ class TheQooParser extends BaseParser {
       final addedNumber = json['added_number'];
       // final documentSrl = json['document_srl'];
 
-      MoclLogger.log('nowCommentPage=$nowCommentPage, addedNumber=$addedNumber');
+      MoclLogger.log(
+        'nowCommentPage=$nowCommentPage, addedNumber=$addedNumber',
+      );
 
       final List<dynamic> list = json['comment_list'] as List<dynamic>;
       var index = 1;
@@ -186,7 +185,9 @@ class TheQooParser extends BaseParser {
       final category = element.qText('ul.list-element > li:last-child');
       if (category == '공지') continue;
 
-      final title = element.qText('ul.list-element > li.title > span.title_span');
+      final title = element.qText(
+        'ul.list-element > li.title > span.title_span',
+      );
       final time = element.qText('ul.list-element > li.date');
 
       final hit =

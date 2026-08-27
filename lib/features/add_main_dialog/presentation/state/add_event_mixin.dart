@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 
 import '../../application/add_list_dlg_providers.dart';
 
-mixin class AddEvent {
+mixin class AddEvent() {
   void onChanged(WidgetRef ref, bool isChecked, MainItem item) =>
       ref.read(addListDlgProvider.notifier).onChanged(isChecked, item);
 

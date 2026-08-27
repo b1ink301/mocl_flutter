@@ -22,11 +22,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 import '../base/base_parser.dart';
 
-class ClienParser extends BaseParser {
-  final bool isShowNickImage;
-
-  const ClienParser(this.isShowNickImage);
-
+class const ClienParser(final bool isShowNickImage) extends BaseParser {
   @override
   SiteType get siteType => SiteType.clien;
 
@@ -376,9 +372,8 @@ class ClienParser extends BaseParser {
       final category = group.qText('a.navmenu_title');
       for (final a in group.querySelectorAll('a.navmenu_menu')) {
         final href = a.attributes['href']?.trim() ?? '';
-        final match = RegExp(
-          r'/service/board/([a-zA-Z0-9_]+)',
-        ).firstMatch(href);
+        final match = RegExp(r'/service/board/([a-zA-Z0-9_]+)')
+            .firstMatch(href);
         if (match == null) continue;
         final board = match.group(1)!;
         if (!seen.add(board)) continue;
@@ -417,8 +412,9 @@ class ClienParser extends BaseParser {
     // boardSn 에 마지막 글 sn 을 넘기면 서버가 그 이후 글만 반환해 겹침이 없다.
     // 추천순은 sn 순서가 아니므로 커서를 쓰지 않는다.
     // (추천순에서는 파서의 `id >= lastId` 필터도 오동작 소지가 있으나 별도 과제)
-    final int boardSn =
-        sortType == SortType.recent && lastId.intId > 0 ? lastId.intId : 0;
+    final int boardSn = sortType == SortType.recent && lastId.intId > 0
+        ? lastId.intId
+        : 0;
     return board == "recommend"
         ? url
         : 'https://m.clien.net/service/api/board/under/list?category=0&boardSn=$boardSn&po=$page$sort&boardCd=$board';

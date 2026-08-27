@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
@@ -15,11 +15,8 @@ import '../../../core/presentation/widgets/plain_icon.dart';
 import '../../../core/presentation/widgets/plain_icon_button.dart';
 import '../../../core/presentation/widgets/plain_text.dart';
 
-class ListSearchDelegate extends SearchDelegate<dynamic> {
-  final MainItem item;
-
-  ListSearchDelegate({required this.item});
-
+class ListSearchDelegate({required final MainItem item})
+    extends SearchDelegate<dynamic> {
   @override
   ThemeData appBarTheme(BuildContext context) {
     final ThemeData theme = Theme.of(context);
@@ -66,16 +63,14 @@ class ListSearchDelegate extends SearchDelegate<dynamic> {
   }
 }
 
-class SearchResultView extends ConsumerStatefulWidget {
-  final String searchText;
-
-  const SearchResultView({super.key, required this.searchText});
-
+class const SearchResultView({super.key, required final String searchText})
+    extends ConsumerStatefulWidget {
   @override
   SearchResultViewState createState() => SearchResultViewState();
 }
 
-class SearchResultViewState extends ConsumerState<SearchResultView>
+class SearchResultViewState()
+    extends ConsumerState<SearchResultView>
     with ListSearchState, ListSearchEvent {
   @override
   void initState() {

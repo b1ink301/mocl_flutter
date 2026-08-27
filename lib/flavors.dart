@@ -1,6 +1,9 @@
-enum Flavor { prd, dev }
+enum Flavor() {
+  prd,
+  dev
+}
 
-class F {
+class F() {
   static Flavor? appFlavor;
 
   static String get name => appFlavor?.name ?? 'dev';

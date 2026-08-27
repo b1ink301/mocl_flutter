@@ -1,10 +1,10 @@
 import 'package:equatable/equatable.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// 앱 내에서 사용되는 시맨틱 컬러 정의 — "Paper" 디자인 시스템.
 ///
 /// 웜 뉴트럴(종이) 배경 위에 단일 강조색(코랄)을 쓰는 읽기 중심 팔레트.
-class MoclColors {
+class MoclColors() {
   // ── Paper 공용 토큰 (Light) ──
   static const Color bgLight = Color(0xFFFBFAF9); // 배경(종이)
   static const Color surfaceLight = Color(0xFFFFFFFF); // 카드/표면
@@ -44,29 +44,20 @@ class MoclColors {
 
 /// 기본 폰트 사이즈 정의
 /// Flutter의 Text 위젯이 시스템 폰트 설정을 자동으로 반영하므로 기준값만 정의합니다.
-class _AppFontSizes {
+class _AppFontSizes() {
   static const double title = 16.0;
   static const double small = 13.0;
   static const double badge = 11.0;
 }
 
-class AppTextStyles extends ThemeExtension<AppTextStyles> with Equatable {
-  final TextStyle titleTextStyle;
-  final TextStyle readTitleTextStyle;
-  final TextStyle smallTextStyle;
-  final TextStyle readSmallTextStyle;
-  final TextStyle badgeTextStyle;
-  final TextStyle readBadgeTextStyle;
-
-  const AppTextStyles({
-    required this.titleTextStyle,
-    required this.readTitleTextStyle,
-    required this.smallTextStyle,
-    required this.readSmallTextStyle,
-    required this.badgeTextStyle,
-    required this.readBadgeTextStyle,
-  });
-
+class const AppTextStyles({
+  required final TextStyle titleTextStyle,
+  required final TextStyle readTitleTextStyle,
+  required final TextStyle smallTextStyle,
+  required final TextStyle readSmallTextStyle,
+  required final TextStyle badgeTextStyle,
+  required final TextStyle readBadgeTextStyle,
+}) extends ThemeExtension<AppTextStyles> with Equatable {
   /// 모든 텍스트 스타일의 크기를 비율로 조절한다.
   AppTextStyles scaled(double factor) {
     if (factor == 1.0) return this;

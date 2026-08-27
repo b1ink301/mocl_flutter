@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
@@ -8,7 +8,7 @@ import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 
 import '../../application/list_providers.dart';
 
-mixin class ListState {
+mixin class ListState() {
   String smallTitleState(WidgetRef ref) => ref.watch(listSmallTitleProvider);
 
   String titleState(WidgetRef ref) => ref.watch(listTitleProvider);
@@ -29,7 +29,8 @@ mixin class ListState {
   bool isSinglePageBoardState(WidgetRef ref) =>
       ref.watch(isSinglePageBoardProvider);
 
-  AppTextStyles appTextStyles(WidgetRef ref) => ref.watch(appTextStylesFontSizeProvider);
+  AppTextStyles appTextStyles(WidgetRef ref) =>
+      ref.watch(appTextStylesFontSizeProvider);
 
   ListItem? itemState(WidgetRef ref, int index) {
     return ref.watch(itemAtIndexProvider(index));

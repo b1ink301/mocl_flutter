@@ -9,7 +9,7 @@ part 'add_list_dlg_providers.g.dart';
 
 /// 게시판 선택 다이얼로그의 검색어. 다이얼로그가 닫히면 자동으로 초기화된다.
 @riverpod
-class AddListSearchQuery extends _$AddListSearchQuery {
+class AddListSearchQuery() extends _$AddListSearchQuery {
   @override
   String build() => '';
 
@@ -17,7 +17,7 @@ class AddListSearchQuery extends _$AddListSearchQuery {
 }
 
 @riverpod
-class AddListDlgNotifier extends _$AddListDlgNotifier {
+class AddListDlgNotifier() extends _$AddListDlgNotifier {
   @override
   FutureOr<List<CheckableMainItem>> build() async {
     state = const AsyncValue.loading();

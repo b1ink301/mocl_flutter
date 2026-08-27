@@ -5,12 +5,8 @@ import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/usecases/usecase.dart';
 import 'package:mocl_flutter/features/main_page/domain/repositories/main_repository.dart';
 
-class GetMainList
+class const GetMainList({required final MainRepository mainRepository})
     implements FutureUseCase<Either<Failure, List<MainItem>>, SiteType> {
-  final MainRepository mainRepository;
-
-  const GetMainList({required this.mainRepository});
-
   @override
   Future<Either<Failure, List<MainItem>>> call(SiteType params) =>
       mainRepository.getMainList(siteType: params);

@@ -9,7 +9,7 @@ part 'mocl_list_item.freezed.dart';
 
 @freezed
 abstract class ListItem with _$ListItem {
-  const factory ListItem({
+  const factory({
     required int id,
     required String title,
     required String reply,
@@ -26,22 +26,22 @@ abstract class ListItem with _$ListItem {
     required bool isRead,
   }) = _ListItem;
 
-  factory ListItem.empty() => const ListItem(
-        id: -1,
-        title: '',
-        reply: '',
-        category: '',
-        time: '',
-        url: '',
-        info: '',
-        board: '',
-        boardTitle: '',
-        like: '',
-        hit: '',
-        userInfo: UserInfo(id: '', nickName: '', nickImage: ''),
-        hasImage: false,
-        isRead: false,
-      );
+  factory empty() => const ListItem(
+    id: -1,
+    title: '',
+    reply: '',
+    category: '',
+    time: '',
+    url: '',
+    info: '',
+    board: '',
+    boardTitle: '',
+    like: '',
+    hit: '',
+    userInfo: UserInfo(id: '', nickName: '', nickImage: ''),
+    hasImage: false,
+    isRead: false,
+  );
 }
 
 extension ListItemExtension on ListItem {

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
@@ -12,7 +12,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'main_providers.g.dart';
 
 @riverpod
-class MainItemsNotifier extends _$MainItemsNotifier {
+class MainItemsNotifier() extends _$MainItemsNotifier {
   @override
   Future<List<MainItem>> build() async {
     state = const AsyncValue.loading();
@@ -75,7 +75,7 @@ GlobalKey<ScaffoldState> mainScaffoldState(Ref ref) =>
 /// 메인 항목 '정렬 모드' 토글. 켜져 있을 때만 드래그 핸들이 노출되고
 /// 드래그로 순서를 바꿀 수 있다(평소엔 탭으로 게시판 이동).
 @riverpod
-class MainReorderMode extends _$MainReorderMode {
+class MainReorderMode() extends _$MainReorderMode {
   @override
   bool build() => false;
 
@@ -85,7 +85,7 @@ class MainReorderMode extends _$MainReorderMode {
 }
 
 @riverpod
-class MainSidebarNotifier extends _$MainSidebarNotifier {
+class MainSidebarNotifier() extends _$MainSidebarNotifier {
   @override
   bool build() => false;
 

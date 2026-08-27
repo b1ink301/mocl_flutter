@@ -1,25 +1,19 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
-class PlainPopupMenuButton<T> extends StatefulWidget {
-  final Widget icon;
-  final List<PopupMenuEntry<T>> Function(BuildContext context) itemBuilder;
-  final ValueChanged<T>? onSelected;
-  final EdgeInsetsGeometry padding;
-
-  const PlainPopupMenuButton({
-    super.key,
-    required this.icon,
-    required this.itemBuilder,
-    this.onSelected,
-    this.padding = const EdgeInsets.all(8),
-  });
-
+class const PlainPopupMenuButton<T>({
+  super.key,
+  required final Widget icon,
+  required final List<PopupMenuEntry<T>> Function(BuildContext context)
+  itemBuilder,
+  final ValueChanged<T>? onSelected,
+  final EdgeInsetsGeometry padding = const EdgeInsets.all(8),
+}) extends StatefulWidget {
   @override
   State<PlainPopupMenuButton<T>> createState() =>
       _PlainPopupMenuButtonState<T>();
 }
 
-class _PlainPopupMenuButtonState<T> extends State<PlainPopupMenuButton<T>> {
+class _PlainPopupMenuButtonState<T>() extends State<PlainPopupMenuButton<T>> {
   Future<void> _showMenu() async {
     final RenderBox button = context.findRenderObject()! as RenderBox;
     final RenderBox overlay =

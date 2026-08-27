@@ -1,4 +1,4 @@
-enum SortType {
+enum SortType() {
   recent,
-  recommend,
+  recommend
 }

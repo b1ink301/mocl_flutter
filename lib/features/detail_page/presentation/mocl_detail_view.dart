@@ -3,7 +3,7 @@ import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:go_router/go_router.dart';
@@ -73,17 +73,15 @@ void _openGallery(
   );
 }
 
-class DetailView extends ConsumerWidget with DetailState, DetailEvent {
-  const DetailView({super.key});
-
+class const DetailView({super.key})
+    extends ConsumerWidget
+    with DetailState, DetailEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final smallTextStyle = DetailStyleScope.of(context).$1.smallTextStyle;
     return detailState(ref).maybeMap(
-      data: (state) => _DetailView(
-        detail: state.value,
-        onRefresh: () => handleRefresh(ref),
-      ),
+      data: (state) =>
+          _DetailView(detail: state.value, onRefresh: () => handleRefresh(ref)),
       error: (state) => SliverFillRemaining(
         hasScrollBody: false,
         child: Padding(
@@ -98,9 +96,7 @@ class DetailView extends ConsumerWidget with DetailState, DetailEvent {
   }
 }
 
-class _LoadingView extends StatelessWidget {
-  const _LoadingView();
-
+class const _LoadingView() extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final smallTextStyle = DetailStyleScope.of(context).$1.smallTextStyle;
@@ -119,12 +115,10 @@ class _LoadingView extends StatelessWidget {
   }
 }
 
-class _DetailView extends StatelessWidget with DetailEvent {
-  final Details detail;
-  final VoidCallback onRefresh;
-
-  const _DetailView({required this.detail, required this.onRefresh});
-
+class const _DetailView({
+  required final Details detail,
+  required final VoidCallback onRefresh,
+}) extends StatelessWidget with DetailEvent {
   @override
   Widget build(BuildContext context) {
     final (styles, hexColor) = DetailStyleScope.of(context);
@@ -185,27 +179,17 @@ class _DetailView extends StatelessWidget with DetailEvent {
   }
 }
 
-class _CommentList extends StatelessWidget {
-  final List<CommentItem> comments;
+class const _CommentList({
+  required final List<CommentItem> comments,
 
   /// 원글 작성자(OP) 식별용. 댓글 작성자가 이와 같으면 닉네임을 강조색으로 칠한다.
-  final String authorId;
-  final String authorNick;
-  final TextStyle? bodySmall;
-  final TextStyle? bodyMedium;
-  final String hexColor;
-  final void Function(String) openUrl;
-
-  const _CommentList({
-    required this.comments,
-    required this.authorId,
-    required this.authorNick,
-    required this.bodySmall,
-    required this.bodyMedium,
-    required this.hexColor,
-    required this.openUrl,
-  });
-
+  required final String authorId,
+  required final String authorNick,
+  required final TextStyle? bodySmall,
+  required final TextStyle? bodyMedium,
+  required final String hexColor,
+  required final void Function(String) openUrl,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) => SliverList.separated(
     addSemanticIndexes: false,
@@ -234,27 +218,18 @@ class _CommentList extends StatelessWidget {
   }
 }
 
-class _SpaceWidget extends StatelessWidget {
-  const _SpaceWidget();
-
+class const _SpaceWidget() extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       const SliverPadding(padding: EdgeInsets.only(top: 10));
 }
 
-class _Body extends StatelessWidget {
-  final Details detail;
-  final String hexColor;
-  final TextStyle? bodyMedium;
-  final FutureOr<bool> Function(String url) onTapUrl;
-
-  const _Body({
-    required this.detail,
-    required this.hexColor,
-    required this.bodyMedium,
-    required this.onTapUrl,
-  });
-
+class const _Body({
+  required final Details detail,
+  required final String hexColor,
+  required final TextStyle? bodyMedium,
+  required final FutureOr<bool> Function(String url) onTapUrl,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) => _HtmlWidget(
     html: detail.bodyHtml,
@@ -266,17 +241,11 @@ class _Body extends StatelessWidget {
   );
 }
 
-class _CommentHeader extends StatelessWidget {
-  final int commentCount;
-  final int totalCount;
-  final TextStyle? bodyMedium;
-
-  const _CommentHeader({
-    required this.commentCount,
-    required this.totalCount,
-    required this.bodyMedium,
-  });
-
+class const _CommentHeader({
+  required final int commentCount,
+  required final int totalCount,
+  required final TextStyle? bodyMedium,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final focusColor = Theme.of(context).focusColor;
@@ -301,25 +270,15 @@ class _CommentHeader extends StatelessWidget {
   }
 }
 
-class _CommentItem extends StatelessWidget {
-  final CommentItem comment;
-  final bool isAuthor;
-  final TextStyle? bodySmall;
-  final TextStyle? bodyMedium;
-  final String hexColor;
-  final int depth;
-  final void Function(String) openUrl;
-
-  const _CommentItem({
-    required this.comment,
-    required this.isAuthor,
-    required this.bodySmall,
-    required this.bodyMedium,
-    required this.hexColor,
-    required this.depth,
-    required this.openUrl,
-  });
-
+class const _CommentItem({
+  required final CommentItem comment,
+  required final bool isAuthor,
+  required final TextStyle? bodySmall,
+  required final TextStyle? bodyMedium,
+  required final String hexColor,
+  required final int depth,
+  required final void Function(String) openUrl,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final UserInfo userInfo = comment.userInfo;
@@ -379,13 +338,11 @@ class _CommentItem extends StatelessWidget {
   }
 }
 
-class _HtmlLoadingWidget extends StatelessWidget {
-  final String src;
-  final TextStyle? textStyle;
-  final double? progress;
-
-  const _HtmlLoadingWidget({required this.src, this.textStyle, this.progress});
-
+class const _HtmlLoadingWidget({
+  required final String src,
+  final TextStyle? textStyle,
+  final double? progress,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -414,29 +371,23 @@ class _HtmlLoadingWidget extends StatelessWidget {
 ///
 /// [CachedNetworkImage] 는 실패 결과도 캐시하므로, 재시도 시 캐시를 비운 뒤
 /// [ValueKey] 를 바꿔 위젯을 재생성해 다시 요청하게 한다.
-class _RetryableCachedImage extends StatefulWidget {
-  final String url;
-  final Map<String, String> headers;
-  final Widget Function(BuildContext context, double? progress) loadingBuilder;
-  final Widget Function(
+class const _RetryableCachedImage({
+  required final String url,
+  required final Map<String, String> headers,
+  required final Widget Function(BuildContext context, double? progress)
+  loadingBuilder,
+  required final Widget Function(
     BuildContext context,
     dynamic error,
     VoidCallback onRetry,
   )
-  errorBuilder;
-
-  const _RetryableCachedImage({
-    required this.url,
-    required this.headers,
-    required this.loadingBuilder,
-    required this.errorBuilder,
-  });
-
+  errorBuilder,
+}) extends StatefulWidget {
   @override
   State<_RetryableCachedImage> createState() => _RetryableCachedImageState();
 }
 
-class _RetryableCachedImageState extends State<_RetryableCachedImage> {
+class _RetryableCachedImageState() extends State<_RetryableCachedImage> {
   int _attempt = 0;
 
   Future<void> _retry() async {
@@ -466,12 +417,10 @@ class _RetryableCachedImageState extends State<_RetryableCachedImage> {
 }
 
 /// 이미지 로드 실패 표시: 파일이름(기존 fwfh 위젯) + 재시도 버튼.
-class _HtmlImageErrorWidget extends StatelessWidget {
-  final Widget filename;
-  final VoidCallback onRetry;
-
-  const _HtmlImageErrorWidget({required this.filename, required this.onRetry});
-
+class const _HtmlImageErrorWidget({
+  required final Widget filename,
+  required final VoidCallback onRetry,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final focusColor = Theme.of(context).focusColor;
@@ -496,19 +445,12 @@ class _HtmlImageErrorWidget extends StatelessWidget {
   }
 }
 
-class _HtmlWidget extends ConsumerWidget with DetailState {
-  final String html;
-  final TextStyle? textStyle;
-  final String hexColor;
-  final void Function(String) openUrl;
-
-  const _HtmlWidget({
-    required this.html,
-    required this.textStyle,
-    required this.hexColor,
-    required this.openUrl,
-  });
-
+class const _HtmlWidget({
+  required final String html,
+  required final TextStyle? textStyle,
+  required final String hexColor,
+  required final void Function(String) openUrl,
+}) extends ConsumerWidget with DetailState {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // 이미지 Referer 는 "현재 보고 있는 사이트"의 baseUrl(파서 단일 출처)을 쓴다.
@@ -548,12 +490,10 @@ class _HtmlWidget extends ConsumerWidget with DetailState {
   }
 }
 
-class _RefreshButton extends StatelessWidget {
-  final VoidCallback onRefresh;
-  final TextStyle? textStyle;
-
-  const _RefreshButton({required this.onRefresh, required this.textStyle});
-
+class const _RefreshButton({
+  required final VoidCallback onRefresh,
+  required final TextStyle? textStyle,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final focusColor = Theme.of(context).focusColor;
@@ -571,15 +511,13 @@ class _RefreshButton extends StatelessWidget {
 }
 
 /// YouTube iframe을 외부 앱으로 열고, 일반 미디어는 인라인 재생을 허용하는 WidgetFactory.
-class _MoclWidgetFactory extends WidgetFactory {
-  final void Function(String) openUrl;
+class _MoclWidgetFactory({
+  required final void Function(String) openUrl,
 
   /// 본문 이미지 로드 시 보낼 Referer. 보통 현재 사이트의 baseUrl.
   /// (디시 등 일부 CDN 은 Referer 가 사이트 도메인이어야 이미지를 준다.)
-  final String referer;
-
-  _MoclWidgetFactory({required this.openUrl, required this.referer});
-
+  required final String referer,
+}) extends WidgetFactory {
   /// fwfh 의 CachedNetworkImageFactory mixin 은 buildImageWidget 에서
   /// CachedNetworkImage 를 직접 만들며 httpHeaders 를 넣지 않아서, Referer 가
   /// 필요한 CDN(디시 등)은 403→alt(해시)만 보였다. 여기서 buildImageWidget 을
@@ -592,8 +530,7 @@ class _MoclWidgetFactory extends WidgetFactory {
         url: url,
         headers: {'Referer': referer, 'User-Agent': userAgentMobile},
         loadingBuilder: (context, v) =>
-            onLoadingBuilder(context, tree, v, src) ??
-            const SizedBox.shrink(),
+            onLoadingBuilder(context, tree, v, src) ?? const SizedBox.shrink(),
         errorBuilder: (context, error, onRetry) => _HtmlImageErrorWidget(
           filename:
               onErrorBuilder(context, tree, error, src) ??

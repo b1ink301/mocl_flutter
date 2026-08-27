@@ -7,23 +7,17 @@ import 'package:mocl_flutter/features/database/data/datasources/local/local_data
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_parser.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 
-abstract class DetailDataSource {
+abstract class DetailDataSource() {
   Future<Either<Failure, Details>> getDetail(ListItem item);
 
   Future<int> setReadFlag(SiteType siteType, int id);
 }
 
-class DetailDataSourceImpl implements DetailDataSource {
-  final BaseApi apiClient;
-  final BaseParser parser;
-  final LocalDatabase localDatabase;
-
-  const DetailDataSourceImpl({
-    required this.apiClient,
-    required this.parser,
-    required this.localDatabase,
-  });
-
+class const DetailDataSourceImpl({
+  required final BaseApi apiClient,
+  required final BaseParser parser,
+  required final LocalDatabase localDatabase,
+}) implements DetailDataSource {
   @override
   Future<Either<Failure, Details>> getDetail(ListItem item) =>
       apiClient.detail(item, parser);

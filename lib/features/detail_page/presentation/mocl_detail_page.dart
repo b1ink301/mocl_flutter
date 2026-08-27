@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/gestures.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -15,9 +15,7 @@ import 'widgets/detail_appbar.dart';
 import 'mocl_detail_view.dart';
 import 'state/detail_event_mixin.dart';
 
-class DetailPage extends StatelessWidget {
-  const DetailPage({super.key});
-
+class const DetailPage({super.key}) extends StatelessWidget {
   static Widget init(double width, ListItem item) => ProviderScope(
     overrides: DetailEvent.overridesProviderScope(width, item),
     child: const DetailPage(),
@@ -42,9 +40,7 @@ class DetailPage extends StatelessWidget {
   }
 }
 
-class _DetailScaffold extends ConsumerWidget with DetailEvent {
-  const _DetailScaffold();
-
+class const _DetailScaffold() extends ConsumerWidget with DetailEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);

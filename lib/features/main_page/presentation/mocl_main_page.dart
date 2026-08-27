@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/features/main_page/presentation/state/main_state_mixin.dart';
@@ -7,9 +7,9 @@ import 'package:mocl_flutter/features/main_page/presentation/widgets/mocl_drawer
 import 'mocl_main_view.dart';
 import 'state/main_event_mixin.dart';
 
-class MainPage extends ConsumerWidget with MainEvent, MainState {
-  const MainPage({super.key});
-
+class const MainPage({super.key})
+    extends ConsumerWidget
+    with MainEvent, MainState {
   static Widget init(double width) => ProviderScope(
     overrides: MainEvent.overridesProviderScope(width),
     child: const MainPage(),
@@ -23,9 +23,7 @@ class MainPage extends ConsumerWidget with MainEvent, MainState {
   );
 }
 
-class _ScaffoldWidget extends ConsumerWidget with MainState, MainEvent {
-  const _ScaffoldWidget();
-
+class const _ScaffoldWidget() extends ConsumerWidget with MainState, MainEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final systemOverlayStyle =

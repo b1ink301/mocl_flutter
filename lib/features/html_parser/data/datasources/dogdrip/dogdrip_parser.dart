@@ -24,9 +24,7 @@ import '../base/base_parser.dart';
 /// 리스트 URL: `/{board}` (예: `/dogdrip` 베스트), 페이지는 `?page=N`.
 /// 상세 URL: `/{document_srl}`. 본문/댓글이 단일 GET 응답에 모두 포함된다.
 /// 상대 시각("1 시간 전")을 그대로 노출하므로 별도 날짜 파싱은 하지 않는다.
-class DogdripParser extends BaseParser {
-  const DogdripParser();
-
+class const DogdripParser() extends BaseParser {
   @override
   SiteType get siteType => SiteType.dogdrip;
 
@@ -174,7 +172,9 @@ class DogdripParser extends BaseParser {
     final document = parse(responseData);
 
     final String rawTitle =
-        document.querySelector('meta[property="og:title"]')?.attributes['content'] ??
+        document
+            .querySelector('meta[property="og:title"]')
+            ?.attributes['content'] ??
         '';
     final String title = rawTitle
         .replaceFirst(RegExp(r'\s*-\s*DogDrip\.Net.*$'), '')

@@ -17,9 +17,7 @@ import '../base/base_parser.dart';
 /// MLBPARK 읽기는 비로그인도 가능하지만, 로그인 시 회원 기능을 위해
 /// [getWithCookies] 로 쿠키를 함께 보낸다. 댓글은 `m=reply` 로 별도 로드되므로
 /// 상세 요청 시 본문 HTML 과 댓글 HTML 을 동시에 받아 `[html, reply]` 로 넘긴다.
-class MlbparkApi extends BaseApi {
-  const MlbparkApi(super.dio, super.userAgent);
-
+class const MlbparkApi(super.dio, super.userAgent) extends BaseApi {
   @override
   Future<Either<Failure, Details>> detail(
     ListItem item,
@@ -31,20 +29,25 @@ class MlbparkApi extends BaseApi {
       final String replyUrl =
           'https://mlbpark.donga.com/mp/b.php?b=$board&id=${item.id}&m=reply';
       final String host = Uri.parse(parser.baseUrl).host;
-      final Map<String, String> headers = {'Host': host, 'User-Agent': userAgent};
+      final Map<String, String> headers = {
+        'Host': host,
+        'User-Agent': userAgent,
+      };
 
       final Future<Response<dynamic>> htmlFuture = getWithCookies(
         url,
         parser.baseUrl,
         headers: headers,
       );
-      final Future<Response<dynamic>> replyFuture = getWithCookies(
-        replyUrl,
-        parser.baseUrl,
-        headers: {'User-Agent': userAgent, 'Referer': url},
-      ).catchError(
-        (_) => Response<dynamic>(data: '', requestOptions: RequestOptions()),
-      );
+      final Future<Response<dynamic>> replyFuture =
+          getWithCookies(
+            replyUrl,
+            parser.baseUrl,
+            headers: {'User-Agent': userAgent, 'Referer': url},
+          ).catchError(
+            (_) =>
+                Response<dynamic>(data: '', requestOptions: RequestOptions()),
+          );
 
       final responses = await Future.wait([htmlFuture, replyFuture]);
       final htmlResponse = responses.first;
@@ -62,7 +65,7 @@ class MlbparkApi extends BaseApi {
         requestOptions: htmlResponse.requestOptions,
         statusCode: 200,
       );
-      return parser.detail(combined);
+      return await parser.detail(combined);
     } on DioException catch (e) {
       return Left(NetworkFailure(message: e.message ?? 'Unknown Error'));
     } catch (e) {
@@ -88,7 +91,10 @@ class MlbparkApi extends BaseApi {
         lastId,
       );
       final String host = Uri.parse(parser.baseUrl).host;
-      final Map<String, String> headers = {'Host': host, 'User-Agent': userAgent};
+      final Map<String, String> headers = {
+        'Host': host,
+        'User-Agent': userAgent,
+      };
       final Response<dynamic> response = await getWithCookies(
         url,
         parser.baseUrl,
@@ -96,7 +102,7 @@ class MlbparkApi extends BaseApi {
       );
       log('[getList] $url response = ${response.statusCode}');
       return response.statusCode == 200
-          ? parser.list(response, lastId, item.text, isReads)
+          ? await parser.list(response, lastId, item.text, isReads)
           : Left(
               GetListFailure(
                 message: 'response.statusCode = ${response.statusCode}',
@@ -144,7 +150,7 @@ class MlbparkApi extends BaseApi {
       );
       log('[searchList] $url response = ${response.statusCode}');
       return response.statusCode == 200
-          ? parser.list(response, lastId, item.text, isReads)
+          ? await parser.list(response, lastId, item.text, isReads)
           : Left(
               GetListFailure(
                 message: 'response.statusCode = ${response.statusCode}',
