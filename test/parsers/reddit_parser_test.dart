@@ -54,7 +54,10 @@ void main() {
       const parser = RedditParser();
 
       final result = await parser.detail(
-        Response(data: json, requestOptions: RequestOptions(path: '')),
+        Response(
+          data: json,
+          requestOptions: RequestOptions(path: ''),
+        ),
       );
 
       final details = result.fold(

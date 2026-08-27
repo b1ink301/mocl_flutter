@@ -5,7 +5,7 @@ part 'mocl_comment_item.freezed.dart';
 
 @freezed
 abstract class CommentItem with _$CommentItem {
-  const factory CommentItem({
+  const factory({
     required int id,
     required String bodyHtml,
     required String mediaHtml,

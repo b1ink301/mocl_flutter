@@ -1,11 +1,11 @@
-import 'package:flutter/material.dart' show ThemeMode;
+import 'package:material_ui/material_ui.dart' show ThemeMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/features/google_drive/application/google_drive_providers.dart';
 
 import '../../application/settings_providers.dart';
 
-mixin class SettingsEvent {
+mixin class SettingsEvent() {
   void handleClearCache(WidgetRef ref) =>
       ref.read(sizeCacheDirProvider.notifier).clear();
 

@@ -26,9 +26,7 @@ import '../base/base_parser.dart';
 /// 게시판 URL 형식: `/board/{slug}/{boardId}[/{articleId}]`, 페이지는 `?p=N`.
 /// 댓글은 PwCMT 가 `comment.json.php` 로 비동기 로드하므로, [InvenApi] 가
 /// 본문 HTML 과 댓글 JSON 을 함께 받아 `[html, json]` 리스트로 넘긴다.
-class InvenParser extends BaseParser {
-  const InvenParser();
-
+class const InvenParser() extends BaseParser {
   @override
   SiteType get siteType => SiteType.inven;
 
@@ -117,10 +115,7 @@ class InvenParser extends BaseParser {
       if (title.isEmpty) continue;
 
       final String nickName = element.qText('span.nick span.layerNickName');
-      final String hit = element
-          .qText('span.view')
-          .replaceAll('조회', '')
-          .trim();
+      final String hit = element.qText('span.view').replaceAll('조회', '').trim();
       final String time = element.qText('span.time');
       final String reply = element.qText('a.com-btn span.num');
 
@@ -173,7 +168,8 @@ class InvenParser extends BaseParser {
     }
 
     final document = parse(html);
-    final container = document.querySelector('section.mo-board-view') ??
+    final container =
+        document.querySelector('section.mo-board-view') ??
         document.querySelector('#articleView');
     if (container == null) {
       return Left(GetDetailFailure(message: 'container is null'));
@@ -244,7 +240,8 @@ class InvenParser extends BaseParser {
       if (item is! Map) continue;
       final attr = item['__attr__'];
       final int cmtidx = (attr is Map ? attr['cmtidx'] : null) as int? ?? 0;
-      final int cmtpidx = (attr is Map ? attr['cmtpidx'] : null) as int? ?? cmtidx;
+      final int cmtpidx =
+          (attr is Map ? attr['cmtpidx'] : null) as int? ?? cmtidx;
       final bool isReply = cmtpidx != cmtidx;
 
       final String nick = item['o_name']?.toString() ?? '';

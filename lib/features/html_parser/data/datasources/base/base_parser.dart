@@ -12,11 +12,9 @@ import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 
-abstract class BaseParser {
+abstract class const BaseParser() {
   abstract final SiteType siteType;
   abstract final String baseUrl;
-
-  const BaseParser();
 
   String urlByMain() => throw UnimplementedError('urlByMain');
 
@@ -72,18 +70,9 @@ abstract class BaseParser {
   }
 }
 
-class ReadStatusRequest {
-  final List<int> ids;
-  final SendPort responsePort;
+class const ReadStatusRequest(final List<int> ids, final SendPort responsePort);
 
-  const ReadStatusRequest(this.ids, this.responsePort);
-}
-
-class ReadStatusResponse {
-  final List<int> statuses;
-
-  const ReadStatusResponse(this.statuses);
-}
+class const ReadStatusResponse(final List<int> statuses);
 
 /// 워커에서 파싱한 [items] 의 id 들로 읽음 여부를 메인 isolate 에 질의하고,
 /// 그 결과를 `isRead` 에 반영한 리스트를 [replyPort] 로 돌려준다.

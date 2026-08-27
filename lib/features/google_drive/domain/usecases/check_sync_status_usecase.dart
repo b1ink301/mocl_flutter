@@ -1,11 +1,7 @@
 import 'package:mocl_flutter/features/google_drive/domain/entities/sync_action.dart';
 import 'package:mocl_flutter/features/google_drive/domain/repositories/google_drive_repository.dart';
 
-class CheckSyncStatusUseCase {
-  final GoogleDriveRepository repository;
-
-  CheckSyncStatusUseCase(this.repository);
-
+class CheckSyncStatusUseCase(final GoogleDriveRepository repository) {
   Future<SyncAction> call() async {
     await repository.signIn();
     final remoteTime = await repository.getRemoteFileModifiedTime();

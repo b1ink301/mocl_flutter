@@ -20,9 +20,7 @@ import 'package:timeago/timeago.dart' as timeago;
 import '../../../../../core/util/mocl_logger.dart';
 import '../base/base_parser.dart';
 
-class NaverCafeParser extends BaseParser {
-  const NaverCafeParser();
-
+class const NaverCafeParser() extends BaseParser {
   @override
   SiteType get siteType => SiteType.naverCafe;
 
@@ -30,7 +28,9 @@ class NaverCafeParser extends BaseParser {
   String get baseUrl => 'https://m.cafe.naver.com';
 
   @override
-  Future<Either<Failure, List<MainItem>>> main(Response<dynamic> response) async {
+  Future<Either<Failure, List<MainItem>>> main(
+    Response<dynamic> response,
+  ) async {
     final Map<String, dynamic> json =
         response.data['message'] as Map<String, dynamic>;
     final String status = json['status'] as String;
@@ -71,7 +71,6 @@ class NaverCafeParser extends BaseParser {
   }
 
   static Either<Failure, Details> _parseDetail(List<dynamic> responseData) {
-
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
     final detail = responseData.first['result'];
@@ -211,14 +210,12 @@ class NaverCafeParser extends BaseParser {
 
     final price = sale['price'];
     if (price is num) {
-      buffer.write('<p><strong>가격: ${_formatPrice(price.toInt())}원</strong></p>');
+      buffer.write(
+        '<p><strong>가격: ${_formatPrice(price.toInt())}원</strong></p>',
+      );
     }
 
-    const statusLabels = {
-      'SALE': '판매중',
-      'RESERVED': '예약중',
-      'SOLD_OUT': '판매완료',
-    };
+    const statusLabels = {'SALE': '판매중', 'RESERVED': '예약중', 'SOLD_OUT': '판매완료'};
     final status = statusLabels[sale['saleStatus']];
     if (status != null) {
       buffer.write('<p>거래상태: $status</p>');
@@ -343,7 +340,6 @@ class NaverCafeParser extends BaseParser {
 
     await sendListWithReadStatus(replyPort, items);
   }
-
 
   @override
   String urlByDetail(String url, String board, int id) =>

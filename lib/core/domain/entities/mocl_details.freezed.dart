@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'mocl_details.dart';
@@ -9,6 +9,7 @@ part of 'mocl_details.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -63,7 +64,7 @@ class _$DetailsCopyWithImpl<$Res>
 /// Create a copy of Details
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? time = null,Object? viewCount = null,Object? likeCount = null,Object? bodyHtml = null,Object? info = null,Object? userInfo = null,Object? comments = null,Object? recents = freezed,Object? csrf = null,Object? extraData = freezed,}) {
-  return _then(_self.copyWith(
+  return _then(Details(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,time: null == time ? _self.time : time // ignore: cast_nullable_to_non_nullable
 as String,viewCount: null == viewCount ? _self.viewCount : viewCount // ignore: cast_nullable_to_non_nullable
@@ -237,7 +238,7 @@ return $default(_that.title,_that.time,_that.viewCount,_that.likeCount,_that.bod
 
 
 class _Details implements Details {
-  const _Details({required this.title, required this.time, required this.viewCount, required this.likeCount, required this.bodyHtml, required this.info, required this.userInfo, required final  List<CommentItem> comments, this.recents = null, this.csrf = '', final  Map<String, dynamic>? extraData}): _comments = comments,_extraData = extraData;
+  const _Details({required this.title, required this.time, required this.viewCount, required this.likeCount, required this.bodyHtml, required this.info, required this.userInfo, required  List<CommentItem> comments, this.recents = null, this.csrf = '',  Map<String, dynamic>? extraData}): _comments = comments,_extraData = extraData;
   
 
 @override final  String title;

@@ -26,9 +26,7 @@ import '../base/base_parser.dart';
 /// 리스트 URL: `/board/{gallery}` (실시간베스트 `dcbest` 포함), 페이지 `?page=N`.
 /// 상세 URL: `/board/{gallery}/{no}`. 본문/댓글 모두 단일 응답에 포함되며
 /// 본문 이미지는 lazy-load 라 `data-original` 을 `src` 로 치환한다.
-class DcinsideParser extends BaseParser {
-  const DcinsideParser();
-
+class const DcinsideParser() extends BaseParser {
   @override
   SiteType get siteType => SiteType.dcinside;
 
@@ -57,9 +55,8 @@ class DcinsideParser extends BaseParser {
     var orderBy = 0;
     for (final a in anchors) {
       final href = a.attributes['href']?.trim() ?? '';
-      final match = RegExp(r'/board/([a-zA-Z0-9_]+)/?$').firstMatch(
-        href.split('?').first,
-      );
+      final match = RegExp(r'/board/([a-zA-Z0-9_]+)/?$')
+          .firstMatch(href.split('?').first);
       if (match == null) continue;
       final board = match.group(1)!;
       if (!seen.add(board)) continue;
@@ -89,8 +86,25 @@ class DcinsideParser extends BaseParser {
   }
 
   static const List<String> _chosungTable = [
-    'ㄱ', 'ㄲ', 'ㄴ', 'ㄷ', 'ㄸ', 'ㄹ', 'ㅁ', 'ㅂ', 'ㅃ', 'ㅅ',
-    'ㅆ', 'ㅇ', 'ㅈ', 'ㅉ', 'ㅊ', 'ㅋ', 'ㅌ', 'ㅍ', 'ㅎ',
+    'ㄱ',
+    'ㄲ',
+    'ㄴ',
+    'ㄷ',
+    'ㄸ',
+    'ㄹ',
+    'ㅁ',
+    'ㅂ',
+    'ㅃ',
+    'ㅅ',
+    'ㅆ',
+    'ㅇ',
+    'ㅈ',
+    'ㅉ',
+    'ㅊ',
+    'ㅋ',
+    'ㅌ',
+    'ㅍ',
+    'ㅎ',
   ];
 
   /// 이름 첫 글자의 초성을 카테고리로. 한글 외(영문/숫자)는 '#/A-Z' 로.
@@ -182,11 +196,12 @@ class DcinsideParser extends BaseParser {
 
       // 제목/카테고리: span.subjectin (앞에 <b>[갤]</b> 카테고리가 올 수 있음).
       final subjectEl = anchor.querySelector('span.subjectin');
-      final category = subjectEl
-          ?.querySelector('b')
-          ?.text
-          .replaceAll(RegExp(r'[\[\]]'), '')
-          .trim() ??
+      final category =
+          subjectEl
+              ?.querySelector('b')
+              ?.text
+              .replaceAll(RegExp(r'[\[\]]'), '')
+              .trim() ??
           '';
       String title = subjectEl?.text.trim() ?? '';
       if (category.isNotEmpty && title.startsWith('[$category]')) {
@@ -286,11 +301,10 @@ class DcinsideParser extends BaseParser {
         break;
       }
     }
-    final likeCount = document
-        .qText('div.gall-thum-btm li.up-add span')
-        .trim();
+    final likeCount = document.qText('div.gall-thum-btm li.up-add span').trim();
 
-    final bodyEl = document.querySelector('div.thum-txt div.thum-txtin') ??
+    final bodyEl =
+        document.querySelector('div.thum-txt div.thum-txtin') ??
         document.querySelector('div.thum-txt');
     bodyEl.removeAll('script, style, ins, iframe, .adv-inner');
     // lazy 이미지: data-original → src 치환.
@@ -316,7 +330,8 @@ class DcinsideParser extends BaseParser {
       final cBody = bodyP?.innerHtml.trim() ?? '';
       if (cBody.isEmpty && cNick.isEmpty) continue;
       final cTime = li.qText('span.date');
-      final int cId = int.tryParse(li.attributes['no'] ?? '') ?? comments.length;
+      final int cId =
+          int.tryParse(li.attributes['no'] ?? '') ?? comments.length;
       final cParsedTime = formatTimeago(cTime);
       final cInfo = cParsedTime;
 

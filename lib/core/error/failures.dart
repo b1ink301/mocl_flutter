@@ -5,27 +5,16 @@ import 'package:equatable/equatable.dart';
 export 'package:mocl_flutter/features/html_parser/domain/errors/parser_failures.dart';
 export 'package:mocl_flutter/features/main_page/domain/errors/main_failures.dart';
 
-abstract class Failure extends Equatable {
-  final String message;
-
-  const Failure({required this.message});
-
+abstract class const Failure({required final String message})
+    extends Equatable {
   @override
   List<Object> get props => [message];
 }
 
-class ServerFailure extends Failure {
-  const ServerFailure({required super.message});
-}
+class const ServerFailure({required super.message}) extends Failure;
 
-class NetworkFailure extends Failure {
-  const NetworkFailure({required super.message});
-}
+class const NetworkFailure({required super.message}) extends Failure;
 
-class NotLoginFailure extends Failure {
-  const NotLoginFailure({required super.message});
-}
+class const NotLoginFailure({required super.message}) extends Failure;
 
-class UnknownFailure extends Failure {
-  const UnknownFailure({required super.message});
-}
+class const UnknownFailure({required super.message}) extends Failure;

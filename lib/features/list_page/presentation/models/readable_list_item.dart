@@ -3,15 +3,10 @@ import 'package:flutter/foundation.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
 
 @immutable
-class ReadableListItem extends Equatable {
-  final ListItem item;
-  final ValueNotifier<bool> isRead;
-
-  const ReadableListItem({
-    required this.item,
-    required this.isRead,
-  });
-
+class const ReadableListItem({
+  required final ListItem item,
+  required final ValueNotifier<bool> isRead,
+}) extends Equatable {
   void markAsRead() {
     if (isUnread) {
       isRead.value = true;

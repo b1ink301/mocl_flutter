@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:go_router/go_router.dart';
@@ -11,7 +11,7 @@ import 'package:mocl_flutter/core/util/utilities.dart';
 
 import '../../application/main_providers.dart';
 
-mixin class MainEvent {
+mixin class MainEvent() {
   void listenNotLoginFailure(WidgetRef ref, BuildContext context) {
     ref.listen(mainItemsProvider, (previous, next) {
       if (next case AsyncError<List<MainItem>> error

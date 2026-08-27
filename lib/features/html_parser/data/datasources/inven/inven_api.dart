@@ -18,9 +18,7 @@ import '../base/base_parser.dart';
 /// 필요하므로 [getWithCookies] 로 로그인 쿠키를 함께 보낸다.
 /// 댓글은 본문 HTML 에 없고 `comment.json.php` 로 비동기 로드되므로, 상세 요청 시
 /// 본문 HTML 과 댓글 JSON 을 동시에 받아 `[html, json]` 으로 파서에 넘긴다.
-class InvenApi extends BaseApi {
-  const InvenApi(super.dio, super.userAgent);
-
+class const InvenApi(super.dio, super.userAgent) extends BaseApi {
   static const String _commentUrl =
       'https://www.inven.co.kr/common/board/comment.json.php';
 
@@ -32,37 +30,42 @@ class InvenApi extends BaseApi {
     try {
       final String url = parser.urlByDetail(item.url, item.board, item.id);
       final String host = Uri.parse(parser.baseUrl).host;
-      final Map<String, String> headers = {'Host': host, 'User-Agent': userAgent};
+      final Map<String, String> headers = {
+        'Host': host,
+        'User-Agent': userAgent,
+      };
 
       final Future<Response<dynamic>> htmlFuture = getWithCookies(
         url,
         parser.baseUrl,
         headers: headers,
       );
-      final Future<Response<dynamic>> commentFuture = postUri(
-        _commentUrl,
-        data: {
-          'act': 'list',
-          'comeidx': item.board,
-          'articlecode': item.id,
-          'typecode': item.board,
-          'dbtype': 'bbs',
-          'out': 'json',
-          'sortorder': 'date',
-          'pidx': 0,
-          'listoption': '',
-        },
-        headers: {
-          'User-Agent': userAgent,
-          'Referer': url,
-          'X-Requested-With': 'XMLHttpRequest',
-        },
-        responseType: ResponseType.json,
-        contentType: Headers.formUrlEncodedContentType,
-      ).catchError(
-        // 댓글 로드 실패는 본문 표시를 막지 않도록 무시.
-        (_) => Response<dynamic>(data: null, requestOptions: RequestOptions()),
-      );
+      final Future<Response<dynamic>> commentFuture =
+          postUri(
+            _commentUrl,
+            data: {
+              'act': 'list',
+              'comeidx': item.board,
+              'articlecode': item.id,
+              'typecode': item.board,
+              'dbtype': 'bbs',
+              'out': 'json',
+              'sortorder': 'date',
+              'pidx': 0,
+              'listoption': '',
+            },
+            headers: {
+              'User-Agent': userAgent,
+              'Referer': url,
+              'X-Requested-With': 'XMLHttpRequest',
+            },
+            responseType: ResponseType.json,
+            contentType: Headers.formUrlEncodedContentType,
+          ).catchError(
+            // 댓글 로드 실패는 본문 표시를 막지 않도록 무시.
+            (_) =>
+                Response<dynamic>(data: null, requestOptions: RequestOptions()),
+          );
 
       final List<Response<dynamic>> responses = await Future.wait([
         htmlFuture,
@@ -84,7 +87,7 @@ class InvenApi extends BaseApi {
         requestOptions: htmlResponse.requestOptions,
         statusCode: 200,
       );
-      return parser.detail(combined);
+      return await parser.detail(combined);
     } on DioException catch (e) {
       return Left(NetworkFailure(message: e.message ?? 'Unknown Error'));
     } catch (e) {
@@ -110,7 +113,10 @@ class InvenApi extends BaseApi {
         lastId,
       );
       final String host = Uri.parse(parser.baseUrl).host;
-      final Map<String, String> headers = {'Host': host, 'User-Agent': userAgent};
+      final Map<String, String> headers = {
+        'Host': host,
+        'User-Agent': userAgent,
+      };
       final Response<dynamic> response = await getWithCookies(
         url,
         parser.baseUrl,
@@ -118,7 +124,7 @@ class InvenApi extends BaseApi {
       );
       log('[getList] $url response = ${response.statusCode}');
       return response.statusCode == 200
-          ? parser.list(response, lastId, item.text, isReads)
+          ? await parser.list(response, lastId, item.text, isReads)
           : Left(
               GetListFailure(
                 message: 'response.statusCode = ${response.statusCode}',
@@ -166,7 +172,7 @@ class InvenApi extends BaseApi {
       );
       log('[searchList] $url response = ${response.statusCode}');
       return response.statusCode == 200
-          ? parser.list(response, lastId, item.text, isReads)
+          ? await parser.list(response, lastId, item.text, isReads)
           : Left(
               GetListFailure(
                 message: 'response.statusCode = ${response.statusCode}',

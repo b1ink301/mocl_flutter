@@ -1,14 +1,12 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 
-abstract class BasePage extends HookConsumerWidget {
-  const BasePage({super.key});
-
+abstract class const BasePage({super.key}) extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     /// 페이지의 초기화 및 해제를 처리

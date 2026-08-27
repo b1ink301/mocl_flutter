@@ -5,11 +5,9 @@ import 'package:mocl_flutter/features/google_drive/domain/repositories/google_dr
 import 'package:path/path.dart' as path;
 import 'package:path_provider/path_provider.dart';
 
-class GoogleDriveRepositoryImpl implements GoogleDriveRepository {
-  final GoogleDriveRemoteDataSource remoteDataSource;
-
-  const GoogleDriveRepositoryImpl(this.remoteDataSource);
-
+class const GoogleDriveRepositoryImpl(
+  final GoogleDriveRemoteDataSource remoteDataSource,
+) implements GoogleDriveRepository {
   @override
   Future<bool> backupDatabase() => remoteDataSource.uploadDb();
 

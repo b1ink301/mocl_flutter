@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,9 +7,9 @@ import 'package:mocl_flutter/features/login_page/presentation/state/login_event_
 import 'package:mocl_flutter/features/login_page/presentation/state/login_state_mixin.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class LoginView extends ConsumerWidget with LoginState, LoginEvent {
-  const LoginView({super.key});
-
+class const LoginView({super.key})
+    extends ConsumerWidget
+    with LoginState, LoginEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final siteType = siteTypeState(ref);
@@ -32,7 +32,7 @@ class LoginView extends ConsumerWidget with LoginState, LoginEvent {
 
           MoclLogger.log('[shouldOverrideUrlLoading] url=$url, uri=$uri');
           // if (await canLaunchUrl(uri)) {
-            await launchUrl(uri, mode: LaunchMode.externalApplication);
+          await launchUrl(uri, mode: LaunchMode.externalApplication);
           // }
         } catch (_) {}
         return NavigationActionPolicy.CANCEL;

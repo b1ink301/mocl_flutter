@@ -19,9 +19,7 @@ import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_i
 
 import '../base/base_parser.dart';
 
-class GeekNewsParser extends BaseParser {
-  const GeekNewsParser();
-
+class const GeekNewsParser() extends BaseParser {
   @override
   SiteType get siteType => SiteType.geekNews;
 
@@ -208,28 +206,26 @@ class GeekNewsParser extends BaseParser {
         final String points = pointsEl?.text.trim() ?? '0';
 
         // Author
-        final authorEl =
-            row.querySelector('div.topicinfo a[href^="/@"]');
+        final authorEl = row.querySelector('div.topicinfo a[href^="/@"]');
         final String author = authorEl?.text.trim() ?? '';
 
-      // Time - <time> 우선, 구버전 span[title] 폴백, 그래도 없으면 텍스트 regex.
-      String timeText = '';
-      final timeEl =
-          row.querySelector('div.topicinfo time') ??
-          row.querySelector('div.topicinfo span[title]');
-      if (timeEl != null) {
-        timeText = timeEl.text.trim();
-      } else {
-        final infoEl = row.querySelector('div.topicinfo');
-        if (infoEl != null) {
-          final timeMatch = RegExp(
-            r'(\d+(?:일|시간|분|초)전|방금)',
-          ).firstMatch(infoEl.text);
-          if (timeMatch != null) {
-            timeText = timeMatch.group(0)!;
+        // Time - <time> 우선, 구버전 span[title] 폴백, 그래도 없으면 텍스트 regex.
+        String timeText = '';
+        final timeEl =
+            row.querySelector('div.topicinfo time') ??
+            row.querySelector('div.topicinfo span[title]');
+        if (timeEl != null) {
+          timeText = timeEl.text.trim();
+        } else {
+          final infoEl = row.querySelector('div.topicinfo');
+          if (infoEl != null) {
+            final timeMatch = RegExp(r'(\d+(?:일|시간|분|초)전|방금)')
+                .firstMatch(infoEl.text);
+            if (timeMatch != null) {
+              timeText = timeMatch.group(0)!;
+            }
           }
         }
-      }
 
         // Comment count
         final commentLink =
@@ -295,8 +291,8 @@ class GeekNewsParser extends BaseParser {
     MoclLogger.log('urlByList = url = $url, board = $board, page = $page');
     // page=1 → 오늘, page=2 → 어제, page=3 → 그저께 ...
     final date = DateTime.now().subtract(Duration(days: page - 1));
-    final day = '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
+    final day =
+        '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
     return '$baseUrl/$board?day=$day';
   }
-
 }

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
@@ -46,7 +46,8 @@ void main() {
     rec.expectNoRebuild(appBarWidgets, reason: '스크롤로 앱바 위젯이 리빌드됨');
     rec.expectNoRebuild(
       headerWidgets,
-      reason: '확장 헤더가 앱바 숨김/보임마다 리빌드/재생성됨 — '
+      reason:
+          '확장 헤더가 앱바 숨김/보임마다 리빌드/재생성됨 — '
           'bottom 슬롯으로 되돌아갔는지 확인 (AppbarDualTextWidget 주석 참고)',
     );
   });

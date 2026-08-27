@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/features/database/domain/entities/bookmark_data.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/state/detail_event_mixin.dart';
@@ -6,11 +6,9 @@ import 'package:mocl_flutter/features/detail_page/presentation/state/detail_stat
 
 /// 상세 화면 헤더의 스크랩(북마크) 토글 버튼.
 /// 현재 게시물·사이트를 읽어 동작한다. (provider 접근은 detail mixin 경유)
-class BookmarkIconButton extends ConsumerWidget with DetailState, DetailEvent {
-  final Color color;
-
-  const BookmarkIconButton({super.key, required this.color});
-
+class const BookmarkIconButton({super.key, required final Color color})
+    extends ConsumerWidget
+    with DetailState, DetailEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final item = listItemState(ref);

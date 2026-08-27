@@ -6,7 +6,7 @@ part 'mocl_main_item.g.dart';
 
 @freezed
 abstract class MainItem with _$MainItem {
-  const factory MainItem({
+  const factory({
     required SiteType siteType,
     required String board,
     required String text,
@@ -20,14 +20,13 @@ abstract class MainItem with _$MainItem {
     @Default('') String category,
   }) = _MainItem;
 
-  factory MainItem.fromJson(Map<String, dynamic> json) =>
-      _$MainItemFromJson(json);
+  factory fromJson(Map<String, dynamic> json) => _$MainItemFromJson(json);
 
-  factory MainItem.empty() => MainItem(
-        siteType: SiteType.damoang,
-        board: '',
-        text: '',
-        url: '',
-        orderBy: 1,
-      );
+  factory empty() => MainItem(
+    siteType: SiteType.damoang,
+    board: '',
+    text: '',
+    url: '',
+    orderBy: 1,
+  );
 }

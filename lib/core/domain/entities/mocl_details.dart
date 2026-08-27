@@ -10,7 +10,7 @@ part 'mocl_details.freezed.dart';
 
 @freezed
 abstract class Details with _$Details {
-  const factory Details({
+  const factory({
     required String title,
     required String time,
     required String viewCount,
@@ -24,7 +24,7 @@ abstract class Details with _$Details {
     Map<String, dynamic>? extraData,
   }) = _Details;
 
-  factory Details.empty() => const Details(
+  factory empty() => const Details(
     title: '',
     time: '',
     viewCount: '',

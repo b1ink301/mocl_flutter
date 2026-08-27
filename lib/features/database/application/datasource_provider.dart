@@ -21,7 +21,6 @@ Future<Database> openAppDatabase() async {
 }
 
 @riverpod
-LocalDatabase localDatabase(Ref ref) =>
-    throw UnimplementedError(
-      'localDatabaseProvider must be overridden in main()',
-    );
+LocalDatabase localDatabase(Ref ref) => throw UnimplementedError(
+  'localDatabaseProvider must be overridden in main()',
+);

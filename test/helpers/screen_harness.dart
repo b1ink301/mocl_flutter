@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // `Override` 타입은 misc.dart 에서 노출된다(앱의 *_event_mixin 과 동일한 경로).
 import 'package:flutter_riverpod/misc.dart';
@@ -172,7 +172,9 @@ Future<void> pumpDetailScreen(
       overrides: <Override>[
         ...commonOverrides(siteType: siteType),
         listItemProvider.overrideWithValue(item ?? fakeListItem()),
-        detailsProvider.overrideWith(() => _FakeDetails(details ?? fakeDetails())),
+        detailsProvider.overrideWith(
+          () => _FakeDetails(details ?? fakeDetails()),
+        ),
         bookmarkRepositoryProvider.overrideWithValue(_FakeBookmarkRepository()),
         // 본문 이미지 Referer 계산에만 쓰인다(파서 인스턴스 자체는 사용 안 함).
         currentParserProvider.overrideWith(
@@ -206,7 +208,7 @@ Widget _app(Widget home) =>
 
 /// 영속화된 폰트 델타 대신 메모리 값을 쓴다.
 /// `adjustFontSize`/`resetFontSize` 는 실제 경로(appTextStyles → 화면)를 그대로 태운다.
-class _FakeFontSizeDelta extends FontSizeDelta {
+class _FakeFontSizeDelta() extends FontSizeDelta {
   @override
   double build() => 0;
 
@@ -217,11 +219,7 @@ class _FakeFontSizeDelta extends FontSizeDelta {
   void reset() => state = 0;
 }
 
-class _FakeSiteType extends CurrentSiteTypeNotifier {
-  _FakeSiteType(this._siteType);
-
-  final SiteType _siteType;
-
+class _FakeSiteType(final SiteType _siteType) extends CurrentSiteTypeNotifier {
   @override
   SiteType build() => _siteType;
 
@@ -229,11 +227,7 @@ class _FakeSiteType extends CurrentSiteTypeNotifier {
   void changeSiteType(SiteType siteType) => state = siteType;
 }
 
-class _FakeMainItems extends MainItemsNotifier {
-  _FakeMainItems(this._items);
-
-  final List<MainItem> _items;
-
+class _FakeMainItems(final List<MainItem> _items) extends MainItemsNotifier {
   @override
   Future<List<MainItem>> build() async => _items;
 
@@ -250,11 +244,7 @@ class _FakeMainItems extends MainItemsNotifier {
   }
 }
 
-class _FakeDetails extends DetailsNotifier {
-  _FakeDetails(this._details);
-
-  final Details _details;
-
+class _FakeDetails(final Details _details) extends DetailsNotifier {
   @override
   Future<Details> build() async {
     // 실제 구현은 getDetail() await 이후에 제목을 갱신한다. 동기 초기화 구간에서
@@ -266,11 +256,8 @@ class _FakeDetails extends DetailsNotifier {
 }
 
 /// 네트워크 fetch 없이 한 페이지를 즉시 돌려주는 PagingController.
-class _FakePagingController extends ListPagingController {
-  _FakePagingController(this._items);
-
-  final List<ListItem> _items;
-
+class _FakePagingController(final List<ListItem> _items)
+    extends ListPagingController {
   @override
   PagingController<int, ListItem> build() {
     final PagingController<int, ListItem> controller =
@@ -285,7 +272,7 @@ class _FakePagingController extends ListPagingController {
   }
 }
 
-class _FakeBookmarkRepository implements BookmarkRepository {
+class _FakeBookmarkRepository() implements BookmarkRepository {
   final Set<(SiteType, int)> _bookmarks = <(SiteType, int)>{};
 
   @override
@@ -305,7 +292,7 @@ class _FakeBookmarkRepository implements BookmarkRepository {
 }
 
 /// `baseUrl` 만 사용되므로 나머지는 noSuchMethod 로 남긴다.
-class _FakeParser implements BaseParser {
+class _FakeParser() implements BaseParser {
   @override
   final String baseUrl = 'https://example.com';
 
@@ -313,7 +300,7 @@ class _FakeParser implements BaseParser {
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
-class _FakeApi implements BaseApi {
+class _FakeApi() implements BaseApi {
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

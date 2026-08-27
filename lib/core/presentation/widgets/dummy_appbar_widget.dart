@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
-class DummyAppBarWidget extends StatelessWidget implements PreferredSizeWidget {
-  const DummyAppBarWidget._();
-
+class const DummyAppBarWidget._()
+    extends StatelessWidget
+    implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     // final statusBarColor =

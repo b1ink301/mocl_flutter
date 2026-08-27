@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'mocl_recents.dart';
@@ -9,6 +9,7 @@ part of 'mocl_recents.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -63,7 +64,7 @@ class _$RecentsCopyWithImpl<$Res>
 /// Create a copy of Recents
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? articles = null,Object? comments = null,}) {
-  return _then(_self.copyWith(
+  return _then(Recents(
 articles: null == articles ? _self.articles : articles // ignore: cast_nullable_to_non_nullable
 as List<Recent>,comments: null == comments ? _self.comments : comments // ignore: cast_nullable_to_non_nullable
 as List<Recent>,
@@ -207,7 +208,7 @@ return $default(_that.articles,_that.comments);case _:
 
 
 class _Recents implements Recents {
-  const _Recents({final  List<Recent> articles = const [], final  List<Recent> comments = const []}): _articles = articles,_comments = comments;
+  const _Recents({ List<Recent> articles = const [],  List<Recent> comments = const []}): _articles = articles,_comments = comments;
   
 
  final  List<Recent> _articles;
@@ -335,7 +336,7 @@ class _$RecentCopyWithImpl<$Res>
 /// Create a copy of Recent
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? time = null,Object? extraData = null,}) {
-  return _then(_self.copyWith(
+  return _then(Recent(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,time: null == time ? _self.time : time // ignore: cast_nullable_to_non_nullable
 as String,extraData: null == extraData ? _self.extraData : extraData // ignore: cast_nullable_to_non_nullable
@@ -480,7 +481,7 @@ return $default(_that.title,_that.time,_that.extraData);case _:
 
 
 class _Recent implements Recent {
-  const _Recent({this.title = '', this.time = '', final  Map<String, dynamic> extraData = const {}}): _extraData = extraData;
+  const _Recent({this.title = '', this.time = '',  Map<String, dynamic> extraData = const {}}): _extraData = extraData;
   
 
 @override@JsonKey() final  String title;

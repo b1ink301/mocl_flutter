@@ -10,21 +10,15 @@ import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/list_page/data/datasources/list_data_source.dart';
 import 'package:mocl_flutter/features/list_page/domain/repositories/list_repository.dart';
 
-class ListRepositoryImpl implements ListRepository {
-  final ListDataSource dataSource;
-
-  const ListRepositoryImpl({
-    required this.dataSource,
-  });
-
+class const ListRepositoryImpl({required final ListDataSource dataSource})
+    implements ListRepository {
   @override
   Future<Either<Failure, List<ListItem>>> getList({
     required MainItem item,
     required int page,
     required LastId lastId,
     required SortType sortType,
-  }) =>
-      dataSource.getList(item, page, lastId, sortType);
+  }) => dataSource.getList(item, page, lastId, sortType);
 
   @override
   Future<Either<Failure, List<ListItem>>> getSearchList({
@@ -33,20 +27,17 @@ class ListRepositoryImpl implements ListRepository {
     required LastId lastId,
     required SortType sortType,
     required String keyword,
-  }) =>
-      dataSource.getSearchList(item, page, lastId, sortType, keyword);
+  }) => dataSource.getSearchList(item, page, lastId, sortType, keyword);
 
   @override
   Future<bool> getReadFlag({
     required SiteType siteType,
     required int boardId,
-  }) =>
-      dataSource.isReadFlag(siteType, boardId);
+  }) => dataSource.isReadFlag(siteType, boardId);
 
   @override
   Future<List<int>> getReadFlags({
     required SiteType siteType,
     required List<int> boardIds,
-  }) =>
-      dataSource.isReadFlags(siteType, boardIds);
+  }) => dataSource.isReadFlags(siteType, boardIds);
 }

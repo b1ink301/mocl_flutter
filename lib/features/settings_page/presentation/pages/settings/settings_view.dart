@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
@@ -8,9 +8,9 @@ import 'package:mocl_flutter/core/application/app_provider.dart';
 import '../../state/settings_event_mixin.dart';
 import '../../state/settings_state_mixin.dart';
 
-class SettingsView extends ConsumerWidget with SettingsState, SettingsEvent {
-  const SettingsView({super.key});
-
+class const SettingsView({super.key})
+    extends ConsumerWidget
+    with SettingsState, SettingsEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     listenSyncStatus(ref);
@@ -50,7 +50,10 @@ class SettingsView extends ConsumerWidget with SettingsState, SettingsEvent {
                       tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                     ),
                     segments: const [
-                      ButtonSegment(value: ThemeMode.system, label: Text('시스템')),
+                      ButtonSegment(
+                        value: ThemeMode.system,
+                        label: Text('시스템'),
+                      ),
                       ButtonSegment(value: ThemeMode.light, label: Text('라이트')),
                       ButtonSegment(value: ThemeMode.dark, label: Text('다크')),
                     ],
@@ -172,23 +175,14 @@ class SettingsView extends ConsumerWidget with SettingsState, SettingsEvent {
 /// 글자 크기 조절 컨트롤. − / 현재 단계 / + 버튼으로 구성하며,
 /// 가운데 값을 탭하면 기본값으로 초기화한다. 단계 범위(-5~+10)는
 /// SetFontSize 유스케이스에서 보정되므로 버튼은 항상 활성.
-class _FontSizeControl extends StatelessWidget {
-  final double delta;
-  final TextStyle labelStyle;
-  final Color focusColor;
-  final VoidCallback onDecrease;
-  final VoidCallback onIncrease;
-  final VoidCallback onReset;
-
-  const _FontSizeControl({
-    required this.delta,
-    required this.labelStyle,
-    required this.focusColor,
-    required this.onDecrease,
-    required this.onIncrease,
-    required this.onReset,
-  });
-
+class const _FontSizeControl({
+  required final double delta,
+  required final TextStyle labelStyle,
+  required final Color focusColor,
+  required final VoidCallback onDecrease,
+  required final VoidCallback onIncrease,
+  required final VoidCallback onReset,
+}) extends StatelessWidget {
   String get _label {
     if (delta == 0) return '기본';
     final int step = delta.toInt();
@@ -233,10 +227,7 @@ class _FontSizeControl extends StatelessWidget {
   }
 }
 
-class _SectionHeader extends ConsumerWidget {
-  final String title;
-  const _SectionHeader(this.title);
-
+class const _SectionHeader(final String title) extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final AppTextStyles styles = ref.watch(appTextStylesFontSizeProvider);
@@ -253,10 +244,8 @@ class _SectionHeader extends ConsumerWidget {
   }
 }
 
-class _SettingsCard extends StatelessWidget {
-  final List<Widget> children;
-  const _SettingsCard({required this.children});
-
+class const _SettingsCard({required final List<Widget> children})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isDark = Theme.of(context).brightness == Brightness.dark;
@@ -272,30 +261,18 @@ class _SettingsCard extends StatelessWidget {
   }
 }
 
-class _TileDivider extends StatelessWidget {
-  const _TileDivider();
-
+class const _TileDivider() extends StatelessWidget {
   @override
-  Widget build(BuildContext context) => const Divider(
-        height: 1,
-        thickness: 1,
-        indent: 52,
-      );
+  Widget build(BuildContext context) =>
+      const Divider(height: 1, thickness: 1, indent: 52);
 }
 
-class _SettingsTile extends ConsumerWidget {
-  final IconData icon;
-  final String title;
-  final Widget? trailing;
-  final VoidCallback? onTap;
-
-  const _SettingsTile({
-    required this.icon,
-    required this.title,
-    this.trailing,
-    this.onTap,
-  });
-
+class const _SettingsTile({
+  required final IconData icon,
+  required final String title,
+  final Widget? trailing,
+  final VoidCallback? onTap,
+}) extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
@@ -310,13 +287,8 @@ class _SettingsTile extends ConsumerWidget {
             children: [
               Icon(icon, size: 22, color: theme.iconTheme.color),
               const SizedBox(width: 14),
-              Expanded(
-                child: Text(title, style: styles.titleTextStyle),
-              ),
-              if (trailing != null) ...[
-                const SizedBox(width: 8),
-                trailing!,
-              ],
+              Expanded(child: Text(title, style: styles.titleTextStyle)),
+              if (trailing != null) ...[const SizedBox(width: 8), trailing!],
             ],
           ),
         ),

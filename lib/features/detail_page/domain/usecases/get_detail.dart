@@ -5,11 +5,8 @@ import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/usecases/usecase.dart';
 import 'package:mocl_flutter/features/detail_page/domain/repositories/detail_repository.dart';
 
-class GetDetail implements UseCase<Future<Either<Failure, Details>>, ListItem> {
-  final DetailRepository detailRepository;
-
-  const GetDetail({required this.detailRepository});
-
+class const GetDetail({required final DetailRepository detailRepository})
+    implements UseCase<Future<Either<Failure, Details>>, ListItem> {
   @override
   Future<Either<Failure, Details>> call(ListItem params) =>
       detailRepository.getDetail(item: params);

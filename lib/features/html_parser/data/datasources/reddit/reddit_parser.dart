@@ -23,9 +23,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 import '../base/base_parser.dart';
 
-class RedditParser extends BaseParser {
-  const RedditParser();
-
+class const RedditParser() extends BaseParser {
   @override
   String get baseUrl => 'https://www.reddit.com';
 
@@ -36,7 +34,6 @@ class RedditParser extends BaseParser {
   }
 
   static Either<Failure, Details> _parseDetail(dynamic json) {
-
     if (json == null || json.isEmpty == true) {
       return Right<Failure, Details>(Details.empty());
     }
@@ -115,11 +112,10 @@ class RedditParser extends BaseParser {
     List<CommentItem> repliesList = [];
     if (replies is Map<String, dynamic>) {
       final repliesData = replies['data']['children'] as List;
-      repliesList =
-          repliesData
-              .map((replyJson) => _parseComment(replyJson, htmlUnescape))
-              .whereType<CommentItem>()
-              .toList();
+      repliesList = repliesData
+          .map((replyJson) => _parseComment(replyJson, htmlUnescape))
+          .whereType<CommentItem>()
+          .toList();
     }
 
     return CommentItem(
@@ -181,9 +177,8 @@ class RedditParser extends BaseParser {
 
           final double created = data['created'] as double;
           final int milliseconds = (created * 1000).toInt();
-          final date = DateTime.fromMillisecondsSinceEpoch(
-            milliseconds,
-          ).toLocal();
+          final date = DateTime.fromMillisecondsSinceEpoch(milliseconds)
+              .toLocal();
           final parsedTime = timeago.format(date, locale: 'ko');
           final hit = '';
           final nickName = data['author'].toString();
@@ -219,7 +214,9 @@ class RedditParser extends BaseParser {
   }
 
   @override
-  Future<Either<Failure, List<MainItem>>> main(Response<dynamic> response) async {
+  Future<Either<Failure, List<MainItem>>> main(
+    Response<dynamic> response,
+  ) async {
     final responseData = response.data;
     final document = parse(responseData).body;
     final container = document?.querySelector(

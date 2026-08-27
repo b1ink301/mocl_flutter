@@ -1,18 +1,13 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 import '../../../../config/mocl_text_styles.dart';
 
-class DetailStyleScope extends InheritedWidget {
-  final AppTextStyles styles;
-  final String hexColor;
-
-  const DetailStyleScope({
-    required this.styles,
-    required this.hexColor,
-    required super.child,
-    super.key,
-  });
-
+class const DetailStyleScope({
+  required final AppTextStyles styles,
+  required final String hexColor,
+  required super.child,
+  super.key,
+}) extends InheritedWidget {
   static (AppTextStyles, String) of(BuildContext context) {
     final scope = context
         .dependOnInheritedWidgetOfExactType<DetailStyleScope>()!;

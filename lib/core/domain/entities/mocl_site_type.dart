@@ -1,4 +1,4 @@
-enum SiteType {
+enum SiteType() {
   arcalive,
   bobaedream,
   clien,
@@ -16,7 +16,7 @@ enum SiteType {
   ppomppu,
   reddit,
   ruliweb,
-  theqoo,
+  theqoo
 }
 
 extension SiteTypeExtension on SiteType {

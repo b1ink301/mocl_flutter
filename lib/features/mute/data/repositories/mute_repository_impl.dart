@@ -2,11 +2,8 @@ import 'package:mocl_flutter/features/database/data/datasources/local/local_data
 import 'package:mocl_flutter/features/database/domain/entities/mute_rule.dart';
 import 'package:mocl_flutter/features/mute/domain/repositories/mute_repository.dart';
 
-class MuteRepositoryImpl implements MuteRepository {
-  final LocalDatabase localDatabase;
-
-  const MuteRepositoryImpl(this.localDatabase);
-
+class const MuteRepositoryImpl(final LocalDatabase localDatabase)
+    implements MuteRepository {
   @override
   Future<void> add(MuteRule rule) => localDatabase.addMute(rule);
 

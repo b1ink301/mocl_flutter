@@ -1,27 +1,20 @@
 // ignore_for_file: unnecessary_import
 
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+// import 'package:cupertino_ui/cupertino_ui.dart';
+import 'package:material_ui/material_ui.dart';
 
-class CheckBoxListTitleWidget extends StatefulWidget {
-  final String text;
-  final void Function(bool)? onChanged;
-  final bool isChecked;
-  final TextStyle? textStyle;
-
-  const CheckBoxListTitleWidget({
-    super.key,
-    required this.text,
-    required this.isChecked,
-    this.onChanged,
-    this.textStyle,
-  });
-
+class const CheckBoxListTitleWidget({
+  super.key,
+  required final String text,
+  required final bool isChecked,
+  final void Function(bool)? onChanged,
+  final TextStyle? textStyle,
+}) extends StatefulWidget {
   @override
   State<StatefulWidget> createState() => _CheckBoxListTitleState();
 }
 
-class _CheckBoxListTitleState extends State<CheckBoxListTitleWidget> {
+class _CheckBoxListTitleState() extends State<CheckBoxListTitleWidget> {
   bool _isChecked = false;
 
   @override

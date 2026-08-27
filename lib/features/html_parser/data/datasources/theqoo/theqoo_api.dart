@@ -16,9 +16,7 @@ import '../base/base_parser.dart';
 
 /// 더쿠 읽기는 비로그인도 가능하지만, 로그인 시 회원 전용 글 열람을 위해
 /// [getWithCookies] 로 로그인 쿠키를 함께 보낸다.
-class TheQooApi extends BaseApi {
-  const TheQooApi(super.dio, super.userAgent);
-
+class const TheQooApi(super.dio, super.userAgent) extends BaseApi {
   @override
   Future<Either<Failure, Details>> detail(
     ListItem item,
@@ -63,11 +61,9 @@ class TheQooApi extends BaseApi {
           data: data,
           requestOptions: RequestOptions(),
         );
-        return parser.detail(result);
+        return await parser.detail(result);
       } else {
-        return Left(
-          GetDetailFailure(message: 'response.statusCode = not 200'),
-        );
+        return Left(GetDetailFailure(message: 'response.statusCode = not 200'));
       }
     } on DioException catch (e) {
       return Left(NetworkFailure(message: e.message ?? 'Unknown Error'));
@@ -106,7 +102,7 @@ class TheQooApi extends BaseApi {
       log('[getList] $url, $headers response = ${response.statusCode}');
 
       return response.statusCode == 200
-          ? parser.list(response, lastId, item.text, isReads)
+          ? await parser.list(response, lastId, item.text, isReads)
           : Left(
               GetListFailure(
                 message: 'response.statusCode = ${response.statusCode}',
@@ -135,7 +131,7 @@ class TheQooApi extends BaseApi {
       );
       log('[getMain] $url response = ${response.statusCode}');
       return response.statusCode == 200
-          ? parser.main(response)
+          ? await parser.main(response)
           : Left(
               GetMainFailure(
                 message: 'response.statusCode = ${response.statusCode}',
@@ -180,7 +176,7 @@ class TheQooApi extends BaseApi {
       log('[searchList] $url, $headers response = ${response.statusCode}');
 
       return response.statusCode == 200
-          ? parser.list(response, lastId, item.text, isReads)
+          ? await parser.list(response, lastId, item.text, isReads)
           : Left(
               GetListFailure(
                 message: 'response.statusCode = ${response.statusCode}',

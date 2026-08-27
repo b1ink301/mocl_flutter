@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:go_router/go_router.dart';
@@ -14,7 +14,7 @@ import '../../../../core/domain/entities/mocl_list_item.dart';
 import '../../../../core/util/mocl_logger.dart';
 import '../../application/list_providers.dart';
 
-mixin class ListEvent {
+mixin class ListEvent() {
   void handleRefresh(WidgetRef ref) =>
       ref.read(listPagingControllerProvider.notifier).refresh();
 

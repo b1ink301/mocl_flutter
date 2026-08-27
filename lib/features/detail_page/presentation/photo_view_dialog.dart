@@ -2,7 +2,7 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
@@ -22,35 +22,27 @@ import '../services/file_download_service.dart';
 
 /// 이미지 뷰어로 전달되는 인자. 글/댓글 본문에서 추출한 이미지 URL 목록과
 /// 처음 보여줄 인덱스, 그리고 일부 CDN(디시 등) 이 요구하는 Referer 를 담는다.
-class GalleryArgs {
-  final List<String> urls;
-  final int index;
-  final String? referer;
-
-  const GalleryArgs({required this.urls, this.index = 0, this.referer});
-}
+class const GalleryArgs({
+  required final List<String> urls,
+  final int index = 0,
+  final String? referer,
+});
 
 /// 좌우 스와이프로 글 안의 모든 이미지를 넘겨보는 풀스크린 갤러리 뷰어.
 /// 핀치 줌(photo_view), 현재 이미지 저장/공유, 하단 페이지 인디케이터를 제공한다.
-class PhotoViewDialog extends StatefulWidget {
-  final List<String> imageUrls;
-  final int initialIndex;
+class const PhotoViewDialog({
+  super.key,
+  required final List<String> imageUrls,
+  final int initialIndex = 0,
 
   /// 본문과 동일하게 실어 보낼 Referer. 비어 있으면 헤더 없이 로드한다.
-  final String? referer;
-
-  const PhotoViewDialog({
-    super.key,
-    required this.imageUrls,
-    this.initialIndex = 0,
-    this.referer,
-  });
-
+  final String? referer,
+}) extends StatefulWidget {
   @override
   State<PhotoViewDialog> createState() => _PhotoViewDialogState();
 }
 
-class _PhotoViewDialogState extends State<PhotoViewDialog> {
+class _PhotoViewDialogState() extends State<PhotoViewDialog> {
   late final PageController _pageController;
   late int _currentIndex;
 
@@ -248,9 +240,8 @@ class _PhotoViewDialogState extends State<PhotoViewDialog> {
     final value =
         event.cumulativeBytesLoaded /
         (event.expectedTotalBytes ?? event.cumulativeBytesLoaded);
-    final style = Theme.of(
-      context,
-    ).textTheme.bodyMedium!.copyWith(color: Colors.white);
+    final style = Theme.of(context).textTheme.bodyMedium!
+        .copyWith(color: Colors.white);
 
     final percentage = (100 * value).floor();
     return Center(child: PlainText('$percentage%', style: style));

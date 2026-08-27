@@ -78,7 +78,10 @@ void main() {
       const parser = ClienParser(false);
 
       final result = await parser.detail(
-        Response(data: fixture, requestOptions: RequestOptions(path: '')),
+        Response(
+          data: fixture,
+          requestOptions: RequestOptions(path: ''),
+        ),
       );
 
       final details = result.fold(

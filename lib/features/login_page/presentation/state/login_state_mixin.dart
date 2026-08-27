@@ -9,7 +9,7 @@ import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 const String _googleLoginUserAgent =
     'Mozilla/5.0 (Linux; Android 16; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Mobile Safari/537.36';
 
-mixin class LoginState {
+mixin class LoginState() {
   SiteType siteTypeState(WidgetRef ref) => ref.watch(currentSiteTypeProvider);
 
   URLRequest urlRequest(SiteType siteType) {
@@ -28,8 +28,7 @@ mixin class LoginState {
       },
       SiteType.meeco => <String, String>{},
       SiteType.naverCafe => {
-        'Referer':
-            'https://nid.naver.com/mobile/user/help/naverProfile.nhn?lang=ko_KR',
+        'Referer': 'https://nid.naver.com/mobile/user/help/naverProfile.nhn?lang=ko_KR',
         'ContentType': 'application/x-www-form-urlencoded',
       },
       _ => const {},

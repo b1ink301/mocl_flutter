@@ -13,9 +13,7 @@ import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_parser.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 
-class ClienApi extends BaseApi {
-  const ClienApi(super.dio, super.userAgent);
-
+class const ClienApi(super.dio, super.userAgent) extends BaseApi {
   @override
   Future<Either<Failure, Details>> detail(ListItem item, BaseParser parser) =>
       withSyncCookie(parser.baseUrl, () async {

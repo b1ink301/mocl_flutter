@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'mocl_comment_item.dart';
@@ -9,6 +9,7 @@ part of 'mocl_comment_item.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -63,7 +64,7 @@ class _$CommentItemCopyWithImpl<$Res>
 /// Create a copy of CommentItem
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? bodyHtml = null,Object? mediaHtml = null,Object? isVideo = null,Object? time = null,Object? info = null,Object? likeCount = null,Object? userInfo = null,Object? authorId = null,Object? isReply = null,Object? replies = null,}) {
-  return _then(_self.copyWith(
+  return _then(CommentItem(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,bodyHtml: null == bodyHtml ? _self.bodyHtml : bodyHtml // ignore: cast_nullable_to_non_nullable
 as String,mediaHtml: null == mediaHtml ? _self.mediaHtml : mediaHtml // ignore: cast_nullable_to_non_nullable
@@ -225,7 +226,7 @@ return $default(_that.id,_that.bodyHtml,_that.mediaHtml,_that.isVideo,_that.time
 
 
 class _CommentItem implements CommentItem {
-  const _CommentItem({required this.id, required this.bodyHtml, required this.mediaHtml, required this.isVideo, required this.time, required this.info, required this.likeCount, required this.userInfo, required this.authorId, required this.isReply, final  List<CommentItem> replies = const []}): _replies = replies;
+  const _CommentItem({required this.id, required this.bodyHtml, required this.mediaHtml, required this.isVideo, required this.time, required this.info, required this.likeCount, required this.userInfo, required this.authorId, required this.isReply,  List<CommentItem> replies = const []}): _replies = replies;
   
 
 @override final  int id;

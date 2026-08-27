@@ -1,6 +1,6 @@
 import 'dart:io';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/core/presentation/widgets/appbar_dual_text_widget.dart';
@@ -12,14 +12,11 @@ import '../../../../core/presentation/widgets/plain_popup_menu_button.dart';
 import '../state/list_state_mixin.dart';
 import 'list_scope.dart';
 
-class ListAppBar extends ConsumerWidget with ListState {
-  const ListAppBar({super.key});
-
+class const ListAppBar({super.key}) extends ConsumerWidget with ListState {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final titleStyle = ListStyleScope.of(
-      context,
-    ).titleTextStyle.copyWith(fontWeight: FontWeight.w800);
+    final titleStyle = ListStyleScope.of(context).titleTextStyle
+        .copyWith(fontWeight: FontWeight.w800);
     final smallTitleStyle = Theme.of(context).textTheme.labelSmall!;
 
     return AppbarDualTextWidget(
@@ -35,9 +32,7 @@ class ListAppBar extends ConsumerWidget with ListState {
 }
 
 // 2. 검색 버튼 분리 (Theme/IconTheme 의존 없는 PlainIconButton 사용)
-class _SearchButton extends ConsumerWidget with ListEvent {
-  const _SearchButton();
-
+class const _SearchButton() extends ConsumerWidget with ListEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) => PlainIconButton(
     icon: const PlainIcon(Icons.search),
@@ -46,9 +41,7 @@ class _SearchButton extends ConsumerWidget with ListEvent {
 }
 
 // 3. 정렬 버튼 분리 (상태 변화에만 반응하도록 함)
-class _SortButton extends ConsumerWidget with ListState, ListEvent {
-  const _SortButton();
-
+class const _SortButton() extends ConsumerWidget with ListState, ListEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) =>
       PlainPopupMenuButton<SortType>(
@@ -70,9 +63,7 @@ class _SortButton extends ConsumerWidget with ListState, ListEvent {
 }
 
 // 4. 더보기 버튼 분리 (PlainPopupMenuButton 사용)
-class _MoreButton extends ConsumerWidget with ListEvent {
-  const _MoreButton();
-
+class const _MoreButton() extends ConsumerWidget with ListEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) =>
       PlainPopupMenuButton<int>(

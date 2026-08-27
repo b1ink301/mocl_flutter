@@ -13,9 +13,7 @@ import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_parser.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 
-class ArcaliveApi extends BaseApi {
-  const ArcaliveApi(super.dio, super.userAgent);
-
+class const ArcaliveApi(super.dio, super.userAgent) extends BaseApi {
   /// 아카라이브 글 보기는 Cloudflare 로 보호되어 Dio 단순 GET 은 403 이 난다.
   /// 헤드리스 웹뷰로 페이지를 띄워 JS 챌린지를 통과시킨 뒤, 렌더된 HTML 을
   /// 그대로 파서에 넘긴다. (통과 시 cf_clearance 쿠키가 공유 쿠키스토어에
@@ -33,16 +31,14 @@ class ArcaliveApi extends BaseApi {
       );
       log('[detail] $url via webview, htmlLen=${html?.length}');
       if (html == null) {
-        return Left(
-          GetDetailFailure(message: 'Cloudflare 챌린지 통과 실패(timeout)'),
-        );
+        return Left(GetDetailFailure(message: 'Cloudflare 챌린지 통과 실패(timeout)'));
       }
       final Response<String> response = Response<String>(
         data: html,
         requestOptions: RequestOptions(path: url),
         statusCode: 200,
       );
-      return parser.detail(response);
+      return await parser.detail(response);
     } on DioException catch (e) {
       return Left(NetworkFailure(message: e.message ?? 'Unknown Error'));
     } catch (e) {
@@ -117,7 +113,7 @@ class ArcaliveApi extends BaseApi {
         requestOptions: RequestOptions(path: url),
         statusCode: 200,
       );
-      return parser.main(response);
+      return await parser.main(response);
     } catch (e) {
       return Left(GetMainFailure(message: e.toString()));
     }

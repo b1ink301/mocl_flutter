@@ -60,7 +60,10 @@ void main() {
       const parser = GeekNewsParser();
 
       final result = await parser.detail(
-        Response(data: fixture, requestOptions: RequestOptions(path: '')),
+        Response(
+          data: fixture,
+          requestOptions: RequestOptions(path: ''),
+        ),
       );
 
       final details = result.fold(

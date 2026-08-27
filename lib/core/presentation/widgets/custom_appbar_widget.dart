@@ -1,10 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const CustomAppBar({super.key, required this.title});
-
-  final Widget title;
-
+class const CustomAppBar({super.key, required final Widget title})
+    extends StatelessWidget
+    implements PreferredSizeWidget {
   @override
   Size get preferredSize => Size.fromHeight(_calculateHeight());
 

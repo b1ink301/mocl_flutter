@@ -28,9 +28,7 @@ import '../base/base_parser.dart';
 /// 상세 URL: `/b/{channel}/{id}`. 본문/댓글 단일 응답에 포함.
 /// 주의: 아카라이브 글 보기는 Cloudflare 로 보호되어 데이터센터 IP 의 단순
 /// 요청은 403 이 날 수 있다(실기기/주거 IP 에서는 통과되는 경우가 많음).
-class ArcaliveParser extends BaseParser {
-  const ArcaliveParser();
-
+class const ArcaliveParser() extends BaseParser {
   @override
   SiteType get siteType => SiteType.arcalive;
 
@@ -45,8 +43,16 @@ class ArcaliveParser extends BaseParser {
 
   // 운영/종합 성격 채널(게임 채널과 구분).
   static const Set<String> _generalChannels = {
-    'live', 'hotdeal', 'headline', 'breaking', 'replay', 'notice',
-    'whyiblocked', 'stock', 'baseball', 'rogersfu',
+    'live',
+    'hotdeal',
+    'headline',
+    'breaking',
+    'replay',
+    'notice',
+    'whyiblocked',
+    'stock',
+    'baseball',
+    'rogersfu',
   };
 
   /// 아카라이브 홈에 노출되는 채널 링크(`/b/{slug}`)를 파싱한다.
@@ -63,9 +69,8 @@ class ArcaliveParser extends BaseParser {
     final seen = <String>{};
     var orderBy = 0;
     for (final a in document.querySelectorAll('a[href^="/b/"]')) {
-      final match = RegExp(
-        r'^/b/([a-zA-Z0-9_]+)',
-      ).firstMatch(a.attributes['href'] ?? '');
+      final match = RegExp(r'^/b/([a-zA-Z0-9_]+)')
+          .firstMatch(a.attributes['href'] ?? '');
       if (match == null) continue;
       final board = match.group(1)!;
       if (!seen.add(board)) continue;
@@ -214,8 +219,8 @@ class ArcaliveParser extends BaseParser {
           like: like,
           hit: hit,
           userInfo: UserInfo(id: nickName, nickName: nickName, nickImage: ''),
-          hasImage: row.querySelector('.vrow-preview, .title.preview-image') !=
-              null,
+          hasImage:
+              row.querySelector('.vrow-preview, .title.preview-image') != null,
           isRead: false,
         ),
       );
@@ -279,7 +284,8 @@ class ArcaliveParser extends BaseParser {
           '';
     }
 
-    final bodyEl = document.querySelector('.fr-view.article-content') ??
+    final bodyEl =
+        document.querySelector('.fr-view.article-content') ??
         document.querySelector('.article-body');
     bodyEl.removeAll('script, style, ins, iframe');
     final bodyHtml = bodyEl?.innerHtml ?? '';
@@ -297,8 +303,7 @@ class ArcaliveParser extends BaseParser {
       final cBody = msgEl?.innerHtml.trim() ?? '';
       if (cBody.isEmpty && cNick.isEmpty) continue;
       final timeEl = el.querySelector('.info-row .right time');
-      final cTime =
-          timeEl?.attributes['datetime'] ?? timeEl?.text.trim() ?? '';
+      final cTime = timeEl?.attributes['datetime'] ?? timeEl?.text.trim() ?? '';
       final int cId =
           int.tryParse((el.id).replaceAll(RegExp(r'[^0-9]'), '')) ??
           comments.length;

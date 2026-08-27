@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
@@ -73,7 +73,8 @@ void main() {
     expect(
       rec.builds('MoclListItem'),
       1,
-      reason: '읽음 처리된 행 1개만 리빌드되어야 한다 (실제: ${rec.builds('MoclListItem')})\n'
+      reason:
+          '읽음 처리된 행 1개만 리빌드되어야 한다 (실제: ${rec.builds('MoclListItem')})\n'
           '${rec.report()}',
     );
   });
@@ -86,7 +87,9 @@ void main() {
     );
 
     final RebuildRecorder rec = RebuildRecorder.attach();
-    container.read(sortTypeProvider.notifier).changeSortType(SortType.recommend);
+    container
+        .read(sortTypeProvider.notifier)
+        .changeSortType(SortType.recommend);
     await tester.pumpAndSettle();
 
     // `_SortButton` 도 리빌드되지 않는다. sortType 을 watch 하는 지점이

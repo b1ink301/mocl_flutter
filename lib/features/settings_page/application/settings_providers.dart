@@ -8,7 +8,7 @@ import 'datasource_provider.dart';
 part 'settings_providers.g.dart';
 
 @riverpod
-class SizeCacheDirNotifier extends _$SizeCacheDirNotifier {
+class SizeCacheDirNotifier() extends _$SizeCacheDirNotifier {
   @override
   Future<String> build() async => await _getSizeCacheDir();
 
@@ -25,7 +25,7 @@ class SizeCacheDirNotifier extends _$SizeCacheDirNotifier {
 }
 
 @Riverpod(keepAlive: true)
-class ShowNickImageNotifier extends _$ShowNickImageNotifier {
+class ShowNickImageNotifier() extends _$ShowNickImageNotifier {
   @override
   bool build() {
     final settings = ref.watch(settingsRepositoryProvider);

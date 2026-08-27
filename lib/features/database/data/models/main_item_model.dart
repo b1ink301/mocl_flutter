@@ -8,7 +8,7 @@ part 'main_item_model.g.dart';
 
 @freezed
 abstract class MainItemModel with _$MainItemModel {
-  const factory MainItemModel({
+  const factory({
     required int no,
     required String board,
     required int type,
@@ -17,8 +17,7 @@ abstract class MainItemModel with _$MainItemModel {
     SiteType? siteType,
   }) = _MainItemData;
 
-  factory MainItemModel.fromJson(Map<String, dynamic> json) =>
-      _$MainItemModelFromJson(json);
+  factory fromJson(Map<String, dynamic> json) => _$MainItemModelFromJson(json);
 
   // @override
   // Map<String, dynamic> toJson() => _$MainItemDataToJson(this);

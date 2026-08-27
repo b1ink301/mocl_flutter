@@ -63,7 +63,7 @@ bool isSinglePageBoard(Ref ref) {
 @Riverpod(
   dependencies: [mainItem, reqListData, SortTypeNotifier, isSinglePageBoard],
 )
-class ListPagingController extends _$ListPagingController {
+class ListPagingController() extends _$ListPagingController {
   /// forceLoadMore 가 부여하는 추가 fetch 허용량.
   /// getNextPageKey 의 '연속 빈 페이지 종료' 가드를 이 횟수만큼 무시하고
   /// 더 깊은 페이지로 전진한다. (같은 페이지 재시도는 offset 이 밀린 상황에서
@@ -128,8 +128,7 @@ class ListPagingController extends _$ListPagingController {
         // 따라서 추천순에서는 lastId 를 비워 필터를 끄고, 커서형이라 정렬과
         // 무관하게 lastId 가 필요한 reddit 만 예외로 유지한다.
         final bool useLastId =
-            sortType == SortType.recent ||
-            mainItem.siteType == SiteType.reddit;
+            sortType == SortType.recent || mainItem.siteType == SiteType.reddit;
         final ListItem? lastItem = useLastId
             ? controller.value.items?.lastOrNull
             : null;
@@ -250,7 +249,7 @@ class ListPagingController extends _$ListPagingController {
 /// 컨트롤러가 보유한 flat items 를 Riverpod 상태로 노출.
 /// detail/리스트 row 등 비-paging 영역에서 인덱스 기반 접근에 사용.
 @Riverpod(dependencies: [ListPagingController])
-class PagingItems extends _$PagingItems {
+class PagingItems() extends _$PagingItems {
   @override
   List<ListItem> build() {
     final controller = ref.watch(listPagingControllerProvider);
@@ -282,7 +281,7 @@ ListItem? itemAtIndex(Ref ref, int index) {
 }
 
 @riverpod
-class SortTypeNotifier extends _$SortTypeNotifier {
+class SortTypeNotifier() extends _$SortTypeNotifier {
   @override
   SortType build() => SortType.recent;
 
@@ -305,11 +304,7 @@ List<ListItem> _applyMute(List<ListItem> items, List<MuteRule> mutes) {
   }).toList();
 }
 
-class _PagingFailure implements Exception {
-  final String message;
-
-  _PagingFailure(this.message);
-
+class _PagingFailure(final String message) implements Exception {
   @override
   String toString() => message;
 }

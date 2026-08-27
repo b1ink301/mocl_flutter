@@ -14,9 +14,7 @@ import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 
 import '../base/base_parser.dart';
 
-class NaverCafeApi extends BaseApi {
-  const NaverCafeApi(super.dio, super.userAgent);
-
+class const NaverCafeApi(super.dio, super.userAgent) extends BaseApi {
   @override
   Future<Either<Failure, Details>> detail(ListItem item, BaseParser parser) =>
       withSyncCookie(parser.baseUrl, () async {

@@ -9,7 +9,7 @@ import 'package:mocl_flutter/features/database/data/datasources/local/local_data
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_parser.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 
-abstract class ListDataSource {
+abstract class ListDataSource() {
   Future<Either<Failure, List<ListItem>>> getList(
     MainItem item,
     int page,
@@ -30,17 +30,11 @@ abstract class ListDataSource {
   Future<List<int>> isReadFlags(SiteType siteType, List<int> boardIds);
 }
 
-class ListDataSourceImpl implements ListDataSource {
-  final LocalDatabase localDatabase;
-  final BaseApi apiClient;
-  final BaseParser parser;
-
-  const ListDataSourceImpl({
-    required this.localDatabase,
-    required this.apiClient,
-    required this.parser,
-  });
-
+class const ListDataSourceImpl({
+  required final LocalDatabase localDatabase,
+  required final BaseApi apiClient,
+  required final BaseParser parser,
+}) implements ListDataSource {
   @override
   Future<Either<Failure, List<ListItem>>> getList(
     MainItem item,

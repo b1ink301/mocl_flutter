@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
@@ -17,7 +17,7 @@ part 'detail_providers.g.dart';
 ListItem listItem(Ref ref) => throw UnimplementedError('listItem');
 
 @Riverpod(dependencies: [listItem, DetailTitleStateNotifier, _markAsRead])
-class DetailsNotifier extends _$DetailsNotifier {
+class DetailsNotifier() extends _$DetailsNotifier {
   @override
   Future<Details> build() async {
     state = const AsyncValue.loading();
@@ -61,7 +61,7 @@ String detailSmallTitle(Ref ref) {
 }
 
 @Riverpod(dependencies: [listItem, detailTitle])
-class DetailTitleStateNotifier extends _$DetailTitleStateNotifier {
+class DetailTitleStateNotifier() extends _$DetailTitleStateNotifier {
   @override
   String build() => ref.watch(detailTitleProvider);
 
@@ -94,7 +94,7 @@ double _kExtraVerticalSpace = 28; // 추가 수직 공간(크럼브+여백)
 /// text, style, width가 동일하면 TextPainter.layout()을 생략합니다.
 final _detailHeightCache = _DetailHeightCache();
 
-class _DetailHeightCache {
+class _DetailHeightCache() {
   String? _lastText;
   TextStyle? _lastStyle;
   double? _lastWidth;

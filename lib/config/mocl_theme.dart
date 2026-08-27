@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
 
@@ -6,7 +6,7 @@ import 'package:mocl_flutter/config/mocl_text_styles.dart';
 ///
 /// 웜 뉴트럴(종이) 배경 + 단일 코랄 강조 + 밝은 앱바(잉크 텍스트).
 /// 경계는 굵은 선이 아니라 헤어라인(1px)과 여백으로 표현한다.
-class MoclTheme {
+class MoclTheme() {
   static final ThemeData lightTheme = ThemeData.light().copyWith(
     extensions: [AppTextStyles.light],
     appBarTheme: const AppBarTheme(

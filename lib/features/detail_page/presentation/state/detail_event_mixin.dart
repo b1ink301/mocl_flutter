@@ -9,7 +9,7 @@ import 'package:mocl_flutter/features/database/domain/entities/bookmark_data.dar
 
 import '../../application/detail_providers.dart';
 
-mixin class DetailEvent {
+mixin class DetailEvent() {
   void handleRefresh(WidgetRef ref) =>
       ref.read(detailsProvider.notifier).refresh();
 

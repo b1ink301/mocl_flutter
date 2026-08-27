@@ -1,14 +1,11 @@
-import 'package:flutter/material.dart' show ThemeMode;
+import 'package:material_ui/material_ui.dart' show ThemeMode;
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../domain/repositories/settings_repository.dart';
 
-class SettingsRepositoryImpl implements SettingsRepository {
-  final SharedPreferences _prefs;
-
-  const SettingsRepositoryImpl({required this._prefs});
-
+class const SettingsRepositoryImpl({required final SharedPreferences _prefs})
+    implements SettingsRepository {
   @override
   SiteType getSiteType() {
     final String siteTypeName =

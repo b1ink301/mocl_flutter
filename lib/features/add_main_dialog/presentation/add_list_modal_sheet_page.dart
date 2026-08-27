@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/core/presentation/widgets/check_box_list_title_widget.dart';
@@ -10,9 +10,9 @@ import 'state/add_event_mixin.dart';
 import 'state/add_state_mixin.dart';
 import 'widgets/board_search_field.dart';
 
-class AddListBottomSheet extends ConsumerWidget with AddState, AddEvent {
-  const AddListBottomSheet({super.key});
-
+class const AddListBottomSheet({super.key})
+    extends ConsumerWidget
+    with AddState, AddEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
@@ -31,7 +31,10 @@ class AddListBottomSheet extends ConsumerWidget with AddState, AddEvent {
       // ListTile 이 ink/배경을 가장 가까운 Material 에 그리므로, 배경색은
       // Container 가 아니라 Material 에 줘서 assertion(배경/잉크 가림)을 막는다.
       builder: (context, scrollController) => Material(
-        borderRadius: BorderRadiusGeometry.horizontal(left: Radius.circular(24), right: Radius.circular(24)),
+        borderRadius: BorderRadiusGeometry.horizontal(
+          left: Radius.circular(24),
+          right: Radius.circular(24),
+        ),
         color: color,
         child: Column(
           children: [

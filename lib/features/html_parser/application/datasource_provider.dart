@@ -144,7 +144,9 @@ part 'datasource_provider.g.dart';
 
   return switch (siteType) {
     SiteType.arcalive => ref.watch(_arcaliveParserProvider(isShowNickImage)),
-    SiteType.bobaedream => ref.watch(_bobaedreamParserProvider(isShowNickImage)),
+    SiteType.bobaedream => ref.watch(
+      _bobaedreamParserProvider(isShowNickImage),
+    ),
     SiteType.clien => ref.watch(_clienParserProvider(isShowNickImage)),
     SiteType.cook82 => ref.watch(_cook82ParserProvider(isShowNickImage)),
     SiteType.dcinside => ref.watch(_dcinsideParserProvider(isShowNickImage)),

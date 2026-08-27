@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mocl_flutter/features/database/application/datasource_provider.dart';
 import 'package:mocl_flutter/features/google_drive/data/datasources/google_drive_remote_data_source.dart';
@@ -37,10 +37,15 @@ RestoreDatabaseUseCase restoreDatabaseUseCase(Ref ref) =>
 CheckSyncStatusUseCase checkSyncStatusUseCase(Ref ref) =>
     CheckSyncStatusUseCase(ref.watch(googleDriveRepositoryProvider));
 
-enum SyncStatus { idle, syncing, success, error }
+enum SyncStatus() {
+  idle,
+  syncing,
+  success,
+  error
+}
 
 @riverpod
-class GoogleDriveSyncNotifier extends _$GoogleDriveSyncNotifier {
+class GoogleDriveSyncNotifier() extends _$GoogleDriveSyncNotifier {
   @override
   SyncStatus build() => SyncStatus.idle;
 

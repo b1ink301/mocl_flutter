@@ -1,4 +1,4 @@
-abstract class GoogleDriveRepository {
+abstract class GoogleDriveRepository() {
   Future<void> signIn();
   Future<bool> backupDatabase();
 

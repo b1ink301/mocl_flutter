@@ -5,7 +5,7 @@ import 'package:riverpod_annotation/riverpod_annotation.dart';
 part 'auto_sync_provider.g.dart';
 
 @riverpod
-class AutoSyncNotifier extends _$AutoSyncNotifier {
+class AutoSyncNotifier() extends _$AutoSyncNotifier {
   @override
   SyncAction build() => SyncAction.idle;
 

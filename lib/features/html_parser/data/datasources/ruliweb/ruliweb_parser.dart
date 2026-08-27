@@ -26,9 +26,7 @@ import '../base/base_parser.dart';
 /// `/best/{slug}` (베스트 모음) 과 `/community/board/{id}` (일반 게시판) 의
 /// 리스트는 모두 `tr.table_body.blocktarget` 행 구조를 공유하므로 하나의
 /// 워커로 처리한다. 상세/댓글은 단일 GET 응답 안에 모두 포함된다.
-class RuliwebParser extends BaseParser {
-  const RuliwebParser();
-
+class const RuliwebParser() extends BaseParser {
   @override
   SiteType get siteType => SiteType.ruliweb;
 
@@ -55,9 +53,8 @@ class RuliwebParser extends BaseParser {
     final seen = <String>{};
     var orderBy = 0;
     for (final a in document.querySelectorAll('a[href*="/board/"]')) {
-      final match = RegExp(
-        r'/board/(\d+)',
-      ).firstMatch(a.attributes['href'] ?? '');
+      final match = RegExp(r'/board/(\d+)')
+          .firstMatch(a.attributes['href'] ?? '');
       if (match == null) continue;
       final board = match.group(1)!;
       if (!seen.add(board)) continue;

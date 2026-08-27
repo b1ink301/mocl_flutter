@@ -23,12 +23,10 @@ import 'package:flutter_test/flutter_test.dart';
 /// await scrollCycles(tester);
 /// rec.expectNoRebuild(const ['MyAppBar', 'MyRow']);
 /// ```
-class RebuildRecorder {
-  RebuildRecorder();
-
+class RebuildRecorder() {
   /// 계측을 시작하고 테스트 종료 시 자동으로 해제한다.
   /// (`testWidgets` 본문에서만 호출 — `addTearDown` 이 필요하다)
-  factory RebuildRecorder.attach() {
+  factory attach() {
     final RebuildRecorder recorder = RebuildRecorder()..start();
     addTearDown(recorder.stop);
     return recorder;
@@ -82,7 +80,8 @@ class RebuildRecorder {
   /// rebuild + mount 합계. "이 위젯의 build() 가 몇 번 돌았나"에 해당한다.
   int builds(String widgetName) => rebuilds(widgetName) + mounts(widgetName);
 
-  Map<String, int> get rebuildsByWidget => Map<String, int>.unmodifiable(_rebuilds);
+  Map<String, int> get rebuildsByWidget =>
+      Map<String, int>.unmodifiable(_rebuilds);
 
   Map<String, int> get mountsByWidget => Map<String, int>.unmodifiable(_mounts);
 
@@ -97,8 +96,9 @@ class RebuildRecorder {
       if (_matches(pattern, e.key)) e.key: e.value,
   };
 
-  static bool _matches(Pattern pattern, String input) =>
-      pattern.allMatches(input).any((Match m) => m.start == 0 && m.end == input.length);
+  static bool _matches(Pattern pattern, String input) => pattern
+      .allMatches(input)
+      .any((Match m) => m.start == 0 && m.end == input.length);
 
   /// [names] 중 하나라도 리빌드/재생성되면 실패한다.
   ///
@@ -134,16 +134,24 @@ class RebuildRecorder {
       expect(
         actual,
         greaterThan(0),
-        reason: reason ?? '$name 이 리빌드될 것으로 예상했지만 0회 (계측 대상이 트리에 없을 수 있음)\n${report()}',
+        reason:
+            reason ??
+            '$name 이 리빌드될 것으로 예상했지만 0회 (계측 대상이 트리에 없을 수 있음)\n${report()}',
       );
     } else {
-      expect(actual, times, reason: reason ?? '$name build 횟수 불일치\n${report()}');
+      expect(
+        actual,
+        times,
+        reason: reason ?? '$name build 횟수 불일치\n${report()}',
+      );
     }
   }
 
   /// 사람이 읽을 수 있는 상위 리빌드 목록.
   String report({int limit = 25, Pattern? only}) {
-    Map<String, int> rebuilds = only == null ? _rebuilds : rebuildsMatching(only);
+    Map<String, int> rebuilds = only == null
+        ? _rebuilds
+        : rebuildsMatching(only);
     Map<String, int> mounts = only == null ? _mounts : mountsMatching(only);
 
     final Set<String> names = <String>{...rebuilds.keys, ...mounts.keys};
@@ -154,14 +162,18 @@ class RebuildRecorder {
         return (mounts[b] ?? 0).compareTo(mounts[a] ?? 0);
       });
 
-    final StringBuffer buffer = StringBuffer('── 리빌드 리포트 (rebuild / mount) ──\n');
+    final StringBuffer buffer = StringBuffer(
+      '── 리빌드 리포트 (rebuild / mount) ──\n',
+    );
     if (sorted.isEmpty) {
       buffer.writeln('  (없음)');
       return buffer.toString();
     }
     for (final String name in sorted.take(limit)) {
-      buffer.writeln('  ${(rebuilds[name] ?? 0).toString().padLeft(4)} / '
-          '${(mounts[name] ?? 0).toString().padLeft(4)}  $name');
+      buffer.writeln(
+        '  ${(rebuilds[name] ?? 0).toString().padLeft(4)} / '
+        '${(mounts[name] ?? 0).toString().padLeft(4)}  $name',
+      );
     }
     if (sorted.length > limit) {
       buffer.writeln('  ... 외 ${sorted.length - limit}종');
@@ -202,7 +214,9 @@ Future<void> scrollBy(
     '스텝당 이동량($dy/$stepCount)이 터치 슬롭($kDragSlopDefault)보다 커야 한다',
   );
 
-  final TestGesture gesture = await tester.startGesture(tester.getCenter(target));
+  final TestGesture gesture = await tester.startGesture(
+    tester.getCenter(target),
+  );
   final Offset step = Offset(0, dy / stepCount);
   for (int i = 0; i < stepCount; i++) {
     await gesture.moveBy(step);

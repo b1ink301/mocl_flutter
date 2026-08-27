@@ -1,17 +1,11 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
-class ModalBottomSheetPage<T> extends Page<T> {
-  final WidgetBuilder builder;
-  final bool isScrollControlled;
-  final Color? backgroundColor;
-
-  const ModalBottomSheetPage({
-    required this.builder,
-    this.isScrollControlled = true,
-    this.backgroundColor = Colors.transparent,
-    super.key,
-  });
-
+class const ModalBottomSheetPage<T>({
+  required final WidgetBuilder builder,
+  final bool isScrollControlled = true,
+  final Color? backgroundColor = Colors.transparent,
+  super.key,
+}) extends Page<T> {
   @override
   Route<T> createRoute(BuildContext context) => ModalBottomSheetRoute<T>(
     builder: builder,

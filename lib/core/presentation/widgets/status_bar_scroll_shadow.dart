@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// 스크롤 가능한 [child] 위에 "상태바 스트립" 을 오버레이해서, 컨텐츠가 상태바
 /// 아래로 스크롤되면 상태바 하단에 그림자를 드리운다.
@@ -10,23 +10,18 @@ import 'package:flutter/material.dart';
 /// 스트립은 [Stack] 최상위(앱바 위)에 그려지며 상태바 높이만큼 불투명 배경으로
 /// 덮으므로, 컨텐츠가 상태바 밑으로 비쳐 보이는 것도 함께 막는다. 스크롤할 때는
 /// 그림자 투명도만 [ValueNotifier] 로 갱신되어 본문은 리빌드되지 않는다.
-class StatusBarScrollShadow extends StatefulWidget {
-  final Widget child;
+class const StatusBarScrollShadow({
+  super.key,
+  required final Widget child,
 
   /// 그림자가 최대치에 도달하는 스크롤 거리(px). 조금만 스크롤해도 보이도록 작게.
-  final double revealExtent;
-
-  const StatusBarScrollShadow({
-    super.key,
-    required this.child,
-    this.revealExtent = 20,
-  });
-
+  final double revealExtent = 20,
+}) extends StatefulWidget {
   @override
   State<StatusBarScrollShadow> createState() => _StatusBarScrollShadowState();
 }
 
-class _StatusBarScrollShadowState extends State<StatusBarScrollShadow> {
+class _StatusBarScrollShadowState() extends State<StatusBarScrollShadow> {
   final ValueNotifier<double> _t = ValueNotifier<double>(0);
 
   @override

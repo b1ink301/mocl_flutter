@@ -3,11 +3,8 @@ import 'package:mocl_flutter/features/bookmark/domain/repositories/bookmark_repo
 import 'package:mocl_flutter/features/database/data/datasources/local/local_database.dart';
 import 'package:mocl_flutter/features/database/domain/entities/bookmark_data.dart';
 
-class BookmarkRepositoryImpl implements BookmarkRepository {
-  final LocalDatabase localDatabase;
-
-  const BookmarkRepositoryImpl(this.localDatabase);
-
+class const BookmarkRepositoryImpl(final LocalDatabase localDatabase)
+    implements BookmarkRepository {
   @override
   Future<void> add(BookmarkData data) => localDatabase.setBookmark(data);
 

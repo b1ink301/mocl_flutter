@@ -14,9 +14,7 @@ import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 
 import '../base/base_parser.dart';
 
-class MeecoApi extends BaseApi {
-  const MeecoApi(super.dio, super.userAgent);
-
+class const MeecoApi(super.dio, super.userAgent) extends BaseApi {
   @override
   Future<Either<Failure, Details>> detail(ListItem item, BaseParser parser) =>
       withSyncCookie(parser.baseUrl, () async {
@@ -77,7 +75,7 @@ class MeecoApi extends BaseApi {
       final Response<dynamic> response = await get(url, headers: headers);
       log('[getMain] $url response = ${response.statusCode}');
       return response.statusCode == 200
-          ? parser.main(response)
+          ? await parser.main(response)
           : Left(
               GetMainFailure(
                 message: 'response.statusCode = ${response.statusCode}',

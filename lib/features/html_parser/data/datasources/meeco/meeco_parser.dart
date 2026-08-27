@@ -22,11 +22,7 @@ import 'package:timeago/timeago.dart' as timeago;
 
 import '../base/base_parser.dart';
 
-class MeecoParser extends BaseParser {
-  final bool isShowNickImage;
-
-  const MeecoParser(this.isShowNickImage);
-
+class const MeecoParser(final bool isShowNickImage) extends BaseParser {
   @override
   SiteType get siteType => SiteType.meeco;
 
@@ -46,7 +42,6 @@ class MeecoParser extends BaseParser {
     String responseData,
     bool isShowNickImage,
   ) {
-
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
     final document = parse(responseData);
@@ -103,7 +98,7 @@ class MeecoParser extends BaseParser {
               );
 
               final cmtTo = headerElement.qText('div.cmt_to');
-              
+
               final body = element.querySelector('div.xe_content');
               body.removeAll('input, span.name, button');
 
@@ -135,9 +130,10 @@ class MeecoParser extends BaseParser {
                     '<a href="https://meeco.kr/index.php?mid=sticker&',
                   ) ==
                   true) {
-                final atag = HtmlParser(
-                  bodyHtml,
-                ).parse().getElementsByTagName('a').firstOrNull;
+                final atag = HtmlParser(bodyHtml)
+                    .parse()
+                    .getElementsByTagName('a')
+                    .firstOrNull;
                 final style = atag?.attributes['style'];
                 if (style != null) {
                   final RegExp urlRegex = RegExp(r'url\((https?://[^)]+)\)');
@@ -145,7 +141,8 @@ class MeecoParser extends BaseParser {
 
                   if (match != null) {
                     final url = match.group(1)!;
-                    bodyHtml = '<img src=$url height="140" width="140">\n$bodyHtml';
+                    bodyHtml =
+                        '<img src=$url height="140" width="140">\n$bodyHtml';
                   }
                 }
               }
@@ -298,7 +295,6 @@ class MeecoParser extends BaseParser {
     await sendListWithReadStatus(replyPort, items);
   }
 
-
   @override
   String urlByDetail(String url, String board, int id) => url;
 
@@ -307,8 +303,19 @@ class MeecoParser extends BaseParser {
 
   // 게시판이 아닌 슬러그(메뉴/기능 링크) 제외 목록.
   static const Set<String> _notBoards = {
-    'adminonly', 'attendance', 'contact', 'sticker', 'login', 'logout',
-    'signup', 'member', 'mypage', 'search', 'index', 'home', 'point',
+    'adminonly',
+    'attendance',
+    'contact',
+    'sticker',
+    'login',
+    'logout',
+    'signup',
+    'member',
+    'mypage',
+    'search',
+    'index',
+    'home',
+    'point',
   };
 
   /// 미코 홈의 게시판 슬러그 링크(`/news`, `/free` 등)를 파싱한다.

@@ -1,21 +1,16 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/rendering.dart';
 
-class OptimizedListView extends StatefulWidget {
-  final int itemCount;
-  final IndexedWidgetBuilder itemBuilder;
-
-  const OptimizedListView({
-    super.key,
-    required this.itemCount,
-    required this.itemBuilder,
-  });
-
+class const OptimizedListView({
+  super.key,
+  required final int itemCount,
+  required final IndexedWidgetBuilder itemBuilder,
+}) extends StatefulWidget {
   @override
   State createState() => _OptimizedListViewState();
 }
 
-class _OptimizedListViewState extends State<OptimizedListView> {
+class _OptimizedListViewState() extends State<OptimizedListView> {
   final ScrollController _scrollController = ScrollController();
 
   @override
@@ -26,15 +21,15 @@ class _OptimizedListViewState extends State<OptimizedListView> {
           offset: offset,
           slivers: [
             SliverList(
-              delegate: SliverChildBuilderDelegate(
-                (BuildContext context, int index) {
-                  if (index < widget.itemCount) {
-                    return widget.itemBuilder(context, index);
-                  }
-                  return null;
-                },
-                childCount: widget.itemCount,
-              ),
+              delegate: SliverChildBuilderDelegate((
+                BuildContext context,
+                int index,
+              ) {
+                if (index < widget.itemCount) {
+                  return widget.itemBuilder(context, index);
+                }
+                return null;
+              }, childCount: widget.itemCount),
             ),
           ],
         );

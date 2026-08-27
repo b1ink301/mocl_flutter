@@ -8,12 +8,8 @@ import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/usecases/usecase.dart';
 import 'package:mocl_flutter/features/list_page/domain/repositories/list_repository.dart';
 
-class GetList
+class const GetList({required final ListRepository listRepository})
     implements UseCase<Future<Either<Failure, List<ListItem>>>, GetListParams> {
-  final ListRepository listRepository;
-
-  const GetList({required this.listRepository});
-
   @override
   Future<Either<Failure, List<ListItem>>> call(GetListParams params) =>
       listRepository.getList(
@@ -24,19 +20,12 @@ class GetList
       );
 }
 
-class GetListParams extends Equatable {
-  final MainItem mainItem;
-  final int page;
-  final LastId lastId;
-  final SortType sortType;
-
-  const GetListParams({
-    required this.mainItem,
-    required this.page,
-    required this.lastId,
-    required this.sortType,
-  });
-
+class const GetListParams({
+  required final MainItem mainItem,
+  required final int page,
+  required final LastId lastId,
+  required final SortType sortType,
+}) extends Equatable {
   @override
   List<Object> get props => [mainItem, page, lastId, sortType];
 }

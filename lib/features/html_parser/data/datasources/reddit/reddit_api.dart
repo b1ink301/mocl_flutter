@@ -15,9 +15,7 @@ import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 
 import '../base/base_parser.dart';
 
-class RedditApi extends BaseApi {
-  const RedditApi(super.dio, super.userAgent);
-
+class const RedditApi(super.dio, super.userAgent) extends BaseApi {
   @override
   Future<Either<Failure, Details>> detail(ListItem item, BaseParser parser) =>
       withSyncCookie(parser.baseUrl, () async {
@@ -45,8 +43,7 @@ class RedditApi extends BaseApi {
     try {
       if (data is! List || data.length < 2) return;
 
-      final rootChildren =
-          data[1]['data']['children'] as List<dynamic>;
+      final rootChildren = data[1]['data']['children'] as List<dynamic>;
       final String linkFullname = 't3_$postId36';
 
       // parent fullname -> 그 자식 댓글을 담는 List (트리에 splice 할 위치)

@@ -5,9 +5,7 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:mocl_flutter/core/util/mocl_logger.dart';
 
-class FileDownloadService {
-  FileDownloadService._();
-
+class FileDownloadService._() {
   /// base64 데이터를 파일로 저장
   static Future<Map<String, dynamic>> saveFile({
     required String base64Data,
@@ -38,7 +36,7 @@ class FileDownloadService {
     }
 
     if (Platform.isIOS) {
-      final file = File(outputPath);
+      final file = File.fromUri(outputPath);
       if (!await file.exists() || await file.length() == 0) {
         await file.writeAsBytes(bytes);
       }

@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
 /// 앱바 액션 영역용 고정 IconTheme 래퍼.
 ///
@@ -7,11 +7,10 @@ import 'package:flutter/material.dart';
 /// IconTheme.of 를 구독하는 PlainIcon 이 스크롤 내내 리빌드되는 것을 막기 위해
 /// 액션들을 고정 IconTheme 으로 감싼다. 색은 앱바 foregroundColor 를 따르므로
 /// 테마 전환 시에는 정상적으로 갱신된다.
-class AppbarActionsIconTheme extends StatelessWidget {
-  final List<Widget> children;
-
-  const AppbarActionsIconTheme({super.key, required this.children});
-
+class const AppbarActionsIconTheme({
+  super.key,
+  required final List<Widget> children,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);

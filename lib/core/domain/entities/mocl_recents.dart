@@ -4,7 +4,7 @@ part 'mocl_recents.freezed.dart';
 
 @freezed
 abstract class Recents with _$Recents {
-  const factory Recents({
+  const factory({
     @Default([]) List<Recent> articles,
     @Default([]) List<Recent> comments,
   }) = _Recents;
@@ -12,7 +12,7 @@ abstract class Recents with _$Recents {
 
 @freezed
 abstract class Recent with _$Recent {
-  const factory Recent({
+  const factory({
     @Default('') String title,
     @Default('') String time,
     @Default({}) Map<String, dynamic> extraData,

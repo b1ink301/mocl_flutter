@@ -19,9 +19,7 @@ import '../base/base_parser.dart';
 /// 뽐뿌는 EUC-KR(CP949) 인코딩이므로 응답을 bytes 로 받아 CP949 로 디코딩한 뒤
 /// UTF-8 String 으로 파서에 넘긴다. 로그인 시 회원 전용 글 열람을 위해
 /// [getWithCookies] 로 로그인 쿠키를 함께 보낸다.
-class PpomppuApi extends BaseApi {
-  const PpomppuApi(super.dio, super.userAgent);
-
+class const PpomppuApi(super.dio, super.userAgent) extends BaseApi {
   /// bytes 응답을 CP949 로 디코딩한 String Response 로 변환.
   Future<Response<dynamic>> _getDecoded(
     String url,
@@ -53,11 +51,14 @@ class PpomppuApi extends BaseApi {
     try {
       final String url = parser.urlByDetail(item.url, item.board, item.id);
       final String host = Uri.parse(parser.baseUrl).host;
-      final Map<String, String> headers = {'Host': host, 'User-Agent': userAgent};
+      final Map<String, String> headers = {
+        'Host': host,
+        'User-Agent': userAgent,
+      };
       final Response<dynamic> response = await _getDecoded(url, headers);
       log('[detail] $url response = ${response.statusCode}');
       return response.statusCode == 200
-          ? parser.detail(response)
+          ? await parser.detail(response)
           : Left(
               GetDetailFailure(
                 message: 'response.statusCode = ${response.statusCode}',
@@ -88,11 +89,14 @@ class PpomppuApi extends BaseApi {
         lastId,
       );
       final String host = Uri.parse(parser.baseUrl).host;
-      final Map<String, String> headers = {'Host': host, 'User-Agent': userAgent};
+      final Map<String, String> headers = {
+        'Host': host,
+        'User-Agent': userAgent,
+      };
       final Response<dynamic> response = await _getDecoded(url, headers);
       log('[getList] $url response = ${response.statusCode}');
       return response.statusCode == 200
-          ? parser.list(response, lastId, item.text, isReads)
+          ? await parser.list(response, lastId, item.text, isReads)
           : Left(
               GetListFailure(
                 message: 'response.statusCode = ${response.statusCode}',
@@ -123,7 +127,7 @@ class PpomppuApi extends BaseApi {
         requestOptions: RequestOptions(path: url),
         statusCode: 200,
       );
-      return parser.main(response);
+      return await parser.main(response);
     } catch (e) {
       return Left(GetMainFailure(message: e.toString()));
     }
@@ -156,7 +160,7 @@ class PpomppuApi extends BaseApi {
       final Response<dynamic> response = await _getDecoded(url, headers);
       log('[searchList] $url response = ${response.statusCode}');
       return response.statusCode == 200
-          ? parser.list(response, lastId, item.text, isReads)
+          ? await parser.list(response, lastId, item.text, isReads)
           : Left(
               GetListFailure(
                 message: 'response.statusCode = ${response.statusCode}',

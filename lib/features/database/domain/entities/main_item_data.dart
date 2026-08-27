@@ -8,7 +8,7 @@ part 'main_item_data.g.dart';
 
 @freezed
 abstract class MainItemData with _$MainItemData {
-  const factory MainItemData({
+  const factory({
     required String board,
     required String text,
     required String url,
@@ -17,8 +17,7 @@ abstract class MainItemData with _$MainItemData {
     required int type,
   }) = _MainItemData;
 
-  factory MainItemData.fromJson(Map<String, dynamic> json) =>
-      _$MainItemDataFromJson(json);
+  factory fromJson(Map<String, dynamic> json) => _$MainItemDataFromJson(json);
 }
 
 extension MainItemDataExtention on MainItemData {
