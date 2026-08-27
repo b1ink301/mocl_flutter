@@ -25,14 +25,14 @@ import '../base/base_parser.dart';
 /// 목록이라 페이지네이션이 없으므로 단일 페이지 게시판으로 처리한다
 /// (list_providers 의 _isSinglePageBoard 참고).
 /// 상세 URL: `/talk/{id}`. 본문/베스트 댓글이 단일 GET 응답에 포함된다.
-class NateParser extends BaseParser {
-  const NateParser();
-
+class const NateParser() extends BaseParser {
   @override
   SiteType get siteType => SiteType.nate;
 
+  // 리스트/상세 모두 모바일(m.pann) 마크업 기준으로 파싱한다. 데스크톱(pann)은
+  // 마크업이 다르고 today/talker 등 일부 게시판은 모바일에만 존재한다.
   @override
-  String get baseUrl => 'https://pann.nate.com';
+  String get baseUrl => 'https://m.pann.nate.com';
 
   @override
   String urlByDetail(String url, String board, int id) => url;
@@ -92,16 +92,28 @@ class NateParser extends BaseParser {
     final items = <ListItem>[];
     final seen = <int>{};
 
+    // 모바일(m.pann) 리스트 마크업: 항목마다
+    //   <a class="cnbox" href="/talk/{id}...">
+    //     <span class="thumb"><img></span>
+    //     <span class="tit"><h2>제목</h2><span class="count">(3)</span></span>
+    //     <span class="sub">조회 <span class="num">N</span> 추천 <span class="num">M</span></span>
     for (final a in document.querySelectorAll('a.cnbox')) {
       final href = a.attributes['href']?.trim() ?? '';
       final int id = int.tryParse(_idRe.firstMatch(href)?.group(1) ?? '') ?? 0;
       if (id <= 0 || !seen.add(id)) continue;
 
-      final String title = a.qText('span.tit');
+      // 게시판마다 tit/h2 중첩이 반대다:
+      //   today  : <span class="tit"><h2>제목</h2><span class="count">(3)</span></span>
+      //   ranking: <h2><span class="tit">제목</span></h2><span class="count">(211)</span>
+      // span.tit 안에 h2 가 있으면 그 텍스트, 없으면 span.tit 텍스트를 쓴다.
+      final String title =
+          (a.querySelector('span.tit h2')?.text ?? a.qText('span.tit')).trim();
       if (title.isEmpty) continue;
 
-      final String reply =
-          a.qText('span.count').replaceAll(RegExp(r'[^0-9]'), '');
+      // 댓글수 span.count 는 tit 안/밖이 게시판마다 다르므로 anchor 기준 첫 항목.
+      final String reply = a
+          .qText('span.count')
+          .replaceAll(RegExp(r'[^0-9]'), '');
       final nums = a
           .querySelectorAll('span.sub span.num')
           .map((e) => e.text.trim())
@@ -147,9 +159,9 @@ class NateParser extends BaseParser {
     final String title = document.qText('h1.view-tit').isNotEmpty
         ? document.qText('h1.view-tit')
         : (document
-                  .querySelector('meta[property="og:title"]')
-                  ?.attributes['content'] ??
-              '')
+                      .querySelector('meta[property="og:title"]')
+                      ?.attributes['content'] ??
+                  '')
               .replaceFirst(RegExp(r'\s*\|\s*네이트.*$'), '')
               .trim();
 
