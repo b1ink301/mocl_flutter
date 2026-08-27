@@ -13,6 +13,19 @@ linter:
   rules:
     - no_wildcard_variable_uses
     - parameter_assignments
+    # Dart 3.12 / 3.13 모던 문법 정리용
+    - use_primary_constructors
+    - use_declaring_parameters
+    - unnecessary_type_name_in_constructor
+    - unnecessary_primary_constructor_body
+    - unnecessary_const_in_enum_constructor
+    - initialize_in_field_declaration
+    - empty_container_bodies
+    - simplify_variable_pattern
+    - prefer_initializing_formals
+    - simple_directive_paths
+    # async_return_with_no_await: 자동 수정 불가 + async 제거 시 예외 발생 시점이
+    # 바뀌므로(동기 throw vs Future error) 일괄 적용하지 않음. 필요 시 개별 검토 후 활성화.
 
 # Additional information about this file can be found at
 # https://dart.dev/guides/language/analysis-options
@@ -26,6 +39,12 @@ analyzer:
     - "build/**"
     - "**/*.g.dart"
     - "**/*.freezed.dart"
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
   errors:
     invalid_annotation_target: ignore
   plugins:
