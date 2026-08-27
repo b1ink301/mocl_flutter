@@ -1,6 +1,6 @@
-import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/config/mocl_theme.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/presentation/widgets/mocl_custom_scroll_behavior.dart';
@@ -9,9 +9,7 @@ import 'package:mocl_flutter/src/generated/i18n/app_localizations.dart';
 import 'config/routes/mocl_app_pages.dart';
 import 'core/util/glyph_warmup_manager.dart';
 
-class AppWidget extends HookConsumerWidget {
-  const AppWidget({super.key});
-
+class const AppWidget({super.key}) extends HookConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textStyles = ref.watch(appTextStylesFontSizeProvider);
@@ -32,7 +30,7 @@ class AppWidget extends HookConsumerWidget {
       themeMode: themeMode,
       theme: MoclTheme.lightTheme,
       darkTheme: MoclTheme.darkTheme,
-      localizationsDelegates: AppLocalizations.localizationsDelegates,
+      localizationsDelegates: GlobalMaterialLocalizations.delegates,
       supportedLocales: AppLocalizations.supportedLocales,
       scrollBehavior: CustomScrollBehavior(),
       routerConfig: AppPages.router,
