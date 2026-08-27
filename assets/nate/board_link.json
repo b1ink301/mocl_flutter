@@ -1,3 +1,5 @@
 [
-  {"board":"ranking","title":"실시간 인기톡 랭킹","type":0,"url":"https://pann.nate.com/talk/ranking","no":0}
+  {"board":"ranking","title":"실시간 인기톡 랭킹","type":0,"url":"https://m.pann.nate.com/talk/ranking","no":0},
+  {"board":"today","title":"오늘의 톡","type":0,"url":"https://m.pann.nate.com/talk/today","no":1},
+  {"board":"talker","title":"토커들의 선택","type":0,"url":"https://m.pann.nate.com/talk/talker","no":2}
 ]
