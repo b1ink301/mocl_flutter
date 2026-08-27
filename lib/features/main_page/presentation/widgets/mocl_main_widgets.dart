@@ -1,8 +1,6 @@
 part of '../mocl_main_view.dart';
 
-class _MainBody extends ConsumerWidget with MainState, MainEvent {
-  const _MainBody();
-
+class const _MainBody() extends ConsumerWidget with MainState, MainEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     listenNotLoginFailure(ref, context);
@@ -36,11 +34,9 @@ class _MainBody extends ConsumerWidget with MainState, MainEvent {
   }
 }
 
-class _BodyList extends ConsumerWidget with MainState, MainEvent {
-  final List<MainItem> items;
-
-  const _BodyList({super.key, required this.items});
-
+class const _BodyList({super.key, required final List<MainItem> items})
+    extends ConsumerWidget
+    with MainState, MainEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textStyle = titleTextStyleState(ref);
@@ -90,12 +86,14 @@ class _BodyList extends ConsumerWidget with MainState, MainEvent {
             leading: item.icon.isEmpty ? null : _buildIconView(item.icon),
             title: PlainText(item.text, style: textStyle!),
             // 정렬 모드에서만 드래그 핸들 노출 + 탭 이동 비활성화.
+            // 평소엔 즐겨찾기 별 버튼(사이트 상관없이 드로어에 모임).
             trailing: reorderMode
                 ? ReorderableDragStartListener(
                     index: index,
                     child: PlainIcon(Icons.drag_handle, color: primaryColor),
                   )
                 : null,
+            // : _FavoriteStar(item: item),
             onTap: reorderMode
                 ? null
                 : () => context.push(Routes.list, extra: item),
@@ -113,11 +111,27 @@ class _BodyList extends ConsumerWidget with MainState, MainEvent {
   );
 }
 
-class _ErrorWidget extends StatelessWidget {
-  final String message;
+/// 메인 게시판 목록의 즐겨찾기 별 버튼. 켜지면 채워진 별(강조색),
+/// 꺼지면 빈 별. 사이트 경계를 넘어 드로어 '즐겨찾기' 섹션에 모인다.
+class const _FavoriteStar({required final MainItem item})
+    extends ConsumerWidget
+    with FavoriteState, FavoriteEvent {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool isFav = isFavoriteState(ref, item.siteType, item.board);
+    final Color primaryColor = Theme.of(context).primaryColor;
+    return PlainIconButton(
+      onPressed: () => toggleFavorite(ref, item),
+      icon: PlainIcon(
+        isFav ? Icons.star_rounded : Icons.star_border_rounded,
+        color: isFav ? primaryColor : null,
+      ),
+    );
+  }
+}
 
-  const _ErrorWidget({super.key, required this.message});
-
+class const _ErrorWidget({super.key, required final String message})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final focusColor = Theme.of(context).focusColor;
@@ -133,9 +147,7 @@ class _ErrorWidget extends StatelessWidget {
   }
 }
 
-class _MainAppBar extends ConsumerWidget with MainState, MainEvent {
-  const _MainAppBar();
-
+class const _MainAppBar() extends ConsumerWidget with MainState, MainEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final titleStyle = ref.watch(appbarTextStyleProvider);

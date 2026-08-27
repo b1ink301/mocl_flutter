@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
@@ -44,9 +44,7 @@ const List<_SiteGroup> _siteGroups = [
   (label: '해외', sites: [SiteType.reddit]),
 ];
 
-class DrawerWidget extends ConsumerWidget with MainEvent {
-  const DrawerWidget({super.key});
-
+class const DrawerWidget({super.key}) extends ConsumerWidget with MainEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
@@ -60,6 +58,10 @@ class DrawerWidget extends ConsumerWidget with MainEvent {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _DrawerHeader(
+            onFavoritesTap: () {
+              context.pop();
+              context.push(Routes.favorites);
+            },
             onBookmarksTap: () {
               context.pop();
               context.push(Routes.bookmarks);
@@ -105,11 +107,7 @@ class DrawerWidget extends ConsumerWidget with MainEvent {
   }
 }
 
-class _SectionHeader extends StatelessWidget {
-  const _SectionHeader(this.label);
-
-  final String label;
-
+class const _SectionHeader(final String label) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
@@ -129,15 +127,11 @@ class _SectionHeader extends StatelessWidget {
   }
 }
 
-class _DrawerHeader extends ConsumerWidget with MainState {
-  const _DrawerHeader({
-    required this.onBookmarksTap,
-    required this.onSettingsTap,
-  });
-
-  final VoidCallback onBookmarksTap;
-  final VoidCallback onSettingsTap;
-
+class const _DrawerHeader({
+  required final VoidCallback onFavoritesTap,
+  required final VoidCallback onBookmarksTap,
+  required final VoidCallback onSettingsTap,
+}) extends ConsumerWidget with MainState {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
@@ -191,6 +185,11 @@ class _DrawerHeader extends ConsumerWidget with MainState {
               ],
             ),
           ),
+          // IconButton(
+          //   tooltip: '즐겨찾기',
+          //   icon: Icon(Icons.star_border_rounded, color: inkColor),
+          //   onPressed: onFavoritesTap,
+          // ),
           IconButton(
             tooltip: '스크랩 보기',
             icon: Icon(Icons.bookmark_border, color: inkColor),
@@ -207,17 +206,11 @@ class _DrawerHeader extends ConsumerWidget with MainState {
   }
 }
 
-class _DrawerSiteTag extends ConsumerWidget with MainState {
-  const _DrawerSiteTag({
-    required this.siteType,
-    required this.focusColor,
-    required this.onTap,
-  });
-
-  final SiteType siteType;
-  final Color focusColor;
-  final VoidCallback onTap;
-
+class const _DrawerSiteTag({
+  required final SiteType siteType,
+  required final Color focusColor,
+  required final VoidCallback onTap,
+}) extends ConsumerWidget with MainState {
   // Paper 팔레트에 맞춘 웜 뉴트럴 칩(비선택). 선택 시엔 강조색(코랄)으로 채운다.
   static const Color _tagBgLight = Color(0xFFF1EEEA);
   static const Color _tagBorderLight = Color(0xFFE4E1DB);

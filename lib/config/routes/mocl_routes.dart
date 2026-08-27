@@ -1,14 +1,13 @@
 part of 'mocl_app_pages.dart';
 
-abstract class Routes {
-  Routes._();
-
+abstract class Routes._() {
   static const home = '/';
   static const main = '/main';
   static const list = '/list';
   static const detail = '/detail';
   static const settings = '/settings';
   static const bookmarks = '/bookmarks';
+  static const favorites = '/favorites';
   static const mute = '/mute';
   static const login = '/login';
   static const viewPhotoDlg = 'viewPhotoDlg';

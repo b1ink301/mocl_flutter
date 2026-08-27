@@ -2,20 +2,16 @@ import 'dart:async';
 
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/database/domain/entities/bookmark_data.dart';
+import 'package:mocl_flutter/features/database/domain/entities/favorite_data.dart';
 import 'package:mocl_flutter/features/database/domain/entities/main_item_data.dart';
 import 'package:mocl_flutter/features/database/domain/entities/mute_rule.dart';
 import 'package:sembast/sembast.dart';
 
-class LocalDatabase {
-  Database _db;
-  final Future<Database> Function() _opener;
-
-  LocalDatabase({
-    required Database database,
-    required Future<Database> Function() opener,
-  }) : _db = database,
-       // ignore: prefer_initializing_formals
-       _opener = opener;
+class LocalDatabase({
+  required Database database,
+  required final Future<Database> Function() _opener,
+}) {
+  Database _db = database;
 
   /// 현재 메모리에 적재된 DB 연결을 닫는다.
   /// Drive 복원 시 파일 교체(rename) 전에 호출해 파일 핸들 충돌을 막는다.
@@ -145,6 +141,48 @@ class LocalDatabase {
       finder: Finder(sortOrders: [SortOrder('savedAt', false)]),
     );
     return records.map((r) => BookmarkData.fromJson(r.value)).toList();
+  }
+
+  // ===== 즐겨찾기(게시판) — 전역 `favorites` 스토어 =====
+
+  StoreRef<int, Map<String, Object?>> get _favoriteStore =>
+      intMapStoreFactory.store('favorites');
+
+  Finder _favoriteFinder(SiteType siteType, String board) => Finder(
+    filter: Filter.and([
+      Filter.equals('siteType', siteType.name),
+      Filter.equals('board', board),
+    ]),
+  );
+
+  Future<void> setFavorite(FavoriteData data) async {
+    final existing = await _favoriteStore.find(
+      _db,
+      finder: _favoriteFinder(data.siteType, data.board),
+    );
+    if (existing.isEmpty) {
+      await _favoriteStore.add(_db, data.toJson());
+    }
+  }
+
+  Future<void> removeFavorite(SiteType siteType, String board) async {
+    await _favoriteStore.delete(_db, finder: _favoriteFinder(siteType, board));
+  }
+
+  Future<bool> isFavorite(SiteType siteType, String board) async {
+    final found = await _favoriteStore.find(
+      _db,
+      finder: _favoriteFinder(siteType, board),
+    );
+    return found.isNotEmpty;
+  }
+
+  Future<List<FavoriteData>> getFavorites() async {
+    final records = await _favoriteStore.find(
+      _db,
+      finder: Finder(sortOrders: [SortOrder('savedAt', false)]),
+    );
+    return records.map((r) => FavoriteData.fromJson(r.value)).toList();
   }
 
   // ===== 뮤트(키워드/작성자 차단) — 전역 `mutes` 스토어 =====

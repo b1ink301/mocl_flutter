@@ -1,10 +1,11 @@
-import 'package:flutter/cupertino.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/presentation/widgets/bottom_sheet_page.dart';
 import 'package:mocl_flutter/features/add_main_dialog/presentation/add_list_modal_sheet_page.dart';
 import 'package:mocl_flutter/features/bookmark/presentation/bookmarks_page.dart';
+import 'package:mocl_flutter/features/favorite/presentation/favorites_page.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/mocl_detail_page.dart';
 import 'package:mocl_flutter/features/mute/presentation/mute_page.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/photo_view_dialog.dart';
@@ -16,9 +17,7 @@ import 'package:swipeable_page_route/swipeable_page_route.dart';
 
 part 'mocl_routes.dart';
 
-class AppPages {
-  AppPages._();
-
+class AppPages._() {
   static const String initial = Routes.main;
 
   static final GoRouter router = GoRouter(
@@ -121,11 +120,16 @@ class AppPages {
             ),
       ),
       GoRoute(
-        path: Routes.mute,
+        path: Routes.favorites,
         pageBuilder: (BuildContext context, GoRouterState state) =>
             SwipeablePage(
-              builder: (BuildContext context) => const MutePage(),
+              builder: (BuildContext context) => const FavoritesPage(),
             ),
+      ),
+      GoRoute(
+        path: Routes.mute,
+        pageBuilder: (BuildContext context, GoRouterState state) =>
+            SwipeablePage(builder: (BuildContext context) => const MutePage()),
       ),
       GoRoute(
         path: Routes.login,
