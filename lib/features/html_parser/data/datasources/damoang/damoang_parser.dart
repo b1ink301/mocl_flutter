@@ -557,7 +557,14 @@ class const DamoangParser(final bool isShowNickImage) extends BaseParser {
         // Skip notice posts
         if (post['is_notice'] == true) continue;
 
-        final String title = (post['title'] ?? '').toString();
+        // 삭제된 글은 title/author/category 가 모두 빈 문자열로 내려오고
+        // deleted_at 에만 삭제 시각이 담긴다. 빈 행으로 보이지 않게 대체 표시.
+        final deletedAt = post['deleted_at'];
+        final bool isDeleted = deletedAt is String && deletedAt.isNotEmpty;
+
+        final String title = isDeleted
+            ? '삭제된 게시물입니다'
+            : (post['title'] ?? '').toString();
         final String author = (post['author'] ?? '').toString();
         final String authorId = (post['author_id'] ?? '').toString();
         final int commentsCount = (post['comments_count'] is int)
