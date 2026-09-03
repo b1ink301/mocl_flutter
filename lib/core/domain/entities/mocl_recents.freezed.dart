@@ -26,16 +26,21 @@ $RecentsCopyWith<Recents> get copyWith => _$RecentsCopyWithImpl<Recents>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Recents&&const DeepCollectionEquality().equals(other.articles, articles)&&const DeepCollectionEquality().equals(other.comments, comments));
+  final _this = this as Recents;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Recents&&const DeepCollectionEquality().equals(other.articles, _this.articles)&&const DeepCollectionEquality().equals(other.comments, _this.comments));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(articles),const DeepCollectionEquality().hash(comments));
+int get hashCode {
+  final _this = this as Recents;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.articles),const DeepCollectionEquality().hash(_this.comments));
+}
 
 @override
 String toString() {
-  return 'Recents(articles: $articles, comments: $comments)';
+  final _this = this as Recents;
+  return 'Recents(articles: ${_this.articles}, comments: ${_this.comments})';
 }
 
 
@@ -236,16 +241,18 @@ _$RecentsCopyWith<_Recents> get copyWith => __$RecentsCopyWithImpl<_Recents>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Recents&&const DeepCollectionEquality().equals(other._articles, _articles)&&const DeepCollectionEquality().equals(other._comments, _comments));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Recents&&const DeepCollectionEquality().equals(other.articles, _articles)&&const DeepCollectionEquality().equals(other.comments, _comments));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_articles),const DeepCollectionEquality().hash(_comments));
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_articles),const DeepCollectionEquality().hash(_comments));
+}
 
 @override
 String toString() {
-  return 'Recents(articles: $articles, comments: $comments)';
+    return 'Recents(articles: $articles, comments: $comments)';
 }
 
 
@@ -298,16 +305,21 @@ $RecentCopyWith<Recent> get copyWith => _$RecentCopyWithImpl<Recent>(this as Rec
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Recent&&(identical(other.title, title) || other.title == title)&&(identical(other.time, time) || other.time == time)&&const DeepCollectionEquality().equals(other.extraData, extraData));
+  final _this = this as Recent;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Recent&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.time, _this.time) || other.time == _this.time)&&const DeepCollectionEquality().equals(other.extraData, _this.extraData));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,time,const DeepCollectionEquality().hash(extraData));
+int get hashCode {
+  final _this = this as Recent;
+  return Object.hash(runtimeType,_this.title,_this.time,const DeepCollectionEquality().hash(_this.extraData));
+}
 
 @override
 String toString() {
-  return 'Recent(title: $title, time: $time, extraData: $extraData)';
+  final _this = this as Recent;
+  return 'Recent(title: ${_this.title}, time: ${_this.time}, extraData: ${_this.extraData})';
 }
 
 
@@ -504,16 +516,18 @@ _$RecentCopyWith<_Recent> get copyWith => __$RecentCopyWithImpl<_Recent>(this, _
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Recent&&(identical(other.title, title) || other.title == title)&&(identical(other.time, time) || other.time == time)&&const DeepCollectionEquality().equals(other._extraData, _extraData));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Recent&&(identical(other.title, title) || other.title == title)&&(identical(other.time, time) || other.time == time)&&const DeepCollectionEquality().equals(other.extraData, _extraData));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,time,const DeepCollectionEquality().hash(_extraData));
+int get hashCode {
+    return Object.hash(runtimeType,title,time,const DeepCollectionEquality().hash(_extraData));
+}
 
 @override
 String toString() {
-  return 'Recent(title: $title, time: $time, extraData: $extraData)';
+    return 'Recent(title: $title, time: $time, extraData: $extraData)';
 }
 
 

@@ -29,16 +29,21 @@ $MainItemCopyWith<MainItem> get copyWith => _$MainItemCopyWithImpl<MainItem>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MainItem&&(identical(other.siteType, siteType) || other.siteType == siteType)&&(identical(other.board, board) || other.board == board)&&(identical(other.text, text) || other.text == text)&&(identical(other.url, url) || other.url == url)&&(identical(other.orderBy, orderBy) || other.orderBy == orderBy)&&(identical(other.type, type) || other.type == type)&&(identical(other.hasItem, hasItem) || other.hasItem == hasItem)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.category, category) || other.category == category));
+  final _this = this as MainItem;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MainItem&&(identical(other.siteType, _this.siteType) || other.siteType == _this.siteType)&&(identical(other.board, _this.board) || other.board == _this.board)&&(identical(other.text, _this.text) || other.text == _this.text)&&(identical(other.url, _this.url) || other.url == _this.url)&&(identical(other.orderBy, _this.orderBy) || other.orderBy == _this.orderBy)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.hasItem, _this.hasItem) || other.hasItem == _this.hasItem)&&(identical(other.icon, _this.icon) || other.icon == _this.icon)&&(identical(other.category, _this.category) || other.category == _this.category));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,siteType,board,text,url,orderBy,type,hasItem,icon,category);
+int get hashCode {
+  final _this = this as MainItem;
+  return Object.hash(runtimeType,_this.siteType,_this.board,_this.text,_this.url,_this.orderBy,_this.type,_this.hasItem,_this.icon,_this.category);
+}
 
 @override
 String toString() {
-  return 'MainItem(siteType: $siteType, board: $board, text: $text, url: $url, orderBy: $orderBy, type: $type, hasItem: $hasItem, icon: $icon, category: $category)';
+  final _this = this as MainItem;
+  return 'MainItem(siteType: ${_this.siteType}, board: ${_this.board}, text: ${_this.text}, url: ${_this.url}, orderBy: ${_this.orderBy}, type: ${_this.type}, hasItem: ${_this.hasItem}, icon: ${_this.icon}, category: ${_this.category})';
 }
 
 
@@ -244,16 +249,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MainItem&&(identical(other.siteType, siteType) || other.siteType == siteType)&&(identical(other.board, board) || other.board == board)&&(identical(other.text, text) || other.text == text)&&(identical(other.url, url) || other.url == url)&&(identical(other.orderBy, orderBy) || other.orderBy == orderBy)&&(identical(other.type, type) || other.type == type)&&(identical(other.hasItem, hasItem) || other.hasItem == hasItem)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.category, category) || other.category == category));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MainItem&&(identical(other.siteType, siteType) || other.siteType == siteType)&&(identical(other.board, board) || other.board == board)&&(identical(other.text, text) || other.text == text)&&(identical(other.url, url) || other.url == url)&&(identical(other.orderBy, orderBy) || other.orderBy == orderBy)&&(identical(other.type, type) || other.type == type)&&(identical(other.hasItem, hasItem) || other.hasItem == hasItem)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.category, category) || other.category == category));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,siteType,board,text,url,orderBy,type,hasItem,icon,category);
+int get hashCode {
+    return Object.hash(runtimeType,siteType,board,text,url,orderBy,type,hasItem,icon,category);
+}
 
 @override
 String toString() {
-  return 'MainItem(siteType: $siteType, board: $board, text: $text, url: $url, orderBy: $orderBy, type: $type, hasItem: $hasItem, icon: $icon, category: $category)';
+    return 'MainItem(siteType: $siteType, board: $board, text: $text, url: $url, orderBy: $orderBy, type: $type, hasItem: $hasItem, icon: $icon, category: $category)';
 }
 
 

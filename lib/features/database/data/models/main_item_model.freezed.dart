@@ -36,16 +36,21 @@ $MainItemModelCopyWith<MainItemModel> get copyWith => _$MainItemModelCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MainItemModel&&(identical(other.no, no) || other.no == no)&&(identical(other.board, board) || other.board == board)&&(identical(other.type, type) || other.type == type)&&(identical(other.title, title) || other.title == title)&&(identical(other.url, url) || other.url == url)&&(identical(other.siteType, siteType) || other.siteType == siteType));
+  final _this = this as MainItemModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MainItemModel&&(identical(other.no, _this.no) || other.no == _this.no)&&(identical(other.board, _this.board) || other.board == _this.board)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.url, _this.url) || other.url == _this.url)&&(identical(other.siteType, _this.siteType) || other.siteType == _this.siteType));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,no,board,type,title,url,siteType);
+int get hashCode {
+  final _this = this as MainItemModel;
+  return Object.hash(runtimeType,_this.no,_this.board,_this.type,_this.title,_this.url,_this.siteType);
+}
 
 @override
 String toString() {
-  return 'MainItemModel(no: $no, board: $board, type: $type, title: $title, url: $url, siteType: $siteType)';
+  final _this = this as MainItemModel;
+  return 'MainItemModel(no: ${_this.no}, board: ${_this.board}, type: ${_this.type}, title: ${_this.title}, url: ${_this.url}, siteType: ${_this.siteType})';
 }
 
 
@@ -245,16 +250,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MainItemData&&(identical(other.no, no) || other.no == no)&&(identical(other.board, board) || other.board == board)&&(identical(other.type, type) || other.type == type)&&(identical(other.title, title) || other.title == title)&&(identical(other.url, url) || other.url == url)&&(identical(other.siteType, siteType) || other.siteType == siteType));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MainItemData&&(identical(other.no, no) || other.no == no)&&(identical(other.board, board) || other.board == board)&&(identical(other.type, type) || other.type == type)&&(identical(other.title, title) || other.title == title)&&(identical(other.url, url) || other.url == url)&&(identical(other.siteType, siteType) || other.siteType == siteType));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,no,board,type,title,url,siteType);
+int get hashCode {
+    return Object.hash(runtimeType,no,board,type,title,url,siteType);
+}
 
 @override
 String toString() {
-  return 'MainItemModel(no: $no, board: $board, type: $type, title: $title, url: $url, siteType: $siteType)';
+    return 'MainItemModel(no: $no, board: $board, type: $type, title: $title, url: $url, siteType: $siteType)';
 }
 
 

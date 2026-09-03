@@ -89,7 +89,7 @@ final class DetailsNotifierProvider
   DetailsNotifier create() => DetailsNotifier();
 }
 
-String _$detailsNotifierHash() => r'2bb881f9efad651923d7630a9b076ed803fb4dfe';
+String _$detailsNotifierHash() => r'bee129533fbed2960e195e3c82f1c1165dfc52b0';
 
 abstract class _$DetailsNotifier extends $AsyncNotifier<Details> {
   FutureOr<Details> build();
@@ -264,7 +264,7 @@ final class DetailTitleStateNotifierProvider
 }
 
 String _$detailTitleStateNotifierHash() =>
-    r'63decb395ef74d725259430126449c2460871287';
+    r'528e0c2ff0c6a5cc8ffe7b3c0cca04889232ff5d';
 
 abstract class _$DetailTitleStateNotifier extends $Notifier<String> {
   String build();

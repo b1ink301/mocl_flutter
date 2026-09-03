@@ -15,6 +15,8 @@ _FavoriteData _$FavoriteDataFromJson(Map<String, dynamic> json) =>
       type: (json['type'] as num).toInt(),
       icon: json['icon'] as String,
       savedAt: (json['savedAt'] as num).toInt(),
+      group: json['group'] as String? ?? '',
+      orderBy: (json['orderBy'] as num?)?.toInt() ?? 0,
     );
 
 Map<String, dynamic> _$FavoriteDataToJson(_FavoriteData instance) =>
@@ -26,6 +28,8 @@ Map<String, dynamic> _$FavoriteDataToJson(_FavoriteData instance) =>
       'type': instance.type,
       'icon': instance.icon,
       'savedAt': instance.savedAt,
+      'group': instance.group,
+      'orderBy': instance.orderBy,
     };
 
 const _$SiteTypeEnumMap = {

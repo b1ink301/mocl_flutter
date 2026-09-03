@@ -324,7 +324,7 @@ final class GoogleDriveSyncNotifierProvider
 }
 
 String _$googleDriveSyncNotifierHash() =>
-    r'c319ae272a1b791af2693f01944aa78f59fcce6e';
+    r'7a62391760a5f31cf40ee85068f01ec209d8716c';
 
 abstract class _$GoogleDriveSyncNotifier extends $Notifier<SyncStatus> {
   SyncStatus build();

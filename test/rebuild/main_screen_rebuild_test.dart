@@ -24,7 +24,7 @@ void main() {
   /// 본문(목록) 쪽. 화면에 새로 들어오는 행의 mount 는 정상이므로 rebuild 만 본다.
   const List<String> bodyWidgets = <String>[
     '_MainBody',
-    '_BodyList',
+    '_BoardTile',
     'ListTile',
     'PlainText',
     'PlainDividerWidget',
@@ -62,6 +62,6 @@ void main() {
 
     // 스타일이 바뀌면 목록은 반드시 다시 그려져야 한다.
     // (이게 0이면 계측 훅이 동작하지 않는다는 뜻이다)
-    rec.expectRebuild('_BodyList');
+    rec.expectRebuild('_BoardTile');
   });
 }

@@ -26,16 +26,21 @@ $UserInfoCopyWith<UserInfo> get copyWith => _$UserInfoCopyWithImpl<UserInfo>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserInfo&&(identical(other.id, id) || other.id == id)&&(identical(other.nickName, nickName) || other.nickName == nickName)&&(identical(other.nickImage, nickImage) || other.nickImage == nickImage)&&(identical(other.nameMemo, nameMemo) || other.nameMemo == nameMemo)&&(identical(other.ip, ip) || other.ip == ip)&&(identical(other.isBlock, isBlock) || other.isBlock == isBlock)&&(identical(other.isMe, isMe) || other.isMe == isMe)&&(identical(other.isAuthor, isAuthor) || other.isAuthor == isAuthor));
+  final _this = this as UserInfo;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is UserInfo&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.nickName, _this.nickName) || other.nickName == _this.nickName)&&(identical(other.nickImage, _this.nickImage) || other.nickImage == _this.nickImage)&&(identical(other.nameMemo, _this.nameMemo) || other.nameMemo == _this.nameMemo)&&(identical(other.ip, _this.ip) || other.ip == _this.ip)&&(identical(other.isBlock, _this.isBlock) || other.isBlock == _this.isBlock)&&(identical(other.isMe, _this.isMe) || other.isMe == _this.isMe)&&(identical(other.isAuthor, _this.isAuthor) || other.isAuthor == _this.isAuthor));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,nickName,nickImage,nameMemo,ip,isBlock,isMe,isAuthor);
+int get hashCode {
+  final _this = this as UserInfo;
+  return Object.hash(runtimeType,_this.id,_this.nickName,_this.nickImage,_this.nameMemo,_this.ip,_this.isBlock,_this.isMe,_this.isAuthor);
+}
 
 @override
 String toString() {
-  return 'UserInfo(id: $id, nickName: $nickName, nickImage: $nickImage, nameMemo: $nameMemo, ip: $ip, isBlock: $isBlock, isMe: $isMe, isAuthor: $isAuthor)';
+  final _this = this as UserInfo;
+  return 'UserInfo(id: ${_this.id}, nickName: ${_this.nickName}, nickImage: ${_this.nickImage}, nameMemo: ${_this.nameMemo}, ip: ${_this.ip}, isBlock: ${_this.isBlock}, isMe: ${_this.isMe}, isAuthor: ${_this.isAuthor})';
 }
 
 
@@ -236,16 +241,18 @@ _$UserInfoCopyWith<_UserInfo> get copyWith => __$UserInfoCopyWithImpl<_UserInfo>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserInfo&&(identical(other.id, id) || other.id == id)&&(identical(other.nickName, nickName) || other.nickName == nickName)&&(identical(other.nickImage, nickImage) || other.nickImage == nickImage)&&(identical(other.nameMemo, nameMemo) || other.nameMemo == nameMemo)&&(identical(other.ip, ip) || other.ip == ip)&&(identical(other.isBlock, isBlock) || other.isBlock == isBlock)&&(identical(other.isMe, isMe) || other.isMe == isMe)&&(identical(other.isAuthor, isAuthor) || other.isAuthor == isAuthor));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _UserInfo&&(identical(other.id, id) || other.id == id)&&(identical(other.nickName, nickName) || other.nickName == nickName)&&(identical(other.nickImage, nickImage) || other.nickImage == nickImage)&&(identical(other.nameMemo, nameMemo) || other.nameMemo == nameMemo)&&(identical(other.ip, ip) || other.ip == ip)&&(identical(other.isBlock, isBlock) || other.isBlock == isBlock)&&(identical(other.isMe, isMe) || other.isMe == isMe)&&(identical(other.isAuthor, isAuthor) || other.isAuthor == isAuthor));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,nickName,nickImage,nameMemo,ip,isBlock,isMe,isAuthor);
+int get hashCode {
+    return Object.hash(runtimeType,id,nickName,nickImage,nameMemo,ip,isBlock,isMe,isAuthor);
+}
 
 @override
 String toString() {
-  return 'UserInfo(id: $id, nickName: $nickName, nickImage: $nickImage, nameMemo: $nameMemo, ip: $ip, isBlock: $isBlock, isMe: $isMe, isAuthor: $isAuthor)';
+    return 'UserInfo(id: $id, nickName: $nickName, nickImage: $nickImage, nameMemo: $nameMemo, ip: $ip, isBlock: $isBlock, isMe: $isMe, isAuthor: $isAuthor)';
 }
 
 

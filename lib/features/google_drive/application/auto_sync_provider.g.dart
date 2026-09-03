@@ -41,7 +41,7 @@ final class AutoSyncNotifierProvider
   }
 }
 
-String _$autoSyncNotifierHash() => r'21e6c0579c20d6f648a4c977016e47654a32ca20';
+String _$autoSyncNotifierHash() => r'a235317ec14060a3c6529007ecc00ca0b477d84d';
 
 abstract class _$AutoSyncNotifier extends $Notifier<SyncAction> {
   SyncAction build();

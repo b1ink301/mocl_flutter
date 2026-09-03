@@ -41,7 +41,7 @@ final class KeywordNotifierProvider
   }
 }
 
-String _$keywordNotifierHash() => r'71b08ed24030b6db2641eadccaee061fba69673f';
+String _$keywordNotifierHash() => r'9961fd34627c5adbf8034015aba5e6159e5eb6a6';
 
 abstract class _$KeywordNotifier extends $Notifier<String> {
   String build();

@@ -34,7 +34,7 @@ final class SizeCacheDirNotifierProvider
 }
 
 String _$sizeCacheDirNotifierHash() =>
-    r'72bf634503015595e1e407767f23959003479fcd';
+    r'9fcb8b122942cd89e86c0efc876f798902095587';
 
 abstract class _$SizeCacheDirNotifier extends $AsyncNotifier<String> {
   FutureOr<String> build();
@@ -87,7 +87,7 @@ final class ShowNickImageNotifierProvider
 }
 
 String _$showNickImageNotifierHash() =>
-    r'9cf107c2d76fe699d13375225498213e288150bf';
+    r'fc6dc85a955b55f366a00d166c0886aaada8624d';
 
 abstract class _$ShowNickImageNotifier extends $Notifier<bool> {
   bool build();
