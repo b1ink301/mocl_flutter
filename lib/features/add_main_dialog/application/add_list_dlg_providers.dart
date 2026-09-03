@@ -21,6 +21,17 @@ class AddListSearchQuery() extends _$AddListSearchQuery {
   void update(String query) => state = query;
 }
 
+/// 게시판 선택 화면에서 펼쳐 볼 사이트 카테고리.
+/// 기본값은 현재 보고 있는 사이트가 속한 카테고리이며, 사이트를 바꾸면
+/// 그 사이트의 카테고리로 따라 움직인다(선택된 사이트가 항상 보이도록).
+@riverpod
+class AddSelectedCategory() extends _$AddSelectedCategory {
+  @override
+  String build() => defaultCategoryIdOf(ref.watch(currentSiteTypeProvider));
+
+  void select(String categoryId) => state = categoryId;
+}
+
 /// 선택한 게시판을 담을 즐겨찾기 그룹. 기본값은 그 사이트가 속한 카테고리라,
 /// 사용자가 아무것도 고르지 않아도 정리된 상태로 쌓인다.
 /// (그룹 이름이 바뀌어도 ID 로 찾으므로 유지되고, 그룹이 지워졌으면 첫 그룹)

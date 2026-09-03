@@ -1,6 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_site_category.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/presentation/widgets/check_box_list_title_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
@@ -11,6 +13,94 @@ import '../../../core/presentation/widgets/plain_icon_button.dart';
 import 'state/add_event_mixin.dart';
 import 'state/add_state_mixin.dart';
 import 'widgets/board_search_field.dart';
+
+/// 어느 사이트의 게시판을 볼지 고른다.
+/// 위 줄에서 카테고리를 고르면 아래 줄에 그 카테고리의 사이트가 펼쳐지고,
+/// 사이트를 누르면 그 사이트의 게시판 목록으로 바뀐다.
+class const _SitePicker() extends ConsumerWidget with AddState, AddEvent {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final String categoryId = selectedCategoryId(ref);
+    final SiteType site = currentSite(ref);
+    final SiteCategory category = kSiteCategories.firstWhere(
+      (candidate) => candidate.id == categoryId,
+      orElse: () => kSiteCategories.first,
+    );
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _ChipRow(
+          children: [
+            for (final SiteCategory candidate in kSiteCategories)
+              _PickerChip(
+                label: candidate.label,
+                isSelected: candidate.id == category.id,
+                onTap: () => selectCategory(ref, candidate.id),
+              ),
+          ],
+        ),
+        _ChipRow(
+          children: [
+            for (final SiteType candidate in category.sites)
+              _PickerChip(
+                label: candidate.title,
+                isSelected: candidate == site,
+                onTap: () => selectSite(ref, candidate),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class const _ChipRow({required final List<Widget> children})
+    extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => SingleChildScrollView(
+    scrollDirection: Axis.horizontal,
+    padding: const EdgeInsets.fromLTRB(12, 6, 12, 0),
+    child: Row(spacing: 8, children: children),
+  );
+}
+
+class const _PickerChip({
+  required final String label,
+  required final bool isSelected,
+  required final VoidCallback onTap,
+}) extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final Color focusColor = theme.focusColor;
+    final Color textColor = isSelected
+        ? Colors.white
+        : theme.textTheme.bodyMedium!.color!;
+
+    return Material(
+      color: isSelected ? focusColor : Colors.transparent,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+        side: BorderSide(color: isSelected ? focusColor : theme.dividerColor),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
+          child: Text(
+            label,
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: textColor,
+              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 /// 고른 게시판을 어느 즐겨찾기 그룹에 담을지 선택한다.
 /// 기본값은 사이트가 속한 카테고리라 그냥 체크만 해도 알아서 정리된다.
@@ -93,7 +183,12 @@ class const AddListBottomSheet({super.key})
                       icon: const Icon(Icons.close),
                       onPressed: () => context.pop(),
                     ),
-                    const Expanded(child: Center(child: Text('게시판 선택'))),
+                    // 어느 사이트의 목록을 보고 있는지 항상 제목에 드러낸다.
+                    Expanded(
+                      child: Center(
+                        child: Text('${currentSite(ref).title} 게시판'),
+                      ),
+                    ),
                     PlainIconButton(
                       padding: const .all(10),
                       icon: const Icon(Icons.check),
@@ -104,6 +199,7 @@ class const AddListBottomSheet({super.key})
               ),
             ),
             const PlainDividerWidget(),
+            const _SitePicker(),
             const _GroupSelector(),
             const BoardSearchField(),
             // 콘텐츠
