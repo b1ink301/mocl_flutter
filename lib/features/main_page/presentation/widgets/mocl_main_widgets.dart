@@ -109,7 +109,7 @@ class const _MainBody() extends ConsumerWidget
       child: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 32),
         child: Text(
-          '아직 추가한 게시판이 없습니다.\n왼쪽 메뉴에서 사이트를 골라\n자주 보는 게시판을 추가해 보세요.',
+          '아직 추가한 게시판이 없습니다.\n오른쪽 위 + 를 눌러\n자주 보는 게시판을 추가해 보세요.',
           textAlign: TextAlign.center,
           style: textStyle,
         ),

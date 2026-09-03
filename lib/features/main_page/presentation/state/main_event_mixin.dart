@@ -16,29 +16,12 @@ mixin class MainEvent() {
   void handleToggleEdit(WidgetRef ref) =>
       ref.read(mainEditModeProvider.notifier).toggle();
 
-  /// 현재 선택된 사이트의 게시판 선택 화면을 연다.
+  /// 게시판 선택 화면을 연다(안에서 카테고리 · 사이트를 골라 담는다).
   Future<void> handleAddButton(WidgetRef ref, BuildContext context) async =>
       context.push(Routes.setMainDlgFull);
 
-  /// 드로어에서 사이트를 고르면 그 사이트로 전환한 뒤 곧바로
-  /// 게시판 선택 화면을 띄운다(드로어 = 게시판을 찾아 추가하는 통로).
-  Future<void> openAddBoards(
-    WidgetRef ref,
-    BuildContext context,
-    SiteType siteType,
-  ) async {
-    changeSiteType(ref, siteType);
-    await context.push(Routes.setMainDlgFull);
-  }
-
-  void handleSideBarToggle(WidgetRef ref) =>
-      ref.read(mainSidebarProvider.notifier).toggle();
-
-  void sidebarOpen(WidgetRef ref) =>
-      ref.read(mainSidebarProvider.notifier).open();
-
-  void sidebarClose(WidgetRef ref) =>
-      ref.read(mainSidebarProvider.notifier).close();
+  void selectTab(WidgetRef ref, int index) =>
+      ref.read(mainTabIndexProvider.notifier).select(index);
 
   void changeSiteType(WidgetRef ref, SiteType siteType) =>
       ref.read(currentSiteTypeProvider.notifier).changeSiteType(siteType);
@@ -47,14 +30,11 @@ mixin class MainEvent() {
     screenWidthProvider.overrideWithValue(width),
   ];
 
+  /// 다른 탭에서 뒤로가기를 누르면 앱을 닫는 대신 첫 탭으로 돌아온다.
   void handlePop(WidgetRef ref, bool didPop) {
     if (didPop) {
       return;
     }
-    final scaffoldState = ref.read(mainScaffoldStateProvider).currentState;
-
-    if (scaffoldState?.isDrawerOpen == true) {
-      scaffoldState?.closeDrawer();
-    }
+    selectTab(ref, 0);
   }
 }

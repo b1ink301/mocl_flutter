@@ -81,13 +81,7 @@ class const SettingsView({super.key})
             const _SectionHeader('데이터'),
             _SettingsCard(
               children: [
-                _SettingsTile(
-                  icon: Icons.bookmark_outline,
-                  title: '스크랩 보기',
-                  trailing: const Icon(Icons.chevron_right, size: 22),
-                  onTap: () => context.push(Routes.bookmarks),
-                ),
-                const _TileDivider(),
+                // 스크랩은 하단 탭에서 바로 갈 수 있어 여기 두지 않는다.
                 _SettingsTile(
                   icon: Icons.block,
                   title: '차단(뮤트) 관리',
