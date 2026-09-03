@@ -41,12 +41,9 @@ const List<SiteCategory> kSiteCategories = [
   (id: 'global', label: '해외', sites: [SiteType.reddit]),
 ];
 
-/// 사이트가 속한 기본 카테고리 ID. 정의에 없으면 첫 카테고리로 보낸다.
-String defaultCategoryIdOf(SiteType siteType) {
-  for (final SiteCategory category in kSiteCategories) {
-    if (category.sites.contains(siteType)) {
-      return category.id;
-    }
-  }
-  return kSiteCategories.first.id;
-}
+/// 카테고리 순서대로 펼친 전체 사이트 목록.
+/// 게시판 추가 화면의 사이트 레일이 이 순서로 그린다(성격이 비슷한 사이트끼리
+/// 이웃하게 두어 훑기 쉽게).
+final List<SiteType> kAllSitesInOrder = [
+  for (final SiteCategory category in kSiteCategories) ...category.sites,
+];

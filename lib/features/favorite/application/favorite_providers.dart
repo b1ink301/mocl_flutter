@@ -1,5 +1,4 @@
 import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_site_category.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/database/application/datasource_provider.dart';
 import 'package:mocl_flutter/features/database/domain/entities/favorite_data.dart';
@@ -107,31 +106,45 @@ class FavoritesNotifier() extends _$FavoritesNotifier {
   Future<List<FavoriteData>> build() =>
       ref.watch(favoriteRepositoryProvider).getAll();
 
-  /// 선택한 게시판들을 지정 그룹의 맨 뒤에 추가한다(이미 있는 항목은 건너뜀).
-  Future<void> addBoards(List<MainItem> items, String groupId) async {
-    if (items.isEmpty) return;
-
+  /// 게시판 담기/빼기를 한 번에 처리한다(게시판 추가 화면의 칩 탭).
+  /// 담을 때는 그 사이트의 그룹을 찾고, 없으면 사이트 이름으로 새로 만든다.
+  Future<void> toggleBoard(MainItem item) async {
     final repo = ref.read(favoriteRepositoryProvider);
     final List<FavoriteData> current = await repo.getAll();
-    final Set<String> existing = current
-        .map((favorite) => _keyOf(favorite.siteType, favorite.board))
-        .toSet();
+    final String key = _keyOf(item.siteType, item.board);
+    final bool exists = current.any(
+      (favorite) => _keyOf(favorite.siteType, favorite.board) == key,
+    );
 
-    int order = _nextOrderIn(current, groupId);
-    final int now = DateTime.now().millisecondsSinceEpoch;
-    final List<FavoriteData> toAdd = [
-      for (final MainItem item in items)
-        if (existing.add(_keyOf(item.siteType, item.board)))
-          FavoriteData.fromMainItem(
-            item,
-            now,
-            group: groupId,
-            orderBy: order++,
-          ),
-    ];
+    if (exists) {
+      await repo.remove(item.siteType, item.board);
+    } else {
+      final String groupId = await _ensureSiteGroup(repo, item.siteType);
+      await repo.addAll([
+        FavoriteData.fromMainItem(
+          item,
+          DateTime.now().millisecondsSinceEpoch,
+          group: groupId,
+          orderBy: _nextOrderIn(current, groupId),
+        ),
+      ]);
+    }
 
-    await repo.addAll(toAdd);
     ref.invalidateSelf();
+    ref.invalidate(favoriteGroupsProvider);
+  }
+
+  /// 사이트에 대응하는 그룹 ID. 없으면 맨 뒤에 새로 만들어 저장한다.
+  Future<String> _ensureSiteGroup(
+    FavoriteRepository repo,
+    SiteType siteType,
+  ) async {
+    final List<FavoriteGroup> groups = await repo.getGroups();
+    final bool exists = groups.any((group) => group.id == siteType.name);
+    if (!exists) {
+      await repo.saveGroups([...groups, siteGroupOf(siteType, groups.length)]);
+    }
+    return siteType.name;
   }
 
   Future<void> remove(SiteType siteType, String board) async {
@@ -190,8 +203,20 @@ class FavoritesNotifier() extends _$FavoritesNotifier {
   }
 }
 
+/// 게시판 추가 화면이 '이미 담긴 게시판'을 표시하는 데 쓰는 키 집합.
+/// (사이트+게시판 조합)
+@riverpod
+Set<String> favoriteBoardKeys(Ref ref) {
+  final List<FavoriteData> favorites =
+      ref.watch(favoritesProvider).value ?? const [];
+  return {
+    for (final FavoriteData favorite in favorites)
+      _keyOf(favorite.siteType, favorite.board),
+  };
+}
+
 /// 그룹 순서대로 묶은 메인 화면용 섹션 목록.
-/// 그룹이 삭제되는 등으로 소속을 잃은 항목은 사이트 기본 카테고리로,
+/// 그룹이 삭제되는 등으로 소속을 잃은 항목은 같은 이름의 사이트 그룹으로,
 /// 그마저 없으면 첫 그룹으로 보내 화면에서 사라지지 않게 한다.
 @riverpod
 Future<List<FavoriteSection>> favoriteSections(Ref ref) async {
@@ -209,7 +234,7 @@ Future<List<FavoriteSection>> favoriteSections(Ref ref) async {
   for (final FavoriteData favorite in favorites) {
     String id = favorite.group;
     if (!groupIds.contains(id)) {
-      final String fallback = defaultCategoryIdOf(favorite.siteType);
+      final String fallback = favorite.siteType.name;
       id = groupIds.contains(fallback) ? fallback : groups.first.id;
     }
     byGroup[id]!.add(favorite);

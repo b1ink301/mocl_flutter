@@ -1,160 +1,30 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_category.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/core/presentation/widgets/check_box_list_title_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/plain_divider_widget.dart';
-import 'package:mocl_flutter/features/database/domain/entities/favorite_group.dart';
 
 import '../../../core/presentation/widgets/plain_icon_button.dart';
 import 'state/add_event_mixin.dart';
 import 'state/add_state_mixin.dart';
 import 'widgets/board_search_field.dart';
 
-/// 어느 사이트의 게시판을 볼지 고른다.
-/// 위 줄에서 카테고리를 고르면 아래 줄에 그 카테고리의 사이트가 펼쳐지고,
-/// 사이트를 누르면 그 사이트의 게시판 목록으로 바뀐다.
-class const _SitePicker() extends ConsumerWidget with AddState, AddEvent {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final String categoryId = selectedCategoryId(ref);
-    final SiteType site = currentSite(ref);
-    final SiteCategory category = kSiteCategories.firstWhere(
-      (candidate) => candidate.id == categoryId,
-      orElse: () => kSiteCategories.first,
-    );
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
-        _ChipRow(
-          children: [
-            for (final SiteCategory candidate in kSiteCategories)
-              _PickerChip(
-                label: candidate.label,
-                isSelected: candidate.id == category.id,
-                onTap: () => selectCategory(ref, candidate.id),
-              ),
-          ],
-        ),
-        _ChipRow(
-          children: [
-            for (final SiteType candidate in category.sites)
-              _PickerChip(
-                label: candidate.title,
-                isSelected: candidate == site,
-                onTap: () => selectSite(ref, candidate),
-              ),
-          ],
-        ),
-      ],
-    );
-  }
-}
-
-class const _ChipRow({required final List<Widget> children})
-    extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) => SingleChildScrollView(
-    scrollDirection: Axis.horizontal,
-    padding: const EdgeInsets.fromLTRB(12, 6, 12, 0),
-    child: Row(spacing: 8, children: children),
-  );
-}
-
-class const _PickerChip({
-  required final String label,
-  required final bool isSelected,
-  required final VoidCallback onTap,
-}) extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final Color focusColor = theme.focusColor;
-    final Color textColor = isSelected
-        ? Colors.white
-        : theme.textTheme.bodyMedium!.color!;
-
-    return Material(
-      color: isSelected ? focusColor : Colors.transparent,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(18),
-        side: BorderSide(color: isSelected ? focusColor : theme.dividerColor),
-      ),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 7),
-          child: Text(
-            label,
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: textColor,
-              fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-/// 고른 게시판을 어느 즐겨찾기 그룹에 담을지 선택한다.
-/// 기본값은 사이트가 속한 카테고리라 그냥 체크만 해도 알아서 정리된다.
-class const _GroupSelector() extends ConsumerWidget with AddState, AddEvent {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final List<FavoriteGroup> groups = favoriteGroups(ref);
-    if (groups.isEmpty) return const SizedBox.shrink();
-
-    final String selected = targetGroupId(ref);
-    final bool exists = groups.any((group) => group.id == selected);
-    final theme = Theme.of(context);
-
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-      child: Row(
-        children: [
-          Text('그룹', style: theme.textTheme.bodySmall),
-          const SizedBox(width: 14),
-          Expanded(
-            child: DropdownButton<String>(
-              isExpanded: true,
-              value: exists ? selected : groups.first.id,
-              underline: const SizedBox.shrink(),
-              items: [
-                for (final FavoriteGroup group in groups)
-                  DropdownMenuItem<String>(
-                    value: group.id,
-                    child: Text(group.name, style: theme.textTheme.bodyMedium),
-                  ),
-              ],
-              onChanged: (value) {
-                if (value != null) selectGroup(ref, value);
-              },
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
+/// 게시판 추가 화면.
+///
+/// 왼쪽 레일에서 사이트를 고르고, 오른쪽에서 게시판 칩을 눌러 담는다.
+/// 칩을 누르는 즉시 즐겨찾기에 저장/해제되므로 따로 '적용'이 없다
+/// (레일로 사이트를 옮겨 다녀도 고른 게 사라지지 않는다).
+/// 담긴 게시판은 그 사이트 이름의 그룹으로 자동 분류된다.
 class const AddListBottomSheet({super.key})
     extends ConsumerWidget
     with AddState, AddEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final color = theme.scaffoldBackgroundColor;
-    final textStyle = theme.textTheme.bodyMedium;
-    final headerStyle = theme.textTheme.titleSmall?.copyWith(
-      color: theme.focusColor,
-      fontWeight: FontWeight.bold,
-    );
 
     return DraggableScrollableSheet(
       initialChildSize: 0.9,
@@ -164,128 +34,296 @@ class const AddListBottomSheet({super.key})
       // ListTile 이 ink/배경을 가장 가까운 Material 에 그리므로, 배경색은
       // Container 가 아니라 Material 에 줘서 assertion(배경/잉크 가림)을 막는다.
       builder: (context, scrollController) => Material(
-        borderRadius: BorderRadiusGeometry.horizontal(
-          left: Radius.circular(24),
-          right: Radius.circular(24),
+        borderRadius: const BorderRadiusGeometry.vertical(
+          top: Radius.circular(24),
         ),
-        color: color,
+        color: theme.scaffoldBackgroundColor,
         child: Column(
           children: [
-            // 상단 바
-            Padding(
-              padding: const .symmetric(horizontal: 4),
-              child: SizedBox(
-                height: 62,
-                child: Row(
-                  children: [
-                    PlainIconButton(
-                      padding: const .all(10),
-                      icon: const Icon(Icons.close),
-                      onPressed: () => context.pop(),
-                    ),
-                    // 어느 사이트의 목록을 보고 있는지 항상 제목에 드러낸다.
-                    Expanded(
-                      child: Center(
-                        child: Text('${currentSite(ref).title} 게시판'),
-                      ),
-                    ),
-                    PlainIconButton(
-                      padding: const .all(10),
-                      icon: const Icon(Icons.check),
-                      onPressed: () => apply(ref, context),
-                    ),
-                  ],
-                ),
-              ),
-            ),
+            _TopBar(),
             const PlainDividerWidget(),
-            const _SitePicker(),
-            const _GroupSelector(),
-            const BoardSearchField(),
-            // 콘텐츠
             Expanded(
-              child: addState(ref).maybeWhen(
-                data: (allData) {
-                  final query = searchQuery(ref).trim().toLowerCase();
-                  final data = query.isEmpty
-                      ? allData
-                      : allData
-                            .where(
-                              (e) =>
-                                  e.mainItem.text.toLowerCase().contains(
-                                    query,
-                                  ) ||
-                                  e.mainItem.category.toLowerCase().contains(
-                                    query,
-                                  ),
-                            )
-                            .toList();
-                  if (data.isEmpty) {
-                    return Center(
-                      child: Text("'$query' 검색 결과가 없습니다", style: textStyle),
-                    );
-                  }
-                  return ListView.builder(
-                    controller: scrollController,
-                    itemCount: data.length,
-                    itemBuilder: (context, index) {
-                      final item = data[index];
-                      final category = item.mainItem.category;
-                      // 카테고리가 바뀌는 첫 항목 위에 섹션 헤더 표시.
-                      final bool showHeader =
-                          category.isNotEmpty &&
-                          (index == 0 ||
-                              data[index - 1].mainItem.category != category);
-                      final tile = CheckBoxListTitleWidget(
-                        // 필터링으로 순서가 바뀌어도 체크 상태가 섞이지 않도록
-                        // 항목 고유값을 키로 지정한다.
-                        key: ValueKey(item.mainItem.url),
-                        text: item.mainItem.text,
-                        isChecked: item.isChecked,
-                        textStyle: textStyle,
-                        onChanged: (isChecked) =>
-                            onChanged(ref, isChecked, item.mainItem),
-                      );
-                      if (!showHeader) {
-                        return Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [const PlainDividerWidget(), tile],
-                        );
-                      }
-                      return Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Padding(
-                            padding: const EdgeInsets.fromLTRB(16, 14, 16, 6),
-                            child: Text(category, style: headerStyle),
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  const _SiteRail(),
+                  Expanded(
+                    child: Column(
+                      children: [
+                        const BoardSearchField(),
+                        Expanded(
+                          child: _BoardChips(
+                            scrollController: scrollController,
                           ),
-                          tile,
-                        ],
-                      );
-                    },
-                  );
-                },
-                error: (error, _) => Padding(
-                  padding: const .all(16.0),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(error.toString(), style: textStyle),
-                      // 로그인해야 목록을 받아오는 사이트(레딧 · 네이버카페)를 위해
-                      // 여기서 바로 로그인으로 넘어갈 수 있게 한다.
-                      if (error is NotLoginFailure)
-                        TextButton(
-                          onPressed: () => loginAndRetry(ref, context),
-                          child: const Text('로그인하기'),
                         ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                orElse: () => const LoadingWidget(),
+                ],
               ),
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+class const _TopBar() extends ConsumerWidget with AddState {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final SiteType site = currentSite(ref);
+    final int count = addedBoardKeys(
+      ref,
+    ).where((key) => key.startsWith('${site.name}_')).length;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 4),
+      child: SizedBox(
+        height: 58,
+        child: Row(
+          children: [
+            PlainIconButton(
+              padding: const EdgeInsets.all(10),
+              icon: const Icon(Icons.close),
+              onPressed: () => context.pop(),
+            ),
+            const Expanded(
+              child: Center(
+                child: Text(
+                  '게시판 추가',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+              ),
+            ),
+            // 누르는 즉시 저장되므로 '적용' 대신 담긴 개수를 보여준다.
+            Padding(
+              padding: const EdgeInsets.only(right: 14),
+              child: Text(
+                count == 0 ? '' : '$count개 담김',
+                style: TextStyle(
+                  fontSize: 12,
+                  fontWeight: FontWeight.w700,
+                  color: theme.focusColor,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// 왼쪽 사이트 레일. 18개 사이트를 세로로 훑으며 탭 한 번으로 전환한다.
+class const _SiteRail() extends ConsumerWidget with AddState, AddEvent {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final bool isDark = theme.brightness == Brightness.dark;
+    final SiteType selected = currentSite(ref);
+
+    return Container(
+      width: 92,
+      decoration: BoxDecoration(
+        color: isDark
+            ? Colors.white.withValues(alpha: 0.03)
+            : Colors.black.withValues(alpha: 0.02),
+        border: Border(right: BorderSide(color: theme.dividerColor)),
+      ),
+      child: ListView.builder(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        itemCount: kAllSitesInOrder.length,
+        itemBuilder: (context, index) {
+          final SiteType site = kAllSitesInOrder[index];
+          return _RailItem(
+            site: site,
+            isSelected: site == selected,
+            onTap: () => selectSite(ref, site),
+          );
+        },
+      ),
+    );
+  }
+}
+
+class const _RailItem({
+  required final SiteType site,
+  required final bool isSelected,
+  required final VoidCallback onTap,
+}) extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final Color focusColor = theme.focusColor;
+
+    return Material(
+      color: isSelected ? theme.scaffoldBackgroundColor : Colors.transparent,
+      child: InkWell(
+        onTap: onTap,
+        child: Stack(
+          children: [
+            // 선택된 사이트는 왼쪽에 강조색 막대를 붙인다.
+            if (isSelected)
+              Positioned(
+                left: 0,
+                top: 8,
+                bottom: 8,
+                child: Container(
+                  width: 3,
+                  decoration: BoxDecoration(
+                    color: focusColor,
+                    borderRadius: const BorderRadius.horizontal(
+                      right: Radius.circular(3),
+                    ),
+                  ),
+                ),
+              ),
+            Padding(
+              padding: const EdgeInsets.fromLTRB(8, 13, 6, 13),
+              child: Text(
+                site.title,
+                textAlign: TextAlign.center,
+                style: TextStyle(
+                  fontSize: 12,
+                  height: 1.25,
+                  color: isSelected
+                      ? focusColor
+                      : theme.textTheme.bodySmall?.color,
+                  fontWeight: isSelected ? FontWeight.w800 : FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// 오른쪽 게시판 칩 목록. 담긴 칩은 강조색으로 채워진다.
+class const _BoardChips({required final ScrollController scrollController})
+    extends ConsumerWidget
+    with AddState, AddEvent {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final textStyle = theme.textTheme.bodyMedium;
+
+    return boardListState(ref).when(
+      // 담기/빼기 때마다 목록이 '로딩 중'으로 깜빡이지 않게 직전 목록을 유지한다.
+      skipLoadingOnReload: true,
+      loading: () => const LoadingWidget(),
+      error: (error, _) => Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(error.toString(), style: textStyle),
+            // 로그인해야 목록을 받아오는 사이트(레딧 · 네이버카페)를 위해
+            // 여기서 바로 로그인으로 넘어갈 수 있게 한다.
+            if (error is NotLoginFailure)
+              TextButton(
+                onPressed: () => loginAndRetry(ref, context),
+                child: const Text('로그인하기'),
+              ),
+          ],
+        ),
+      ),
+      data: (boards) {
+        final String query = searchQuery(ref).trim().toLowerCase();
+        final List<MainItem> items = query.isEmpty
+            ? boards
+            : boards
+                  .where(
+                    (board) =>
+                        board.text.toLowerCase().contains(query) ||
+                        board.category.toLowerCase().contains(query),
+                  )
+                  .toList();
+
+        if (items.isEmpty) {
+          return Center(
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Text(
+                query.isEmpty ? '게시판이 없습니다' : "'$query' 검색 결과가 없습니다",
+                textAlign: TextAlign.center,
+                style: textStyle,
+              ),
+            ),
+          );
+        }
+
+        final Set<String> added = addedBoardKeys(ref);
+        return SingleChildScrollView(
+          controller: scrollController,
+          padding: const EdgeInsets.fromLTRB(12, 10, 12, 24),
+          child: Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: [
+              for (final MainItem board in items)
+                _BoardChip(
+                  key: ValueKey(board.url),
+                  board: board,
+                  isAdded: added.contains(
+                    '${board.siteType.name}_${board.board}',
+                  ),
+                  onTap: () => toggleBoard(ref, board),
+                ),
+            ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class const _BoardChip({
+  super.key,
+  required final MainItem board,
+  required final bool isAdded,
+  required final VoidCallback onTap,
+}) extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final Color focusColor = theme.focusColor;
+
+    return Material(
+      color: isAdded
+          ? focusColor.withValues(alpha: 0.10)
+          : theme.cardColor,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(19),
+        side: BorderSide(color: isAdded ? focusColor : theme.dividerColor),
+      ),
+      clipBehavior: Clip.antiAlias,
+      child: InkWell(
+        onTap: onTap,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (isAdded) ...[
+                Icon(Icons.check, size: 14, color: focusColor),
+                const SizedBox(width: 5),
+              ],
+              Text(
+                board.text,
+                style: TextStyle(
+                  fontSize: 13.5,
+                  color: isAdded
+                      ? focusColor
+                      : theme.textTheme.bodyMedium?.color,
+                  fontWeight: isAdded ? FontWeight.w700 : FontWeight.normal,
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );

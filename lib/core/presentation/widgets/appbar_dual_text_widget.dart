@@ -26,9 +26,7 @@ class const AppbarDualTextWidget({
       smallTitleStyle: smallTitleStyle,
     ),
     scrolledUnderElevation: 1,
-    titleSpacing: automaticallyImplyLeading
-        ? 0
-        : NavigationToolbar.kMiddleSpacing,
+    titleSpacing: NavigationToolbar.kMiddleSpacing,
     automaticallyImplyLeading: automaticallyImplyLeading,
     centerTitle: false,
     floating: true,
