@@ -232,10 +232,10 @@ class _FakeSiteType(final SiteType _siteType) extends CurrentSiteTypeNotifier {
 }
 
 /// 메인 화면이 읽는 즐겨찾기 저장소를 메모리로 대체한다.
-/// 그룹은 기본 그룹 하나만 두고, 주어진 게시판을 전부 거기에 담는다.
+/// 실제 앱처럼 사이트 이름으로 그룹 하나를 두고 그 사이트 게시판을 담는다.
 class _FakeFavoriteRepository(final List<MainItem> _items)
     implements FavoriteRepository {
-  static const String _groupId = 'community';
+  static const String _groupId = 'clien';
 
   List<FavoriteData> get _favorites => <FavoriteData>[
     for (int i = 0; i < _items.length; i++)
@@ -247,7 +247,7 @@ class _FakeFavoriteRepository(final List<MainItem> _items)
 
   @override
   Future<List<FavoriteGroup>> getGroups() async => <FavoriteGroup>[
-    const FavoriteGroup(id: _groupId, name: '커뮤니티', orderBy: 0),
+    const FavoriteGroup(id: _groupId, name: '클리앙', orderBy: 0),
   ];
 
   @override

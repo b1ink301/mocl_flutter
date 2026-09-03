@@ -28,18 +28,9 @@ class const FavoriteRepositoryImpl(final LocalDatabase localDatabase)
   Future<void> updateAll(List<FavoriteData> items) =>
       localDatabase.updateFavorites(items);
 
-  /// 최초 실행(또는 그룹을 모두 지운 상태)에는 기본 그룹을 만들어 저장한 뒤
-  /// 돌려준다. 그래야 게시판을 추가하자마자 정리된 상태로 보인다.
+  /// 그룹은 게시판을 담을 때 사이트별로 만들어지므로, 미리 시드하지 않는다.
   @override
-  Future<List<FavoriteGroup>> getGroups() async {
-    final List<FavoriteGroup> stored = await localDatabase.getFavoriteGroups();
-    if (stored.isNotEmpty) {
-      return stored;
-    }
-    final List<FavoriteGroup> defaults = defaultFavoriteGroups();
-    await localDatabase.saveFavoriteGroups(defaults);
-    return defaults;
-  }
+  Future<List<FavoriteGroup>> getGroups() => localDatabase.getFavoriteGroups();
 
   @override
   Future<void> saveGroups(List<FavoriteGroup> groups) =>

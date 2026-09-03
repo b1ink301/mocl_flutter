@@ -64,10 +64,11 @@ class const _SettingsAppBar() extends ConsumerWidget {
       backgroundColor: appBarTheme.backgroundColor,
       // automaticallyImplyLeading: Platform.isMacOS,
       scrolledUnderElevation: 0,
-      titleSpacing: 0,
+      // titleSpacing: 0,
       floating: true,
       toolbarHeight: kToolbarHeight,
       pinned: true,
+      centerTitle: true,
       title: PlainText('설정', style: titleStyle),
     );
   }

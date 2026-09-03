@@ -8,15 +8,15 @@ part of 'add_list_dlg_providers.dart';
 
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
-/// 게시판 선택 다이얼로그의 검색어. 다이얼로그가 닫히면 자동으로 초기화된다.
+/// 게시판 추가 화면의 검색어. 화면이 닫히면 자동으로 초기화된다.
 
 @ProviderFor(AddListSearchQuery)
 final addListSearchQueryProvider = AddListSearchQueryProvider._();
 
-/// 게시판 선택 다이얼로그의 검색어. 다이얼로그가 닫히면 자동으로 초기화된다.
+/// 게시판 추가 화면의 검색어. 화면이 닫히면 자동으로 초기화된다.
 final class AddListSearchQueryProvider
     extends $NotifierProvider<AddListSearchQuery, String> {
-  /// 게시판 선택 다이얼로그의 검색어. 다이얼로그가 닫히면 자동으로 초기화된다.
+  /// 게시판 추가 화면의 검색어. 화면이 닫히면 자동으로 초기화된다.
   AddListSearchQueryProvider._()
     : super(
         from: null,
@@ -47,7 +47,7 @@ final class AddListSearchQueryProvider
 String _$addListSearchQueryHash() =>
     r'ff2ff4201fd4a9ae0cdf443adf8900e7e76e0a9c';
 
-/// 게시판 선택 다이얼로그의 검색어. 다이얼로그가 닫히면 자동으로 초기화된다.
+/// 게시판 추가 화면의 검색어. 화면이 닫히면 자동으로 초기화된다.
 
 abstract class _$AddListSearchQuery extends $Notifier<String> {
   String build();
@@ -67,182 +67,49 @@ abstract class _$AddListSearchQuery extends $Notifier<String> {
   }
 }
 
-/// 게시판 선택 화면에서 펼쳐 볼 사이트 카테고리.
-/// 기본값은 현재 보고 있는 사이트가 속한 카테고리이며, 사이트를 바꾸면
-/// 그 사이트의 카테고리로 따라 움직인다(선택된 사이트가 항상 보이도록).
+/// 현재 선택된 사이트가 제공하는 전체 게시판 목록.
+/// 담겼는지 여부는 즐겨찾기(favoriteBoardKeys)가 알려주므로 여기선 다루지 않는다.
 
-@ProviderFor(AddSelectedCategory)
-final addSelectedCategoryProvider = AddSelectedCategoryProvider._();
+@ProviderFor(addBoardList)
+final addBoardListProvider = AddBoardListProvider._();
 
-/// 게시판 선택 화면에서 펼쳐 볼 사이트 카테고리.
-/// 기본값은 현재 보고 있는 사이트가 속한 카테고리이며, 사이트를 바꾸면
-/// 그 사이트의 카테고리로 따라 움직인다(선택된 사이트가 항상 보이도록).
-final class AddSelectedCategoryProvider
-    extends $NotifierProvider<AddSelectedCategory, String> {
-  /// 게시판 선택 화면에서 펼쳐 볼 사이트 카테고리.
-  /// 기본값은 현재 보고 있는 사이트가 속한 카테고리이며, 사이트를 바꾸면
-  /// 그 사이트의 카테고리로 따라 움직인다(선택된 사이트가 항상 보이도록).
-  AddSelectedCategoryProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'addSelectedCategoryProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
+/// 현재 선택된 사이트가 제공하는 전체 게시판 목록.
+/// 담겼는지 여부는 즐겨찾기(favoriteBoardKeys)가 알려주므로 여기선 다루지 않는다.
 
-  @override
-  String debugGetCreateSourceHash() => _$addSelectedCategoryHash();
-
-  @$internal
-  @override
-  AddSelectedCategory create() => AddSelectedCategory();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(String value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<String>(value),
-    );
-  }
-}
-
-String _$addSelectedCategoryHash() =>
-    r'6c35bf42e949ac0ca72ffb02a990767242ededce';
-
-/// 게시판 선택 화면에서 펼쳐 볼 사이트 카테고리.
-/// 기본값은 현재 보고 있는 사이트가 속한 카테고리이며, 사이트를 바꾸면
-/// 그 사이트의 카테고리로 따라 움직인다(선택된 사이트가 항상 보이도록).
-
-abstract class _$AddSelectedCategory extends $Notifier<String> {
-  String build();
-  @$mustCallSuper
-  @override
-  WhenComplete runBuild() {
-    final ref = this.ref as $Ref<String, String>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<String, String>,
-              String,
-              Object?,
-              Object?
-            >;
-    return element.handleCreate(ref, build);
-  }
-}
-
-/// 선택한 게시판을 담을 즐겨찾기 그룹. 기본값은 그 사이트가 속한 카테고리라,
-/// 사용자가 아무것도 고르지 않아도 정리된 상태로 쌓인다.
-/// (그룹 이름이 바뀌어도 ID 로 찾으므로 유지되고, 그룹이 지워졌으면 첫 그룹)
-
-@ProviderFor(AddTargetGroup)
-final addTargetGroupProvider = AddTargetGroupProvider._();
-
-/// 선택한 게시판을 담을 즐겨찾기 그룹. 기본값은 그 사이트가 속한 카테고리라,
-/// 사용자가 아무것도 고르지 않아도 정리된 상태로 쌓인다.
-/// (그룹 이름이 바뀌어도 ID 로 찾으므로 유지되고, 그룹이 지워졌으면 첫 그룹)
-final class AddTargetGroupProvider
-    extends $AsyncNotifierProvider<AddTargetGroup, String> {
-  /// 선택한 게시판을 담을 즐겨찾기 그룹. 기본값은 그 사이트가 속한 카테고리라,
-  /// 사용자가 아무것도 고르지 않아도 정리된 상태로 쌓인다.
-  /// (그룹 이름이 바뀌어도 ID 로 찾으므로 유지되고, 그룹이 지워졌으면 첫 그룹)
-  AddTargetGroupProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'addTargetGroupProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$addTargetGroupHash();
-
-  @$internal
-  @override
-  AddTargetGroup create() => AddTargetGroup();
-}
-
-String _$addTargetGroupHash() => r'ed54cd44fd64b40ce9c6ffa80fd3f9dbeea6226c';
-
-/// 선택한 게시판을 담을 즐겨찾기 그룹. 기본값은 그 사이트가 속한 카테고리라,
-/// 사용자가 아무것도 고르지 않아도 정리된 상태로 쌓인다.
-/// (그룹 이름이 바뀌어도 ID 로 찾으므로 유지되고, 그룹이 지워졌으면 첫 그룹)
-
-abstract class _$AddTargetGroup extends $AsyncNotifier<String> {
-  FutureOr<String> build();
-  @$mustCallSuper
-  @override
-  WhenComplete runBuild() {
-    final ref = this.ref as $Ref<AsyncValue<String>, String>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<AsyncValue<String>, String>,
-              AsyncValue<String>,
-              Object?,
-              Object?
-            >;
-    return element.handleCreate(ref, build);
-  }
-}
-
-@ProviderFor(AddListDlgNotifier)
-final addListDlgProvider = AddListDlgNotifierProvider._();
-
-final class AddListDlgNotifierProvider
+final class AddBoardListProvider
     extends
-        $AsyncNotifierProvider<AddListDlgNotifier, List<CheckableMainItem>> {
-  AddListDlgNotifierProvider._()
+        $FunctionalProvider<
+          AsyncValue<List<MainItem>>,
+          List<MainItem>,
+          FutureOr<List<MainItem>>
+        >
+    with $FutureModifier<List<MainItem>>, $FutureProvider<List<MainItem>> {
+  /// 현재 선택된 사이트가 제공하는 전체 게시판 목록.
+  /// 담겼는지 여부는 즐겨찾기(favoriteBoardKeys)가 알려주므로 여기선 다루지 않는다.
+  AddBoardListProvider._()
     : super(
         from: null,
         argument: null,
         retry: null,
-        name: r'addListDlgProvider',
+        name: r'addBoardListProvider',
         isAutoDispose: true,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
 
   @override
-  String debugGetCreateSourceHash() => _$addListDlgNotifierHash();
+  String debugGetCreateSourceHash() => _$addBoardListHash();
 
   @$internal
   @override
-  AddListDlgNotifier create() => AddListDlgNotifier();
-}
+  $FutureProviderElement<List<MainItem>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
 
-String _$addListDlgNotifierHash() =>
-    r'8bc3d69b9e5104ce1cd4e04ee02afa4e0ea300c7';
-
-abstract class _$AddListDlgNotifier
-    extends $AsyncNotifier<List<CheckableMainItem>> {
-  FutureOr<List<CheckableMainItem>> build();
-  @$mustCallSuper
   @override
-  WhenComplete runBuild() {
-    final ref =
-        this.ref
-            as $Ref<
-              AsyncValue<List<CheckableMainItem>>,
-              List<CheckableMainItem>
-            >;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<
-                AsyncValue<List<CheckableMainItem>>,
-                List<CheckableMainItem>
-              >,
-              AsyncValue<List<CheckableMainItem>>,
-              Object?,
-              Object?
-            >;
-    return element.handleCreate(ref, build);
+  FutureOr<List<MainItem>> create(Ref ref) {
+    return addBoardList(ref);
   }
 }
+
+String _$addBoardListHash() => r'd6f7b27c9f6f724d8b380680a4bf7846d4c470e0';

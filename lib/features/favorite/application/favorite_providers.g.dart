@@ -139,7 +139,7 @@ final class FavoritesNotifierProvider
   FavoritesNotifier create() => FavoritesNotifier();
 }
 
-String _$favoritesNotifierHash() => r'314a2a346d3d515b3c140da9ad7a2a4ef773ca5b';
+String _$favoritesNotifierHash() => r'5c41b42a361631d6758e004832136031bf508614';
 
 /// 즐겨찾기한 게시판 전체. 메인 화면의 유일한 데이터 소스다.
 
@@ -162,15 +162,64 @@ abstract class _$FavoritesNotifier extends $AsyncNotifier<List<FavoriteData>> {
   }
 }
 
+/// 게시판 추가 화면이 '이미 담긴 게시판'을 표시하는 데 쓰는 키 집합.
+/// (사이트+게시판 조합)
+
+@ProviderFor(favoriteBoardKeys)
+final favoriteBoardKeysProvider = FavoriteBoardKeysProvider._();
+
+/// 게시판 추가 화면이 '이미 담긴 게시판'을 표시하는 데 쓰는 키 집합.
+/// (사이트+게시판 조합)
+
+final class FavoriteBoardKeysProvider
+    extends $FunctionalProvider<Set<String>, Set<String>, Set<String>>
+    with $Provider<Set<String>> {
+  /// 게시판 추가 화면이 '이미 담긴 게시판'을 표시하는 데 쓰는 키 집합.
+  /// (사이트+게시판 조합)
+  FavoriteBoardKeysProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'favoriteBoardKeysProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$favoriteBoardKeysHash();
+
+  @$internal
+  @override
+  $ProviderElement<Set<String>> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  Set<String> create(Ref ref) {
+    return favoriteBoardKeys(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Set<String> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Set<String>>(value),
+    );
+  }
+}
+
+String _$favoriteBoardKeysHash() => r'a791484d4ce82413fe51391bccd87c57bb363469';
+
 /// 그룹 순서대로 묶은 메인 화면용 섹션 목록.
-/// 그룹이 삭제되는 등으로 소속을 잃은 항목은 사이트 기본 카테고리로,
+/// 그룹이 삭제되는 등으로 소속을 잃은 항목은 같은 이름의 사이트 그룹으로,
 /// 그마저 없으면 첫 그룹으로 보내 화면에서 사라지지 않게 한다.
 
 @ProviderFor(favoriteSections)
 final favoriteSectionsProvider = FavoriteSectionsProvider._();
 
 /// 그룹 순서대로 묶은 메인 화면용 섹션 목록.
-/// 그룹이 삭제되는 등으로 소속을 잃은 항목은 사이트 기본 카테고리로,
+/// 그룹이 삭제되는 등으로 소속을 잃은 항목은 같은 이름의 사이트 그룹으로,
 /// 그마저 없으면 첫 그룹으로 보내 화면에서 사라지지 않게 한다.
 
 final class FavoriteSectionsProvider
@@ -184,7 +233,7 @@ final class FavoriteSectionsProvider
         $FutureModifier<List<FavoriteSection>>,
         $FutureProvider<List<FavoriteSection>> {
   /// 그룹 순서대로 묶은 메인 화면용 섹션 목록.
-  /// 그룹이 삭제되는 등으로 소속을 잃은 항목은 사이트 기본 카테고리로,
+  /// 그룹이 삭제되는 등으로 소속을 잃은 항목은 같은 이름의 사이트 그룹으로,
   /// 그마저 없으면 첫 그룹으로 보내 화면에서 사라지지 않게 한다.
   FavoriteSectionsProvider._()
     : super(
@@ -212,4 +261,4 @@ final class FavoriteSectionsProvider
   }
 }
 
-String _$favoriteSectionsHash() => r'211fe713068f7cbea846b5be6569a0c18b8ef505';
+String _$favoriteSectionsHash() => r'7a5175c9d41a2ffc538e7404608a5df94667d0df';

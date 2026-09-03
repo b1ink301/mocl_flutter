@@ -5,12 +5,9 @@ import 'package:mocl_flutter/features/database/domain/entities/favorite_data.dar
 import 'package:mocl_flutter/features/favorite/application/favorite_providers.dart';
 
 mixin class FavoriteEvent() {
-  /// 선택한 게시판들을 지정 그룹에 추가한다(게시판 선택 화면의 '적용').
-  Future<void> addBoards(
-    WidgetRef ref,
-    List<MainItem> items,
-    String groupId,
-  ) => ref.read(favoritesProvider.notifier).addBoards(items, groupId);
+  /// 게시판을 담거나 뺀다(게시판 추가 화면의 칩 탭). 즉시 저장된다.
+  Future<void> toggleBoard(WidgetRef ref, MainItem item) =>
+      ref.read(favoritesProvider.notifier).toggleBoard(item);
 
   void removeFavorite(WidgetRef ref, SiteType siteType, String board) =>
       ref.read(favoritesProvider.notifier).remove(siteType, board);

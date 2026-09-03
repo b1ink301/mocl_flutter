@@ -35,8 +35,9 @@ class const BookmarksPage({super.key})
               backgroundColor: appBarTheme.backgroundColor,
               // automaticallyImplyLeading: Platform.isMacOS,
               scrolledUnderElevation: 0,
-              titleSpacing: 0,
-              toolbarHeight: 62,
+              // titleSpacing: 0,
+              toolbarHeight: kToolbarHeight,
+              centerTitle: true,
             ),
             body: async.when(
               loading: () => const Center(child: CircularProgressIndicator()),

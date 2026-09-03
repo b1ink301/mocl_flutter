@@ -90,6 +90,7 @@ class const _MainBody() extends ConsumerWidget
           favorite: section.items[itemIndex],
           index: itemIndex,
           editMode: true,
+          showSite: _needsSiteLabel(section, itemIndex),
         ),
       )
     else
@@ -100,6 +101,7 @@ class const _MainBody() extends ConsumerWidget
           favorite: section.items[itemIndex],
           index: itemIndex,
           editMode: false,
+          showSite: _needsSiteLabel(section, itemIndex),
         ),
       ),
   ];
@@ -122,6 +124,12 @@ class const _MainBody() extends ConsumerWidget
 /// 항목마다 고유 Key 가 필요하다(사이트+게시판 조합으로 유일).
 String _tileKeyOf(FavoriteData favorite) =>
     '${favorite.siteType.name}_${favorite.board}';
+
+/// 그룹이 곧 그 사이트를 뜻하면(사이트별 자동 그룹) 항목마다 사이트명을
+/// 반복할 필요가 없다. 사용자가 다른 사이트 게시판을 끌어와 섞은 그룹에서만
+/// 출처를 밝힌다.
+bool _needsSiteLabel(FavoriteSection section, int index) =>
+    section.group.id != section.items[index].siteType.name;
 
 /// 그룹 이름 줄. 편집 모드에서는 위/아래 이동 · 이름 변경 · 삭제 버튼이 붙는다.
 class const _GroupHeader({
@@ -219,6 +227,7 @@ class const _BoardTile({
   required final FavoriteData favorite,
   required final int index,
   required final bool editMode,
+  required final bool showSite,
 }) extends ConsumerWidget
     with MainState, MainEvent, FavoriteEvent {
   @override
@@ -237,11 +246,13 @@ class const _BoardTile({
                 ? null
                 : _buildIconView(favorite.icon),
             title: PlainText(favorite.text, style: titleTextStyleState(ref)),
-            // 사이트를 넘나들며 한 화면에 모이므로 출처를 항상 밝혀준다.
-            subtitle: PlainText(
-              favorite.siteType.title,
-              style: smallTextStyleState(ref),
-            ),
+            // 그룹 이름이 곧 사이트면 중복이라 생략하고, 섞인 그룹에서만 밝힌다.
+            subtitle: showSite
+                ? PlainText(
+                    favorite.siteType.title,
+                    style: smallTextStyleState(ref),
+                  )
+                : null,
             trailing: editMode
                 ? Row(
                     mainAxisSize: MainAxisSize.min,
@@ -393,12 +404,13 @@ class const _MainAppBar() extends ConsumerWidget
     final SiteType siteType = currentSiteType(ref);
 
     return SliverAppBar(
-      scrolledUnderElevation: 1,
+      scrolledUnderElevation: 0,
       title: PlainText(editMode ? '편집' : '내 게시판', style: titleStyle),
       titleTextStyle: titleStyle,
-      titleSpacing: 0,
+      // titleSpacing: 0,
       floating: true,
-      toolbarHeight: 62,
+      centerTitle: true,
+      toolbarHeight: kToolbarHeight,
       // floating 앱바의 toolbarOpacity 로 인한 PlainIcon 리빌드 차단.
       // (AppbarActionsIconTheme 주석 참고)
       actions: <Widget>[

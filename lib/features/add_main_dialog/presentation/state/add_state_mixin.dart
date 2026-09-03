@@ -1,15 +1,15 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/features/database/domain/entities/favorite_group.dart';
 import 'package:mocl_flutter/features/favorite/application/favorite_providers.dart';
 
 import '../../application/add_list_dlg_providers.dart';
-import '../models/checkable_main_item.dart';
 
 mixin class AddState() {
-  AsyncValue<List<CheckableMainItem>> addState(WidgetRef ref) =>
-      ref.watch(addListDlgProvider);
+  /// 현재 사이트의 전체 게시판 목록.
+  AsyncValue<List<MainItem>> boardListState(WidgetRef ref) =>
+      ref.watch(addBoardListProvider);
 
   /// 검색어를 구독한다(빌드용).
   String searchQuery(WidgetRef ref) => ref.watch(addListSearchQueryProvider);
@@ -17,18 +17,10 @@ mixin class AddState() {
   /// 검색어를 1회 읽는다(initState 등 non-build 컨텍스트용).
   String readSearchQuery(WidgetRef ref) => ref.read(addListSearchQueryProvider);
 
-  /// 선택한 게시판을 담을 그룹 ID(아직 로딩 중이면 빈 문자열).
-  String targetGroupId(WidgetRef ref) =>
-      ref.watch(addTargetGroupProvider).value ?? '';
-
-  /// 담을 그룹 후보 목록.
-  List<FavoriteGroup> favoriteGroups(WidgetRef ref) =>
-      ref.watch(favoriteGroupsProvider).value ?? const [];
-
   /// 지금 게시판 목록을 보고 있는 사이트.
   SiteType currentSite(WidgetRef ref) => ref.watch(currentSiteTypeProvider);
 
-  /// 펼쳐 볼 사이트 카테고리 ID.
-  String selectedCategoryId(WidgetRef ref) =>
-      ref.watch(addSelectedCategoryProvider);
+  /// 이미 담아둔 게시판 키(사이트+게시판) 집합.
+  Set<String> addedBoardKeys(WidgetRef ref) =>
+      ref.watch(favoriteBoardKeysProvider);
 }
