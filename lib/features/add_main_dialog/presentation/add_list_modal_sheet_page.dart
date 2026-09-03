@@ -72,7 +72,7 @@ class const AddListBottomSheet({super.key})
   }
 }
 
-class const _TopBar() extends ConsumerWidget with AddState {
+class const _TopBar() extends ConsumerWidget with AddState, AddEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
@@ -101,17 +101,25 @@ class const _TopBar() extends ConsumerWidget with AddState {
               ),
             ),
             // 누르는 즉시 저장되므로 '적용' 대신 담긴 개수를 보여준다.
-            Padding(
-              padding: const EdgeInsets.only(right: 14),
-              child: Text(
-                count == 0 ? '' : '$count개 담김',
+            if (count > 0)
+              Text(
+                '$count개',
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
                   color: theme.focusColor,
                 ),
               ),
-            ),
+            // 로그인은 사이트마다 필요하므로 여기(사이트를 고르는 화면)에 둔다.
+            // 로그인 화면은 지금 고른 사이트로 들어간다.
+            if (site.supportsLogin)
+              PlainIconButton(
+                padding: const EdgeInsets.all(10),
+                icon: const Icon(Icons.login),
+                onPressed: () => login(ref, context),
+              )
+            else
+              const SizedBox(width: 12),
           ],
         ),
       ),
@@ -227,22 +235,11 @@ class const _BoardChips() extends ConsumerWidget with AddState, AddEvent {
         padding: EdgeInsets.symmetric(vertical: 48),
         child: LoadingWidget(),
       ),
-      error: (error, _) => Padding(
-        padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 4),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Text(error.toString(), style: textStyle),
-            // 로그인해야 목록을 받아오는 사이트(레딧 · 네이버카페)를 위해
-            // 여기서 바로 로그인으로 넘어갈 수 있게 한다.
-            if (error is NotLoginFailure)
-              TextButton(
-                onPressed: () => loginAndRetry(ref, context),
-                child: const Text('로그인하기'),
-              ),
-          ],
-        ),
-      ),
+      // 레딧 · 네이버카페처럼 로그인해야 목록을 주는 사이트는 원문 에러 대신
+      // 무엇을 해야 하는지 알려주고 바로 로그인으로 보낸다.
+      error: (error, _) => error is NotLoginFailure
+          ? _LoginRequired(site: currentSite(ref))
+          : _LoadFailed(message: error.toString()),
       data: (boards) {
         final String query = searchQuery(ref).trim().toLowerCase();
         final List<MainItem> items = query.isEmpty
@@ -280,6 +277,92 @@ class const _BoardChips() extends ConsumerWidget with AddState, AddEvent {
           ],
         );
       },
+    );
+  }
+}
+
+/// 로그인해야 게시판 목록을 받아오는 사이트의 안내. 바로 로그인으로 이어진다.
+class const _LoginRequired({required final SiteType site})
+    extends ConsumerWidget
+    with AddEvent {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final Color subColor = theme.textTheme.bodySmall?.color ?? theme.hintColor;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 8),
+      child: Column(
+        children: [
+          Icon(Icons.lock_outline_rounded, size: 34, color: subColor),
+          const SizedBox(height: 14),
+          Text(
+            '${site.title} 로그인이 필요해요',
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            '로그인하면 게시판 목록을 불러옵니다.',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 12.5, color: subColor),
+          ),
+          const SizedBox(height: 18),
+          FilledButton.icon(
+            onPressed: () => login(ref, context),
+            icon: const Icon(Icons.login, size: 18),
+            label: const Text('로그인하기'),
+            style: FilledButton.styleFrom(
+              backgroundColor: theme.focusColor,
+              foregroundColor: Colors.white,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+/// 로그인 외의 이유로 목록을 못 불러왔을 때. 다시 시도할 수 있게 한다.
+class const _LoadFailed({required final String message})
+    extends ConsumerWidget
+    with AddEvent {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final Color subColor = theme.textTheme.bodySmall?.color ?? theme.hintColor;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 8),
+      child: Column(
+        children: [
+          Icon(Icons.cloud_off_rounded, size: 34, color: subColor),
+          const SizedBox(height: 14),
+          Text(
+            '게시판 목록을 불러오지 못했어요',
+            textAlign: TextAlign.center,
+            style: theme.textTheme.bodyMedium?.copyWith(
+              fontWeight: FontWeight.w700,
+            ),
+          ),
+          const SizedBox(height: 6),
+          Text(
+            message,
+            textAlign: TextAlign.center,
+            maxLines: 4,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontSize: 12, color: subColor),
+          ),
+          const SizedBox(height: 18),
+          OutlinedButton.icon(
+            onPressed: () => retry(ref),
+            icon: const Icon(Icons.refresh, size: 18),
+            label: const Text('다시 시도'),
+          ),
+        ],
+      ),
     );
   }
 }

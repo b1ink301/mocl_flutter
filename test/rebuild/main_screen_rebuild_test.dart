@@ -18,7 +18,6 @@ void main() {
     '_MainAppBar',
     'AppbarActionsIconTheme',
     'PlainIconButton',
-    'AdaptivePopupMenu',
   ];
 
   /// 본문(목록) 쪽. 화면에 새로 들어오는 행의 mount 는 정상이므로 rebuild 만 본다.

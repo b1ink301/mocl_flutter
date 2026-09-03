@@ -23,12 +23,16 @@ mixin class AddEvent() {
   void updateSearchQuery(WidgetRef ref, String query) =>
       ref.read(addListSearchQueryProvider.notifier).update(query);
 
-  /// 로그인해야 목록을 받아오는 사이트(레딧 · 네이버카페)를 위해
-  /// 곧바로 로그인으로 보낸다. 성공하면 목록을 다시 읽는다.
-  Future<void> loginAndRetry(WidgetRef ref, BuildContext context) async {
+  /// 지금 레일에서 고른 사이트로 로그인한다(로그인 화면은 currentSiteType 을
+  /// 따르므로 어느 사이트에 로그인하는지 모호하지 않다).
+  /// 로그인을 마치면 게시판 목록을 다시 읽어 바로 반영한다.
+  Future<void> login(WidgetRef ref, BuildContext context) async {
     final bool? result = await context.push<bool>(Routes.login);
     if (result == true) {
       ref.invalidate(addBoardListProvider);
     }
   }
+
+  /// 목록 불러오기를 다시 시도한다.
+  void retry(WidgetRef ref) => ref.invalidate(addBoardListProvider);
 }
