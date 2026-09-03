@@ -80,7 +80,7 @@ dependencies:
   #  hive_flutter: ^1.1.0
 
   # router
-  go_router: ^18.0.0
+  go_router: ^18.0.1
 
   # firebase
   firebase_core: ^4.14.0
@@ -151,10 +151,10 @@ dependencies:
 
   infinite_scroll_pagination: ^5.1.1
 #  translator: ^1.0.4+1
-  file_picker: ^12.1.1
+  file_picker: ^12.2.0
 
-  material_ui: ^1.1.0
-  cupertino_ui: ^1.0.1
+  material_ui: ^1.1.1
+  cupertino_ui: ^1.0.2
   intl: any
 
 dev_dependencies:
