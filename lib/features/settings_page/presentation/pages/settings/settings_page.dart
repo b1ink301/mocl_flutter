@@ -65,7 +65,7 @@ class const _SettingsAppBar() extends ConsumerWidget {
       // automaticallyImplyLeading: Platform.isMacOS,
       scrolledUnderElevation: 0,
       // titleSpacing: 0,
-      floating: true,
+      // floating: true,
       toolbarHeight: kToolbarHeight,
       pinned: true,
       centerTitle: true,

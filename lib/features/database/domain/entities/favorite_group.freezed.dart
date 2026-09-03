@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$FavoriteGroup {
 
- String get id; String get name; int get orderBy;
+ String get id; String get name; int get orderBy; bool get collapsed;
 /// Create a copy of FavoriteGroup
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -30,20 +30,20 @@ $FavoriteGroupCopyWith<FavoriteGroup> get copyWith => _$FavoriteGroupCopyWithImp
 @override
 bool operator ==(Object other) {
   final _this = this as FavoriteGroup;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is FavoriteGroup&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.orderBy, _this.orderBy) || other.orderBy == _this.orderBy));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is FavoriteGroup&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.name, _this.name) || other.name == _this.name)&&(identical(other.orderBy, _this.orderBy) || other.orderBy == _this.orderBy)&&(identical(other.collapsed, _this.collapsed) || other.collapsed == _this.collapsed));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as FavoriteGroup;
-  return Object.hash(runtimeType,_this.id,_this.name,_this.orderBy);
+  return Object.hash(runtimeType,_this.id,_this.name,_this.orderBy,_this.collapsed);
 }
 
 @override
 String toString() {
   final _this = this as FavoriteGroup;
-  return 'FavoriteGroup(id: ${_this.id}, name: ${_this.name}, orderBy: ${_this.orderBy})';
+  return 'FavoriteGroup(id: ${_this.id}, name: ${_this.name}, orderBy: ${_this.orderBy}, collapsed: ${_this.collapsed})';
 }
 
 
@@ -54,7 +54,7 @@ abstract mixin class $FavoriteGroupCopyWith<$Res>  {
   factory $FavoriteGroupCopyWith(FavoriteGroup value, $Res Function(FavoriteGroup) _then) = _$FavoriteGroupCopyWithImpl;
 @useResult
 $Res call({
- String id, String name, int orderBy
+ String id, String name, int orderBy, bool collapsed
 });
 
 
@@ -71,12 +71,13 @@ class _$FavoriteGroupCopyWithImpl<$Res>
 
 /// Create a copy of FavoriteGroup
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? orderBy = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? name = null,Object? orderBy = null,Object? collapsed = null,}) {
   return _then(FavoriteGroup(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,orderBy: null == orderBy ? _self.orderBy : orderBy // ignore: cast_nullable_to_non_nullable
-as int,
+as int,collapsed: null == collapsed ? _self.collapsed : collapsed // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 
@@ -161,10 +162,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  int orderBy)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String id,  String name,  int orderBy,  bool collapsed)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _FavoriteGroup() when $default != null:
-return $default(_that.id,_that.name,_that.orderBy);case _:
+return $default(_that.id,_that.name,_that.orderBy,_that.collapsed);case _:
   return orElse();
 
 }
@@ -182,10 +183,10 @@ return $default(_that.id,_that.name,_that.orderBy);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  int orderBy)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String id,  String name,  int orderBy,  bool collapsed)  $default,) {final _that = this;
 switch (_that) {
 case _FavoriteGroup():
-return $default(_that.id,_that.name,_that.orderBy);case _:
+return $default(_that.id,_that.name,_that.orderBy,_that.collapsed);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -202,10 +203,10 @@ return $default(_that.id,_that.name,_that.orderBy);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  int orderBy)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String id,  String name,  int orderBy,  bool collapsed)?  $default,) {final _that = this;
 switch (_that) {
 case _FavoriteGroup() when $default != null:
-return $default(_that.id,_that.name,_that.orderBy);case _:
+return $default(_that.id,_that.name,_that.orderBy,_that.collapsed);case _:
   return null;
 
 }
@@ -217,12 +218,13 @@ return $default(_that.id,_that.name,_that.orderBy);case _:
 @JsonSerializable()
 
 class _FavoriteGroup implements FavoriteGroup {
-  const _FavoriteGroup({required this.id, required this.name, required this.orderBy});
+  const _FavoriteGroup({required this.id, required this.name, required this.orderBy, this.collapsed = false});
   factory _FavoriteGroup.fromJson(Map<String, dynamic> json) => _$FavoriteGroupFromJson(json);
 
 @override final  String id;
 @override final  String name;
 @override final  int orderBy;
+@override@JsonKey() final  bool collapsed;
 
 /// Create a copy of FavoriteGroup
 /// with the given fields replaced by the non-null parameter values.
@@ -237,18 +239,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _FavoriteGroup&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.orderBy, orderBy) || other.orderBy == orderBy));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _FavoriteGroup&&(identical(other.id, id) || other.id == id)&&(identical(other.name, name) || other.name == name)&&(identical(other.orderBy, orderBy) || other.orderBy == orderBy)&&(identical(other.collapsed, collapsed) || other.collapsed == collapsed));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,id,name,orderBy);
+    return Object.hash(runtimeType,id,name,orderBy,collapsed);
 }
 
 @override
 String toString() {
-    return 'FavoriteGroup(id: $id, name: $name, orderBy: $orderBy)';
+    return 'FavoriteGroup(id: $id, name: $name, orderBy: $orderBy, collapsed: $collapsed)';
 }
 
 
@@ -259,7 +261,7 @@ abstract mixin class _$FavoriteGroupCopyWith<$Res> implements $FavoriteGroupCopy
   factory _$FavoriteGroupCopyWith(_FavoriteGroup value, $Res Function(_FavoriteGroup) _then) = __$FavoriteGroupCopyWithImpl;
 @override @useResult
 $Res call({
- String id, String name, int orderBy
+ String id, String name, int orderBy, bool collapsed
 });
 
 
@@ -276,12 +278,13 @@ class __$FavoriteGroupCopyWithImpl<$Res>
 
 /// Create a copy of FavoriteGroup
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? orderBy = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? name = null,Object? orderBy = null,Object? collapsed = null,}) {
   return _then(_FavoriteGroup(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as String,name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,orderBy: null == orderBy ? _self.orderBy : orderBy // ignore: cast_nullable_to_non_nullable
-as int,
+as int,collapsed: null == collapsed ? _self.collapsed : collapsed // ignore: cast_nullable_to_non_nullable
+as bool,
   ));
 }
 

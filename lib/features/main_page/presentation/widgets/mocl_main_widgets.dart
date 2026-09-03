@@ -68,13 +68,17 @@ class const _MainBody() extends ConsumerWidget
     SliverToBoxAdapter(
       child: _GroupHeader(
         group: section.group,
+        count: section.items.length,
         index: index,
         total: total,
         editMode: editMode,
       ),
     ),
+    // 접어둔 그룹은 헤더만 남긴다.
+    if (section.group.collapsed)
+      const SliverToBoxAdapter(child: SizedBox.shrink())
     // 편집 모드에서만 드래그로 그룹 안 순서를 바꾼다(평소엔 탭=게시판 이동).
-    if (editMode)
+    else if (editMode)
       SliverReorderableList(
         key: ValueKey('reorder_${section.group.id}'),
         itemCount: section.items.length,
@@ -131,9 +135,11 @@ String _tileKeyOf(FavoriteData favorite) =>
 bool _needsSiteLabel(FavoriteSection section, int index) =>
     section.group.id != section.items[index].siteType.name;
 
-/// 그룹 이름 줄. 편집 모드에서는 위/아래 이동 · 이름 변경 · 삭제 버튼이 붙는다.
+/// 그룹 이름 줄. 눌러서 접거나 펼칠 수 있고,
+/// 편집 모드에서는 위/아래 이동 · 이름 변경 · 삭제 버튼이 붙는다.
 class const _GroupHeader({
   required final FavoriteGroup group,
+  required final int count,
   required final int index,
   required final int total,
   required final bool editMode,
@@ -141,20 +147,48 @@ class const _GroupHeader({
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final Color labelColor = theme.textTheme.bodySmall?.color ?? theme.hintColor;
+    // final Color labelColor = theme.textTheme.bodySmall?.color ?? theme.hintColor;
+    final Color labelColor = theme.primaryColor;
+    final TextStyle labelStyle = TextStyle(
+      fontSize: 11.5,
+      fontWeight: FontWeight.w700,
+      letterSpacing: 0.5,
+      color: labelColor,
+    );
 
     return Padding(
-      padding: EdgeInsets.fromLTRB(20, index == 0 ? 14 : 22, 8, 6),
+      padding: EdgeInsets.fromLTRB(8, index == 0 ? 10 : 18, 8, 4),
       child: Row(
         children: [
           Expanded(
-            child: PlainText(
-              group.name,
-              style: TextStyle(
-                fontSize: 11.5,
-                fontWeight: FontWeight.w700,
-                letterSpacing: 0.5,
-                color: labelColor,
+            child: InkWell(
+              onTap: () => toggleGroupCollapsed(ref, group.id),
+              borderRadius: BorderRadius.circular(8),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(12, 6, 8, 6),
+                child: Row(
+                  children: [
+                    // 접힘 여부를 화살표로 알린다(접힘 ▸ / 펼침 ▾).
+                    Icon(
+                      group.collapsed
+                          ? Icons.chevron_right_rounded
+                          : Icons.expand_more_rounded,
+                      size: 18,
+                      color: labelColor,
+                    ),
+                    const SizedBox(width: 2),
+                    Flexible(child: PlainText(group.name, style: labelStyle)),
+                    const SizedBox(width: 6),
+                    // 접어두면 안이 안 보이므로 개수를 함께 보여준다.
+                    PlainText(
+                      '$count',
+                      style: labelStyle.copyWith(
+                        fontWeight: FontWeight.w600,
+                        color: theme.textTheme.bodySmall?.color,
+                      ),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
@@ -407,7 +441,8 @@ class const _MainAppBar() extends ConsumerWidget
       title: PlainText(editMode ? '편집' : '내 게시판', style: titleStyle),
       titleTextStyle: titleStyle,
       // titleSpacing: 0,
-      floating: true,
+      // floating: true,
+      pinned: true,
       centerTitle: true,
       toolbarHeight: kToolbarHeight,
       // floating 앱바의 toolbarOpacity 로 인한 PlainIcon 리빌드 차단.

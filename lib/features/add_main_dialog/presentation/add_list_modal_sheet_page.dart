@@ -229,12 +229,10 @@ class const _BoardChips() extends ConsumerWidget with AddState, AddEvent {
     final textStyle = Theme.of(context).textTheme.bodyMedium;
 
     return boardListState(ref).when(
-      // 담기/빼기 때마다 목록이 '로딩 중'으로 깜빡이지 않게 직전 목록을 유지한다.
-      skipLoadingOnReload: true,
-      loading: () => const Padding(
-        padding: EdgeInsets.symmetric(vertical: 48),
-        child: LoadingWidget(),
-      ),
+      // 사이트를 바꾸면 목록을 새로 받아오는 데 시간이 걸린다. 직전 사이트의
+      // 목록을 남겨두면 아무 반응이 없는 것처럼 보이므로, 로딩을 그대로 노출한다
+      // (칩 담기/빼기는 이 provider 를 다시 읽지 않으므로 깜빡임이 없다).
+      loading: () => _LoadingBoards(site: currentSite(ref)),
       // 레딧 · 네이버카페처럼 로그인해야 목록을 주는 사이트는 원문 에러 대신
       // 무엇을 해야 하는지 알려주고 바로 로그인으로 보낸다.
       error: (error, _) => error is NotLoginFailure
@@ -277,6 +275,31 @@ class const _BoardChips() extends ConsumerWidget with AddState, AddEvent {
           ],
         );
       },
+    );
+  }
+}
+
+/// 게시판 목록을 받아오는 중. 어느 사이트를 불러오는지 함께 알려준다.
+class const _LoadingBoards({required final SiteType site})
+    extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final Color subColor = theme.textTheme.bodySmall?.color ?? theme.hintColor;
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 48),
+      child: Column(
+        children: [
+          const LoadingWidget(),
+          const SizedBox(height: 6),
+          Text(
+            '${site.title} 게시판을 불러오는 중...',
+            textAlign: TextAlign.center,
+            style: TextStyle(fontSize: 12.5, color: subColor),
+          ),
+        ],
+      ),
     );
   }
 }
