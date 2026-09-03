@@ -401,7 +401,6 @@ class const _MainAppBar() extends ConsumerWidget
   Widget build(BuildContext context, WidgetRef ref) {
     final titleStyle = ref.watch(appbarTextStyleProvider);
     final bool editMode = editModeState(ref);
-    final SiteType siteType = currentSiteType(ref);
 
     return SliverAppBar(
       scrolledUnderElevation: 0,
@@ -432,23 +431,11 @@ class const _MainAppBar() extends ConsumerWidget
                     onPressed: () => handleAddButton(ref, context),
                     icon: const PlainIcon(Icons.add),
                   ),
-                  AdaptivePopupMenu(
-                    options: [
-                      AdaptiveMenuOption(
-                        label: '그룹 · 순서 편집',
-                        onTap: () => handleToggleEdit(ref),
-                      ),
-                      if (siteType.supportsLogin)
-                        AdaptiveMenuOption(
-                          label: '${siteType.title} 로그인',
-                          onTap: () => handleLogin(ref, context),
-                        ),
-                    ],
-                    icon: PlainIcon(
-                      isCupertino()
-                          ? CupertinoIcons.ellipsis
-                          : Icons.more_vert_rounded,
-                    ),
+                  // 로그인은 사이트별로 필요하므로 게시판 추가 화면으로 옮겼다.
+                  // 여기 남는 건 편집뿐이라 메뉴 대신 버튼으로 바로 노출한다.
+                  PlainIconButton(
+                    onPressed: () => handleToggleEdit(ref),
+                    icon: const PlainIcon(Icons.tune_rounded),
                   ),
                 ],
         ),

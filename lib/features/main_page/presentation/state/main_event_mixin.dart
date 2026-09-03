@@ -9,9 +9,6 @@ import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import '../../application/main_providers.dart';
 
 mixin class MainEvent() {
-  Future<void> handleLogin(WidgetRef ref, BuildContext context) async =>
-      context.push<bool>(Routes.login);
-
   /// '편집 모드' 토글(켜질 때만 드래그 핸들·편집 버튼 노출).
   void handleToggleEdit(WidgetRef ref) =>
       ref.read(mainEditModeProvider.notifier).toggle();
