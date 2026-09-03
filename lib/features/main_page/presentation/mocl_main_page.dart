@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/features/bookmark/presentation/bookmarks_page.dart';
 import 'package:mocl_flutter/features/main_page/presentation/state/main_state_mixin.dart';
+import 'package:mocl_flutter/features/main_page/presentation/widgets/mocl_floating_nav_bar.dart';
 import 'package:mocl_flutter/features/settings_page/presentation/pages/settings/settings_page.dart';
 
 import 'mocl_main_view.dart';
@@ -44,6 +45,8 @@ class const _ScaffoldWidget() extends ConsumerWidget with MainState, MainEvent {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: systemOverlayStyle,
       child: Scaffold(
+        // 탭바가 목록 위에 떠 있도록 본문을 바 뒤까지 확장한다.
+        extendBody: true,
         // IndexedStack 이라 탭을 오가도 스크롤 위치와 상태가 유지된다.
         body: IndexedStack(
           index: tabIndex,
@@ -53,26 +56,9 @@ class const _ScaffoldWidget() extends ConsumerWidget with MainState, MainEvent {
             SettingsPage(),
           ],
         ),
-        bottomNavigationBar: NavigationBar(
+        bottomNavigationBar: FloatingNavBar(
           selectedIndex: tabIndex,
-          onDestinationSelected: (index) => selectTab(ref, index),
-          destinations: const <Widget>[
-            NavigationDestination(
-              icon: Icon(Icons.dashboard_outlined),
-              selectedIcon: Icon(Icons.dashboard),
-              label: '내 게시판',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.bookmark_border),
-              selectedIcon: Icon(Icons.bookmark),
-              label: '스크랩',
-            ),
-            NavigationDestination(
-              icon: Icon(Icons.settings_outlined),
-              selectedIcon: Icon(Icons.settings),
-              label: '설정',
-            ),
-          ],
+          onSelected: (index) => selectTab(ref, index),
         ),
       ),
     );
