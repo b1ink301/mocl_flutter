@@ -131,7 +131,7 @@ Future<void> pumpMainScreen(
       overrides: <Override>[
         ...commonOverrides(siteType: siteType),
         favoriteRepositoryProvider.overrideWithValue(
-          _FakeFavoriteRepository(items ?? fakeMainItems()),
+          FakeFavoriteRepository(items ?? fakeMainItems()),
         ),
       ],
       child: _app(const Scaffold(body: MainView())),
@@ -233,40 +233,63 @@ class _FakeSiteType(final SiteType _siteType) extends CurrentSiteTypeNotifier {
 
 /// 메인 화면이 읽는 즐겨찾기 저장소를 메모리로 대체한다.
 /// 실제 앱처럼 사이트 이름으로 그룹 하나를 두고 그 사이트 게시판을 담는다.
-class _FakeFavoriteRepository(final List<MainItem> _items)
+/// 그룹 접기처럼 저장까지 오가는 동작을 검증할 수 있게 쓰기도 반영한다.
+class FakeFavoriteRepository(final List<MainItem> _items)
     implements FavoriteRepository {
-  static const String _groupId = 'clien';
+  static const String groupId = 'clien';
 
-  List<FavoriteData> get _favorites => <FavoriteData>[
+  late final List<FavoriteData> _favorites = <FavoriteData>[
     for (int i = 0; i < _items.length; i++)
-      FavoriteData.fromMainItem(_items[i], i, group: _groupId, orderBy: i),
+      FavoriteData.fromMainItem(_items[i], i, group: groupId, orderBy: i),
+  ];
+
+  final List<FavoriteGroup> _groups = <FavoriteGroup>[
+    const FavoriteGroup(id: groupId, name: '클리앙', orderBy: 0),
   ];
 
   @override
-  Future<List<FavoriteData>> getAll() async => _favorites;
+  Future<List<FavoriteData>> getAll() async => List.of(_favorites);
 
   @override
-  Future<List<FavoriteGroup>> getGroups() async => <FavoriteGroup>[
-    const FavoriteGroup(id: _groupId, name: '클리앙', orderBy: 0),
-  ];
+  Future<List<FavoriteGroup>> getGroups() async => List.of(_groups);
 
   @override
-  Future<void> add(FavoriteData data) async {}
+  Future<void> saveGroups(List<FavoriteGroup> groups) async {
+    _groups
+      ..clear()
+      ..addAll(groups);
+  }
 
   @override
-  Future<void> addAll(List<FavoriteData> items) async {}
+  Future<void> add(FavoriteData data) async => _favorites.add(data);
 
   @override
-  Future<void> remove(SiteType siteType, String board) async {}
+  Future<void> addAll(List<FavoriteData> items) async =>
+      _favorites.addAll(items);
 
   @override
-  Future<bool> isFavorite(SiteType siteType, String board) async => true;
+  Future<void> remove(SiteType siteType, String board) => Future.sync(
+    () => _favorites.removeWhere(
+      (favorite) => favorite.siteType == siteType && favorite.board == board,
+    ),
+  );
 
   @override
-  Future<void> updateAll(List<FavoriteData> items) async {}
+  Future<bool> isFavorite(SiteType siteType, String board) async =>
+      _favorites.any(
+        (favorite) => favorite.siteType == siteType && favorite.board == board,
+      );
 
   @override
-  Future<void> saveGroups(List<FavoriteGroup> groups) async {}
+  Future<void> updateAll(List<FavoriteData> items) async {
+    for (final FavoriteData item in items) {
+      final int index = _favorites.indexWhere(
+        (favorite) =>
+            favorite.siteType == item.siteType && favorite.board == item.board,
+      );
+      if (index >= 0) _favorites[index] = item;
+    }
+  }
 }
 
 class _FakeDetails(final Details _details) extends DetailsNotifier {

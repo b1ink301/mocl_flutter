@@ -17,6 +17,8 @@ abstract class FavoriteGroup with _$FavoriteGroup {
     required String id,
     required String name,
     required int orderBy,
+    // 접어둔 그룹인지. 앱을 다시 켜도 유지되도록 함께 저장한다.
+    @Default(false) bool collapsed,
   }) = _FavoriteGroup;
 
   factory fromJson(Map<String, dynamic> json) => _$FavoriteGroupFromJson(json);

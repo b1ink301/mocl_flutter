@@ -37,6 +37,10 @@ mixin class FavoriteEvent() {
   void removeFavoriteGroup(WidgetRef ref, String id) =>
       ref.read(favoriteGroupsProvider.notifier).removeGroup(id);
 
+  /// 그룹 접기/펼치기 토글.
+  void toggleGroupCollapsed(WidgetRef ref, String id) =>
+      ref.read(favoriteGroupsProvider.notifier).toggleCollapsed(id);
+
   void reorderFavoriteGroups(WidgetRef ref, int oldIndex, int newIndex) =>
       ref.read(favoriteGroupsProvider.notifier).reorder(oldIndex, newIndex);
 

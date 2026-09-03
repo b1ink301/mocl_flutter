@@ -87,7 +87,7 @@ final class FavoriteGroupsNotifierProvider
 }
 
 String _$favoriteGroupsNotifierHash() =>
-    r'077eb8a121fd72fc3050b7b86e1dc3b82fc79381';
+    r'fe5095156f2fe8ba05eaffe66b83847cd1271468';
 
 /// 즐겨찾기 그룹(카테고리) 목록. 최초에는 사이트 카테고리 기반 기본 그룹이 시드된다.
 

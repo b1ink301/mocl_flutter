@@ -11,6 +11,7 @@ _FavoriteGroup _$FavoriteGroupFromJson(Map<String, dynamic> json) =>
       id: json['id'] as String,
       name: json['name'] as String,
       orderBy: (json['orderBy'] as num).toInt(),
+      collapsed: json['collapsed'] as bool? ?? false,
     );
 
 Map<String, dynamic> _$FavoriteGroupToJson(_FavoriteGroup instance) =>
@@ -18,4 +19,5 @@ Map<String, dynamic> _$FavoriteGroupToJson(_FavoriteGroup instance) =>
       'id': instance.id,
       'name': instance.name,
       'orderBy': instance.orderBy,
+      'collapsed': instance.collapsed,
     };

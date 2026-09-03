@@ -82,6 +82,27 @@ class FavoriteGroupsNotifier() extends _$FavoriteGroupsNotifier {
     ref.invalidate(favoritesProvider);
   }
 
+  /// 그룹을 접거나 펼친다. 화면을 먼저 바꾸고 저장해 즉각 반응하게 한다.
+  Future<void> toggleCollapsed(String id) async {
+    final List<FavoriteGroup>? current = state.asData?.value;
+    if (current != null) {
+      state = AsyncData([
+        for (final FavoriteGroup group in current)
+          group.id == id
+              ? group.copyWith(collapsed: !group.collapsed)
+              : group,
+      ]);
+    }
+
+    final repo = ref.read(favoriteRepositoryProvider);
+    final List<FavoriteGroup> stored = await repo.getGroups();
+    await repo.saveGroups([
+      for (final FavoriteGroup group in stored)
+        group.id == id ? group.copyWith(collapsed: !group.collapsed) : group,
+    ]);
+    ref.invalidateSelf();
+  }
+
   Future<void> reorder(int oldIndex, int newIndex) async {
     final List<FavoriteGroup>? current = state.asData?.value;
     if (current == null || oldIndex == newIndex) return;

@@ -62,6 +62,46 @@ void main() {
     }
   });
 
+  testWidgets('사이트를 바꾸면 불러오는 동안 로딩이 보인다', (tester) async {
+    useFixedSurface(tester);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: <Override>[
+          ...commonOverrides(siteType: SiteType.clien),
+          mainRepositoryProvider.overrideWith(
+            // 목록을 받아오는 데 시간이 걸리는 상황을 만든다.
+            (Ref ref, SiteType siteType) =>
+                _FakeMainRepository(delay: const Duration(seconds: 2)),
+          ),
+          favoriteRepositoryProvider.overrideWithValue(
+            _InMemoryFavoriteRepository(),
+          ),
+        ],
+        child: MaterialApp(
+          theme: MoclTheme.lightTheme,
+          home: const _SheetHost(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('시트 열기'));
+    await tester.pump();
+
+    // 시트를 열자마자도 로딩이 보여야 한다.
+    expect(find.textContaining('불러오는 중'), findsOneWidget);
+    await tester.pumpAndSettle();
+    expect(find.textContaining('불러오는 중'), findsNothing);
+
+    await tester.tap(find.text('다모앙').first);
+    await tester.pump();
+
+    // 직전 사이트 목록을 남겨두지 않고 로딩을 노출한다.
+    expect(find.text('다모앙 게시판을 불러오는 중...'), findsOneWidget);
+
+    await tester.pumpAndSettle();
+    expect(find.textContaining('불러오는 중'), findsNothing);
+  });
+
   testWidgets('게시판 칩을 누르면 담기고 다시 누르면 빠진다', (tester) async {
     useFixedSurface(tester);
     final _InMemoryFavoriteRepository repo = _InMemoryFavoriteRepository();
@@ -121,20 +161,23 @@ class const _SheetHost() extends StatelessWidget {
   );
 }
 
-class _FakeMainRepository() implements MainRepository {
+class _FakeMainRepository({final Duration? delay}) implements MainRepository {
   @override
   Future<Either<Failure, List<MainItem>>> getMainListFromJson({
     required SiteType siteType,
-  }) async => Right(<MainItem>[
-    for (int i = 0; i < 12; i++)
-      MainItem(
-        siteType: siteType,
-        board: 'board$i',
-        text: '게시판$i',
-        url: 'https://example.com/${siteType.name}/$i',
-        orderBy: i,
-      ),
-  ]);
+  }) async {
+    if (delay != null) await Future<void>.delayed(delay!);
+    return Right(<MainItem>[
+      for (int i = 0; i < 12; i++)
+        MainItem(
+          siteType: siteType,
+          board: 'board$i',
+          text: '게시판$i',
+          url: 'https://example.com/${siteType.name}/$i',
+          orderBy: i,
+        ),
+    ]);
+  }
 }
 
 /// 담기/빼기가 실제로 저장되는지 보기 위한 메모리 저장소.
