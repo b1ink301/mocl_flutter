@@ -52,7 +52,8 @@ class const _MainBody() extends ConsumerWidget
       slivers: [
         for (int i = 0; i < visible.length; i++)
           ..._buildSection(ref, visible[i], i, visible.length, editMode),
-        SliverToBoxAdapter(child: SizedBox(height: bottom + 24)),
+        // bottom 에는 떠 있는 탭바 높이가 들어온다(Scaffold extendBody).
+        SliverToBoxAdapter(child: SizedBox(height: bottom + 8)),
       ],
     );
   }
