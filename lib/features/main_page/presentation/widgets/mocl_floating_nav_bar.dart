@@ -10,11 +10,7 @@ const List<NavItem> _navItems = [
     label: '내 게시판',
   ),
   (icon: Icons.bookmark_border, selectedIcon: Icons.bookmark, label: '스크랩'),
-  (
-    icon: Icons.settings_outlined,
-    selectedIcon: Icons.settings,
-    label: '설정',
-  ),
+  (icon: Icons.settings_outlined, selectedIcon: Icons.settings, label: '설정'),
 ];
 
 /// 화면 아래 가운데에 떠 있는 알약형 탭바(삼성 OneUI 스타일).
@@ -42,47 +38,69 @@ class const FloatingNavBar({
       top: false,
       child: Padding(
         padding: const EdgeInsets.fromLTRB(12, 0, 12, 12),
-        child: Center(
-          child: Container(
-            decoration: BoxDecoration(
-              color: barColor,
-              borderRadius: BorderRadius.circular(32),
-              border: Border.all(color: theme.dividerColor),
-              // 떠 있는 느낌은 그림자로만 준다(라이트/다크 모두 은은하게).
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black.withValues(alpha: isDark ? 0.45 : 0.13),
-                  blurRadius: 20,
-                  offset: const Offset(0, 7),
-                ),
-              ],
+        // Scaffold 는 bottomNavigationBar 를 화면 높이까지 열린 제약으로 재므로,
+        // Center 를 쓰면 세로로도 늘어나 바가 화면 한가운데로 떠버린다.
+        // Row 는 세로로 내용만큼만 차지하면서 가로 가운데 정렬을 해준다.
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            _Pill(
+              barColor: barColor,
+              isDark: isDark,
+              selectedIndex: selectedIndex,
+              onSelected: onSelected,
             ),
-            // 잉크 효과가 알약 배경 위에 그려지고 모서리에 맞춰 잘리도록,
-            // 바깥 Scaffold 의 Material 대신 알약 안쪽에 Material 을 둔다.
-            clipBehavior: Clip.antiAlias,
-            child: Material(
-              type: MaterialType.transparency,
-              child: Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 6,
-                  vertical: 6,
-                ),
-                // 좁은 화면에서 넘칠 때만 살짝 줄인다.
-                child: FittedBox(
-                  fit: BoxFit.scaleDown,
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      for (int i = 0; i < _navItems.length; i++)
-                        _NavBarItem(
-                          item: _navItems[i],
-                          isSelected: i == selectedIndex,
-                          onTap: () => onSelected(i),
-                        ),
-                    ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class const _Pill({
+  required final Color barColor,
+  required final bool isDark,
+  required final int selectedIndex,
+  required final ValueChanged<int> onSelected,
+}) extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      decoration: BoxDecoration(
+        color: barColor,
+        borderRadius: BorderRadius.circular(32),
+        border: Border.all(color: theme.dividerColor),
+        // 떠 있는 느낌은 그림자로만 준다(라이트/다크 모두 은은하게).
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withValues(alpha: isDark ? 0.45 : 0.13),
+            blurRadius: 20,
+            offset: const Offset(0, 7),
+          ),
+        ],
+      ),
+      // 잉크 효과가 알약 배경 위에 그려지고 모서리에 맞춰 잘리도록,
+      // 바깥 Scaffold 의 Material 대신 알약 안쪽에 Material 을 둔다.
+      clipBehavior: Clip.antiAlias,
+      child: Material(
+        type: MaterialType.transparency,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 6),
+          // 좁은 화면에서 넘칠 때만 살짝 줄인다.
+          child: FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (int i = 0; i < _navItems.length; i++)
+                  _NavBarItem(
+                    item: _navItems[i],
+                    isSelected: i == selectedIndex,
+                    onTap: () => onSelected(i),
                   ),
-                ),
-              ),
+              ],
             ),
           ),
         ),
