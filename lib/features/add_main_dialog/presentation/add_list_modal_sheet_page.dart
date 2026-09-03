@@ -1,14 +1,57 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/presentation/widgets/check_box_list_title_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/plain_divider_widget.dart';
+import 'package:mocl_flutter/features/database/domain/entities/favorite_group.dart';
 
 import '../../../core/presentation/widgets/plain_icon_button.dart';
 import 'state/add_event_mixin.dart';
 import 'state/add_state_mixin.dart';
 import 'widgets/board_search_field.dart';
+
+/// 고른 게시판을 어느 즐겨찾기 그룹에 담을지 선택한다.
+/// 기본값은 사이트가 속한 카테고리라 그냥 체크만 해도 알아서 정리된다.
+class const _GroupSelector() extends ConsumerWidget with AddState, AddEvent {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final List<FavoriteGroup> groups = favoriteGroups(ref);
+    if (groups.isEmpty) return const SizedBox.shrink();
+
+    final String selected = targetGroupId(ref);
+    final bool exists = groups.any((group) => group.id == selected);
+    final theme = Theme.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+      child: Row(
+        children: [
+          Text('그룹', style: theme.textTheme.bodySmall),
+          const SizedBox(width: 14),
+          Expanded(
+            child: DropdownButton<String>(
+              isExpanded: true,
+              value: exists ? selected : groups.first.id,
+              underline: const SizedBox.shrink(),
+              items: [
+                for (final FavoriteGroup group in groups)
+                  DropdownMenuItem<String>(
+                    value: group.id,
+                    child: Text(group.name, style: theme.textTheme.bodyMedium),
+                  ),
+              ],
+              onChanged: (value) {
+                if (value != null) selectGroup(ref, value);
+              },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
 
 class const AddListBottomSheet({super.key})
     extends ConsumerWidget
@@ -54,13 +97,14 @@ class const AddListBottomSheet({super.key})
                     PlainIconButton(
                       padding: const .all(10),
                       icon: const Icon(Icons.check),
-                      onPressed: () => pop(ref, context),
+                      onPressed: () => apply(ref, context),
                     ),
                   ],
                 ),
               ),
             ),
             const PlainDividerWidget(),
+            const _GroupSelector(),
             const BoardSearchField(),
             // 콘텐츠
             Expanded(
@@ -127,8 +171,20 @@ class const AddListBottomSheet({super.key})
                   );
                 },
                 error: (error, _) => Padding(
-                  padding: const .all(8.0),
-                  child: Text(error.toString()),
+                  padding: const .all(16.0),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(error.toString(), style: textStyle),
+                      // 로그인해야 목록을 받아오는 사이트(레딧 · 네이버카페)를 위해
+                      // 여기서 바로 로그인으로 넘어갈 수 있게 한다.
+                      if (error is NotLoginFailure)
+                        TextButton(
+                          onPressed: () => loginAndRetry(ref, context),
+                          child: const Text('로그인하기'),
+                        ),
+                    ],
+                  ),
                 ),
                 orElse: () => const LoadingWidget(),
               ),

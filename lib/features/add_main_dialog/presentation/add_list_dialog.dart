@@ -146,7 +146,7 @@ class const AddListDialog({super.key})
       ),
       Consumer(
         builder: (context, ref, _) => TextButton(
-          onPressed: () => pop(ref, context),
+          onPressed: () => apply(ref, context),
           child: Text('적용', style: applyStyle),
         ),
       ),

@@ -26,16 +26,21 @@ $CommentItemCopyWith<CommentItem> get copyWith => _$CommentItemCopyWithImpl<Comm
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommentItem&&(identical(other.id, id) || other.id == id)&&(identical(other.bodyHtml, bodyHtml) || other.bodyHtml == bodyHtml)&&(identical(other.mediaHtml, mediaHtml) || other.mediaHtml == mediaHtml)&&(identical(other.isVideo, isVideo) || other.isVideo == isVideo)&&(identical(other.time, time) || other.time == time)&&(identical(other.info, info) || other.info == info)&&(identical(other.likeCount, likeCount) || other.likeCount == likeCount)&&(identical(other.userInfo, userInfo) || other.userInfo == userInfo)&&(identical(other.authorId, authorId) || other.authorId == authorId)&&(identical(other.isReply, isReply) || other.isReply == isReply)&&const DeepCollectionEquality().equals(other.replies, replies));
+  final _this = this as CommentItem;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CommentItem&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.bodyHtml, _this.bodyHtml) || other.bodyHtml == _this.bodyHtml)&&(identical(other.mediaHtml, _this.mediaHtml) || other.mediaHtml == _this.mediaHtml)&&(identical(other.isVideo, _this.isVideo) || other.isVideo == _this.isVideo)&&(identical(other.time, _this.time) || other.time == _this.time)&&(identical(other.info, _this.info) || other.info == _this.info)&&(identical(other.likeCount, _this.likeCount) || other.likeCount == _this.likeCount)&&(identical(other.userInfo, _this.userInfo) || other.userInfo == _this.userInfo)&&(identical(other.authorId, _this.authorId) || other.authorId == _this.authorId)&&(identical(other.isReply, _this.isReply) || other.isReply == _this.isReply)&&const DeepCollectionEquality().equals(other.replies, _this.replies));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,bodyHtml,mediaHtml,isVideo,time,info,likeCount,userInfo,authorId,isReply,const DeepCollectionEquality().hash(replies));
+int get hashCode {
+  final _this = this as CommentItem;
+  return Object.hash(runtimeType,_this.id,_this.bodyHtml,_this.mediaHtml,_this.isVideo,_this.time,_this.info,_this.likeCount,_this.userInfo,_this.authorId,_this.isReply,const DeepCollectionEquality().hash(_this.replies));
+}
 
 @override
 String toString() {
-  return 'CommentItem(id: $id, bodyHtml: $bodyHtml, mediaHtml: $mediaHtml, isVideo: $isVideo, time: $time, info: $info, likeCount: $likeCount, userInfo: $userInfo, authorId: $authorId, isReply: $isReply, replies: $replies)';
+  final _this = this as CommentItem;
+  return 'CommentItem(id: ${_this.id}, bodyHtml: ${_this.bodyHtml}, mediaHtml: ${_this.mediaHtml}, isVideo: ${_this.isVideo}, time: ${_this.time}, info: ${_this.info}, likeCount: ${_this.likeCount}, userInfo: ${_this.userInfo}, authorId: ${_this.authorId}, isReply: ${_this.isReply}, replies: ${_this.replies})';
 }
 
 
@@ -257,16 +262,18 @@ _$CommentItemCopyWith<_CommentItem> get copyWith => __$CommentItemCopyWithImpl<_
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CommentItem&&(identical(other.id, id) || other.id == id)&&(identical(other.bodyHtml, bodyHtml) || other.bodyHtml == bodyHtml)&&(identical(other.mediaHtml, mediaHtml) || other.mediaHtml == mediaHtml)&&(identical(other.isVideo, isVideo) || other.isVideo == isVideo)&&(identical(other.time, time) || other.time == time)&&(identical(other.info, info) || other.info == info)&&(identical(other.likeCount, likeCount) || other.likeCount == likeCount)&&(identical(other.userInfo, userInfo) || other.userInfo == userInfo)&&(identical(other.authorId, authorId) || other.authorId == authorId)&&(identical(other.isReply, isReply) || other.isReply == isReply)&&const DeepCollectionEquality().equals(other._replies, _replies));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _CommentItem&&(identical(other.id, id) || other.id == id)&&(identical(other.bodyHtml, bodyHtml) || other.bodyHtml == bodyHtml)&&(identical(other.mediaHtml, mediaHtml) || other.mediaHtml == mediaHtml)&&(identical(other.isVideo, isVideo) || other.isVideo == isVideo)&&(identical(other.time, time) || other.time == time)&&(identical(other.info, info) || other.info == info)&&(identical(other.likeCount, likeCount) || other.likeCount == likeCount)&&(identical(other.userInfo, userInfo) || other.userInfo == userInfo)&&(identical(other.authorId, authorId) || other.authorId == authorId)&&(identical(other.isReply, isReply) || other.isReply == isReply)&&const DeepCollectionEquality().equals(other.replies, _replies));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,bodyHtml,mediaHtml,isVideo,time,info,likeCount,userInfo,authorId,isReply,const DeepCollectionEquality().hash(_replies));
+int get hashCode {
+    return Object.hash(runtimeType,id,bodyHtml,mediaHtml,isVideo,time,info,likeCount,userInfo,authorId,isReply,const DeepCollectionEquality().hash(_replies));
+}
 
 @override
 String toString() {
-  return 'CommentItem(id: $id, bodyHtml: $bodyHtml, mediaHtml: $mediaHtml, isVideo: $isVideo, time: $time, info: $info, likeCount: $likeCount, userInfo: $userInfo, authorId: $authorId, isReply: $isReply, replies: $replies)';
+    return 'CommentItem(id: $id, bodyHtml: $bodyHtml, mediaHtml: $mediaHtml, isVideo: $isVideo, time: $time, info: $info, likeCount: $likeCount, userInfo: $userInfo, authorId: $authorId, isReply: $isReply, replies: $replies)';
 }
 
 

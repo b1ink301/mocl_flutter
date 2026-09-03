@@ -26,16 +26,21 @@ $LastIdCopyWith<LastId> get copyWith => _$LastIdCopyWithImpl<LastId>(this as Las
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LastId&&const DeepCollectionEquality().equals(other.extra, extra)&&(identical(other.intId, intId) || other.intId == intId)&&(identical(other.stringId, stringId) || other.stringId == stringId));
+  final _this = this as LastId;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LastId&&const DeepCollectionEquality().equals(other.extra, _this.extra)&&(identical(other.intId, _this.intId) || other.intId == _this.intId)&&(identical(other.stringId, _this.stringId) || other.stringId == _this.stringId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(extra),intId,stringId);
+int get hashCode {
+  final _this = this as LastId;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.extra),_this.intId,_this.stringId);
+}
 
 @override
 String toString() {
-  return 'LastId(extra: $extra, intId: $intId, stringId: $stringId)';
+  final _this = this as LastId;
+  return 'LastId(extra: ${_this.extra}, intId: ${_this.intId}, stringId: ${_this.stringId})';
 }
 
 
@@ -226,16 +231,18 @@ _$LastIdCopyWith<_LastId> get copyWith => __$LastIdCopyWithImpl<_LastId>(this, _
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LastId&&const DeepCollectionEquality().equals(other.extra, extra)&&(identical(other.intId, intId) || other.intId == intId)&&(identical(other.stringId, stringId) || other.stringId == stringId));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _LastId&&const DeepCollectionEquality().equals(other.extra, extra)&&(identical(other.intId, intId) || other.intId == intId)&&(identical(other.stringId, stringId) || other.stringId == stringId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(extra),intId,stringId);
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(extra),intId,stringId);
+}
 
 @override
 String toString() {
-  return 'LastId(extra: $extra, intId: $intId, stringId: $stringId)';
+    return 'LastId(extra: $extra, intId: $intId, stringId: $stringId)';
 }
 
 

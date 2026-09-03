@@ -81,7 +81,7 @@ final class MuteRulesNotifierProvider
   MuteRulesNotifier create() => MuteRulesNotifier();
 }
 
-String _$muteRulesNotifierHash() => r'4139476a6221f5d89494fb94d8fc80bfe43fb466';
+String _$muteRulesNotifierHash() => r'd9b3ed91506f1fb198246dce79daf0744ddbbe30';
 
 /// 전역 뮤트 규칙 목록. 리스트 빌드 시 watch 되어, 규칙이 바뀌면
 /// 리스트가 재생성되며 필터가 다시 적용된다.

@@ -21,7 +21,7 @@ mixin _$Result<T> {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Result<T>);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is Result<T>);
 }
 
 
@@ -30,7 +30,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'Result<$T>()';
+    return 'Result<$T>()';
 }
 
 
@@ -198,7 +198,7 @@ class ResultInitial<T> implements Result<T> {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ResultInitial<T>);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ResultInitial<T>);
 }
 
 
@@ -207,7 +207,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'Result<$T>.initial()';
+    return 'Result<$T>.initial()';
 }
 
 
@@ -230,7 +230,7 @@ class ResultLoading<T> implements Result<T> {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ResultLoading<T>);
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ResultLoading<T>);
 }
 
 
@@ -239,7 +239,7 @@ int get hashCode => runtimeType.hashCode;
 
 @override
 String toString() {
-  return 'Result<$T>.loading()';
+    return 'Result<$T>.loading()';
 }
 
 
@@ -267,16 +267,18 @@ $ResultSuccessCopyWith<T, ResultSuccess<T>> get copyWith => _$ResultSuccessCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ResultSuccess<T>&&const DeepCollectionEquality().equals(other.data, data));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ResultSuccess<T>&&const DeepCollectionEquality().equals(other.data, data));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(data));
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(data));
+}
 
 @override
 String toString() {
-  return 'Result<$T>.success(data: $data)';
+    return 'Result<$T>.success(data: $data)';
 }
 
 
@@ -333,16 +335,18 @@ $ResultFailureCopyWith<T, ResultFailure<T>> get copyWith => _$ResultFailureCopyW
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ResultFailure<T>&&(identical(other.failure, failure) || other.failure == failure));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is ResultFailure<T>&&(identical(other.failure, failure) || other.failure == failure));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,failure);
+int get hashCode {
+    return Object.hash(runtimeType,failure);
+}
 
 @override
 String toString() {
-  return 'Result<$T>.failure(failure: $failure)';
+    return 'Result<$T>.failure(failure: $failure)';
 }
 
 

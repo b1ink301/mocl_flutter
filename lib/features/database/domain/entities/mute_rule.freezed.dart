@@ -29,16 +29,21 @@ $MuteRuleCopyWith<MuteRule> get copyWith => _$MuteRuleCopyWithImpl<MuteRule>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MuteRule&&(identical(other.pattern, pattern) || other.pattern == pattern)&&(identical(other.type, type) || other.type == type)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+  final _this = this as MuteRule;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MuteRule&&(identical(other.pattern, _this.pattern) || other.pattern == _this.pattern)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.createdAt, _this.createdAt) || other.createdAt == _this.createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,pattern,type,createdAt);
+int get hashCode {
+  final _this = this as MuteRule;
+  return Object.hash(runtimeType,_this.pattern,_this.type,_this.createdAt);
+}
 
 @override
 String toString() {
-  return 'MuteRule(pattern: $pattern, type: $type, createdAt: $createdAt)';
+  final _this = this as MuteRule;
+  return 'MuteRule(pattern: ${_this.pattern}, type: ${_this.type}, createdAt: ${_this.createdAt})';
 }
 
 
@@ -232,16 +237,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MuteRule&&(identical(other.pattern, pattern) || other.pattern == pattern)&&(identical(other.type, type) || other.type == type)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MuteRule&&(identical(other.pattern, pattern) || other.pattern == pattern)&&(identical(other.type, type) || other.type == type)&&(identical(other.createdAt, createdAt) || other.createdAt == createdAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,pattern,type,createdAt);
+int get hashCode {
+    return Object.hash(runtimeType,pattern,type,createdAt);
+}
 
 @override
 String toString() {
-  return 'MuteRule(pattern: $pattern, type: $type, createdAt: $createdAt)';
+    return 'MuteRule(pattern: $pattern, type: $type, createdAt: $createdAt)';
 }
 
 

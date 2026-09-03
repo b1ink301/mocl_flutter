@@ -4,63 +4,31 @@ import 'package:flutter_riverpod/misc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/core/util/utilities.dart';
 
 import '../../application/main_providers.dart';
 
 mixin class MainEvent() {
-  void listenNotLoginFailure(WidgetRef ref, BuildContext context) {
-    ref.listen(mainItemsProvider, (previous, next) {
-      if (next case AsyncError<List<MainItem>> error
-          when error.error is NotLoginFailure) {
-        context.push<bool>(Routes.login).then((result) {
-          if (context.mounted && result == true) {
-            handleRefresh(ref);
-          }
-        });
-      }
-    });
-  }
+  Future<void> handleLogin(WidgetRef ref, BuildContext context) async =>
+      context.push<bool>(Routes.login);
 
-  Future<void> handleLogin(WidgetRef ref, BuildContext context) async {
-    context.push<bool>(Routes.login).then((result) {
-      if (context.mounted && result == true) {
-        handleRefresh(ref);
-      }
-    });
-  }
+  /// '편집 모드' 토글(켜질 때만 드래그 핸들·편집 버튼 노출).
+  void handleToggleEdit(WidgetRef ref) =>
+      ref.read(mainEditModeProvider.notifier).toggle();
 
-  void handleRefresh(WidgetRef ref) =>
-      ref.read(mainItemsProvider.notifier).refresh();
+  /// 현재 선택된 사이트의 게시판 선택 화면을 연다.
+  Future<void> handleAddButton(WidgetRef ref, BuildContext context) async =>
+      context.push(Routes.setMainDlgFull);
 
-  /// 메인 항목 드래그 재정렬을 notifier 에 위임한다.
-  void handleReorder(WidgetRef ref, int oldIndex, int newIndex) =>
-      ref.read(mainItemsProvider.notifier).reorder(oldIndex, newIndex);
-
-  /// '정렬 모드' 토글(켜질 때만 드래그 핸들 노출).
-  void handleToggleReorder(WidgetRef ref) =>
-      ref.read(mainReorderModeProvider.notifier).toggle();
-
-  Future<void> handleAddButton(WidgetRef ref, BuildContext context) async {
-    List<MainItem>? result = await context.push<List<MainItem>>(
-      Routes.setMainDlgFull,
-    );
-    if (!context.mounted || result == null) {
-      return;
-    }
-    final state = await ref.read(setMainItemsProvider(result).future);
-    if (!context.mounted) {
-      return;
-    }
-    state.fold(
-      (failure) => failure.message.showToast(
-        backgroundColor: Theme.of(context).appBarTheme.backgroundColor!,
-      ),
-      (data) => handleRefresh(ref),
-    );
+  /// 드로어에서 사이트를 고르면 그 사이트로 전환한 뒤 곧바로
+  /// 게시판 선택 화면을 띄운다(드로어 = 게시판을 찾아 추가하는 통로).
+  Future<void> openAddBoards(
+    WidgetRef ref,
+    BuildContext context,
+    SiteType siteType,
+  ) async {
+    changeSiteType(ref, siteType);
+    await context.push(Routes.setMainDlgFull);
   }
 
   void handleSideBarToggle(WidgetRef ref) =>

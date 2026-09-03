@@ -345,7 +345,7 @@ final class ListPagingControllerProvider
 }
 
 String _$listPagingControllerHash() =>
-    r'd8e29810847965dee1a8be05f3f4347f03fb5990';
+    r'1e836eba4ca1066948bcb6e8b762dd647e47a443';
 
 /// infinite_scroll_pagination 의 PagingController 를 Riverpod 으로 감싼다.
 /// build() 는 mainItem/sortType 이 바뀔 때만 새 컨트롤러를 생성한다.
@@ -433,7 +433,7 @@ final class PagingItemsProvider
   }
 }
 
-String _$pagingItemsHash() => r'c8ef6859bc86dca4c6c749b6e3fd4cef0e8a37ed';
+String _$pagingItemsHash() => r'201704335adbb0b6fb3fa3e38d0f72baf08fdf5b';
 
 /// 컨트롤러가 보유한 flat items 를 Riverpod 상태로 노출.
 /// detail/리스트 row 등 비-paging 영역에서 인덱스 기반 접근에 사용.
@@ -584,7 +584,7 @@ final class SortTypeNotifierProvider
   }
 }
 
-String _$sortTypeNotifierHash() => r'19fe9c4b29d4d6b3d4c1c845099428124cb94554';
+String _$sortTypeNotifierHash() => r'f42b995b9e0efc03c1d001cee9c14d2844417f8d';
 
 abstract class _$SortTypeNotifier extends $Notifier<SortType> {
   SortType build();

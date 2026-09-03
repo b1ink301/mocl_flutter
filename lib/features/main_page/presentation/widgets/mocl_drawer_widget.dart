@@ -2,48 +2,16 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_site_category.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 
 import '../../../../core/presentation/widgets/plain_text.dart';
 import '../state/main_event_mixin.dart';
 import '../state/main_state_mixin.dart';
 
-/// 드로어 사이트 목록을 카테고리로 묶는다. 각 그룹은 라벨과 사이트 목록을
-/// 가지며, 정의된 순서대로 표시된다. (전체 18개 사이트를 모두 포함)
-typedef _SiteGroup = ({String label, List<SiteType> sites});
-
-const List<_SiteGroup> _siteGroups = [
-  (
-    label: '커뮤니티',
-    sites: [
-      SiteType.clien,
-      SiteType.damoang,
-      SiteType.arcalive,
-      SiteType.cook82,
-      SiteType.ppomppu,
-      SiteType.instiz,
-      SiteType.theqoo,
-      SiteType.meeco,
-      SiteType.nate,
-      SiteType.naverCafe,
-    ],
-  ),
-  (
-    label: '취미 · 자동차 · 게임',
-    sites: [
-      SiteType.bobaedream,
-      SiteType.inven,
-      SiteType.ruliweb,
-      SiteType.dogdrip,
-    ],
-  ),
-  (
-    label: '뉴스 · IT · 스포츠',
-    sites: [SiteType.geekNews, SiteType.dcinside, SiteType.mlbpark],
-  ),
-  (label: '해외', sites: [SiteType.reddit]),
-];
-
+/// 사이트를 둘러보고 게시판을 추가하는 통로.
+/// 사이트를 고르면 그 사이트의 게시판 선택 화면이 바로 열리고, 고른 게시판은
+/// 메인 화면의 즐겨찾기 그룹에 쌓인다(메인은 더 이상 사이트별 화면이 아니다).
 class const DrawerWidget({super.key}) extends ConsumerWidget with MainEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -58,10 +26,6 @@ class const DrawerWidget({super.key}) extends ConsumerWidget with MainEvent {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           _DrawerHeader(
-            onFavoritesTap: () {
-              context.pop();
-              context.push(Routes.favorites);
-            },
             onBookmarksTap: () {
               context.pop();
               context.push(Routes.bookmarks);
@@ -77,13 +41,13 @@ class const DrawerWidget({super.key}) extends ConsumerWidget with MainEvent {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  for (final group in _siteGroups) ...[
-                    _SectionHeader(group.label),
+                  for (final SiteCategory category in kSiteCategories) ...[
+                    _SectionHeader(category.label),
                     Wrap(
                       spacing: 10,
                       runSpacing: 10,
                       children: [
-                        for (final siteType in group.sites)
+                        for (final siteType in category.sites)
                           _DrawerSiteTag(
                             siteType: siteType,
                             focusColor: focusColor,
@@ -103,7 +67,7 @@ class const DrawerWidget({super.key}) extends ConsumerWidget with MainEvent {
 
   void _handleSiteTap(BuildContext context, WidgetRef ref, SiteType siteType) {
     context.pop();
-    changeSiteType(ref, siteType);
+    openAddBoards(ref, context, siteType);
   }
 }
 
@@ -128,7 +92,6 @@ class const _SectionHeader(final String label) extends StatelessWidget {
 }
 
 class const _DrawerHeader({
-  required final VoidCallback onFavoritesTap,
   required final VoidCallback onBookmarksTap,
   required final VoidCallback onSettingsTap,
 }) extends ConsumerWidget with MainState {
@@ -185,11 +148,6 @@ class const _DrawerHeader({
               ],
             ),
           ),
-          // IconButton(
-          //   tooltip: '즐겨찾기',
-          //   icon: Icon(Icons.star_border_rounded, color: inkColor),
-          //   onPressed: onFavoritesTap,
-          // ),
           IconButton(
             tooltip: '스크랩 보기',
             icon: Icon(Icons.bookmark_border, color: inkColor),

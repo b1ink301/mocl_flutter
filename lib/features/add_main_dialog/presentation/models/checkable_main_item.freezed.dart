@@ -26,16 +26,21 @@ $CheckableMainItemCopyWith<CheckableMainItem> get copyWith => _$CheckableMainIte
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is CheckableMainItem&&(identical(other.mainItem, mainItem) || other.mainItem == mainItem)&&(identical(other.isChecked, isChecked) || other.isChecked == isChecked));
+  final _this = this as CheckableMainItem;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is CheckableMainItem&&(identical(other.mainItem, _this.mainItem) || other.mainItem == _this.mainItem)&&(identical(other.isChecked, _this.isChecked) || other.isChecked == _this.isChecked));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,mainItem,isChecked);
+int get hashCode {
+  final _this = this as CheckableMainItem;
+  return Object.hash(runtimeType,_this.mainItem,_this.isChecked);
+}
 
 @override
 String toString() {
-  return 'CheckableMainItem(mainItem: $mainItem, isChecked: $isChecked)';
+  final _this = this as CheckableMainItem;
+  return 'CheckableMainItem(mainItem: ${_this.mainItem}, isChecked: ${_this.isChecked})';
 }
 
 
@@ -233,16 +238,18 @@ _$CheckableMainItemCopyWith<_CheckableMainItem> get copyWith => __$CheckableMain
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _CheckableMainItem&&(identical(other.mainItem, mainItem) || other.mainItem == mainItem)&&(identical(other.isChecked, isChecked) || other.isChecked == isChecked));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _CheckableMainItem&&(identical(other.mainItem, mainItem) || other.mainItem == mainItem)&&(identical(other.isChecked, isChecked) || other.isChecked == isChecked));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,mainItem,isChecked);
+int get hashCode {
+    return Object.hash(runtimeType,mainItem,isChecked);
+}
 
 @override
 String toString() {
-  return 'CheckableMainItem(mainItem: $mainItem, isChecked: $isChecked)';
+    return 'CheckableMainItem(mainItem: $mainItem, isChecked: $isChecked)';
 }
 
 

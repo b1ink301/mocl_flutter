@@ -4,20 +4,9 @@ import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 
 abstract class MainRepository() {
-  Stream<Either<Failure, List<MainItem>>> getMainListStream({
-    required SiteType siteType,
-  });
-
-  Future<Either<Failure, List<MainItem>>> getMainList({
-    required SiteType siteType,
-  });
-
+  /// 사이트가 제공하는 전체 게시판 후보 목록(게시판 선택 화면용).
+  /// 사용자가 고른 게시판은 즐겨찾기(favorites)에 저장된다.
   Future<Either<Failure, List<MainItem>>> getMainListFromJson({
     required SiteType siteType,
-  });
-
-  Future<Either<Failure, List<int>>> setMainList({
-    required SiteType siteType,
-    required List<MainItem> list,
   });
 }

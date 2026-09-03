@@ -66,7 +66,7 @@ final class MainDatasourceProvider
   }
 }
 
-String _$mainDatasourceHash() => r'c145eca16cf2ebbc78de87f36f256def38882a2b';
+String _$mainDatasourceHash() => r'b45b4b891936ed14c2e59638038042ec955a5fa7';
 
 final class MainDatasourceFamily extends $Family
     with $FunctionalFamilyOverride<MainDataSource, SiteType> {

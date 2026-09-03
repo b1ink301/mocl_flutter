@@ -5,10 +5,7 @@ import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:mocl_flutter/core/util/read_json_from_assets.dart';
-import 'package:mocl_flutter/features/database/data/datasources/local/local_database.dart';
 import 'package:mocl_flutter/features/database/data/models/main_item_model.dart';
-import 'package:mocl_flutter/features/database/data/models/model_mapper.dart';
-import 'package:mocl_flutter/features/database/domain/entities/main_item_data.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_parser.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 
@@ -22,10 +19,6 @@ const String _boardLinkRemoteBase =
     'https://raw.githubusercontent.com/b1ink301/mocl_flutter/develop/assets';
 
 abstract class MainDataSource() {
-  Future<List<MainItem>> get(SiteType siteType);
-
-  Future<List<int>> set(SiteType siteType, List<MainItem> list);
-
   /// 사이트에서 실시간으로 전체 게시판 목록을 파싱해 온다(main()).
   /// main() 미구현 사이트는 UnimplementedError 를 던진다.
   Future<List<MainItem>> getAllLive(SiteType siteType);
@@ -35,37 +28,12 @@ abstract class MainDataSource() {
   Future<List<MainItemModel>> getAllFromRemote(SiteType siteType);
 
   Future<List<MainItemModel>> getAllFromJson(SiteType siteType);
-
-  Future<void> deleteAll(SiteType siteType);
-
-  Future<bool> hasItem(SiteType siteType, MainItem item);
 }
 
 class const MainDataSourceImpl({
-  required final LocalDatabase localDatabase,
   required final BaseApi apiClient,
   required final BaseParser parser,
 }) implements MainDataSource {
-  @override
-  Future<List<MainItem>> get(SiteType siteType) async => switch (siteType) {
-    SiteType.reddit || SiteType.naverCafe => (await apiClient.main(
-      parser,
-    )).getOrElse((Failure f) => throw f),
-    _ => (await localDatabase.getMainData(
-      siteType,
-    )).map((item) => item.toMainItemModel().toEntity(siteType)).toList(),
-  };
-
-  @override
-  Future<List<int>> set(SiteType siteType, List<MainItem> list) async {
-    final entities = list.map((item) {
-      final MainItemModel data = MainItemMapper.fromEntityToModel(item);
-      return MainItemMapper.fromModelToEntity(data);
-    }).toList();
-    await localDatabase.deleteAll(siteType);
-    return localDatabase.setMainData(siteType, entities);
-  }
-
   @override
   Future<List<MainItem>> getAllLive(SiteType siteType) async =>
       (await apiClient.main(parser)).getOrElse((Failure f) => throw f);
@@ -100,16 +68,5 @@ class const MainDataSourceImpl({
       MoclLogger.log("getAllFromJson - ${e.toString()}");
       return const [];
     }
-  }
-
-  @override
-  Future<void> deleteAll(SiteType siteType) =>
-      localDatabase.deleteAll(siteType);
-
-  @override
-  Future<bool> hasItem(SiteType siteType, MainItem item) {
-    final data = MainItemMapper.fromEntityToModel(item);
-    final entity = MainItemMapper.fromModelToEntity(data);
-    return localDatabase.hasItem(siteType, entity);
   }
 }

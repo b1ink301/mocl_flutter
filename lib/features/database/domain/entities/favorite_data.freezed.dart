@@ -16,7 +16,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$FavoriteData {
 
- SiteType get siteType; String get board; String get text; String get url; int get type; String get icon; int get savedAt;
+ SiteType get siteType; String get board; String get text; String get url; int get type; String get icon; int get savedAt; String get group; int get orderBy;
 /// Create a copy of FavoriteData
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -29,16 +29,21 @@ $FavoriteDataCopyWith<FavoriteData> get copyWith => _$FavoriteDataCopyWithImpl<F
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is FavoriteData&&(identical(other.siteType, siteType) || other.siteType == siteType)&&(identical(other.board, board) || other.board == board)&&(identical(other.text, text) || other.text == text)&&(identical(other.url, url) || other.url == url)&&(identical(other.type, type) || other.type == type)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.savedAt, savedAt) || other.savedAt == savedAt));
+  final _this = this as FavoriteData;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is FavoriteData&&(identical(other.siteType, _this.siteType) || other.siteType == _this.siteType)&&(identical(other.board, _this.board) || other.board == _this.board)&&(identical(other.text, _this.text) || other.text == _this.text)&&(identical(other.url, _this.url) || other.url == _this.url)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.icon, _this.icon) || other.icon == _this.icon)&&(identical(other.savedAt, _this.savedAt) || other.savedAt == _this.savedAt)&&(identical(other.group, _this.group) || other.group == _this.group)&&(identical(other.orderBy, _this.orderBy) || other.orderBy == _this.orderBy));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,siteType,board,text,url,type,icon,savedAt);
+int get hashCode {
+  final _this = this as FavoriteData;
+  return Object.hash(runtimeType,_this.siteType,_this.board,_this.text,_this.url,_this.type,_this.icon,_this.savedAt,_this.group,_this.orderBy);
+}
 
 @override
 String toString() {
-  return 'FavoriteData(siteType: $siteType, board: $board, text: $text, url: $url, type: $type, icon: $icon, savedAt: $savedAt)';
+  final _this = this as FavoriteData;
+  return 'FavoriteData(siteType: ${_this.siteType}, board: ${_this.board}, text: ${_this.text}, url: ${_this.url}, type: ${_this.type}, icon: ${_this.icon}, savedAt: ${_this.savedAt}, group: ${_this.group}, orderBy: ${_this.orderBy})';
 }
 
 
@@ -49,7 +54,7 @@ abstract mixin class $FavoriteDataCopyWith<$Res>  {
   factory $FavoriteDataCopyWith(FavoriteData value, $Res Function(FavoriteData) _then) = _$FavoriteDataCopyWithImpl;
 @useResult
 $Res call({
- SiteType siteType, String board, String text, String url, int type, String icon, int savedAt
+ SiteType siteType, String board, String text, String url, int type, String icon, int savedAt, String group, int orderBy
 });
 
 
@@ -66,7 +71,7 @@ class _$FavoriteDataCopyWithImpl<$Res>
 
 /// Create a copy of FavoriteData
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? siteType = null,Object? board = null,Object? text = null,Object? url = null,Object? type = null,Object? icon = null,Object? savedAt = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? siteType = null,Object? board = null,Object? text = null,Object? url = null,Object? type = null,Object? icon = null,Object? savedAt = null,Object? group = null,Object? orderBy = null,}) {
   return _then(FavoriteData(
 siteType: null == siteType ? _self.siteType : siteType // ignore: cast_nullable_to_non_nullable
 as SiteType,board: null == board ? _self.board : board // ignore: cast_nullable_to_non_nullable
@@ -75,6 +80,8 @@ as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nul
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as int,icon: null == icon ? _self.icon : icon // ignore: cast_nullable_to_non_nullable
 as String,savedAt: null == savedAt ? _self.savedAt : savedAt // ignore: cast_nullable_to_non_nullable
+as int,group: null == group ? _self.group : group // ignore: cast_nullable_to_non_nullable
+as String,orderBy: null == orderBy ? _self.orderBy : orderBy // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }
@@ -160,10 +167,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( SiteType siteType,  String board,  String text,  String url,  int type,  String icon,  int savedAt)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( SiteType siteType,  String board,  String text,  String url,  int type,  String icon,  int savedAt,  String group,  int orderBy)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _FavoriteData() when $default != null:
-return $default(_that.siteType,_that.board,_that.text,_that.url,_that.type,_that.icon,_that.savedAt);case _:
+return $default(_that.siteType,_that.board,_that.text,_that.url,_that.type,_that.icon,_that.savedAt,_that.group,_that.orderBy);case _:
   return orElse();
 
 }
@@ -181,10 +188,10 @@ return $default(_that.siteType,_that.board,_that.text,_that.url,_that.type,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( SiteType siteType,  String board,  String text,  String url,  int type,  String icon,  int savedAt)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( SiteType siteType,  String board,  String text,  String url,  int type,  String icon,  int savedAt,  String group,  int orderBy)  $default,) {final _that = this;
 switch (_that) {
 case _FavoriteData():
-return $default(_that.siteType,_that.board,_that.text,_that.url,_that.type,_that.icon,_that.savedAt);case _:
+return $default(_that.siteType,_that.board,_that.text,_that.url,_that.type,_that.icon,_that.savedAt,_that.group,_that.orderBy);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -201,10 +208,10 @@ return $default(_that.siteType,_that.board,_that.text,_that.url,_that.type,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( SiteType siteType,  String board,  String text,  String url,  int type,  String icon,  int savedAt)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( SiteType siteType,  String board,  String text,  String url,  int type,  String icon,  int savedAt,  String group,  int orderBy)?  $default,) {final _that = this;
 switch (_that) {
 case _FavoriteData() when $default != null:
-return $default(_that.siteType,_that.board,_that.text,_that.url,_that.type,_that.icon,_that.savedAt);case _:
+return $default(_that.siteType,_that.board,_that.text,_that.url,_that.type,_that.icon,_that.savedAt,_that.group,_that.orderBy);case _:
   return null;
 
 }
@@ -216,7 +223,7 @@ return $default(_that.siteType,_that.board,_that.text,_that.url,_that.type,_that
 @JsonSerializable()
 
 class _FavoriteData extends FavoriteData {
-  const _FavoriteData({required this.siteType, required this.board, required this.text, required this.url, required this.type, required this.icon, required this.savedAt}): super._();
+  const _FavoriteData({required this.siteType, required this.board, required this.text, required this.url, required this.type, required this.icon, required this.savedAt, this.group = '', this.orderBy = 0}): super._();
   factory _FavoriteData.fromJson(Map<String, dynamic> json) => _$FavoriteDataFromJson(json);
 
 @override final  SiteType siteType;
@@ -226,6 +233,8 @@ class _FavoriteData extends FavoriteData {
 @override final  int type;
 @override final  String icon;
 @override final  int savedAt;
+@override@JsonKey() final  String group;
+@override@JsonKey() final  int orderBy;
 
 /// Create a copy of FavoriteData
 /// with the given fields replaced by the non-null parameter values.
@@ -240,16 +249,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _FavoriteData&&(identical(other.siteType, siteType) || other.siteType == siteType)&&(identical(other.board, board) || other.board == board)&&(identical(other.text, text) || other.text == text)&&(identical(other.url, url) || other.url == url)&&(identical(other.type, type) || other.type == type)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.savedAt, savedAt) || other.savedAt == savedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _FavoriteData&&(identical(other.siteType, siteType) || other.siteType == siteType)&&(identical(other.board, board) || other.board == board)&&(identical(other.text, text) || other.text == text)&&(identical(other.url, url) || other.url == url)&&(identical(other.type, type) || other.type == type)&&(identical(other.icon, icon) || other.icon == icon)&&(identical(other.savedAt, savedAt) || other.savedAt == savedAt)&&(identical(other.group, group) || other.group == group)&&(identical(other.orderBy, orderBy) || other.orderBy == orderBy));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,siteType,board,text,url,type,icon,savedAt);
+int get hashCode {
+    return Object.hash(runtimeType,siteType,board,text,url,type,icon,savedAt,group,orderBy);
+}
 
 @override
 String toString() {
-  return 'FavoriteData(siteType: $siteType, board: $board, text: $text, url: $url, type: $type, icon: $icon, savedAt: $savedAt)';
+    return 'FavoriteData(siteType: $siteType, board: $board, text: $text, url: $url, type: $type, icon: $icon, savedAt: $savedAt, group: $group, orderBy: $orderBy)';
 }
 
 
@@ -260,7 +271,7 @@ abstract mixin class _$FavoriteDataCopyWith<$Res> implements $FavoriteDataCopyWi
   factory _$FavoriteDataCopyWith(_FavoriteData value, $Res Function(_FavoriteData) _then) = __$FavoriteDataCopyWithImpl;
 @override @useResult
 $Res call({
- SiteType siteType, String board, String text, String url, int type, String icon, int savedAt
+ SiteType siteType, String board, String text, String url, int type, String icon, int savedAt, String group, int orderBy
 });
 
 
@@ -277,7 +288,7 @@ class __$FavoriteDataCopyWithImpl<$Res>
 
 /// Create a copy of FavoriteData
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? siteType = null,Object? board = null,Object? text = null,Object? url = null,Object? type = null,Object? icon = null,Object? savedAt = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? siteType = null,Object? board = null,Object? text = null,Object? url = null,Object? type = null,Object? icon = null,Object? savedAt = null,Object? group = null,Object? orderBy = null,}) {
   return _then(_FavoriteData(
 siteType: null == siteType ? _self.siteType : siteType // ignore: cast_nullable_to_non_nullable
 as SiteType,board: null == board ? _self.board : board // ignore: cast_nullable_to_non_nullable
@@ -286,6 +297,8 @@ as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nul
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
 as int,icon: null == icon ? _self.icon : icon // ignore: cast_nullable_to_non_nullable
 as String,savedAt: null == savedAt ? _self.savedAt : savedAt // ignore: cast_nullable_to_non_nullable
+as int,group: null == group ? _self.group : group // ignore: cast_nullable_to_non_nullable
+as String,orderBy: null == orderBy ? _self.orderBy : orderBy // ignore: cast_nullable_to_non_nullable
 as int,
   ));
 }

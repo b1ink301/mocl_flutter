@@ -29,16 +29,21 @@ $BookmarkDataCopyWith<BookmarkData> get copyWith => _$BookmarkDataCopyWithImpl<B
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is BookmarkData&&(identical(other.siteType, siteType) || other.siteType == siteType)&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.url, url) || other.url == url)&&(identical(other.board, board) || other.board == board)&&(identical(other.boardTitle, boardTitle) || other.boardTitle == boardTitle)&&(identical(other.info, info) || other.info == info)&&(identical(other.time, time) || other.time == time)&&(identical(other.reply, reply) || other.reply == reply)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.nickName, nickName) || other.nickName == nickName)&&(identical(other.nickImage, nickImage) || other.nickImage == nickImage)&&(identical(other.savedAt, savedAt) || other.savedAt == savedAt));
+  final _this = this as BookmarkData;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is BookmarkData&&(identical(other.siteType, _this.siteType) || other.siteType == _this.siteType)&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.url, _this.url) || other.url == _this.url)&&(identical(other.board, _this.board) || other.board == _this.board)&&(identical(other.boardTitle, _this.boardTitle) || other.boardTitle == _this.boardTitle)&&(identical(other.info, _this.info) || other.info == _this.info)&&(identical(other.time, _this.time) || other.time == _this.time)&&(identical(other.reply, _this.reply) || other.reply == _this.reply)&&(identical(other.userId, _this.userId) || other.userId == _this.userId)&&(identical(other.nickName, _this.nickName) || other.nickName == _this.nickName)&&(identical(other.nickImage, _this.nickImage) || other.nickImage == _this.nickImage)&&(identical(other.savedAt, _this.savedAt) || other.savedAt == _this.savedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,siteType,id,title,url,board,boardTitle,info,time,reply,userId,nickName,nickImage,savedAt);
+int get hashCode {
+  final _this = this as BookmarkData;
+  return Object.hash(runtimeType,_this.siteType,_this.id,_this.title,_this.url,_this.board,_this.boardTitle,_this.info,_this.time,_this.reply,_this.userId,_this.nickName,_this.nickImage,_this.savedAt);
+}
 
 @override
 String toString() {
-  return 'BookmarkData(siteType: $siteType, id: $id, title: $title, url: $url, board: $board, boardTitle: $boardTitle, info: $info, time: $time, reply: $reply, userId: $userId, nickName: $nickName, nickImage: $nickImage, savedAt: $savedAt)';
+  final _this = this as BookmarkData;
+  return 'BookmarkData(siteType: ${_this.siteType}, id: ${_this.id}, title: ${_this.title}, url: ${_this.url}, board: ${_this.board}, boardTitle: ${_this.boardTitle}, info: ${_this.info}, time: ${_this.time}, reply: ${_this.reply}, userId: ${_this.userId}, nickName: ${_this.nickName}, nickImage: ${_this.nickImage}, savedAt: ${_this.savedAt})';
 }
 
 
@@ -252,16 +257,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _BookmarkData&&(identical(other.siteType, siteType) || other.siteType == siteType)&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.url, url) || other.url == url)&&(identical(other.board, board) || other.board == board)&&(identical(other.boardTitle, boardTitle) || other.boardTitle == boardTitle)&&(identical(other.info, info) || other.info == info)&&(identical(other.time, time) || other.time == time)&&(identical(other.reply, reply) || other.reply == reply)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.nickName, nickName) || other.nickName == nickName)&&(identical(other.nickImage, nickImage) || other.nickImage == nickImage)&&(identical(other.savedAt, savedAt) || other.savedAt == savedAt));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _BookmarkData&&(identical(other.siteType, siteType) || other.siteType == siteType)&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.url, url) || other.url == url)&&(identical(other.board, board) || other.board == board)&&(identical(other.boardTitle, boardTitle) || other.boardTitle == boardTitle)&&(identical(other.info, info) || other.info == info)&&(identical(other.time, time) || other.time == time)&&(identical(other.reply, reply) || other.reply == reply)&&(identical(other.userId, userId) || other.userId == userId)&&(identical(other.nickName, nickName) || other.nickName == nickName)&&(identical(other.nickImage, nickImage) || other.nickImage == nickImage)&&(identical(other.savedAt, savedAt) || other.savedAt == savedAt));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,siteType,id,title,url,board,boardTitle,info,time,reply,userId,nickName,nickImage,savedAt);
+int get hashCode {
+    return Object.hash(runtimeType,siteType,id,title,url,board,boardTitle,info,time,reply,userId,nickName,nickImage,savedAt);
+}
 
 @override
 String toString() {
-  return 'BookmarkData(siteType: $siteType, id: $id, title: $title, url: $url, board: $board, boardTitle: $boardTitle, info: $info, time: $time, reply: $reply, userId: $userId, nickName: $nickName, nickImage: $nickImage, savedAt: $savedAt)';
+    return 'BookmarkData(siteType: $siteType, id: $id, title: $title, url: $url, board: $board, boardTitle: $boardTitle, info: $info, time: $time, reply: $reply, userId: $userId, nickName: $nickName, nickImage: $nickImage, savedAt: $savedAt)';
 }
 
 

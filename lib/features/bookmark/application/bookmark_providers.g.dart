@@ -85,7 +85,7 @@ final class BookmarksNotifierProvider
   BookmarksNotifier create() => BookmarksNotifier();
 }
 
-String _$bookmarksNotifierHash() => r'c43fd10b78f6d390df1f174fe2f45859b76be846';
+String _$bookmarksNotifierHash() => r'217f248ab1a10c6c8111fce857e09b7fafdbd206';
 
 /// 스크랩 목록(최신순). 추가/삭제 시 invalidate 되어 화면이 갱신된다.
 
@@ -153,7 +153,7 @@ final class BookmarkButtonProvider
   }
 }
 
-String _$bookmarkButtonHash() => r'37071775b85ad07d37183b40b39930565a52bb52';
+String _$bookmarkButtonHash() => r'4fdd875962a6b0cbf0208531f2972432ce53288d';
 
 /// 특정 게시물의 북마크 여부 + 토글. 상세 화면 버튼이 사용한다.
 

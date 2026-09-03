@@ -2,7 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:mocl_flutter/features/database/application/datasource_provider.dart';
 import 'package:mocl_flutter/features/google_drive/data/datasources/google_drive_remote_data_source.dart';
-import 'package:mocl_flutter/features/main_page/application/main_providers.dart';
+import 'package:mocl_flutter/features/favorite/application/favorite_providers.dart';
 import 'package:mocl_flutter/features/google_drive/data/repositories/google_drive_repository_impl.dart';
 import 'package:mocl_flutter/features/google_drive/domain/repositories/google_drive_repository.dart';
 import 'package:mocl_flutter/features/google_drive/domain/usecases/backup_database_usecase.dart';
@@ -80,7 +80,8 @@ class GoogleDriveSyncNotifier() extends _$GoogleDriveSyncNotifier {
       // 3) 교체 성공 시 DB 를 읽는 화면을 invalidate 해 즉시 새 데이터로 갱신한다.
       //    (재시작 불필요. 상세 페이지의 읽음 표시 등은 진입 시 on-demand 로 다시 읽힌다.)
       if (success) {
-        ref.invalidate(mainItemsProvider);
+        ref.invalidate(favoriteGroupsProvider);
+        ref.invalidate(favoritesProvider);
       }
     }
 

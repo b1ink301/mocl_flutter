@@ -26,16 +26,21 @@ $DetailsCopyWith<Details> get copyWith => _$DetailsCopyWithImpl<Details>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Details&&(identical(other.title, title) || other.title == title)&&(identical(other.time, time) || other.time == time)&&(identical(other.viewCount, viewCount) || other.viewCount == viewCount)&&(identical(other.likeCount, likeCount) || other.likeCount == likeCount)&&(identical(other.bodyHtml, bodyHtml) || other.bodyHtml == bodyHtml)&&(identical(other.info, info) || other.info == info)&&(identical(other.userInfo, userInfo) || other.userInfo == userInfo)&&const DeepCollectionEquality().equals(other.comments, comments)&&(identical(other.recents, recents) || other.recents == recents)&&(identical(other.csrf, csrf) || other.csrf == csrf)&&const DeepCollectionEquality().equals(other.extraData, extraData));
+  final _this = this as Details;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Details&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.time, _this.time) || other.time == _this.time)&&(identical(other.viewCount, _this.viewCount) || other.viewCount == _this.viewCount)&&(identical(other.likeCount, _this.likeCount) || other.likeCount == _this.likeCount)&&(identical(other.bodyHtml, _this.bodyHtml) || other.bodyHtml == _this.bodyHtml)&&(identical(other.info, _this.info) || other.info == _this.info)&&(identical(other.userInfo, _this.userInfo) || other.userInfo == _this.userInfo)&&const DeepCollectionEquality().equals(other.comments, _this.comments)&&(identical(other.recents, _this.recents) || other.recents == _this.recents)&&(identical(other.csrf, _this.csrf) || other.csrf == _this.csrf)&&const DeepCollectionEquality().equals(other.extraData, _this.extraData));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,time,viewCount,likeCount,bodyHtml,info,userInfo,const DeepCollectionEquality().hash(comments),recents,csrf,const DeepCollectionEquality().hash(extraData));
+int get hashCode {
+  final _this = this as Details;
+  return Object.hash(runtimeType,_this.title,_this.time,_this.viewCount,_this.likeCount,_this.bodyHtml,_this.info,_this.userInfo,const DeepCollectionEquality().hash(_this.comments),_this.recents,_this.csrf,const DeepCollectionEquality().hash(_this.extraData));
+}
 
 @override
 String toString() {
-  return 'Details(title: $title, time: $time, viewCount: $viewCount, likeCount: $likeCount, bodyHtml: $bodyHtml, info: $info, userInfo: $userInfo, comments: $comments, recents: $recents, csrf: $csrf, extraData: $extraData)';
+  final _this = this as Details;
+  return 'Details(title: ${_this.title}, time: ${_this.time}, viewCount: ${_this.viewCount}, likeCount: ${_this.likeCount}, bodyHtml: ${_this.bodyHtml}, info: ${_this.info}, userInfo: ${_this.userInfo}, comments: ${_this.comments}, recents: ${_this.recents}, csrf: ${_this.csrf}, extraData: ${_this.extraData})';
 }
 
 
@@ -277,16 +282,18 @@ _$DetailsCopyWith<_Details> get copyWith => __$DetailsCopyWithImpl<_Details>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Details&&(identical(other.title, title) || other.title == title)&&(identical(other.time, time) || other.time == time)&&(identical(other.viewCount, viewCount) || other.viewCount == viewCount)&&(identical(other.likeCount, likeCount) || other.likeCount == likeCount)&&(identical(other.bodyHtml, bodyHtml) || other.bodyHtml == bodyHtml)&&(identical(other.info, info) || other.info == info)&&(identical(other.userInfo, userInfo) || other.userInfo == userInfo)&&const DeepCollectionEquality().equals(other._comments, _comments)&&(identical(other.recents, recents) || other.recents == recents)&&(identical(other.csrf, csrf) || other.csrf == csrf)&&const DeepCollectionEquality().equals(other._extraData, _extraData));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Details&&(identical(other.title, title) || other.title == title)&&(identical(other.time, time) || other.time == time)&&(identical(other.viewCount, viewCount) || other.viewCount == viewCount)&&(identical(other.likeCount, likeCount) || other.likeCount == likeCount)&&(identical(other.bodyHtml, bodyHtml) || other.bodyHtml == bodyHtml)&&(identical(other.info, info) || other.info == info)&&(identical(other.userInfo, userInfo) || other.userInfo == userInfo)&&const DeepCollectionEquality().equals(other.comments, _comments)&&(identical(other.recents, recents) || other.recents == recents)&&(identical(other.csrf, csrf) || other.csrf == csrf)&&const DeepCollectionEquality().equals(other.extraData, _extraData));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,time,viewCount,likeCount,bodyHtml,info,userInfo,const DeepCollectionEquality().hash(_comments),recents,csrf,const DeepCollectionEquality().hash(_extraData));
+int get hashCode {
+    return Object.hash(runtimeType,title,time,viewCount,likeCount,bodyHtml,info,userInfo,const DeepCollectionEquality().hash(_comments),recents,csrf,const DeepCollectionEquality().hash(_extraData));
+}
 
 @override
 String toString() {
-  return 'Details(title: $title, time: $time, viewCount: $viewCount, likeCount: $likeCount, bodyHtml: $bodyHtml, info: $info, userInfo: $userInfo, comments: $comments, recents: $recents, csrf: $csrf, extraData: $extraData)';
+    return 'Details(title: $title, time: $time, viewCount: $viewCount, likeCount: $likeCount, bodyHtml: $bodyHtml, info: $info, userInfo: $userInfo, comments: $comments, recents: $recents, csrf: $csrf, extraData: $extraData)';
 }
 
 

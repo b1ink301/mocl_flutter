@@ -26,16 +26,21 @@ $PageStateCopyWith<PageState> get copyWith => _$PageStateCopyWithImpl<PageState>
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is PageState&&const DeepCollectionEquality().equals(other.items, items)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastId, lastId) || other.lastId == lastId)&&(identical(other.hasReachedMax, hasReachedMax) || other.hasReachedMax == hasReachedMax)&&(identical(other.error, error) || other.error == error));
+  final _this = this as PageState;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is PageState&&const DeepCollectionEquality().equals(other.items, _this.items)&&(identical(other.isLoading, _this.isLoading) || other.isLoading == _this.isLoading)&&(identical(other.currentPage, _this.currentPage) || other.currentPage == _this.currentPage)&&(identical(other.lastId, _this.lastId) || other.lastId == _this.lastId)&&(identical(other.hasReachedMax, _this.hasReachedMax) || other.hasReachedMax == _this.hasReachedMax)&&(identical(other.error, _this.error) || other.error == _this.error));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(items),isLoading,currentPage,lastId,hasReachedMax,error);
+int get hashCode {
+  final _this = this as PageState;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.items),_this.isLoading,_this.currentPage,_this.lastId,_this.hasReachedMax,_this.error);
+}
 
 @override
 String toString() {
-  return 'PageState(items: $items, isLoading: $isLoading, currentPage: $currentPage, lastId: $lastId, hasReachedMax: $hasReachedMax, error: $error)';
+  final _this = this as PageState;
+  return 'PageState(items: ${_this.items}, isLoading: ${_this.isLoading}, currentPage: ${_this.currentPage}, lastId: ${_this.lastId}, hasReachedMax: ${_this.hasReachedMax}, error: ${_this.error})';
 }
 
 
@@ -247,16 +252,18 @@ _$PageStateCopyWith<_PageState> get copyWith => __$PageStateCopyWithImpl<_PageSt
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _PageState&&const DeepCollectionEquality().equals(other._items, _items)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastId, lastId) || other.lastId == lastId)&&(identical(other.hasReachedMax, hasReachedMax) || other.hasReachedMax == hasReachedMax)&&(identical(other.error, error) || other.error == error));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _PageState&&const DeepCollectionEquality().equals(other.items, _items)&&(identical(other.isLoading, isLoading) || other.isLoading == isLoading)&&(identical(other.currentPage, currentPage) || other.currentPage == currentPage)&&(identical(other.lastId, lastId) || other.lastId == lastId)&&(identical(other.hasReachedMax, hasReachedMax) || other.hasReachedMax == hasReachedMax)&&(identical(other.error, error) || other.error == error));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_items),isLoading,currentPage,lastId,hasReachedMax,error);
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_items),isLoading,currentPage,lastId,hasReachedMax,error);
+}
 
 @override
 String toString() {
-  return 'PageState(items: $items, isLoading: $isLoading, currentPage: $currentPage, lastId: $lastId, hasReachedMax: $hasReachedMax, error: $error)';
+    return 'PageState(items: $items, isLoading: $isLoading, currentPage: $currentPage, lastId: $lastId, hasReachedMax: $hasReachedMax, error: $error)';
 }
 
 

@@ -15,13 +15,16 @@ import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/features/bookmark/application/bookmark_providers.dart';
 import 'package:mocl_flutter/features/bookmark/domain/repositories/bookmark_repository.dart';
 import 'package:mocl_flutter/features/database/domain/entities/bookmark_data.dart';
+import 'package:mocl_flutter/features/database/domain/entities/favorite_data.dart';
+import 'package:mocl_flutter/features/database/domain/entities/favorite_group.dart';
+import 'package:mocl_flutter/features/favorite/application/favorite_providers.dart';
+import 'package:mocl_flutter/features/favorite/domain/repositories/favorite_repository.dart';
 import 'package:mocl_flutter/features/detail_page/application/detail_providers.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/mocl_detail_page.dart';
 import 'package:mocl_flutter/features/html_parser/application/datasource_provider.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_parser.dart';
 import 'package:mocl_flutter/features/list_page/application/list_providers.dart';
 import 'package:mocl_flutter/features/list_page/presentation/mocl_list_view.dart';
-import 'package:mocl_flutter/features/main_page/application/main_providers.dart';
 import 'package:mocl_flutter/features/main_page/presentation/mocl_main_view.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 
@@ -112,10 +115,11 @@ Details fakeDetails({int commentCount = 12}) => Details(
 // 화면별 pump 헬퍼
 // ─────────────────────────────────────────────────────────────────────────────
 
-/// 메인 화면(`MainView` = 앱바 + 게시판 목록).
+/// 메인 화면(`MainView` = 앱바 + 즐겨찾기 그룹별 게시판 목록).
 ///
 /// `MainPage` 는 Drawer(앱 버전 등 설정 provider 의존)를 포함하므로, 리빌드
 /// 계측에는 스크롤 본체인 `MainView` 만 띄운다.
+/// 메인은 DB(즐겨찾기)를 그대로 구독하므로, 데이터 경계인 저장소만 교체한다.
 Future<void> pumpMainScreen(
   WidgetTester tester, {
   List<MainItem>? items,
@@ -126,8 +130,8 @@ Future<void> pumpMainScreen(
     ProviderScope(
       overrides: <Override>[
         ...commonOverrides(siteType: siteType),
-        mainItemsProvider.overrideWith(
-          () => _FakeMainItems(items ?? fakeMainItems()),
+        favoriteRepositoryProvider.overrideWithValue(
+          _FakeFavoriteRepository(items ?? fakeMainItems()),
         ),
       ],
       child: _app(const Scaffold(body: MainView())),
@@ -227,21 +231,42 @@ class _FakeSiteType(final SiteType _siteType) extends CurrentSiteTypeNotifier {
   void changeSiteType(SiteType siteType) => state = siteType;
 }
 
-class _FakeMainItems(final List<MainItem> _items) extends MainItemsNotifier {
-  @override
-  Future<List<MainItem>> build() async => _items;
+/// 메인 화면이 읽는 즐겨찾기 저장소를 메모리로 대체한다.
+/// 그룹은 기본 그룹 하나만 두고, 주어진 게시판을 전부 거기에 담는다.
+class _FakeFavoriteRepository(final List<MainItem> _items)
+    implements FavoriteRepository {
+  static const String _groupId = 'community';
 
-  /// 실제 구현은 DB 저장(setMainList)까지 하므로 낙관적 갱신만 남긴다.
+  List<FavoriteData> get _favorites => <FavoriteData>[
+    for (int i = 0; i < _items.length; i++)
+      FavoriteData.fromMainItem(_items[i], i, group: _groupId, orderBy: i),
+  ];
+
   @override
-  Future<void> reorder(int oldIndex, int newIndex) async {
-    final List<MainItem>? current = state.asData?.value;
-    if (current == null || oldIndex == newIndex) return;
-    final List<MainItem> list = List<MainItem>.of(current);
-    list.insert(newIndex, list.removeAt(oldIndex));
-    state = AsyncData<List<MainItem>>(<MainItem>[
-      for (int i = 0; i < list.length; i++) list[i].copyWith(orderBy: i),
-    ]);
-  }
+  Future<List<FavoriteData>> getAll() async => _favorites;
+
+  @override
+  Future<List<FavoriteGroup>> getGroups() async => <FavoriteGroup>[
+    const FavoriteGroup(id: _groupId, name: '커뮤니티', orderBy: 0),
+  ];
+
+  @override
+  Future<void> add(FavoriteData data) async {}
+
+  @override
+  Future<void> addAll(List<FavoriteData> items) async {}
+
+  @override
+  Future<void> remove(SiteType siteType, String board) async {}
+
+  @override
+  Future<bool> isFavorite(SiteType siteType, String board) async => true;
+
+  @override
+  Future<void> updateAll(List<FavoriteData> items) async {}
+
+  @override
+  Future<void> saveGroups(List<FavoriteGroup> groups) async {}
 }
 
 class _FakeDetails(final Details _details) extends DetailsNotifier {

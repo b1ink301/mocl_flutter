@@ -25,23 +25,29 @@ $ListItemCopyWith<ListItem> get copyWith => _$ListItemCopyWithImpl<ListItem>(thi
 
 @override
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
+  final _this = this as ListItem;
   properties
     ..add(DiagnosticsProperty('type', 'ListItem'))
-    ..add(DiagnosticsProperty('id', id))..add(DiagnosticsProperty('title', title))..add(DiagnosticsProperty('reply', reply))..add(DiagnosticsProperty('category', category))..add(DiagnosticsProperty('time', time))..add(DiagnosticsProperty('url', url))..add(DiagnosticsProperty('info', info))..add(DiagnosticsProperty('board', board))..add(DiagnosticsProperty('boardTitle', boardTitle))..add(DiagnosticsProperty('like', like))..add(DiagnosticsProperty('hit', hit))..add(DiagnosticsProperty('userInfo', userInfo))..add(DiagnosticsProperty('hasImage', hasImage))..add(DiagnosticsProperty('isRead', isRead));
+    ..add(DiagnosticsProperty('id', _this.id))..add(DiagnosticsProperty('title', _this.title))..add(DiagnosticsProperty('reply', _this.reply))..add(DiagnosticsProperty('category', _this.category))..add(DiagnosticsProperty('time', _this.time))..add(DiagnosticsProperty('url', _this.url))..add(DiagnosticsProperty('info', _this.info))..add(DiagnosticsProperty('board', _this.board))..add(DiagnosticsProperty('boardTitle', _this.boardTitle))..add(DiagnosticsProperty('like', _this.like))..add(DiagnosticsProperty('hit', _this.hit))..add(DiagnosticsProperty('userInfo', _this.userInfo))..add(DiagnosticsProperty('hasImage', _this.hasImage))..add(DiagnosticsProperty('isRead', _this.isRead));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ListItem&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.reply, reply) || other.reply == reply)&&(identical(other.category, category) || other.category == category)&&(identical(other.time, time) || other.time == time)&&(identical(other.url, url) || other.url == url)&&(identical(other.info, info) || other.info == info)&&(identical(other.board, board) || other.board == board)&&(identical(other.boardTitle, boardTitle) || other.boardTitle == boardTitle)&&(identical(other.like, like) || other.like == like)&&(identical(other.hit, hit) || other.hit == hit)&&(identical(other.userInfo, userInfo) || other.userInfo == userInfo)&&(identical(other.hasImage, hasImage) || other.hasImage == hasImage)&&(identical(other.isRead, isRead) || other.isRead == isRead));
+  final _this = this as ListItem;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ListItem&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.reply, _this.reply) || other.reply == _this.reply)&&(identical(other.category, _this.category) || other.category == _this.category)&&(identical(other.time, _this.time) || other.time == _this.time)&&(identical(other.url, _this.url) || other.url == _this.url)&&(identical(other.info, _this.info) || other.info == _this.info)&&(identical(other.board, _this.board) || other.board == _this.board)&&(identical(other.boardTitle, _this.boardTitle) || other.boardTitle == _this.boardTitle)&&(identical(other.like, _this.like) || other.like == _this.like)&&(identical(other.hit, _this.hit) || other.hit == _this.hit)&&(identical(other.userInfo, _this.userInfo) || other.userInfo == _this.userInfo)&&(identical(other.hasImage, _this.hasImage) || other.hasImage == _this.hasImage)&&(identical(other.isRead, _this.isRead) || other.isRead == _this.isRead));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,reply,category,time,url,info,board,boardTitle,like,hit,userInfo,hasImage,isRead);
+int get hashCode {
+  final _this = this as ListItem;
+  return Object.hash(runtimeType,_this.id,_this.title,_this.reply,_this.category,_this.time,_this.url,_this.info,_this.board,_this.boardTitle,_this.like,_this.hit,_this.userInfo,_this.hasImage,_this.isRead);
+}
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'ListItem(id: $id, title: $title, reply: $reply, category: $category, time: $time, url: $url, info: $info, board: $board, boardTitle: $boardTitle, like: $like, hit: $hit, userInfo: $userInfo, hasImage: $hasImage, isRead: $isRead)';
+  final _this = this as ListItem;
+  return 'ListItem(id: ${_this.id}, title: ${_this.title}, reply: ${_this.reply}, category: ${_this.category}, time: ${_this.time}, url: ${_this.url}, info: ${_this.info}, board: ${_this.board}, boardTitle: ${_this.boardTitle}, like: ${_this.like}, hit: ${_this.hit}, userInfo: ${_this.userInfo}, hasImage: ${_this.hasImage}, isRead: ${_this.isRead})';
 }
 
 
@@ -262,23 +268,25 @@ _$ListItemCopyWith<_ListItem> get copyWith => __$ListItemCopyWithImpl<_ListItem>
 
 @override
 void debugFillProperties(DiagnosticPropertiesBuilder properties) {
-  properties
+    properties
     ..add(DiagnosticsProperty('type', 'ListItem'))
     ..add(DiagnosticsProperty('id', id))..add(DiagnosticsProperty('title', title))..add(DiagnosticsProperty('reply', reply))..add(DiagnosticsProperty('category', category))..add(DiagnosticsProperty('time', time))..add(DiagnosticsProperty('url', url))..add(DiagnosticsProperty('info', info))..add(DiagnosticsProperty('board', board))..add(DiagnosticsProperty('boardTitle', boardTitle))..add(DiagnosticsProperty('like', like))..add(DiagnosticsProperty('hit', hit))..add(DiagnosticsProperty('userInfo', userInfo))..add(DiagnosticsProperty('hasImage', hasImage))..add(DiagnosticsProperty('isRead', isRead));
 }
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ListItem&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.reply, reply) || other.reply == reply)&&(identical(other.category, category) || other.category == category)&&(identical(other.time, time) || other.time == time)&&(identical(other.url, url) || other.url == url)&&(identical(other.info, info) || other.info == info)&&(identical(other.board, board) || other.board == board)&&(identical(other.boardTitle, boardTitle) || other.boardTitle == boardTitle)&&(identical(other.like, like) || other.like == like)&&(identical(other.hit, hit) || other.hit == hit)&&(identical(other.userInfo, userInfo) || other.userInfo == userInfo)&&(identical(other.hasImage, hasImage) || other.hasImage == hasImage)&&(identical(other.isRead, isRead) || other.isRead == isRead));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ListItem&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.reply, reply) || other.reply == reply)&&(identical(other.category, category) || other.category == category)&&(identical(other.time, time) || other.time == time)&&(identical(other.url, url) || other.url == url)&&(identical(other.info, info) || other.info == info)&&(identical(other.board, board) || other.board == board)&&(identical(other.boardTitle, boardTitle) || other.boardTitle == boardTitle)&&(identical(other.like, like) || other.like == like)&&(identical(other.hit, hit) || other.hit == hit)&&(identical(other.userInfo, userInfo) || other.userInfo == userInfo)&&(identical(other.hasImage, hasImage) || other.hasImage == hasImage)&&(identical(other.isRead, isRead) || other.isRead == isRead));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,id,title,reply,category,time,url,info,board,boardTitle,like,hit,userInfo,hasImage,isRead);
+int get hashCode {
+    return Object.hash(runtimeType,id,title,reply,category,time,url,info,board,boardTitle,like,hit,userInfo,hasImage,isRead);
+}
 
 @override
 String toString({ DiagnosticLevel minLevel = DiagnosticLevel.info }) {
-  return 'ListItem(id: $id, title: $title, reply: $reply, category: $category, time: $time, url: $url, info: $info, board: $board, boardTitle: $boardTitle, like: $like, hit: $hit, userInfo: $userInfo, hasImage: $hasImage, isRead: $isRead)';
+    return 'ListItem(id: $id, title: $title, reply: $reply, category: $category, time: $time, url: $url, info: $info, board: $board, boardTitle: $boardTitle, like: $like, hit: $hit, userInfo: $userInfo, hasImage: $hasImage, isRead: $isRead)';
 }
 
 

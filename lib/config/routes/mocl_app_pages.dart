@@ -5,7 +5,6 @@ import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/presentation/widgets/bottom_sheet_page.dart';
 import 'package:mocl_flutter/features/add_main_dialog/presentation/add_list_modal_sheet_page.dart';
 import 'package:mocl_flutter/features/bookmark/presentation/bookmarks_page.dart';
-import 'package:mocl_flutter/features/favorite/presentation/favorites_page.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/mocl_detail_page.dart';
 import 'package:mocl_flutter/features/mute/presentation/mute_page.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/photo_view_dialog.dart';
@@ -117,13 +116,6 @@ class AppPages._() {
         pageBuilder: (BuildContext context, GoRouterState state) =>
             SwipeablePage(
               builder: (BuildContext context) => const BookmarksPage(),
-            ),
-      ),
-      GoRoute(
-        path: Routes.favorites,
-        pageBuilder: (BuildContext context, GoRouterState state) =>
-            SwipeablePage(
-              builder: (BuildContext context) => const FavoritesPage(),
             ),
       ),
       GoRoute(
