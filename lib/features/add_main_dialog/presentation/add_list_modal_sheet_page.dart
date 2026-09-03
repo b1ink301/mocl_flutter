@@ -26,43 +26,46 @@ class const AddListBottomSheet({super.key})
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
 
-    return DraggableScrollableSheet(
-      initialChildSize: 0.9,
-      minChildSize: 0.3,
-      maxChildSize: 0.9,
-      expand: false,
+    // DraggableScrollableSheet 를 쓰지 않는다. 그 위젯은 레이아웃 도중
+    // (LayoutBuilder) 자기 subtree 를 다시 빌드하는데, 레일로 사이트를 바꿔
+    // 목록이 갈아끼워지는 순간과 겹치면 Scrollable 의 GlobalKey 를 다시
+    // 붙이려다 assert 로 죽었다. 2단(레일+칩) 화면에선 드래그로 높이를 바꿀
+    // 이유도 없으므로 높이를 90% 로 고정한다.
+    return FractionallySizedBox(
+      heightFactor: 0.9,
+      alignment: Alignment.bottomCenter,
       // ListTile 이 ink/배경을 가장 가까운 Material 에 그리므로, 배경색은
       // Container 가 아니라 Material 에 줘서 assertion(배경/잉크 가림)을 막는다.
-      builder: (context, scrollController) => Material(
+      child: Material(
         borderRadius: const BorderRadiusGeometry.vertical(
           top: Radius.circular(24),
         ),
         color: theme.scaffoldBackgroundColor,
-        child: Column(
-          children: [
-            _TopBar(),
-            const PlainDividerWidget(),
-            Expanded(
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  const _SiteRail(),
-                  Expanded(
-                    child: Column(
-                      children: [
-                        const BoardSearchField(),
-                        Expanded(
-                          child: _BoardChips(
-                            scrollController: scrollController,
-                          ),
-                        ),
-                      ],
+        clipBehavior: Clip.antiAlias,
+        child: SafeArea(
+          top: false,
+          child: Column(
+            children: [
+              const _TopBar(),
+              const PlainDividerWidget(),
+              Expanded(
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    const _SiteRail(),
+                    Expanded(
+                      child: Column(
+                        children: [
+                          const BoardSearchField(),
+                          const Expanded(child: _BoardChips()),
+                        ],
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
@@ -203,20 +206,29 @@ class const _RailItem({
 }
 
 /// 오른쪽 게시판 칩 목록. 담긴 칩은 강조색으로 채워진다.
-class const _BoardChips({required final ScrollController scrollController})
-    extends ConsumerWidget
-    with AddState, AddEvent {
+class const _BoardChips() extends ConsumerWidget with AddState, AddEvent {
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final textStyle = theme.textTheme.bodyMedium;
+  Widget build(BuildContext context, WidgetRef ref) =>
+      // 로딩 · 에러 · 목록 중 무엇을 그리든 스크롤 뷰는 트리에 그대로 둔다.
+      // 분기마다 Scrollable 이 사라졌다 다시 생기면 사이트를 바꾸는 순간
+      // 스크롤 위치와 상태가 통째로 갈아끼워진다.
+      SingleChildScrollView(
+        padding: const EdgeInsets.fromLTRB(12, 10, 12, 24),
+        child: _buildContent(context, ref),
+      );
+
+  Widget _buildContent(BuildContext context, WidgetRef ref) {
+    final textStyle = Theme.of(context).textTheme.bodyMedium;
 
     return boardListState(ref).when(
       // 담기/빼기 때마다 목록이 '로딩 중'으로 깜빡이지 않게 직전 목록을 유지한다.
       skipLoadingOnReload: true,
-      loading: () => const LoadingWidget(),
+      loading: () => const Padding(
+        padding: EdgeInsets.symmetric(vertical: 48),
+        child: LoadingWidget(),
+      ),
       error: (error, _) => Padding(
-        padding: const EdgeInsets.all(16.0),
+        padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 4),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -244,37 +256,28 @@ class const _BoardChips({required final ScrollController scrollController})
                   .toList();
 
         if (items.isEmpty) {
-          return Center(
-            child: Padding(
-              padding: const EdgeInsets.all(16),
-              child: Text(
-                query.isEmpty ? '게시판이 없습니다' : "'$query' 검색 결과가 없습니다",
-                textAlign: TextAlign.center,
-                style: textStyle,
-              ),
+          return Padding(
+            padding: const EdgeInsets.symmetric(vertical: 48),
+            child: Text(
+              query.isEmpty ? '게시판이 없습니다' : "'$query' 검색 결과가 없습니다",
+              textAlign: TextAlign.center,
+              style: textStyle,
             ),
           );
         }
 
         final Set<String> added = addedBoardKeys(ref);
-        return SingleChildScrollView(
-          controller: scrollController,
-          padding: const EdgeInsets.fromLTRB(12, 10, 12, 24),
-          child: Wrap(
-            spacing: 8,
-            runSpacing: 8,
-            children: [
-              for (final MainItem board in items)
-                _BoardChip(
-                  key: ValueKey(board.url),
-                  board: board,
-                  isAdded: added.contains(
-                    '${board.siteType.name}_${board.board}',
-                  ),
-                  onTap: () => toggleBoard(ref, board),
-                ),
-            ],
-          ),
+        return Wrap(
+          spacing: 8,
+          runSpacing: 8,
+          children: [
+            for (final MainItem board in items)
+              _BoardChip(
+                board: board,
+                isAdded: added.contains('${board.siteType.name}_${board.board}'),
+                onTap: () => toggleBoard(ref, board),
+              ),
+          ],
         );
       },
     );
@@ -282,7 +285,6 @@ class const _BoardChips({required final ScrollController scrollController})
 }
 
 class const _BoardChip({
-  super.key,
   required final MainItem board,
   required final bool isAdded,
   required final VoidCallback onTap,
