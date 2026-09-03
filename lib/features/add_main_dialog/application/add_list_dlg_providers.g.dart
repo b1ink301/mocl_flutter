@@ -67,6 +67,73 @@ abstract class _$AddListSearchQuery extends $Notifier<String> {
   }
 }
 
+/// 게시판 선택 화면에서 펼쳐 볼 사이트 카테고리.
+/// 기본값은 현재 보고 있는 사이트가 속한 카테고리이며, 사이트를 바꾸면
+/// 그 사이트의 카테고리로 따라 움직인다(선택된 사이트가 항상 보이도록).
+
+@ProviderFor(AddSelectedCategory)
+final addSelectedCategoryProvider = AddSelectedCategoryProvider._();
+
+/// 게시판 선택 화면에서 펼쳐 볼 사이트 카테고리.
+/// 기본값은 현재 보고 있는 사이트가 속한 카테고리이며, 사이트를 바꾸면
+/// 그 사이트의 카테고리로 따라 움직인다(선택된 사이트가 항상 보이도록).
+final class AddSelectedCategoryProvider
+    extends $NotifierProvider<AddSelectedCategory, String> {
+  /// 게시판 선택 화면에서 펼쳐 볼 사이트 카테고리.
+  /// 기본값은 현재 보고 있는 사이트가 속한 카테고리이며, 사이트를 바꾸면
+  /// 그 사이트의 카테고리로 따라 움직인다(선택된 사이트가 항상 보이도록).
+  AddSelectedCategoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'addSelectedCategoryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$addSelectedCategoryHash();
+
+  @$internal
+  @override
+  AddSelectedCategory create() => AddSelectedCategory();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String>(value),
+    );
+  }
+}
+
+String _$addSelectedCategoryHash() =>
+    r'6c35bf42e949ac0ca72ffb02a990767242ededce';
+
+/// 게시판 선택 화면에서 펼쳐 볼 사이트 카테고리.
+/// 기본값은 현재 보고 있는 사이트가 속한 카테고리이며, 사이트를 바꾸면
+/// 그 사이트의 카테고리로 따라 움직인다(선택된 사이트가 항상 보이도록).
+
+abstract class _$AddSelectedCategory extends $Notifier<String> {
+  String build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<String, String>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String, String>,
+              String,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
 /// 선택한 게시판을 담을 즐겨찾기 그룹. 기본값은 그 사이트가 속한 카테고리라,
 /// 사용자가 아무것도 고르지 않아도 정리된 상태로 쌓인다.
 /// (그룹 이름이 바뀌어도 ID 로 찾으므로 유지되고, 그룹이 지워졌으면 첫 그룹)

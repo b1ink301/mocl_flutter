@@ -2,7 +2,9 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
+import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/favorite/application/favorite_providers.dart';
 
 import '../../application/add_list_dlg_providers.dart';
@@ -14,6 +16,15 @@ mixin class AddEvent() {
   /// 담을 그룹을 바꾼다.
   void selectGroup(WidgetRef ref, String groupId) =>
       ref.read(addTargetGroupProvider.notifier).select(groupId);
+
+  /// 펼쳐 볼 사이트 카테고리를 바꾼다(게시판 목록은 사이트를 고를 때 바뀐다).
+  void selectCategory(WidgetRef ref, String categoryId) =>
+      ref.read(addSelectedCategoryProvider.notifier).select(categoryId);
+
+  /// 게시판 목록을 볼 사이트를 바꾼다. 목록 provider 가 사이트를 구독하므로
+  /// 이 한 줄로 목록·기본 그룹이 함께 갱신된다.
+  void selectSite(WidgetRef ref, SiteType siteType) =>
+      ref.read(currentSiteTypeProvider.notifier).changeSiteType(siteType);
 
   /// '적용'. 체크한 게시판을 선택한 그룹의 즐겨찾기로 저장하고 화면을 닫는다.
   /// (메인 화면은 즐겨찾기를 구독하므로 별도 새로고침이 필요 없다)

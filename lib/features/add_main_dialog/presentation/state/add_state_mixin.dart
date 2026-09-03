@@ -1,4 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mocl_flutter/core/application/app_provider.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/database/domain/entities/favorite_group.dart';
 import 'package:mocl_flutter/features/favorite/application/favorite_providers.dart';
 
@@ -22,4 +24,11 @@ mixin class AddState() {
   /// 담을 그룹 후보 목록.
   List<FavoriteGroup> favoriteGroups(WidgetRef ref) =>
       ref.watch(favoriteGroupsProvider).value ?? const [];
+
+  /// 지금 게시판 목록을 보고 있는 사이트.
+  SiteType currentSite(WidgetRef ref) => ref.watch(currentSiteTypeProvider);
+
+  /// 펼쳐 볼 사이트 카테고리 ID.
+  String selectedCategoryId(WidgetRef ref) =>
+      ref.watch(addSelectedCategoryProvider);
 }
