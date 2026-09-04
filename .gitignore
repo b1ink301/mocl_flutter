@@ -33,6 +33,13 @@ migrate_working_dir/
 .pub/
 /build/
 
+# 서명 키 — 절대 커밋 금지. CI(release.yml)가 Secrets 에서 이 경로로 생성하므로
+# 로컬에 남아 있어도 스테이징되지 않도록 막아 둔다. 자세한 내용은 README '보안' 절 참고.
+*.jks
+*.keystore
+key.properties
+android/key.properties
+
 # Symbolication related
 app.*.symbols
 
