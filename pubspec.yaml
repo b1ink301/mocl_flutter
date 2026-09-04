@@ -1,7 +1,7 @@
 name: mocl_flutter
 description: "Mocl Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.4.2+385
+version: 1.5.0+386
 
 environment:
   sdk: ">=3.13.0"
@@ -36,7 +36,7 @@ dependencies:
   # Remote API
   #  internet_connection_checker_plus: ^2.4.2
   # Http Client
-  dio: ^5.11.0
+  dio: ^5.11.1
   http: ^1.6.0
 
   # cookie
@@ -122,9 +122,9 @@ dependencies:
   dartx: ^1.2.0
 
   # riverpod
-  flutter_riverpod: ^3.4.2
-  riverpod_annotation: ^4.0.6
-  hooks_riverpod: ^3.4.2
+  flutter_riverpod: ^3.4.3
+  riverpod_annotation: ^4.0.7
+  hooks_riverpod: ^3.4.3
 
   flutter_hooks: ^0.21.3+1
   # sliver list
@@ -169,11 +169,11 @@ dev_dependencies:
   json_serializable: ^6.14.1
   mockito: ^5.8.1
   freezed: ^4.0.1
-  analyzer: ^13.3.0
+  analyzer: ^14.3.0
 #  test: ^1.25.10
 #  test_api: ^0.7.4
-  riverpod_generator: ^4.0.8
-  riverpod_lint: ^3.1.8
+  riverpod_generator: ^4.0.9
+  riverpod_lint: ^3.1.9
 
   # 앱 아이콘 / 스플래시 생성
   flutter_launcher_icons: ^0.14.4
