@@ -32,6 +32,20 @@ class const SettingsRepositoryImpl({required final SharedPreferences _prefs})
       _prefs.setBool(_extraShowNickImage, showNickImage);
 
   @override
+  bool isShowBoardIcon() => _prefs.getBool(_extraShowBoardIcon) ?? true;
+
+  @override
+  void setShowBoardIcon(bool showBoardIcon) =>
+      _prefs.setBool(_extraShowBoardIcon, showBoardIcon);
+
+  @override
+  bool isShowQuickJump() => _prefs.getBool(_extraShowQuickJump) ?? true;
+
+  @override
+  void setShowQuickJump(bool showQuickJump) =>
+      _prefs.setBool(_extraShowQuickJump, showQuickJump);
+
+  @override
   ThemeMode getThemeMode() {
     final String? name = _prefs.getString(_extraThemeMode);
     return ThemeMode.values.firstWhere(
@@ -47,5 +61,7 @@ class const SettingsRepositoryImpl({required final SharedPreferences _prefs})
   static final String _extraSiteType = 'site_type';
   static final String _extraFontSize = 'font_size';
   static final String _extraShowNickImage = 'show_nick_image';
+  static final String _extraShowBoardIcon = 'show_board_icon';
+  static final String _extraShowQuickJump = 'show_quick_jump';
   static final String _extraThemeMode = 'theme_mode';
 }

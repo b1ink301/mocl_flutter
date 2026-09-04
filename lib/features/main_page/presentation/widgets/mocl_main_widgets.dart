@@ -2,7 +2,8 @@ part of '../mocl_main_view.dart';
 
 /// 메인 화면 본문. 사이트를 가리지 않고, 사용자가 등록한 게시판을
 /// 그룹(카테고리)별로 묶어 한 화면에 펼쳐 보여준다.
-class const _MainBody() extends ConsumerWidget
+class const _MainBody({required final GroupHeaderKeys headerKeys})
+    extends ConsumerWidget
     with MainState, FavoriteState, FavoriteEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -44,6 +45,12 @@ class const _MainBody() extends ConsumerWidget
         ? sections
         : sections.where((section) => section.items.isNotEmpty).toList();
 
+    // 지워진 그룹의 키는 흘려보낸다(리빌드를 부르지 않는 순수 맵이라 안전).
+    final Set<String> alive = {
+      for (final FavoriteSection section in sections) section.group.id,
+    };
+    headerKeys.removeWhere((id, _) => !alive.contains(id));
+
     if (visible.isEmpty) {
       return _buildEmptyView(titleTextStyleState(ref));
     }
@@ -67,6 +74,8 @@ class const _MainBody() extends ConsumerWidget
   ) => [
     SliverToBoxAdapter(
       child: _GroupHeader(
+        // 빠른 이동 레일이 이 키로 그룹의 스크롤 위치를 잰다.
+        key: headerKeys.putIfAbsent(section.group.id, () => GlobalKey()),
         group: section.group,
         count: section.items.length,
         index: index,
@@ -138,6 +147,7 @@ bool _needsSiteLabel(FavoriteSection section, int index) =>
 /// 그룹 이름 줄. 눌러서 접거나 펼칠 수 있고,
 /// 편집 모드에서는 위/아래 이동 · 이름 변경 · 삭제 버튼이 붙는다.
 class const _GroupHeader({
+  super.key,
   required final FavoriteGroup group,
   required final int count,
   required final int index,
@@ -276,9 +286,14 @@ class const _BoardTile({
         mainAxisSize: MainAxisSize.min,
         children: [
           ListTile(
-            leading: favorite.icon.isEmpty
-                ? null
-                : _buildIconView(favorite.icon),
+            // 아이콘이 없는 사이트도 색 배지로 채워 줄을 가지런히 맞춘다.
+            // 설정에서 끄면 제목만 남아 목록이 담백해진다.
+            leading: showBoardIconState(ref)
+                ? SiteAvatar(
+                    siteType: favorite.siteType,
+                    iconUrl: favorite.icon,
+                  )
+                : null,
             title: PlainText(favorite.text, style: titleTextStyleState(ref)),
             // 그룹 이름이 곧 사이트면 중복이라 생략하고, 섞인 그룹에서만 밝힌다.
             subtitle: showSite
@@ -333,11 +348,6 @@ class const _BoardTile({
         context: context,
         builder: (_) => _GroupPickerDialog(favorite: favorite),
       );
-
-  Widget _buildIconView(String url) => CircleAvatar(
-    radius: 18,
-    backgroundImage: CachedNetworkImageProvider(url),
-  );
 }
 
 /// 게시판을 다른 그룹으로 옮기는 선택 다이얼로그.

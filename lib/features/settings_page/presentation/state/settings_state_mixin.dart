@@ -16,6 +16,10 @@ mixin class SettingsState() {
 
   bool showNickImageState(WidgetRef ref) => ref.watch(showNickImageProvider);
 
+  bool showBoardIconState(WidgetRef ref) => ref.watch(showBoardIconProvider);
+
+  bool showQuickJumpState(WidgetRef ref) => ref.watch(showQuickJumpProvider);
+
   ThemeMode themeModeState(WidgetRef ref) => ref.watch(themeModeProvider);
 
   double fontSizeDeltaState(WidgetRef ref) => ref.watch(fontSizeDeltaProvider);

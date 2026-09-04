@@ -12,6 +12,12 @@ mixin class SettingsEvent() {
   void handleToggleNickImage(WidgetRef ref) =>
       ref.read(showNickImageProvider.notifier).toggle();
 
+  void handleToggleBoardIcon(WidgetRef ref) =>
+      ref.read(showBoardIconProvider.notifier).toggle();
+
+  void handleToggleQuickJump(WidgetRef ref) =>
+      ref.read(showQuickJumpProvider.notifier).toggle();
+
   void handleChangeThemeMode(WidgetRef ref, ThemeMode mode) =>
       ref.read(themeModeProvider.notifier).change(mode);
 

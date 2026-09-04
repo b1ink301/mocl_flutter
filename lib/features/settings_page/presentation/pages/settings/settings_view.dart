@@ -78,6 +78,33 @@ class const SettingsView({super.key})
               ],
             ),
 
+            const _SectionHeader('내 게시판'),
+            _SettingsCard(
+              children: [
+                _SettingsTile(
+                  icon: Icons.account_circle_outlined,
+                  title: '게시판 아이콘 보기',
+                  onTap: () => handleToggleBoardIcon(ref),
+                  trailing: Switch(
+                    value: showBoardIconState(ref),
+                    activeThumbColor: theme.focusColor,
+                    onChanged: (_) => handleToggleBoardIcon(ref),
+                  ),
+                ),
+                const _TileDivider(),
+                _SettingsTile(
+                  icon: Icons.swipe_vertical_outlined,
+                  title: '사이트 빠른 이동',
+                  onTap: () => handleToggleQuickJump(ref),
+                  trailing: Switch(
+                    value: showQuickJumpState(ref),
+                    activeThumbColor: theme.focusColor,
+                    onChanged: (_) => handleToggleQuickJump(ref),
+                  ),
+                ),
+              ],
+            ),
+
             const _SectionHeader('데이터'),
             _SettingsCard(
               children: [
