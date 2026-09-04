@@ -221,6 +221,80 @@ fvm dart run flutter_native_splash:create --path=flutter_native_splash.yaml
 - **스플래시 배경**: 라이트 `#FBFAF9` / 다크 `#121316` (m 은 오렌지 공통, 배경색만 테마별 분기)
 - **런처 아이콘**: 적응형(Android 8+) + 모노크롬(Android 13+ 테마 아이콘) 지원
 
+## 보안 / 시크릿 관리
+
+### Firebase 설정 파일은 시크릿이 아닙니다
+
+[`lib/firebase_options.dart`](lib/firebase_options.dart), `google-services.json`,
+`GoogleService-Info.plist` 에는 `apiKey` 가 평문으로 들어 있고, **의도적으로 커밋합니다.**
+
+Firebase API 키는 프로젝트와 앱을 **식별**할 뿐 권한을 부여하지 않습니다. 실제 인가는
+Google Cloud IAM · Firebase Security Rules · App Check 가 담당합니다
+([공식 문서](https://firebase.google.com/docs/projects/api-keys)).
+
+또한 이 값들은 빌드 산출물에 반드시 포함되므로, APK/IPA 에 `strings` 만 돌려도 그대로
+추출됩니다. **`.gitignore` 로 감추거나 난독화해도 보안상 이득은 없고 빌드만 깨집니다.**
+방어선은 "키를 숨기는 것"이 아니라 **"키로 할 수 있는 일을 제한하는 것"** 입니다.
+
+### 커밋 가능 여부
+
+| 커밋해도 되는 것 | 절대 커밋하면 안 되는 것 |
+|---|---|
+| `lib/firebase_options.dart` | 서비스 계정 JSON (Admin SDK) |
+| `android/app/google-services.json` | 릴리스 키스토어 (`*.jks`), `key.properties` |
+| `{ios,macos}/Runner/GoogleService-Info.plist` | OAuth **client secret**, 서버 API 키 |
+| OAuth client **ID** | Play / App Store Connect API 키 |
+
+우변에 해당하는 값이 실수로 커밋되면 히스토리를 되돌리는 것만으로는 부족합니다.
+**해당 자격증명을 즉시 폐기하고 재발급**해야 합니다.
+
+### 서명 키 취급
+
+릴리스 서명 정보는 저장소 **바깥**에 두고 주입합니다
+([android/app/build.gradle.kts](android/app/build.gradle.kts) 참고).
+
+| 환경 | `key.properties` 위치 |
+|------|----------------------|
+| 로컬 | `../../keystore/key.properties` (저장소 밖) |
+| GitHub Actions | `android/key.properties` (시크릿에서 워크플로가 생성, 커밋 안 함) |
+
+### Firebase 프로젝트 운영 체크리스트
+
+키가 공개돼 있는 만큼, 보호는 콘솔 설정으로 합니다.
+
+1. **미사용 서비스 잠그기 (최우선)** — 앱은 `firebase_core` + `firebase_crashlytics`
+   만 사용합니다. Realtime Database · Cloud Storage 를 쓰지 않으면 **삭제**하고,
+   남긴다면 규칙을 잠급니다. `firebase_options.dart` 에 `databaseURL` 과
+   `storageBucket` 이 공개돼 있으므로, 테스트 모드 규칙이 켜져 있으면 그대로 뚫립니다.
+
+   ```
+   // RTDB
+   { "rules": { ".read": false, ".write": false } }
+   ```
+   ```
+   // Cloud Storage
+   rules_version = '2';
+   service firebase.storage {
+     match /b/{bucket}/o { match /{allPaths=**} { allow read, write: if false; } }
+   }
+   ```
+
+2. **API 키 제한** — GCP Console → API 및 서비스 → 사용자 인증 정보에서 키마다 설정.
+
+   | 키 | 애플리케이션 제한 |
+   |---|---|
+   | Android | Android 앱 → 패키지명 + 릴리스/디버그 SHA-1 지문 |
+   | iOS | iOS 앱 → 번들 ID (`net.b1ink.moclFlutter`) |
+   | Web | HTTP 리퍼러 (웹 미배포 시 항목 자체를 제거하는 편이 낫다) |
+
+   API 제한은 실제 사용하는 Firebase API 만 허용합니다.
+   **유료 API(Maps, Gemini 등)는 공개 키의 허용 목록에 넣지 마세요** — 과금 남용으로 직결됩니다.
+
+3. **App Check** — Play Integrity(Android) / App Attest(iOS). 현재는 사용 서비스가 적어
+   급하지 않지만, Firestore·Functions 를 도입하는 시점에는 필수입니다.
+
+4. **예산 알림** — Cloud Billing 예산 알림을 걸어두어 남용을 청구서보다 먼저 인지합니다.
+
 ## 운영 메모
 
 - **Dio timeout**: 백그라운드 → 포그라운드 복귀 시 소켓 사망으로 멈추는 현상을
