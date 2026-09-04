@@ -3,6 +3,10 @@ import 'package:material_ui/material_ui.dart';
 /// 탭 하나의 정의(아이콘 · 선택 아이콘 · 라벨).
 typedef NavItem = ({IconData icon, IconData selectedIcon, String label});
 
+/// 알약 바깥 테두리의 둥글기. 선택 표시도 같은 값을 써서 바와 같은 곡률로
+/// 보이게 한다(높이의 절반을 넘으면 자동으로 완전한 알약 모양이 된다).
+const double _kPillRadius = 32;
+
 const List<NavItem> _navItems = [
   (
     icon: Icons.dashboard_outlined,
@@ -70,7 +74,7 @@ class const _Pill({
     return Container(
       decoration: BoxDecoration(
         color: barColor,
-        borderRadius: BorderRadius.circular(32),
+        borderRadius: BorderRadius.circular(_kPillRadius),
         border: Border.all(color: theme.dividerColor),
         // 떠 있는 느낌은 그림자로만 준다(라이트/다크 모두 은은하게).
         boxShadow: [
@@ -91,16 +95,23 @@ class const _Pill({
           // 좁은 화면에서 넘칠 때만 살짝 줄인다.
           child: FittedBox(
             fit: BoxFit.scaleDown,
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                for (int i = 0; i < _navItems.length; i++)
-                  _NavBarItem(
-                    item: _navItems[i],
-                    isSelected: i == selectedIndex,
-                    onTap: () => onSelected(i),
-                  ),
-              ],
+            // 라벨 길이가 제각각이라('내 게시판' vs '설정') 그대로 두면 탭마다
+            // 너비와 선택 표시 크기가 달라진다. IntrinsicWidth 가 Row 의 너비를
+            // '가장 넓은 탭 × 개수' 로 잡아주고, 그 안에서 Expanded 가 똑같이
+            // 나눠 가지므로 모든 탭이 가장 긴 라벨에 맞춰 같은 너비가 된다.
+            child: IntrinsicWidth(
+              child: Row(
+                children: [
+                  for (int i = 0; i < _navItems.length; i++)
+                    Expanded(
+                      child: _NavBarItem(
+                        item: _navItems[i],
+                        isSelected: i == selectedIndex,
+                        onTap: () => onSelected(i),
+                      ),
+                    ),
+                ],
+              ),
             ),
           ),
         ),
@@ -122,42 +133,56 @@ class const _NavBarItem({
         theme.textTheme.bodySmall?.color ?? theme.hintColor;
     final Color tint = isSelected ? focusColor : mutedColor;
 
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(26),
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 180),
-              curve: Curves.easeOut,
-              padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 5),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? focusColor.withValues(alpha: 0.15)
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(18),
-              ),
-              child: Icon(
-                isSelected ? item.selectedIcon : item.icon,
-                size: 22,
-                color: tint,
+    // 선택 표시가 아이콘과 라벨을 함께 감싼다(아이콘만 강조하면 라벨이
+    // 알약 밖으로 떨어져 나온 것처럼 보인다).
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 2),
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 180),
+        curve: Curves.easeOut,
+        decoration: BoxDecoration(
+          color: isSelected
+              ? focusColor.withValues(alpha: 0.15)
+              : Colors.transparent,
+          borderRadius: BorderRadius.circular(_kPillRadius),
+        ),
+        // 잉크 효과가 선택 배경 위에 그려지고 모서리에 맞춰 잘리도록,
+        // 배경 안쪽에 Material 을 하나 더 둔다.
+        clipBehavior: Clip.antiAlias,
+        child: Material(
+          type: MaterialType.transparency,
+          child: InkWell(
+            onTap: onTap,
+            borderRadius: BorderRadius.circular(_kPillRadius),
+            child: Padding(
+              // 좌우 여백이 곧 탭 사이 간격이 된다(가장 넓은 탭에 맞춰 폭이
+              // 정해지므로, 이 값을 줄이면 세 탭이 함께 좁아진다).
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Icon(
+                    isSelected ? item.selectedIcon : item.icon,
+                    size: 22,
+                    color: tint,
+                  ),
+                  const SizedBox(height: 3),
+                  Text(
+                    item.label,
+                    maxLines: 1,
+                    style: TextStyle(
+                      fontSize: 11.5,
+                      height: 1.1,
+                      color: tint,
+                      fontWeight: isSelected
+                          ? FontWeight.w700
+                          : FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
             ),
-            const SizedBox(height: 3),
-            Text(
-              item.label,
-              maxLines: 1,
-              style: TextStyle(
-                fontSize: 11.5,
-                height: 1.1,
-                color: tint,
-                fontWeight: isSelected ? FontWeight.w700 : FontWeight.w500,
-              ),
-            ),
-          ],
+          ),
         ),
       ),
     );
