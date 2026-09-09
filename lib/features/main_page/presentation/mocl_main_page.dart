@@ -50,11 +50,7 @@ class const _ScaffoldWidget() extends ConsumerWidget with MainState, MainEvent {
         // IndexedStack 이라 탭을 오가도 스크롤 위치와 상태가 유지된다.
         body: IndexedStack(
           index: tabIndex,
-          children: const <Widget>[
-            MainView(),
-            BookmarksPage(),
-            SettingsPage(),
-          ],
+          children: const <Widget>[MainView(), BookmarksPage(), SettingsPage()],
         ),
         bottomNavigationBar: FloatingNavBar(
           selectedIndex: tabIndex,

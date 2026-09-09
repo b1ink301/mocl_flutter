@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/rendering.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
@@ -19,6 +21,10 @@ typedef GroupHeaderKeys = Map<String, GlobalKey>;
 /// 그룹마다 아이콘 하나를 세워두고, 탭하면 그 그룹의 첫 줄로 곧장 이동시킨다.
 /// 지금 보고 있는 그룹은 강조색 링으로 표시된다.
 ///
+/// 목록 위에 겹쳐 뜨는 만큼 게시판 이름 오른쪽 끝을 가리므로, 스크롤이 멈추고
+/// 잠시 지나면 옅어졌다가 다시 스크롤하면 또렷해진다. 옅어진 상태에서도 탭은
+/// 그대로 받는다(위치를 기억하고 누른 사용자가 헛손질하지 않도록).
+///
 /// 편집 모드에서는 항목마다 드래그 손잡이가 오른쪽에 생겨 서로 부딪히므로
 /// 레일을 감춘다. 그룹이 하나뿐일 때도 이동할 곳이 없어 감춘다.
 class const QuickJumpRail({
@@ -33,6 +39,13 @@ class const QuickJumpRail({
 class _QuickJumpRailState()
     extends ConsumerState<QuickJumpRail>
     with MainState, FavoriteState {
+  /// 스크롤이 멈춘 뒤 레일을 옅게 만들기까지 기다리는 시간.
+  static const Duration _idleDelay = Duration(milliseconds: 1200);
+
+  /// 옅어진 상태인지. [_active] 와 마찬가지로 레일 안쪽만 다시 그린다.
+  final ValueNotifier<bool> _dimmed = ValueNotifier<bool>(false);
+  Timer? _idleTimer;
+
   /// 지금 보고 있는 그룹의 인덱스. 스크롤할 때마다 본문까지 리빌드되지 않도록
   /// setState 대신 알림값으로 레일 안쪽만 갱신한다.
   final ValueNotifier<int> _active = ValueNotifier<int>(0);
@@ -56,6 +69,8 @@ class _QuickJumpRailState()
   void initState() {
     super.initState();
     widget.controller.addListener(_onScroll);
+    // 처음엔 또렷하게 보여 레일의 존재를 알리고, 잠시 뒤 옅어진다.
+    _restartIdleTimer();
   }
 
   @override
@@ -71,6 +86,8 @@ class _QuickJumpRailState()
   void dispose() {
     // removeListener 는 이미 dispose 된 대상에도 안전하다(프레임워크가 보장).
     widget.controller.removeListener(_onScroll);
+    _idleTimer?.cancel();
+    _dimmed.dispose();
     _active.dispose();
     super.dispose();
   }
@@ -113,10 +130,25 @@ class _QuickJumpRailState()
       ),
       child: Align(
         alignment: Alignment.centerRight,
-        child: ValueListenableBuilder<int>(
-          valueListenable: _active,
-          builder: (context, active, _) =>
-              _RailBar(sections: visible, active: active, onTap: _jumpTo),
+        child: ValueListenableBuilder<bool>(
+          valueListenable: _dimmed,
+          builder: (context, dimmed, child) => AnimatedOpacity(
+            // 아예 투명하게 만들면 보이지도 않는데 눌리는 셈이라 하한을 둔다.
+            opacity: dimmed ? 0.35 : 1,
+            duration: const Duration(milliseconds: 280),
+            curve: Curves.easeOut,
+            child: ValueListenableBuilder<int>(
+              valueListenable: _active,
+              builder: (context, active, _) => _RailBar(
+                sections: visible,
+                active: active,
+                // 레일 전체가 옅어진 만큼 아이콘 자체 감쇠는 덜어 준다
+                // (0.35 × 0.55 면 무엇인지 알아볼 수 없다).
+                inactiveOpacity: dimmed ? 0.85 : 0.55,
+                onTap: _jumpTo,
+              ),
+            ),
+          ),
         ),
       ),
     );
@@ -177,7 +209,22 @@ class _QuickJumpRailState()
     return offsets;
   }
 
+  /// 레일을 또렷하게 되돌리고, 유휴 타이머를 다시 건다.
+  void _wake() {
+    _dimmed.value = false;
+    _restartIdleTimer();
+  }
+
+  void _restartIdleTimer() {
+    _idleTimer?.cancel();
+    _idleTimer = Timer(_idleDelay, () {
+      if (mounted) _dimmed.value = true;
+    });
+  }
+
   void _onScroll() {
+    _wake();
+
     // 레이아웃 도중에는 리빌드를 예약할 수 없다. 프레임이 끝난 뒤 다시 잰다.
     if (SchedulerBinding.instance.schedulerPhase ==
         SchedulerPhase.persistentCallbacks) {
@@ -218,6 +265,7 @@ class _QuickJumpRailState()
     if (!controller.hasClients || index >= _groupIds.length) return;
 
     HapticFeedback.selectionClick();
+    _wake();
     _active.value = index;
     _jumping = true;
 
@@ -259,6 +307,7 @@ class _QuickJumpRailState()
 class const _RailBar({
   required final List<FavoriteSection> sections,
   required final int active,
+  required final double inactiveOpacity,
   required final ValueChanged<int> onTap,
 }) extends StatelessWidget {
   @override
@@ -294,6 +343,7 @@ class const _RailBar({
                 _RailDot(
                   section: sections[i],
                   active: i == active,
+                  inactiveOpacity: inactiveOpacity,
                   onTap: () => onTap(i),
                 ),
             ],
@@ -309,6 +359,7 @@ class const _RailBar({
 class const _RailDot({
   required final FavoriteSection section,
   required final bool active,
+  required final double inactiveOpacity,
   required final VoidCallback onTap,
 }) extends StatelessWidget {
   @override
@@ -334,8 +385,10 @@ class const _RailDot({
                 width: 2,
               ),
             ),
-            child: Opacity(
-              opacity: active ? 1 : 0.55,
+            child: AnimatedOpacity(
+              opacity: active ? 1 : inactiveOpacity,
+              duration: const Duration(milliseconds: 280),
+              curve: Curves.easeOut,
               child: lead == null
                   ? const SizedBox(width: 26, height: 26)
                   : SiteAvatar(

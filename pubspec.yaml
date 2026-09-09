@@ -25,7 +25,7 @@ dependencies:
   cp949_codec: ^1.0.2
 
   # HTML Widget
-  flutter_widget_from_html: ^0.17.3
+  flutter_widget_from_html: ^0.17.4
 
   # Value equality
   equatable: ^2.1.0
@@ -153,7 +153,7 @@ dependencies:
 #  translator: ^1.0.4+1
   file_picker: ^12.2.0
 
-  material_ui: ^1.1.1
+  material_ui: ^1.2.0
   cupertino_ui: ^1.0.2
   intl: any
 
