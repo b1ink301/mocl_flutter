@@ -354,8 +354,12 @@ class const _RailBar({
   }
 }
 
-/// 레일 점 하나. 그룹을 대표하는 사이트 아이콘을 쓰고,
-/// 아이콘이 없으면 그룹 이름 앞 글자로 대신한다.
+/// 레일 점 하나. 그룹의 첫 게시판이 속한 사이트 로고를 쓴다.
+///
+/// 게시판별 그림(네이버카페 등)이 아니라 사이트 로고를 쓰는 이유: 이 레일은
+/// "어느 사이트로 가는 길인지"를 알려 주는 것이므로, 그룹에 어쩌다 섞인 게시판
+/// 하나의 그림보다 사이트 로고가 알아보기 쉽다. 로고가 없는 사이트는
+/// [SiteAvatar] 가 색 배지로 대신한다.
 class const _RailDot({
   required final FavoriteSection section,
   required final bool active,
@@ -391,11 +395,7 @@ class const _RailDot({
               curve: Curves.easeOut,
               child: lead == null
                   ? const SizedBox(width: 26, height: 26)
-                  : SiteAvatar(
-                      siteType: lead.siteType,
-                      iconUrl: lead.icon,
-                      radius: 13,
-                    ),
+                  : SiteAvatar(siteType: lead.siteType, radius: 13),
             ),
           ),
         ),
@@ -413,12 +413,7 @@ bool _sameIds(List<String> a, List<String> b) {
   return true;
 }
 
-/// 그룹을 대표하는 게시판. 그림이 있는 게시판을 먼저 고르고, 하나도 없으면
-/// 첫 게시판을 쓴다(그 사이트의 색 배지가 그룹 표시가 된다).
-FavoriteData? _representativeOf(FavoriteSection section) {
-  if (section.items.isEmpty) return null;
-  for (final FavoriteData favorite in section.items) {
-    if (favorite.icon.isNotEmpty) return favorite;
-  }
-  return section.items.first;
-}
+/// 그룹을 대표하는 게시판. 사이트 로고만 쓰므로 첫 게시판으로 충분하다
+/// (그룹은 보통 한 사이트로 묶여 있고, 순서도 사용자가 정한 그대로다).
+FavoriteData? _representativeOf(FavoriteSection section) =>
+    section.items.isEmpty ? null : section.items.first;

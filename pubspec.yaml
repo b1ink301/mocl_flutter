@@ -175,6 +175,9 @@ dev_dependencies:
   riverpod_generator: ^4.0.9
   riverpod_lint: ^3.1.9
 
+  # 사이트 로고 생성(tool/fetch_site_icons.dart) — ico/gif 디코딩 + 리사이즈
+  image: ^4.5.4
+
   # 앱 아이콘 / 스플래시 생성
   flutter_launcher_icons: ^0.14.4
   flutter_native_splash: ^2.4.8
@@ -187,6 +190,7 @@ flutter:
   generate: true
   assets:
     - assets/
+    - assets/icons/
     - assets/arcalive/
     - assets/bobaedream/
     - assets/damoang/
