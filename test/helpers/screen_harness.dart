@@ -27,6 +27,9 @@ import 'package:mocl_flutter/features/list_page/application/list_providers.dart'
 import 'package:mocl_flutter/features/list_page/presentation/mocl_list_view.dart';
 import 'package:mocl_flutter/features/main_page/presentation/mocl_main_view.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
+import 'package:mocl_flutter/features/settings_page/application/datasource_provider.dart'
+    show sharedPreferencesProvider;
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// 리빌드 테스트용 화면 하네스.
 ///
@@ -129,7 +132,7 @@ Future<void> pumpMainScreen(
   await tester.pumpWidget(
     ProviderScope(
       overrides: <Override>[
-        ...commonOverrides(siteType: siteType),
+        ...await commonOverrides(siteType: siteType),
         favoriteRepositoryProvider.overrideWithValue(
           FakeFavoriteRepository(items ?? fakeMainItems()),
         ),
@@ -151,7 +154,7 @@ Future<void> pumpListScreen(
   await tester.pumpWidget(
     ProviderScope(
       overrides: <Override>[
-        ...commonOverrides(siteType: siteType),
+        ...await commonOverrides(siteType: siteType),
         mainItemProvider.overrideWithValue(mainItem),
         listPagingControllerProvider.overrideWith(
           () => _FakePagingController(items ?? fakeListItems()),
@@ -174,7 +177,7 @@ Future<void> pumpDetailScreen(
   await tester.pumpWidget(
     ProviderScope(
       overrides: <Override>[
-        ...commonOverrides(siteType: siteType),
+        ...await commonOverrides(siteType: siteType),
         listItemProvider.overrideWithValue(item ?? fakeListItem()),
         detailsProvider.overrideWith(
           () => _FakeDetails(details ?? fakeDetails()),
@@ -193,15 +196,33 @@ Future<void> pumpDetailScreen(
 
 /// 세 화면이 공통으로 필요한 최소 교체 목록.
 /// - `screenWidth`: 앱 루트에서 주입하는 값(원본은 UnimplementedError)
-/// - `currentSiteType` / `fontSizeDelta`: SharedPreferences 의존 제거
-List<Override> commonOverrides({
+/// - `sharedPreferences`: 설정 저장소의 데이터 경계(원본은 UnimplementedError)
+/// - `currentSiteType` / `fontSizeDelta`: 테스트가 값을 지정하기 위해
+///
+/// 설정 provider(`showQuickJump`, `showBoardIcon` 등)는 따로 교체하지 않는다.
+/// 저장소 밑단인 SharedPreferences 를 메모리로 깔아 두면 실제 구현이 그대로
+/// 돌아가므로, 설정이 새로 추가될 때마다 하네스를 고칠 필요가 없다.
+Future<List<Override>> commonOverrides({
   SiteType siteType = SiteType.clien,
   double width = 400,
-}) => <Override>[
+}) async => <Override>[
   screenWidthProvider.overrideWithValue(width),
+  sharedPreferencesProvider.overrideWithValue(await memoryPreferences()),
   currentSiteTypeProvider.overrideWith(() => _FakeSiteType(siteType)),
   fontSizeDeltaProvider.overrideWith(_FakeFontSizeDelta.new),
 ];
+
+/// 디스크를 쓰지 않는 SharedPreferences.
+///
+/// 설정 저장소는 prefs 를 동기로 읽으므로(`isShowQuickJump()` 등) 가짜 저장소를
+/// 따로 만들기보다 플러그인이 제공하는 메모리 백엔드를 쓰는 편이 실제와 가깝다.
+/// 테스트마다 새로 비워 앞선 테스트의 토글이 새어 나가지 않게 한다.
+Future<SharedPreferences> memoryPreferences([
+  Map<String, Object> initial = const <String, Object>{},
+]) async {
+  SharedPreferences.setMockInitialValues(initial);
+  return SharedPreferences.getInstance();
+}
 
 Widget _app(Widget home) =>
     MaterialApp(theme: MoclTheme.lightTheme, home: home);

@@ -29,7 +29,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: <Override>[
-          ...commonOverrides(siteType: SiteType.clien),
+          ...await commonOverrides(siteType: SiteType.clien),
           mainRepositoryProvider.overrideWith(
             (Ref ref, SiteType siteType) => _FakeMainRepository(),
           ),
@@ -67,7 +67,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: <Override>[
-          ...commonOverrides(siteType: SiteType.clien),
+          ...await commonOverrides(siteType: SiteType.clien),
           mainRepositoryProvider.overrideWith(
             // 목록을 받아오는 데 시간이 걸리는 상황을 만든다.
             (Ref ref, SiteType siteType) =>
@@ -108,7 +108,7 @@ void main() {
     await tester.pumpWidget(
       ProviderScope(
         overrides: <Override>[
-          ...commonOverrides(siteType: SiteType.clien),
+          ...await commonOverrides(siteType: SiteType.clien),
           mainRepositoryProvider.overrideWith(
             (Ref ref, SiteType siteType) => _FakeMainRepository(),
           ),
