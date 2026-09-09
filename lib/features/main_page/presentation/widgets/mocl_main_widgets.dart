@@ -272,8 +272,7 @@ class const _BoardTile({
   required final int index,
   required final bool editMode,
   required final bool showSite,
-}) extends ConsumerWidget
-    with MainState, MainEvent, FavoriteEvent {
+}) extends ConsumerWidget with MainState, MainEvent, FavoriteEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final primaryColor = Theme.of(context).primaryColor;
@@ -398,7 +397,10 @@ Future<String?> _promptGroupName(
   final String? result = await showDialog<String>(
     context: context,
     builder: (dialogContext) => AlertDialog(
-      title: Text(title, style: Theme.of(dialogContext).textTheme.headlineMedium),
+      title: Text(
+        title,
+        style: Theme.of(dialogContext).textTheme.headlineMedium,
+      ),
       content: TextField(
         controller: controller,
         autofocus: true,
@@ -439,7 +441,8 @@ class const _ErrorWidget({super.key, required final String message})
   }
 }
 
-class const _MainAppBar() extends ConsumerWidget
+class const _MainAppBar()
+    extends ConsumerWidget
     with MainState, MainEvent, FavoriteEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {

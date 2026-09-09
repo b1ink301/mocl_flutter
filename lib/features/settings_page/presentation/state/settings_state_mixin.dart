@@ -8,8 +8,10 @@ import '../../application/datasource_provider.dart';
 import '../../application/settings_providers.dart';
 
 mixin class SettingsState() {
+  /// 앱 버전. read 로 읽으면 Future 가 끝나도 위젯이 다시 그려지지 않아
+  /// 로딩 표시가 계속 남으므로 반드시 watch 로 구독한다.
   AsyncValue<String> appVersionState(WidgetRef ref) =>
-      ref.read(getAppVersionProvider);
+      ref.watch(getAppVersionProvider);
 
   AsyncValue<String> cacheSizeState(WidgetRef ref) =>
       ref.watch(sizeCacheDirProvider);
