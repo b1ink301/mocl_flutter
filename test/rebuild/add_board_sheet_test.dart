@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/misc.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/config/mocl_theme.dart';
+import 'package:mocl_flutter/core/domain/entities/board_path.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
@@ -137,7 +138,111 @@ void main() {
     await tester.pumpAndSettle();
     expect(repo.favorites, isEmpty);
   });
+
+  testWidgets('컨테이너 칩은 담기지 않고 안으로 들어간다', (tester) async {
+    final _InMemoryFavoriteRepository repo = _InMemoryFavoriteRepository();
+    await _pumpSheet(tester, repo);
+
+    await tester.tap(find.text('카페A').first);
+    await tester.pumpAndSettle();
+
+    // 담기지 않았고, 대신 그 안의 메뉴가 보인다.
+    expect(repo.favorites, isEmpty);
+    expect(find.text('카페A메뉴0'), findsOneWidget);
+    expect(find.text('전체글'), findsOneWidget);
+    // 폴더는 계층이 아니라 섹션 제목으로 눕는다.
+    expect(find.text('폴더'), findsOneWidget);
+    // 레일은 그대로 남아 있어야 한다(사이트 전환이 언제나 1탭).
+    expect(find.text('다모앙'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('컨테이너 안에서 담으면 부모와의 합성 키로 저장된다', (tester) async {
+    final _InMemoryFavoriteRepository repo = _InMemoryFavoriteRepository();
+    await _pumpSheet(tester, repo);
+
+    await tester.tap(find.text('카페A').first);
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('카페A메뉴1'));
+    await tester.pumpAndSettle();
+
+    final FavoriteData saved = repo.favorites.single;
+    expect(saved.board, joinBoard('카페A', '1'));
+    // 홈에서 출처를 밝힐 수 있어야 한다.
+    expect(saved.parentText, '카페A');
+    expect(saved.parentBoard, '카페A');
+  });
+
+  testWidgets('뒤로가기는 시트를 닫지 않고 한 단계만 나간다', (tester) async {
+    await _pumpSheet(tester, _InMemoryFavoriteRepository());
+
+    await tester.tap(find.text('카페A').first);
+    await tester.pumpAndSettle();
+    expect(find.text('카페A메뉴0'), findsOneWidget);
+
+    // 시스템 뒤로가기.
+    await simulateSystemBack();
+    await tester.pumpAndSettle();
+
+    // 시트는 살아 있고 최상위 목록으로 돌아온다.
+    expect(find.text('게시판 추가'), findsOneWidget);
+    expect(find.text('카페A메뉴0'), findsNothing);
+    expect(find.text('게시판0'), findsOneWidget);
+
+    // 한 번 더 누르면 시트가 닫힌다.
+    await simulateSystemBack();
+    await tester.pumpAndSettle();
+    expect(find.text('게시판 추가'), findsNothing);
+  });
+
+  testWidgets('브레드크럼으로 다른 컨테이너로 바로 건너뛴다', (tester) async {
+    await _pumpSheet(tester, _InMemoryFavoriteRepository());
+
+    await tester.tap(find.text('카페A').first);
+    await tester.pumpAndSettle();
+
+    // 경로 표시줄의 이름을 누르면 전환 목록이 열린다.
+    await tester.tap(find.text('카페A').first);
+    await tester.pumpAndSettle();
+    expect(find.text('이동할 목록 검색'), findsOneWidget);
+
+    await tester.tap(find.text('카페B').last);
+    await tester.pumpAndSettle();
+
+    // 최상위로 나가지 않고 옆 컨테이너로 바로 들어간다.
+    expect(find.text('카페B메뉴0'), findsOneWidget);
+    expect(find.text('카페A메뉴0'), findsNothing);
+  });
 }
+
+Future<void> _pumpSheet(
+  WidgetTester tester,
+  FavoriteRepository favoriteRepository,
+) async {
+  useFixedSurface(tester);
+  await tester.pumpWidget(
+    ProviderScope(
+      overrides: <Override>[
+        ...await commonOverrides(siteType: SiteType.clien),
+        mainRepositoryProvider.overrideWith(
+          (Ref ref, SiteType siteType) => _FakeMainRepository(),
+        ),
+        favoriteRepositoryProvider.overrideWithValue(favoriteRepository),
+      ],
+      child: MaterialApp(
+        theme: MoclTheme.lightTheme,
+        home: const _SheetHost(),
+      ),
+    ),
+  );
+  await tester.pumpAndSettle();
+  await tester.tap(find.text('시트 열기'));
+  await tester.pumpAndSettle();
+}
+
+/// 안드로이드 시스템 뒤로가기.
+Future<void> simulateSystemBack() =>
+    TestWidgetsFlutterBinding.instance.handlePopRoute();
 
 /// 앱의 ModalBottomSheetPage 와 같은 조건(ModalBottomSheetRoute,
 /// isScrollControlled, 투명 배경)으로 시트를 띄운다.
@@ -175,6 +280,46 @@ class _FakeMainRepository({final Duration? delay}) implements MainRepository {
           text: '게시판$i',
           url: 'https://example.com/${siteType.name}/$i',
           orderBy: i,
+        ),
+      // 하위 메뉴를 가진 컨테이너(네이버카페의 카페 같은 항목).
+      for (final String name in const ['카페A', '카페B'])
+        MainItem(
+          siteType: siteType,
+          board: name,
+          text: name,
+          url: 'https://example.com/${siteType.name}/$name',
+          orderBy: 100,
+          hasItem: true,
+        ),
+    ]);
+  }
+
+  @override
+  Future<Either<Failure, List<MainItem>>> getSubMenuList({
+    required MainItem parent,
+  }) async {
+    if (delay != null) await Future<void>.delayed(delay!);
+    return Right(<MainItem>[
+      // 컨테이너 자신(전체글)은 부모와 board 가 같다.
+      MainItem(
+        siteType: parent.siteType,
+        board: parent.board,
+        text: '전체글',
+        url: parent.url,
+        orderBy: 0,
+        parentBoard: parent.board,
+        parentText: parent.text,
+      ),
+      for (int i = 0; i < 3; i++)
+        MainItem(
+          siteType: parent.siteType,
+          board: joinBoard(parent.board, '$i'),
+          text: '${parent.text}메뉴$i',
+          url: parent.url,
+          orderBy: i + 1,
+          category: i == 0 ? '' : '폴더',
+          parentBoard: parent.board,
+          parentText: parent.text,
         ),
     ]);
   }

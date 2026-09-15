@@ -6,6 +6,7 @@ import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:mocl_flutter/core/util/read_json_from_assets.dart';
 import 'package:mocl_flutter/features/database/data/models/main_item_model.dart';
+import 'package:mocl_flutter/features/database/data/models/model_mapper.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_parser.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 
@@ -28,6 +29,13 @@ abstract class MainDataSource() {
   Future<List<MainItemModel>> getAllFromRemote(SiteType siteType);
 
   Future<List<MainItemModel>> getAllFromJson(SiteType siteType);
+
+  /// 컨테이너의 하위 게시판 목록을 실시간으로 받아온다.
+  /// 미지원 사이트는 빈 목록.
+  Future<List<MainItem>> getSubMenuLive(MainItem parent);
+
+  /// 정적 목록(board_link.json)의 `children` 에서 하위 게시판을 꺼낸다.
+  Future<List<MainItem>> getSubMenuFromJson(MainItem parent);
 }
 
 class const MainDataSourceImpl({
@@ -37,6 +45,37 @@ class const MainDataSourceImpl({
   @override
   Future<List<MainItem>> getAllLive(SiteType siteType) async =>
       (await apiClient.main(parser)).getOrElse((Failure f) => throw f);
+
+  @override
+  Future<List<MainItem>> getSubMenuLive(MainItem parent) async {
+    if (!parser.supportsSubMenu) return const [];
+    return (await apiClient.subMenu(
+      parent,
+      parser,
+    )).getOrElse((Failure f) => throw f);
+  }
+
+  @override
+  Future<List<MainItem>> getSubMenuFromJson(MainItem parent) async {
+    // 게시판 목록과 같은 순서(원격 → 번들)로 찾는다. 원격만 children 이
+    // 채워진 사이트에서도 재배포 없이 하위 메뉴가 늘어난다.
+    for (final Future<List<MainItemModel>> source in [
+      getAllFromRemote(parent.siteType),
+      getAllFromJson(parent.siteType),
+    ]) {
+      try {
+        final Iterable<MainItemModel> found = (await source).where(
+          (model) => model.board == parent.board && model.children.isNotEmpty,
+        );
+        if (found.isNotEmpty) {
+          return MainItemMapper.childrenToEntity(found.first, parent.siteType);
+        }
+      } catch (_) {
+        // 다음 소스로 진행
+      }
+    }
+    return const [];
+  }
 
   @override
   Future<List<MainItemModel>> getAllFromRemote(SiteType siteType) async {

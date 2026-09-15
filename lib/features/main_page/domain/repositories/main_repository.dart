@@ -9,4 +9,10 @@ abstract class MainRepository() {
   Future<Either<Failure, List<MainItem>>> getMainListFromJson({
     required SiteType siteType,
   });
+
+  /// 컨테이너([parent], 예: 네이버 카페) 안의 하위 게시판 목록.
+  /// 2단 구조가 없는 사이트는 빈 목록을 돌려준다.
+  Future<Either<Failure, List<MainItem>>> getSubMenuList({
+    required MainItem parent,
+  });
 }

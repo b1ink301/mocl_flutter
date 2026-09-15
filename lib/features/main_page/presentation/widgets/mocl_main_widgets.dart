@@ -262,6 +262,17 @@ class const _HeaderAction({
   );
 }
 
+/// 게시판 한 줄에 붙일 출처 문구.
+///
+/// 2단 게시판(네이버 카페의 게시판 등)은 '자유게시판'처럼 어느 사이트에나 있는
+/// 이름이라 부모(카페)를 밝히지 않으면 구분이 안 된다. 그룹 이름이 곧 사이트인
+/// 경우엔 사이트명이 중복이라 부모만 남긴다.
+String _originOf(FavoriteData favorite, {required bool showSite}) {
+  final String parent = favorite.parentText;
+  if (parent.isEmpty) return showSite ? favorite.siteType.title : '';
+  return showSite ? '$parent · ${favorite.siteType.title}' : parent;
+}
+
 /// 등록한 게시판 한 줄. 평소엔 탭으로 진입하고, 편집 모드에선
 /// 탭=그룹 이동 / 드래그=순서 변경 / X=삭제 로 동작한다.
 class const _BoardTile({
@@ -274,6 +285,7 @@ class const _BoardTile({
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final primaryColor = Theme.of(context).primaryColor;
+    final String origin = _originOf(favorite, showSite: showSite);
 
     return Material(
       // ReorderableList 항목은 Material 조상을 상속받지 못해 ListTile 이 assert 됨.
@@ -293,12 +305,11 @@ class const _BoardTile({
                 : null,
             title: PlainText(favorite.text, style: titleTextStyleState(ref)),
             // 그룹 이름이 곧 사이트면 중복이라 생략하고, 섞인 그룹에서만 밝힌다.
-            subtitle: showSite
-                ? PlainText(
-                    favorite.siteType.title,
-                    style: smallTextStyleState(ref),
-                  )
-                : null,
+            // 단, 2단 게시판(카페 안의 게시판 등)은 '자유게시판' 같은 흔한
+            // 이름이라 어느 카페 것인지 반드시 밝혀야 한다.
+            subtitle: origin.isEmpty
+                ? null
+                : PlainText(origin, style: smallTextStyleState(ref)),
             trailing: editMode
                 ? Row(
                     mainAxisSize: MainAxisSize.min,

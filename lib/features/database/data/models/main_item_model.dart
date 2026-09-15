@@ -15,6 +15,11 @@ abstract class MainItemModel with _$MainItemModel {
     required String title,
     required String url,
     SiteType? siteType,
+    // 하위 메뉴를 가진 컨테이너인지. board_link.json 에 없으면 false.
+    @Default(false) bool hasItem,
+    // 2단 게시판을 정적으로 정의할 때의 하위 목록. 없으면 빈 목록이라
+    // 기존 board_link.json 과 그대로 호환된다.
+    @Default(<MainItemModel>[]) List<MainItemModel> children,
   }) = _MainItemData;
 
   factory fromJson(Map<String, dynamic> json) => _$MainItemModelFromJson(json);

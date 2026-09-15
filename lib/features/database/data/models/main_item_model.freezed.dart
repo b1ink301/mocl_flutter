@@ -23,7 +23,7 @@ MainItemModel _$MainItemModelFromJson(
 /// @nodoc
 mixin _$MainItemModel {
 
- int get no; String get board; int get type; String get title; String get url; SiteType? get siteType;
+ int get no; String get board; int get type; String get title; String get url; SiteType? get siteType; bool get hasItem; List<MainItemModel> get children;
 /// Create a copy of MainItemModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -37,20 +37,20 @@ $MainItemModelCopyWith<MainItemModel> get copyWith => _$MainItemModelCopyWithImp
 @override
 bool operator ==(Object other) {
   final _this = this as MainItemModel;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MainItemModel&&(identical(other.no, _this.no) || other.no == _this.no)&&(identical(other.board, _this.board) || other.board == _this.board)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.url, _this.url) || other.url == _this.url)&&(identical(other.siteType, _this.siteType) || other.siteType == _this.siteType));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MainItemModel&&(identical(other.no, _this.no) || other.no == _this.no)&&(identical(other.board, _this.board) || other.board == _this.board)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.url, _this.url) || other.url == _this.url)&&(identical(other.siteType, _this.siteType) || other.siteType == _this.siteType)&&(identical(other.hasItem, _this.hasItem) || other.hasItem == _this.hasItem)&&const DeepCollectionEquality().equals(other.children, _this.children));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
   final _this = this as MainItemModel;
-  return Object.hash(runtimeType,_this.no,_this.board,_this.type,_this.title,_this.url,_this.siteType);
+  return Object.hash(runtimeType,_this.no,_this.board,_this.type,_this.title,_this.url,_this.siteType,_this.hasItem,const DeepCollectionEquality().hash(_this.children));
 }
 
 @override
 String toString() {
   final _this = this as MainItemModel;
-  return 'MainItemModel(no: ${_this.no}, board: ${_this.board}, type: ${_this.type}, title: ${_this.title}, url: ${_this.url}, siteType: ${_this.siteType})';
+  return 'MainItemModel(no: ${_this.no}, board: ${_this.board}, type: ${_this.type}, title: ${_this.title}, url: ${_this.url}, siteType: ${_this.siteType}, hasItem: ${_this.hasItem}, children: ${_this.children})';
 }
 
 
@@ -61,7 +61,7 @@ abstract mixin class $MainItemModelCopyWith<$Res>  {
   factory $MainItemModelCopyWith(MainItemModel value, $Res Function(MainItemModel) _then) = _$MainItemModelCopyWithImpl;
 @useResult
 $Res call({
- int no, String board, int type, String title, String url, SiteType? siteType
+ int no, String board, int type, String title, String url, SiteType? siteType, bool hasItem, List<MainItemModel> children
 });
 
 
@@ -78,7 +78,7 @@ class _$MainItemModelCopyWithImpl<$Res>
 
 /// Create a copy of MainItemModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? no = null,Object? board = null,Object? type = null,Object? title = null,Object? url = null,Object? siteType = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? no = null,Object? board = null,Object? type = null,Object? title = null,Object? url = null,Object? siteType = freezed,Object? hasItem = null,Object? children = null,}) {
   return _then(MainItemModel(
 no: null == no ? _self.no : no // ignore: cast_nullable_to_non_nullable
 as int,board: null == board ? _self.board : board // ignore: cast_nullable_to_non_nullable
@@ -86,7 +86,9 @@ as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non
 as int,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
 as String,siteType: freezed == siteType ? _self.siteType : siteType // ignore: cast_nullable_to_non_nullable
-as SiteType?,
+as SiteType?,hasItem: null == hasItem ? _self.hasItem : hasItem // ignore: cast_nullable_to_non_nullable
+as bool,children: null == children ? _self.children : children // ignore: cast_nullable_to_non_nullable
+as List<MainItemModel>,
   ));
 }
 
@@ -171,10 +173,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int no,  String board,  int type,  String title,  String url,  SiteType? siteType)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int no,  String board,  int type,  String title,  String url,  SiteType? siteType,  bool hasItem,  List<MainItemModel> children)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MainItemData() when $default != null:
-return $default(_that.no,_that.board,_that.type,_that.title,_that.url,_that.siteType);case _:
+return $default(_that.no,_that.board,_that.type,_that.title,_that.url,_that.siteType,_that.hasItem,_that.children);case _:
   return orElse();
 
 }
@@ -192,10 +194,10 @@ return $default(_that.no,_that.board,_that.type,_that.title,_that.url,_that.site
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int no,  String board,  int type,  String title,  String url,  SiteType? siteType)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int no,  String board,  int type,  String title,  String url,  SiteType? siteType,  bool hasItem,  List<MainItemModel> children)  $default,) {final _that = this;
 switch (_that) {
 case _MainItemData():
-return $default(_that.no,_that.board,_that.type,_that.title,_that.url,_that.siteType);case _:
+return $default(_that.no,_that.board,_that.type,_that.title,_that.url,_that.siteType,_that.hasItem,_that.children);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -212,10 +214,10 @@ return $default(_that.no,_that.board,_that.type,_that.title,_that.url,_that.site
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int no,  String board,  int type,  String title,  String url,  SiteType? siteType)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int no,  String board,  int type,  String title,  String url,  SiteType? siteType,  bool hasItem,  List<MainItemModel> children)?  $default,) {final _that = this;
 switch (_that) {
 case _MainItemData() when $default != null:
-return $default(_that.no,_that.board,_that.type,_that.title,_that.url,_that.siteType);case _:
+return $default(_that.no,_that.board,_that.type,_that.title,_that.url,_that.siteType,_that.hasItem,_that.children);case _:
   return null;
 
 }
@@ -227,7 +229,7 @@ return $default(_that.no,_that.board,_that.type,_that.title,_that.url,_that.site
 @JsonSerializable()
 
 class _MainItemData implements MainItemModel {
-  const _MainItemData({required this.no, required this.board, required this.type, required this.title, required this.url, this.siteType});
+  const _MainItemData({required this.no, required this.board, required this.type, required this.title, required this.url, this.siteType, this.hasItem = false,  List<MainItemModel> children = const <MainItemModel>[]}): _children = children;
   factory _MainItemData.fromJson(Map<String, dynamic> json) => _$MainItemDataFromJson(json);
 
 @override final  int no;
@@ -236,6 +238,14 @@ class _MainItemData implements MainItemModel {
 @override final  String title;
 @override final  String url;
 @override final  SiteType? siteType;
+@override@JsonKey() final  bool hasItem;
+ final  List<MainItemModel> _children;
+@override@JsonKey() List<MainItemModel> get children {
+  if (_children is EqualUnmodifiableListView) return _children;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_children);
+}
+
 
 /// Create a copy of MainItemModel
 /// with the given fields replaced by the non-null parameter values.
@@ -250,18 +260,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MainItemData&&(identical(other.no, no) || other.no == no)&&(identical(other.board, board) || other.board == board)&&(identical(other.type, type) || other.type == type)&&(identical(other.title, title) || other.title == title)&&(identical(other.url, url) || other.url == url)&&(identical(other.siteType, siteType) || other.siteType == siteType));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MainItemData&&(identical(other.no, no) || other.no == no)&&(identical(other.board, board) || other.board == board)&&(identical(other.type, type) || other.type == type)&&(identical(other.title, title) || other.title == title)&&(identical(other.url, url) || other.url == url)&&(identical(other.siteType, siteType) || other.siteType == siteType)&&(identical(other.hasItem, hasItem) || other.hasItem == hasItem)&&const DeepCollectionEquality().equals(other.children, _children));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
 int get hashCode {
-    return Object.hash(runtimeType,no,board,type,title,url,siteType);
+    return Object.hash(runtimeType,no,board,type,title,url,siteType,hasItem,const DeepCollectionEquality().hash(_children));
 }
 
 @override
 String toString() {
-    return 'MainItemModel(no: $no, board: $board, type: $type, title: $title, url: $url, siteType: $siteType)';
+    return 'MainItemModel(no: $no, board: $board, type: $type, title: $title, url: $url, siteType: $siteType, hasItem: $hasItem, children: $children)';
 }
 
 
@@ -272,7 +282,7 @@ abstract mixin class _$MainItemDataCopyWith<$Res> implements $MainItemModelCopyW
   factory _$MainItemDataCopyWith(_MainItemData value, $Res Function(_MainItemData) _then) = __$MainItemDataCopyWithImpl;
 @override @useResult
 $Res call({
- int no, String board, int type, String title, String url, SiteType? siteType
+ int no, String board, int type, String title, String url, SiteType? siteType, bool hasItem, List<MainItemModel> children
 });
 
 
@@ -289,7 +299,7 @@ class __$MainItemDataCopyWithImpl<$Res>
 
 /// Create a copy of MainItemModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? no = null,Object? board = null,Object? type = null,Object? title = null,Object? url = null,Object? siteType = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? no = null,Object? board = null,Object? type = null,Object? title = null,Object? url = null,Object? siteType = freezed,Object? hasItem = null,Object? children = null,}) {
   return _then(_MainItemData(
 no: null == no ? _self.no : no // ignore: cast_nullable_to_non_nullable
 as int,board: null == board ? _self.board : board // ignore: cast_nullable_to_non_nullable
@@ -297,7 +307,9 @@ as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non
 as int,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
 as String,siteType: freezed == siteType ? _self.siteType : siteType // ignore: cast_nullable_to_non_nullable
-as SiteType?,
+as SiteType?,hasItem: null == hasItem ? _self.hasItem : hasItem // ignore: cast_nullable_to_non_nullable
+as bool,children: null == children ? _self._children : children // ignore: cast_nullable_to_non_nullable
+as List<MainItemModel>,
   ));
 }
 
