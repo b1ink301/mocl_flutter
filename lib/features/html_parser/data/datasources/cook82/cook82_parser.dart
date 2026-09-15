@@ -272,7 +272,7 @@ class const Cook82Parser() extends BaseParser {
       }
       final parsedTime = formatTimeago(cTime);
 
-      MoclLogger.log('cTime=$cTime, parsedTime=$parsedTime');
+      MoclLogger.d(() => 'cTime=$cTime, parsedTime=$parsedTime');
       final info = BaseParser.parserInfo(parsedTime, '');
 
       final bodyP = li.querySelector('p');

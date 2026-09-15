@@ -12,6 +12,8 @@ include: package:flutter_lints/flutter.yaml
 linter:
   rules:
     - no_wildcard_variable_uses
+    # 콘솔 로그는 MoclLogger 경유 (tool/check_logging.dart 로도 검사)
+    - avoid_print
     - parameter_assignments
     # Dart 3.12 / 3.13 모던 문법 정리용
     - use_primary_constructors

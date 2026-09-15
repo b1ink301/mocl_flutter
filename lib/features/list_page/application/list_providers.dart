@@ -216,7 +216,7 @@ class ListPagingController() extends _$ListPagingController {
   void kickIfStale() {
     final ctrl = state;
     if (!ctrl.value.isLoading) return;
-    MoclLogger.log('[ListPagingController] kickIfStale: 멈춘 fetch 강제 재시작');
+    MoclLogger.d(() => '[ListPagingController] kickIfStale: 멈춘 fetch 강제 재시작');
     // PagingController 의 mutex 가드는 isLoading 이 아니라 내부 `operation`
     // 필드다. isLoading 만 내려서는 다음 fetchNextPage 가 `operation != null`
     // 에 막혀 no-op 이 되므로, operation 까지 비워주는 cancel() 을 호출한다.

@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/domain/entities/last_id.dart';
@@ -10,6 +8,7 @@ import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 
 import '../base/base_parser.dart';
@@ -34,7 +33,7 @@ class const NateApi(super.dio, super.userAgent) extends BaseApi {
         parser.baseUrl,
         headers: headers,
       );
-      log('[detail] $url response = ${response.statusCode}');
+      MoclLogger.d(() => '[detail] $url response = ${response.statusCode}');
       return response.statusCode == 200
           ? await parser.detail(response)
           : Left(
@@ -76,7 +75,7 @@ class const NateApi(super.dio, super.userAgent) extends BaseApi {
         parser.baseUrl,
         headers: headers,
       );
-      log('[getList] $url response = ${response.statusCode}');
+      MoclLogger.d(() => '[getList] $url response = ${response.statusCode}');
       return response.statusCode == 200
           ? await parser.list(response, lastId, item.text, isReads)
           : Left(
@@ -124,7 +123,7 @@ class const NateApi(super.dio, super.userAgent) extends BaseApi {
         parser.baseUrl,
         headers: headers,
       );
-      log('[searchList] $url response = ${response.statusCode}');
+      MoclLogger.d(() => '[searchList] $url response = ${response.statusCode}');
       return response.statusCode == 200
           ? await parser.list(response, lastId, item.text, isReads)
           : Left(

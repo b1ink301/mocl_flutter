@@ -36,10 +36,10 @@ class const NickImageWidget({
       if (fileInfo == null) {
         // 캐시된 파일이 없으면 다운로드
         await _cacheManager.downloadFile(url, key: url);
-        MoclLogger.log('Preloaded image: $url');
+        MoclLogger.d(() => 'Preloaded image: $url');
       }
     } catch (e) {
-      MoclLogger.log('Error preloading image: $e');
+      MoclLogger.e('Error preloading image', error: e);
     }
   }
 
@@ -77,14 +77,14 @@ class const NickImageWidget({
         totalBytes += file.statSync().size;
       });
 
-      MoclLogger.log('totalBytes=$totalBytes');
+      MoclLogger.d(() => 'totalBytes=$totalBytes');
 
       const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
       final i = (log(totalBytes) / log(1024)).floor();
       final sizeText =
           '${(totalBytes / pow(1024, i)).toStringAsFixed(1)} ${suffixes[i]}';
 
-      MoclLogger.log('sizeText=$sizeText');
+      MoclLogger.d(() => 'sizeText=$sizeText');
       return sizeText;
     }
     return '0 KB';

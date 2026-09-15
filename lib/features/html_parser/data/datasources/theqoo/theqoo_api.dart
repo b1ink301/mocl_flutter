@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/domain/entities/last_id.dart';
@@ -10,6 +8,7 @@ import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 
 import '../base/base_parser.dart';
@@ -50,7 +49,7 @@ class const TheQooApi(super.dio, super.userAgent) extends BaseApi {
         commentFuture,
       ]);
 
-      log('[getDetail] $url, commentUrl=$commentUrl');
+      MoclLogger.d(() => '[getDetail] $url, commentUrl=$commentUrl');
 
       if (responses.first.statusCode == 200 &&
           responses.last.statusCode == 200) {
@@ -99,7 +98,10 @@ class const TheQooApi(super.dio, super.userAgent) extends BaseApi {
         parser.baseUrl,
         headers: headers,
       );
-      log('[getList] $url, $headers response = ${response.statusCode}');
+      MoclLogger.d(
+        () =>
+            '[getList] $url, ${MoclLogger.redactHeaders(headers)} response = ${response.statusCode}',
+      );
 
       return response.statusCode == 200
           ? await parser.list(response, lastId, item.text, isReads)
@@ -129,7 +131,7 @@ class const TheQooApi(super.dio, super.userAgent) extends BaseApi {
         parser.baseUrl,
         headers: headers,
       );
-      log('[getMain] $url response = ${response.statusCode}');
+      MoclLogger.d(() => '[getMain] $url response = ${response.statusCode}');
       return response.statusCode == 200
           ? await parser.main(response)
           : Left(
@@ -173,7 +175,10 @@ class const TheQooApi(super.dio, super.userAgent) extends BaseApi {
         parser.baseUrl,
         headers: headers,
       );
-      log('[searchList] $url, $headers response = ${response.statusCode}');
+      MoclLogger.d(
+        () =>
+            '[searchList] $url, ${MoclLogger.redactHeaders(headers)} response = ${response.statusCode}',
+      );
 
       return response.statusCode == 200
           ? await parser.list(response, lastId, item.text, isReads)
