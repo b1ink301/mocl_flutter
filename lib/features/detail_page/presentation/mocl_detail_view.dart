@@ -1,20 +1,21 @@
 import 'dart:async';
-import 'dart:io';
 
 import 'package:cached_network_image/cached_network_image.dart';
-import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_widget_from_html/flutter_widget_from_html.dart';
 import 'package:go_router/go_router.dart';
+import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as html_parser;
 import 'package:mocl_flutter/config/routes/mocl_app_pages.dart' show Routes;
+import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/photo_view_dialog.dart'
     show GalleryArgs;
 import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
+import 'package:mocl_flutter/core/presentation/widgets/failure_view.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart'
     show userAgentMobile;
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
@@ -32,15 +33,64 @@ import '../../../core/presentation/widgets/plain_text.dart';
 
 const _kHeaderHeight = 38.0;
 
+/// 본문 이미지 디코딩 폭 상한(px). 화면 폭 * DPR 이 이보다 크면 여기서 자른다.
+const int _kMaxImageCacheWidth = 1080;
+
+/// URL -> 이미지 종횡비(width / height) 기억 캐시.
+///
+/// damoang 등은 `<img>` 에 width/height 속성이 없어서 디코딩 전에는 높이를 알 수
+/// 없다. 본문을 sliver 로 지연 렌더하면 화면 밖으로 밀려난 이미지가 언마운트되고,
+/// 되돌아올 때 높이 0 에서 시작했다가 로드가 끝나는 순간 튀어오른다. 위로
+/// 스크롤하는 중이면 그 증가분만큼 아래 콘텐츠가 밀려 스크롤 위치가 통째로 틀어진다.
+/// 한 번이라도 그려본 이미지의 비율을 기억해 두면 재mount 즉시 같은 높이를 잡아
+/// SliverList 의 scrollOffsetCorrection 이 정확해진다.
+final Map<String, double> _imageAspectRatios = <String, double>{};
+
+/// 비율 캐시 상한. 넘으면 통째로 비운다(지나간 글의 이미지는 다시 볼 일이 적다).
+const int _kMaxAspectRatioEntries = 512;
+
+void _rememberAspectRatio(String url, double ratio) {
+  if (!ratio.isFinite || ratio <= 0) return;
+  if (_imageAspectRatios.length >= _kMaxAspectRatioEntries) {
+    _imageAspectRatios.clear();
+  }
+  _imageAspectRatios[url] = ratio;
+}
+
+/// 원문이 테두리를 직접 지정한 표인지. 지정돼 있으면 앱이 덧그리지 않는다.
+bool _hasOwnBorder(dom.Element element) =>
+    element.attributes.containsKey('border') ||
+    (element.attributes['style'] ?? '').contains('border');
+
+/// [cell] 이 속한 `<table>`. td → tr → (thead|tbody) → table 처럼 중간 단계가
+/// 사이트마다 달라서 조상을 거슬러 올라가 찾는다.
+dom.Element? _ownerTable(dom.Element cell) {
+  dom.Element? parent = cell.parent;
+  while (parent != null && parent.localName != 'table') {
+    parent = parent.parent;
+  }
+  return parent;
+}
+
 /// 프로토콜 상대 경로(`//cdn.../x.webp`)는 스킴이 없어 뷰어가 로드하지 못하므로
 /// https 로 정규화한다.
 String _normalizeImageUrl(String url) =>
     url.startsWith('//') ? 'https:$url' : url;
 
+/// 직전 [_extractImageUrls] 결과. 같은 본문에서 이미지를 연속으로 탭할 때
+/// 본문 전체를 매번 재파싱하지 않도록 1건만 기억한다.
+String? _lastExtractedHtml;
+List<String> _lastExtractedUrls = const [];
+
 /// [html] 본문 안의 모든 `<img>` src 를 등장 순서대로 수집해 정규화한다.
 List<String> _extractImageUrls(String html) {
+  if (identical(_lastExtractedHtml, html) || _lastExtractedHtml == html) {
+    return _lastExtractedUrls;
+  }
+
+  List<String> urls;
   try {
-    return html_parser
+    urls = html_parser
         .parse(html)
         .querySelectorAll('img')
         .map((e) => e.attributes['src'] ?? '')
@@ -48,8 +98,12 @@ List<String> _extractImageUrls(String html) {
         .map(_normalizeImageUrl)
         .toList(growable: false);
   } catch (_) {
-    return const [];
+    urls = const [];
   }
+
+  _lastExtractedHtml = html;
+  _lastExtractedUrls = urls;
+  return urls;
 }
 
 /// 탭한 이미지를 기준으로 같은 본문의 모든 이미지를 좌우 스와이프할 수 있는
@@ -84,10 +138,15 @@ class const DetailView({super.key})
           _DetailView(detail: state.value, onRefresh: () => handleRefresh(ref)),
       error: (state) => SliverFillRemaining(
         hasScrollBody: false,
-        child: Padding(
-          padding: const EdgeInsets.all(12.0),
-          child: Center(
-            child: PlainText(state.error.toString(), style: smallTextStyle),
+        child: Center(
+          child: FailureView(
+            error: state.error,
+            descriptionStyle: smallTextStyle,
+            titleStyle: DetailStyleScope.of(context).$1.titleTextStyle,
+            onRetry: () => handleRefresh(ref),
+            // 권한/로그인 문제는 앱에서 풀 수 없으니 원문으로 갈 길을 남긴다.
+            secondaryLabel: '브라우저로 열기',
+            onSecondary: () => handleOpenBrowser(ref),
           ),
         ),
       ),
@@ -138,14 +197,14 @@ class const _DetailView({
           sliver: MultiSliver(
             children: [
               const _SpaceWidget(),
-              // 본문은 RepaintBoundary로 감싸 스크롤 시 불필요한 페인팅 방지
-              RepaintBoundary(
-                child: _Body(
-                  detail: detail,
-                  hexColor: hexColor,
-                  bodyMedium: bodyMedium,
-                  onTapUrl: (url) => url.openUrl(context),
-                ),
+              // 본문은 sliver(SliverList)로 렌더돼 화면 밖 요소가 mount 되지
+              // 않는다. RepaintBoundary 는 SliverListMode 가 자체적으로
+              // 붙여주므로(addRepaintBoundaries: true) 여기서 감싸지 않는다.
+              _Body(
+                detail: detail,
+                hexColor: hexColor,
+                bodyMedium: bodyMedium,
+                onTapUrl: (url) => url.openUrl(context),
               ),
               const _SpaceWidget(),
               if (detail.comments.isNotEmpty) ...[
@@ -237,7 +296,8 @@ class const _Body({
     textStyle: bodyMedium?.copyWith(height: 1.7),
     hexColor: hexColor,
     openUrl: onTapUrl,
-    // renderMode: RenderMode.sliverList,
+    // 본문은 길고 이미지/비디오가 많아 지연 렌더가 필수다.
+    sliver: true,
   );
 }
 
@@ -388,23 +448,150 @@ class const _RetryableCachedImage({
 }
 
 class _RetryableCachedImageState() extends State<_RetryableCachedImage> {
+  /// 일시 오류(5xx 등)일 때 사용자를 거치지 않고 다시 시도할 횟수.
+  static const int _kMaxAutoRetries = 2;
+
   int _attempt = 0;
+  int _autoRetries = 0;
+  Timer? _autoRetryTimer;
+  double? _aspectRatio;
+  ImageStream? _sizeStream;
+  ImageStreamListener? _sizeListener;
+
+  @override
+  void initState() {
+    super.initState();
+    _aspectRatio = _imageAspectRatios[widget.url];
+  }
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    if (_aspectRatio == null) _resolveAspectRatio();
+  }
+
+  @override
+  void didUpdateWidget(_RetryableCachedImage oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.url == widget.url) return;
+    _stopResolving();
+    _aspectRatio = _imageAspectRatios[widget.url];
+    if (_aspectRatio == null) _resolveAspectRatio();
+  }
+
+  @override
+  void dispose() {
+    _autoRetryTimer?.cancel();
+    _autoRetryTimer = null;
+    _stopResolving();
+    super.dispose();
+  }
+
+  /// 이미지 서버가 간헐적으로 5xx 를 뱉는 경우(메코 img.meeco.kr 등)가 있어,
+  /// 첫 실패에서 바로 "실패" 를 보여주지 않고 몇 번 조용히 다시 받아본다.
+  /// 지연을 두 배씩 늘려 같은 순간에 몰린 요청이 다시 몰리지 않게 한다.
+  void _scheduleAutoRetry() {
+    if (_autoRetryTimer != null || _autoRetries >= _kMaxAutoRetries) return;
+
+    final delay = Duration(milliseconds: 600 * (1 << _autoRetries));
+    _autoRetryTimer = Timer(delay, () async {
+      _autoRetryTimer = null;
+      if (!mounted) return;
+      _autoRetries++;
+      await CachedNetworkImage.evictFromCache(widget.url);
+      if (mounted) setState(() => _attempt++);
+    });
+  }
+
+  /// 본문 이미지 디코딩 폭(px). 화면 폭 이상은 필요 없다.
+  int _cacheWidth(BuildContext context) {
+    final double dpr = MediaQuery.devicePixelRatioOf(context);
+    return (MediaQuery.sizeOf(context).width * dpr).round().clamp(
+      1,
+      _kMaxImageCacheWidth,
+    );
+  }
+
+  /// 실제 이미지의 종횡비를 알아내 [_imageAspectRatios] 에 넣는다.
+  ///
+  /// [CachedNetworkImage] 가 내부에서 만드는 것과 **동일한** provider 를 쓴다.
+  /// [CachedNetworkImageProvider] 의 == 는 url/scale/maxWidth/maxHeight 만 보고
+  /// (headers 는 제외), octo_image 가 씌우는 [ResizeImage] 래핑까지 맞췄으므로
+  /// 이미지 캐시 키가 같다. 즉 추가 네트워크 요청이나 디코딩이 생기지 않는다.
+  void _resolveAspectRatio() {
+    final provider = ResizeImage.resizeIfNeeded(
+      _cacheWidth(context),
+      null,
+      // headers 는 == 에 안 들어가서 캐시 키는 그대로지만, 캐시 미스 때 이쪽이
+      // 먼저 로드를 시작할 수 있으므로 Referer 를 반드시 같이 실어야 한다(디시 등).
+      CachedNetworkImageProvider(widget.url, headers: widget.headers),
+    );
+    final stream = provider.resolve(createLocalImageConfiguration(context));
+    final listener = ImageStreamListener((info, _) {
+      final double ratio = info.image.width / info.image.height;
+      info.dispose();
+      _rememberAspectRatio(widget.url, ratio);
+      _applyAspectRatio(ratio);
+    }, onError: (_, _) => _stopResolving());
+    // addListener 가 (이미 캐시된 이미지면) 콜백을 동기 호출할 수 있어
+    // 필드를 먼저 채운 뒤 등록한다.
+    _sizeStream = stream;
+    _sizeListener = listener;
+    stream.addListener(listener);
+  }
+
+  void _applyAspectRatio(double ratio) {
+    _stopResolving();
+    if (!mounted || _aspectRatio == ratio) return;
+    _aspectRatio = ratio;
+    // 위 콜백은 build/didChangeDependencies 도중 동기로 불릴 수 있으므로
+    // setState 를 프레임 밖으로 미룬다. 필드는 이미 갱신돼 있어서 이번
+    // 프레임에 빌드되더라도 올바른 비율로 그려진다.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) setState(() {});
+    });
+  }
+
+  void _stopResolving() {
+    final listener = _sizeListener;
+    if (listener != null) _sizeStream?.removeListener(listener);
+    _sizeStream = null;
+    _sizeListener = null;
+  }
 
   Future<void> _retry() async {
     // 실패 캐시를 제거한 뒤 key 를 바꿔 재요청을 유도한다.
+    _autoRetryTimer?.cancel();
+    _autoRetryTimer = null;
+    _autoRetries = 0;
     await CachedNetworkImage.evictFromCache(widget.url);
     if (mounted) setState(() => _attempt++);
   }
 
   @override
   Widget build(BuildContext context) {
-    return CachedNetworkImage(
+    // 본문 이미지는 최대 화면 폭까지만 필요하다. 원본 해상도로 디코딩하면
+    // (예: 980x735 -> 2.7MB) 이미지가 많은 글에서 수십 MB 가 상주한다.
+    //
+    // memCacheWidth 만 쓴다. maxWidthDiskCache 는 flutter_cache_manager 가
+    // UI isolate 에서 원본을 두 번 디코딩한 뒤 PNG 로 재인코딩해 디스크에
+    // 따로 저장하는 방식이라(첫 로드 시 큰 CPU 비용 + 사진은 오히려 용량 증가)
+    // 지금 고치려는 버벅임을 되레 악화시킨다.
+    final Widget image = CachedNetworkImage(
       key: ValueKey(_attempt),
       imageUrl: widget.url,
       httpHeaders: widget.headers,
+      memCacheWidth: _cacheWidth(context),
       fit: BoxFit.fill,
-      errorWidget: (context, _, error) =>
-          widget.errorBuilder(context, error, _retry),
+      errorWidget: (context, _, error) {
+        MoclLogger.d(() => 'errorWidget=$error');
+        // 자동 재시도가 남았으면 실패를 노출하지 않고 조용히 다시 받는다.
+        if (_autoRetries < _kMaxAutoRetries) {
+          _scheduleAutoRetry();
+          return widget.loadingBuilder(context, null);
+        }
+        return widget.errorBuilder(context, error, _retry);
+      },
       progressIndicatorBuilder: (context, _, progress) {
         final total = progress.totalSize;
         final v = total != null && total > 0
@@ -413,6 +600,15 @@ class _RetryableCachedImageState() extends State<_RetryableCachedImage> {
         return widget.loadingBuilder(context, v);
       },
     );
+
+    // 비율을 아는 이미지는 로딩 중에도 최종 높이만큼 자리를 미리 잡는다.
+    // 이게 없으면 재mount 시 높이 0 -> 실제 높이로 튀면서 스크롤이 틀어진다.
+    final double? ratio = _aspectRatio;
+    return ratio == null
+        ? image
+        : ClipRect(
+            child: AspectRatio(aspectRatio: ratio, child: image),
+          );
   }
 }
 
@@ -445,20 +641,78 @@ class const _HtmlImageErrorWidget({
   }
 }
 
+/// 본문 `<video>` 를 탭하기 전까지 실제 플레이어를 트리에 붙이지 않는다.
+///
+/// fwfh_chewie 의 `VideoPlayer` 는 `initState` 에서 곧바로
+/// `VideoPlayerController.network()` + `initialize()` 를 호출하므로, 본문에
+/// video 가 여러 개면 화면 밖 것까지 ExoPlayer 가 동시에 생성돼 힙이 터진다.
+/// 여기서 자식 mount 자체를 지연시켜 탭한 영상만 컨트롤러를 만들게 한다.
+class const _LazyVideoPlayer({
+  required final Widget player,
+  required final double aspectRatio,
+  final Widget? poster,
+}) extends StatefulWidget {
+  @override
+  State<_LazyVideoPlayer> createState() => _LazyVideoPlayerState();
+}
+
+class _LazyVideoPlayerState() extends State<_LazyVideoPlayer> {
+  bool _started = false;
+
+  @override
+  Widget build(BuildContext context) {
+    if (_started) return widget.player;
+
+    return GestureDetector(
+      onTap: () => setState(() => _started = true),
+      child: AspectRatio(
+        aspectRatio: widget.aspectRatio,
+        child: Stack(
+          alignment: Alignment.center,
+          fit: StackFit.expand,
+          children: [
+            widget.poster ?? const ColoredBox(color: Color(0xFF000000)),
+            const Center(
+              child: PlainIcon(
+                Icons.play_circle_fill,
+                size: 64,
+                color: Color(0xCCFFFFFF),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class const _HtmlWidget({
   required final String html,
   required final TextStyle? textStyle,
   required final String hexColor,
   required final void Function(String) openUrl,
+
+  /// true 면 sliver(SliverList)를 반환한다. 긴 본문을 지연 렌더해 화면 밖
+  /// 이미지/비디오가 mount 되지 않게 한다. sliver 는 box 위젯으로 감쌀 수 없다.
+  final bool sliver = false,
 }) extends ConsumerWidget with DetailState {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // 이미지 Referer 는 "현재 보고 있는 사이트"의 baseUrl(파서 단일 출처)을 쓴다.
     // application provider 직접 참조 대신 DetailState mixin 을 통해 가져온다.
     final referer = imageRefererState(ref);
+    final theme = Theme.of(context);
+    final String tableBorderHex =
+        (theme.dividerTheme.color ?? theme.dividerColor).stringHexColor;
 
-    final htmlWidget = HtmlWidget(
+    return HtmlWidget(
       html,
+      // 본문 HTML 이 루트 상대 경로를 쓰는 사이트(다모앙 이모티콘
+      // `/emoticons/onion-003.gif` 등)가 있어, 현재 사이트의 baseUrl 로
+      // 절대 URL 을 만들어 준다. 없으면 이미지 로드가 실패해 alt 텍스트
+      // (파일명)만 보인다.
+      baseUrl: referer.isNotEmpty ? Uri.tryParse(referer) : null,
+      renderMode: sliver ? RenderMode.sliverList : RenderMode.column,
       onLoadingBuilder: (context, element, progress) {
         final src = element.attributes['src'] ?? '';
         return _HtmlLoadingWidget(
@@ -474,6 +728,34 @@ class const _HtmlWidget({
         if (element.localName == 'a') {
           return {'color': hexColor, 'text-decoration': 'underline'};
         }
+        // 이모티콘(다모앙 `/emoticons/*.gif` 50x50 등)은 본문 사진과 달리
+        // 폭을 가득 채우면 안 된다. 원본이 작아도 이미지 위젯은 부모 폭에
+        // 맞춰 늘어나므로, 사이트 CSS 와 같은 상한(max-height: 2.5em)을 준다.
+        if (element.localName == 'img' &&
+            !element.attributes.containsKey('width') &&
+            (element.classes.contains('emoticon-inline') ||
+                (element.attributes['src'] ?? '').contains('/emoticons/'))) {
+          return const {'max-height': '2.5em'};
+        }
+        // 본문의 `<table>` 은 대개 border 속성도 인라인 스타일도 없이 오고
+        // (사이트 CSS 가 그려준다), 앱에는 그 CSS 가 없어 선 없는 글자 덩어리로
+        // 보인다. 원문이 테두리를 지정한 표는 그대로 두고, 아무것도 없을 때만
+        // 구분선 색으로 그려준다.
+        if (element.localName == 'table' && !_hasOwnBorder(element)) {
+          return {
+            'border': '1px solid $tableBorderHex',
+            'border-collapse': 'collapse',
+          };
+        }
+        // fwfh 는 HTML `border` **속성**이 있을 때만 셀에 `border: inherit` 를
+        // 넣어준다. 위처럼 CSS 로만 주면 바깥 테두리만 생기고 칸이 안 나뉘므로
+        // 셀에도 같은 선을 직접 지정한다.
+        if (element.localName == 'td' || element.localName == 'th') {
+          final table = _ownerTable(element);
+          if (table != null && !_hasOwnBorder(table)) {
+            return {'border': '1px solid $tableBorderHex', 'padding': '6px'};
+          }
+        }
         return null;
       },
       onTapImage: (data) {
@@ -481,12 +763,6 @@ class const _HtmlWidget({
         _openGallery(context, html, data.sources.first.url, referer);
       },
     );
-
-    if (kIsWeb || Platform.isMacOS) {
-      return htmlWidget;
-    } else {
-      return SelectionArea(child: htmlWidget);
-    }
   }
 }
 
@@ -540,6 +816,44 @@ class _MoclWidgetFactory({
       );
     }
     return super.buildImageWidget(tree, src);
+  }
+
+  /// 본문 video 는 자동재생/루프를 끄고, 탭하기 전까지 컨트롤러를 만들지 않는다.
+  /// (clien 등에 apple.com 1080p mp4 가 autoplay+loop 로 여러 개 박혀 오던 케이스)
+  @override
+  Widget? buildVideoPlayer(
+    BuildTree tree,
+    String url, {
+    required bool autoplay,
+    required bool controls,
+    double? height,
+    required bool loop,
+    String? posterUrl,
+    double? width,
+  }) {
+    final Widget? player = super.buildVideoPlayer(
+      tree,
+      url,
+      // HTML 의 autoplay/loop 는 무시한다. 탭으로 mount 된 시점부터 재생.
+      autoplay: true,
+      controls: true,
+      height: height,
+      loop: false,
+      posterUrl: posterUrl,
+      width: width,
+    );
+    if (player == null) return null;
+
+    final bool dimensOk =
+        height != null && height > 0 && width != null && width > 0;
+
+    return _LazyVideoPlayer(
+      player: player,
+      aspectRatio: dimensOk ? width / height : 16 / 9,
+      poster: posterUrl != null && posterUrl.isNotEmpty
+          ? buildImage(tree, ImageMetadata(sources: [ImageSource(posterUrl)]))
+          : null,
+    );
   }
 
   static final _youtubePattern = RegExp(
