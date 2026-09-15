@@ -6,7 +6,7 @@ part 'mute_rule.g.dart';
 /// 뮤트 규칙의 종류. 제목 키워드 또는 작성자(닉네임) 차단.
 enum MuteType() {
   keyword,
-  user
+  user,
 }
 
 /// 차단 규칙. sembast 의 `mutes` 스토어에 JSON 으로 저장된다(전역, 사이트 무관).

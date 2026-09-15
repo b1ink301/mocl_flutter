@@ -88,9 +88,7 @@ class FavoriteGroupsNotifier() extends _$FavoriteGroupsNotifier {
     if (current != null) {
       state = AsyncData([
         for (final FavoriteGroup group in current)
-          group.id == id
-              ? group.copyWith(collapsed: !group.collapsed)
-              : group,
+          group.id == id ? group.copyWith(collapsed: !group.collapsed) : group,
       ]);
     }
 
@@ -246,7 +244,9 @@ Future<List<FavoriteSection>> favoriteSections(Ref ref) async {
   );
   if (groups.isEmpty) return const [];
 
-  final List<FavoriteData> favorites = await ref.watch(favoritesProvider.future);
+  final List<FavoriteData> favorites = await ref.watch(
+    favoritesProvider.future,
+  );
   final Set<String> groupIds = {for (final FavoriteGroup g in groups) g.id};
   final Map<String, List<FavoriteData>> byGroup = {
     for (final FavoriteGroup group in groups) group.id: <FavoriteData>[],

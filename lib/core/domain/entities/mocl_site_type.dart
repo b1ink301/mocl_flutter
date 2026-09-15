@@ -16,7 +16,7 @@ enum SiteType() {
   ppomppu,
   reddit,
   ruliweb,
-  theqoo
+  theqoo,
 }
 
 extension SiteTypeExtension on SiteType {

@@ -77,9 +77,9 @@ class const _TopBar() extends ConsumerWidget with AddState, AddEvent {
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final SiteType site = currentSite(ref);
-    final int count = addedBoardKeys(
-      ref,
-    ).where((key) => key.startsWith('${site.name}_')).length;
+    final int count = addedBoardKeys(ref)
+        .where((key) => key.startsWith('${site.name}_'))
+        .length;
 
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 4),
@@ -269,7 +269,9 @@ class const _BoardChips() extends ConsumerWidget with AddState, AddEvent {
             for (final MainItem board in items)
               _BoardChip(
                 board: board,
-                isAdded: added.contains('${board.siteType.name}_${board.board}'),
+                isAdded: added.contains(
+                  '${board.siteType.name}_${board.board}',
+                ),
                 onTap: () => toggleBoard(ref, board),
               ),
           ],
@@ -401,9 +403,7 @@ class const _BoardChip({
     final Color focusColor = theme.focusColor;
 
     return Material(
-      color: isAdded
-          ? focusColor.withValues(alpha: 0.10)
-          : theme.cardColor,
+      color: isAdded ? focusColor.withValues(alpha: 0.10) : theme.cardColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(19),
         side: BorderSide(color: isAdded ? focusColor : theme.dividerColor),
@@ -413,24 +413,13 @@ class const _BoardChip({
         onTap: onTap,
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (isAdded) ...[
-                Icon(Icons.check, size: 14, color: focusColor),
-                const SizedBox(width: 5),
-              ],
-              Text(
-                board.text,
-                style: TextStyle(
-                  fontSize: 13.5,
-                  color: isAdded
-                      ? focusColor
-                      : theme.textTheme.bodyMedium?.color,
-                  fontWeight: isAdded ? FontWeight.w700 : FontWeight.normal,
-                ),
-              ),
-            ],
+          child: Text(
+            board.text,
+            style: TextStyle(
+              fontSize: 13.5,
+              color: isAdded ? focusColor : theme.textTheme.bodyMedium?.color,
+              fontWeight: isAdded ? FontWeight.w700 : FontWeight.normal,
+            ),
           ),
         ),
       ),

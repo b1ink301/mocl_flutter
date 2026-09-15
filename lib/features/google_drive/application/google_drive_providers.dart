@@ -41,7 +41,7 @@ enum SyncStatus() {
   idle,
   syncing,
   success,
-  error
+  error,
 }
 
 @riverpod
