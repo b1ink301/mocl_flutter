@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:cookie_jar/cookie_jar.dart' as cookiejar;
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
@@ -8,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart' as webview;
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_action.dart';
 
 // 차단 회피를 위해 최신 Chrome(2026.06 기준 150) UA 로 맞춘다. 웹뷰 식별
@@ -16,6 +15,28 @@ const String userAgentMobile =
     'Mozilla/5.0 (Linux; Android 16; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Mobile Safari/537.36';
 const String userAgentPc =
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36';
+
+/// [DioException] 을 사용자에게 그대로 보여줄 수 있는 짧은 한국어 사유의
+/// [Failure] 로 바꾼다. dio 의 기본 message 는 영문 설명 + MDN 링크까지 담긴
+/// 여러 줄 문자열이라 화면에 노출하면 안 된다.
+Failure failureFromDio(DioException e) => switch (e.type) {
+  DioExceptionType.connectionTimeout ||
+  DioExceptionType.sendTimeout ||
+  DioExceptionType.receiveTimeout => const NetworkFailure(
+    message: '서버 응답이 너무 느려요.',
+  ),
+  DioExceptionType.connectionError => const NetworkFailure(
+    message: '인터넷에 연결할 수 없어요.',
+  ),
+  DioExceptionType.badCertificate => const NetworkFailure(
+    message: '보안 인증서를 확인할 수 없어요.',
+  ),
+  DioExceptionType.cancel => const NetworkFailure(message: '요청이 취소되었어요.'),
+  DioExceptionType.badResponse => ServerFailure(
+    message: '서버 오류 (HTTP ${e.response?.statusCode ?? '?'})',
+  ),
+  _ => const NetworkFailure(message: '연결에 실패했어요.'),
+};
 
 abstract class const BaseApi(final Dio _dio, final String userAgent)
     with BaseAction {
@@ -39,13 +60,19 @@ abstract class const BaseApi(final Dio _dio, final String userAgent)
     Map<String, String>? headers,
     ResponseType? responseType,
     String? contentType,
+
+    /// true 를 돌려주면 해당 상태코드에서 예외를 던지지 않는다. 서버가 오류
+    /// 상태코드(예: 500)의 **본문**에 사람이 읽을 수 있는 사유를 담아 보내는
+    /// API 에서, 그 본문을 파서로 넘기기 위해 사용한다.
+    bool Function(int?)? validateStatus,
   }) => _dio.get(
     url,
-    options: headers != null
+    options: headers != null || validateStatus != null
         ? Options(
             headers: headers,
             responseType: responseType,
             contentType: contentType,
+            validateStatus: validateStatus,
           )
         : null,
   );
@@ -140,11 +167,10 @@ abstract class const BaseApi(final Dio _dio, final String userAgent)
       _dio.interceptors.add(interceptor);
       return await action();
     } on DioException catch (e) {
-      log('DioException: $e');
-      final String message = e.message ?? 'Unknown Error';
-      return Left(NetworkFailure(message: message));
+      MoclLogger.e('DioException', error: e);
+      return Left(failureFromDio(e));
     } on Failure catch (e) {
-      log('DioException: $e');
+      MoclLogger.e('DioException', error: e);
       return Left(e);
     } finally {
       _dio.interceptors.remove(interceptor);
@@ -192,7 +218,7 @@ abstract class const BaseApi(final Dio _dio, final String userAgent)
       }
       return last;
     } catch (e) {
-      log('[fetchRenderedHtml] $url error: $e');
+      MoclLogger.e('[fetchRenderedHtml] $url error', error: e);
       return null;
     } finally {
       await headless?.dispose();
