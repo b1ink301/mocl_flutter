@@ -65,7 +65,7 @@ class const MainDataSourceImpl({
           .map((item) => MainItemModel.fromJson(item as Map<String, dynamic>))
           .toList();
     } on Exception catch (e) {
-      MoclLogger.log("getAllFromJson - ${e.toString()}");
+      MoclLogger.e("getAllFromJson", error: e);
       return const [];
     }
   }

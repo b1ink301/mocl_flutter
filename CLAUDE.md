@@ -34,6 +34,28 @@ Riverpod Provider 는 **mixin class 를 통해서만** 접근한다.
   fvm dart run tool/check_provider_imports.dart
   ```
 
+## 로깅 (MoclLogger 경유 필수)
+
+`print()` / `debugPrint()` / `dart:developer` 의 `log()` 를 **직접 쓰지 말 것.**
+셋 다 릴리즈 빌드에서 제거되지 않아 사용자 단말 logcat 에 그대로 남는다.
+
+```dart
+import 'package:mocl_flutter/core/util/mocl_logger.dart';
+
+MoclLogger.d(() => '[getList] $url response = ${response.statusCode}'); // 디버그 전용
+MoclLogger.w(() => '웹뷰 폴백');                                          // 경고
+MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  // 릴리즈에서도 Crashlytics 로 전송
+```
+
+- `d` / `i` / `w` 는 메시지를 **클로저로** 받는다. `kDebugMode` 가 컴파일 타임 상수라
+  릴리즈에서는 본문과 클로저가 함께 제거되어 문자열 보간 비용조차 없다.
+- `e` 만 릴리즈에서도 `MoclLogger.onError`(= Crashlytics) 로 전달된다. 콘솔 출력은 하지 않는다.
+- 헤더는 반드시 `MoclLogger.redactHeaders(headers)` 로 마스킹한다. 쿠키/토큰 직접 보간 금지.
+- 커밋 전 검증(사전 커밋 훅에서도 자동 실행):
+  ```bash
+  fvm dart run tool/check_logging.dart
+  ```
+
 ## 아키텍처
 
 - Clean Architecture: `domain → data → application → presentation`

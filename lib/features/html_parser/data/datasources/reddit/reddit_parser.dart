@@ -225,7 +225,7 @@ class const RedditParser() extends BaseParser {
     if (container == null) {
       return Left(NotLoginFailure(message: '로그인하지 않았습니다. #1'));
     }
-    MoclLogger.log('container=${container.outerHtml}');
+    MoclLogger.d(() => 'container=${container.outerHtml}');
     final initialStateJson = container.attributes['initialstatejson'];
     if (initialStateJson == null || initialStateJson == "[]") {
       return Left(NotLoginFailure(message: '로그인하지 않았습니다. #2'));
@@ -249,7 +249,7 @@ class const RedditParser() extends BaseParser {
         .whereType<MainItem>()
         .toList();
 
-    MoclLogger.log('[main]#3 result=$result');
+    MoclLogger.d(() => '[main]#3 result=$result');
 
     return Right(result);
   }

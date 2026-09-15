@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/domain/entities/last_id.dart';
@@ -10,6 +8,7 @@ import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_parser.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 
@@ -29,7 +28,7 @@ class const ArcaliveApi(super.dio, super.userAgent) extends BaseApi {
         url,
         readyMarkers: const ['article-content', 'fr-view'],
       );
-      log('[detail] $url via webview, htmlLen=${html?.length}');
+      MoclLogger.d(() => '[detail] $url via webview, htmlLen=${html?.length}');
       if (html == null) {
         return Left(GetDetailFailure(message: 'Cloudflare 챌린지 통과 실패(timeout)'));
       }
@@ -65,13 +64,15 @@ class const ArcaliveApi(super.dio, super.userAgent) extends BaseApi {
     final String host = Uri.parse(parser.baseUrl).host;
     final Map<String, String> headers = {'Host': host, 'User-Agent': userAgent};
 
-    log('[getList] url=$url, headers=$headers');
+    MoclLogger.d(
+      () => '[getList] url=$url, headers=${MoclLogger.redactHeaders(headers)}',
+    );
     Response<dynamic>? response;
     try {
       response = await get(url, headers: headers);
     } on DioException catch (e) {
       // 일부 채널(예: breaking/hotdeal)은 단순 GET 이 Cloudflare 403 을 받는다.
-      log('[getList] dio ${e.response?.statusCode} → 웹뷰 폴백');
+      MoclLogger.w(() => '[getList] dio ${e.response?.statusCode} → 웹뷰 폴백');
       response = null;
     }
 
@@ -104,7 +105,7 @@ class const ArcaliveApi(super.dio, super.userAgent) extends BaseApi {
         url,
         readyMarkers: const ['href="/b/'],
       );
-      log('[getMain] $url via webview, htmlLen=${html?.length}');
+      MoclLogger.d(() => '[getMain] $url via webview, htmlLen=${html?.length}');
       if (html == null) {
         return Left(GetMainFailure(message: '채널 목록 로드 실패'));
       }
@@ -143,7 +144,10 @@ class const ArcaliveApi(super.dio, super.userAgent) extends BaseApi {
       'User-Agent': userAgent,
     };
     final Response<dynamic> response = await get(url, headers: headers);
-    log('[searchList] $url, $headers response = ${response.statusCode}');
+    MoclLogger.d(
+      () =>
+          '[searchList] $url, ${MoclLogger.redactHeaders(headers)} response = ${response.statusCode}',
+    );
 
     return response.statusCode == 200
         ? parser.list(response, lastId, item.text, isReads)

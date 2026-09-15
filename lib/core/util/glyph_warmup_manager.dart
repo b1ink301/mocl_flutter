@@ -21,9 +21,9 @@ class GlyphWarmupManager._() with WidgetsBindingObserver {
 
   @override
   void didChangeAppLifecycleState(AppLifecycleState state) {
-    MoclLogger.logWithTag(
-      'GlyphWarmupManager',
-      'didChangeAppLifecycleState=$state',
+    MoclLogger.d(
+      () => 'didChangeAppLifecycleState=$state',
+      tag: 'GlyphWarmupManager',
     );
     if (state == AppLifecycleState.resumed) {
       final bg = backgroundedAt;
@@ -47,7 +47,7 @@ class GlyphWarmupManager._() with WidgetsBindingObserver {
     }
     _isWarmingUp = true;
 
-    MoclLogger.logWithTag('GlyphWarmupManager', '_runWarmup#1 start');
+    MoclLogger.d(() => '_runWarmup#1 start', tag: 'GlyphWarmupManager');
 
     final styles = <TextStyle>[
       // 실제 앱에서 사용하는 스타일과 동일하게
@@ -60,13 +60,13 @@ class GlyphWarmupManager._() with WidgetsBindingObserver {
 
     _isWarmingUp = false;
 
-    MoclLogger.logWithTag('GlyphWarmupManager', '_runWarmup#2 end');
+    MoclLogger.d(() => '_runWarmup#2 end', tag: 'GlyphWarmupManager');
   }
 
   void dispose() {
     _stopRequested = true;
     WidgetsBinding.instance.removeObserver(this);
 
-    MoclLogger.logWithTag('GlyphWarmupManager', 'dispose');
+    MoclLogger.d(() => 'dispose', tag: 'GlyphWarmupManager');
   }
 }

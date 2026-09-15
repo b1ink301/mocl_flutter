@@ -17,7 +17,7 @@ class SizeCacheDirNotifier() extends _$SizeCacheDirNotifier {
     await ref.read(clearDataProvider.future);
     state = await AsyncValue.guard(_getSizeCacheDir);
 
-    MoclLogger.log('clear cache = $state');
+    MoclLogger.d(() => 'clear cache = $state');
   }
 
   Future<String> _getSizeCacheDir() async =>

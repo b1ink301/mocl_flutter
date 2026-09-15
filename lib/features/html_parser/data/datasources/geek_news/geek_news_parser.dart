@@ -265,7 +265,7 @@ class const GeekNewsParser() extends BaseParser {
     } catch (e) {
       // 구조 파손 등 치명 오류는 삼키지 않고 워커 디스패처가
       // ParseListError 로 보고하도록 전파한다.
-      MoclLogger.log('[GeekNewsParser] Error parsing list: $e');
+      MoclLogger.e('[GeekNewsParser] Error parsing list', error: e);
       rethrow;
     }
 
@@ -288,7 +288,7 @@ class const GeekNewsParser() extends BaseParser {
     SortType sortType,
     LastId lastId,
   ) {
-    MoclLogger.log('urlByList = url = $url, board = $board, page = $page');
+    MoclLogger.d(() => 'urlByList = url = $url, board = $board, page = $page');
     // page=1 → 오늘, page=2 → 어제, page=3 → 그저께 ...
     final date = DateTime.now().subtract(Duration(days: page - 1));
     final day =

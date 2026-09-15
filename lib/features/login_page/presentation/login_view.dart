@@ -30,7 +30,7 @@ class const LoginView({super.key})
         try {
           final uri = _resolveUri(url);
 
-          MoclLogger.log('[shouldOverrideUrlLoading] url=$url, uri=$uri');
+          MoclLogger.d(() => '[shouldOverrideUrlLoading] url=$url, uri=$uri');
           // if (await canLaunchUrl(uri)) {
           await launchUrl(uri, mode: LaunchMode.externalApplication);
           // }

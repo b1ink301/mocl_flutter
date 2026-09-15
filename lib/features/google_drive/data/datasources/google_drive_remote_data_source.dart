@@ -59,7 +59,7 @@ class GoogleDriveRemoteDataSource() {
       try {
         _currentUser = await signIn.authenticate();
       } catch (e) {
-        MoclLogger.log('Interactive sign-in failed: $e');
+        MoclLogger.e('Interactive sign-in failed', error: e);
       }
     }
 
@@ -74,7 +74,7 @@ class GoogleDriveRemoteDataSource() {
   Future<drive.DriveApi?> _getDriveApi() async {
     final googleUser = _currentUser ?? await signIn();
     if (googleUser == null) {
-      MoclLogger.log("Google Sign-In failed.");
+      MoclLogger.w(() => "Google Sign-In failed.");
       return null;
     }
 
@@ -90,7 +90,7 @@ class GoogleDriveRemoteDataSource() {
             .authorizeScopes(scopes);
         headers = {'Authorization': 'Bearer ${authorization.accessToken}'};
       } catch (e) {
-        MoclLogger.log('Scope authorization failed: $e');
+        MoclLogger.e('Scope authorization failed', error: e);
         return null;
       }
     }
@@ -126,7 +126,7 @@ class GoogleDriveRemoteDataSource() {
         return createdFolder.id;
       }
     } catch (e) {
-      MoclLogger.log('Error creating/finding app folder: $e');
+      MoclLogger.e('Error creating/finding app folder', error: e);
       return null;
     }
   }
@@ -155,14 +155,14 @@ class GoogleDriveRemoteDataSource() {
     final dbFile = await _getDbFile();
 
     if (driveApi == null || dbFile == null) {
-      MoclLogger.log("Drive API or DB file not available.");
+      MoclLogger.w(() => "Drive API or DB file not available.");
       return false;
     }
 
     try {
       final appFolderId = await _getOrCreateAppFolder(driveApi);
       if (appFolderId == null) {
-        MoclLogger.log("Could not get or create app folder.");
+        MoclLogger.w(() => "Could not get or create app folder.");
         return false;
       }
 
@@ -177,15 +177,15 @@ class GoogleDriveRemoteDataSource() {
       if (listResponse.files != null && listResponse.files!.isNotEmpty) {
         final fileId = listResponse.files!.first.id!;
         await driveApi.files.update(driveFile, fileId, uploadMedia: media);
-        MoclLogger.log("Database updated successfully.");
+        MoclLogger.d(() => "Database updated successfully.");
       } else {
         driveFile.parents = [appFolderId];
         await driveApi.files.create(driveFile, uploadMedia: media);
-        MoclLogger.log("Database uploaded successfully.");
+        MoclLogger.d(() => "Database uploaded successfully.");
       }
       return true;
     } catch (e) {
-      MoclLogger.log('Error uploading DB: $e');
+      MoclLogger.e('Error uploading DB', error: e);
       return false;
     }
   }
@@ -196,14 +196,14 @@ class GoogleDriveRemoteDataSource() {
   Future<String?> downloadDbToTemp() async {
     final driveApi = await _getDriveApi();
     if (driveApi == null) {
-      MoclLogger.log("Drive API not available.");
+      MoclLogger.w(() => "Drive API not available.");
       return null;
     }
 
     try {
       final appFolderId = await _getOrCreateAppFolder(driveApi);
       if (appFolderId == null) {
-        MoclLogger.log("Could not get or create app folder.");
+        MoclLogger.w(() => "Could not get or create app folder.");
         return null;
       }
 
@@ -213,7 +213,7 @@ class GoogleDriveRemoteDataSource() {
       );
 
       if (listResponse.files == null || listResponse.files!.isEmpty) {
-        MoclLogger.log("No database file found on Google Drive.");
+        MoclLogger.w(() => "No database file found on Google Drive.");
         return null;
       }
 
@@ -231,10 +231,10 @@ class GoogleDriveRemoteDataSource() {
       await fileStream.flush();
       await fileStream.close();
 
-      MoclLogger.log("Database downloaded to temp file successfully.");
+      MoclLogger.d(() => "Database downloaded to temp file successfully.");
       return tmpFile.path;
     } catch (e) {
-      MoclLogger.log('Error downloading DB: $e');
+      MoclLogger.e('Error downloading DB', error: e);
       return null;
     }
   }
@@ -246,10 +246,10 @@ class GoogleDriveRemoteDataSource() {
       final dbDirectory = await getApplicationDocumentsDirectory();
       final dbPath = path.join(dbDirectory.path, _dbFileName);
       await File(tmpPath).rename(dbPath);
-      MoclLogger.log("Downloaded DB applied successfully.");
+      MoclLogger.d(() => "Downloaded DB applied successfully.");
       return true;
     } catch (e) {
-      MoclLogger.log('Error applying downloaded DB: $e');
+      MoclLogger.e('Error applying downloaded DB', error: e);
       return false;
     }
   }

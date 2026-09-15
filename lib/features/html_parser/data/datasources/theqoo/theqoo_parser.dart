@@ -70,8 +70,8 @@ class const TheQooParser() extends BaseParser {
       final addedNumber = json['added_number'];
       // final documentSrl = json['document_srl'];
 
-      MoclLogger.log(
-        'nowCommentPage=$nowCommentPage, addedNumber=$addedNumber',
+      MoclLogger.d(
+        () => 'nowCommentPage=$nowCommentPage, addedNumber=$addedNumber',
       );
 
       final List<dynamic> list = json['comment_list'] as List<dynamic>;

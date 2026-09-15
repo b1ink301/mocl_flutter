@@ -16,7 +16,7 @@ class FileDownloadService._() {
       final bytes = base64Decode(base64Data);
       return await _saveWithPicker(bytes, fileName);
     } catch (e) {
-      MoclLogger.logWithTag('FileDownload', 'error: $e');
+      MoclLogger.e('error', error: e, tag: 'FileDownload');
       return {'success': false, 'error': e.toString()};
     }
   }
@@ -60,7 +60,7 @@ class FileDownloadService._() {
 
       return await _saveWithPicker(bytes, fileName);
     } catch (e) {
-      MoclLogger.logWithTag('FileDownload', 'downloadFromUrl error: $e');
+      MoclLogger.e('downloadFromUrl error', error: e, tag: 'FileDownload');
       return {'success': false, 'error': e.toString()};
     }
   }

@@ -14,10 +14,10 @@ extension WidgetRefExtension on WidgetRef {
       // ②
       try {
         final result = globalContainer.read(provider);
-        MoclLogger.log('WidgetRef dispose → fallback: $e');
+        MoclLogger.e('WidgetRef dispose → fallback', error: e);
         return result;
       } catch (e) {
-        MoclLogger.log('safeRead error: $e');
+        MoclLogger.e('safeRead error', error: e);
         rethrow;
       }
     }

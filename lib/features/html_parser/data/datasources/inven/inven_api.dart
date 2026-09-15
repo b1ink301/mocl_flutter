@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/domain/entities/last_id.dart';
@@ -10,6 +8,7 @@ import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 
 import '../base/base_parser.dart';
@@ -72,7 +71,7 @@ class const InvenApi(super.dio, super.userAgent) extends BaseApi {
         commentFuture,
       ]);
       final Response<dynamic> htmlResponse = responses.first;
-      log('[detail] $url response = ${htmlResponse.statusCode}');
+      MoclLogger.d(() => '[detail] $url response = ${htmlResponse.statusCode}');
 
       if (htmlResponse.statusCode != 200) {
         return Left(
@@ -122,7 +121,7 @@ class const InvenApi(super.dio, super.userAgent) extends BaseApi {
         parser.baseUrl,
         headers: headers,
       );
-      log('[getList] $url response = ${response.statusCode}');
+      MoclLogger.d(() => '[getList] $url response = ${response.statusCode}');
       return response.statusCode == 200
           ? await parser.list(response, lastId, item.text, isReads)
           : Left(
@@ -170,7 +169,7 @@ class const InvenApi(super.dio, super.userAgent) extends BaseApi {
         parser.baseUrl,
         headers: headers,
       );
-      log('[searchList] $url response = ${response.statusCode}');
+      MoclLogger.d(() => '[searchList] $url response = ${response.statusCode}');
       return response.statusCode == 200
           ? await parser.list(response, lastId, item.text, isReads)
           : Left(

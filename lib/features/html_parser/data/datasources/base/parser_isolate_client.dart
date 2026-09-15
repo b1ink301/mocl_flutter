@@ -178,7 +178,7 @@ void _workerEntry(SendPort mainPort) {
       }
       await worker(msg);
     } catch (e, st) {
-      MoclLogger.log('[ParserWorker] dispatch error: $e\n$st');
+      MoclLogger.e('[ParserWorker] dispatch error', error: e, stackTrace: st);
       msg.replyPort.send(ParseListError(e.toString()));
     }
   });

@@ -55,7 +55,7 @@ mixin class ListEvent() {
     try {
       context.push(Routes.detail, extra: item);
     } catch (e) {
-      MoclLogger.log('_handleItemTap = $e');
+      MoclLogger.e('_handleItemTap', error: e);
     }
   }
 

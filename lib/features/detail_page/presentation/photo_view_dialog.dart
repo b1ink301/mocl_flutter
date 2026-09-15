@@ -174,7 +174,7 @@ class _PhotoViewDialogState() extends State<PhotoViewDialog> {
         return response.bodyBytes;
       }
     } catch (e) {
-      MoclLogger.log('Image download failed: $e');
+      MoclLogger.e('Image download failed', error: e);
     }
     return null;
   }
@@ -199,7 +199,7 @@ class _PhotoViewDialogState() extends State<PhotoViewDialog> {
         _showSnackBar(context, '저장에 실패했습니다.');
       }
     } catch (e) {
-      MoclLogger.log('Image save failed: $e');
+      MoclLogger.e('Image save failed', error: e);
       if (context.mounted) _showSnackBar(context, '저장에 실패했습니다.');
     }
   }
@@ -221,7 +221,7 @@ class _PhotoViewDialogState() extends State<PhotoViewDialog> {
 
       await SharePlus.instance.share(ShareParams(files: [XFile(filePath)]));
     } catch (e) {
-      MoclLogger.log('Image share failed: $e');
+      MoclLogger.e('Image share failed', error: e);
       if (context.mounted) _showSnackBar(context, '공유에 실패했습니다.');
     }
   }
