@@ -29,4 +29,17 @@ mixin class MainState() {
 
   /// 오른쪽 사이트 빠른 이동 레일을 보일지(설정에서 끌 수 있다).
   bool showQuickJumpState(WidgetRef ref) => ref.watch(showQuickJumpProvider);
+
+  /// 검색창이 열려 있는지.
+  bool searchOpenState(WidgetRef ref) => ref.watch(mainSearchOpenProvider);
+
+  /// 내 게시판 검색어.
+  String searchQueryState(WidgetRef ref) => ref.watch(mainSearchQueryProvider);
+
+  /// 검색어를 1회 읽는다(initState 등 non-build 컨텍스트용).
+  String readSearchQuery(WidgetRef ref) => ref.read(mainSearchQueryProvider);
+
+  /// 접어둔 카페 소구획 키 집합.
+  Set<String> collapsedSubSectionsState(WidgetRef ref) =>
+      ref.watch(collapsedSubSectionsProvider);
 }

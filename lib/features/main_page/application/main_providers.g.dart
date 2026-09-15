@@ -125,3 +125,182 @@ abstract class _$MainEditMode extends $Notifier<bool> {
     return element.handleCreate(ref, build);
   }
 }
+
+/// 내 게시판 검색창이 열려 있는지.
+
+@ProviderFor(MainSearchOpen)
+final mainSearchOpenProvider = MainSearchOpenProvider._();
+
+/// 내 게시판 검색창이 열려 있는지.
+final class MainSearchOpenProvider
+    extends $NotifierProvider<MainSearchOpen, bool> {
+  /// 내 게시판 검색창이 열려 있는지.
+  MainSearchOpenProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'mainSearchOpenProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$mainSearchOpenHash();
+
+  @$internal
+  @override
+  MainSearchOpen create() => MainSearchOpen();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$mainSearchOpenHash() => r'b932e6370cb5aded664f4987cbffeaf23978f567';
+
+/// 내 게시판 검색창이 열려 있는지.
+
+abstract class _$MainSearchOpen extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// 내 게시판 검색어. 담은 게시판이 수십 개가 되면 스크롤·빠른 이동보다
+/// 두 글자 입력이 빠르다.
+
+@ProviderFor(MainSearchQuery)
+final mainSearchQueryProvider = MainSearchQueryProvider._();
+
+/// 내 게시판 검색어. 담은 게시판이 수십 개가 되면 스크롤·빠른 이동보다
+/// 두 글자 입력이 빠르다.
+final class MainSearchQueryProvider
+    extends $NotifierProvider<MainSearchQuery, String> {
+  /// 내 게시판 검색어. 담은 게시판이 수십 개가 되면 스크롤·빠른 이동보다
+  /// 두 글자 입력이 빠르다.
+  MainSearchQueryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'mainSearchQueryProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$mainSearchQueryHash();
+
+  @$internal
+  @override
+  MainSearchQuery create() => MainSearchQuery();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String>(value),
+    );
+  }
+}
+
+String _$mainSearchQueryHash() => r'826e60070e9bc5cced1cc3d332a7297b485411b6';
+
+/// 내 게시판 검색어. 담은 게시판이 수십 개가 되면 스크롤·빠른 이동보다
+/// 두 글자 입력이 빠르다.
+
+abstract class _$MainSearchQuery extends $Notifier<String> {
+  String build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<String, String>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String, String>,
+              String,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// 접어둔 카페 소구획 키 집합. 그룹 접힘과 같이 앱을 다시 켜도 유지된다.
+
+@ProviderFor(CollapsedSubSections)
+final collapsedSubSectionsProvider = CollapsedSubSectionsProvider._();
+
+/// 접어둔 카페 소구획 키 집합. 그룹 접힘과 같이 앱을 다시 켜도 유지된다.
+final class CollapsedSubSectionsProvider
+    extends $NotifierProvider<CollapsedSubSections, Set<String>> {
+  /// 접어둔 카페 소구획 키 집합. 그룹 접힘과 같이 앱을 다시 켜도 유지된다.
+  CollapsedSubSectionsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'collapsedSubSectionsProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$collapsedSubSectionsHash();
+
+  @$internal
+  @override
+  CollapsedSubSections create() => CollapsedSubSections();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Set<String> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Set<String>>(value),
+    );
+  }
+}
+
+String _$collapsedSubSectionsHash() =>
+    r'a8d5d5c90de5b21c97c3656faded0e5f898f6455';
+
+/// 접어둔 카페 소구획 키 집합. 그룹 접힘과 같이 앱을 다시 켜도 유지된다.
+
+abstract class _$CollapsedSubSections extends $Notifier<Set<String>> {
+  Set<String> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<Set<String>, Set<String>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<Set<String>, Set<String>>,
+              Set<String>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
