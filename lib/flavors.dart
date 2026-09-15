@@ -1,6 +1,6 @@
 enum Flavor() {
   prd,
-  dev
+  dev,
 }
 
 class F() {

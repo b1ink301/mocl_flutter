@@ -7,7 +7,7 @@ enum ResultStatus() {
   initial,
   loading,
   success,
-  failure
+  failure,
 }
 
 @immutable

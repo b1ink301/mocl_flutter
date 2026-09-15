@@ -85,7 +85,7 @@ final class BookmarksNotifierProvider
   BookmarksNotifier create() => BookmarksNotifier();
 }
 
-String _$bookmarksNotifierHash() => r'217f248ab1a10c6c8111fce857e09b7fafdbd206';
+String _$bookmarksNotifierHash() => r'98f73ea27aae2e2e9232c163ab2fe343c995fb4f';
 
 /// 스크랩 목록(최신순). 추가/삭제 시 invalidate 되어 화면이 갱신된다.
 

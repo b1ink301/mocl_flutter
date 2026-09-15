@@ -77,6 +77,7 @@ android {
         getByName("release") {
             signingConfig = signingConfigs.getByName("key")
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         getByName("debug") {
@@ -85,8 +86,8 @@ android {
         }
         getByName("profile") {
             signingConfig = signingConfigs.getByName("key")
+            // 프로파일 빌드는 축소하지 않으므로 proguardFiles 는 지정하지 않는다 (적용되지 않음).
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
     }
 
