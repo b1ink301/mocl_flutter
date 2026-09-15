@@ -1,5 +1,3 @@
-import 'dart:developer';
-
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/domain/entities/last_id.dart';
@@ -10,27 +8,33 @@ import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 
 import '../base/base_parser.dart';
 
 class const MeecoApi(super.dio, super.userAgent) extends BaseApi {
   @override
-  Future<Either<Failure, Details>> detail(ListItem item, BaseParser parser) =>
-      withSyncCookie(parser.baseUrl, () async {
-        final String url = parser.urlByDetail(item.url, item.board, item.id);
-        final Map<String, String> headers = {'User-Agent': userAgent};
+  Future<Either<Failure, Details>> detail(
+    ListItem item,
+    BaseParser parser,
+  ) => withSyncCookie(parser.baseUrl, () async {
+    final String url = parser.urlByDetail(item.url, item.board, item.id);
+    final Map<String, String> headers = {'User-Agent': userAgent};
 
-        final Response<dynamic> response = await get(url, headers: headers);
-        log('[detail] $url, $headers response = ${response.statusCode}');
-        return response.statusCode == 200
-            ? parser.detail(response)
-            : Left(
-                GetDetailFailure(
-                  message: 'response.statusCode = ${response.statusCode}',
-                ),
-              );
-      });
+    final Response<dynamic> response = await get(url, headers: headers);
+    MoclLogger.d(
+      () =>
+          '[detail] $url, ${MoclLogger.redactHeaders(headers)} response = ${response.statusCode}',
+    );
+    return response.statusCode == 200
+        ? parser.detail(response)
+        : Left(
+            GetDetailFailure(
+              message: 'response.statusCode = ${response.statusCode}',
+            ),
+          );
+  });
 
   @override
   Future<Either<Failure, List<ListItem>>> list(
@@ -52,7 +56,10 @@ class const MeecoApi(super.dio, super.userAgent) extends BaseApi {
     final String host = Uri.parse(parser.baseUrl).host;
     final Map<String, String> headers = {'Host': host, 'User-Agent': userAgent};
     final Response<dynamic> response = await get(url, headers: headers);
-    log('[getList] $url, $headers response = ${response.statusCode}');
+    MoclLogger.d(
+      () =>
+          '[getList] $url, ${MoclLogger.redactHeaders(headers)} response = ${response.statusCode}',
+    );
 
     return response.statusCode == 200
         ? parser.list(response, lastId, item.text, isReads)
@@ -73,7 +80,7 @@ class const MeecoApi(super.dio, super.userAgent) extends BaseApi {
         'User-Agent': userAgent,
       };
       final Response<dynamic> response = await get(url, headers: headers);
-      log('[getMain] $url response = ${response.statusCode}');
+      MoclLogger.d(() => '[getMain] $url response = ${response.statusCode}');
       return response.statusCode == 200
           ? await parser.main(response)
           : Left(
@@ -112,7 +119,10 @@ class const MeecoApi(super.dio, super.userAgent) extends BaseApi {
       'User-Agent': userAgent,
     };
     final Response<dynamic> response = await get(url, headers: headers);
-    log('[getList] $url, $headers response = ${response.statusCode}');
+    MoclLogger.d(
+      () =>
+          '[getList] $url, ${MoclLogger.redactHeaders(headers)} response = ${response.statusCode}',
+    );
 
     return response.statusCode == 200
         ? parser.list(response, lastId, item.text, isReads)

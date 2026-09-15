@@ -153,9 +153,21 @@ class const DamoangParser(final bool isShowNickImage) extends BaseParser {
 
   /// post 의 videos / downloads / link1 / link2 를 본문 뒤에 붙일 HTML 로 변환.
   /// 첨부가 없으면 빈 문자열.
+  /// [url] 이 이미 [bodyHtml] 안에서 쓰이고 있는지 판별한다.
+  ///
+  /// 에디터로 올린 이미지는 본문 `<img src>` 와 `downloads` 양쪽에 같은 파일이
+  /// 들어와서, 그대로 append 하면 같은 사진이 본문과 첨부에 두 번 보인다.
+  /// 절대/상대 경로가 섞여도 잡히도록 호스트를 뺀 path 로 비교한다.
+  static bool _isUsedInBody(String bodyHtml, String url) {
+    if (bodyHtml.isEmpty || url.isEmpty) return false;
+    final String path = Uri.tryParse(url)?.path ?? '';
+    return bodyHtml.contains(path.isEmpty ? url : path);
+  }
+
   static String _buildAttachmentsHtml(
     Map<String, dynamic> post,
     List<dynamic> postNodeData,
+    String bodyHtml,
   ) {
     final List<Map<String, String>> files = [];
 
@@ -166,6 +178,8 @@ class const DamoangParser(final bool isShowNickImage) extends BaseParser {
         final resolved = _resolveObject(postNodeData, idx);
         final url = (resolved['url'] ?? '').toString();
         if (url.isEmpty) continue;
+        // 본문에 이미 삽입된 첨부(에디터 업로드 이미지/동영상)는 건너뛴다.
+        if (_isUsedInBody(bodyHtml, url)) continue;
         final filename = (resolved['filename'] ?? '').toString();
         final size = resolved['size'];
         files.add({
@@ -328,7 +342,11 @@ class const DamoangParser(final bool isShowNickImage) extends BaseParser {
       //      transformedPostContent 에는 본문 텍스트만 들어가고,
       //      에디터로 업로드된 첨부(videos/downloads)와 link1/link2 가
       //      누락되므로 본문 뒤에 명시적으로 append.
-      final String attachmentsHtml = _buildAttachmentsHtml(post, postNodeData);
+      final String attachmentsHtml = _buildAttachmentsHtml(
+        post,
+        postNodeData,
+        bodyHtml,
+      );
       if (attachmentsHtml.isNotEmpty) {
         bodyHtml = '$bodyHtml$attachmentsHtml';
       }
@@ -432,8 +450,8 @@ class const DamoangParser(final bool isShowNickImage) extends BaseParser {
           }
         }
       } else {
-        MoclLogger.log(
-          '[DamoangParser] commentsData node not found in any data node',
+        MoclLogger.d(
+          () => '[DamoangParser] commentsData node not found in any data node',
         );
       }
 
@@ -508,7 +526,7 @@ class const DamoangParser(final bool isShowNickImage) extends BaseParser {
       // Find posts data from node with 'postsData' key
       final nodeData = _findNodeDataByKey(lines, 'postsData');
       if (nodeData == null || nodeData.isEmpty) {
-        MoclLogger.log('[DamoangParser] postsData node not found');
+        MoclLogger.d(() => '[DamoangParser] postsData node not found');
         replyPort.send(<ListItem>[]);
         return;
       }
@@ -516,28 +534,28 @@ class const DamoangParser(final bool isShowNickImage) extends BaseParser {
       final nodeRoot = nodeData[0] as Map;
       final postsDataIndex = nodeRoot['postsData'];
       if (postsDataIndex is! int || postsDataIndex >= nodeData.length) {
-        MoclLogger.log('[DamoangParser] postsData index not found');
+        MoclLogger.d(() => '[DamoangParser] postsData index not found');
         replyPort.send(<ListItem>[]);
         return;
       }
 
       final postsDataObj = nodeData[postsDataIndex];
       if (postsDataObj is! Map) {
-        MoclLogger.log('[DamoangParser] postsData is not a Map');
+        MoclLogger.d(() => '[DamoangParser] postsData is not a Map');
         replyPort.send(<ListItem>[]);
         return;
       }
 
       final postsIndex = postsDataObj['posts'];
       if (postsIndex is! int || postsIndex >= nodeData.length) {
-        MoclLogger.log('[DamoangParser] Posts index not found');
+        MoclLogger.d(() => '[DamoangParser] Posts index not found');
         replyPort.send(<ListItem>[]);
         return;
       }
 
       final postIndices = nodeData[postsIndex];
       if (postIndices is! List) {
-        MoclLogger.log('[DamoangParser] Posts array not found');
+        MoclLogger.d(() => '[DamoangParser] Posts array not found');
         replyPort.send(<ListItem>[]);
         return;
       }
@@ -550,7 +568,7 @@ class const DamoangParser(final bool isShowNickImage) extends BaseParser {
         final int id = (post['id'] is int) ? post['id'] as int : -1;
         if (id <= 0) continue;
         if (lastId > 0 && id >= lastId) {
-          MoclLogger.log('[SKIP] id=$id, lastId=$lastId');
+          MoclLogger.d(() => '[SKIP] id=$id, lastId=$lastId');
           continue;
         }
 
@@ -614,7 +632,7 @@ class const DamoangParser(final bool isShowNickImage) extends BaseParser {
         );
       }
     } catch (e) {
-      MoclLogger.log('[DamoangParser] Error parsing list: $e');
+      MoclLogger.e('[DamoangParser] Error parsing list', error: e);
     }
 
     await sendListWithReadStatus(replyPort, items);
@@ -652,11 +670,11 @@ class const DamoangParser(final bool isShowNickImage) extends BaseParser {
   );
 
   static Either<Failure, List<MainItem>> _parseMain(dynamic data) {
-    MoclLogger.log('_parseMain data=${data.runtimeType}');
+    MoclLogger.d(() => '_parseMain data=${data.runtimeType}');
     String homeHtml = '';
     String groupsJson = '';
     if (data is List) {
-      MoclLogger.log('_parseMain #2 data=${data.length}');
+      MoclLogger.d(() => '_parseMain #2 data=${data.length}');
       homeHtml = data.isNotEmpty ? (data[0] as String? ?? '') : '';
       groupsJson = data.length > 1 ? (data[1] as String? ?? '') : '';
     } else if (data is String) {
@@ -672,7 +690,7 @@ class const DamoangParser(final bool isShowNickImage) extends BaseParser {
       final document = parse(homeHtml);
       for (final nav in document.querySelectorAll('nav')) {
         for (final a in nav.querySelectorAll('a[href]')) {
-          MoclLogger.log('_parseMain a=${a.outerHtml}');
+          MoclLogger.d(() => '_parseMain a=${a.outerHtml}');
           final href = a.attributes['href']?.trim() ?? '';
           final slug = RegExp(r'^/([a-z0-9_]+)$').firstMatch(href)?.group(1);
           if (slug == null || !seen.add(slug)) continue;

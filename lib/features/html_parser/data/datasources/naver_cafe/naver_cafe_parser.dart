@@ -67,20 +67,57 @@ class const NaverCafeParser() extends BaseParser {
   @override
   Future<Either<Failure, Details>> detail(Response<dynamic> response) async {
     final responseData = response.data as List<dynamic>;
-    return Isolate.run(() => _parseDetail(responseData));
+    try {
+      return await Isolate.run(() => _parseDetail(responseData));
+    } catch (e, st) {
+      // 예상 못 한 응답 형태로 파싱이 깨져도 원시 예외 문구를 화면에 흘리지 않는다.
+      MoclLogger.e('[detail] parse error', error: e, stackTrace: st);
+      return const Left(GetDetailFailure(message: '글을 불러오지 못했어요.'));
+    }
+  }
+
+  /// 네이버 카페 오류 응답을 화면에 보여줄 [Failure] 로 바꾼다.
+  /// 서버가 주는 `reason` 은 사람이 읽을 수 있는 한국어라 그대로 노출한다.
+  /// - `0004`: 로그인 필요
+  /// - `4005`: 게시글을 읽기 위한 멤버 레벨 부족
+  /// - `9999`: 서버가 사유를 감춘 일반 오류(권한 없는 글의 댓글 API 등)
+  static Failure _failureOf(Map<dynamic, dynamic> error, String fallback) {
+    final String? code = (error['errorCode'] ?? error['code'])?.toString();
+    final String? reason = (error['reason'] ?? error['errorMessage'])
+        ?.toString();
+    return switch (code) {
+      '0004' => NotLoginFailure(message: reason ?? '로그인이 필요해요.'),
+      '4005' => PermissionFailure(message: reason ?? '이 글을 읽을 권한이 없어요.'),
+      _ => GetDetailFailure(
+        message: reason?.isNotEmpty == true ? reason! : fallback,
+      ),
+    };
+  }
+
+  /// 권한이 없는 글의 댓글 API 는 `{"errorCode":"9999"}` 만 돌려준다.
+  /// 본문을 읽을 수 있는 상황이라면 댓글이 없는 것으로 보고 본문만 보여준다.
+  static List<dynamic> _commentItemsOf(dynamic body) {
+    if (body is! Map) return const [];
+    final result = body['result'];
+    if (result is! Map) return const [];
+    final comments = result['comments'];
+    if (comments is! Map) return const [];
+    final items = comments['items'];
+    return items is List ? items : const [];
   }
 
   static Either<Failure, Details> _parseDetail(List<dynamic> responseData) {
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
-    final detail = responseData.first['result'];
+    final body = responseData.first;
+    if (body is! Map) {
+      return const Left(GetDetailFailure(message: '글을 불러오지 못했어요.'));
+    }
+    // 오류 응답은 사유가 result 안(4005 등)에 오기도 하고 최상위(9999)에 오기도 한다.
+    final detail = body['result'] is Map ? body['result'] as Map : body;
     final article = detail['article'];
     if (article is! Map) {
-      final errorCode = detail['errorCode']?.toString();
-      final reason = detail['reason']?.toString() ?? '본문을 불러오지 못했습니다.';
-      return errorCode == '0004'
-          ? Left(NotLoginFailure(message: reason))
-          : Left(GetDetailFailure(message: reason));
+      return Left(_failureOf(detail, '글을 불러오지 못했어요.'));
     }
 
     // contentHtml 은 구형 에디터 글에만 채워진다. 비어 있으면(마켓/플리마켓 글 등)
@@ -88,11 +125,12 @@ class const NaverCafeParser() extends BaseParser {
     final rawBody = article['contentHtml'];
     var bodyHtml = rawBody is String ? rawBody : '';
     if (bodyHtml.isEmpty) {
-      bodyHtml = _buildMarketBodyHtml(article);
+      bodyHtml = _buildMarketBodyHtml(detail, article);
       if (bodyHtml.isEmpty) {
-        MoclLogger.log(
-          '[detail] empty body. isMarket=${article['isMarket']} '
-          'editorVersion=${article['editorVersion']}',
+        MoclLogger.d(
+          () =>
+              '[detail] empty body. isMarket=${article['isMarket']} '
+              'editorVersion=${article['editorVersion']}',
         );
       }
     }
@@ -106,10 +144,7 @@ class const NaverCafeParser() extends BaseParser {
     // final commentCount = writer['commentCount'];
     final likeCount = '';
 
-    final comment = responseData.last['result'];
-
-    final List<dynamic> comments =
-        comment['comments']['items'] as List<dynamic>;
+    final List<dynamic> comments = _commentItemsOf(responseData.last);
 
     final commentItems = comments
         .map((comment) {
@@ -199,9 +234,13 @@ class const NaverCafeParser() extends BaseParser {
   }
 
   /// 중고거래(네이버 플리마켓) 글은 contentHtml/contentElements 가 비어 있고
-  /// 본문이 nfleaProduct.saleProduct 에 들어 있다. 가격/상태/설명/사진을 HTML 로 합친다.
-  static String _buildMarketBodyHtml(Map<dynamic, dynamic> article) {
-    final nflea = article['nfleaProduct'];
+  /// 본문이 nfleaProduct.saleProduct 에 들어 있다. 가격/설명/사진만 HTML 로 합친다.
+  /// nfleaProduct 는 article 이 아니라 result 바로 아래(= article 의 형제)에 온다.
+  static String _buildMarketBodyHtml(
+    Map<dynamic, dynamic> result,
+    Map<dynamic, dynamic> article,
+  ) {
+    final nflea = result['nfleaProduct'] ?? article['nfleaProduct'];
     if (nflea is! Map) return '';
     final sale = nflea['saleProduct'];
     if (sale is! Map) return '';
@@ -215,7 +254,14 @@ class const NaverCafeParser() extends BaseParser {
       );
     }
 
-    const statusLabels = {'SALE': '판매중', 'RESERVED': '예약중', 'SOLD_OUT': '판매완료'};
+    const statusLabels = {
+      'ON_SALE': '판매중',
+      'SALE': '판매중',
+      'RESERVED': '예약중',
+      'SOLD_OUT': '판매완료',
+      'SOLD': '판매완료',
+      'END': '판매완료',
+    };
     final status = statusLabels[sale['saleStatus']];
     if (status != null) {
       buffer.write('<p>거래상태: $status</p>');
@@ -231,17 +277,39 @@ class const NaverCafeParser() extends BaseParser {
       buffer.write('<p>$escaped</p>');
     }
 
+    for (final url in _marketImageUrls(result, sale)) {
+      buffer.write('<img src="$url" width="100%"><br>');
+    }
+
+    return buffer.toString();
+  }
+
+  /// 사진은 saleProduct.productImages 가 1순위, 없으면 result.attaches 의
+  /// 이미지 첨부(type == 'I')를 쓴다.
+  static List<String> _marketImageUrls(
+    Map<dynamic, dynamic> result,
+    Map<dynamic, dynamic> sale,
+  ) {
+    final urls = <String>[];
+
     final images = sale['productImages'];
     if (images is List) {
       for (final image in images) {
         final url = image is Map ? image['url'] : null;
-        if (url is String && url.isNotEmpty) {
-          buffer.write('<img src="$url" width="100%"><br>');
-        }
+        if (url is String && url.isNotEmpty) urls.add(url);
       }
     }
+    if (urls.isNotEmpty) return urls;
 
-    return buffer.toString();
+    final attaches = result['attaches'];
+    if (attaches is List) {
+      for (final attach in attaches) {
+        if (attach is! Map || attach['type'] != 'I') continue;
+        final url = attach['url'];
+        if (url is String && url.isNotEmpty) urls.add(url);
+      }
+    }
+    return urls;
   }
 
   static String _formatPrice(int price) {

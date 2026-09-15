@@ -58,7 +58,7 @@ class const ClienParser(final bool isShowNickImage) extends BaseParser {
       "div.post_information > div.post_time > div.post_date",
     );
 
-    // MoclLogger.log('timeElement = ${timeElement?.outerHtml}');
+    // MoclLogger.d(() => 'timeElement = ${timeElement?.outerHtml}');
     timeElement.removeAll('.fa');
     var time = timeElement?.text.trim() ?? '';
     final tmp = time.split('수정일 :');
@@ -68,7 +68,7 @@ class const ClienParser(final bool isShowNickImage) extends BaseParser {
     final bodyHtmlElement = container?.querySelector(
       "div.post_view > div.post_content > article > div.post_article",
     );
-    bodyHtmlElement.removeAll('input, button');
+    bodyHtmlElement.removeAll('script, style, ins, input, button');
     final linkHtml =
         container
             ?.querySelector("div.post_view > div.attached_link > div.link_list")
@@ -80,14 +80,6 @@ class const ClienParser(final bool isShowNickImage) extends BaseParser {
     );
 
     marketHtmlElement.removeAll('div.product_address');
-
-    final recentsElement = container?.querySelector("div.writer_board");
-
-    MoclLogger.log('recentsElement=${recentsElement?.innerHtml}');
-
-    final recentsWritersElement = container?.querySelector("div.writer_menu");
-
-    MoclLogger.log('recentsWritersElement=${recentsWritersElement?.innerHtml}');
 
     final bodyHtml = bodyHtmlElement?.innerHtml ?? '';
     final viewCountElement = container?.querySelector(
@@ -268,7 +260,7 @@ class const ClienParser(final bool isShowNickImage) extends BaseParser {
     for (final element in elementList) {
       final id = int.tryParse(element.attributes['data-board-sn'] ?? '') ?? 0;
       if (id <= 0 || lastId > 0 && id >= lastId) {
-        MoclLogger.log('[SKIP] id=$id, lastId=$lastId');
+        MoclLogger.d(() => '[SKIP] id=$id, lastId=$lastId');
         continue;
       }
 

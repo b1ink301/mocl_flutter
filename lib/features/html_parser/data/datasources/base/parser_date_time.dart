@@ -6,12 +6,19 @@ import 'package:timeago/timeago.dart' as timeago;
 /// - `어제`
 /// - `2026년 3월 12일 오후 03:10` (damoang 한국어 형식)
 /// - `2026-06-11 10:00:00`, `2026.06.11 10:00` (연-월-일 + 시각)
+/// - `26.09.13. 09:34` (2자리 연도 + 시각 — meeco 댓글)
 /// - `12-25 14:30`, `12.25 14:30` (월-일 + 시각, 연도는 올해)
 /// - `14:30`, `14:30:05` (시각만, 날짜는 오늘)
-/// - `2026-06-11`, `2026.06.11` (날짜만, 시각은 현재 유지)
+/// - `2026-06-11`, `2026.06.11`, `26.06.11.` (날짜만, 시각은 현재 유지)
 /// - `26.7.20 1:44 PM` (2자리 연도 + 영문 AM/PM)
 /// - ISO 8601 (`2026-03-13T11:04:59+09:00`)
 class ParserDateTime._() {
+  /// 2자리 연도를 2000년대로 편다.
+  ///
+  /// `26.09.13.` 의 `26` 을 그대로 쓰면 서기 26년이 되어 timeago 가
+  /// "2001년 전" 같은 값을 내놓는다.
+  static int _normalizeYear(int year) => year < 100 ? year + 2000 : year;
+
   static final RegExp _korean = RegExp(
     r'(\d{4})년\s*(\d{1,2})월\s*(\d{1,2})일\s*(오전|오후)\s*(\d{1,2}):(\d{2})',
   );
@@ -20,7 +27,7 @@ class ParserDateTime._() {
     caseSensitive: false,
   );
   static final RegExp _dateOnly = RegExp(
-    r'^(\d{4})[.-](\d{1,2})[.-](\d{1,2})\.?$',
+    r'^(\d{2,4})[.-](\d{1,2})[.-](\d{1,2})\.?$',
   );
   static final RegExp _timeOnly = RegExp(r'^(\d{1,2}):(\d{2})(?::(\d{2}))?$');
 
@@ -49,8 +56,7 @@ class ParserDateTime._() {
     final ampmMatch = _ampm.firstMatch(s);
     if (ampmMatch != null) {
       final bool isPm = ampmMatch.group(6)!.toUpperCase() == 'PM';
-      int year = int.parse(ampmMatch.group(1)!);
-      if (year < 100) year += 2000;
+      final int year = _normalizeYear(int.parse(ampmMatch.group(1)!));
       int hour = int.parse(ampmMatch.group(4)!);
       if (isPm && hour < 12) hour += 12;
       if (!isPm && hour == 12) hour = 0;
@@ -67,7 +73,7 @@ class ParserDateTime._() {
     final dateOnlyMatch = _dateOnly.firstMatch(s);
     if (dateOnlyMatch != null) {
       return DateTime(
-        int.parse(dateOnlyMatch.group(1)!),
+        _normalizeYear(int.parse(dateOnlyMatch.group(1)!)),
         int.parse(dateOnlyMatch.group(2)!),
         int.parse(dateOnlyMatch.group(3)!),
         now.hour,
@@ -99,7 +105,7 @@ class ParserDateTime._() {
           (timeParts.length == 2 || timeParts.length == 3)) {
         final bool hasYear = dateParts.length == 3;
         return DateTime(
-          hasYear ? int.parse(dateParts[0]) : now.year,
+          hasYear ? _normalizeYear(int.parse(dateParts[0])) : now.year,
           int.parse(dateParts[hasYear ? 1 : 0]),
           int.parse(dateParts[hasYear ? 2 : 1]),
           int.parse(timeParts[0]),

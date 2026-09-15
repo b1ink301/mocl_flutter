@@ -21,6 +21,19 @@ void main() {
       );
     });
 
+    test('meeco 댓글: 2자리 연도는 2000년대로 편다', () {
+      expect(
+        ParserDateTime.parse('26.09.13. 09:34'),
+        DateTime(2026, 9, 13, 9, 34),
+      );
+      expect(
+        ParserDateTime.parse('26.09.13 16:57'),
+        DateTime(2026, 9, 13, 16, 57),
+      );
+      // 날짜만 있는 2자리 연도도 마찬가지 (시각은 현재를 유지한다)
+      expect(ParserDateTime.parse('26.09.13.').year, 2026);
+    });
+
     test('월.일/월-일 + 시각은 올해로 파싱한다', () {
       final now = DateTime.now();
       expect(

@@ -3,6 +3,7 @@ import 'dart:isolate';
 
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:mocl_flutter/core/domain/entities/last_id.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
@@ -37,6 +38,48 @@ class const MeecoParser(final bool isShowNickImage) extends BaseParser {
     return Isolate.run(() => _parseDetail(url, responseData, showNickImage));
   }
 
+  /// `style="...background-image:url(https://...)..."` 에서 URL 만 뽑는다.
+  static final RegExp _stickerUrlRegex = RegExp(
+    r'''background-image\s*:\s*url\(\s*['"]?([^'")]+)['"]?\s*\)''',
+  );
+
+  /// 같은 style 의 `width: 100px` / `height: 100px`.
+  static final RegExp _stickerSizeRegex = RegExp(
+    r'(?:^|;)\s*(width|height)\s*:\s*(\d+)px',
+  );
+
+  /// 메코 스티커를 실제 `<img>` 로 바꾼다.
+  ///
+  /// 스티커는 `<span class="meeco-sticker" style="background-image:url(...)">`
+  /// 처럼 **CSS 배경**으로 들어온다. 앱의 HTML 렌더러는 background-image 를
+  /// 그리지 않아서 댓글에 빈 자리만 남았다.
+  ///
+  /// 원래 `background-size: contain` 이므로, 지정된 상자 크기를 넘지 않는
+  /// 상한(max-width/max-height)만 주어 비율이 찌그러지지 않게 한다.
+  static void _replaceStickers(Element? root, String baseUrl) {
+    if (root == null) return;
+
+    for (final span in root.querySelectorAll('span.meeco-sticker')) {
+      final String style = span.attributes['style'] ?? '';
+      final String url =
+          _stickerUrlRegex.firstMatch(style)?.group(1)?.trim() ?? '';
+      if (url.isEmpty) continue;
+
+      final Map<String, String> size = {
+        for (final m in _stickerSizeRegex.allMatches(style))
+          m.group(1)!: m.group(2)!,
+      };
+
+      span.replaceWith(
+        Element.tag('img')
+          ..attributes['src'] = url.toUrl(baseUrl)
+          ..attributes['style'] =
+              'max-width:${size['width'] ?? '100'}px;'
+              'max-height:${size['height'] ?? '100'}px',
+      );
+    }
+  }
+
   static Either<Failure, Details> _parseDetail(
     String baseUrl,
     String responseData,
@@ -65,6 +108,7 @@ class const MeecoParser(final bool isShowNickImage) extends BaseParser {
 
     final bodyHtml = container?.querySelector('div.atc_body');
     bodyHtml.removeAll('input, button');
+    _replaceStickers(bodyHtml, baseUrl);
 
     final time = infoElement?.querySelectorAll('ul > li')[0].text.trim() ?? '';
 
@@ -87,7 +131,7 @@ class const MeecoParser(final bool isShowNickImage) extends BaseParser {
                 'div.pf_wrap > span.pf > img.pf_img',
               );
 
-              MoclLogger.log('element=${element.innerHtml}');
+              MoclLogger.d(() => 'element=${element.innerHtml}');
 
               final tmpUrl = profileElement?.attributes['src']?.trim() ?? '';
               final nickImage = isShowNickImage ? tmpUrl.toUrl(baseUrl) : '';
@@ -101,14 +145,16 @@ class const MeecoParser(final bool isShowNickImage) extends BaseParser {
 
               final body = element.querySelector('div.xe_content');
               body.removeAll('input, span.name, button');
+              _replaceStickers(body, baseUrl);
 
               final parsedTime = formatTimeago(time);
 
               final isSecret =
                   element.querySelector('div.cmt_secret_ctn') != null;
 
-              MoclLogger.log(
-                'isSecret=$isSecret, headerElement=${headerElement?.innerHtml}',
+              MoclLogger.d(
+                () =>
+                    'isSecret=$isSecret, headerElement=${headerElement?.innerHtml}',
               );
 
               final nickNameElement = headerElement?.children.firstWhere(
