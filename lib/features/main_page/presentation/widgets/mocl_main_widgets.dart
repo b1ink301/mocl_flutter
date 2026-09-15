@@ -14,10 +14,8 @@ class const _MainBody({required final GroupHeaderKeys headerKeys})
       // 갱신 중에는 직전 목록을 그대로 유지한다.
       skipLoadingOnReload: true,
       data: (sections) => _buildSections(ref, sections, bottom),
-      error: (error, _) => _ErrorWidget(
-        key: ValueKey(error.hashCode),
-        message: error is Failure ? error.message : error.toString(),
-      ),
+      error: (error, _) =>
+          _ErrorWidget(key: ValueKey(error.hashCode), error: error),
       loading: () => SliverFillRemaining(
         hasScrollBody: false,
         child: Column(
@@ -424,21 +422,13 @@ Future<String?> _promptGroupName(
   return result;
 }
 
-class const _ErrorWidget({super.key, required final String message})
+class const _ErrorWidget({super.key, required final Object? error})
     extends StatelessWidget {
   @override
-  Widget build(BuildContext context) {
-    final focusColor = Theme.of(context).focusColor;
-    return SliverPadding(
-      padding: const .all(12.0),
-      sliver: SliverToBoxAdapter(
-        child: PlainText(
-          message,
-          style: TextStyle(fontSize: 16, color: focusColor),
-        ),
-      ),
-    );
-  }
+  Widget build(BuildContext context) => SliverFillRemaining(
+    hasScrollBody: false,
+    child: Center(child: FailureView(error: error)),
+  );
 }
 
 class const _MainAppBar()

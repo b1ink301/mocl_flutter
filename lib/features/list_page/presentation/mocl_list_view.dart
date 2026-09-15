@@ -3,6 +3,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/core/presentation/widgets/failure_view.dart';
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
 import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mixin.dart';
 import 'package:mocl_flutter/features/list_page/presentation/state/list_state_mixin.dart';
@@ -37,10 +38,11 @@ class const MoclListView({super.key})
     final bottom = MediaQuery.of(context).padding.bottom;
 
     // 에러 인디케이터 빌더 (중복 제거)
-    Widget buildErrorIndicator(dynamic error) => _ListError(
-      errorMessage: '로딩 중 오류가 발생했습니다',
+    Widget buildErrorIndicator(Object? error) => FailureView(
+      error: error,
+      descriptionStyle: styles.smallTextStyle,
+      titleStyle: styles.titleTextStyle,
       onRetry: () => handleRetry(ref),
-      textStyle: styles.smallTextStyle,
     );
 
     return ListStyleScope(
@@ -141,33 +143,6 @@ class const _NoMoreItems({
         onPressed: onLoadMore,
         child: PlainText('더 불러오기', style: textStyle),
       ),
-    ),
-  );
-}
-
-class const _ListError({
-  required final String errorMessage,
-  required final VoidCallback onRetry,
-  required final TextStyle textStyle,
-}) extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.all(16),
-    child: Column(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        PlainText(
-          errorMessage,
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
-          style: textStyle,
-        ),
-        const SizedBox(height: 16),
-        ElevatedButton(
-          onPressed: onRetry,
-          child: PlainText('재시도', style: textStyle),
-        ),
-      ],
     ),
   );
 }
