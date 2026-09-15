@@ -18,6 +18,14 @@ class const SettingsRepositoryImpl({required final SharedPreferences _prefs})
       _prefs.setString(_extraSiteType, siteType.name);
 
   @override
+  List<String> getCollapsedSubSections() =>
+      _prefs.getStringList(_extraCollapsedSubSections) ?? const [];
+
+  @override
+  void setCollapsedSubSections(List<String> keys) =>
+      _prefs.setStringList(_extraCollapsedSubSections, keys);
+
+  @override
   void setFontSize(double fontSize) =>
       _prefs.setDouble(_extraFontSize, fontSize);
 
@@ -63,5 +71,6 @@ class const SettingsRepositoryImpl({required final SharedPreferences _prefs})
   static final String _extraShowNickImage = 'show_nick_image';
   static final String _extraShowBoardIcon = 'show_board_icon';
   static final String _extraShowQuickJump = 'show_quick_jump';
+  static final String _extraCollapsedSubSections = 'collapsed_sub_sections';
   static final String _extraThemeMode = 'theme_mode';
 }

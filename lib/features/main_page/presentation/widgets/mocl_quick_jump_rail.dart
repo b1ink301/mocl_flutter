@@ -100,6 +100,9 @@ class _QuickJumpRailState()
     // 편집 모드에서는 오른쪽이 드래그 손잡이 자리다.
     if (editModeState(ref)) return const SizedBox.shrink();
 
+    // 검색 중에는 목록이 걸러진 상태라 레일의 그룹 위치와 어긋난다.
+    if (searchOpenState(ref)) return const SizedBox.shrink();
+
     final List<FavoriteSection> sections =
         favoriteSectionsState(ref).asData?.value ?? const <FavoriteSection>[];
     // 본문과 같은 규칙으로 빈 그룹은 뺀다(레일과 목록의 순서가 어긋나면 안 된다).

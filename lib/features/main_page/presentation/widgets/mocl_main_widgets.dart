@@ -33,10 +33,39 @@ class const _MainBody({required final GroupHeaderKeys headerKeys})
 
   Widget _buildSections(
     WidgetRef ref,
-    List<FavoriteSection> sections,
+    List<FavoriteSection> rawSections,
     double bottom,
   ) {
     final bool editMode = editModeState(ref);
+    final String query = searchQueryState(ref).trim().toLowerCase();
+    // 검색 중에는 그룹 구조만 남기고 걸러낸 항목만 그린다.
+    final List<FavoriteSection> sections = query.isEmpty
+        ? rawSections
+        : [
+            for (final FavoriteSection section in rawSections)
+              (
+                group: section.group.copyWith(collapsed: false),
+                items: section.items
+                    .where((favorite) => _matches(favorite, query))
+                    .toList(),
+              ),
+          ];
+
+    if (query.isNotEmpty) {
+      final List<FavoriteSection> hits = sections
+          .where((section) => section.items.isNotEmpty)
+          .toList();
+      if (hits.isEmpty) {
+        return _buildNoResultView(titleTextStyleState(ref), query);
+      }
+      return SliverMainAxisGroup(
+        slivers: [
+          for (int i = 0; i < hits.length; i++)
+            ..._buildSection(ref, hits[i], i, hits.length, false),
+          SliverToBoxAdapter(child: SizedBox(height: bottom + 8)),
+        ],
+      );
+    }
     // 평소엔 빈 그룹을 감춰 목록을 짧게 유지하고, 편집 모드에선 이름 변경 ·
     // 삭제 · 이동 대상이 되도록 빈 그룹까지 모두 보여준다.
     final List<FavoriteSection> visible = editMode
@@ -85,6 +114,8 @@ class const _MainBody({required final GroupHeaderKeys headerKeys})
     if (section.group.collapsed)
       const SliverToBoxAdapter(child: SizedBox.shrink())
     // 편집 모드에서만 드래그로 그룹 안 순서를 바꾼다(평소엔 탭=게시판 이동).
+    // 편집 중에는 소구획으로 묶지 않는다 — 드래그가 평면 인덱스를 쓰므로
+    // 묶어버리면 순서를 바꿀 수 없다.
     else if (editMode)
       SliverReorderableList(
         key: ValueKey('reorder_${section.group.id}'),
@@ -105,17 +136,70 @@ class const _MainBody({required final GroupHeaderKeys headerKeys})
         ),
       )
     else
-      SliverList.builder(
-        itemCount: section.items.length,
-        itemBuilder: (context, itemIndex) => _BoardTile(
-          key: ValueKey(_tileKeyOf(section.items[itemIndex])),
-          favorite: section.items[itemIndex],
-          index: itemIndex,
-          editMode: false,
-          showSite: _needsSiteLabel(section, itemIndex),
-        ),
-      ),
+      ..._buildSubSections(ref, section),
   ];
+
+  /// 같은 카페의 게시판을 소제목 아래로 묶어 그린다.
+  /// 부모가 없는(또는 혼자인) 항목은 예전처럼 평평하게 이어진다.
+  List<Widget> _buildSubSections(WidgetRef ref, FavoriteSection section) {
+    final List<FavoriteSubSection> subSections = subSectionsOf(section.items);
+    final Set<String> collapsed = collapsedSubSectionsState(ref);
+
+    return [
+      for (final FavoriteSubSection sub in subSections)
+        if (sub.key.isEmpty)
+          SliverList.builder(
+            itemCount: sub.items.length,
+            itemBuilder: (context, itemIndex) => _BoardTile(
+              key: ValueKey(_tileKeyOf(sub.items[itemIndex])),
+              favorite: sub.items[itemIndex],
+              index: itemIndex,
+              editMode: false,
+              showSite: section.group.id != sub.items[itemIndex].siteType.name,
+            ),
+          )
+        else
+          SliverMainAxisGroup(
+            slivers: [
+              SliverToBoxAdapter(
+                child: _SubSectionHeader(
+                  sub: sub,
+                  collapsed: collapsed.contains(sub.key),
+                ),
+              ),
+              if (!collapsed.contains(sub.key))
+                SliverList.builder(
+                  itemCount: sub.items.length,
+                  itemBuilder: (context, itemIndex) => _BoardTile(
+                    key: ValueKey(_tileKeyOf(sub.items[itemIndex])),
+                    favorite: sub.items[itemIndex],
+                    index: itemIndex,
+                    editMode: false,
+                    // 소제목이 이미 카페를 밝히므로 행에서는 출처를 지운다.
+                    inSubSection: true,
+                    showSite:
+                        section.group.id != sub.items[itemIndex].siteType.name,
+                  ),
+                ),
+            ],
+          ),
+    ];
+  }
+
+  Widget _buildNoResultView(TextStyle textStyle, String query) =>
+      SliverFillRemaining(
+        hasScrollBody: false,
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 32),
+            child: Text(
+              "'$query' 와 맞는 게시판이 없습니다.",
+              textAlign: TextAlign.center,
+              style: textStyle,
+            ),
+          ),
+        ),
+      );
 
   Widget _buildEmptyView(TextStyle textStyle) => SliverFillRemaining(
     hasScrollBody: false,
@@ -262,15 +346,133 @@ class const _HeaderAction({
   );
 }
 
-/// 게시판 한 줄에 붙일 출처 문구.
+/// 검색어가 게시판 이름이나 출처(카페 · 사이트)에 걸리는지.
+bool _matches(FavoriteData favorite, String query) =>
+    favorite.text.toLowerCase().contains(query) ||
+    favorite.parentText.toLowerCase().contains(query) ||
+    favorite.siteType.title.toLowerCase().contains(query);
+
+/// 컨테이너(카페) 자체를 담은 항목인지. 하위 메뉴 목록의 '전체글' 이 이렇게
+/// 저장된다(board 가 부모와 같다). 이 항목만 제목이 '전체글' 이라 여러 카페를
+/// 담으면 구분이 안 되므로, 소제목 밖에서는 카페 이름을 제목으로 쓴다.
+bool _isWholeContainer(FavoriteData favorite) =>
+    favorite.parentBoard.isNotEmpty && favorite.board == favorite.parentBoard;
+
+/// 행에 보일 제목.
+String _titleOf(FavoriteData favorite, {required bool inSubSection}) =>
+    !inSubSection && _isWholeContainer(favorite) && favorite.parentText.isNotEmpty
+    ? favorite.parentText
+    : favorite.text;
+
+/// 행에 붙일 출처. 소제목(카페)이 이미 밝혀주면 비우고, 부제 대신 오른쪽
+/// 배지로 붙여 행 높이를 한 줄로 유지한다.
+String _originOf(
+  FavoriteData favorite, {
+  required bool showSite,
+  required bool inSubSection,
+}) {
+  final List<String> parts = [
+    if (!inSubSection &&
+        !_isWholeContainer(favorite) &&
+        favorite.parentText.isNotEmpty)
+      favorite.parentText,
+    if (showSite) favorite.siteType.title,
+  ];
+  return parts.join(' · ');
+}
+
+/// 카페(부모) 소제목 한 줄. 눌러서 그 카페의 게시판을 접거나 펼친다.
 ///
-/// 2단 게시판(네이버 카페의 게시판 등)은 '자유게시판'처럼 어느 사이트에나 있는
-/// 이름이라 부모(카페)를 밝히지 않으면 구분이 안 된다. 그룹 이름이 곧 사이트인
-/// 경우엔 사이트명이 중복이라 부모만 남긴다.
-String _originOf(FavoriteData favorite, {required bool showSite}) {
-  final String parent = favorite.parentText;
-  if (parent.isEmpty) return showSite ? favorite.siteType.title : '';
-  return showSite ? '$parent · ${favorite.siteType.title}' : parent;
+/// 그룹 헤더보다 한 칸 들여쓰고 배경을 옅게 깔아, 그룹과 같은 층으로 보이지
+/// 않게 한다. 접었을 때 카페 하나가 한 줄로 줄어드는 게 이 소제목의 값이다.
+class const _SubSectionHeader({
+  required final FavoriteSubSection sub,
+  required final bool collapsed,
+}) extends ConsumerWidget with MainState, MainEvent {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final Color subColor = theme.textTheme.bodySmall?.color ?? theme.hintColor;
+    final bool showIcon = showBoardIconState(ref);
+
+    return Material(
+      type: MaterialType.transparency,
+      child: InkWell(
+        onTap: () => toggleSubSection(ref, sub.key),
+        child: Container(
+          color: theme.brightness == Brightness.dark
+              ? Colors.white.withValues(alpha: 0.03)
+              : Colors.black.withValues(alpha: 0.02),
+          padding: const EdgeInsets.fromLTRB(16, 9, 12, 9),
+          child: Row(
+            children: [
+              if (showIcon && sub.siteType != null) ...[
+                SiteAvatar(
+                  siteType: sub.siteType!,
+                  iconUrl: sub.icon,
+                  radius: 9,
+                ),
+                const SizedBox(width: 8),
+              ],
+              Flexible(
+                child: PlainText(
+                  sub.parentText,
+                  style: TextStyle(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: theme.textTheme.bodyMedium?.color,
+                  ),
+                ),
+              ),
+              const SizedBox(width: 6),
+              PlainText(
+                '${sub.items.length}',
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w600,
+                  color: subColor,
+                ),
+              ),
+              const Spacer(),
+              PlainIcon(
+                collapsed
+                    ? Icons.chevron_right_rounded
+                    : Icons.expand_more_rounded,
+                size: 18,
+                color: subColor,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 행 오른쪽에 붙는 출처(카페 · 사이트) 배지.
+/// 부제로 내리면 행이 두 줄이 되어 목록의 리듬이 깨지므로 오른쪽에 둔다.
+class const _OriginBadge({required final String text})
+    extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final Color color = theme.textTheme.bodySmall?.color ?? theme.hintColor;
+
+    return Container(
+      constraints: const BoxConstraints(maxWidth: 130),
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(9),
+        border: Border.all(color: theme.dividerColor),
+      ),
+      child: Text(
+        text,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(fontSize: 10.5, color: color),
+      ),
+    );
+  }
 }
 
 /// 등록한 게시판 한 줄. 평소엔 탭으로 진입하고, 편집 모드에선
@@ -281,11 +483,16 @@ class const _BoardTile({
   required final int index,
   required final bool editMode,
   required final bool showSite,
+  final bool inSubSection = false,
 }) extends ConsumerWidget with MainState, MainEvent, FavoriteEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final primaryColor = Theme.of(context).primaryColor;
-    final String origin = _originOf(favorite, showSite: showSite);
+    final String origin = _originOf(
+      favorite,
+      showSite: showSite,
+      inSubSection: inSubSection,
+    );
 
     return Material(
       // ReorderableList 항목은 Material 조상을 상속받지 못해 ListTile 이 assert 됨.
@@ -303,15 +510,19 @@ class const _BoardTile({
                     iconUrl: favorite.icon,
                   )
                 : null,
-            title: PlainText(favorite.text, style: titleTextStyleState(ref)),
-            // 그룹 이름이 곧 사이트면 중복이라 생략하고, 섞인 그룹에서만 밝힌다.
-            // 단, 2단 게시판(카페 안의 게시판 등)은 '자유게시판' 같은 흔한
-            // 이름이라 어느 카페 것인지 반드시 밝혀야 한다.
-            subtitle: origin.isEmpty
-                ? null
-                : PlainText(origin, style: smallTextStyleState(ref)),
-            trailing: editMode
-                ? Row(
+            title: PlainText(
+              _titleOf(favorite, inSubSection: inSubSection),
+              style: titleTextStyleState(ref),
+            ),
+            // 출처는 평소에 오른쪽 배지로 붙여 모든 행을 한 줄로 맞춘다.
+            // 편집 모드에선 오른쪽이 버튼 차지라 부제로 내린다(높이가 흔들려도
+            // 편집 중에는 어느 카페 것인지 아는 편이 낫다).
+            subtitle: editMode && origin.isNotEmpty
+                ? PlainText(origin, style: smallTextStyleState(ref))
+                : null,
+            trailing: !editMode
+                ? (origin.isEmpty ? null : _OriginBadge(text: origin))
+                : Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       IconButton(
@@ -331,8 +542,7 @@ class const _BoardTile({
                         ),
                       ),
                     ],
-                  )
-                : null,
+                  ),
             onTap: editMode
                 ? () => _showGroupPicker(context, ref)
                 : () => _openBoard(context, ref),
@@ -450,20 +660,32 @@ class const _MainAppBar()
     final titleStyle = ref.watch(appbarTextStyleProvider);
     final bool editMode = editModeState(ref);
 
+    final bool searchOpen = searchOpenState(ref);
+
     return SliverAppBar(
       scrolledUnderElevation: 0,
-      title: PlainText(editMode ? '편집' : '내 게시판', style: titleStyle),
+      title: searchOpen
+          ? const _SearchField()
+          : PlainText(editMode ? '편집' : '내 게시판', style: titleStyle),
       titleTextStyle: titleStyle,
       // titleSpacing: 0,
       // floating: true,
       pinned: true,
-      centerTitle: true,
+      centerTitle: !searchOpen,
       toolbarHeight: kToolbarHeight,
       // floating 앱바의 toolbarOpacity 로 인한 PlainIcon 리빌드 차단.
       // (AppbarActionsIconTheme 주석 참고)
       actions: <Widget>[
         AppbarActionsIconTheme(
-          children: editMode
+          children: searchOpen
+              // 검색 중에는 닫기만 남긴다(입력창이 앱바를 다 쓴다).
+              ? [
+                  PlainIconButton(
+                    onPressed: () => closeSearch(ref),
+                    icon: const PlainIcon(Icons.close),
+                  ),
+                ]
+              : editMode
               // 편집 모드: 그룹을 추가하거나 '완료' 로 빠져나간다.
               ? [
                   PlainIconButton(
@@ -476,6 +698,11 @@ class const _MainAppBar()
                   ),
                 ]
               : [
+                  // 담은 게시판이 많아지면 스크롤·빠른 이동보다 검색이 빠르다.
+                  PlainIconButton(
+                    onPressed: () => openSearch(ref),
+                    icon: const PlainIcon(Icons.search),
+                  ),
                   PlainIconButton(
                     onPressed: () => handleAddButton(ref, context),
                     icon: const PlainIcon(Icons.add),
@@ -496,5 +723,49 @@ class const _MainAppBar()
     final String? name = await _promptGroupName(context, title: '그룹 추가');
     if (name == null || name.trim().isEmpty) return;
     addFavoriteGroup(ref, name);
+  }
+}
+
+/// 앱바 자리에 들어가는 내 게시판 검색 입력창.
+class const _SearchField() extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_SearchField> createState() => _SearchFieldState();
+}
+
+class _SearchFieldState()
+    extends ConsumerState<_SearchField>
+    with MainState, MainEvent {
+  late final TextEditingController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = TextEditingController(text: readSearchQuery(ref));
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final Color hintColor = theme.textTheme.bodySmall?.color ?? theme.hintColor;
+
+    return TextField(
+      controller: _controller,
+      autofocus: true,
+      textInputAction: TextInputAction.search,
+      style: theme.textTheme.bodyLarge,
+      onChanged: (value) => updateSearchQuery(ref, value),
+      decoration: InputDecoration(
+        isDense: true,
+        border: InputBorder.none,
+        hintText: '담은 게시판 검색',
+        hintStyle: TextStyle(fontSize: 15, color: hintColor),
+      ),
+    );
   }
 }

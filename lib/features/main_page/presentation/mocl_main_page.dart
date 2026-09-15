@@ -27,7 +27,8 @@ class const MainPage({super.key})
     final int tabIndex = tabIndexState(ref);
     return PopScope(
       // 다른 탭에 있으면 뒤로가기로 앱을 닫지 않고 첫 탭으로 돌아온다.
-      canPop: tabIndex == 0,
+      // 검색 중이라면 먼저 검색을 닫는다.
+      canPop: tabIndex == 0 && !searchOpenState(ref),
       onPopInvokedWithResult: (bool didPop, _) => handlePop(ref, didPop),
       child: const _ScaffoldWidget(),
     );
