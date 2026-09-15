@@ -48,4 +48,30 @@ class const MainRepositoryImpl({required final MainDataSource dataSource})
       return Left(GetMainFailure(message: e.toString()));
     }
   }
+
+  @override
+  Future<Either<Failure, List<MainItem>>> getSubMenuList({
+    required MainItem parent,
+  }) async {
+    // 정적 정의(children)를 우선한다. 큐레이션된 목록이 있으면 네트워크를
+    // 타지 않고, 없을 때만 실시간 조회로 내려간다(네이버카페가 여기에 해당).
+    try {
+      final List<MainItem> fromJson = await dataSource.getSubMenuFromJson(
+        parent,
+      );
+      if (fromJson.isNotEmpty) return Right(fromJson);
+    } catch (_) {
+      // 실시간 조회로 진행
+    }
+
+    try {
+      return Right(await dataSource.getSubMenuLive(parent));
+    } on Failure catch (f) {
+      // 로그인 필요(NotLoginFailure) 같은 사유는 화면이 그대로 써야 하므로
+      // 문자열로 뭉개지 않고 그대로 올려보낸다.
+      return Left(f);
+    } catch (e) {
+      return Left(GetMainFailure(message: e.toString()));
+    }
+  }
 }

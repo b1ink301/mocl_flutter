@@ -21,9 +21,18 @@ part 'list_providers.g.dart';
 @riverpod
 MainItem mainItem(Ref ref) => throw UnimplementedError('mainItem');
 
-@riverpod
-String listSmallTitle(Ref ref) =>
-    ref.watch(currentSiteTypeProvider.select((siteType) => siteType.title));
+/// 앱바 부제. 2단 게시판이면 사이트명만으로는 어느 카페의 게시판인지 알 수
+/// 없으므로 부모(카페) 이름을 앞에 붙인다.
+@Riverpod(dependencies: [mainItem])
+String listSmallTitle(Ref ref) {
+  final String site = ref.watch(
+    currentSiteTypeProvider.select((siteType) => siteType.title),
+  );
+  final String parent = ref.watch(
+    mainItemProvider.select((MainItem item) => item.parentText),
+  );
+  return parent.isEmpty ? site : '$parent · $site';
+}
 
 @Riverpod(dependencies: [mainItem])
 String listTitle(Ref ref) =>

@@ -7,6 +7,7 @@ import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/plain_divider_widget.dart';
+import 'package:mocl_flutter/core/presentation/widgets/site_avatar.dart';
 
 import '../../../core/presentation/widgets/plain_icon_button.dart';
 import 'state/add_event_mixin.dart';
@@ -31,7 +32,18 @@ class const AddListBottomSheet({super.key})
     // 목록이 갈아끼워지는 순간과 겹치면 Scrollable 의 GlobalKey 를 다시
     // 붙이려다 assert 로 죽었다. 2단(레일+칩) 화면에선 드래그로 높이를 바꿀
     // 이유도 없으므로 높이를 90% 로 고정한다.
-    return FractionallySizedBox(
+    // 컨테이너 안에 들어가 있으면 뒤로가기가 시트를 닫는 대신 한 단계만
+    // 나간다. 이게 없으면 카페 안에서 백키를 눌렀을 때 담던 화면이 통째로
+    // 사라진다.
+    final bool canPop =
+        drillParent(ref) == null && !containerPickerOpen(ref);
+
+    return PopScope(
+      canPop: canPop,
+      onPopInvokedWithResult: (bool didPop, _) {
+        if (!didPop) handleBack(ref);
+      },
+      child: FractionallySizedBox(
       heightFactor: 0.9,
       alignment: Alignment.bottomCenter,
       // ListTile 이 ink/배경을 가장 가까운 Material 에 그리므로, 배경색은
@@ -53,11 +65,19 @@ class const AddListBottomSheet({super.key})
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const _SiteRail(),
+                    // 컨테이너 전환 드롭다운은 오른쪽 패널 위에만 떠야 한다
+                    // (레일은 계속 눌러 사이트를 바꿀 수 있어야 하므로).
                     Expanded(
-                      child: Column(
+                      child: Stack(
                         children: [
-                          const BoardSearchField(),
-                          const Expanded(child: _BoardChips()),
+                          Column(
+                            children: [
+                              const _Breadcrumb(),
+                              const BoardSearchField(),
+                              const Expanded(child: _BoardChips()),
+                            ],
+                          ),
+                          const _ContainerPicker(),
                         ],
                       ),
                     ),
@@ -66,6 +86,183 @@ class const AddListBottomSheet({super.key})
               ),
             ],
           ),
+        ),
+      ),
+      ),
+    );
+  }
+}
+
+/// 컨테이너(카페 등) 안에 들어와 있을 때만 뜨는 경로 표시줄.
+/// 왼쪽 화살표로 한 단계 나가고, 이름을 누르면 같은 사이트의 다른 컨테이너로
+/// 바로 건너뛴다(목록으로 나갔다 다시 들어오지 않아도 된다).
+class const _Breadcrumb() extends ConsumerWidget with AddState, AddEvent {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final MainItem? parent = drillParent(ref);
+    if (parent == null) return const SizedBox.shrink();
+
+    final theme = Theme.of(context);
+    final Color focusColor = theme.focusColor;
+    final bool canSwitch = siblingContainers(ref).length > 1;
+    final bool pickerOpen = containerPickerOpen(ref);
+
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(8, 8, 8, 0),
+      child: Material(
+        color: focusColor.withValues(alpha: 0.10),
+        borderRadius: BorderRadius.circular(10),
+        clipBehavior: Clip.antiAlias,
+        child: Row(
+          children: [
+            PlainIconButton(
+              padding: const EdgeInsets.all(8),
+              icon: const Icon(Icons.arrow_back, size: 18),
+              onPressed: () => exitBoard(ref),
+            ),
+            Expanded(
+              child: InkWell(
+                onTap: canSwitch ? () => toggleContainerPicker(ref) : null,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(vertical: 10),
+                  child: Row(
+                    children: [
+                      Flexible(
+                        child: Text(
+                          parent.text,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: const TextStyle(
+                            fontSize: 13,
+                            fontWeight: FontWeight.w700,
+                          ),
+                        ),
+                      ),
+                      if (canSwitch)
+                        Icon(
+                          pickerOpen
+                              ? Icons.arrow_drop_up
+                              : Icons.arrow_drop_down,
+                          size: 18,
+                          color: focusColor,
+                        ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+            PlainIconButton(
+              padding: const EdgeInsets.all(8),
+              icon: const Icon(Icons.refresh, size: 18),
+              onPressed: () => refreshSubMenu(ref),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// 브레드크럼에서 펼치는 컨테이너 전환 목록.
+/// 카페는 수십~100개까지 오므로 목록 안에서 바로 걸러 찾을 수 있게 한다.
+class const _ContainerPicker() extends ConsumerStatefulWidget {
+  @override
+  ConsumerState<_ContainerPicker> createState() => _ContainerPickerState();
+}
+
+class _ContainerPickerState()
+    extends ConsumerState<_ContainerPicker>
+    with AddState, AddEvent {
+  String _filter = '';
+
+  @override
+  Widget build(BuildContext context) {
+    if (!containerPickerOpen(ref)) return const SizedBox.shrink();
+
+    final theme = Theme.of(context);
+    final Color focusColor = theme.focusColor;
+    final MainItem? parent = drillParent(ref);
+    final String query = _filter.trim().toLowerCase();
+    final List<MainItem> containers = siblingContainers(ref)
+        .where((item) => item.text.toLowerCase().contains(query))
+        .toList();
+
+    return Positioned(
+      left: 8,
+      right: 8,
+      top: 48,
+      child: Material(
+        color: theme.cardColor,
+        elevation: 8,
+        borderRadius: BorderRadius.circular(12),
+        clipBehavior: Clip.antiAlias,
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Padding(
+              padding: const EdgeInsets.fromLTRB(10, 10, 10, 4),
+              child: TextField(
+                autofocus: true,
+                style: theme.textTheme.bodyMedium,
+                onChanged: (value) => setState(() => _filter = value),
+                decoration: InputDecoration(
+                  isDense: true,
+                  filled: true,
+                  fillColor: theme.scaffoldBackgroundColor,
+                  hintText: '이동할 목록 검색',
+                  hintStyle: TextStyle(fontSize: 13, color: theme.hintColor),
+                  prefixIcon: Icon(
+                    Icons.search,
+                    size: 17,
+                    color: theme.hintColor,
+                  ),
+                  prefixIconConstraints: const BoxConstraints(minWidth: 34),
+                  contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(20),
+                    borderSide: BorderSide.none,
+                  ),
+                ),
+              ),
+            ),
+            // 후보가 많아도 시트를 넘지 않게 높이를 묶고 안에서 스크롤한다.
+            ConstrainedBox(
+              constraints: const BoxConstraints(maxHeight: 260),
+              child: ListView.builder(
+                shrinkWrap: true,
+                padding: EdgeInsets.zero,
+                itemCount: containers.length,
+                itemBuilder: (context, index) {
+                  final MainItem item = containers[index];
+                  final bool isCurrent = item.board == parent?.board;
+                  return ListTile(
+                    dense: true,
+                    leading: SiteAvatar(
+                      siteType: item.siteType,
+                      iconUrl: item.icon,
+                      radius: 12,
+                    ),
+                    title: Text(
+                      item.text,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: isCurrent ? focusColor : null,
+                        fontWeight: isCurrent
+                            ? FontWeight.w700
+                            : FontWeight.normal,
+                      ),
+                    ),
+                    trailing: isCurrent
+                        ? Icon(Icons.check, size: 17, color: focusColor)
+                        : null,
+                    onTap: () => enterBoard(ref, item),
+                  );
+                },
+              ),
+            ),
+          ],
         ),
       ),
     );
@@ -228,7 +425,7 @@ class const _BoardChips() extends ConsumerWidget with AddState, AddEvent {
   Widget _buildContent(BuildContext context, WidgetRef ref) {
     final textStyle = Theme.of(context).textTheme.bodyMedium;
 
-    return boardListState(ref).when(
+    return visibleBoardsState(ref).when(
       // 사이트를 바꾸면 목록을 새로 받아오는 데 시간이 걸린다. 직전 사이트의
       // 목록을 남겨두면 아무 반응이 없는 것처럼 보이므로, 로딩을 그대로 노출한다
       // (칩 담기/빼기는 이 provider 를 다시 읽지 않으므로 깜빡임이 없다).
@@ -262,18 +459,58 @@ class const _BoardChips() extends ConsumerWidget with AddState, AddEvent {
         }
 
         final Set<String> added = addedBoardKeys(ref);
-        return Wrap(
+        final MainItem? parent = drillParent(ref);
+        final theme = Theme.of(context);
+
+        // 컨테이너가 게시판을 폴더로 묶어 주면(네이버카페의 메뉴 폴더 등)
+        // 계층을 더 파고들지 않고 섹션 제목으로 눕힌다. 폴더가 없으면
+        // 섹션이 하나뿐이라 예전과 똑같은 칩 무더기로 보인다.
+        final Map<String, List<MainItem>> sections = {};
+        for (final MainItem board in items) {
+          sections.putIfAbsent(board.category, () => []).add(board);
+        }
+
+        Widget chipsOf(List<MainItem> group) => Wrap(
           spacing: 8,
           runSpacing: 8,
           children: [
-            for (final MainItem board in items)
+            for (final MainItem board in group)
               _BoardChip(
                 board: board,
                 isAdded: added.contains(
                   '${board.siteType.name}_${board.board}',
                 ),
-                onTap: () => toggleBoard(ref, board),
+                // 부모와 board 가 같은 항목이 그 컨테이너의 '전체글'이다.
+                isWholeContainer:
+                    parent != null && board.board == parent.board,
+                onTap: () => tapBoard(ref, board),
               ),
+          ],
+        );
+
+        if (sections.length == 1) {
+          return chipsOf(items);
+        }
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            for (final MapEntry<String, List<MainItem>> section
+                in sections.entries) ...[
+              if (section.key.isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(2, 12, 2, 6),
+                  child: Text(
+                    section.key,
+                    style: TextStyle(
+                      fontSize: 11,
+                      fontWeight: FontWeight.w700,
+                      color: theme.textTheme.bodySmall?.color,
+                    ),
+                  ),
+                ),
+              chipsOf(section.value),
+            ],
           ],
         );
       },
@@ -392,34 +629,71 @@ class const _LoadFailed({required final String message})
   }
 }
 
+/// 게시판 칩. 세 가지로 그려진다.
+/// - 담김: 강조색 배경 + 실선
+/// - 컨테이너(하위 메뉴 보유): 배경 없이 강조색 테두리 + `›` → 담기가 아니라 진입
+/// - 전체글: 컨테이너 안에서 그 컨테이너 자체를 담는 항목
 class const _BoardChip({
   required final MainItem board,
   required final bool isAdded,
   required final VoidCallback onTap,
+  final bool isWholeContainer = false,
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final Color focusColor = theme.focusColor;
+    final bool isContainer = board.hasItem;
+    // 눌렀을 때 담기는 항목만 강조색 배경을 깐다. 컨테이너는 '들어가는' 칩이라
+    // 담긴 것처럼 보이면 안 되므로 테두리만 강조색으로 둔다.
+    final bool outlined = !isAdded && (isContainer || isWholeContainer);
 
     return Material(
-      color: isAdded ? focusColor.withValues(alpha: 0.10) : theme.cardColor,
+      color: isAdded
+          ? focusColor.withValues(alpha: 0.10)
+          : (outlined ? Colors.transparent : theme.cardColor),
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(19),
-        side: BorderSide(color: isAdded ? focusColor : theme.dividerColor),
+        side: BorderSide(
+          color: isAdded || outlined ? focusColor : theme.dividerColor,
+          width: outlined ? 1.2 : 1,
+        ),
       ),
       clipBehavior: Clip.antiAlias,
       child: InkWell(
         onTap: onTap,
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 9),
-          child: Text(
-            board.text,
-            style: TextStyle(
-              fontSize: 13.5,
-              color: isAdded ? focusColor : theme.textTheme.bodyMedium?.color,
-              fontWeight: isAdded ? FontWeight.w700 : FontWeight.normal,
-            ),
+          padding: EdgeInsets.fromLTRB(14, 9, isContainer ? 8 : 14, 9),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (board.icon.isNotEmpty && isContainer) ...[
+                SiteAvatar(
+                  siteType: board.siteType,
+                  iconUrl: board.icon,
+                  radius: 8,
+                ),
+                const SizedBox(width: 7),
+              ],
+              Flexible(
+                child: Text(
+                  board.text,
+                  maxLines: 1,
+                  overflow: TextOverflow.ellipsis,
+                  style: TextStyle(
+                    fontSize: 13.5,
+                    color: isAdded || outlined
+                        ? focusColor
+                        : theme.textTheme.bodyMedium?.color,
+                    fontWeight: isAdded || isWholeContainer
+                        ? FontWeight.w700
+                        : FontWeight.normal,
+                  ),
+                ),
+              ),
+              if (isContainer)
+                Icon(Icons.chevron_right, size: 17, color: focusColor),
+            ],
           ),
         ),
       ),

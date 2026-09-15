@@ -1,0 +1,29 @@
+{
+  "message": {
+    "status": "200",
+    "error": { "code": "", "msg": "" },
+    "result": {
+      "linkMenus": [
+        { "menuName": "인기글", "menuType": "P", "boardType": "D" },
+        { "menuName": "카페태그", "menuType": "T", "boardType": "" }
+      ],
+      "menus": [
+        { "menuId": 1, "menuName": "공지사항", "menuType": "B", "boardType": "L", "listOrder": 1, "indent": false, "hidden": false },
+        { "menuId": 5, "menuName": "끝말잇기", "menuType": "M", "boardType": "M", "listOrder": 3, "indent": false, "hidden": false },
+        { "menuId": 2, "menuName": "자유게시판 (질문금지)", "menuType": "B", "boardType": "L", "listOrder": 15, "indent": false, "hidden": false },
+        { "menuId": 7, "menuName": "블랙베리 사진", "menuType": "B", "boardType": "I", "listOrder": 14, "indent": false, "hidden": false },
+        { "menuId": 68, "menuName": "", "menuType": "S", "boardType": " ", "listOrder": 18, "indent": false, "hidden": false },
+        { "menuId": 126, "menuName": "qwerty폰", "menuType": "F", "boardType": " ", "listOrder": 19, "indent": false, "hidden": false },
+        { "menuId": 127, "menuName": "[qP]질문게시판 (삭제금지)", "menuType": "B", "boardType": "L", "listOrder": 20, "indent": false, "hidden": false },
+        { "menuId": 113, "menuName": "", "menuType": "S", "boardType": " ", "listOrder": 30, "indent": false, "hidden": false },
+        { "menuId": 111, "menuName": "OS10", "menuType": "F", "boardType": " ", "listOrder": 31, "indent": false, "hidden": false },
+        { "menuId": 94, "menuName": "[OS10]질문게시판 (삭제금지)", "menuType": "B", "boardType": "L", "listOrder": 32, "indent": true, "hidden": false },
+        { "menuId": 82, "menuName": "개발관련Q&amp;A", "menuType": "B", "boardType": "L", "listOrder": 59, "indent": true, "hidden": false },
+        { "menuId": 78, "menuName": "[OS7&gt;]질문게시판 (삭제금지)", "menuType": "B", "boardType": "L", "listOrder": 38, "indent": true, "hidden": false },
+        { "menuId": 108, "menuName": "등업신청현황", "menuType": "U", "boardType": " ", "listOrder": 88, "indent": false, "hidden": false },
+        { "menuId": 999, "menuName": "숨긴게시판", "menuType": "B", "boardType": "L", "listOrder": 90, "indent": false, "hidden": true }
+      ],
+      "styleCode": "#3A3A3A"
+    }
+  }
+}
