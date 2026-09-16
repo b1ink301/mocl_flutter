@@ -141,7 +141,7 @@ void main() {
     await tester.tap(icon(Icons.close));
     await tester.pumpAndSettle();
 
-    expect(label('내 게시판'), findsOneWidget);
+    expect(label('클리앙'), findsOneWidget);
     expect(label('게시판 0'), findsOneWidget);
   });
 }

@@ -139,7 +139,7 @@ final class FavoritesNotifierProvider
   FavoritesNotifier create() => FavoritesNotifier();
 }
 
-String _$favoritesNotifierHash() => r'5c41b42a361631d6758e004832136031bf508614';
+String _$favoritesNotifierHash() => r'2ea6f4b60c94ace39f7f853e906fa7b34dc95a77';
 
 /// 즐겨찾기한 게시판 전체. 메인 화면의 유일한 데이터 소스다.
 
@@ -210,6 +210,123 @@ final class FavoriteBoardKeysProvider
 }
 
 String _$favoriteBoardKeysHash() => r'a791484d4ce82413fe51391bccd87c57bb363469';
+
+/// 지금 보고 있는 사이트의 담은 게시판. 홈 화면의 유일한 데이터 소스다.
+///
+/// 순서는 사용자가 정한 [FavoriteData.orderBy] 를 따른다. 그룹 홈 시절에
+/// 그룹별로 매겨진 값이라 사이트 안에서 동률이 생길 수 있어, 그때는 담은
+/// 시각으로 갈라 순서가 매번 흔들리지 않게 한다(정렬 한 번이면 0..n 으로
+/// 다시 매겨진다).
+
+@ProviderFor(siteFavorites)
+final siteFavoritesProvider = SiteFavoritesProvider._();
+
+/// 지금 보고 있는 사이트의 담은 게시판. 홈 화면의 유일한 데이터 소스다.
+///
+/// 순서는 사용자가 정한 [FavoriteData.orderBy] 를 따른다. 그룹 홈 시절에
+/// 그룹별로 매겨진 값이라 사이트 안에서 동률이 생길 수 있어, 그때는 담은
+/// 시각으로 갈라 순서가 매번 흔들리지 않게 한다(정렬 한 번이면 0..n 으로
+/// 다시 매겨진다).
+
+final class SiteFavoritesProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<FavoriteData>>,
+          List<FavoriteData>,
+          FutureOr<List<FavoriteData>>
+        >
+    with
+        $FutureModifier<List<FavoriteData>>,
+        $FutureProvider<List<FavoriteData>> {
+  /// 지금 보고 있는 사이트의 담은 게시판. 홈 화면의 유일한 데이터 소스다.
+  ///
+  /// 순서는 사용자가 정한 [FavoriteData.orderBy] 를 따른다. 그룹 홈 시절에
+  /// 그룹별로 매겨진 값이라 사이트 안에서 동률이 생길 수 있어, 그때는 담은
+  /// 시각으로 갈라 순서가 매번 흔들리지 않게 한다(정렬 한 번이면 0..n 으로
+  /// 다시 매겨진다).
+  SiteFavoritesProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'siteFavoritesProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$siteFavoritesHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<List<FavoriteData>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<List<FavoriteData>> create(Ref ref) {
+    return siteFavorites(ref);
+  }
+}
+
+String _$siteFavoritesHash() => r'b962aef0d73b4b902b044f1cb69882a8e99bdd12';
+
+/// 사이트별로 담아둔 게시판 개수. 드로어 칩과 빠른 이동 레일이 "갈 곳이 있는
+/// 사이트"를 가리는 데 쓴다.
+
+@ProviderFor(favoriteCountBySite)
+final favoriteCountBySiteProvider = FavoriteCountBySiteProvider._();
+
+/// 사이트별로 담아둔 게시판 개수. 드로어 칩과 빠른 이동 레일이 "갈 곳이 있는
+/// 사이트"를 가리는 데 쓴다.
+
+final class FavoriteCountBySiteProvider
+    extends
+        $FunctionalProvider<
+          Map<SiteType, int>,
+          Map<SiteType, int>,
+          Map<SiteType, int>
+        >
+    with $Provider<Map<SiteType, int>> {
+  /// 사이트별로 담아둔 게시판 개수. 드로어 칩과 빠른 이동 레일이 "갈 곳이 있는
+  /// 사이트"를 가리는 데 쓴다.
+  FavoriteCountBySiteProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'favoriteCountBySiteProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$favoriteCountBySiteHash();
+
+  @$internal
+  @override
+  $ProviderElement<Map<SiteType, int>> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  Map<SiteType, int> create(Ref ref) {
+    return favoriteCountBySite(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Map<SiteType, int> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Map<SiteType, int>>(value),
+    );
+  }
+}
+
+String _$favoriteCountBySiteHash() =>
+    r'a6513df4111ac5a3363f9e4910c297ec98997015';
 
 /// 그룹 순서대로 묶은 메인 화면용 섹션 목록.
 /// 그룹이 삭제되는 등으로 소속을 잃은 항목은 같은 이름의 사이트 그룹으로,
