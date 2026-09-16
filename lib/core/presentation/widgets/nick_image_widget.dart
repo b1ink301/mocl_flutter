@@ -77,14 +77,12 @@ class const NickImageWidget({
         totalBytes += file.statSync().size;
       });
 
-      MoclLogger.d(() => 'totalBytes=$totalBytes');
-
       const suffixes = ["B", "KB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
       final i = (log(totalBytes) / log(1024)).floor();
       final sizeText =
           '${(totalBytes / pow(1024, i)).toStringAsFixed(1)} ${suffixes[i]}';
 
-      MoclLogger.d(() => 'sizeText=$sizeText');
+      MoclLogger.d(() => 'totalBytes=$totalBytes, sizeText=$sizeText');
       return sizeText;
     }
     return '0 KB';
