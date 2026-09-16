@@ -18,12 +18,6 @@ class BookmarksNotifier() extends _$BookmarksNotifier {
   Future<List<BookmarkData>> build() =>
       ref.watch(bookmarkRepositoryProvider).getAll();
 
-  /// 삭제 실행취소용. 스와이프로 지운 스크랩을 그대로 되돌린다.
-  Future<void> add(BookmarkData data) async {
-    await ref.read(bookmarkRepositoryProvider).add(data);
-    ref.invalidateSelf();
-  }
-
   Future<void> remove(SiteType siteType, int id) async {
     await ref.read(bookmarkRepositoryProvider).remove(siteType, id);
     ref.invalidateSelf();

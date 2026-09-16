@@ -644,19 +644,16 @@ class const _BoardChip({
     final theme = Theme.of(context);
     final Color focusColor = theme.focusColor;
     final bool isContainer = board.hasItem;
-    // 눌렀을 때 담기는 항목만 강조색 배경을 깐다. 컨테이너는 '들어가는' 칩이라
-    // 담긴 것처럼 보이면 안 되므로 테두리만 강조색으로 둔다.
-    final bool outlined = !isAdded && (isContainer || isWholeContainer);
 
     return Material(
       color: isAdded
           ? focusColor.withValues(alpha: 0.10)
-          : (outlined ? Colors.transparent : theme.cardColor),
+          : theme.cardColor,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(19),
         side: BorderSide(
-          color: isAdded || outlined ? focusColor : theme.dividerColor,
-          width: outlined ? 1.2 : 1,
+          color: isAdded ? focusColor : theme.dividerColor,
+          width: 1,
         ),
       ),
       clipBehavior: Clip.antiAlias,
@@ -682,10 +679,10 @@ class const _BoardChip({
                   overflow: TextOverflow.ellipsis,
                   style: TextStyle(
                     fontSize: 13.5,
-                    color: isAdded || outlined
+                    color: isAdded
                         ? focusColor
                         : theme.textTheme.bodyMedium?.color,
-                    fontWeight: isAdded || isWholeContainer
+                    fontWeight: isAdded
                         ? FontWeight.w700
                         : FontWeight.normal,
                   ),

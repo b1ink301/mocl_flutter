@@ -4,9 +4,9 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_category.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/core/presentation/widgets/site_avatar.dart';
 import 'package:mocl_flutter/features/favorite/presentation/state/favorite_state_mixin.dart';
 
+import '../../../../core/presentation/widgets/plain_icon.dart';
 import '../../../../core/presentation/widgets/plain_text.dart';
 import '../state/main_event_mixin.dart';
 import '../state/main_state_mixin.dart';
@@ -14,8 +14,9 @@ import '../state/main_state_mixin.dart';
 /// 사이트를 고르는 드로어.
 ///
 /// 홈은 '지금 고른 사이트의 담은 게시판'만 보여주므로, 사이트를 바꾸는 자리가
-/// 필요하다. 맨 위에는 이미 게시판을 담아둔 사이트를 모아 두어(대부분의 이동이
-/// 여기서 끝난다), 그 아래에 전체 사이트를 카테고리별로 펼친다.
+/// 필요하다. 전체 사이트를 카테고리별로 펼치고, 칩마다 담은 게시판 개수를
+/// 붙여 이미 쓰고 있는 사이트를 한눈에 알아보게 한다. 헤더의 아이콘으로
+/// 스크랩 · 설정으로 빠져나간다.
 class const DrawerWidget({super.key})
     extends ConsumerWidget
     with MainEvent, FavoriteState {
@@ -23,29 +24,30 @@ class const DrawerWidget({super.key})
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final double bottomPadding = MediaQuery.of(context).padding.bottom;
+    // 사이트 칩에 담은 게시판 개수를 함께 보여 준다.
     final Map<SiteType, int> counts = favoriteCountBySiteState(ref);
-    // 담아둔 사이트는 전체 목록과 같은 순서로 위에 모은다.
-    final List<SiteType> mine = [
-      for (final SiteType siteType in kAllSitesInOrder)
-        if ((counts[siteType] ?? 0) > 0) siteType,
-    ];
 
     return Drawer(
       backgroundColor: theme.scaffoldBackgroundColor,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          const _DrawerHeader(),
+          _DrawerHeader(
+            onBookmarksTap: () {
+              context.pop();
+              context.push(Routes.bookmarks);
+            },
+            onSettingsTap: () {
+              context.pop();
+              context.push(Routes.settings);
+            },
+          ),
           Expanded(
             child: SingleChildScrollView(
               padding: EdgeInsets.fromLTRB(18, 4, 18, 18 + bottomPadding),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  if (mine.isNotEmpty) ...[
-                    const _SectionHeader('담아둔 사이트'),
-                    _SiteWrap(sites: mine, counts: counts),
-                  ],
                   for (final SiteCategory category in kSiteCategories) ...[
                     _SectionHeader(category.label),
                     _SiteWrap(sites: category.sites, counts: counts),
@@ -96,7 +98,10 @@ class const _SectionHeader(final String label) extends StatelessWidget {
   }
 }
 
-class const _DrawerHeader() extends ConsumerWidget with MainState {
+class const _DrawerHeader({
+  required final VoidCallback onBookmarksTap,
+  required final VoidCallback onSettingsTap,
+}) extends ConsumerWidget with MainState {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
@@ -108,7 +113,7 @@ class const _DrawerHeader() extends ConsumerWidget with MainState {
     // 헤더는 드로어 본문과 같은 종이 배경을 그대로 쓰고(별도 색 없음),
     // 하단 헤어라인으로만 경계를 준다. 강조색은 선택된 사이트 칩에만.
     return Container(
-      padding: EdgeInsets.fromLTRB(20, 14 + top, 20, 14),
+      padding: EdgeInsets.fromLTRB(20, 14 + top, 8, 14),
       decoration: BoxDecoration(
         border: Border(bottom: BorderSide(color: theme.dividerColor)),
       ),
@@ -149,6 +154,16 @@ class const _DrawerHeader() extends ConsumerWidget with MainState {
                 ),
               ],
             ),
+          ),
+          IconButton(
+            tooltip: '스크랩 보기',
+            icon: PlainIcon(Icons.bookmark_border, color: inkColor),
+            onPressed: onBookmarksTap,
+          ),
+          IconButton(
+            tooltip: '설정',
+            icon: PlainIcon(Icons.settings_outlined, color: inkColor),
+            onPressed: onSettingsTap,
           ),
         ],
       ),
@@ -199,9 +214,6 @@ class const _DrawerSiteTag({
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              // 이름 두 글자보다 로고가 빨리 읽힌다(로고가 없으면 색 배지).
-              SiteAvatar(siteType: siteType, radius: 10),
-              const SizedBox(width: 8),
               PlainText(
                 siteType.title,
                 style: baseStyle.copyWith(
@@ -245,8 +257,13 @@ class const _AddBoardButton({required final double bottomPadding})
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
+    final primaryColor = theme.primaryColor;
+    final TextStyle fontStyle =
+        (theme.textTheme.bodySmall ?? const TextStyle()).copyWith(
+          color: primaryColor,
+        );
     return Container(
-      padding: EdgeInsets.fromLTRB(16, 10, 16, 10 + bottomPadding),
+      padding: EdgeInsets.fromLTRB(16, 2, 16, 10 + bottomPadding),
       decoration: BoxDecoration(
         border: Border(top: BorderSide(color: theme.dividerColor)),
       ),
@@ -255,8 +272,8 @@ class const _AddBoardButton({required final double bottomPadding})
           context.pop();
           context.push(Routes.setMainDlgFull);
         },
-        icon: const Icon(Icons.add),
-        label: const Text('게시판 추가'),
+        icon: PlainIcon(Icons.add, color: primaryColor),
+        label: PlainText('게시판 추가', style: fontStyle),
       ),
     );
   }

@@ -131,7 +131,7 @@ class const _MainBody() extends ConsumerWidget with MainState, FavoriteState {
         child: Center(
           child: Padding(
             padding: const EdgeInsets.symmetric(horizontal: 32),
-            child: Text(
+            child: PlainText(
               "'$query' 와 맞는 게시판이 없습니다.",
               textAlign: TextAlign.center,
               style: textStyle,
@@ -224,7 +224,6 @@ class const _SubSectionHeader({
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final Color subColor = theme.textTheme.bodySmall?.color ?? theme.hintColor;
-    final bool showIcon = showBoardIconState(ref);
 
     return Material(
       type: MaterialType.transparency,
@@ -237,14 +236,6 @@ class const _SubSectionHeader({
           padding: const EdgeInsets.fromLTRB(16, 9, 12, 9),
           child: Row(
             children: [
-              if (showIcon && sub.siteType != null) ...[
-                SiteAvatar(
-                  siteType: sub.siteType!,
-                  iconUrl: sub.icon,
-                  radius: 9,
-                ),
-                const SizedBox(width: 8),
-              ],
               Flexible(
                 child: PlainText(
                   sub.parentText,
@@ -264,7 +255,7 @@ class const _SubSectionHeader({
                   color: subColor,
                 ),
               ),
-              const Spacer(),
+              const SizedBox(width: 6),
               PlainIcon(
                 collapsed
                     ? Icons.chevron_right_rounded
@@ -295,7 +286,7 @@ class const _OriginBadge({required final String text}) extends StatelessWidget {
         borderRadius: BorderRadius.circular(9),
         border: Border.all(color: theme.dividerColor),
       ),
-      child: Text(
+      child: PlainText(
         text,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
@@ -329,7 +320,7 @@ class const _BoardTile({
           ListTile(
             // 아이콘이 없는 사이트도 색 배지로 채워 줄을 가지런히 맞춘다.
             // 설정에서 끄면 제목만 남아 목록이 담백해진다.
-            leading: showBoardIconState(ref)
+            leading: showBoardIconState(ref) && favorite.icon.isNotEmpty
                 ? SiteAvatar(
                     siteType: favorite.siteType,
                     iconUrl: favorite.icon,
@@ -345,14 +336,22 @@ class const _BoardTile({
             subtitle: editMode && origin.isNotEmpty
                 ? PlainText(origin, style: smallTextStyleState(ref))
                 : null,
+            // 진입 표시는 iOS 설정 앱처럼 작고 옅은 회색 셰브론으로 둔다.
+            // 강조색·큰 아이콘은 제목보다 먼저 눈에 띄어 목록 균형을 깨뜨린다.
             trailing: !editMode
-                ? (origin.isEmpty ? null : _OriginBadge(text: origin))
+                ? (origin.isEmpty
+                      ? PlainIcon(
+                          Icons.chevron_right_rounded,
+                          size: 20,
+                          color: Theme.of(context).hintColor
+                              .withValues(alpha: 0.55),
+                        )
+                      : _OriginBadge(text: origin))
                 : Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      IconButton(
-                        tooltip: '삭제',
-                        icon: const Icon(Icons.close_rounded),
+                      PlainIconButton(
+                        icon: const PlainIcon(Icons.close_rounded),
                         onPressed: () => removeFavorite(
                           ref,
                           favorite.siteType,
@@ -370,9 +369,10 @@ class const _BoardTile({
                   ),
             // 편집 중에는 탭이 실수로 화면을 떠나게 만드므로 막는다.
             onTap: editMode ? null : () => _openBoard(context, ref),
-            contentPadding: const EdgeInsets.fromLTRB(16, 2, 8, 2),
+            contentPadding: const EdgeInsets.fromLTRB(16, 2, 12, 2),
           ),
-          const PlainDividerWidget(),
+          // 구분선은 제목 시작선(왼쪽 16)에 맞춰 들여 넣고 오른쪽은 끝까지 채운다.
+          const PlainDividerWidget(indent: 16, endIndent: 0),
         ],
       ),
     );
@@ -403,24 +403,22 @@ class const _MainAppBar() extends ConsumerWidget with MainState, MainEvent {
     final bool searchOpen = searchOpenState(ref);
 
     return SliverAppBar(
-      scrolledUnderElevation: 0,
-      // 사이트 전환은 드로어가 맡는다(제목이 곧 지금 보고 있는 사이트다).
-      leading: searchOpen
-          ? null
-          : AppbarActionsIconTheme(
-              children: [
-                PlainIconButton(
-                  onPressed: () => openDrawer(ref),
-                  icon: const PlainIcon(Icons.menu),
-                ),
-              ],
-            ),
+      scrolledUnderElevation: 1,
+      // Scaffold 기본 leading(DrawerButton = Icons.menu) 대신 직접 그린
+      // 메뉴 아이콘을 쓴다. 액션들과 같은 PlainIconButton 이라 floating
+      // 앱바의 toolbarOpacity 변화에도 불필요한 리빌드가 없다.
+      leading: PlainIconButton(
+        onPressed: () => openDrawer(ref),
+        icon: const MenuLinesIcon(),
+      ),
+      // 검색 중에는 입력창이 제목 자리를 통째로 쓴다(닫기 버튼만 오른쪽에 남는다).
       title: searchOpen
           ? const _SearchField()
           : PlainText(editMode ? '편집' : titleState(ref), style: titleStyle),
       titleTextStyle: titleStyle,
-      pinned: true,
-      centerTitle: !searchOpen,
+      titleSpacing: 0,
+      floating: true,
+      centerTitle: false,
       toolbarHeight: kToolbarHeight,
       // floating 앱바의 toolbarOpacity 로 인한 PlainIcon 리빌드 차단.
       // (AppbarActionsIconTheme 주석 참고)
@@ -443,18 +441,27 @@ class const _MainAppBar() extends ConsumerWidget with MainState, MainEvent {
                 ]
               : [
                   // 담은 게시판이 많아지면 스크롤보다 검색이 빠르다.
-                  PlainIconButton(
-                    onPressed: () => openSearch(ref),
-                    icon: const PlainIcon(Icons.search),
-                  ),
+                  // PlainIconButton(
+                  //   onPressed: () => openSearch(ref),
+                  //   icon: const PlainIcon(Icons.search),
+                  // ),
                   PlainIconButton(
                     onPressed: () => handleAddButton(ref, context),
                     icon: const PlainIcon(Icons.add),
                   ),
                   // 순서 변경 · 삭제는 평소엔 숨겨 두고 편집 모드에서만 연다.
-                  PlainIconButton(
-                    onPressed: () => handleToggleEdit(ref),
-                    icon: const PlainIcon(Icons.tune_rounded),
+                  AdaptivePopupMenu(
+                    options: [
+                      AdaptiveMenuOption(
+                        label: '순서 변경/삭제',
+                        onTap: () => handleToggleEdit(ref),
+                      ),
+                    ],
+                    icon: PlainIcon(
+                      isCupertino()
+                          ? CupertinoIcons.ellipsis
+                          : Icons.more_vert_rounded,
+                    ),
                   ),
                 ],
         ),
