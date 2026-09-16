@@ -728,6 +728,15 @@ class const _HtmlWidget({
         if (element.localName == 'a') {
           return {'color': hexColor, 'text-decoration': 'underline'};
         }
+        // 클리앙 댓글의 멘션 닉네임 이미지(`<img data-role="highlite"
+        // data-nick-id="...">`)는 사이트 CSS 가 글자 높이에 맞춰 줄여주지만,
+        // 앱에는 그 CSS 가 없어 본문 사진처럼 폭을 가득 채웠다. 글줄 높이로
+        // 제한해 닉네임처럼 보이게 한다.
+        if (element.localName == 'img' &&
+            (element.attributes['data-role'] == 'highlite' ||
+                element.attributes.containsKey('data-nick-id'))) {
+          return const {'max-height': '1.2em'};
+        }
         // 이모티콘(다모앙 `/emoticons/*.gif` 50x50 등)은 본문 사진과 달리
         // 폭을 가득 채우면 안 된다. 원본이 작아도 이미지 위젯은 부모 폭에
         // 맞춰 늘어나므로, 사이트 CSS 와 같은 상한(max-height: 2.5em)을 준다.
