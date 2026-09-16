@@ -16,6 +16,11 @@ abstract class SettingsRepository() {
   bool isShowQuickJump();
   void setShowQuickJump(bool showQuickJump);
 
+  /// 접어둔 카페 소구획 키 목록('{siteType}_{부모board}').
+  /// 그룹 접힘과 마찬가지로 앱을 다시 켜도 유지한다.
+  List<String> getCollapsedSubSections();
+  void setCollapsedSubSections(List<String> keys);
+
   double getFontSize();
   void setFontSize(double fontSize);
 

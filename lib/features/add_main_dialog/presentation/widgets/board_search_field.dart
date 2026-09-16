@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 
 import '../state/add_event_mixin.dart';
 import '../state/add_state_mixin.dart';
@@ -38,12 +39,18 @@ class _BoardSearchFieldState()
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final MainItem? parent = drillParent(ref);
     final bool isDark = theme.brightness == Brightness.dark;
     final Color fill = isDark
         ? Colors.white.withValues(alpha: 0.06)
         : Colors.black.withValues(alpha: 0.04);
     final Color hintColor = theme.textTheme.bodySmall?.color ?? theme.hintColor;
     final String query = searchQuery(ref);
+    // 단계를 오가면 검색어가 비워진다(범위가 달라지므로). 입력창에 남은
+    // 글자도 같이 지워 화면과 실제 필터가 어긋나지 않게 한다.
+    listenSearchQuery(ref, (next) {
+      if (next != _controller.text) _controller.text = next;
+    });
 
     return Padding(
       padding: const EdgeInsets.fromLTRB(12, 10, 12, 2),
@@ -58,7 +65,7 @@ class _BoardSearchFieldState()
             isDense: true,
             filled: true,
             fillColor: fill,
-            hintText: '게시판 검색',
+            hintText: parent == null ? '게시판 검색' : '${parent.text}에서 검색',
             hintStyle: TextStyle(fontSize: 14, color: hintColor),
             prefixIcon: Icon(Icons.search, size: 18, color: hintColor),
             prefixIconConstraints: const BoxConstraints(minWidth: 38),

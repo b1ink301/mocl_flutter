@@ -34,7 +34,7 @@ final class SizeCacheDirNotifierProvider
 }
 
 String _$sizeCacheDirNotifierHash() =>
-    r'9fcb8b122942cd89e86c0efc876f798902095587';
+    r'3140a5c356ef478fc8b90f72454e2e63c068e62d';
 
 abstract class _$SizeCacheDirNotifier extends $AsyncNotifier<String> {
   FutureOr<String> build();

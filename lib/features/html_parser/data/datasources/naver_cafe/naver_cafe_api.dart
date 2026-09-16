@@ -154,6 +154,14 @@ class const NaverCafeApi(super.dio, super.userAgent) extends BaseApi {
           );
   });
 
+  /// 카페 사이드 메뉴는 비공개 카페면 로그인 쿠키가 있어야 응답한다.
+  /// 기본 구현과 달리 쿠키를 실어 보내기 위해 감싼다.
+  @override
+  Future<Either<Failure, List<MainItem>>> subMenu(
+    MainItem parent,
+    BaseParser parser,
+  ) => withSyncCookie(parser.baseUrl, () => super.subMenu(parent, parser));
+
   @override
   Future<Either<Failure, List<CommentItem>>> comments(
     ListItem item,

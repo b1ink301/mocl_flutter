@@ -16,6 +16,8 @@ _MainItem _$MainItemFromJson(Map<String, dynamic> json) => _MainItem(
   hasItem: json['hasItem'] as bool? ?? false,
   icon: json['icon'] as String? ?? '',
   category: json['category'] as String? ?? '',
+  parentBoard: json['parentBoard'] as String? ?? '',
+  parentText: json['parentText'] as String? ?? '',
 );
 
 Map<String, dynamic> _$MainItemToJson(_MainItem instance) => <String, dynamic>{
@@ -28,6 +30,8 @@ Map<String, dynamic> _$MainItemToJson(_MainItem instance) => <String, dynamic>{
   'hasItem': instance.hasItem,
   'icon': instance.icon,
   'category': instance.category,
+  'parentBoard': instance.parentBoard,
+  'parentText': instance.parentText,
 };
 
 const _$SiteTypeEnumMap = {

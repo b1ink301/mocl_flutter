@@ -4,6 +4,7 @@ import 'dart:isolate';
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:html/parser.dart';
+import 'package:mocl_flutter/core/domain/entities/board_path.dart';
 import 'package:mocl_flutter/core/domain/entities/last_id.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
@@ -54,7 +55,9 @@ class const NaverCafeParser() extends BaseParser {
           'board': cafe['cafeUrl'],
           'text': cafe['mobileCafeName'],
           'icon': cafe['cafeIconImageUrl'],
-          'hasItem': false,
+          // 카페는 그 자체가 게시판이 아니라 메뉴(게시판)를 담은 컨테이너다.
+          // 추가 화면은 이 값을 보고 '담기' 대신 '들어가기'로 그린다.
+          'hasItem': true,
           'type': 0,
         };
         return MainItem.fromJson(json);
@@ -424,16 +427,127 @@ class const NaverCafeParser() extends BaseParser {
     LastId lastId,
   ) {
     // final String sort = sortType.toQuery(siteType);
+    // board 는 카페 전체글이면 cafeUrl, 특정 게시판이면 'cafeUrl/menuId' 합성 키다.
+    // menuid 를 붙이면 같은 API 가 그 게시판만 돌려준다.
+    final String menuId = splitBoard(board).child ?? '';
+    final String menuQuery = menuId.isEmpty ? '' : '&search.menuid=$menuId';
     return "https://apis.naver.com/cafe-web/cafe2/ArticleListV2dot1.json?"
         "search.clubid=$url"
         "&search.queryType=lastArticle"
         "&search.perPage=20"
         "&ad=false"
         "&uuid=6dd62de1-7279-49f0-b009-6ccc554ac679"
-        "&search.page=$page";
+        "&search.page=$page"
+        "$menuQuery";
   }
 
   @override
   String urlByMain() =>
       'https://apis.naver.com/cafe-home-web/cafe-home/v1/cafes/join?perPage=100';
+
+  @override
+  bool get supportsSubMenu => true;
+
+  @override
+  String urlBySubMenu(MainItem parent) =>
+      'https://apis.naver.com/cafe-web/cafe2/SideMenuList?cafeId=${parent.url}';
+
+  /// 카페 사이드 메뉴(게시판 목록)를 담을 수 있는 [MainItem] 으로 바꾼다.
+  ///
+  /// `menuType` 이 섞여 오므로 걸러야 한다.
+  /// - `B`  : 게시판 → 담을 수 있는 항목
+  /// - `F`  : 폴더 → 항목이 아니라 뒤따르는 게시판들의 섹션 이름([MainItem.category])
+  /// - `S`  : 구분선 → 폴더 묶음이 끝났다는 신호
+  /// - 그 외(`M` 끝말잇기 · `U` 등업신청현황 · `P` 인기글 · `T` 태그)는 목록 파서가
+  ///   없으므로 제외한다.
+  ///
+  /// 폴더 소속 판정에 `indent` 는 쓰지 않는다. 실제 응답에서 폴더 바로 아래
+  /// 게시판이 `indent:false` 로 오는 카페가 있어(예: `qwerty폰`) 소속이 끊긴다.
+  /// 대신 '폴더를 만나면 열고, 구분선이나 다음 폴더에서 닫는다'로 묶는다.
+  @override
+  Future<Either<Failure, List<MainItem>>> subMenu(
+    Response<dynamic> response,
+    MainItem parent,
+  ) async {
+    final dynamic data = response.data;
+    final dynamic message = data is Map ? data['message'] : null;
+    if (message is! Map) {
+      return const Left(GetMainFailure(message: '게시판 목록을 불러오지 못했어요.'));
+    }
+
+    if (message['status'].toString() != '200') {
+      final Map<dynamic, dynamic> error =
+          message['error'] is Map ? message['error'] as Map : const {};
+      final String code = error['code']?.toString() ?? '';
+      final String msg = error['msg']?.toString() ?? '';
+      return code == '0004'
+          ? Left(NotLoginFailure(message: msg.isNotEmpty ? msg : '로그인이 필요해요.'))
+          : Left(
+              GetMainFailure(
+                message: msg.isNotEmpty ? msg : '게시판 목록을 불러오지 못했어요.',
+              ),
+            );
+    }
+
+    final dynamic result = message['result'];
+    final dynamic menus = result is Map ? result['menus'] : null;
+    if (menus is! List) return const Right(<MainItem>[]);
+
+    var orderBy = 0;
+    // 카페 전체글. board 가 부모와 같아서(합성 키가 아니다) 기존에 담아둔
+    // '카페' 즐겨찾기와 키가 일치한다 → 이미 담긴 것으로 그려진다.
+    final List<MainItem> items = [
+      MainItem(
+        siteType: siteType,
+        board: parent.board,
+        text: '전체글',
+        url: parent.url,
+        orderBy: orderBy++,
+        icon: parent.icon,
+        parentBoard: parent.board,
+        parentText: parent.text,
+      ),
+    ];
+
+    var folder = '';
+    for (final dynamic menu in menus) {
+      if (menu is! Map) continue;
+      if (menu['hidden'] == true) continue;
+
+      final String menuType = menu['menuType']?.toString() ?? '';
+      // 메뉴 이름에 HTML 엔티티가 그대로 온다(`[OS7&gt;]질문게시판`, `개발관련Q&amp;A`).
+      final String name = parse(
+        menu['menuName']?.toString() ?? '',
+      ).body?.text.trim() ?? '';
+
+      if (menuType == 'S') {
+        folder = '';
+        continue;
+      }
+      if (menuType == 'F') {
+        folder = name;
+        continue;
+      }
+      if (menuType != 'B' || name.isEmpty) continue;
+
+      final String menuId = menu['menuId']?.toString() ?? '';
+      if (menuId.isEmpty) continue;
+
+      items.add(
+        MainItem(
+          siteType: siteType,
+          board: joinBoard(parent.board, menuId),
+          text: name,
+          url: parent.url,
+          orderBy: orderBy++,
+          icon: parent.icon,
+          category: folder,
+          parentBoard: parent.board,
+          parentText: parent.text,
+        ),
+      );
+    }
+
+    return Right(items);
+  }
 }

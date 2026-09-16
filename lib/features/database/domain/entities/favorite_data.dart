@@ -21,6 +21,10 @@ abstract class const FavoriteData._() with _$FavoriteData {
     required int savedAt,
     @Default('') String group,
     @Default(0) int orderBy,
+    // 하위 메뉴(2단 게시판)일 때 부모의 board/표시명. 단일 게시판이면 빈 문자열.
+    // 기존 레코드에는 없는 키라 기본값으로 하위호환된다.
+    @Default('') String parentBoard,
+    @Default('') String parentText,
   }) = _FavoriteData;
 
   factory fromJson(Map<String, dynamic> json) => _$FavoriteDataFromJson(json);
@@ -40,6 +44,8 @@ abstract class const FavoriteData._() with _$FavoriteData {
     savedAt: savedAt,
     group: group,
     orderBy: orderBy,
+    parentBoard: item.parentBoard,
+    parentText: item.parentText,
   );
 
   MainItem toMainItem() => MainItem(
@@ -50,5 +56,8 @@ abstract class const FavoriteData._() with _$FavoriteData {
     orderBy: orderBy,
     type: type,
     icon: icon,
+    parentBoard: parentBoard,
+    parentText: parentText,
+    hasItem: false,
   );
 }
