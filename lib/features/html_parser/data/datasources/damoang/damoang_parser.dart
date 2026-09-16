@@ -42,6 +42,23 @@ class const DamoangParser(final bool isShowNickImage) extends BaseParser {
     );
   }
 
+  /// 다모앙 이모티콘 토큰 `{emo:onion-034.gif}` 을 실제 `<img>` 로 바꾼다.
+  ///
+  /// 본문(transformedPostContent)은 서버가 이미 치환해서 내려주지만, 댓글
+  /// content 는 원문 그대로라 토큰이 글자로 보였다. 사이트가 만들어내는
+  /// 마크업(`/emoticons/<파일명>`, width=50, class=emoticon-inline)과 동일하게
+  /// 맞춰 상세 화면의 이모티콘 크기 규칙을 그대로 타게 한다.
+  static final RegExp _emoticonToken = RegExp(r'\{emo:([A-Za-z0-9._-]+)\}');
+
+  static String _replaceEmoticonTokens(String html) => html.contains('{emo:')
+      ? html.replaceAllMapped(
+          _emoticonToken,
+          (m) =>
+              '<img src="/emoticons/${m.group(1)}" width="50" '
+              'alt="이모티콘" class="emoticon-inline">',
+        )
+      : html;
+
   /// Parse newline-delimited JSON response from __data.json endpoint.
   static List<Map<String, dynamic>> _parseLines(String responseData) {
     final lines = responseData.trim().split('\n');
@@ -322,7 +339,7 @@ class const DamoangParser(final bool isShowNickImage) extends BaseParser {
 
       // 2. Get transformedPostContent from auxiliary chunk (id=1)
       //    This has plugins applied (emoticons, auto-embed, etc.)
-      String bodyHtml = _unescapeMediaTags(content);
+      String bodyHtml = _replaceEmoticonTokens(_unescapeMediaTags(content));
       final auxChunkData = _findChunkData(lines, 1);
       if (auxChunkData != null && auxChunkData.isNotEmpty) {
         final auxRoot = auxChunkData[0];
@@ -331,8 +348,8 @@ class const DamoangParser(final bool isShowNickImage) extends BaseParser {
           if (transformedIndex is int &&
               transformedIndex < auxChunkData.length &&
               auxChunkData[transformedIndex] is String) {
-            bodyHtml = _unescapeMediaTags(
-              auxChunkData[transformedIndex] as String,
+            bodyHtml = _replaceEmoticonTokens(
+              _unescapeMediaTags(auxChunkData[transformedIndex] as String),
             );
           }
         }
@@ -430,7 +447,9 @@ class const DamoangParser(final bool isShowNickImage) extends BaseParser {
                     CommentItem(
                       id: commentIdx++,
                       isReply: cDepth > 0,
-                      bodyHtml: cContent,
+                      bodyHtml: _replaceEmoticonTokens(
+                        _unescapeMediaTags(cContent),
+                      ),
                       likeCount: cLikes > 0 ? cLikes.toString() : '',
                       mediaHtml: '',
                       isVideo: false,
