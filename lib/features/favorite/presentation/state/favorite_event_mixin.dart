@@ -18,6 +18,16 @@ mixin class FavoriteEvent() {
     String groupId,
   ) => ref.read(favoritesProvider.notifier).moveToGroup(favorite, groupId);
 
+  /// 사이트 안에서 순서를 바꾼다(홈 목록의 드래그 정렬).
+  void reorderFavoriteInSite(
+    WidgetRef ref,
+    List<FavoriteData> siteItems,
+    int oldIndex,
+    int newIndex,
+  ) => ref
+      .read(favoritesProvider.notifier)
+      .reorderInSite(siteItems, oldIndex, newIndex);
+
   void reorderFavoriteInGroup(
     WidgetRef ref,
     String groupId,

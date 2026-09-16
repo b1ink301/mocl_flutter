@@ -3,17 +3,18 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/features/bookmark/presentation/bookmarks_page.dart';
 import 'package:mocl_flutter/features/main_page/presentation/state/main_state_mixin.dart';
+import 'package:mocl_flutter/features/main_page/presentation/widgets/mocl_drawer_widget.dart';
 import 'package:mocl_flutter/features/main_page/presentation/widgets/mocl_floating_nav_bar.dart';
 import 'package:mocl_flutter/features/settings_page/presentation/pages/settings/settings_page.dart';
 
 import 'mocl_main_view.dart';
 import 'state/main_event_mixin.dart';
 
-/// 앱의 홈 셸. 하단 탭으로 '내 게시판 · 스크랩 · 설정' 을 오간다.
+/// 앱의 홈 셸.
 ///
-/// 예전엔 드로어가 사이트 전환과 스크랩/설정 진입을 겸했지만, 사이트 선택이
-/// 게시판 추가 화면 안으로 들어가면서 드로어는 역할을 잃었다. 대신 자주 쓰는
-/// 세 화면을 한 번의 탭으로 오갈 수 있게 하단 탭으로 바꿨다.
+/// 가로축(드로어)으로 **사이트**를, 세로축(하단 탭)으로 **화면**을 고른다.
+/// 홈은 지금 고른 사이트에 담아둔 게시판만 보여주므로, 사이트 전환은 드로어가
+/// 맡고 스크랩 · 설정은 한 번의 탭으로 오간다.
 class const MainPage({super.key})
     extends ConsumerWidget
     with MainEvent, MainState {
@@ -26,9 +27,9 @@ class const MainPage({super.key})
   Widget build(BuildContext context, WidgetRef ref) {
     final int tabIndex = tabIndexState(ref);
     return PopScope(
-      // 다른 탭에 있으면 뒤로가기로 앱을 닫지 않고 첫 탭으로 돌아온다.
-      // 검색 중이라면 먼저 검색을 닫는다.
-      canPop: tabIndex == 0 && !searchOpenState(ref),
+      // 드로어 · 검색 · 다른 탭 중 열려 있는 것을 먼저 닫고, 다 닫혀 있을 때만
+      // 뒤로가기가 앱을 나간다.
+      canPop: tabIndex == 0 && !searchOpenState(ref) && !isSidebarExpanded(ref),
       onPopInvokedWithResult: (bool didPop, _) => handlePop(ref, didPop),
       child: const _ScaffoldWidget(),
     );
@@ -46,6 +47,14 @@ class const _ScaffoldWidget() extends ConsumerWidget with MainState, MainEvent {
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: systemOverlayStyle,
       child: Scaffold(
+        key: scaffoldState(ref),
+        drawer: const DrawerWidget(),
+        onDrawerChanged: (isOpen) =>
+            isOpen ? sidebarOpen(ref) : sidebarClose(ref),
+        drawerEdgeDragWidth: screenWidth(ref) / 2,
+        // 사이트 전환은 첫 탭(게시판 목록)에서만 뜻이 있다. 스크랩 · 설정에서
+        // 왼쪽을 쓸어 드로어가 열리면 그 화면의 제스처와 부딪힌다.
+        drawerEnableOpenDragGesture: tabIndex == 0,
         // 탭바가 목록 위에 떠 있도록 본문을 바 뒤까지 확장한다.
         extendBody: true,
         // IndexedStack 이라 탭을 오가도 스크롤 위치와 상태가 유지된다.

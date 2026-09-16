@@ -1,3 +1,4 @@
+import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/database/application/datasource_provider.dart';
@@ -186,6 +187,44 @@ class FavoritesNotifier() extends _$FavoritesNotifier {
     ref.invalidateSelf();
   }
 
+  /// 사이트 안에서 순서를 바꾼다(홈은 사이트 하나만 보여주므로 이 경로를 쓴다).
+  ///
+  /// [siteItems] 는 화면에 보이는 그대로의(정렬된) 그 사이트 게시판 목록이다.
+  /// 그룹이 뒤섞여 있어도 화면 순서를 그대로 0..n 으로 다시 매겨 저장하므로,
+  /// 저장된 순서가 곧 다음에 보게 될 순서가 된다.
+  Future<void> reorderInSite(
+    List<FavoriteData> siteItems,
+    int oldIndex,
+    int newIndex,
+  ) async {
+    if (oldIndex == newIndex) return;
+
+    // onReorderItem 콜백은 제거 후 인덱스를 이미 보정해 넘겨준다(별도 -1 불필요).
+    final List<FavoriteData> list = List<FavoriteData>.of(siteItems);
+    final FavoriteData moved = list.removeAt(oldIndex);
+    list.insert(newIndex, moved);
+
+    final List<FavoriteData> reordered = [
+      for (int i = 0; i < list.length; i++) list[i].copyWith(orderBy: i),
+    ];
+
+    // 낙관적 갱신: 저장을 기다리지 않고 화면을 먼저 바꾼다.
+    final List<FavoriteData>? current = state.asData?.value;
+    if (current != null) {
+      final Map<String, FavoriteData> updated = {
+        for (final FavoriteData favorite in reordered)
+          _keyOf(favorite.siteType, favorite.board): favorite,
+      };
+      state = AsyncData([
+        for (final FavoriteData favorite in current)
+          updated[_keyOf(favorite.siteType, favorite.board)] ?? favorite,
+      ]);
+    }
+
+    await ref.read(favoriteRepositoryProvider).updateAll(reordered);
+    ref.invalidateSelf();
+  }
+
   /// 그룹 안에서 순서를 바꾼다. 낙관적으로 화면을 먼저 갱신한 뒤
   /// orderBy 를 0..n 으로 재부여해 저장한다(저장 순서가 곧 표시 순서).
   Future<void> reorderInGroup(
@@ -232,6 +271,39 @@ Set<String> favoriteBoardKeys(Ref ref) {
     for (final FavoriteData favorite in favorites)
       _keyOf(favorite.siteType, favorite.board),
   };
+}
+
+/// 지금 보고 있는 사이트의 담은 게시판. 홈 화면의 유일한 데이터 소스다.
+///
+/// 순서는 사용자가 정한 [FavoriteData.orderBy] 를 따른다. 그룹 홈 시절에
+/// 그룹별로 매겨진 값이라 사이트 안에서 동률이 생길 수 있어, 그때는 담은
+/// 시각으로 갈라 순서가 매번 흔들리지 않게 한다(정렬 한 번이면 0..n 으로
+/// 다시 매겨진다).
+@riverpod
+Future<List<FavoriteData>> siteFavorites(Ref ref) async {
+  final SiteType siteType = ref.watch(currentSiteTypeProvider);
+  final List<FavoriteData> favorites = await ref.watch(
+    favoritesProvider.future,
+  );
+
+  return favorites.where((favorite) => favorite.siteType == siteType).toList()
+    ..sort((a, b) {
+      final int byOrder = a.orderBy.compareTo(b.orderBy);
+      return byOrder != 0 ? byOrder : a.savedAt.compareTo(b.savedAt);
+    });
+}
+
+/// 사이트별로 담아둔 게시판 개수. 드로어 칩과 빠른 이동 레일이 "갈 곳이 있는
+/// 사이트"를 가리는 데 쓴다.
+@riverpod
+Map<SiteType, int> favoriteCountBySite(Ref ref) {
+  final List<FavoriteData> favorites =
+      ref.watch(favoritesProvider).value ?? const [];
+  final Map<SiteType, int> counts = <SiteType, int>{};
+  for (final FavoriteData favorite in favorites) {
+    counts[favorite.siteType] = (counts[favorite.siteType] ?? 0) + 1;
+  }
+  return counts;
 }
 
 /// 그룹 순서대로 묶은 메인 화면용 섹션 목록.

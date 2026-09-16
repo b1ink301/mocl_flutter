@@ -1,69 +1,46 @@
 import 'dart:async';
 
-import 'package:flutter/rendering.dart';
-import 'package:flutter/scheduler.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_site_category.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/presentation/widgets/site_avatar.dart';
-import 'package:mocl_flutter/features/database/domain/entities/favorite_data.dart';
-import 'package:mocl_flutter/features/database/domain/entities/favorite_group.dart';
 import 'package:mocl_flutter/features/favorite/presentation/state/favorite_state_mixin.dart';
+import 'package:mocl_flutter/features/main_page/presentation/state/main_event_mixin.dart';
 import 'package:mocl_flutter/features/main_page/presentation/state/main_state_mixin.dart';
 
-/// 그룹 헤더의 위치를 재기 위한 키 모음(그룹 ID → 키).
-/// 메인 화면이 소유하고, 본문과 이 레일이 함께 들여다본다.
-typedef GroupHeaderKeys = Map<String, GlobalKey>;
-
-/// 메인 목록 오른쪽에 세로로 떠 있는 "사이트 바로가기" 레일.
+/// 목록 오른쪽에 세로로 떠 있는 "사이트 바로가기" 레일.
 ///
-/// 등록한 게시판이 많아지면 원하는 사이트까지 한참 스크롤해야 한다. 이 레일은
-/// 그룹마다 아이콘 하나를 세워두고, 탭하면 그 그룹의 첫 줄로 곧장 이동시킨다.
-/// 지금 보고 있는 그룹은 강조색 링으로 표시된다.
+/// 홈은 한 사이트의 게시판만 보여주므로 사이트를 바꾸려면 드로어를 열어야
+/// 한다. 자주 오가는 사이트는 그마저 번거로워서, 이미 게시판을 담아둔 사이트만
+/// 로고 하나씩 세워 두고 탭 한 번으로 갈아타게 한다. 지금 보고 있는 사이트는
+/// 강조색 링으로 표시된다.
 ///
 /// 목록 위에 겹쳐 뜨는 만큼 게시판 이름 오른쪽 끝을 가리므로, 스크롤이 멈추고
 /// 잠시 지나면 옅어졌다가 다시 스크롤하면 또렷해진다. 옅어진 상태에서도 탭은
 /// 그대로 받는다(위치를 기억하고 누른 사용자가 헛손질하지 않도록).
 ///
 /// 편집 모드에서는 항목마다 드래그 손잡이가 오른쪽에 생겨 서로 부딪히므로
-/// 레일을 감춘다. 그룹이 하나뿐일 때도 이동할 곳이 없어 감춘다.
-class const QuickJumpRail({
+/// 레일을 감춘다. 담아둔 사이트가 하나뿐일 때도 갈 곳이 없어 감춘다.
+class const SiteJumpRail({
   super.key,
   required final ScrollController controller,
-  required final GroupHeaderKeys headerKeys,
 }) extends ConsumerStatefulWidget {
   @override
-  ConsumerState<QuickJumpRail> createState() => _QuickJumpRailState();
+  ConsumerState<SiteJumpRail> createState() => _SiteJumpRailState();
 }
 
-class _QuickJumpRailState()
-    extends ConsumerState<QuickJumpRail>
-    with MainState, FavoriteState {
+class _SiteJumpRailState()
+    extends ConsumerState<SiteJumpRail>
+    with MainState, MainEvent, FavoriteState {
   /// 스크롤이 멈춘 뒤 레일을 옅게 만들기까지 기다리는 시간.
   static const Duration _idleDelay = Duration(milliseconds: 1200);
 
-  /// 옅어진 상태인지. [_active] 와 마찬가지로 레일 안쪽만 다시 그린다.
+  /// 옅어진 상태인지. 스크롤할 때마다 본문까지 리빌드되지 않도록 setState
+  /// 대신 알림값으로 레일 안쪽만 갱신한다.
   final ValueNotifier<bool> _dimmed = ValueNotifier<bool>(false);
   Timer? _idleTimer;
-
-  /// 지금 보고 있는 그룹의 인덱스. 스크롤할 때마다 본문까지 리빌드되지 않도록
-  /// setState 대신 알림값으로 레일 안쪽만 갱신한다.
-  final ValueNotifier<int> _active = ValueNotifier<int>(0);
-
-  /// 화면에 그려지는 순서대로의 그룹 ID(레일 점 순서와 같다).
-  List<String> _groupIds = const <String>[];
-
-  /// 레일 탭으로 이동하는 중. 이동 중에는 스크롤에 따른 강조 갱신을 멈춘다
-  /// (지나치는 그룹마다 강조가 옮겨 다니면 어지럽다).
-  bool _jumping = false;
-
-  /// 그룹별 목표 스크롤 위치([_groupIds] 와 같은 순서).
-  ///
-  /// 위치를 재려면 그룹마다 뷰포트까지 거슬러 올라가야 해서, 스크롤할 때마다
-  /// 전부 다시 재면 손해다. 목록 길이가 변하지 않는 한 값도 그대로이므로
-  /// 캐시해 두고 [_offsetsExtent] 가 달라질 때만 다시 잰다.
-  List<double>? _offsets;
-  double _offsetsExtent = -1;
 
   @override
   void initState() {
@@ -74,7 +51,7 @@ class _QuickJumpRailState()
   }
 
   @override
-  void didUpdateWidget(QuickJumpRail oldWidget) {
+  void didUpdateWidget(SiteJumpRail oldWidget) {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.controller != widget.controller) {
       oldWidget.controller.removeListener(_onScroll);
@@ -88,7 +65,6 @@ class _QuickJumpRailState()
     widget.controller.removeListener(_onScroll);
     _idleTimer?.cancel();
     _dimmed.dispose();
-    _active.dispose();
     super.dispose();
   }
 
@@ -100,28 +76,21 @@ class _QuickJumpRailState()
     // 편집 모드에서는 오른쪽이 드래그 손잡이 자리다.
     if (editModeState(ref)) return const SizedBox.shrink();
 
-    // 검색 중에는 목록이 걸러진 상태라 레일의 그룹 위치와 어긋난다.
+    // 검색 중에는 사이트를 바꾸면 검색어만 남고 결과가 통째로 바뀌어 혼란스럽다.
     if (searchOpenState(ref)) return const SizedBox.shrink();
 
-    final List<FavoriteSection> sections =
-        favoriteSectionsState(ref).asData?.value ?? const <FavoriteSection>[];
-    // 본문과 같은 규칙으로 빈 그룹은 뺀다(레일과 목록의 순서가 어긋나면 안 된다).
-    final List<FavoriteSection> visible = sections
-        .where((section) => section.items.isNotEmpty)
-        .toList();
-    final List<String> ids = [
-      for (final FavoriteSection section in visible) section.group.id,
+    final Map<SiteType, int> counts = favoriteCountBySiteState(ref);
+    // 드로어와 같은 순서로 세운다(성격이 비슷한 사이트끼리 이웃한다).
+    final List<SiteType> sites = [
+      for (final SiteType siteType in kAllSitesInOrder)
+        if ((counts[siteType] ?? 0) > 0) siteType,
     ];
-    // 그룹이 늘거나 줄면 재둔 위치는 모두 못 쓴다.
-    if (!_sameIds(ids, _groupIds)) {
-      _groupIds = ids;
-      _offsets = null;
-    }
 
     // 갈 곳이 하나뿐이면 레일은 자리만 차지한다.
-    if (visible.length < 2) return const SizedBox.shrink();
+    if (sites.length < 2) return const SizedBox.shrink();
 
     final MediaQueryData media = MediaQuery.of(context);
+    final SiteType current = currentSiteType(ref);
 
     return Padding(
       padding: EdgeInsets.only(
@@ -140,76 +109,18 @@ class _QuickJumpRailState()
             opacity: dimmed ? 0.35 : 1,
             duration: const Duration(milliseconds: 280),
             curve: Curves.easeOut,
-            child: ValueListenableBuilder<int>(
-              valueListenable: _active,
-              builder: (context, active, _) => _RailBar(
-                sections: visible,
-                active: active,
-                // 레일 전체가 옅어진 만큼 아이콘 자체 감쇠는 덜어 준다
-                // (0.35 × 0.55 면 무엇인지 알아볼 수 없다).
-                inactiveOpacity: dimmed ? 0.85 : 0.55,
-                onTap: _jumpTo,
-              ),
+            child: _RailBar(
+              sites: sites,
+              current: current,
+              // 레일 전체가 옅어진 만큼 아이콘 자체 감쇠는 덜어 준다
+              // (0.35 × 0.55 면 무엇인지 알아볼 수 없다).
+              inactiveOpacity: dimmed ? 0.85 : 0.55,
+              onTap: _jumpTo,
             ),
           ),
         ),
       ),
     );
-  }
-
-  /// 그룹 헤더를 뷰포트 맨 위에 붙이는 스크롤 오프셋.
-  /// 아직 배치 전이거나 사라진 그룹이면 null.
-  ///
-  /// 그룹 헤더는 게으르게 만들어지는 목록 항목과 달리 항상 배치되므로,
-  /// 화면 밖으로 한참 벗어난 그룹도 위치를 물어볼 수 있다.
-  double? _rawOffsetOf(String groupId) {
-    final BuildContext? headerContext =
-        widget.headerKeys[groupId]?.currentContext;
-    if (headerContext == null) return null;
-
-    final RenderObject? header = headerContext.findRenderObject();
-    if (header == null || !header.attached) return null;
-
-    final RenderAbstractViewport? viewport = RenderAbstractViewport.maybeOf(
-      header,
-    );
-    if (viewport == null) return null;
-
-    try {
-      return viewport.getOffsetToReveal(header, 0).offset;
-    } catch (_) {
-      return null;
-    }
-  }
-
-  /// 그룹을 고정 앱바 바로 아래에 붙이는 스크롤 위치를 모두 구한다.
-  ///
-  /// 첫 그룹의 오프셋이 곧 앱바가 차지하는 높이라, 이를 기준선으로 빼면
-  /// 앱바 높이를 따로 계산하지 않고도 정확한 목표 위치가 나온다.
-  ///
-  /// 아직 한 그룹이라도 못 재면 null 을 돌려 어중간한 표를 만들지 않는다.
-  List<double>? _ensureOffsets({bool force = false}) {
-    if (_groupIds.isEmpty || !widget.controller.hasClients) return null;
-
-    // 목록이 자라거나 줄면(항목이 새로 그려지며 추정 길이가 바뀔 때 포함)
-    // 재둔 위치도 밀리므로 다시 잰다.
-    final double extent = widget.controller.position.maxScrollExtent;
-    final List<double>? cached = _offsets;
-    if (!force && cached != null && _offsetsExtent == extent) return cached;
-
-    final double? base = _rawOffsetOf(_groupIds.first);
-    if (base == null) return null;
-
-    final List<double> offsets = <double>[];
-    for (final String groupId in _groupIds) {
-      final double? raw = _rawOffsetOf(groupId);
-      if (raw == null) return null;
-      offsets.add(raw - base);
-    }
-
-    _offsets = offsets;
-    _offsetsExtent = extent;
-    return offsets;
   }
 
   /// 레일을 또렷하게 되돌리고, 유휴 타이머를 다시 건다.
@@ -225,93 +136,30 @@ class _QuickJumpRailState()
     });
   }
 
-  void _onScroll() {
-    _wake();
+  void _onScroll() => _wake();
 
-    // 레이아웃 도중에는 리빌드를 예약할 수 없다. 프레임이 끝난 뒤 다시 잰다.
-    if (SchedulerBinding.instance.schedulerPhase ==
-        SchedulerPhase.persistentCallbacks) {
-      SchedulerBinding.instance.addPostFrameCallback((_) {
-        if (mounted) _updateActive();
-      });
-      return;
-    }
-    _updateActive();
-  }
-
-  void _updateActive() {
-    if (_jumping) return;
-
-    final List<double>? offsets = _ensureOffsets();
-    if (offsets == null) return;
-
-    final double offset = widget.controller.offset;
-    int index = 0;
-    for (int i = 0; i < offsets.length; i++) {
-      // 헤더가 앱바 밑에 막 닿은 시점부터 그 그룹을 보고 있는 것으로 친다.
-      if (offsets[i] <= offset + 8) {
-        index = i;
-      } else {
-        break;
-      }
-    }
-    _active.value = index;
-  }
-
-  /// 레일 점을 누르면 해당 그룹의 첫 줄로 이동한다.
-  ///
-  /// 화면 밖 목록은 아직 그려지지 않아 위치가 '추정값'이다. 그래서 한 번
-  /// 애니메이션으로 이동한 뒤, 실제로 그려진 위치를 다시 재서 어긋난 만큼
-  /// 보정한다(최대 두 번).
-  Future<void> _jumpTo(int index) async {
-    final ScrollController controller = widget.controller;
-    if (!controller.hasClients || index >= _groupIds.length) return;
+  /// 레일 점을 누르면 그 사이트로 갈아탄다. 목록이 통째로 바뀌므로
+  /// 이전 사이트의 스크롤 위치는 맨 위로 되돌린다.
+  void _jumpTo(SiteType siteType) {
+    if (siteType == currentSiteType(ref)) return;
 
     HapticFeedback.selectionClick();
     _wake();
-    _active.value = index;
-    _jumping = true;
+    changeSiteType(ref, siteType);
 
-    try {
-      for (int attempt = 0; attempt < 3; attempt++) {
-        // 이동하며 목록이 새로 그려져 위치가 밀리므로 매번 다시 잰다.
-        final List<double>? offsets = _ensureOffsets(force: true);
-        if (offsets == null || index >= offsets.length) break;
-
-        final double clamped = offsets[index].clamp(
-          0.0,
-          controller.position.maxScrollExtent,
-        );
-        if ((controller.offset - clamped).abs() < 1) break;
-
-        if (attempt == 0) {
-          await controller.animateTo(
-            clamped,
-            duration: const Duration(milliseconds: 320),
-            curve: Curves.easeOutCubic,
-          );
-        } else {
-          controller.jumpTo(clamped);
-          // 새로 그려진 줄들이 반영된 뒤에 다시 재야 한다.
-          await SchedulerBinding.instance.endOfFrame;
-        }
-
-        if (!mounted || !controller.hasClients) break;
-      }
-    } finally {
-      _jumping = false;
+    final ScrollController controller = widget.controller;
+    if (controller.hasClients && controller.offset > 0) {
+      controller.jumpTo(0);
     }
-
-    if (mounted) _active.value = index;
   }
 }
 
-/// 알약 모양의 레일 몸통. 그룹이 많으면 레일 안에서 스크롤된다.
+/// 알약 모양의 레일 몸통. 사이트가 많으면 레일 안에서 스크롤된다.
 class const _RailBar({
-  required final List<FavoriteSection> sections,
-  required final int active,
+  required final List<SiteType> sites,
+  required final SiteType current,
   required final double inactiveOpacity,
-  required final ValueChanged<int> onTap,
+  required final ValueChanged<SiteType> onTap,
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -336,18 +184,18 @@ class const _RailBar({
       clipBehavior: Clip.antiAlias,
       child: Material(
         type: MaterialType.transparency,
-        // 그룹이 많아 레일이 화면보다 길어지면 레일만 따로 스크롤한다.
+        // 사이트가 많아 레일이 화면보다 길어지면 레일만 따로 스크롤한다.
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(vertical: 8),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              for (int i = 0; i < sections.length; i++)
+              for (final SiteType siteType in sites)
                 _RailDot(
-                  section: sections[i],
-                  active: i == active,
+                  siteType: siteType,
+                  active: siteType == current,
                   inactiveOpacity: inactiveOpacity,
-                  onTap: () => onTap(i),
+                  onTap: () => onTap(siteType),
                 ),
             ],
           ),
@@ -357,14 +205,10 @@ class const _RailBar({
   }
 }
 
-/// 레일 점 하나. 그룹의 첫 게시판이 속한 사이트 로고를 쓴다.
-///
-/// 게시판별 그림(네이버카페 등)이 아니라 사이트 로고를 쓰는 이유: 이 레일은
-/// "어느 사이트로 가는 길인지"를 알려 주는 것이므로, 그룹에 어쩌다 섞인 게시판
-/// 하나의 그림보다 사이트 로고가 알아보기 쉽다. 로고가 없는 사이트는
-/// [SiteAvatar] 가 색 배지로 대신한다.
+/// 레일 점 하나(사이트 로고). 로고가 없는 사이트는 [SiteAvatar] 가 색 배지로
+/// 대신한다.
 class const _RailDot({
-  required final FavoriteSection section,
+  required final SiteType siteType,
   required final bool active,
   required final double inactiveOpacity,
   required final VoidCallback onTap,
@@ -372,10 +216,9 @@ class const _RailDot({
   @override
   Widget build(BuildContext context) {
     final ThemeData theme = Theme.of(context);
-    final FavoriteData? lead = _representativeOf(section);
 
     return Tooltip(
-      message: section.group.name,
+      message: siteType.title,
       child: InkWell(
         onTap: onTap,
         customBorder: const CircleBorder(),
@@ -396,9 +239,7 @@ class const _RailDot({
               opacity: active ? 1 : inactiveOpacity,
               duration: const Duration(milliseconds: 280),
               curve: Curves.easeOut,
-              child: lead == null
-                  ? const SizedBox(width: 26, height: 26)
-                  : SiteAvatar(siteType: lead.siteType, radius: 13),
+              child: SiteAvatar(siteType: siteType, radius: 13),
             ),
           ),
         ),
@@ -406,17 +247,3 @@ class const _RailDot({
     );
   }
 }
-
-/// 그룹 구성이 그대로인지(순서까지 같은지) 확인한다.
-bool _sameIds(List<String> a, List<String> b) {
-  if (a.length != b.length) return false;
-  for (int i = 0; i < a.length; i++) {
-    if (a[i] != b[i]) return false;
-  }
-  return true;
-}
-
-/// 그룹을 대표하는 게시판. 사이트 로고만 쓰므로 첫 게시판으로 충분하다
-/// (그룹은 보통 한 사이트로 묶여 있고, 순서도 사용자가 정한 그대로다).
-FavoriteData? _representativeOf(FavoriteSection section) =>
-    section.items.isEmpty ? null : section.items.first;
