@@ -21,24 +21,30 @@ class const MainRepositoryImpl({required final MainDataSource dataSource})
     //   3) 실시간 파싱 — 큐레이션 JSON 이 없는 사이트(예: 네이버카페)의 최후 수단
     // (UnimplementedError 는 Error 라서 Exception catch 로는 안 잡히므로 catch-all)
 
-    // 1) 원격 큐레이션 JSON
-    try {
-      final remote = await dataSource.getAllFromRemote(siteType);
-      if (remote.isNotEmpty) {
-        return Right(remote.map((data) => data.toEntity(siteType)).toList());
+    // 네이버카페처럼 큐레이션 목록이 존재할 수 없는 사이트는 1) 2) 를 건너뛴다.
+    // (없는 파일을 받으러 가는 원격 404 왕복과 asset 로드 실패가 사라진다)
+    if (siteType.hasCuratedBoardList) {
+      // 1) 원격 큐레이션 JSON
+      try {
+        final remote = await dataSource.getAllFromRemote(siteType);
+        if (remote.isNotEmpty) {
+          return Right(remote.map((data) => data.toEntity(siteType)).toList());
+        }
+      } catch (_) {
+        // 다음 폴백으로 진행
       }
-    } catch (_) {
-      // 다음 폴백으로 진행
-    }
 
-    // 2) 번들 asset JSON 폴백
-    try {
-      final mainData = await dataSource.getAllFromJson(siteType);
-      if (mainData.isNotEmpty) {
-        return Right(mainData.map((data) => data.toEntity(siteType)).toList());
+      // 2) 번들 asset JSON 폴백
+      try {
+        final mainData = await dataSource.getAllFromJson(siteType);
+        if (mainData.isNotEmpty) {
+          return Right(
+            mainData.map((data) => data.toEntity(siteType)).toList(),
+          );
+        }
+      } catch (_) {
+        // 다음 폴백으로 진행
       }
-    } catch (_) {
-      // 다음 폴백으로 진행
     }
 
     // 3) 실시간 파싱 최후 수단
