@@ -50,12 +50,20 @@ final class MainItemProvider
 
 String _$mainItemHash() => r'bfd8c4675d74a8ec6b735008aa9f59eee3c014e6';
 
+/// 앱바 부제. 2단 게시판이면 사이트명만으로는 어느 카페의 게시판인지 알 수
+/// 없으므로 부모(카페) 이름을 앞에 붙인다.
+
 @ProviderFor(listSmallTitle)
 final listSmallTitleProvider = ListSmallTitleProvider._();
+
+/// 앱바 부제. 2단 게시판이면 사이트명만으로는 어느 카페의 게시판인지 알 수
+/// 없으므로 부모(카페) 이름을 앞에 붙인다.
 
 final class ListSmallTitleProvider
     extends $FunctionalProvider<String, String, String>
     with $Provider<String> {
+  /// 앱바 부제. 2단 게시판이면 사이트명만으로는 어느 카페의 게시판인지 알 수
+  /// 없으므로 부모(카페) 이름을 앞에 붙인다.
   ListSmallTitleProvider._()
     : super(
         from: null,
@@ -63,9 +71,13 @@ final class ListSmallTitleProvider
         retry: null,
         name: r'listSmallTitleProvider',
         isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
+        dependencies: <ProviderOrFamily>[mainItemProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          ListSmallTitleProvider.$allTransitiveDependencies0,
+        ],
       );
+
+  static final $allTransitiveDependencies0 = mainItemProvider;
 
   @override
   String debugGetCreateSourceHash() => _$listSmallTitleHash();
@@ -89,7 +101,7 @@ final class ListSmallTitleProvider
   }
 }
 
-String _$listSmallTitleHash() => r'4d44c4e8d04a365a84741c0d5ce123f586f67b4b';
+String _$listSmallTitleHash() => r'452a15992dcb95d11838535d129806001ad2af74';
 
 @ProviderFor(listTitle)
 final listTitleProvider = ListTitleProvider._();
@@ -345,7 +357,7 @@ final class ListPagingControllerProvider
 }
 
 String _$listPagingControllerHash() =>
-    r'1e836eba4ca1066948bcb6e8b762dd647e47a443';
+    r'85dbc0d96906a245dcced9460c9065779a90453c';
 
 /// infinite_scroll_pagination 의 PagingController 를 Riverpod 으로 감싼다.
 /// build() 는 mainItem/sortType 이 바뀔 때만 새 컨트롤러를 생성한다.

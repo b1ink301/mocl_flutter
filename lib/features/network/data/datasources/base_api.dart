@@ -5,8 +5,10 @@ import 'package:dio_cookie_manager/dio_cookie_manager.dart' as diocookie;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart' as webview;
 import 'package:fpdart/fpdart.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/util/mocl_logger.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_parser.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_action.dart';
 
 // 차단 회피를 위해 최신 Chrome(2026.06 기준 150) UA 로 맞춘다. 웹뷰 식별
@@ -76,6 +78,28 @@ abstract class const BaseApi(final Dio _dio, final String userAgent)
           )
         : null,
   );
+
+  /// 컨테이너([parent]) 의 하위 메뉴 목록을 받아온다.
+  /// URL 과 파싱은 파서가 정하므로 사이트별 API 구현이 따로 필요 없다.
+  /// 쿠키 동기화가 필요한 사이트(네이버카페 등)만 오버라이드한다.
+  Future<Either<Failure, List<MainItem>>> subMenu(
+    MainItem parent,
+    BaseParser parser,
+  ) async {
+    final String url = parser.urlBySubMenu(parent);
+    final Response<dynamic> response = await get(
+      url,
+      headers: {'User-Agent': userAgent},
+    );
+    MoclLogger.d(() => '[subMenu] $url response = ${response.statusCode}');
+    return response.statusCode == 200
+        ? parser.subMenu(response, parent)
+        : Left(
+            GetMainFailure(
+              message: 'response.statusCode = ${response.statusCode}',
+            ),
+          );
+  }
 
   Future<Response<dynamic>> postUri(
     String url, {

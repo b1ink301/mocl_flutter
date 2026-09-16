@@ -1,19 +1,16 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mocl_flutter/features/bookmark/presentation/bookmarks_page.dart';
 import 'package:mocl_flutter/features/main_page/presentation/state/main_state_mixin.dart';
-import 'package:mocl_flutter/features/main_page/presentation/widgets/mocl_floating_nav_bar.dart';
-import 'package:mocl_flutter/features/settings_page/presentation/pages/settings/settings_page.dart';
+import 'package:mocl_flutter/features/main_page/presentation/widgets/mocl_drawer_widget.dart';
 
 import 'mocl_main_view.dart';
 import 'state/main_event_mixin.dart';
 
-/// 앱의 홈 셸. 하단 탭으로 '내 게시판 · 스크랩 · 설정' 을 오간다.
+/// 앱의 홈 셸.
 ///
-/// 예전엔 드로어가 사이트 전환과 스크랩/설정 진입을 겸했지만, 사이트 선택이
-/// 게시판 추가 화면 안으로 들어가면서 드로어는 역할을 잃었다. 대신 자주 쓰는
-/// 세 화면을 한 번의 탭으로 오갈 수 있게 하단 탭으로 바꿨다.
+/// 드로어로 **사이트**를 고르고, 본문은 그 사이트에 담아둔 게시판만 보여준다.
+/// 스크랩 · 설정은 드로어 헤더의 아이콘으로 각자의 화면을 밀어 올린다.
 class const MainPage({super.key})
     extends ConsumerWidget
     with MainEvent, MainState {
@@ -24,10 +21,10 @@ class const MainPage({super.key})
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final int tabIndex = tabIndexState(ref);
     return PopScope(
-      // 다른 탭에 있으면 뒤로가기로 앱을 닫지 않고 첫 탭으로 돌아온다.
-      canPop: tabIndex == 0,
+      // 검색창과 드로어 중 열려 있는 것을 먼저 닫고, 다 닫혀 있을 때만
+      // 뒤로가기가 앱을 나간다.
+      canPop: !searchOpenState(ref) && !isSidebarExpanded(ref),
       onPopInvokedWithResult: (bool didPop, _) => handlePop(ref, didPop),
       child: const _ScaffoldWidget(),
     );
@@ -40,22 +37,17 @@ class const _ScaffoldWidget() extends ConsumerWidget with MainState, MainEvent {
     final systemOverlayStyle =
         Theme.of(context).appBarTheme.systemOverlayStyle ??
         SystemUiOverlayStyle.light;
-    final int tabIndex = tabIndexState(ref);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(
       value: systemOverlayStyle,
       child: Scaffold(
-        // 탭바가 목록 위에 떠 있도록 본문을 바 뒤까지 확장한다.
-        extendBody: true,
-        // IndexedStack 이라 탭을 오가도 스크롤 위치와 상태가 유지된다.
-        body: IndexedStack(
-          index: tabIndex,
-          children: const <Widget>[MainView(), BookmarksPage(), SettingsPage()],
-        ),
-        bottomNavigationBar: FloatingNavBar(
-          selectedIndex: tabIndex,
-          onSelected: (index) => selectTab(ref, index),
-        ),
+        key: scaffoldState(ref),
+        drawer: const DrawerWidget(),
+        onDrawerChanged: (isOpen) =>
+            isOpen ? sidebarOpen(ref) : sidebarClose(ref),
+        drawerEdgeDragWidth: screenWidth(ref) / 2,
+        drawerEnableOpenDragGesture: true,
+        body: const MainView(),
       ),
     );
   }

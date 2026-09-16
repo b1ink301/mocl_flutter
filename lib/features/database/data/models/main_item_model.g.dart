@@ -14,6 +14,12 @@ _MainItemData _$MainItemDataFromJson(Map<String, dynamic> json) =>
       title: json['title'] as String,
       url: json['url'] as String,
       siteType: $enumDecodeNullable(_$SiteTypeEnumMap, json['siteType']),
+      hasItem: json['hasItem'] as bool? ?? false,
+      children:
+          (json['children'] as List<dynamic>?)
+              ?.map((e) => MainItemModel.fromJson(e as Map<String, dynamic>))
+              .toList() ??
+          const <MainItemModel>[],
     );
 
 Map<String, dynamic> _$MainItemDataToJson(_MainItemData instance) =>
@@ -24,6 +30,8 @@ Map<String, dynamic> _$MainItemDataToJson(_MainItemData instance) =>
       'title': instance.title,
       'url': instance.url,
       'siteType': _$SiteTypeEnumMap[instance.siteType],
+      'hasItem': instance.hasItem,
+      'children': instance.children,
     };
 
 const _$SiteTypeEnumMap = {

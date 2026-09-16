@@ -18,6 +18,11 @@ abstract class const BaseParser() {
 
   String urlByMain() => throw UnimplementedError('urlByMain');
 
+  /// 컨테이너([parent]) 의 하위 메뉴 목록을 받아올 URL.
+  /// 2단 구조가 없는 사이트는 구현하지 않는다.
+  String urlBySubMenu(MainItem parent) =>
+      throw UnimplementedError('urlBySubMenu');
+
   String urlByList(
     String url,
     String board,
@@ -42,6 +47,17 @@ abstract class const BaseParser() {
 
   Future<Either<Failure, List<MainItem>>> main(Response<dynamic> response) =>
       throw UnimplementedError('main');
+
+  /// 이 사이트가 실시간 하위 메뉴 조회를 지원하는지.
+  /// UI 는 사이트를 직접 알지 못하므로(분기 금지) 이 값과 [MainItem.hasItem] 만 본다.
+  bool get supportsSubMenu => false;
+
+  /// 하위 메뉴 응답을 [MainItem] 목록으로 바꾼다. 기본은 미지원(빈 목록).
+  /// [parent] 는 합성 board 키와 출처 표기를 만들기 위해 받는다.
+  Future<Either<Failure, List<MainItem>>> subMenu(
+    Response<dynamic> response,
+    MainItem parent,
+  ) async => const Right(<MainItem>[]);
 
   Future<Either<Failure, List<ListItem>>> list(
     Response<dynamic> response,

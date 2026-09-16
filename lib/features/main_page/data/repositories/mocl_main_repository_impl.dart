@@ -21,29 +21,61 @@ class const MainRepositoryImpl({required final MainDataSource dataSource})
     //   3) 실시간 파싱 — 큐레이션 JSON 이 없는 사이트(예: 네이버카페)의 최후 수단
     // (UnimplementedError 는 Error 라서 Exception catch 로는 안 잡히므로 catch-all)
 
-    // 1) 원격 큐레이션 JSON
-    try {
-      final remote = await dataSource.getAllFromRemote(siteType);
-      if (remote.isNotEmpty) {
-        return Right(remote.map((data) => data.toEntity(siteType)).toList());
+    // 네이버카페처럼 큐레이션 목록이 존재할 수 없는 사이트는 1) 2) 를 건너뛴다.
+    // (없는 파일을 받으러 가는 원격 404 왕복과 asset 로드 실패가 사라진다)
+    if (siteType.hasCuratedBoardList) {
+      // 1) 원격 큐레이션 JSON
+      try {
+        final remote = await dataSource.getAllFromRemote(siteType);
+        if (remote.isNotEmpty) {
+          return Right(remote.map((data) => data.toEntity(siteType)).toList());
+        }
+      } catch (_) {
+        // 다음 폴백으로 진행
       }
-    } catch (_) {
-      // 다음 폴백으로 진행
-    }
 
-    // 2) 번들 asset JSON 폴백
-    try {
-      final mainData = await dataSource.getAllFromJson(siteType);
-      if (mainData.isNotEmpty) {
-        return Right(mainData.map((data) => data.toEntity(siteType)).toList());
+      // 2) 번들 asset JSON 폴백
+      try {
+        final mainData = await dataSource.getAllFromJson(siteType);
+        if (mainData.isNotEmpty) {
+          return Right(
+            mainData.map((data) => data.toEntity(siteType)).toList(),
+          );
+        }
+      } catch (_) {
+        // 다음 폴백으로 진행
       }
-    } catch (_) {
-      // 다음 폴백으로 진행
     }
 
     // 3) 실시간 파싱 최후 수단
     try {
       return Right(await dataSource.getAllLive(siteType));
+    } catch (e) {
+      return Left(GetMainFailure(message: e.toString()));
+    }
+  }
+
+  @override
+  Future<Either<Failure, List<MainItem>>> getSubMenuList({
+    required MainItem parent,
+  }) async {
+    // 정적 정의(children)를 우선한다. 큐레이션된 목록이 있으면 네트워크를
+    // 타지 않고, 없을 때만 실시간 조회로 내려간다(네이버카페가 여기에 해당).
+    try {
+      final List<MainItem> fromJson = await dataSource.getSubMenuFromJson(
+        parent,
+      );
+      if (fromJson.isNotEmpty) return Right(fromJson);
+    } catch (_) {
+      // 실시간 조회로 진행
+    }
+
+    try {
+      return Right(await dataSource.getSubMenuLive(parent));
+    } on Failure catch (f) {
+      // 로그인 필요(NotLoginFailure) 같은 사유는 화면이 그대로 써야 하므로
+      // 문자열로 뭉개지 않고 그대로 올려보낸다.
+      return Left(f);
     } catch (e) {
       return Left(GetMainFailure(message: e.toString()));
     }
