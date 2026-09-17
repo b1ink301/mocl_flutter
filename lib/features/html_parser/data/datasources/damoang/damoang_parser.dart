@@ -42,22 +42,121 @@ class const DamoangParser(final bool isShowNickImage) extends BaseParser {
     );
   }
 
-  /// 다모앙 이모티콘 토큰 `{emo:onion-034.gif}` 을 실제 `<img>` 로 바꾼다.
-  ///
-  /// 본문(transformedPostContent)은 서버가 이미 치환해서 내려주지만, 댓글
-  /// content 는 원문 그대로라 토큰이 글자로 보였다. 사이트가 만들어내는
-  /// 마크업(`/emoticons/<파일명>`, width=50, class=emoticon-inline)과 동일하게
-  /// 맞춰 상세 화면의 이모티콘 크기 규칙을 그대로 타게 한다.
-  static final RegExp _emoticonToken = RegExp(r'\{emo:([A-Za-z0-9._-]+)\}');
+  // ──────────────────────────────────────────────────────────────────
+  // 사이트 플러그인(emoticon / bracket-image) 재현
+  //
+  // 다모앙 글/댓글은 원문에 숏코드가 그대로 저장되고, 웹은 클라이언트
+  // 플러그인이 하이드레이션 때 `<img>` 로 바꿔 그린다. 앱에는 그 플러그인이
+  // 없어 `{emo:...}` / `[https://...gif]` 가 글자로 보였으므로, 사이트가
+  // 만들어내는 마크업과 동일하게 파싱 단계에서 치환한다.
+  // ──────────────────────────────────────────────────────────────────
 
-  static String _replaceEmoticonTokens(String html) => html.contains('{emo:')
-      ? html.replaceAllMapped(
-          _emoticonToken,
-          (m) =>
-              '<img src="/emoticons/${m.group(1)}" width="50" '
-              'alt="이모티콘" class="emoticon-inline">',
-        )
+  /// 이모티콘 토큰. `{emo:onion-034.gif}` / `{이모티콘:xxx.gif:100}` 둘 다 받는다.
+  /// (두 번째 값은 사이트와 같이 픽셀 폭)
+  static final RegExp _emoticonToken = RegExp(
+    r'\{(?:이모티콘|emo):([^}]*)\}',
+    caseSensitive: false,
+  );
+
+  /// 이모티콘 폭을 지정하지 않았을 때의 기본값과 상한. (사이트와 동일)
+  static const int _kEmoticonDefaultWidth = 50;
+  static const int _kEmoticonMaxWidth = 200;
+
+  static const List<String> _kEmoticonExtensions = [
+    '.gif',
+    '.png',
+    '.jpg',
+    '.jpeg',
+    '.webp',
+  ];
+
+  /// 파일명 접두사별 기본 폭. 사이트 플러그인의 표를 그대로 옮긴 것.
+  static const List<(String, int)> _kEmoticonWidthByPrefix = [
+    ('damoang-meme-', 200),
+    ('moon-emo-', 100),
+    ('lee-president-', 100),
+    ('president-', 100),
+    ('damoang-sol-', 100),
+    ('damoang-emo-', 80),
+    ('dinkisstyle-3d-ang-', 100),
+    ('dinkisstyle-ang-', 100),
+    ('dinkisstyle-ani-', 100),
+    ('dinkisstyle-animal-', 100),
+    ('dinkisstyle-anniversary-', 100),
+  ];
+
+  /// `[https://.../a.gif]` 숏코드(bracket-image 플러그인).
+  static final RegExp _bracketImage = RegExp(
+    r'\[(https?://[^\]]+\.(?:jpg|jpeg|png|gif|webp|bmp|svg)(?:\?[^\]]*)?)\]',
+    caseSensitive: false,
+  );
+
+  /// 에디터가 URL 을 `<a>` 로 감싸 대괄호만 남은 형태.
+  static final RegExp _bracketImageAnchor = RegExp(
+    r'\[\s*<a\b[^>]*\shref="(https?://[^"]+\.(?:jpg|jpeg|png|gif|webp|bmp|svg)(?:\?[^"]*)?)"[^>]*>.*?</a>\s*\]',
+    caseSensitive: false,
+    dotAll: true,
+  );
+
+  /// 본문/댓글 HTML 공통 정규화. 댓글 전용 API([DamoangApi]) 도 같은 규칙을
+  /// 타야 이모티콘·이미지 숏코드가 글자로 새지 않는다.
+  static String normalizeContentHtml(String html) =>
+      _replaceBracketImages(_replaceEmoticonTokens(_unescapeMediaTags(html)));
+
+  static bool _isValidEmoticonName(String name) {
+    if (name.isEmpty ||
+        name.length > 200 ||
+        name.contains('..') ||
+        name.contains('/') ||
+        name.contains(r'\') ||
+        name.contains('"')) {
+      return false;
+    }
+    final lower = name.toLowerCase();
+    return _kEmoticonExtensions.any(lower.endsWith);
+  }
+
+  static int _emoticonWidthFor(String name) {
+    final lower = name.toLowerCase();
+    for (final (prefix, width) in _kEmoticonWidthByPrefix) {
+      if (lower.startsWith(prefix)) return width;
+    }
+    return _kEmoticonDefaultWidth;
+  }
+
+  static String _replaceEmoticonTokens(String html) => html.contains('{')
+      ? html.replaceAllMapped(_emoticonToken, (m) {
+          final parts = (m.group(1) ?? '').split(':');
+          final name = parts.first.trim();
+          // 사이트는 파일명이 이상하면 이모티콘 대신 기본 이모지를 보여준다.
+          if (!_isValidEmoticonName(name)) return '😀';
+
+          int width = parts.length > 1
+              ? (int.tryParse(parts[1].trim()) ?? 0)
+              : 0;
+          if (width <= 0) width = _emoticonWidthFor(name);
+          if (width > _kEmoticonMaxWidth) width = _kEmoticonMaxWidth;
+
+          return '<img src="/emoticons/$name" width="$width" '
+              'alt="이모티콘" loading="lazy" class="emoticon-inline">';
+        })
       : html;
+
+  static String _replaceBracketImages(String html) => html.contains('[')
+      ? html
+            .replaceAllMapped(
+              _bracketImage,
+              (m) => _bracketImageTag(m.group(1)!),
+            )
+            .replaceAllMapped(
+              _bracketImageAnchor,
+              (m) => _bracketImageTag(m.group(1)!),
+            )
+      : html;
+
+  static String _bracketImageTag(String url) =>
+      '<img src="$url" alt="이미지" loading="lazy" class="bracket-image" '
+      'style="max-width:100%;height:auto;">';
 
   /// Parse newline-delimited JSON response from __data.json endpoint.
   static List<Map<String, dynamic>> _parseLines(String responseData) {
@@ -339,7 +438,7 @@ class const DamoangParser(final bool isShowNickImage) extends BaseParser {
 
       // 2. Get transformedPostContent from auxiliary chunk (id=1)
       //    This has plugins applied (emoticons, auto-embed, etc.)
-      String bodyHtml = _replaceEmoticonTokens(_unescapeMediaTags(content));
+      String bodyHtml = normalizeContentHtml(content);
       final auxChunkData = _findChunkData(lines, 1);
       if (auxChunkData != null && auxChunkData.isNotEmpty) {
         final auxRoot = auxChunkData[0];
@@ -348,8 +447,8 @@ class const DamoangParser(final bool isShowNickImage) extends BaseParser {
           if (transformedIndex is int &&
               transformedIndex < auxChunkData.length &&
               auxChunkData[transformedIndex] is String) {
-            bodyHtml = _replaceEmoticonTokens(
-              _unescapeMediaTags(auxChunkData[transformedIndex] as String),
+            bodyHtml = normalizeContentHtml(
+              auxChunkData[transformedIndex] as String,
             );
           }
         }
@@ -447,9 +546,7 @@ class const DamoangParser(final bool isShowNickImage) extends BaseParser {
                     CommentItem(
                       id: commentIdx++,
                       isReply: cDepth > 0,
-                      bodyHtml: _replaceEmoticonTokens(
-                        _unescapeMediaTags(cContent),
-                      ),
+                      bodyHtml: normalizeContentHtml(cContent),
                       likeCount: cLikes > 0 ? cLikes.toString() : '',
                       mediaHtml: '',
                       isVideo: false,

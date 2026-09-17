@@ -15,6 +15,7 @@ import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 import 'package:timeago/timeago.dart' as timeago;
 
+import 'damoang_parser.dart';
 import '../base/base_parser.dart';
 
 class const DamoangApi(super.dio, super.userAgent) extends BaseApi {
@@ -179,7 +180,9 @@ class const DamoangApi(super.dio, super.userAgent) extends BaseApi {
         return CommentItem(
           id: idOffset + entry.key,
           isReply: depth > 0,
-          bodyHtml: isDeleted ? _kDeletedCommentHtml : content,
+          bodyHtml: isDeleted
+              ? _kDeletedCommentHtml
+              : DamoangParser.normalizeContentHtml(content),
           likeCount: likes > 0 ? likes.toString() : '',
           mediaHtml: '',
           isVideo: false,
