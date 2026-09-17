@@ -403,27 +403,45 @@ class const _HtmlLoadingWidget({
   final TextStyle? textStyle,
   final double? progress,
 }) extends StatelessWidget {
+  /// 파일명 + 진행바를 모두 그리기 위해 필요한 최소 높이.
+  static const double _kFullLoadingHeight = 36.0;
+
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final dividerColor = theme.dividerTheme.color;
     final focusColor = theme.focusColor;
 
-    return src.isEmpty || progress == null
-        ? const SizedBox.shrink()
-        : Padding(
-            padding: const EdgeInsets.symmetric(vertical: 4.0),
-            child: Column(
-              children: [
-                PlainText(src, style: textStyle!),
-                LinearProgressIndicator(
-                  value: progress,
-                  backgroundColor: dividerColor,
-                  valueColor: AlwaysStoppedAnimation<Color>(focusColor),
-                ),
-              ],
-            ),
-          );
+    if (src.isEmpty || progress == null) return const SizedBox.shrink();
+
+    final progressBar = LinearProgressIndicator(
+      value: progress,
+      backgroundColor: dividerColor,
+      valueColor: AlwaysStoppedAnimation<Color>(focusColor),
+    );
+
+    // 이모티콘처럼 자리(placeholder)가 아주 낮은 이미지는 `_RetryableCachedImage`
+    // 가 AspectRatio 로 최종 높이를 미리 잡아두기 때문에 몇 px 만 주어진다.
+    // 거기에 파일명 + 진행바를 세로로 쌓으면 RenderFlex 오버플로가 나므로,
+    // 높이가 모자라면 진행바만 그린다.
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final double maxHeight = constraints.maxHeight;
+        if (maxHeight.isFinite && maxHeight < _kFullLoadingHeight) {
+          return ClipRect(child: Center(child: progressBar));
+        }
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 4.0),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(child: PlainText(src, style: textStyle!)),
+              progressBar,
+            ],
+          ),
+        );
+      },
+    );
   }
 }
 
@@ -735,7 +753,7 @@ class const _HtmlWidget({
         if (element.localName == 'img' &&
             (element.attributes['data-role'] == 'highlite' ||
                 element.attributes.containsKey('data-nick-id'))) {
-          return const {'max-height': '1.2em'};
+          return const {'max-height': '1.0em'};
         }
         // 이모티콘(다모앙 `/emoticons/*.gif` 50x50 등)은 본문 사진과 달리
         // 폭을 가득 채우면 안 된다. 원본이 작아도 이미지 위젯은 부모 폭에
