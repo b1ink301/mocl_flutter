@@ -50,6 +50,11 @@ class const MainRepositoryImpl({required final MainDataSource dataSource})
     // 3) 실시간 파싱 최후 수단
     try {
       return Right(await dataSource.getAllLive(siteType));
+    } on Failure catch (f) {
+      // 로그인 필요(NotLoginFailure) 같은 사유는 화면이 그대로 써야 하므로
+      // 문자열로 뭉개지 않고 그대로 올려보낸다.
+      // (뭉개면 GetMainFailure(NotLoginFailure(...)) 처럼 이중으로 감싸진다)
+      return Left(f);
     } catch (e) {
       return Left(GetMainFailure(message: e.toString()));
     }
