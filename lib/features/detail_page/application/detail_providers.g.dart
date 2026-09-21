@@ -379,26 +379,29 @@ final class DetailUrlProvider
 
 String _$detailUrlHash() => r'e8d8b65b390da45d78b52b2fa4cafe7415b04d7a';
 
-/// 확장 영역에 들어갈 큰 타이틀의 높이(툴바 제외).
+/// 상세 앱바의 expandedHeight.
 ///
-/// 실제로 그려지는 스타일(30pt, w800)과 같은 조건으로 재야 3줄짜리 제목이
-/// 툴바 위로 삐져나오지 않는다.
+/// 제목이 최대 3줄까지 늘어나므로 글마다 앱바 높이가 다르다. 실제로 그려지는
+/// 것과 같은 스타일 · 같은 폭으로 재야 제목이 툴바 위로 삐져나오지 않는다.
+/// 치수는 렌더 쪽(LargeTitleFlexibleSpace)과 같은 상수를 쓴다.
 
 @ProviderFor(detailAppbarHeight)
 final detailAppbarHeightProvider = DetailAppbarHeightFamily._();
 
-/// 확장 영역에 들어갈 큰 타이틀의 높이(툴바 제외).
+/// 상세 앱바의 expandedHeight.
 ///
-/// 실제로 그려지는 스타일(30pt, w800)과 같은 조건으로 재야 3줄짜리 제목이
-/// 툴바 위로 삐져나오지 않는다.
+/// 제목이 최대 3줄까지 늘어나므로 글마다 앱바 높이가 다르다. 실제로 그려지는
+/// 것과 같은 스타일 · 같은 폭으로 재야 제목이 툴바 위로 삐져나오지 않는다.
+/// 치수는 렌더 쪽(LargeTitleFlexibleSpace)과 같은 상수를 쓴다.
 
 final class DetailAppbarHeightProvider
     extends $FunctionalProvider<double, double, double>
     with $Provider<double> {
-  /// 확장 영역에 들어갈 큰 타이틀의 높이(툴바 제외).
+  /// 상세 앱바의 expandedHeight.
   ///
-  /// 실제로 그려지는 스타일(30pt, w800)과 같은 조건으로 재야 3줄짜리 제목이
-  /// 툴바 위로 삐져나오지 않는다.
+  /// 제목이 최대 3줄까지 늘어나므로 글마다 앱바 높이가 다르다. 실제로 그려지는
+  /// 것과 같은 스타일 · 같은 폭으로 재야 제목이 툴바 위로 삐져나오지 않는다.
+  /// 치수는 렌더 쪽(LargeTitleFlexibleSpace)과 같은 상수를 쓴다.
   DetailAppbarHeightProvider._({
     required DetailAppbarHeightFamily super.from,
     required String super.argument,
@@ -460,12 +463,13 @@ final class DetailAppbarHeightProvider
 }
 
 String _$detailAppbarHeightHash() =>
-    r'bf70793b1ff7019b4526803282998aa84803119b';
+    r'a6c01eeed92e77918800bc3210a8fa85e9983e7b';
 
-/// 확장 영역에 들어갈 큰 타이틀의 높이(툴바 제외).
+/// 상세 앱바의 expandedHeight.
 ///
-/// 실제로 그려지는 스타일(30pt, w800)과 같은 조건으로 재야 3줄짜리 제목이
-/// 툴바 위로 삐져나오지 않는다.
+/// 제목이 최대 3줄까지 늘어나므로 글마다 앱바 높이가 다르다. 실제로 그려지는
+/// 것과 같은 스타일 · 같은 폭으로 재야 제목이 툴바 위로 삐져나오지 않는다.
+/// 치수는 렌더 쪽(LargeTitleFlexibleSpace)과 같은 상수를 쓴다.
 
 final class DetailAppbarHeightFamily extends $Family
     with $FunctionalFamilyOverride<double, String> {
@@ -487,10 +491,11 @@ final class DetailAppbarHeightFamily extends $Family
         isAutoDispose: true,
       );
 
-  /// 확장 영역에 들어갈 큰 타이틀의 높이(툴바 제외).
+  /// 상세 앱바의 expandedHeight.
   ///
-  /// 실제로 그려지는 스타일(30pt, w800)과 같은 조건으로 재야 3줄짜리 제목이
-  /// 툴바 위로 삐져나오지 않는다.
+  /// 제목이 최대 3줄까지 늘어나므로 글마다 앱바 높이가 다르다. 실제로 그려지는
+  /// 것과 같은 스타일 · 같은 폭으로 재야 제목이 툴바 위로 삐져나오지 않는다.
+  /// 치수는 렌더 쪽(LargeTitleFlexibleSpace)과 같은 상수를 쓴다.
 
   DetailAppbarHeightProvider call(String text) =>
       DetailAppbarHeightProvider._(argument: text, from: this);

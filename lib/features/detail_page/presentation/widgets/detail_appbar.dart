@@ -1,9 +1,11 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mocl_flutter/config/large_title_metrics.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/presentation/widgets/adaptive_popup_menu.dart';
 import 'package:mocl_flutter/core/presentation/widgets/appbar_actions_icon_theme.dart';
+import 'package:mocl_flutter/core/presentation/widgets/appbar_back_button.dart';
+import 'package:mocl_flutter/core/presentation/widgets/large_title_flexible_space.dart';
 import 'package:mocl_flutter/core/presentation/widgets/plain_icon_button.dart';
 
 import '../../../../core/presentation/widgets/plain_icon.dart';
@@ -27,11 +29,7 @@ class const DetailAppBar({super.key})
     final double height = appbarHeight(ref, title);
 
     final styleScope = DetailStyleScope.of(context).$1;
-    final titleStyle = styleScope.titleTextStyle.copyWith(
-      fontSize: 30,
-      fontWeight: FontWeight.w800,
-      height: 1.15,
-    );
+    final titleStyle = largeTitleStyle(styleScope.titleTextStyle);
     final theme = Theme.of(context);
     final primaryColor = theme.primaryColor;
     final smallTitleStyle = styleScope.smallTextStyle.copyWith(
@@ -39,34 +37,16 @@ class const DetailAppBar({super.key})
     );
 
     return SliverAppBar(
-      leading: AppbarFixedIconTheme(
-        child: Center(
-          child: PlainIconButton(
-            onPressed: () => context.pop(),
-            padding: EdgeInsets.zero,
-            icon: const PlainIcon(Icons.arrow_back_ios_new_rounded),
-          ),
-        ),
-      ),
+      leading: const AppbarBackButton(),
       scrolledUnderElevation: 1,
-      expandedHeight: height + kToolbarHeight,
+      expandedHeight: height,
       automaticallyImplyLeading: false,
       title: PlainText(smallTitleState(ref), style: smallTitleStyle),
       titleSpacing: -14,
-      flexibleSpace: FlexibleSpaceBar(
-        collapseMode: CollapseMode.parallax,
-        background: Align(
-          alignment: AlignmentDirectional.bottomStart,
-          child: Padding(
-            padding: const EdgeInsetsDirectional.only(start: 16, bottom: 4, end: 4),
-            child: PlainText(
-              title,
-              style: titleStyle,
-              maxLines: 3,
-              overflow: .ellipsis,
-            ),
-          ),
-        ),
+      flexibleSpace: LargeTitleFlexibleSpace(
+        title: title,
+        style: titleStyle,
+        maxLines: kDetailTitleMaxLines,
       ),
       floating: true,
       pinned: false,
