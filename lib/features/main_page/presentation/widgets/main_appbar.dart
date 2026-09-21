@@ -28,9 +28,11 @@ class const MainAppBar({super.key})
     final titleStyle = textStyle.copyWith(fontSize: 30, height: 1.15);
 
     return SliverAppBar(
-      leading: PlainIconButton(
-        onPressed: () => openDrawer(ref),
-        icon: const MenuLinesIcon(),
+      leading: AppbarFixedIconTheme(
+        child: PlainIconButton(
+          onPressed: () => openDrawer(ref),
+          icon: const MenuLinesIcon(),
+        ),
       ),
       expandedHeight: 100,
       flexibleSpace: FlexibleSpaceBar(

@@ -4,6 +4,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mixin.dart';
 
+import '../../../../core/presentation/widgets/appbar_actions_icon_theme.dart';
 import '../../../../core/presentation/widgets/plain_icon.dart';
 import '../../../../core/presentation/widgets/plain_icon_button.dart';
 import '../../../../core/presentation/widgets/plain_popup_menu_button.dart';
@@ -26,11 +27,13 @@ class const ListAppBar({super.key}) extends ConsumerWidget with ListState {
     );
 
     return SliverAppBar(
-      leading: Center(
-        child: PlainIconButton(
-          onPressed: () => context.pop(),
-          padding: EdgeInsets.zero,
-          icon: PlainIcon(Icons.arrow_back_ios_new_rounded),
+      leading: AppbarFixedIconTheme(
+        child: Center(
+          child: PlainIconButton(
+            onPressed: () => context.pop(),
+            padding: EdgeInsets.zero,
+            icon: const PlainIcon(Icons.arrow_back_ios_new_rounded),
+          ),
         ),
       ),
       expandedHeight: 100,
@@ -55,7 +58,11 @@ class const ListAppBar({super.key}) extends ConsumerWidget with ListState {
       floating: true,
       pinned: false,
       centerTitle: false,
-      actions: const [_SearchButton(), _SortButton(), _MoreButton()],
+      actions: const [
+        AppbarActionsIconTheme(
+          children: [_SearchButton(), _SortButton(), _MoreButton()],
+        ),
+      ],
     );
   }
 }
