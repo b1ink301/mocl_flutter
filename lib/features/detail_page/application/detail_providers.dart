@@ -2,6 +2,7 @@ import 'dart:io';
 import 'dart:math';
 
 import 'package:material_ui/material_ui.dart';
+import 'package:mocl_flutter/config/large_title_metrics.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
@@ -85,71 +86,54 @@ String detailUrl(Ref ref) {
       : listItem.url;
 }
 
-/// 큰 타이틀 폰트 크기. 메인/리스트 앱바의 확장 타이틀과 같은 값이라
-/// 세 화면이 같은 리듬으로 접히고 펼쳐진다.
-const double _kLargeTitleFontSize = 30.0;
-
-/// 큰 타이틀의 좌우 여백(시작 16 + 끝 16). 측정 폭에서 빼야 실제 줄바꿈과
-/// 같은 줄 수가 나온다.
-const double _kTitleHorizontalInset = 20.0;
-
-/// 타이틀 아래 여백(앱바 하단과의 간격).
-const double _kTitleBottomSpace = 4.0;
-
-/// 최소 텍스트 높이(한 줄).
-const double _kMinTextHeight = 30.0;
-
-/// 상세 화면 앱바 높이 캐시.
-/// text, style, width가 동일하면 TextPainter.layout()을 생략합니다.
+/// 상세 앱바 높이 캐시.
+///
+/// 제목 · 스타일 · 폭이 같으면 TextPainter.layout() 을 생략한다. 상세를 오가며
+/// 뒤로 돌아오는 흐름이 흔해서 한 칸만 두면 번번이 다시 재게 된다.
 final _detailHeightCache = _DetailHeightCache();
 
 class _DetailHeightCache() {
-  String? _lastText;
-  TextStyle? _lastStyle;
-  double? _lastWidth;
-  double? _cachedHeight;
+  static const int _kCapacity = 3;
+
+  /// 삽입 순서를 유지하는 LRU. 오래된 항목부터 밀어낸다.
+  final Map<({String text, TextStyle style, double width}), double> _entries =
+      {};
 
   double getOrCalculate(String text, TextStyle style, double availableWidth) {
-    if (_lastText == text &&
-        _lastStyle == style &&
-        _lastWidth == availableWidth &&
-        _cachedHeight != null) {
-      return _cachedHeight!;
+    final key = (text: text, style: style, width: availableWidth);
+    final double? hit = _entries.remove(key);
+    if (hit != null) {
+      return _entries[key] = hit; // 최근 사용으로 끌어올린다
     }
 
     final textPainter = TextPainter(
       text: TextSpan(text: text, style: style),
-      maxLines: 3,
+      maxLines: kDetailTitleMaxLines,
       textDirection: TextDirection.ltr,
     )..layout(minWidth: 0, maxWidth: availableWidth);
 
-    final double height = max(_kMinTextHeight, textPainter.height);
+    final double height = max(kLargeTitleLineHeight, textPainter.height);
     textPainter.dispose();
 
-    _lastText = text;
-    _lastStyle = style;
-    _lastWidth = availableWidth;
-    _cachedHeight = height;
-    return height;
+    if (_entries.length >= _kCapacity) {
+      _entries.remove(_entries.keys.first);
+    }
+    return _entries[key] = height;
   }
 }
 
-/// 확장 영역에 들어갈 큰 타이틀의 높이(툴바 제외).
+/// 상세 앱바의 expandedHeight.
 ///
-/// 실제로 그려지는 스타일(30pt, w800)과 같은 조건으로 재야 3줄짜리 제목이
-/// 툴바 위로 삐져나오지 않는다.
+/// 제목이 최대 3줄까지 늘어나므로 글마다 앱바 높이가 다르다. 실제로 그려지는
+/// 것과 같은 스타일 · 같은 폭으로 재야 제목이 툴바 위로 삐져나오지 않는다.
+/// 치수는 렌더 쪽(LargeTitleFlexibleSpace)과 같은 상수를 쓴다.
 @Riverpod(dependencies: [appbarTextStyle, screenWidth])
 double detailAppbarHeight(Ref ref, String text) {
-  final TextStyle style = ref
-      .watch(appbarTextStyleProvider)
-      .copyWith(
-        fontSize: _kLargeTitleFontSize,
-        fontWeight: FontWeight.w800,
-        height: 1.15,
-      );
+  final TextStyle style = largeTitleStyle(ref.watch(appbarTextStyleProvider));
   final double screenWidth = ref.watch(screenWidthProvider);
-  final double availableWidth = screenWidth - _kTitleHorizontalInset;
+  final double availableWidth = screenWidth - kLargeTitleHorizontalInset;
 
-  return _detailHeightCache.getOrCalculate(text, style, availableWidth) +
-      _kTitleBottomSpace;
+  return largeTitleExpandedHeight(
+    _detailHeightCache.getOrCalculate(text, style, availableWidth),
+  );
 }

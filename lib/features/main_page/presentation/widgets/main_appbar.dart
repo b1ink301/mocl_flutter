@@ -2,9 +2,11 @@ import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
+import '../../../../config/large_title_metrics.dart';
 import '../../../../core/application/app_provider.dart';
 import '../../../../core/presentation/widgets/adaptive_popup_menu.dart';
 import '../../../../core/presentation/widgets/appbar_actions_icon_theme.dart';
+import '../../../../core/presentation/widgets/large_title_flexible_space.dart';
 import '../../../../core/presentation/widgets/menu_lines_icon.dart';
 import '../../../../core/presentation/widgets/plain_icon.dart';
 import '../../../../core/presentation/widgets/plain_icon_button.dart';
@@ -18,14 +20,15 @@ class const MainAppBar({super.key})
     with MainState, MainEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final textStyle = ref
-        .watch(appbarTextStyleProvider);
+    final textStyle = ref.watch(appbarTextStyleProvider);
     final bool editMode = editModeState(ref);
-    final bool searchOpen = searchOpenState(ref);
     final primaryColor = Theme.of(context).primaryColor;
 
-    final menuStyle = textStyle.copyWith(color: primaryColor, fontWeight: FontWeight.w400, );
-    final titleStyle = textStyle.copyWith(fontSize: 30, height: 1.15);
+    final menuStyle = textStyle.copyWith(
+      color: primaryColor,
+      fontWeight: FontWeight.w400,
+    );
+    final titleStyle = largeTitleStyle(textStyle);
 
     return SliverAppBar(
       leading: AppbarFixedIconTheme(
@@ -34,18 +37,13 @@ class const MainAppBar({super.key})
           icon: const MenuLinesIcon(),
         ),
       ),
-      expandedHeight: 100,
-      flexibleSpace: FlexibleSpaceBar(
-        collapseMode: CollapseMode.parallax,
-        background: Align(
-          alignment: AlignmentDirectional.bottomStart,
-          child: Padding(
-            padding: const EdgeInsetsDirectional.only(start: 16, bottom: 4, end: 4),
-            child: PlainText(titleState(ref), style: titleStyle),
-          ),
-        ),
+      expandedHeight: kLargeTitleExpandedHeightSingleLine,
+      flexibleSpace: LargeTitleFlexibleSpace(
+        title: titleState(ref),
+        style: titleStyle,
       ),
-      // 검색 중에는 입력창이 제목 자리를 통째로 쓴다(닫기 버튼만 오른쪽에 남는다).
+      // 편집 모드에서만 툴바에 라벨을 띄운다. 평소에는 크럼브가 없는 화면이라
+      // 툴바 제목 자리를 비워 둔다.
       title: editMode ? PlainText('편집', style: menuStyle) : null,
       titleTextStyle: menuStyle,
       titleSpacing: -8,
@@ -53,52 +51,59 @@ class const MainAppBar({super.key})
       pinned: false,
       centerTitle: false,
       toolbarHeight: kToolbarHeight,
-      // floating 앱바의 toolbarOpacity 로 인한 PlainIcon 리빌드 차단.
-      // (AppbarActionsIconTheme 주석 참고)
-      actions: <Widget>[
-        AppbarActionsIconTheme(
-          children: searchOpen
-              // 검색 중에는 닫기만 남긴다(입력창이 앱바를 다 쓴다).
-              ? [
-                  PlainIconButton(
-                    onPressed: () => closeSearch(ref),
-                    icon: const PlainIcon(Icons.close),
-                  ),
-                ]
-              : editMode
-              ? [
-                  PlainIconButton(
-                    onPressed: () => handleToggleEdit(ref),
-                    icon: const PlainIcon(Icons.check),
-                  ),
-                ]
-              : [
-                  // 담은 게시판이 많아지면 스크롤보다 검색이 빠르다.
-                  // PlainIconButton(
-                  //   onPressed: () => openSearch(ref),
-                  //   icon: const PlainIcon(Icons.search),
-                  // ),
-                  PlainIconButton(
-                    onPressed: () => handleAddButton(ref, context),
-                    icon: const PlainIcon(Icons.add),
-                  ),
-                  // 순서 변경 · 삭제는 평소엔 숨겨 두고 편집 모드에서만 연다.
-                  AdaptivePopupMenu(
-                    options: [
-                      AdaptiveMenuOption(
-                        label: '순서 변경/삭제',
-                        onTap: () => handleToggleEdit(ref),
-                      ),
-                    ],
-                    icon: PlainIcon(
-                      isCupertino()
-                          ? CupertinoIcons.ellipsis
-                          : Icons.more_vert_rounded,
-                    ),
+      actions: const <Widget>[_MainActions()],
+    );
+  }
+}
+
+/// 앱바 액션.
+///
+/// 검색 · 편집 상태를 여기서만 구독한다. 앱바 본체에 두면 검색창을 여닫을
+/// 때마다 큰 제목까지 통째로 다시 만들게 된다.
+class const _MainActions() extends ConsumerWidget with MainState, MainEvent {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool searchOpen = searchOpenState(ref);
+    final bool editMode = editModeState(ref);
+
+    // floating 앱바의 toolbarOpacity 로 인한 PlainIcon 리빌드 차단.
+    // (AppbarActionsIconTheme 주석 참고)
+    return AppbarActionsIconTheme(
+      children: searchOpen
+          // 검색 중에는 닫기만 남긴다(입력창이 앱바를 다 쓴다).
+          ? [
+              PlainIconButton(
+                onPressed: () => closeSearch(ref),
+                icon: const PlainIcon(Icons.close),
+              ),
+            ]
+          : editMode
+          ? [
+              PlainIconButton(
+                onPressed: () => handleToggleEdit(ref),
+                icon: const PlainIcon(Icons.check),
+              ),
+            ]
+          : [
+              PlainIconButton(
+                onPressed: () => handleAddButton(ref, context),
+                icon: const PlainIcon(Icons.add),
+              ),
+              // 순서 변경 · 삭제는 평소엔 숨겨 두고 편집 모드에서만 연다.
+              AdaptivePopupMenu(
+                options: [
+                  AdaptiveMenuOption(
+                    label: '순서 변경/삭제',
+                    onTap: () => handleToggleEdit(ref),
                   ),
                 ],
-        ),
-      ],
+                icon: PlainIcon(
+                  isCupertino()
+                      ? CupertinoIcons.ellipsis
+                      : Icons.more_vert_rounded,
+                ),
+              ),
+            ],
     );
   }
 }
