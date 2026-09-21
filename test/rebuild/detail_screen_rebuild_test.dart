@@ -15,16 +15,20 @@ import '../helpers/screen_harness.dart';
 /// 숨겨졌다 나타나면 같은 슬롯의 위젯 타입이 바뀌면서 서브트리가
 /// unmount → re-inflate 되고, 그 안의 위젯이 앱바 숨김/보임마다 재생성된다.
 ///
-/// 그래서 `AppbarDualTextWidget` 은 실제 확장 콘텐츠(작성자 헤더)를 구조가
-/// 안정적인 `flexibleSpace` 에 두고, `bottom` 에는 높이 확보용 빈 `PreferredSize`
-/// 만 남긴다. 즉 **앱바 숨김/보임에서 churn 이 허용되는 것은 그 빈 sizer 뿐**이다.
+/// 지금 상세 앱바는 확장 영역에 **제목만** 둔다. 작성자 헤더는 앱바를 떠나
+/// 본문 맨 위 sliver 로 내려갔으므로 `bottom` 슬롯은 아예 비어 있다.
+/// 이 테스트는 헤더가 다시 앱바로 올라가는 회귀를 막는다.
 void main() {
   const List<String> appBarWidgets = <String>[
     'DetailAppBar',
-    'AppbarDualTextWidget',
-    '_DualTitle',
+    'LargeTitleFlexibleSpace',
+    'AppbarBackButton',
     '_DetailPopupMenuButton',
     'AppbarActionsIconTheme',
+    // 색을 IconTheme 에서 받는 아이콘들. floating 앱바가 toolbarOpacity 를
+    // IconThemeData 에 실어 보내므로, 고정 IconTheme 이 빠지면 스크롤하는
+    // 내내 여기서 잡힌다(AppbarFixedIconTheme 주석 참고).
+    'PlainIcon',
   ];
 
   const List<String> headerWidgets = <String>[
@@ -46,36 +50,34 @@ void main() {
     rec.expectNoRebuild(appBarWidgets, reason: '스크롤로 앱바 위젯이 리빌드됨');
     rec.expectNoRebuild(
       headerWidgets,
-      reason:
-          '확장 헤더가 앱바 숨김/보임마다 리빌드/재생성됨 — '
-          'bottom 슬롯으로 되돌아갔는지 확인 (AppbarDualTextWidget 주석 참고)',
+      reason: '작성자 헤더가 앱바 숨김/보임마다 리빌드/재생성됨 — 앱바로 되돌아갔는지 확인',
     );
   });
 
-  testWidgets('확장 헤더는 bottom 이 아니라 flexibleSpace 에 있다', (tester) async {
+  testWidgets('작성자 헤더는 앱바가 아니라 본문에 있다', (tester) async {
     await pumpDetailScreen(tester);
 
     final AppBar appBar = tester.widget<AppBar>(
       find.byType(AppBar, skipOffstage: false),
     );
 
-    // bottom 슬롯에 남은 것은 높이 확보용 빈 PreferredSize 뿐이어야 한다.
-    // 헤더가 다시 bottom 으로 들어가면 여기서 잡힌다.
+    // 확장 영역은 제목 전용이다. 헤더가 bottom 으로 돌아가면 앱바 숨김/보임마다
+    // 서브트리가 재생성된다.
     expect(
       appBar.bottom,
-      isA<PreferredSize>(),
-      reason: 'DetailHeaderBar 가 AppBar.bottom 에 직접 들어가면 앱바 숨김/보임마다 재생성된다',
+      isNull,
+      reason: 'DetailHeaderBar 가 AppBar.bottom 에 들어가면 앱바 숨김/보임마다 재생성된다',
     );
-    // 실제 헤더는 구조가 안정적인 flexibleSpace(=FlexibleSpaceBarSettings 하위)에 있다.
     expect(
       find.descendant(
         of: find.byType(FlexibleSpaceBarSettings, skipOffstage: false),
         matching: find.byType(DetailHeaderBar, skipOffstage: false),
         skipOffstage: false,
       ),
-      findsOneWidget,
-      reason: '확장 헤더는 flexibleSpace 에 있어야 한다',
+      findsNothing,
+      reason: '작성자 헤더는 앱바 확장 영역이 아니라 본문 맨 위에 있어야 한다',
     );
+    expect(find.byType(DetailHeaderBar, skipOffstage: false), findsOneWidget);
   });
 
   testWidgets('본문/댓글은 앱바 숨김/보임에 영향받지 않는다', (tester) async {
