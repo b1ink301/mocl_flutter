@@ -379,12 +379,26 @@ final class DetailUrlProvider
 
 String _$detailUrlHash() => r'e8d8b65b390da45d78b52b2fa4cafe7415b04d7a';
 
+/// 확장 영역에 들어갈 큰 타이틀의 높이(툴바 제외).
+///
+/// 실제로 그려지는 스타일(30pt, w800)과 같은 조건으로 재야 3줄짜리 제목이
+/// 툴바 위로 삐져나오지 않는다.
+
 @ProviderFor(detailAppbarHeight)
 final detailAppbarHeightProvider = DetailAppbarHeightFamily._();
+
+/// 확장 영역에 들어갈 큰 타이틀의 높이(툴바 제외).
+///
+/// 실제로 그려지는 스타일(30pt, w800)과 같은 조건으로 재야 3줄짜리 제목이
+/// 툴바 위로 삐져나오지 않는다.
 
 final class DetailAppbarHeightProvider
     extends $FunctionalProvider<double, double, double>
     with $Provider<double> {
+  /// 확장 영역에 들어갈 큰 타이틀의 높이(툴바 제외).
+  ///
+  /// 실제로 그려지는 스타일(30pt, w800)과 같은 조건으로 재야 3줄짜리 제목이
+  /// 툴바 위로 삐져나오지 않는다.
   DetailAppbarHeightProvider._({
     required DetailAppbarHeightFamily super.from,
     required String super.argument,
@@ -446,7 +460,12 @@ final class DetailAppbarHeightProvider
 }
 
 String _$detailAppbarHeightHash() =>
-    r'2f73d594e6c0849c43ef3bd712ba748a47c6fa52';
+    r'bf70793b1ff7019b4526803282998aa84803119b';
+
+/// 확장 영역에 들어갈 큰 타이틀의 높이(툴바 제외).
+///
+/// 실제로 그려지는 스타일(30pt, w800)과 같은 조건으로 재야 3줄짜리 제목이
+/// 툴바 위로 삐져나오지 않는다.
 
 final class DetailAppbarHeightFamily extends $Family
     with $FunctionalFamilyOverride<double, String> {
@@ -467,6 +486,11 @@ final class DetailAppbarHeightFamily extends $Family
         },
         isAutoDispose: true,
       );
+
+  /// 확장 영역에 들어갈 큰 타이틀의 높이(툴바 제외).
+  ///
+  /// 실제로 그려지는 스타일(30pt, w800)과 같은 조건으로 재야 3줄짜리 제목이
+  /// 툴바 위로 삐져나오지 않는다.
 
   DetailAppbarHeightProvider call(String text) =>
       DetailAppbarHeightProvider._(argument: text, from: this);

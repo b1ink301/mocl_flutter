@@ -22,6 +22,7 @@ import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/core/util/utilities.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/state/detail_event_mixin.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/state/detail_state_mixin.dart';
+import 'package:mocl_flutter/features/detail_page/presentation/widgets/detail_header_bar.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/widgets/detail_scope.dart';
 import 'package:sliver_tools/sliver_tools.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -188,10 +189,13 @@ class const _DetailView({
 
     final bottom = MediaQuery.of(context).padding.bottom;
 
-    // 작성자 헤더는 앱바 확장 영역(DetailAppBar.bottom)으로 이동해 앱바와 함께
-    // floating 된다. 여기서는 본문/댓글만 렌더한다.
+    // 작성자 헤더는 앱바가 아니라 본문 맨 위에 둔다. 앱바 확장 영역은
+    // 제목만 쓰고(DetailAppBar), 헤더는 본문과 같이 스크롤된다.
     return MultiSliver(
       children: [
+        SliverToBoxAdapter(
+          child: DetailHeaderBar(detail: detail, style: bodySmall),
+        ),
         SliverPadding(
           padding: const EdgeInsets.only(left: 16, right: 8),
           sliver: MultiSliver(

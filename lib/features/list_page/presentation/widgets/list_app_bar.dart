@@ -1,31 +1,60 @@
-import 'dart:io';
-
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
-import 'package:mocl_flutter/core/presentation/widgets/appbar_dual_text_widget.dart';
 import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mixin.dart';
 
 import '../../../../core/presentation/widgets/plain_icon.dart';
 import '../../../../core/presentation/widgets/plain_icon_button.dart';
 import '../../../../core/presentation/widgets/plain_popup_menu_button.dart';
+import '../../../../core/presentation/widgets/plain_text.dart';
 import '../state/list_state_mixin.dart';
 import 'list_scope.dart';
 
 class const ListAppBar({super.key}) extends ConsumerWidget with ListState {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final titleStyle = ListStyleScope.of(context).titleTextStyle
-        .copyWith(fontWeight: FontWeight.w800);
-    final smallTitleStyle = Theme.of(context).textTheme.labelSmall!;
+    final primaryColor = Theme.of(context).primaryColor;
+    final styleScope = ListStyleScope.of(context);
+    final smallTitleStyle = styleScope.smallTextStyle.copyWith(
+      color: primaryColor,
+    );
+    final titleStyle = styleScope.titleTextStyle.copyWith(
+      fontSize: 30,
+      fontWeight: FontWeight.w800,
+      height: 1.15,
+    );
 
-    return AppbarDualTextWidget(
-      title: titleState(ref),
-      smallTitle: smallTitleState(ref),
-      titleStyle: titleStyle,
-      smallTitleStyle: smallTitleStyle,
-      automaticallyImplyLeading: Platform.isMacOS,
-      // 1. 하위 위젯들을 const로 선언하여 부모 리빌드 시 영향을 받지 않도록 합니다.
+    return SliverAppBar(
+      leading: Center(
+        child: PlainIconButton(
+          onPressed: () => context.pop(),
+          padding: EdgeInsets.zero,
+          icon: PlainIcon(Icons.arrow_back_ios_new_rounded),
+        ),
+      ),
+      expandedHeight: 100,
+      automaticallyImplyLeading: false,
+      title: PlainText(smallTitleState(ref), style: smallTitleStyle),
+      titleSpacing: -14,
+      flexibleSpace: FlexibleSpaceBar(
+        collapseMode: CollapseMode.parallax,
+        background: Align(
+          alignment: AlignmentDirectional.bottomStart,
+          child: Padding(
+            padding: const EdgeInsetsDirectional.only(start: 16, bottom: 4, end: 4),
+            child: PlainText(
+              titleState(ref),
+              style: titleStyle,
+              maxLines: 1,
+              overflow: .ellipsis,
+            ),
+          ),
+        ),
+      ),
+      floating: true,
+      pinned: false,
+      centerTitle: false,
       actions: const [_SearchButton(), _SortButton(), _MoreButton()],
     );
   }

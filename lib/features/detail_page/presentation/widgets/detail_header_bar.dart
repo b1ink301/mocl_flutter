@@ -10,8 +10,8 @@ import 'bookmark_icon_button.dart';
 
 /// 상세 화면 작성자 헤더.
 ///
-/// [DetailAppBar] 의 `bottom`(확장 영역)으로 들어가 floating 앱바와 한 몸으로
-/// 밀려 올라가고 되돌아온다. 배경과 스크롤 그림자는 앱바가 담당하므로
+/// 앱바가 아니라 본문 맨 위에 놓여 본문과 같이 스크롤된다. 앱바 확장 영역은
+/// 제목만 쓴다([DetailAppBar]). 배경과 스크롤 그림자는 앱바가 담당하므로
 /// (`appBarTheme.scrolledUnderElevation`) 자체 Material/elevation 을 두지 않는다.
 ///
 /// 높이는 고정이 아니라 [style] 의 폰트 크기에서 계산한다. 사용자가 글자 크기를
@@ -73,6 +73,7 @@ class const DetailHeaderBar({
           padding: const EdgeInsets.only(
             left: 16,
             right: 8,
+            top: _kBottomPadding,
             bottom: _kBottomPadding,
           ),
           child: Row(

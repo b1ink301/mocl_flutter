@@ -1,18 +1,13 @@
-import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
-import 'package:mocl_flutter/core/application/app_provider.dart';
-import 'package:mocl_flutter/core/presentation/widgets/adaptive_popup_menu.dart';
-import 'package:mocl_flutter/core/presentation/widgets/appbar_actions_icon_theme.dart';
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
-import 'package:mocl_flutter/core/presentation/widgets/menu_lines_icon.dart';
-import 'package:mocl_flutter/core/util/platform_util.dart';
 import 'package:mocl_flutter/features/favorite/presentation/state/favorite_event_mixin.dart';
 import 'package:mocl_flutter/features/favorite/presentation/state/favorite_state_mixin.dart';
 import 'package:mocl_flutter/features/main_page/presentation/state/main_event_mixin.dart';
 import 'package:mocl_flutter/features/main_page/presentation/state/main_state_mixin.dart';
+import 'package:mocl_flutter/features/main_page/presentation/widgets/main_appbar.dart';
 
 import '../../../core/presentation/widgets/failure_view.dart';
 import '../../../core/presentation/widgets/plain_divider_widget.dart';
@@ -33,7 +28,7 @@ class const MainView({super.key}) extends ConsumerWidget with FavoriteEvent {
       color: focusColor,
       onRefresh: () async => refreshFavorites(ref),
       child: const CustomScrollView(
-        slivers: <Widget>[_MainAppBar(), _MainBody()],
+        slivers: <Widget>[MainAppBar(), _MainBody()],
       ),
     );
   }
