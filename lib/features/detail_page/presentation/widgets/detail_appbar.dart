@@ -1,52 +1,76 @@
-import 'dart:io';
-
-import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/presentation/widgets/adaptive_popup_menu.dart';
-import 'package:mocl_flutter/core/presentation/widgets/appbar_dual_text_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/plain_icon_button.dart';
 
 import '../../../../core/presentation/widgets/plain_icon.dart';
 import '../../../../core/presentation/widgets/plain_text.dart';
 import '../state/detail_event_mixin.dart';
 import '../state/detail_state_mixin.dart';
-import 'detail_header_bar.dart';
 import 'detail_scope.dart';
 
+/// 상세 화면 앱바.
+///
+/// 메인/리스트와 같은 규칙: 툴바에는 작은 크럼브만 두고, 확장 영역에는
+/// 오로지 큰 제목만 둔다. 위로 스크롤하면 큰 제목이 서서히 사라진다.
+/// 작성자 헤더는 앱바가 아니라 본문 맨 위에 있다(DetailView).
 class const DetailAppBar({super.key})
     extends ConsumerWidget
     with DetailState, DetailEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final String title = titleState(ref);
+    // 제목 줄 수에 따라 확장 높이가 달라진다(최대 3줄).
     final double height = appbarHeight(ref, title);
 
-    final styles = DetailStyleScope.of(context).$1;
-    final titleStyle = styles.titleTextStyle.copyWith(
+    final styleScope = DetailStyleScope.of(context).$1;
+    final titleStyle = styleScope.titleTextStyle.copyWith(
+      fontSize: 30,
       fontWeight: FontWeight.w800,
+      height: 1.15,
     );
     final theme = Theme.of(context);
-    final smallTitleStyle = theme.textTheme.labelSmall!;
-    final focusColor = theme.focusColor;
+    final primaryColor = theme.primaryColor;
+    final smallTitleStyle = styleScope.smallTextStyle.copyWith(
+      color: primaryColor,
+    );
 
-    // 상세 데이터가 로드되면 작성자 헤더를 앱바 확장 영역(bottom)으로 붙여
-    // floating 앱바와 한 몸으로 스크롤/재등장하게 한다.
-    final detail = detailState(ref).asData?.value;
-
-    return AppbarDualTextWidget(
-      title: title,
-      smallTitle: smallTitleState(ref),
-      titleStyle: titleStyle,
-      smallTitleStyle: smallTitleStyle,
-      automaticallyImplyLeading: Platform.isMacOS,
-      toolbarHeight: height,
-      bottom: detail != null
-          ? DetailHeaderBar(detail: detail, style: styles.smallTextStyle)
-          : null,
+    return SliverAppBar(
+      leading: Center(
+        child: PlainIconButton(
+          onPressed: () => context.pop(),
+          padding: EdgeInsets.zero,
+          icon: PlainIcon(Icons.arrow_back_ios_new_rounded),
+        ),
+      ),
+      scrolledUnderElevation: 1,
+      expandedHeight: height + kToolbarHeight,
+      automaticallyImplyLeading: false,
+      title: PlainText(smallTitleState(ref), style: smallTitleStyle),
+      titleSpacing: -14,
+      flexibleSpace: FlexibleSpaceBar(
+        collapseMode: CollapseMode.parallax,
+        background: Align(
+          alignment: AlignmentDirectional.bottomStart,
+          child: Padding(
+            padding: const EdgeInsetsDirectional.only(start: 16, bottom: 4, end: 4),
+            child: PlainText(
+              title,
+              style: titleStyle,
+              maxLines: 3,
+              overflow: .ellipsis,
+            ),
+          ),
+        ),
+      ),
+      floating: true,
+      pinned: false,
+      centerTitle: false,
       actions: [
         _DetailPopupMenuButton(
-          focusColor: focusColor,
+          focusColor: primaryColor,
           onRefresh: () => handleRefresh(ref),
           onOpenBrowser: () => handleOpenBrowser(ref),
           onShareUrl: () => handleShareUrl(ref),
