@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/presentation/widgets/adaptive_popup_menu.dart';
+import 'package:mocl_flutter/core/presentation/widgets/appbar_actions_icon_theme.dart';
 import 'package:mocl_flutter/core/presentation/widgets/plain_icon_button.dart';
 
 import '../../../../core/presentation/widgets/plain_icon.dart';
@@ -38,11 +39,13 @@ class const DetailAppBar({super.key})
     );
 
     return SliverAppBar(
-      leading: Center(
-        child: PlainIconButton(
-          onPressed: () => context.pop(),
-          padding: EdgeInsets.zero,
-          icon: PlainIcon(Icons.arrow_back_ios_new_rounded),
+      leading: AppbarFixedIconTheme(
+        child: Center(
+          child: PlainIconButton(
+            onPressed: () => context.pop(),
+            padding: EdgeInsets.zero,
+            icon: const PlainIcon(Icons.arrow_back_ios_new_rounded),
+          ),
         ),
       ),
       scrolledUnderElevation: 1,
@@ -69,14 +72,18 @@ class const DetailAppBar({super.key})
       pinned: false,
       centerTitle: false,
       actions: [
-        _DetailPopupMenuButton(
-          focusColor: primaryColor,
-          onRefresh: () => handleRefresh(ref),
-          onOpenBrowser: () => handleOpenBrowser(ref),
-          onShareUrl: () => handleShareUrl(ref),
-          onIncreaseFontSize: () => adjustFontSize(ref, 1),
-          onDecreaseFontSize: () => adjustFontSize(ref, -1),
-          onResetFontSize: () => resetFontSize(ref),
+        AppbarActionsIconTheme(
+          children: [
+            _DetailPopupMenuButton(
+              focusColor: primaryColor,
+              onRefresh: () => handleRefresh(ref),
+              onOpenBrowser: () => handleOpenBrowser(ref),
+              onShareUrl: () => handleShareUrl(ref),
+              onIncreaseFontSize: () => adjustFontSize(ref, 1),
+              onDecreaseFontSize: () => adjustFontSize(ref, -1),
+              onResetFontSize: () => resetFontSize(ref),
+            ),
+          ],
         ),
       ],
     );
