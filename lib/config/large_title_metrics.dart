@@ -6,7 +6,7 @@ import 'package:material_ui/material_ui.dart';
 /// 같은 값**을 봐야 한다. 두 곳이 각자 숫자를 들고 있으면 제목이 툴바 위로
 /// 삐져나오거나 아래가 뜨는데, 화면에서 눈으로만 잡히는 종류의 버그라
 /// 값을 여기 한 곳에만 둔다.
-const double kLargeTitleFontSize = 30.0;
+const double kLargeTitleFontSize = 24.0;
 const double kLargeTitleLineSpacing = 1.15;
 
 /// 큰 제목 한 줄이 차지하는 세로 크기.
@@ -17,12 +17,13 @@ const double kLargeTitleStartInset = 16.0;
 const double kLargeTitleEndInset = 4.0;
 
 /// 제목 아래 여백(앱바 하단과의 간격).
-const double kLargeTitleBottomSpace = 4.0;
+const double kLargeTitleBottomSpace = 6.0;
 
 /// 제목 위 여백(툴바와의 간격).
-const double kLargeTitleTopSpace = 6.0;
+const double kLargeTitleTopSpace = 2.0;
 
 const EdgeInsetsDirectional kLargeTitlePadding = EdgeInsetsDirectional.only(
+  top: kLargeTitleTopSpace,
   start: kLargeTitleStartInset,
   end: kLargeTitleEndInset,
   bottom: kLargeTitleBottomSpace,
@@ -35,7 +36,7 @@ const double kLargeTitleHorizontalInset =
 /// 큰 제목 스타일. 측정과 렌더가 같은 스타일을 써야 줄 수가 일치한다.
 TextStyle largeTitleStyle(TextStyle base) => base.copyWith(
   fontSize: kLargeTitleFontSize,
-  fontWeight: FontWeight.w800,
+  fontWeight: FontWeight.w600,
   height: kLargeTitleLineSpacing,
 );
 
