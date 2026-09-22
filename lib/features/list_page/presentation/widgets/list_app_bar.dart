@@ -5,7 +5,6 @@ import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mixin.dart';
 
 import '../../../../core/presentation/widgets/appbar_actions_icon_theme.dart';
-import '../../../../core/presentation/widgets/appbar_back_button.dart';
 import '../../../../core/presentation/widgets/large_title_flexible_space.dart';
 import '../../../../core/presentation/widgets/plain_icon.dart';
 import '../../../../core/presentation/widgets/plain_icon_button.dart';
@@ -17,23 +16,26 @@ import 'list_scope.dart';
 class const ListAppBar({super.key}) extends ConsumerWidget with ListState {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final primaryColor = Theme.of(context).primaryColor;
     final styleScope = ListStyleScope.of(context);
-    final smallTitleStyle = styleScope.smallTextStyle.copyWith(
-      color: primaryColor,
-    );
+    final crumbStyle = appbarCrumbStyle(styleScope.smallTextStyle);
     final titleStyle = largeTitleStyle(styleScope.titleTextStyle);
 
     return SliverAppBar(
-      leading: const AppbarBackButton(),
       expandedHeight: kLargeTitleExpandedHeightSingleLine,
-      automaticallyImplyLeading: false,
-      title: PlainText(smallTitleState(ref), style: smallTitleStyle),
-      titleSpacing: -14,
+      automaticallyImplyLeading: true,
+      // 툴바에는 상위 경로만(= 사이트). 큰 제목은 게시판 이름을 쓴다.
+      title: PlainText(
+        smallTitleState(ref),
+        style: crumbStyle,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+      titleSpacing: kAppbarCrumbTitleSpacing,
       flexibleSpace: LargeTitleFlexibleSpace(
         title: titleState(ref),
         style: titleStyle,
       ),
+      toolbarHeight: kToolbarHeight,
       floating: true,
       pinned: false,
       centerTitle: false,

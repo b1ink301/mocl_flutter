@@ -1,4 +1,3 @@
-import 'dart:io';
 import 'dart:math';
 
 import 'package:material_ui/material_ui.dart';
@@ -45,20 +44,21 @@ Future<int> _markAsRead(Ref ref, ListItem listItem) async {
   return -1;
 }
 
+/// 툴바 크럼브: `클리앙 › 모두의공원`.
+///
+/// 큰 제목이 글 제목을 가져가면서 사이트 구분이 화면에서 사라졌다. 목록과
+/// 같은 규칙(상위 경로는 툴바에)으로 여기에 되살린다. 게시판 이름을 모르는
+/// 경우(스크랩 등 boardTitle 이 빈 항목)에는 사이트만 적는다.
 @Riverpod(dependencies: [listItem, detailTitle])
 String detailSmallTitle(Ref ref) {
   final String boardTitle = ref.watch(
     listItemProvider.select((item) => item.boardTitle),
   );
-  if (Platform.isIOS) {
-    return boardTitle;
-  } else {
-    final String title = ref.watch(
-      currentSiteTypeProvider.select((siteType) => siteType.title),
-    );
+  final String site = ref.watch(
+    currentSiteTypeProvider.select((siteType) => siteType.title),
+  );
 
-    return '$title > $boardTitle';
-  }
+  return boardTitle.isEmpty ? site : '$site$kAppbarCrumbSeparator$boardTitle';
 }
 
 @Riverpod(dependencies: [listItem, detailTitle])

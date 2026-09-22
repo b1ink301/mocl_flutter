@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../config/large_title_metrics.dart';
-import '../../../../core/application/app_provider.dart';
 import '../../../../core/presentation/widgets/adaptive_popup_menu.dart';
 import '../../../../core/presentation/widgets/appbar_actions_icon_theme.dart';
 import '../../../../core/presentation/widgets/large_title_flexible_space.dart';
@@ -20,14 +19,13 @@ class const MainAppBar({super.key})
     with MainState, MainEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final textStyle = ref.watch(appbarTextStyleProvider);
+    final textStyle = titleTextStyleState(ref);
     final bool editMode = editModeState(ref);
-    final primaryColor = Theme.of(context).primaryColor;
 
-    final menuStyle = textStyle.copyWith(
-      color: primaryColor,
-      fontWeight: FontWeight.w400,
-    );
+    // 편집 라벨도 목록 · 상세의 크럼브와 같은 스타일을 쓴다. 툴바 왼쪽에
+    // 작게 놓이는 같은 성격의 글자라, 셋이 따로 놀면 화면을 옮길 때마다
+    // 같은 자리의 글자 크기 · 색이 바뀌어 보인다.
+    final menuStyle = appbarCrumbStyle(smallTextStyleState(ref));
     final titleStyle = largeTitleStyle(textStyle);
 
     return SliverAppBar(
@@ -46,7 +44,7 @@ class const MainAppBar({super.key})
       // 툴바 제목 자리를 비워 둔다.
       title: editMode ? PlainText('편집', style: menuStyle) : null,
       titleTextStyle: menuStyle,
-      titleSpacing: -8,
+      titleSpacing: 0,
       floating: true,
       pinned: false,
       centerTitle: false,

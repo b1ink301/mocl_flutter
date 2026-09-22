@@ -50,20 +50,26 @@ final class MainItemProvider
 
 String _$mainItemHash() => r'bfd8c4675d74a8ec6b735008aa9f59eee3c014e6';
 
-/// 앱바 부제. 2단 게시판이면 사이트명만으로는 어느 카페의 게시판인지 알 수
-/// 없으므로 부모(카페) 이름을 앞에 붙인다.
+/// 툴바 크럼브: `클리앙` 또는 2단 게시판이면 `네이버카페 › 중고나라`.
+///
+/// 큰 제목이 게시판 이름을 가져가므로, 그 위 경로는 상세 화면과 같은 규칙으로
+/// 툴바에 적는다(넓은 쪽 → 좁은 쪽 순서).
 
 @ProviderFor(listSmallTitle)
 final listSmallTitleProvider = ListSmallTitleProvider._();
 
-/// 앱바 부제. 2단 게시판이면 사이트명만으로는 어느 카페의 게시판인지 알 수
-/// 없으므로 부모(카페) 이름을 앞에 붙인다.
+/// 툴바 크럼브: `클리앙` 또는 2단 게시판이면 `네이버카페 › 중고나라`.
+///
+/// 큰 제목이 게시판 이름을 가져가므로, 그 위 경로는 상세 화면과 같은 규칙으로
+/// 툴바에 적는다(넓은 쪽 → 좁은 쪽 순서).
 
 final class ListSmallTitleProvider
     extends $FunctionalProvider<String, String, String>
     with $Provider<String> {
-  /// 앱바 부제. 2단 게시판이면 사이트명만으로는 어느 카페의 게시판인지 알 수
-  /// 없으므로 부모(카페) 이름을 앞에 붙인다.
+  /// 툴바 크럼브: `클리앙` 또는 2단 게시판이면 `네이버카페 › 중고나라`.
+  ///
+  /// 큰 제목이 게시판 이름을 가져가므로, 그 위 경로는 상세 화면과 같은 규칙으로
+  /// 툴바에 적는다(넓은 쪽 → 좁은 쪽 순서).
   ListSmallTitleProvider._()
     : super(
         from: null,
@@ -101,7 +107,7 @@ final class ListSmallTitleProvider
   }
 }
 
-String _$listSmallTitleHash() => r'452a15992dcb95d11838535d129806001ad2af74';
+String _$listSmallTitleHash() => r'034fa89facef19ecbceecd01cd536e1dd85f48b5';
 
 @ProviderFor(listTitle)
 final listTitleProvider = ListTitleProvider._();
