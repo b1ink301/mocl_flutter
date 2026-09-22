@@ -17,7 +17,7 @@ class const AppbarBackButton({super.key}) extends StatelessWidget {
       child: PlainIconButton(
         onPressed: () => context.pop(),
         padding: EdgeInsets.zero,
-        icon: const PlainIcon(Icons.arrow_back_ios_new_rounded),
+        icon: const PlainIcon(Icons.arrow_back_rounded),
       ),
     ),
   );
