@@ -178,12 +178,29 @@ final class _MarkAsReadFamily extends $Family
   String toString() => r'_markAsReadProvider';
 }
 
+/// 툴바 크럼브: `클리앙 › 모두의공원`.
+///
+/// 큰 제목이 글 제목을 가져가면서 사이트 구분이 화면에서 사라졌다. 목록과
+/// 같은 규칙(상위 경로는 툴바에)으로 여기에 되살린다. 게시판 이름을 모르는
+/// 경우(스크랩 등 boardTitle 이 빈 항목)에는 사이트만 적는다.
+
 @ProviderFor(detailSmallTitle)
 final detailSmallTitleProvider = DetailSmallTitleProvider._();
+
+/// 툴바 크럼브: `클리앙 › 모두의공원`.
+///
+/// 큰 제목이 글 제목을 가져가면서 사이트 구분이 화면에서 사라졌다. 목록과
+/// 같은 규칙(상위 경로는 툴바에)으로 여기에 되살린다. 게시판 이름을 모르는
+/// 경우(스크랩 등 boardTitle 이 빈 항목)에는 사이트만 적는다.
 
 final class DetailSmallTitleProvider
     extends $FunctionalProvider<String, String, String>
     with $Provider<String> {
+  /// 툴바 크럼브: `클리앙 › 모두의공원`.
+  ///
+  /// 큰 제목이 글 제목을 가져가면서 사이트 구분이 화면에서 사라졌다. 목록과
+  /// 같은 규칙(상위 경로는 툴바에)으로 여기에 되살린다. 게시판 이름을 모르는
+  /// 경우(스크랩 등 boardTitle 이 빈 항목)에는 사이트만 적는다.
   DetailSmallTitleProvider._()
     : super(
         from: null,
@@ -223,7 +240,7 @@ final class DetailSmallTitleProvider
   }
 }
 
-String _$detailSmallTitleHash() => r'710823e81464ca519003e6367eda2f308610d560';
+String _$detailSmallTitleHash() => r'73de9f9f6cc12067b6b9e251b24e55ae7da6d439';
 
 @ProviderFor(DetailTitleStateNotifier)
 final detailTitleStateProvider = DetailTitleStateNotifierProvider._();

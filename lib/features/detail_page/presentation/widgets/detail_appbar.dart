@@ -32,17 +32,21 @@ class const DetailAppBar({super.key})
     final titleStyle = largeTitleStyle(styleScope.titleTextStyle);
     final theme = Theme.of(context);
     final primaryColor = theme.primaryColor;
-    final smallTitleStyle = styleScope.smallTextStyle.copyWith(
-      color: primaryColor,
-    );
+    final crumbStyle = appbarCrumbStyle(styleScope.smallTextStyle);
 
     return SliverAppBar(
       leading: const AppbarBackButton(),
-      scrolledUnderElevation: 1,
+      // scrolledUnderElevation: 1,
       expandedHeight: height,
       automaticallyImplyLeading: false,
-      title: PlainText(smallTitleState(ref), style: smallTitleStyle),
-      titleSpacing: -14,
+      // 툴바에는 상위 경로만(= 사이트 › 게시판). 큰 제목은 글 제목을 쓴다.
+      title: PlainText(
+        smallTitleState(ref),
+        style: crumbStyle,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+      ),
+      titleSpacing: kAppbarCrumbTitleSpacing,
       flexibleSpace: LargeTitleFlexibleSpace(
         title: title,
         style: titleStyle,

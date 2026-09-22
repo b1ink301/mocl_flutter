@@ -50,3 +50,26 @@ final double kLargeTitleExpandedHeightSingleLine = largeTitleExpandedHeight(
 
 /// 상세 제목이 늘어날 수 있는 최대 줄 수.
 const int kDetailTitleMaxLines = 3;
+
+/// 툴바 크럼브(상위 경로) 규칙.
+///
+/// 큰 제목은 "지금 보고 있는 것"만 말한다. 그 위 어디에서 왔는지(사이트 ·
+/// 게시판)는 이미 있는 툴바 줄에 작게 적는다. 확장 영역 높이를 한 픽셀도
+/// 더 쓰지 않으면서 목록 · 상세가 같은 리듬을 갖게 하려는 것.
+///
+/// - 메인: 크럼브 없음 (최상위)
+/// - 목록: `클리앙` · 큰 제목 = 게시판 이름
+/// - 상세: `클리앙 › 모두의공원` · 큰 제목 = 글 제목
+const String kAppbarCrumbSeparator = ' › ';
+
+/// 크럼브를 뒤로가기 버튼 쪽으로 당기는 양.
+///
+/// AppBar 는 leading 을 폭 56 으로 묶는다. 그대로 두면 아이콘(오른쪽 끝 40)과
+/// 글자 사이가 16 이나 벌어져 크럼브가 제목처럼 떠 보인다.
+const double kAppbarCrumbTitleSpacing = -8.0;
+
+/// 크럼브 스타일. 큰 제목과 싸우지 않도록 작은 본문 스타일(= 작성자 메타 줄과
+/// 같은 크기 · 색)에 두께만 한 단계 올려 쓴다. 폰트 크기 설정은 [base] 가
+/// 이미 반영하고 있으므로 여기서 크기를 고정하지 않는다.
+TextStyle appbarCrumbStyle(TextStyle base) =>
+    base.copyWith(fontWeight: FontWeight.w500);

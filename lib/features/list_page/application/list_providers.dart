@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:mocl_flutter/config/large_title_metrics.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/domain/entities/last_id.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
@@ -21,8 +22,10 @@ part 'list_providers.g.dart';
 @riverpod
 MainItem mainItem(Ref ref) => throw UnimplementedError('mainItem');
 
-/// 앱바 부제. 2단 게시판이면 사이트명만으로는 어느 카페의 게시판인지 알 수
-/// 없으므로 부모(카페) 이름을 앞에 붙인다.
+/// 툴바 크럼브: `클리앙` 또는 2단 게시판이면 `네이버카페 › 중고나라`.
+///
+/// 큰 제목이 게시판 이름을 가져가므로, 그 위 경로는 상세 화면과 같은 규칙으로
+/// 툴바에 적는다(넓은 쪽 → 좁은 쪽 순서).
 @Riverpod(dependencies: [mainItem])
 String listSmallTitle(Ref ref) {
   final String site = ref.watch(
@@ -31,7 +34,7 @@ String listSmallTitle(Ref ref) {
   final String parent = ref.watch(
     mainItemProvider.select((MainItem item) => item.parentText),
   );
-  return parent.isEmpty ? site : '$parent · $site';
+  return parent.isEmpty ? site : '$site$kAppbarCrumbSeparator$parent';
 }
 
 @Riverpod(dependencies: [mainItem])
