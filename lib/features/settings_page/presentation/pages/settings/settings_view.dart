@@ -35,7 +35,7 @@ class const SettingsView({super.key})
                   onTap: () => handleToggleNickImage(ref),
                   trailing: Switch(
                     value: showNickImageState(ref),
-                    activeThumbColor: theme.focusColor,
+                    activeThumbColor: theme.colorScheme.primary,
                     onChanged: (_) => handleToggleNickImage(ref),
                   ),
                 ),
@@ -55,7 +55,7 @@ class const SettingsView({super.key})
                   trailing: _FontSizeControl(
                     delta: fontSizeDeltaState(ref),
                     labelStyle: styles.titleTextStyle,
-                    focusColor: theme.focusColor,
+                    focusColor: theme.colorScheme.primary,
                     onDecrease: () => handleDecreaseFontSize(ref),
                     onIncrease: () => handleIncreaseFontSize(ref),
                     onReset: () => handleResetFontSize(ref),
@@ -64,32 +64,32 @@ class const SettingsView({super.key})
               ],
             ),
 
-            const _SectionHeader('내 게시판'),
-            _SettingsCard(
-              children: [
-                _SettingsTile(
-                  icon: Icons.account_circle_outlined,
-                  title: '게시판 아이콘 보기',
-                  onTap: () => handleToggleBoardIcon(ref),
-                  trailing: Switch(
-                    value: showBoardIconState(ref),
-                    activeThumbColor: theme.focusColor,
-                    onChanged: (_) => handleToggleBoardIcon(ref),
-                  ),
-                ),
-                const _TileDivider(),
-                _SettingsTile(
-                  icon: Icons.swipe_vertical_outlined,
-                  title: '사이트 빠른 이동',
-                  onTap: () => handleToggleQuickJump(ref),
-                  trailing: Switch(
-                    value: showQuickJumpState(ref),
-                    activeThumbColor: theme.focusColor,
-                    onChanged: (_) => handleToggleQuickJump(ref),
-                  ),
-                ),
-              ],
-            ),
+            // const _SectionHeader('내 게시판'),
+            // _SettingsCard(
+            //   children: [
+            //     _SettingsTile(
+            //       icon: Icons.account_circle_outlined,
+            //       title: '게시판 아이콘 보기',
+            //       onTap: () => handleToggleBoardIcon(ref),
+            //       trailing: Switch(
+            //         value: showBoardIconState(ref),
+            //         activeThumbColor: theme.colorScheme.primary,
+            //         onChanged: (_) => handleToggleBoardIcon(ref),
+            //       ),
+            //     ),
+            //     const _TileDivider(),
+            //     _SettingsTile(
+            //       icon: Icons.swipe_vertical_outlined,
+            //       title: '사이트 빠른 이동',
+            //       onTap: () => handleToggleQuickJump(ref),
+            //       trailing: Switch(
+            //         value: showQuickJumpState(ref),
+            //         activeThumbColor: theme.colorScheme.primary,
+            //         onChanged: (_) => handleToggleQuickJump(ref),
+            //       ),
+            //     ),
+            //   ],
+            // ),
 
             const _SectionHeader('데이터'),
             _SettingsCard(
@@ -139,7 +139,9 @@ class const SettingsView({super.key})
                     padding: const EdgeInsets.symmetric(vertical: 24),
                     child: Column(
                       children: [
-                        CircularProgressIndicator(color: theme.focusColor),
+                        CircularProgressIndicator(
+                          color: theme.colorScheme.primary,
+                        ),
                         const SizedBox(height: 12),
                         Text(
                           'Google Drive와 동기화 중...',
@@ -216,7 +218,7 @@ class const _ThemeModeSelector({
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final bool isDark = theme.brightness == Brightness.dark;
-    final Color focusColor = theme.focusColor;
+    final Color focusColor = theme.colorScheme.primary;
     final int index = _options.indexWhere((o) => o.mode == mode);
     final int selected = index < 0 ? 0 : index;
 
@@ -273,7 +275,9 @@ class const _ThemeModeSegment({
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final Color tint = isSelected ? theme.focusColor : theme.hintColor;
+    final Color tint = isSelected
+        ? theme.colorScheme.primary
+        : theme.colorScheme.onSurfaceVariant;
 
     return Tooltip(
       message: option.label,
@@ -358,7 +362,9 @@ class const _FontSizeControl({
                   _label,
                   style: labelStyle.copyWith(
                     fontWeight: isDefault ? FontWeight.w500 : FontWeight.bold,
-                    color: isDefault ? theme.hintColor : focusColor,
+                    color: isDefault
+                        ? theme.colorScheme.onSurfaceVariant
+                        : focusColor,
                   ),
                 ),
               ),

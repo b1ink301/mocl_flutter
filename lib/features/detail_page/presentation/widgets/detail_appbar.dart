@@ -31,7 +31,7 @@ class const DetailAppBar({super.key})
     final styleScope = DetailStyleScope.of(context).$1;
     final titleStyle = largeTitleStyle(styleScope.titleTextStyle);
     final theme = Theme.of(context);
-    final primaryColor = theme.primaryColor;
+    final primaryColor = theme.colorScheme.primary;
     final crumbStyle = appbarCrumbStyle(styleScope.smallTextStyle);
 
     return SliverAppBar(

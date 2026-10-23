@@ -13,8 +13,13 @@ class const NickImageWidget({
   required final String url,
   final double height = 16,
 }) extends StatelessWidget {
-  // static const Duration _fadeOutDuration = Duration.zero;
-  // static const Duration _fadeInDuration = Duration.zero;
+  /// 닉 이미지는 행마다 붙어 스크롤 중 동시에 여러 개가 로드된다. 기본값(페이드인
+  /// 500ms)이면 그동안 해당 행이 매 프레임 다시 그려져 래스터 부하가 쌓이므로 끈다.
+  static const Duration _noFade = Duration.zero;
+
+  /// 이미지 오른쪽 간격. 플레이스홀더도 같은 폭을 잡아야 로드 직후 메타 줄이
+  /// 옆으로 밀리지 않는다.
+  static const double _trailingGap = 8;
 
   // 메모리 캐시 크기 상수화
   static const int _memCacheHeight = 32; // 실제 높이의 2배로 설정 (고해상도 디스플레이 대응)
@@ -52,12 +57,16 @@ class const NickImageWidget({
   Widget build(BuildContext context) => CachedNetworkImage(
     memCacheHeight: _memCacheHeight,
     height: height,
+    fadeInDuration: _noFade,
+    fadeOutDuration: _noFade,
+    placeholderFadeInDuration: _noFade,
     imageBuilder: (context, imageProvider) => Padding(
-      padding: const EdgeInsets.only(right: 8),
+      padding: const EdgeInsets.only(right: _trailingGap),
       child: OctoImage(image: imageProvider),
     ),
     errorWidget: (context, url, error) => const SizedBox.shrink(),
-    placeholder: (context, url) => SizedBox(height: height, width: height),
+    placeholder: (context, url) =>
+        SizedBox(height: height, width: height + _trailingGap),
     imageUrl: url,
     cacheKey: url,
     fit: BoxFit.contain,

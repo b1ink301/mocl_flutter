@@ -101,8 +101,8 @@ void main() {
     );
 
     expect(label('낫싱폰 잡담'), findsOneWidget);
-    // 배지는 일반 Text 로 그린다(부제가 아니라 행 오른쪽).
-    expect(find.text('낫싱카페'), findsOneWidget);
+    // 배지는 부제가 아니라 행 오른쪽에 붙는다(다른 글자와 같이 PlainText).
+    expect(label('낫싱카페'), findsOneWidget);
   });
 
   testWidgets('검색하면 걸린 게시판만 남고 출처가 배지로 보인다', (tester) async {
@@ -118,7 +118,7 @@ void main() {
     expect(label('갤24 메뉴0'), findsNothing);
     expect(label('게시판 0'), findsNothing);
     // 검색 결과에서는 소구획을 묶지 않으므로 출처를 배지로 밝힌다.
-    expect(find.text('삼성스마트폰카페'), findsOneWidget);
+    expect(label('삼성스마트폰카페'), findsOneWidget);
   });
 
   testWidgets('카페 이름으로도 찾을 수 있고, 닫으면 목록이 돌아온다', (tester) async {
@@ -136,7 +136,10 @@ void main() {
 
     await tester.enterText(find.byType(TextField), '없는이름');
     await tester.pumpAndSettle();
-    expect(find.textContaining('맞는 게시판이 없습니다'), findsOneWidget);
+    expect(
+      find.textContaining('맞는 게시판이 없습니다', findRichText: true),
+      findsOneWidget,
+    );
 
     await tester.tap(icon(Icons.close));
     await tester.pumpAndSettle();

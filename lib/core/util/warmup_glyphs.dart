@@ -76,14 +76,23 @@ class const Glyphs._() {
   /// 자주 쓰이는 한글/라틴 글리프를 미리 렌더링해 GPU glyph atlas 를 예열한다.
   /// 스크롤 중 새 글자 등장 시 발생하는 `CreateGlyphAtlas` 스파이크를 줄인다.
   ///
+  /// Impeller 는 글리프를 (폰트, 크기, 굵기, **배율**) 단위로 atlas 에 올린다.
+  /// 화면은 DPR 이 곱해진 배율로 그리므로 예열도 [devicePixelRatio] 배율로
+  /// 그려야 같은 atlas 항목을 재사용한다. 배율 1 로 그리면 화면에서 쓰지 않는
+  /// 크기의 글리프만 쌓여 효과가 없다.
+  ///
   /// 11k+ 음절을 한 번에 layout 하면 height 가 거대해져 메모리/시간 비용이 크므로,
   /// 청크 단위로 잘라서 처리하고 매 청크 사이에 yield 한다.
   static Future<void> warmupKoreanGlyphs(
     List<TextStyle> styles, {
+    required double devicePixelRatio,
     bool Function()? shouldAbort, // 중단 여부를 확인할 콜백 추가
   }) async {
     const int chunkSize = 80; // 청크당 문자 수 (작을수록 한 번에 점유하는 UI 시간 짧음)
-    const double maxWidth = 1024; // layout 최대 너비
+    // layout 최대 너비(논리 px). DPR 을 곱한 물리 크기가 이미지 상한(4096)을
+    // 넘으면 잘린 영역의 글리프가 컬링되므로 좁게 잡는다.
+    const double maxWidth = 360;
+    final double dpr = devicePixelRatio > 0 ? devicePixelRatio : 1.0;
 
     for (final style in styles) {
       for (int start = 0; start < _warmupText.length; start += chunkSize) {
@@ -96,29 +105,43 @@ class const Glyphs._() {
         final chunk = _warmupText.substring(start, end);
 
         // idle 우선순위로 예약 → 사용자 인터랙션/스크롤/애니메이션 중에는 대기.
-        // 한 청크의 layout/paint 가 끝나야 다음이 시작되며, 그 사이 프레임 워크가
-        // 더 중요한 작업을 처리할 수 있다.
-        SchedulerBinding.instance.scheduleTask<void>(() async {
-          final tp = TextPainter(
-            text: TextSpan(text: chunk, style: style),
-            textDirection: TextDirection.ltr,
-          )..layout(maxWidth: maxWidth);
-
-          final recorder = PictureRecorder();
-          final canvas = Canvas(recorder);
-          tp.paint(canvas, Offset.zero);
-          final picture = recorder.endRecording();
-
-          // 실제 텍스트 영역에 맞춰 rasterize 해야 glyph 가 atlas 에 업로드됨.
-          // 1x1 로 하면 Impeller 가 화면 밖 draw 를 컬링해 워밍업 효과가 사라진다.
-          final int w = tp.width.ceil().clamp(8, 2048);
-          final int h = tp.height.ceil().clamp(8, 2048);
-          final image = await picture.toImage(w, h);
-          image.dispose();
-          picture.dispose();
-          tp.dispose();
-        }, Priority.idle);
+        // 이전 청크의 rasterize 가 끝난 뒤 다음 청크를 예약해 래스터 스레드에
+        // toImage 가 한꺼번에 몰리지 않게 한다.
+        final Future<void> rasterized = await SchedulerBinding.instance
+            .scheduleTask(
+              () => _rasterizeChunk(chunk, style, dpr, maxWidth),
+              Priority.idle,
+            );
+        await rasterized;
       }
     }
+  }
+
+  static Future<void> _rasterizeChunk(
+    String chunk,
+    TextStyle style,
+    double dpr,
+    double maxWidth,
+  ) async {
+    const int maxImageExtent = 4096;
+    final tp = TextPainter(
+      text: TextSpan(text: chunk, style: style),
+      textDirection: TextDirection.ltr,
+    )..layout(maxWidth: maxWidth);
+
+    final recorder = PictureRecorder();
+    // 화면과 같은 배율로 그린다([warmupKoreanGlyphs] 주석 참고).
+    final canvas = Canvas(recorder)..scale(dpr);
+    tp.paint(canvas, Offset.zero);
+    final picture = recorder.endRecording();
+
+    // 실제 텍스트 영역에 맞춰 rasterize 해야 glyph 가 atlas 에 업로드됨.
+    // 1x1 로 하면 Impeller 가 화면 밖 draw 를 컬링해 워밍업 효과가 사라진다.
+    final int w = (tp.width * dpr).ceil().clamp(8, maxImageExtent);
+    final int h = (tp.height * dpr).ceil().clamp(8, maxImageExtent);
+    final image = await picture.toImage(w, h);
+    image.dispose();
+    picture.dispose();
+    tp.dispose();
   }
 }

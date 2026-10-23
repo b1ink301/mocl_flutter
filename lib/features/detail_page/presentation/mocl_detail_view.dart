@@ -312,7 +312,7 @@ class const _CommentHeader({
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final focusColor = Theme.of(context).focusColor;
+    final focusColor = Theme.of(context).colorScheme.primary;
     // "댓글 N" 은 볼드 코랄 라벨로 강조해 본문/댓글 섹션 경계를 명확히 한다.
     final bodyMedium_ = bodyMedium!.copyWith(
       color: focusColor,
@@ -414,7 +414,7 @@ class const _HtmlLoadingWidget({
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final dividerColor = theme.dividerTheme.color;
-    final focusColor = theme.focusColor;
+    final focusColor = theme.colorScheme.primary;
 
     if (src.isEmpty || progress == null) return const SizedBox.shrink();
 
@@ -641,7 +641,7 @@ class const _HtmlImageErrorWidget({
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final focusColor = Theme.of(context).focusColor;
+    final focusColor = Theme.of(context).colorScheme.primary;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -803,7 +803,7 @@ class const _RefreshButton({
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final focusColor = Theme.of(context).focusColor;
+    final focusColor = Theme.of(context).colorScheme.primary;
     final textStyle = this.textStyle!.copyWith(color: focusColor);
 
     return InkWell(

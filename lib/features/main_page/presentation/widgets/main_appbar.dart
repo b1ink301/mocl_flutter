@@ -13,6 +13,7 @@ import '../../../../core/presentation/widgets/plain_text.dart';
 import '../../../../core/util/platform_util.dart';
 import '../state/main_event_mixin.dart';
 import '../state/main_state_mixin.dart';
+import 'main_search_field.dart';
 
 class const MainAppBar({super.key})
     extends ConsumerWidget
@@ -20,7 +21,6 @@ class const MainAppBar({super.key})
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final textStyle = titleTextStyleState(ref);
-    final bool editMode = editModeState(ref);
 
     // 편집 라벨도 목록 · 상세의 크럼브와 같은 스타일을 쓴다. 툴바 왼쪽에
     // 작게 놓이는 같은 성격의 글자라, 셋이 따로 놀면 화면을 옮길 때마다
@@ -40,9 +40,7 @@ class const MainAppBar({super.key})
         title: titleState(ref),
         style: titleStyle,
       ),
-      // 편집 모드에서만 툴바에 라벨을 띄운다. 평소에는 크럼브가 없는 화면이라
-      // 툴바 제목 자리를 비워 둔다.
-      title: editMode ? PlainText('편집', style: menuStyle) : null,
+      title: _MainAppBarTitle(style: menuStyle),
       titleTextStyle: menuStyle,
       titleSpacing: 0,
       floating: true,
@@ -51,6 +49,25 @@ class const MainAppBar({super.key})
       toolbarHeight: kToolbarHeight,
       actions: const <Widget>[_MainActions()],
     );
+  }
+}
+
+/// 툴바 제목 자리.
+///
+/// 검색 중에는 입력창이 이 자리를 통째로 쓰고(닫기 버튼만 오른쪽에 남는다),
+/// 편집 중에는 라벨만 띄운다. 평소에는 크럼브가 없는 화면이라 비워 둔다.
+///
+/// 검색 · 편집 상태를 앱바 본체가 아니라 여기서 구독한다. 본체에서 보면
+/// 검색창을 여닫을 때마다 큰 제목까지 통째로 다시 만들게 된다(_MainActions
+/// 주석 참고).
+class const _MainAppBarTitle({required final TextStyle style})
+    extends ConsumerWidget
+    with MainState {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (searchOpenState(ref)) return const MainSearchField();
+    if (editModeState(ref)) return PlainText('편집', style: style);
+    return const SizedBox.shrink();
   }
 }
 
@@ -83,6 +100,11 @@ class const _MainActions() extends ConsumerWidget with MainState, MainEvent {
               ),
             ]
           : [
+              // 담은 게시판이 많아지면 스크롤보다 검색이 빠르다.
+              PlainIconButton(
+                onPressed: () => openSearch(ref),
+                icon: const PlainIcon(Icons.search),
+              ),
               PlainIconButton(
                 onPressed: () => handleAddButton(ref, context),
                 icon: const PlainIcon(Icons.add),

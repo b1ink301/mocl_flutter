@@ -128,9 +128,9 @@ class const _NavBarItem({
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final Color focusColor = theme.focusColor;
+    final Color focusColor = theme.colorScheme.primary;
     final Color mutedColor =
-        theme.textTheme.bodySmall?.color ?? theme.hintColor;
+        theme.textTheme.bodySmall?.color ?? theme.colorScheme.onSurfaceVariant;
     final Color tint = isSelected ? focusColor : mutedColor;
 
     // 선택 표시가 아이콘과 라벨을 함께 감싼다(아이콘만 강조하면 라벨이

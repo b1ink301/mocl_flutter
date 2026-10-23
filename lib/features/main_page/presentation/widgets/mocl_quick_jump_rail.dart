@@ -231,7 +231,7 @@ class const _RailDot({
             decoration: BoxDecoration(
               shape: BoxShape.circle,
               border: Border.all(
-                color: active ? theme.focusColor : Colors.transparent,
+                color: active ? theme.colorScheme.primary : Colors.transparent,
                 width: 2,
               ),
             ),
