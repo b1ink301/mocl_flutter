@@ -7,6 +7,8 @@ import 'package:mocl_flutter/features/database/domain/entities/favorite_group.da
 import 'package:mocl_flutter/features/database/domain/entities/mute_rule.dart';
 import 'package:sembast/sembast.dart';
 
+import 'database_migrations.dart';
+
 class LocalDatabase({
   required Database database,
   required final Future<Database> Function() _opener,
@@ -21,39 +23,63 @@ class LocalDatabase({
   /// 메모리로 읽어오므로, 파일을 덮어쓴 뒤 close→reopen 해야 새 데이터가 반영된다.
   Future<void> reopen() async => _db = await _opener();
 
-  Future<bool> isRead(SiteType siteType, int id) async {
-    final StoreRef<int, Map<String, Object?>> store = intMapStoreFactory.store(
-      '${siteType.name}_read',
-    );
-    final Finder finder = Finder(filter: Filter.equals(Field.value, id));
-    final List<RecordSnapshot<int, Map<String, Object?>>> recordSnapshot =
-        await store.find(_db, finder: finder);
-    return recordSnapshot.isNotEmpty;
+  // ===== 읽음 기록 — 사이트별 `{site}_read` 스토어 (키: 글 id, 값: 읽은 시각) =====
+
+  /// 정리 주기를 기록하는 스토어. DB 파일 안에 두어 Drive 백업과 함께 움직인다.
+  static final StoreRef<String, int> _metaStore = StoreRef<String, int>('meta');
+  static const String _readsPrunedAtKey = 'readsPrunedAt';
+
+  Future<bool> isRead(SiteType siteType, int id) =>
+      readStoreOf(siteType).record(id).exists(_db);
+
+  /// [ids] 중 읽은 글의 id 만 돌려준다. 키 조회라 스토어 크기와 무관하다.
+  Future<List<int>> isReads(SiteType siteType, List<int> ids) async {
+    final List<int?> readAts = await readStoreOf(siteType)
+        .records(ids)
+        .get(_db);
+    return [
+      for (int i = 0; i < ids.length; i++)
+        if (readAts[i] != null) ids[i],
+    ];
   }
 
-  FutureOr<List<int>> isReads(SiteType siteType, List<int> ids) async {
-    final StoreRef<int, int> store = StoreRef<int, int>(
-      '${siteType.name}_read',
-    );
-    final List<Filter> filters = ids
-        .map((id) => Filter.equals(Field.value, id))
-        .toList();
-    final Finder finder = Finder(filter: Filter.or(filters));
-    final List<RecordSnapshot<int, int>> recordSnapshot = await store.find(
-      _db,
-      finder: finder,
-    );
-    final List<int> result = recordSnapshot
-        .map((snapshot) => snapshot.value)
-        .toList();
-    return result;
-  }
-
+  /// 읽음으로 표시한다. 같은 글을 다시 열면 읽은 시각만 갱신된다.
   Future<int> setRead(SiteType siteType, int id) async {
-    final StoreRef<int, int> store = StoreRef<int, int>(
-      '${siteType.name}_read',
+    await readStoreOf(siteType)
+        .record(id)
+        .put(_db, DateTime.now().millisecondsSinceEpoch);
+    return id;
+  }
+
+  /// [ttl] 보다 오래전에 읽은 기록을 지우고 지운 개수를 돌려준다.
+  ///
+  /// 지난 정리 후 [interval] 이 지나지 않았으면 아무것도 하지 않는다.
+  /// 스토어 전체를 훑으므로 앱 시작 직후가 아니라 첫 프레임 뒤에 부를 것.
+  Future<int> pruneReadsIfDue({
+    required Duration ttl,
+    Duration interval = const Duration(days: 1),
+    DateTime? now,
+  }) async {
+    final int nowMs = (now ?? DateTime.now()).millisecondsSinceEpoch;
+    final int? prunedAt = await _metaStore.record(_readsPrunedAtKey).get(_db);
+    if (prunedAt != null && nowMs - prunedAt < interval.inMilliseconds) {
+      return 0;
+    }
+
+    final Finder expired = Finder(
+      filter: Filter.lessThan(Field.value, nowMs - ttl.inMilliseconds),
     );
-    return store.add(_db, id);
+    final int removed = await _db.transaction((txn) async {
+      int count = 0;
+      for (final SiteType siteType in SiteType.values) {
+        count += await readStoreOf(siteType).delete(txn, finder: expired);
+      }
+      await _metaStore.record(_readsPrunedAtKey).put(txn, nowMs);
+      return count;
+    });
+    // sembast 는 변경을 파일 끝에 덧붙이므로, 지운 만큼 줄이려면 압축해야 한다.
+    if (removed > 0) await _db.compact();
+    return removed;
   }
 
   // ===== 북마크(스크랩) — 전역 `bookmarks` 스토어 =====
