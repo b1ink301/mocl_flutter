@@ -165,7 +165,7 @@ void main() {
       // 목록 파서가 ListItem.board 에 cafeId 를 담으므로 상세는 영향을 받지 않는다.
       expect(
         parser.urlByDetail('', '17654719', 616962),
-        'https://apis.naver.com/cafe-web/cafe-articleapi/v3/cafes/17654719/articles/616962',
+        'https://apis.naver.com/cafe-web/cafe-articleapi/v4/cafes/17654719/articles/616962',
       );
     });
   });

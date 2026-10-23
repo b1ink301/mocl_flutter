@@ -1,8 +1,10 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart';
 import 'package:mocl_flutter/core/domain/entities/board_path.dart';
 import 'package:mocl_flutter/core/domain/entities/last_id.dart';
@@ -125,8 +127,7 @@ class const NaverCafeParser() extends BaseParser {
 
     // contentHtml 은 구형 에디터 글에만 채워진다. 비어 있으면(마켓/플리마켓 글 등)
     // 본문이 다른 필드에 있으므로 글 종류별 폴백으로 본문 HTML 을 만든다.
-    final rawBody = article['contentHtml'];
-    var bodyHtml = rawBody is String ? rawBody : '';
+    var bodyHtml = _replaceSeVideos(_articleBodyHtml(article));
     if (bodyHtml.isEmpty) {
       bodyHtml = _buildMarketBodyHtml(detail, article);
       if (bodyHtml.isEmpty) {
@@ -234,6 +235,161 @@ class const NaverCafeParser() extends BaseParser {
     );
 
     return Right<Failure, Details>(details);
+  }
+
+  /// 본문 HTML. 다른 카페 글을 스크랩한 글은 원문이 `article.scrap.contentHtml`
+  /// 에 따로 오고 `article.contentHtml` 에는 덧붙인 글(대개 빈 문단)만 있다.
+  /// 카페 웹과 같이 덧붙인 글 → 원문 링크 → 원문 순으로 잇는다.
+  static String _articleBodyHtml(Map<dynamic, dynamic> article) {
+    final rawBody = article['contentHtml'];
+    final body = rawBody is String ? rawBody : '';
+
+    final scrap = article['scrap'];
+    if (scrap is! Map) return body;
+    final scrapBody = scrap['contentHtml'];
+    if (scrapBody is! String || scrapBody.isEmpty) return body;
+
+    final link = scrap['linkHtml'];
+    final linkHtml = link is String && link.isNotEmpty ? '<p>$link</p>' : '';
+    return '$body$linkHtml$scrapBody';
+  }
+
+  /// 스마트에디터 동영상 컴포넌트를 표시하려고 붙이는 속성. API 계층이 이
+  /// 속성으로 영상을 찾아 재생 주소를 받아온 뒤 `<video>` 로 바꾼다.
+  static const String videoIdAttr = 'data-naver-vid';
+  static const String videoKeyAttr = 'data-naver-inkey';
+
+  /// 스마트에디터 동영상은 빈 `div.se-module-video` 로 오고, 영상 정보(vid ·
+  /// inkey · 썸네일)는 컴포넌트 안 `<script data-module>` JSON 에만 있다.
+  /// 재생 주소는 네트워크로 따로 받아야 하므로 여기서는 썸네일 `<img>` 로
+  /// 바꿔 두고 [videoIdAttr]/[videoKeyAttr] 를 실어 보낸다. 재생 주소를 못
+  /// 받아도 썸네일은 남는다.
+  static String _replaceSeVideos(String html) {
+    if (!html.contains('v2_video')) return html;
+
+    final fragment = parseFragment(html);
+    var replaced = false;
+    for (final script in fragment.querySelectorAll('script.__se_module_data')) {
+      final Map<dynamic, dynamic>? data = _videoModuleData(script);
+      if (data == null) continue;
+      final String vid = data['vid']?.toString() ?? '';
+      final String inkey = data['inkey']?.toString() ?? '';
+      if (vid.isEmpty || inkey.isEmpty) continue;
+
+      final dom.Element? component = script.parent;
+      if (component == null) continue;
+
+      final placeholder = dom.Element.tag('img')
+        ..attributes['src'] = data['thumbnail']?.toString() ?? ''
+        ..attributes[videoIdAttr] = vid
+        ..attributes[videoKeyAttr] = inkey;
+      for (final dimen in const ['width', 'height']) {
+        final value = int.tryParse(data[dimen]?.toString() ?? '');
+        if (value != null && value > 0) {
+          placeholder.attributes[dimen] = value.toString();
+        }
+      }
+      component.replaceWith(placeholder);
+      replaced = true;
+    }
+    return replaced ? fragment.outerHtml : html;
+  }
+
+  /// `data-module-v2` 가 없는 구형 글도 있어 `data-module` 까지 본다.
+  static Map<dynamic, dynamic>? _videoModuleData(dom.Element script) {
+    for (final attr in const ['data-module-v2', 'data-module']) {
+      final raw = script.attributes[attr];
+      if (raw == null || raw.isEmpty) continue;
+      try {
+        final json = jsonDecode(raw);
+        if (json is! Map || json['type'] != 'v2_video') continue;
+        final data = json['data'];
+        if (data is Map) return data;
+      } on FormatException {
+        continue;
+      }
+    }
+    return null;
+  }
+
+  /// [html] 안의 동영상 자리표시자에서 (vid, inkey) 를 모은다.
+  static List<({String vid, String inkey})> videoRefsOf(String html) {
+    if (!html.contains(videoIdAttr)) return const [];
+    return parseFragment(html)
+        .querySelectorAll('img[$videoIdAttr]')
+        .map(
+          (img) => (
+            vid: img.attributes[videoIdAttr] ?? '',
+            inkey: img.attributes[videoKeyAttr] ?? '',
+          ),
+        )
+        .where((ref) => ref.vid.isNotEmpty && ref.inkey.isNotEmpty)
+        .toList();
+  }
+
+  /// 재생 주소를 받은 영상([sources]: vid → mp4)만 썸네일을 `<video>` 로
+  /// 바꾼다. 썸네일은 poster 로 옮긴다.
+  static String applyVideoSources(String html, Map<String, String> sources) {
+    if (sources.isEmpty) return html;
+
+    final fragment = parseFragment(html);
+    for (final img in fragment.querySelectorAll('img[$videoIdAttr]')) {
+      final String? src = sources[img.attributes[videoIdAttr]];
+      if (src == null) continue;
+
+      final video = dom.Element.tag('video')
+        ..attributes['src'] = src
+        ..attributes['controls'] = '';
+      final poster = img.attributes['src'] ?? '';
+      if (poster.isNotEmpty) video.attributes['poster'] = poster;
+      for (final dimen in const ['width', 'height']) {
+        final value = img.attributes[dimen];
+        if (value != null) video.attributes[dimen] = value;
+      }
+      img.replaceWith(video);
+    }
+    return fragment.outerHtml;
+  }
+
+  /// 네이버 동영상 재생 정보 API. 응답의 `videos.list[].source` 가 mp4 주소다.
+  static String urlByVideoPlay(String vid, String inkey) =>
+      'https://apis.naver.com/rmcnmv/rmcnmv/vod/play/v2.0/$vid'
+      '?key=${Uri.encodeQueryComponent(inkey)}';
+
+  /// 재생 정보 응답에서 쓸 mp4 를 고른다. 화질이 높을수록 좋지만 본문에
+  /// 영상이 여럿이면 메모리를 많이 쓰므로 720p 이하 중 가장 높은 것을 쓴다.
+  static String? videoSourceOf(dynamic playInfo) {
+    if (playInfo is! Map) return null;
+    final videos = playInfo['videos'];
+    final list = videos is Map ? videos['list'] : null;
+    if (list is! List) return null;
+
+    String? best;
+    var bestHeight = -1;
+    String? smallest;
+    var smallestHeight = 1 << 30;
+    for (final item in list) {
+      if (item is! Map) continue;
+      final source = item['source'];
+      if (source is! String || source.isEmpty) continue;
+      final option = item['encodingOption'];
+      final width = option is Map ? option['width'] : null;
+      final height = option is Map ? option['height'] : null;
+      // 세로 영상은 height 가 긴 변이라 짧은 변으로 화질을 판단한다.
+      final int shortSide = [width, height]
+          .whereType<num>()
+          .map((v) => v.toInt())
+          .fold<int>(0, (a, b) => a == 0 || b < a ? b : a);
+      if (shortSide <= 720 && shortSide > bestHeight) {
+        best = source;
+        bestHeight = shortSide;
+      }
+      if (shortSide < smallestHeight) {
+        smallest = source;
+        smallestHeight = shortSide;
+      }
+    }
+    return best ?? smallest;
   }
 
   /// 중고거래(네이버 플리마켓) 글은 contentHtml/contentElements 가 비어 있고
@@ -414,7 +570,7 @@ class const NaverCafeParser() extends BaseParser {
 
   @override
   String urlByDetail(String url, String board, int id) =>
-      'https://apis.naver.com/cafe-web/cafe-articleapi/v3/cafes/$board/articles/$id';
+      'https://apis.naver.com/cafe-web/cafe-articleapi/v4/cafes/$board/articles/$id';
 
   // 'https://apis.naver.com/cafe-web/cafe-articleapi/v2/cafes/$board/articles/$id'; //?query=&useCafeId=true&requestFrom=A
 
@@ -476,8 +632,9 @@ class const NaverCafeParser() extends BaseParser {
     }
 
     if (message['status'].toString() != '200') {
-      final Map<dynamic, dynamic> error =
-          message['error'] is Map ? message['error'] as Map : const {};
+      final Map<dynamic, dynamic> error = message['error'] is Map
+          ? message['error'] as Map
+          : const {};
       final String code = error['code']?.toString() ?? '';
       final String msg = error['msg']?.toString() ?? '';
       return code == '0004'
@@ -516,9 +673,8 @@ class const NaverCafeParser() extends BaseParser {
 
       final String menuType = menu['menuType']?.toString() ?? '';
       // 메뉴 이름에 HTML 엔티티가 그대로 온다(`[OS7&gt;]질문게시판`, `개발관련Q&amp;A`).
-      final String name = parse(
-        menu['menuName']?.toString() ?? '',
-      ).body?.text.trim() ?? '';
+      final String name =
+          parse(menu['menuName']?.toString() ?? '').body?.text.trim() ?? '';
 
       if (menuType == 'S') {
         folder = '';
