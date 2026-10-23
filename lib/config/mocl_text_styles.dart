@@ -1,6 +1,12 @@
 import 'package:equatable/equatable.dart';
 import 'package:material_ui/material_ui.dart';
 
+/// 앱 기본 폰트 패밀리(pubspec.yaml `fonts:` 에 번들).
+///
+/// [ThemeData.fontFamily] 로도 지정하지만, `PlainText`(RichText) 처럼
+/// DefaultTextStyle 을 상속하지 않는 경로가 있어 스타일에도 직접 넣는다.
+const String kAppFontFamily = 'Pretendard';
+
 /// 앱 내에서 사용되는 시맨틱 컬러 정의 — "Paper" 디자인 시스템.
 ///
 /// 웜 뉴트럴(종이) 배경 위에 단일 강조색(코랄)을 쓰는 읽기 중심 팔레트.
@@ -107,7 +113,7 @@ class const AppTextStyles({
   );
 
   static TextStyle _create(Color color, double fontSize) =>
-      TextStyle(color: color, fontSize: fontSize);
+      TextStyle(color: color, fontSize: fontSize, fontFamily: kAppFontFamily);
 
   @override
   AppTextStyles copyWith({

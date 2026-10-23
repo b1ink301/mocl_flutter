@@ -23,7 +23,7 @@ part 'widgets/mocl_main_widgets.dart';
 class const MainView({super.key}) extends ConsumerWidget with FavoriteEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final focusColor = Theme.of(context).focusColor;
+    final focusColor = Theme.of(context).colorScheme.primary;
     return RefreshIndicator.adaptive(
       color: focusColor,
       onRefresh: () async => refreshFavorites(ref),

@@ -25,7 +25,7 @@ class _CheckBoxListTitleState() extends State<CheckBoxListTitleWidget> {
 
   @override
   Widget build(BuildContext context) {
-    final focusColor = Theme.of(context).focusColor;
+    final focusColor = Theme.of(context).colorScheme.primary;
     final trailing = Checkbox.adaptive(
       onChanged: (value) {
         if (value != null) {

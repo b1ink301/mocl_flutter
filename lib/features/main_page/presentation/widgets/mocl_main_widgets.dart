@@ -223,7 +223,8 @@ class const _SubSectionHeader({
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final Color subColor = theme.textTheme.bodySmall?.color ?? theme.hintColor;
+    final Color subColor =
+        theme.textTheme.bodySmall?.color ?? theme.colorScheme.onSurfaceVariant;
 
     return Material(
       type: MaterialType.transparency,
@@ -277,7 +278,8 @@ class const _OriginBadge({required final String text}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final Color color = theme.textTheme.bodySmall?.color ?? theme.hintColor;
+    final Color color =
+        theme.textTheme.bodySmall?.color ?? theme.colorScheme.onSurfaceVariant;
 
     return Container(
       constraints: const BoxConstraints(maxWidth: 130),
@@ -307,7 +309,7 @@ class const _BoardTile({
 }) extends ConsumerWidget with MainState, MainEvent, FavoriteEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final primaryColor = Theme.of(context).primaryColor;
+    final primaryColor = Theme.of(context).colorScheme.primary;
     final String origin = _originOf(favorite, inSubSection: inSubSection);
 
     return Material(
@@ -343,7 +345,7 @@ class const _BoardTile({
                       ? PlainIcon(
                           Icons.chevron_right_rounded,
                           size: 20,
-                          color: Theme.of(context).hintColor
+                          color: Theme.of(context).colorScheme.onSurfaceVariant
                               .withValues(alpha: 0.55),
                         )
                       : _OriginBadge(text: origin))
@@ -393,48 +395,4 @@ class const _ErrorWidget({super.key, required final Object? error})
     hasScrollBody: false,
     child: Center(child: FailureView(error: error)),
   );
-}
-
-/// 앱바 자리에 들어가는 게시판 검색 입력창.
-class const _SearchField() extends ConsumerStatefulWidget {
-  @override
-  ConsumerState<_SearchField> createState() => _SearchFieldState();
-}
-
-class _SearchFieldState()
-    extends ConsumerState<_SearchField>
-    with MainState, MainEvent {
-  late final TextEditingController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller = TextEditingController(text: readSearchQuery(ref));
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final Color hintColor = theme.textTheme.bodySmall?.color ?? theme.hintColor;
-
-    return TextField(
-      controller: _controller,
-      autofocus: true,
-      textInputAction: TextInputAction.search,
-      style: theme.textTheme.bodyLarge,
-      onChanged: (value) => updateSearchQuery(ref, value),
-      decoration: InputDecoration(
-        isDense: true,
-        border: InputBorder.none,
-        hintText: '담은 게시판 검색',
-        hintStyle: TextStyle(fontSize: 15, color: hintColor),
-      ),
-    );
-  }
 }
