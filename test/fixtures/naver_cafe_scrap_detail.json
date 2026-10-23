@@ -1,0 +1,38 @@
+{
+ "result": {
+  "cafeId": 1,
+  "articleId": 360316,
+  "article": {
+   "id": 360316,
+   "menu": {
+    "id": 1,
+    "name": "자유",
+    "menuType": "B",
+    "boardType": "L"
+   },
+   "writer": {
+    "memberKey": "k",
+    "nick": "작성자"
+   },
+   "writeDate": 1790500891460,
+   "readCount": 125,
+   "commentCount": 0,
+   "isMarket": false,
+   "customElements": [],
+   "subject": "아이폰 갤럭시 표절 논란 ㄷㄷ",
+   "existScrapAddContent": true,
+   "scrap": {
+    "sourceType": 2,
+    "sourceForm": 1,
+    "linkHtml": "<a href='https://cafe.naver.com/anycallusershow/5272287'  >https://cafe.naver.com/anycallusershow/5272287</a>",
+    "contentHtml": "<div class=\"se-viewer se-theme-default\" lang=\"ko-KR\">\n    <!-- SE_DOC_HEADER_START -->\n    <!--@CONTENTS_HEADER-->\n    <!-- SE_DOC_HEADER_END -->\n    <div class=\"se-main-container\"><div class=\"se-component se-image se-l-default\"><div class=\"se-component-content se-component-content-extend\"><div class=\"se-section se-section-image se-l-default se-section-align-\" ><div class=\"se-module se-module-image\" style=\"\"><a href=\"#\" class=\"se-module-image-link __se_image_link __se_link\" onclick=\"return false;\" data-linktype=\"img\"><img src=\"https://cafeptthumb-phinf.pstatic.net/MjAyNjA5MjhfOTkg/MDAxNzkwNTUwNjU4ODI0.PrKZ.JPEG/10384082073_486616_e4dacd488789475c0fcf8e06749b454f.jpg?type=w800\" alt=\"\" class=\"se-image-resource\" /></a></div></div></div><script type=\"text/data\" class=\"__se_module_data\" data-module-v2='{\"type\": \"v2_image\", \"id\": \"SE-i\", \"data\": {\"ctype\": \"image\", \"ai\": \"false\", \"fileSize\": \"189083\" }}'></script></div><div class=\"se-component se-text se-l-default\"><div class=\"se-component-content\"><div class=\"se-section se-section-text se-l-default\"><div class=\"se-module se-module-text\"><!-- SE-TEXT { --><p class=\"se-text-paragraph se-text-paragraph-align- \"><span class=\"se-fs- se-ff-   \">아앗..</span></p>\n<!-- } SE-TEXT --></div></div></div><script type=\"text/data\" class=\"__se_module_data\" data-module-v2='{\"type\": \"v2_text\", \"id\": \"SE-t\", \"data\": {\"ctype\": \"text\"  }}'></script></div>    </div>\n</div>\n",
+    "customElements": []
+   },
+   "contentHtml": "<div class=\"se-viewer se-theme-default\" lang=\"ko-KR\">\n    <!-- SE_DOC_HEADER_START -->\n    <!--@CONTENTS_HEADER-->\n    <!-- SE_DOC_HEADER_END -->\n    <div class=\"se-main-container\"><div class=\"se-component se-text se-l-default\"><div class=\"se-component-content\"><div class=\"se-section se-section-text se-l-default\"><div class=\"se-module se-module-text\"><!-- SE-TEXT { --><p class=\"se-text-paragraph se-text-paragraph-align- \"><span class=\"se-fs- se-ff-   \"></span></p>\n<!-- } SE-TEXT --></div></div></div><script type=\"text/data\" class=\"__se_module_data\" data-module-v2='{\"type\": \"v2_text\", \"id\": \"SE-t\", \"data\": {\"ctype\": \"text\"  }}'></script></div>    </div>\n</div>\n"
+  },
+  "comments": {
+   "items": []
+  },
+  "attaches": []
+ }
+}

@@ -1,3 +1,5 @@
+import 'dart:isolate';
+
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/domain/entities/last_id.dart';
@@ -12,11 +14,16 @@ import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 
 import '../base/base_parser.dart';
+import 'naver_cafe_parser.dart';
 
 /// 오류 상태코드의 본문(사유 JSON)까지 읽기 위해 dio 의 상태코드 검증을 끈다.
 bool _acceptAnyStatus(int? status) => status != null;
 
 class const NaverCafeApi(super.dio, super.userAgent) extends BaseApi {
+  /// 영상 재생 정보를 기다리는 최대 시간. 본문 표시가 이보다 늦어지지 않는다
+  /// (영상들은 동시에 요청한다). 넘기면 그 영상은 썸네일로 남는다.
+  static const Duration _videoPlayTimeout = Duration(seconds: 4);
+
   @override
   Future<Either<Failure, Details>> detail(ListItem item, BaseParser parser) =>
       withSyncCookie(parser.baseUrl, () async {
@@ -60,8 +67,67 @@ class const NaverCafeApi(super.dio, super.userAgent) extends BaseApi {
           requestOptions: RequestOptions(),
         );
 
-        return parser.detail(result);
+        final Either<Failure, Details> details = await parser.detail(result);
+        return switch (details) {
+          Right(:final Details value) => Right(
+            await _withVideoSources(value, headers).catchError((
+              Object e,
+              StackTrace st,
+            ) {
+              // 영상 처리가 깨져도 본문은 썸네일 그대로 보여 준다.
+              MoclLogger.e('네이버 카페 영상 처리 실패', error: e, stackTrace: st);
+              return value;
+            }),
+          ),
+          _ => details,
+        };
       });
+
+  /// 본문 동영상 자리표시자의 재생 주소(mp4)를 받아 `<video>` 로 바꾼다.
+  /// 재생 정보는 영상마다 따로 받아야 해서 파서(워커 isolate)가 아니라 여기서
+  /// 요청한다. 본문 HTML 파싱은 메인 isolate 를 막지 않도록 워커에서 하고,
+  /// 실패하거나 [_videoPlayTimeout] 안에 오지 않은 영상은 썸네일로 남긴다.
+  Future<Details> _withVideoSources(
+    Details details,
+    Map<String, String> headers,
+  ) async {
+    final String bodyHtml = details.bodyHtml;
+    final refs = await Isolate.run(() => NaverCafeParser.videoRefsOf(bodyHtml));
+    if (refs.isEmpty) return details;
+
+    final List<MapEntry<String, String>?> resolved = await Future.wait(
+      refs.map((ref) async {
+        try {
+          final Response<dynamic> response = await get(
+            NaverCafeParser.urlByVideoPlay(ref.vid, ref.inkey),
+            headers: headers,
+            responseType: ResponseType.json,
+          ).timeout(_videoPlayTimeout);
+          final String? source = NaverCafeParser.videoSourceOf(response.data);
+          return source == null ? null : MapEntry(ref.vid, source);
+        } catch (e) {
+          MoclLogger.w(
+            () => '[detail] video play info failed vid=${ref.vid}: $e',
+          );
+          return null;
+        }
+      }),
+    );
+
+    final Map<String, String> sources = Map.fromEntries(
+      resolved.whereType<MapEntry<String, String>>(),
+    );
+    MoclLogger.d(
+      () => '[detail] videos resolved ${sources.length}/${refs.length}',
+    );
+    return sources.isEmpty
+        ? details
+        : details.copyWith(
+            bodyHtml: await Isolate.run(
+              () => NaverCafeParser.applyVideoSources(bodyHtml, sources),
+            ),
+          );
+  }
 
   @override
   Future<Either<Failure, List<ListItem>>> list(
