@@ -42,7 +42,7 @@ class const InstizApi(super.dio, super.userAgent) extends BaseApi {
               ),
             );
     } on DioException catch (e) {
-      return Left(NetworkFailure(message: e.message ?? 'Unknown Error'));
+      return Left(failureFromDio(e));
     } catch (e) {
       return Left(GetDetailFailure(message: e.toString()));
     }
@@ -84,7 +84,7 @@ class const InstizApi(super.dio, super.userAgent) extends BaseApi {
               ),
             );
     } on DioException catch (e) {
-      return Left(NetworkFailure(message: e.message ?? 'Unknown Error'));
+      return Left(failureFromDio(e));
     } catch (e) {
       return Left(GetListFailure(message: e.toString()));
     }
@@ -132,7 +132,7 @@ class const InstizApi(super.dio, super.userAgent) extends BaseApi {
               ),
             );
     } on DioException catch (e) {
-      return Left(NetworkFailure(message: e.message ?? 'Unknown Error'));
+      return Left(failureFromDio(e));
     } catch (e) {
       return Left(GetListFailure(message: e.toString()));
     }
