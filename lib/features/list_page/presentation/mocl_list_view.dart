@@ -2,6 +2,8 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
+import 'package:mocl_flutter/features/ads/presentation/list_ad_slots.dart';
+import 'package:mocl_flutter/features/ads/presentation/widgets/list_ad_separator.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/core/presentation/widgets/failure_view.dart';
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
@@ -34,8 +36,9 @@ class const MoclListView({super.key})
     final controller = listPageController(ref);
     final singlePageBoard = isSinglePageBoardState(ref);
     final styles = appTextStyles(ref);
-    final focusColor = Theme.of(context).focusColor;
+    final focusColor = Theme.of(context).colorScheme.primary;
     final bottom = MediaQuery.of(context).padding.bottom;
+    final adSlots = useListAdSlots();
 
     // 에러 인디케이터 빌더 (중복 제거)
     Widget buildErrorIndicator(Object? error) => FailureView(
@@ -50,40 +53,45 @@ class const MoclListView({super.key})
       child: RefreshIndicator.adaptive(
         color: focusColor,
         onRefresh: () async => handleRefresh(ref),
-        child: PagingListener<int, ListItem>(
-          controller: controller,
-          builder: (context, state, fetchNextPage) => CustomScrollView(
-            shrinkWrap: false,
-            slivers: <Widget>[
-              const ListAppBar(),
-              PagedSliverList<int, ListItem>.separated(
-                state: state,
-                fetchNextPage: fetchNextPage,
-                builderDelegate: PagedChildBuilderDelegate<ListItem>(
-                  itemBuilder: (context, item, index) =>
-                      ListItemScope(item: item, child: const MoclListItem()),
-                  firstPageProgressIndicatorBuilder: (_) =>
-                      const _FirstPageLoading(),
-                  newPageProgressIndicatorBuilder: (_) =>
-                      const _NewPageLoading(),
-                  firstPageErrorIndicatorBuilder: (_) =>
-                      buildErrorIndicator(state.error),
-                  newPageErrorIndicatorBuilder: (_) =>
-                      buildErrorIndicator(state.error),
-                  noItemsFoundIndicatorBuilder: (_) => const _NoItemsFound(),
-                  // 뮤트/중복 필터로 페이징이 잘못 종료된 경우를 위한 복구 수단.
-                  // 단일 페이지 게시판은 실제로 끝이므로 버튼을 노출하지 않는다.
-                  noMoreItemsIndicatorBuilder: (context) => singlePageBoard
-                      ? SizedBox(height: bottom)
-                      : _NoMoreItems(
-                          bottomPadding: bottom,
-                          onLoadMore: () => handleForceLoadMore(ref),
-                          textStyle: styles.smallTextStyle,
-                        ),
+        child: ListAdScope(
+          slots: adSlots,
+          child: PagingListener<int, ListItem>(
+            controller: controller,
+            builder: (context, state, fetchNextPage) => CustomScrollView(
+              shrinkWrap: false,
+              slivers: <Widget>[
+                const ListAppBar(),
+                PagedSliverList<int, ListItem>.separated(
+                  state: state,
+                  fetchNextPage: fetchNextPage,
+                  builderDelegate: PagedChildBuilderDelegate<ListItem>(
+                    itemBuilder: (context, item, index) =>
+                        ListItemScope(item: item, child: const MoclListItem()),
+                    firstPageProgressIndicatorBuilder: (_) =>
+                        const _FirstPageLoading(),
+                    newPageProgressIndicatorBuilder: (_) =>
+                        const _NewPageLoading(),
+                    firstPageErrorIndicatorBuilder: (_) =>
+                        buildErrorIndicator(state.error),
+                    newPageErrorIndicatorBuilder: (_) =>
+                        buildErrorIndicator(state.error),
+                    noItemsFoundIndicatorBuilder: (_) => const _NoItemsFound(),
+                    // 뮤트/중복 필터로 페이징이 잘못 종료된 경우를 위한 복구 수단.
+                    // 단일 페이지 게시판은 실제로 끝이므로 버튼을 노출하지 않는다.
+                    noMoreItemsIndicatorBuilder: (context) => singlePageBoard
+                        ? SizedBox(height: bottom)
+                        : _NoMoreItems(
+                            bottomPadding: bottom,
+                            onLoadMore: () => handleForceLoadMore(ref),
+                            textStyle: styles.smallTextStyle,
+                          ),
+                  ),
+                  // 글 사이사이에 목록 행 모양의 네이티브 광고를 넣는다.
+                  separatorBuilder: (_, index) =>
+                      ListAdSeparator(index: index, styles: styles),
                 ),
-                separatorBuilder: (_, _) => const PlainDividerWidget(),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),

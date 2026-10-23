@@ -62,6 +62,34 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
 - 사이트 파서는 워커 isolate(`ParserIsolateClient`)에서 실행 — 메인 isolate 차단 금지
 - 네트워크: dio, connect/receive/send timeout 모두 15초 통일
 
+## 부팅 (`main.dart`)
+
+- 초기화는 `_prepareApp()` 안에서만 한다. `BootGuard` 가 감싸서, 던지면 실패 화면 +
+  재시도, 10초 안에 안 끝나면 지연 화면을 띄운다. `runApp` 앞에서 그냥 `await` 하는
+  코드를 `main()` 에 추가하지 말 것 — 실패 시 스플래시에서 영원히 멈춘다.
+- `PlatformDispatcher.onError` 에서 `true` 를 고정으로 돌려주지 말 것(디버그 콘솔까지
+  사라져 원인이 숨는다). 무거운 작업(DB 정리 등)은 첫 프레임 뒤로 미룬다.
+
+## 로컬 DB (sembast)
+
+- 저장 구조를 바꾸면 `database_migrations.dart` 의 `kAppDatabaseVersion` 을 올리고
+  `onAppDatabaseVersionChanged` 에 단계를 추가한다. Drive 복원도 reopen 시 이 경로를
+  타므로 옛 백업도 자동으로 옮겨진다. 마이그레이션은 데이터 문제로 던지지 않는다
+  (던지면 DB 열기가 실패해 앱이 안 뜬다).
+- 읽음 기록 `{site}_read` 는 `글 id → 읽은 시각(ms)`. 180일 지난 기록은 하루 한 번 정리.
+
+## release 빌드 / 의존성 업그레이드
+
+- `pubspec.lock` 이 바뀌면 커밋 전에 기기를 연결하고 실행한다(사전 커밋 훅이 확인):
+  ```bash
+  tool/release_smoke_test.sh            # 빌드 → R8 keep 검사 → 설치 → 기동 확인
+  ```
+  debug 는 R8 축소를 하지 않아 release 전용 문제가 보이지 않고, 빌드 성공도 런타임을
+  보장하지 않는다.
+- `package:jni` 를 쓰는 플러그인은 Dart 가 Java/Kotlin 클래스를 이름 문자열로 찾으므로
+  R8 이 지우거나 줄이면 런타임에 멈춘다. `fvm dart run tool/check_jni_keep.dart` 가
+  실패하면 `android/app/proguard-rules.pro` 의 "package:jni" 항목에 keep 을 추가한다.
+
 ## 앱 아이콘 / 스플래시
 
 - 밀도별 리소스를 직접 수정하지 말 것. `branding/` 의 소스 PNG 교체 후 재생성:
@@ -69,3 +97,17 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   fvm dart run flutter_launcher_icons -f flutter_launcher_icons.yaml
   fvm dart run flutter_native_splash:create --path=flutter_native_splash.yaml
   ```
+
+## 광고 (AdMob, 현재 Android 만)
+
+- 목록 사이 네이티브 광고: `features/ads/`. 자리는 `ListAdPlacement`, 모양은
+  `ListAdStyle` ↔ `android/.../ListNativeAdFactory.kt` 가 같은 여백 상수로 높이를 맞춘다
+  (한쪽 여백을 바꾸면 다른 쪽도 함께 바꿀 것).
+- ID: 앱 ID 는 `android/app/build.gradle.kts`(`-PmoclAdmobAppId` 로 교체 가능), 광고 단위는
+  `AdUnitIds`(release 만 실제 단위, debug · profile 은 테스트 단위).
+  개발 중 실제 ID 로 노출/클릭하지 말 것(계정 정지).
+- 광고 요청은 동의(UMP) 확인 → `canRequestAds()` → SDK 초기화가 끝난 뒤(`mobileAdsReady`)
+  에만 한다. 이 순서를 건너뛰고 `NativeAd` 를 만들지 말 것. 동의 화면 문구는 AdMob 콘솔
+  "개인 정보 보호 및 메시지" 의 GDPR 메시지로 관리한다.
+- play-services-ads 가 끌어오는 room-runtime 2.2.5 는 keep 규칙이 없어
+  `proguard-rules.pro` 의 RoomDatabase keep 이 필요하다(빠지면 release 가 시작 즉시 죽는다).
