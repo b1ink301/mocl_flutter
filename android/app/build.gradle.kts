@@ -51,6 +51,16 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+
+        // AdMob 앱 ID(비밀값 아님). debug 도 실제 앱 ID 를 쓰고, 테스트 광고 여부는
+        // Dart 의 AdUnitIds 가 광고 단위로 가른다. `-PmoclAdmobAppId=…` 로 바꿔 끼울 수 있다.
+        val admobAppId = (project.findProperty("moclAdmobAppId") as String?)
+            ?: "ca-app-pub-0000000000000000~0000000000"
+        // 앱 ID 는 `~`, 광고 단위 ID 는 `/`. 헷갈려 넣으면 SDK 가 시작 시 죽으므로 빌드에서 막는다.
+        require(Regex("^ca-app-pub-\\d+~\\d+$").matches(admobAppId)) {
+            "moclAdmobAppId 는 AdMob 앱 ID(ca-app-pub-…~…) 여야 합니다: $admobAppId"
+        }
+        manifestPlaceholders["admobAppId"] = admobAppId
     }
 
     signingConfigs {

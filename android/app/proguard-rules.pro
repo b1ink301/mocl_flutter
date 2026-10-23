@@ -18,10 +18,55 @@
 
 # FlutterJNI 는 @androidx.annotation.Keep 이 붙어 있어
 # androidx-annotations.pro 의 `-keep @androidx.annotation.Keep class * {*;}` 로 이미 보존됨.
-# Pigeon(dev.flutter.pigeon.**) 은 이 앱의 의존성에서 생성되지 않음 (매칭 0건).
+# Pigeon(dev.flutter.pigeon.**) 패키지 클래스는 이 앱의 의존성에서 생성되지 않음 (매칭 0건).
 # 둘 다 R8 구성 분석기 결과에 따라 제거됨.
+# 단, JNI 방식 Pigeon(shared_preferences_android 2.5.x 등)은 Dart 가 Java 타입을
+# 이름 문자열로 찾는다 — 아래 "package:jni" 항목 참고. 플러그인을 들일 때
+#   grep -rhoE "JClass\.forName\('[^']+'\)" ~/.pub-cache/hosted/pub.dev/<플러그인>/lib/
+# 로 새로 keep 해야 할 타입이 있는지 확인한다.
 
 -dontwarn io.flutter.embedding.**
+
+# ------------------------------------------------------------
+# package:jni — Kotlin suspend 함수의 JNI 호출 경계
+# (shared_preferences_android 2.5.x 등 Pigeon 의 직접 JNI 바인딩)
+#
+# Dart 쪽은 `JClass.forName('kotlin/coroutines/Continuation')` 처럼
+# **클래스 이름 문자열로** 조회한다. R8 은 이 참조를 볼 수 없어
+# Continuation 을 `qu` 로 줄이거나 CoroutineSingletons 를 통째로
+# 제거하고, 런타임에 NoSuchMethodError / ClassNotFoundException 이
+# 난다. 그 예외는 `SharedPreferences.getInstance()` 를 영원히 끝나지
+# 않게 만들어 앱이 스플래시에서 멈춘다.
+#
+# 목록은 `fvm dart run tool/check_jni_keep.dart` 가 release 빌드의 mapping.txt
+# 와 대조해 찾는다(tool/release_smoke_test.sh 에서 자동 실행). 플러그인을
+# 올리거나 들인 뒤 이 검사가 실패하면 여기에 추가한다.
+# ------------------------------------------------------------
+# jni 코루틴 지원 — 이게 빠지면 SharedPreferences.getInstance() 에서 멈춘다
+-keep class kotlin.Result { *; }
+-keep class kotlin.Result$Failure { *; }
+-keep class kotlin.Unit { *; }
+-keep class kotlin.coroutines.Continuation { *; }
+-keep class kotlin.coroutines.intrinsics.CoroutineSingletons { *; }
+-keep class kotlin.coroutines.intrinsics.IntrinsicsKt { *; }
+
+# 바인딩이 이름으로 참조하지만 지금 쓰는 경로에선 불리지 않는 타입.
+# (SharedPreferencesAsync 등 다른 API 를 쓰기 시작하면 바로 필요해진다)
+-keep class kotlin.jvm.internal.DefaultConstructorMarker { *; }
+-keep class kotlin.enums.EnumEntries { *; }
+-keep class io.flutter.plugins.sharedpreferences.** { *; }
+-keep class io.flutter.embedding.engine.plugins.FlutterPlugin$FlutterPluginBinding { *; }
+-keep class io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding { *; }
+
+# ------------------------------------------------------------
+# google_mobile_ads(play-services-ads) → work-runtime 2.7.0 → room-runtime 2.2.5
+#
+# 이 Room 은 consumer keep 규칙이 없어 R8 이 `WorkDatabase_Impl` 의 기본
+# 생성자를 지운다. Room 은 그 클래스를 이름으로 찾아 리플렉션으로 만들기
+# 때문에, 앱 시작 시 androidx.startup 의 WorkManager 초기화에서
+# "Failed to create an instance of androidx.work.impl.WorkDatabase" 로 죽는다.
+# ------------------------------------------------------------
+-keep class * extends androidx.room.RoomDatabase { void <init>(); }
 
 # Deferred components 용 Play Core — 이 앱은 사용하지 않음
 -dontwarn com.google.android.play.core.**

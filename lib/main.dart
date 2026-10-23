@@ -9,11 +9,14 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:mocl_flutter/app_widget.dart';
+import 'package:mocl_flutter/core/presentation/widgets/boot_failure_app.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/core/util/boot_guard.dart';
 import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:mocl_flutter/firebase_options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
+import 'features/ads/data/mobile_ads_bootstrap.dart';
 import 'features/database/application/datasource_provider.dart';
 import 'features/database/data/datasources/local/local_database.dart';
 import 'features/settings_page/application/datasource_provider.dart';
@@ -21,13 +24,21 @@ import 'flavors.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-  await SystemChrome.setPreferredOrientations([
-    DeviceOrientation.portraitUp,
-    DeviceOrientation.portraitDown,
-  ]);
-  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  _installErrorReporting();
+  await BootGuard(
+    prepare: _prepareApp,
+    failureBuilder: ({Object? error, VoidCallback? onRetry}) =>
+        BootFailureApp(error: error, onRetry: onRetry),
+  ).start();
+}
+
+/// 오래된 읽음 기록의 보존 기간. 정리는 하루 한 번만 돈다.
+const Duration _readHistoryTtl = Duration(days: 180);
+
+/// `runApp` 에 넘길 앱을 만든다. 여기서 던지거나 멈추면 [BootGuard] 가
+/// 스플래시 대신 실패 화면을 띄운다. 재시도 때 다시 불리므로 여러 번
+/// 불려도 안전해야 한다.
+Future<Widget> _prepareApp() async {
+  await _initPlatform();
 
   F.appFlavor = Flavor.values.firstWhere(
     (element) => element.name == appFlavor,
@@ -41,20 +52,63 @@ Future<void> main() async {
 
   final sharedPrefs = await SharedPreferences.getInstance();
   final database = await openAppDatabase();
-
-  runApp(
-    ProviderScope(
-      retry: retry,
-      observers: [if (kDebugMode) Logger()],
-      overrides: [
-        sharedPreferencesProvider.overrideWithValue(sharedPrefs),
-        localDatabaseProvider.overrideWithValue(
-          LocalDatabase(database: database, opener: openAppDatabase),
-        ),
-      ],
-      child: const AppWidget(),
-    ),
+  final localDatabase = LocalDatabase(
+    database: database,
+    opener: openAppDatabase,
   );
+  _schedulePruneReads(localDatabase);
+  scheduleMobileAdsInit();
+
+  return ProviderScope(
+    retry: retry,
+    observers: [if (kDebugMode) Logger()],
+    overrides: [
+      sharedPreferencesProvider.overrideWithValue(sharedPrefs),
+      localDatabaseProvider.overrideWithValue(localDatabase),
+    ],
+    child: const AppWidget(),
+  );
+}
+
+/// 화면 모드 · Crashlytics. 실패해도 앱은 떠야 하므로 여기서는 던지지 않는다.
+Future<void> _initPlatform() async {
+  try {
+    await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    await SystemChrome.setPreferredOrientations([
+      DeviceOrientation.portraitUp,
+      DeviceOrientation.portraitDown,
+    ]);
+  } catch (e, st) {
+    MoclLogger.e('화면 모드 설정 실패', error: e, stackTrace: st);
+  }
+
+  // 재시도로 다시 불려도 Firebase 는 한 번만 초기화한다.
+  if (Firebase.apps.isNotEmpty) return;
+  try {
+    await Firebase.initializeApp(
+      options: DefaultFirebaseOptions.currentPlatform,
+    );
+    _installErrorReporting();
+  } catch (e, st) {
+    // 리포터 없이도 앱은 쓸 수 있다. (이때 MoclLogger.e 는 디버그 콘솔에만 남는다)
+    MoclLogger.e('Firebase 초기화 실패', error: e, stackTrace: st);
+  }
+}
+
+/// 읽음 기록 정리. 스토어 전체를 훑으므로 첫 화면이 뜨고 한숨 돌린 뒤에 돌린다.
+void _schedulePruneReads(LocalDatabase localDatabase) {
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    Timer(const Duration(seconds: 5), () async {
+      try {
+        final int removed = await localDatabase.pruneReadsIfDue(
+          ttl: _readHistoryTtl,
+        );
+        MoclLogger.d(() => '[pruneReads] removed=$removed');
+      } catch (e, st) {
+        MoclLogger.e('읽음 기록 정리 실패', error: e, stackTrace: st);
+      }
+    });
+  });
 }
 
 /// 잡히지 않은 예외와 [MoclLogger.e] 로 남긴 에러를 Crashlytics 로 보낸다.
@@ -70,10 +124,16 @@ void _installErrorReporting() {
         unawaited(crashlytics.recordError(error, stackTrace, reason: reason));
       };
 
-  FlutterError.onError = crashlytics.recordFlutterFatalError;
+  FlutterError.onError = (FlutterErrorDetails details) {
+    // 디버그에서는 프레임워크 기본 출력을 살린다. 릴리즈 콘솔에는 남기지 않는다.
+    if (kDebugMode) FlutterError.presentError(details);
+    crashlytics.recordFlutterFatalError(details);
+  };
   PlatformDispatcher.instance.onError = (Object error, StackTrace stackTrace) {
     unawaited(crashlytics.recordError(error, stackTrace, fatal: true));
-    return true;
+    // true 는 "처리됨" 이라 런타임이 아무것도 출력하지 않는다. 디버그에서는
+    // false 를 돌려 콘솔에 찍히게 한다. (true 고정이 원인을 숨겼던 적이 있다)
+    return !kDebugMode;
   };
 }
 
