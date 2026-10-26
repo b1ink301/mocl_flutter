@@ -100,9 +100,12 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
 
 ## 광고 (AdMob, 현재 Android 만)
 
-- 목록 사이 네이티브 광고: `features/ads/`. 자리는 `ListAdPlacement`, 모양은
-  `ListAdStyle` ↔ `android/.../ListNativeAdFactory.kt` 가 같은 여백 상수로 높이를 맞춘다
-  (한쪽 여백을 바꾸면 다른 쪽도 함께 바꿀 것).
+- 자리 세 곳(`features/ads/`), 광고 단위도 자리마다 따로(`AdUnitIds`):
+  - 게시판 목록 글 사이 — `ListAdPlacement` · `ListAdSlots`, 모양 `ListAdStyle` ↔ `ListNativeAdFactory.kt`(`listTile`)
+  - 메인 게시판 목록 맨 아래 하나 — `MainAdTile`(편집 · 검색 중엔 없음), 모양은 `listTile` 재사용
+  - 상세 본문과 댓글 사이 하나 — `DetailAdCard`, 모양 `DetailAdStyle` ↔ `DetailNativeAdFactory.kt`(`detailCard`)
+- Dart 스타일과 Kotlin 팩토리는 같은 여백 상수로 높이를 맞춘다(한쪽을 바꾸면 다른 쪽도 함께).
+  한 자리에 하나만 두는 광고는 `SingleNativeAd` 를 쓴다.
 - ID: 앱 ID 는 `android/app/build.gradle.kts`(`-PmoclAdmobAppId` 로 교체 가능), 광고 단위는
   `AdUnitIds`(release 만 실제 단위, debug · profile 은 테스트 단위).
   개발 중 실제 ID 로 노출/클릭하지 말 것(계정 정지).

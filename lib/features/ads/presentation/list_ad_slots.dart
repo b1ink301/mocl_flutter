@@ -59,12 +59,10 @@ class ListAdSlots({required final String adUnitId}) {
     final ListAdStyle style = _style!;
     entry._ad = NativeAd(
       adUnitId: adUnitId,
-      factoryId: 'listTile',
+      factoryId: style.factoryId,
       request: const AdRequest(),
       customOptions: style.toOptions(),
-      nativeAdOptions: NativeAdOptions(
-        adChoicesPlacement: AdChoicesPlacement.topRightCorner,
-      ),
+      nativeAdOptions: style.nativeAdOptions,
       listener: NativeAdListener(
         onAdLoaded: (Ad ad) {
           if (entry._disposed) return;

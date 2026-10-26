@@ -20,6 +20,7 @@ import 'package:mocl_flutter/features/network/data/datasources/base_api.dart'
     show userAgentMobile;
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/core/util/utilities.dart';
+import 'package:mocl_flutter/features/ads/presentation/widgets/detail_ad_card.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/state/detail_event_mixin.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/state/detail_state_mixin.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/widgets/detail_header_bar.dart';
@@ -211,6 +212,8 @@ class const _DetailView({
                 onTapUrl: (url) => url.openUrl(context),
               ),
               const _SpaceWidget(),
+              // 본문을 다 읽고 댓글로 넘어가는 자리에 광고 하나.
+              SliverToBoxAdapter(child: DetailAdCard(styles: styles)),
               if (detail.comments.isNotEmpty) ...[
                 const PlainDividerWidget(indent: 0, endIndent: 0),
                 _CommentHeader(
