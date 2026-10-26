@@ -73,8 +73,13 @@ class const _MainBody() extends ConsumerWidget with MainState, FavoriteState {
       slivers: [
         if (editMode)
           _ReorderableBoards(favorites: favorites)
-        else
+        else ...[
           ..._buildSubSections(ref, favorites),
+          // 광고는 게시판들 맨 아래에 하나만. 편집(드래그) · 검색 중에는 두지 않는다.
+          SliverToBoxAdapter(
+            child: MainAdTile(styles: appTextStylesState(ref)),
+          ),
+        ],
         // bottom 에는 떠 있는 탭바 높이가 들어온다(Scaffold extendBody).
         SliverToBoxAdapter(child: SizedBox(height: bottom + 8)),
       ],

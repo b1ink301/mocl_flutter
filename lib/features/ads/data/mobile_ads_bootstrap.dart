@@ -15,7 +15,7 @@ bool _started = false;
 /// 광고 동의 확인 → SDK 초기화. 첫 화면을 늦추지 않도록 첫 프레임 뒤에 돌린다.
 /// 부팅 재시도로 여러 번 불려도 한 번만 돈다.
 void scheduleMobileAdsInit() {
-  if (AdUnitIds.listNative == null || _started) return;
+  if (!AdUnitIds.enabled || _started) return;
   _started = true;
   WidgetsBinding.instance.addPostFrameCallback((_) {
     unawaited(_init());
