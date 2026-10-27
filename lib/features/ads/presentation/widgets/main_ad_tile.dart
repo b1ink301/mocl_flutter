@@ -17,8 +17,6 @@ class const MainAdTile({required final AppTextStyles styles, super.key})
     frame: (ad) => Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        // 마지막 게시판 행이 이미 아래 구분선을 그리므로 위에는 여백만 둔다.
-        const SizedBox(height: 12),
         ad,
         const PlainDividerWidget(),
       ],

@@ -7,18 +7,21 @@ import 'package:mocl_flutter/core/presentation/widgets/appbar_actions_icon_theme
 import 'package:mocl_flutter/core/presentation/widgets/appbar_back_button.dart';
 import 'package:mocl_flutter/core/presentation/widgets/large_title_flexible_space.dart';
 import 'package:mocl_flutter/core/presentation/widgets/plain_icon_button.dart';
+import 'package:mocl_flutter/core/presentation/widgets/scroll_to_top_title.dart';
 
 import '../../../../core/presentation/widgets/plain_icon.dart';
 import '../../../../core/presentation/widgets/plain_text.dart';
 import '../state/detail_event_mixin.dart';
 import '../state/detail_state_mixin.dart';
+import 'bookmark_icon_button.dart';
 import 'detail_scope.dart';
 
 /// 상세 화면 앱바.
 ///
 /// 메인/리스트와 같은 규칙: 툴바에는 작은 크럼브만 두고, 확장 영역에는
 /// 오로지 큰 제목만 둔다. 위로 스크롤하면 큰 제목이 서서히 사라진다.
-/// 작성자 헤더는 앱바가 아니라 본문 맨 위에 있다(DetailView).
+/// 작성자 헤더는 앱바가 아니라 본문 맨 위에 있다(DetailView). 본문 중간에도
+/// 필요한 북마크는 액션에 두고, 헤더는 툴바를 탭해 맨 위로 올려 본다.
 class const DetailAppBar({super.key})
     extends ConsumerWidget
     with DetailState, DetailEvent {
@@ -40,11 +43,13 @@ class const DetailAppBar({super.key})
       expandedHeight: height,
       automaticallyImplyLeading: false,
       // 툴바에는 상위 경로만(= 사이트 › 게시판). 큰 제목은 글 제목을 쓴다.
-      title: PlainText(
-        smallTitleState(ref),
-        style: crumbStyle,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
+      title: ScrollToTopTitle(
+        child: PlainText(
+          smallTitleState(ref),
+          style: crumbStyle,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
       titleSpacing: kAppbarCrumbTitleSpacing,
       flexibleSpace: LargeTitleFlexibleSpace(
@@ -58,6 +63,7 @@ class const DetailAppBar({super.key})
       actions: [
         AppbarActionsIconTheme(
           children: [
+            const BookmarkIconButton(),
             _DetailPopupMenuButton(
               focusColor: primaryColor,
               onRefresh: () => handleRefresh(ref),

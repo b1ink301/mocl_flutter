@@ -6,49 +6,23 @@ import 'package:mocl_flutter/core/presentation/widgets/plain_divider_widget.dart
 import 'package:mocl_flutter/core/presentation/widgets/plain_icon.dart';
 import 'package:mocl_flutter/core/presentation/widgets/plain_text.dart';
 
-import 'bookmark_icon_button.dart';
-
 /// 상세 화면 작성자 헤더.
 ///
 /// 앱바가 아니라 본문 맨 위에 놓여 본문과 같이 스크롤된다. 앱바 확장 영역은
-/// 제목만 쓴다([DetailAppBar]). 배경과 스크롤 그림자는 앱바가 담당하므로
+/// 메인 · 목록과 같이 제목만 쓴다([DetailAppBar]). 스크롤 중에도 필요한
+/// 북마크는 앱바 액션에 있다. 배경과 스크롤 그림자는 앱바가 담당하므로
 /// (`appBarTheme.scrolledUnderElevation`) 자체 Material/elevation 을 두지 않는다.
-///
-/// 높이는 고정이 아니라 [style] 의 폰트 크기에서 계산한다. 사용자가 글자 크기를
-/// 키우면 [preferredSize] 도 함께 커져 헤더 콘텐츠가 잘리지 않는다.
 class const DetailHeaderBar({
   super.key,
   required final Details detail,
   required final TextStyle style,
-}) extends StatelessWidget implements PreferredSizeWidget {
-  /// 북마크 버튼(아이콘 20 + 상하 패딩 4)의 높이. 행 안에서 가장 큰 고정 요소라,
-  /// 작은 폰트에서는 이 값이 행 높이의 하한이 된다.
-  static const double _kIconRowFloor = 28.0;
+}) extends StatelessWidget {
+  /// 행 최소 높이. 북마크 버튼(아이콘 20 + 상하 패딩 4)이 있던 시절의 높이를
+  /// 유지해, 닉네임 이미지가 없는 글에서도 헤더 높이가 들쭉날쭉하지 않게 한다.
+  static const double _kRowMinHeight = 28.0;
 
-  /// Row 아래 여백(구분선과의 간격).
-  static const double _kBottomPadding = 4.0;
-
-  /// 하단 구분선 두께.
-  static const double _kDividerHeight = 1.0;
-
-  @override
-  Size get preferredSize {
-    // 한 줄 텍스트의 실제 렌더 높이를 폰트 메트릭으로 측정한다. 폰트 크기가
-    // 바뀌면 이 값도 바뀌므로 큰 글자에서도 헤더가 잘리지 않는다.
-    // (PlainText 와 동일하게 OS 스케일은 무시 — 앱 자체 delta 만 style 에 반영됨.)
-    final double textHeight = (TextPainter(
-      text: TextSpan(text: '가', style: style),
-      textDirection: TextDirection.ltr,
-      textScaler: TextScaler.noScaling,
-      maxLines: 1,
-    )..layout()).height;
-
-    // 행 높이 = 텍스트와 고정 아이콘 중 큰 값.
-    final double rowHeight = textHeight > _kIconRowFloor
-        ? textHeight
-        : _kIconRowFloor;
-    return Size.fromHeight(rowHeight + _kBottomPadding + _kDividerHeight);
-  }
+  /// 행 위아래 여백(구분선과의 간격).
+  static const double _kVerticalPadding = 4.0;
 
   List<Widget>? _buildLikeView() =>
       detail.likeCount.isNotEmpty && detail.likeCount != '0'
@@ -57,7 +31,6 @@ class const DetailHeaderBar({
           PlainIcon(Icons.favorite_outline, color: style.color!, size: 17),
           const SizedBox(width: 4),
           PlainText(detail.likeCount, style: style),
-          const SizedBox(width: 10),
         ]
       : null;
 
@@ -72,27 +45,29 @@ class const DetailHeaderBar({
         Padding(
           padding: const EdgeInsets.only(
             left: 16,
-            right: 8,
-            top: _kBottomPadding,
-            bottom: _kBottomPadding,
+            right: 16,
+            top: _kVerticalPadding,
+            bottom: _kVerticalPadding,
           ),
-          child: Row(
-            children: [
-              if (nickImage.isNotEmpty) NickImageWidget(url: nickImage),
-              Expanded(
-                child: AuthorInfoText(
-                  info: detail.info,
-                  nickName: detail.userInfo.nickName,
-                  isAuthor: true,
-                  style: style,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: _kRowMinHeight),
+            child: Row(
+              children: [
+                if (nickImage.isNotEmpty) NickImageWidget(url: nickImage),
+                Expanded(
+                  child: AuthorInfoText(
+                    info: detail.info,
+                    nickName: detail.userInfo.nickName,
+                    isAuthor: true,
+                    style: style,
+                  ),
                 ),
-              ),
-              ...?likeView,
-              BookmarkIconButton(color: style.color!),
-            ],
+                ...?likeView,
+              ],
+            ),
           ),
         ),
-        const PlainDividerWidget(indent: 16, endIndent: 8),
+        const PlainDividerWidget(indent: 16, endIndent: 16),
       ],
     );
   }

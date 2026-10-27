@@ -10,6 +10,7 @@ import '../../../../core/presentation/widgets/plain_icon.dart';
 import '../../../../core/presentation/widgets/plain_icon_button.dart';
 import '../../../../core/presentation/widgets/plain_popup_menu_button.dart';
 import '../../../../core/presentation/widgets/plain_text.dart';
+import '../../../../core/presentation/widgets/scroll_to_top_title.dart';
 import '../state/list_state_mixin.dart';
 import 'list_scope.dart';
 
@@ -24,11 +25,13 @@ class const ListAppBar({super.key}) extends ConsumerWidget with ListState {
       expandedHeight: kLargeTitleExpandedHeightSingleLine,
       automaticallyImplyLeading: true,
       // 툴바에는 상위 경로만(= 사이트). 큰 제목은 게시판 이름을 쓴다.
-      title: PlainText(
-        smallTitleState(ref),
-        style: crumbStyle,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
+      title: ScrollToTopTitle(
+        child: PlainText(
+          smallTitleState(ref),
+          style: crumbStyle,
+          maxLines: 1,
+          overflow: TextOverflow.ellipsis,
+        ),
       ),
       titleSpacing: kAppbarCrumbTitleSpacing,
       flexibleSpace: LargeTitleFlexibleSpace(

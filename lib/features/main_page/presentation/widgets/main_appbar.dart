@@ -10,6 +10,7 @@ import '../../../../core/presentation/widgets/menu_lines_icon.dart';
 import '../../../../core/presentation/widgets/plain_icon.dart';
 import '../../../../core/presentation/widgets/plain_icon_button.dart';
 import '../../../../core/presentation/widgets/plain_text.dart';
+import '../../../../core/presentation/widgets/scroll_to_top_title.dart';
 import '../../../../core/util/platform_util.dart';
 import '../state/main_event_mixin.dart';
 import '../state/main_state_mixin.dart';
@@ -56,6 +57,7 @@ class const MainAppBar({super.key})
 ///
 /// 검색 중에는 입력창이 이 자리를 통째로 쓰고(닫기 버튼만 오른쪽에 남는다),
 /// 편집 중에는 라벨만 띄운다. 평소에는 크럼브가 없는 화면이라 비워 둔다.
+/// 검색 중이 아니면 비어 있어도 툴바를 탭해 맨 위로 올릴 수 있다([ScrollToTopTitle]).
 ///
 /// 검색 · 편집 상태를 앱바 본체가 아니라 여기서 구독한다. 본체에서 보면
 /// 검색창을 여닫을 때마다 큰 제목까지 통째로 다시 만들게 된다(_MainActions
@@ -66,8 +68,11 @@ class const _MainAppBarTitle({required final TextStyle style})
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (searchOpenState(ref)) return const MainSearchField();
-    if (editModeState(ref)) return PlainText('편집', style: style);
-    return const SizedBox.shrink();
+    return ScrollToTopTitle(
+      child: editModeState(ref)
+          ? PlainText('편집', style: style)
+          : const SizedBox.shrink(),
+    );
   }
 }
 
