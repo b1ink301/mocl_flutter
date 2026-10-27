@@ -60,7 +60,7 @@ class const _MainBody() extends ConsumerWidget with MainState, FavoriteState {
               editMode: false,
             ),
           ),
-          SliverToBoxAdapter(child: SizedBox(height: bottom + 8)),
+          SliverToBoxAdapter(child: SizedBox(height: bottom)),
         ],
       );
     }
@@ -81,7 +81,7 @@ class const _MainBody() extends ConsumerWidget with MainState, FavoriteState {
           ),
         ],
         // bottom 에는 떠 있는 탭바 높이가 들어온다(Scaffold extendBody).
-        SliverToBoxAdapter(child: SizedBox(height: bottom + 8)),
+        SliverToBoxAdapter(child: SizedBox(height: bottom)),
       ],
     );
   }
