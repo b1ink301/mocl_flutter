@@ -26,7 +26,6 @@ import 'package:mocl_flutter/features/detail_page/presentation/state/detail_stat
 import 'package:mocl_flutter/features/detail_page/presentation/widgets/detail_header_bar.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/widgets/detail_scope.dart';
 import 'package:sliver_tools/sliver_tools.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/presentation/widgets/author_info_text.dart';
 import '../../../core/presentation/widgets/plain_divider_widget.dart';
@@ -136,8 +135,11 @@ class const DetailView({super.key})
   Widget build(BuildContext context, WidgetRef ref) {
     final smallTextStyle = DetailStyleScope.of(context).$1.smallTextStyle;
     return detailState(ref).maybeMap(
-      data: (state) =>
-          _DetailView(detail: state.value, onRefresh: () => handleRefresh(ref)),
+      data: (state) => _DetailView(
+        detail: state.value,
+        onRefresh: () => handleRefresh(ref),
+        onOpenUrl: (url) => handleOpenLink(context, ref, url),
+      ),
       error: (state) => SliverFillRemaining(
         hasScrollBody: false,
         child: Center(
@@ -179,6 +181,7 @@ class const _LoadingView() extends StatelessWidget {
 class const _DetailView({
   required final Details detail,
   required final VoidCallback onRefresh,
+  required final Future<bool> Function(String url) onOpenUrl,
 }) extends StatelessWidget with DetailEvent {
   @override
   Widget build(BuildContext context) {
@@ -209,7 +212,7 @@ class const _DetailView({
                 detail: detail,
                 hexColor: hexColor,
                 bodyMedium: bodyMedium,
-                onTapUrl: (url) => url.openUrl(context),
+                onTapUrl: onOpenUrl,
               ),
               const _SpaceWidget(),
               // 본문을 다 읽고 댓글로 넘어가는 자리에 광고 하나.
@@ -229,7 +232,7 @@ class const _DetailView({
                   bodySmall: bodySmall,
                   bodyMedium: bodyMedium,
                   hexColor: hexColor,
-                  openUrl: (String url) => url.openUrl(context),
+                  openUrl: onOpenUrl,
                 ),
               ],
               const PlainDividerWidget(indent: 0, endIndent: 0),
@@ -807,7 +810,10 @@ class const _RefreshButton({
   @override
   Widget build(BuildContext context) {
     final focusColor = Theme.of(context).colorScheme.primary;
-    final textStyle = this.textStyle!.copyWith(color: focusColor);
+    final textStyle = this.textStyle!.copyWith(
+      color: focusColor,
+      fontWeight: FontWeight.w800,
+    );
 
     return InkWell(
       onTap: onRefresh,
@@ -820,7 +826,8 @@ class const _RefreshButton({
   }
 }
 
-/// YouTube iframe을 외부 앱으로 열고, 일반 미디어는 인라인 재생을 허용하는 WidgetFactory.
+/// YouTube iframe 은 썸네일로 그리고 탭하면 [openUrl] 로 넘기며(설정에 따라 앱
+/// 플레이어 또는 유튜브 앱), 일반 미디어는 인라인 재생을 허용하는 WidgetFactory.
 class _MoclWidgetFactory({
   required final void Function(String) openUrl,
 
@@ -917,7 +924,8 @@ class _MoclWidgetFactory({
           : url;
 
       return GestureDetector(
-        onTap: () => _launchYouTube(watchUrl),
+        // 설정(동영상 링크는 앱에서 재생)에 따라 앱 플레이어 또는 유튜브 앱으로 간다.
+        onTap: () => openUrl(watchUrl),
         child: AspectRatio(
           aspectRatio: width != null && height != null && height > 0
               ? width / height
@@ -968,12 +976,5 @@ class _MoclWidgetFactory({
       if (match != null) return match.group(1);
     }
     return null;
-  }
-
-  static Future<void> _launchYouTube(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
   }
 }

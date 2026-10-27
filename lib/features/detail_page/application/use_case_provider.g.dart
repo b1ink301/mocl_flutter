@@ -10,24 +10,31 @@ part of 'use_case_provider.dart';
 // ignore_for_file: type=lint, type=warning
 
 @ProviderFor(getDetail)
-final getDetailProvider = GetDetailProvider._();
+final getDetailProvider = GetDetailFamily._();
 
 final class GetDetailProvider
     extends $FunctionalProvider<GetDetail, GetDetail, GetDetail>
     with $Provider<GetDetail> {
-  GetDetailProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'getDetailProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
+  GetDetailProvider._({
+    required GetDetailFamily super.from,
+    required SiteType super.argument,
+  }) : super(
+         retry: null,
+         name: r'getDetailProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$getDetailHash();
+
+  @override
+  String toString() {
+    return r'getDetailProvider'
+        ''
+        '($argument)';
+  }
 
   @$internal
   @override
@@ -36,7 +43,8 @@ final class GetDetailProvider
 
   @override
   GetDetail create(Ref ref) {
-    return getDetail(ref);
+    final argument = this.argument as SiteType;
+    return getDetail(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -46,29 +54,64 @@ final class GetDetailProvider
       providerOverride: $SyncValueProvider<GetDetail>(value),
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    return other is GetDetailProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
 }
 
-String _$getDetailHash() => r'02d7c131080e1cc739795aa3d56be69dfc3fbac8';
+String _$getDetailHash() => r'7c70969bbd3ef88ed61a0d4fa80df24846ac8a52';
+
+final class GetDetailFamily extends $Family
+    with $FunctionalFamilyOverride<GetDetail, SiteType> {
+  GetDetailFamily._()
+    : super(
+        retry: null,
+        name: r'getDetailProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  GetDetailProvider call(SiteType siteType) =>
+      GetDetailProvider._(argument: siteType, from: this);
+
+  @override
+  String toString() => r'getDetailProvider';
+}
 
 @ProviderFor(setReadFlag)
-final setReadFlagProvider = SetReadFlagProvider._();
+final setReadFlagProvider = SetReadFlagFamily._();
 
 final class SetReadFlagProvider
     extends $FunctionalProvider<SetReadFlag, SetReadFlag, SetReadFlag>
     with $Provider<SetReadFlag> {
-  SetReadFlagProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'setReadFlagProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
+  SetReadFlagProvider._({
+    required SetReadFlagFamily super.from,
+    required SiteType super.argument,
+  }) : super(
+         retry: null,
+         name: r'setReadFlagProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
 
   @override
   String debugGetCreateSourceHash() => _$setReadFlagHash();
+
+  @override
+  String toString() {
+    return r'setReadFlagProvider'
+        ''
+        '($argument)';
+  }
 
   @$internal
   @override
@@ -77,7 +120,8 @@ final class SetReadFlagProvider
 
   @override
   SetReadFlag create(Ref ref) {
-    return setReadFlag(ref);
+    final argument = this.argument as SiteType;
+    return setReadFlag(ref, argument);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -87,6 +131,34 @@ final class SetReadFlagProvider
       providerOverride: $SyncValueProvider<SetReadFlag>(value),
     );
   }
+
+  @override
+  bool operator ==(Object other) {
+    return other is SetReadFlagProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
 }
 
-String _$setReadFlagHash() => r'8e4671d0a3f31775d0aedb5958f12ff4c14febbb';
+String _$setReadFlagHash() => r'1ee13066c59948659ee6e990494fc77f360253c2';
+
+final class SetReadFlagFamily extends $Family
+    with $FunctionalFamilyOverride<SetReadFlag, SiteType> {
+  SetReadFlagFamily._()
+    : super(
+        retry: null,
+        name: r'setReadFlagProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  SetReadFlagProvider call(SiteType siteType) =>
+      SetReadFlagProvider._(argument: siteType, from: this);
+
+  @override
+  String toString() => r'setReadFlagProvider';
+}

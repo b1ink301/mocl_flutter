@@ -16,13 +16,29 @@ part 'detail_providers.g.dart';
 @riverpod
 ListItem listItem(Ref ref) => throw UnimplementedError('listItem');
 
-@Riverpod(dependencies: [listItem, DetailTitleStateNotifier, _markAsRead])
+/// 이 상세 화면이 읽는 사이트.
+///
+/// 보통은 전역 [currentSiteTypeProvider] 와 같다. 본문 링크로 다른 사이트 글을
+/// 열 때는 ProviderScope 에서 그 사이트로 교체한다 — 전역 값을 바꾸면 뒤에 쌓인
+/// 목록 화면까지 다른 사이트로 바뀌어 버린다.
+@Riverpod(dependencies: [CurrentSiteTypeNotifier])
+SiteType detailSiteType(Ref ref) => ref.watch(currentSiteTypeProvider);
+
+@Riverpod(
+  dependencies: [
+    listItem,
+    detailSiteType,
+    DetailTitleStateNotifier,
+    _markAsRead,
+  ],
+)
 class DetailsNotifier() extends _$DetailsNotifier {
   @override
   Future<Details> build() async {
     state = const AsyncValue.loading();
     final listItem = ref.watch(listItemProvider);
-    final result = await ref.read(getDetailProvider)(listItem);
+    final siteType = ref.watch(detailSiteTypeProvider);
+    final result = await ref.read(getDetailProvider(siteType))(listItem);
     final data = result.getOrElse((f) => throw f);
     await ref.watch(_markAsReadProvider(listItem).future);
     ref.read(detailTitleStateProvider.notifier).update(data.title);
@@ -32,13 +48,17 @@ class DetailsNotifier() extends _$DetailsNotifier {
   void refresh() => ref.invalidateSelf();
 }
 
-@riverpod
+@Riverpod(dependencies: [detailSiteType])
 Future<int> _markAsRead(Ref ref, ListItem listItem) async {
   if (!listItem.isRead) {
-    final siteType = ref.read(currentSiteTypeProvider);
+    final siteType = ref.read(detailSiteTypeProvider);
     final params = SetReadFlagParams(siteType: siteType, boardId: listItem.id);
-    final int result = await ref.read(setReadFlagProvider)(params);
-    ref.read(readableStateProvider.notifier).update(listItem.id);
+    final int result = await ref.read(setReadFlagProvider(siteType))(params);
+    // 목록의 읽음 표시는 같은 사이트일 때만 갱신한다(다른 사이트 글의 id 가
+    // 우연히 같으면 엉뚱한 행이 읽음 처리된다).
+    if (siteType == ref.read(currentSiteTypeProvider)) {
+      ref.read(readableStateProvider.notifier).update(listItem.id);
+    }
     return result;
   }
   return -1;
@@ -49,13 +69,13 @@ Future<int> _markAsRead(Ref ref, ListItem listItem) async {
 /// 큰 제목이 글 제목을 가져가면서 사이트 구분이 화면에서 사라졌다. 목록과
 /// 같은 규칙(상위 경로는 툴바에)으로 여기에 되살린다. 게시판 이름을 모르는
 /// 경우(스크랩 등 boardTitle 이 빈 항목)에는 사이트만 적는다.
-@Riverpod(dependencies: [listItem, detailTitle])
+@Riverpod(dependencies: [listItem, detailTitle, detailSiteType])
 String detailSmallTitle(Ref ref) {
   final String boardTitle = ref.watch(
     listItemProvider.select((item) => item.boardTitle),
   );
   final String site = ref.watch(
-    currentSiteTypeProvider.select((siteType) => siteType.title),
+    detailSiteTypeProvider.select((siteType) => siteType.title),
   );
 
   return boardTitle.isEmpty ? site : '$site$kAppbarCrumbSeparator$boardTitle';
@@ -77,9 +97,9 @@ class DetailTitleStateNotifier() extends _$DetailTitleStateNotifier {
 String detailTitle(Ref ref) =>
     ref.watch(listItemProvider.select((item) => item.title));
 
-@Riverpod(dependencies: [listItem, CurrentSiteTypeNotifier])
+@Riverpod(dependencies: [listItem, detailSiteType])
 String detailUrl(Ref ref) {
-  final siteType = ref.watch(currentSiteTypeProvider);
+  final siteType = ref.watch(detailSiteTypeProvider);
   final listItem = ref.watch(listItemProvider);
   return siteType == SiteType.naverCafe
       ? 'https://m.cafe.naver.com/ca-fe/web/cafes/${listItem.board}/articles/${listItem.id}'

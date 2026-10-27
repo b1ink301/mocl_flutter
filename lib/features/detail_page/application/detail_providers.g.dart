@@ -50,6 +50,68 @@ final class ListItemProvider
 
 String _$listItemHash() => r'5979621f5fb9d6c055c046d194e6282673cf181e';
 
+/// 이 상세 화면이 읽는 사이트.
+///
+/// 보통은 전역 [currentSiteTypeProvider] 와 같다. 본문 링크로 다른 사이트 글을
+/// 열 때는 ProviderScope 에서 그 사이트로 교체한다 — 전역 값을 바꾸면 뒤에 쌓인
+/// 목록 화면까지 다른 사이트로 바뀌어 버린다.
+
+@ProviderFor(detailSiteType)
+final detailSiteTypeProvider = DetailSiteTypeProvider._();
+
+/// 이 상세 화면이 읽는 사이트.
+///
+/// 보통은 전역 [currentSiteTypeProvider] 와 같다. 본문 링크로 다른 사이트 글을
+/// 열 때는 ProviderScope 에서 그 사이트로 교체한다 — 전역 값을 바꾸면 뒤에 쌓인
+/// 목록 화면까지 다른 사이트로 바뀌어 버린다.
+
+final class DetailSiteTypeProvider
+    extends $FunctionalProvider<SiteType, SiteType, SiteType>
+    with $Provider<SiteType> {
+  /// 이 상세 화면이 읽는 사이트.
+  ///
+  /// 보통은 전역 [currentSiteTypeProvider] 와 같다. 본문 링크로 다른 사이트 글을
+  /// 열 때는 ProviderScope 에서 그 사이트로 교체한다 — 전역 값을 바꾸면 뒤에 쌓인
+  /// 목록 화면까지 다른 사이트로 바뀌어 버린다.
+  DetailSiteTypeProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'detailSiteTypeProvider',
+        isAutoDispose: true,
+        dependencies: <ProviderOrFamily>[currentSiteTypeProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          DetailSiteTypeProvider.$allTransitiveDependencies0,
+        ],
+      );
+
+  static final $allTransitiveDependencies0 = currentSiteTypeProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$detailSiteTypeHash();
+
+  @$internal
+  @override
+  $ProviderElement<SiteType> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  SiteType create(Ref ref) {
+    return detailSiteType(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SiteType value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SiteType>(value),
+    );
+  }
+}
+
+String _$detailSiteTypeHash() => r'6b1f8ff8b17b1f3b25aa4d3390217b69ba34b8f5';
+
 @ProviderFor(DetailsNotifier)
 final detailsProvider = DetailsNotifierProvider._();
 
@@ -64,6 +126,7 @@ final class DetailsNotifierProvider
         isAutoDispose: true,
         dependencies: <ProviderOrFamily>[
           listItemProvider,
+          detailSiteTypeProvider,
           detailTitleStateProvider,
           _markAsReadProvider,
         ],
@@ -72,14 +135,19 @@ final class DetailsNotifierProvider
           DetailsNotifierProvider.$allTransitiveDependencies1,
           DetailsNotifierProvider.$allTransitiveDependencies2,
           DetailsNotifierProvider.$allTransitiveDependencies3,
+          DetailsNotifierProvider.$allTransitiveDependencies4,
+          DetailsNotifierProvider.$allTransitiveDependencies5,
         },
       );
 
   static final $allTransitiveDependencies0 = listItemProvider;
-  static final $allTransitiveDependencies1 = detailTitleStateProvider;
+  static final $allTransitiveDependencies1 = detailSiteTypeProvider;
   static final $allTransitiveDependencies2 =
+      DetailSiteTypeProvider.$allTransitiveDependencies0;
+  static final $allTransitiveDependencies3 = detailTitleStateProvider;
+  static final $allTransitiveDependencies4 =
       DetailTitleStateNotifierProvider.$allTransitiveDependencies1;
-  static final $allTransitiveDependencies3 = _markAsReadProvider;
+  static final $allTransitiveDependencies5 = _markAsReadProvider;
 
   @override
   String debugGetCreateSourceHash() => _$detailsNotifierHash();
@@ -89,7 +157,7 @@ final class DetailsNotifierProvider
   DetailsNotifier create() => DetailsNotifier();
 }
 
-String _$detailsNotifierHash() => r'bee129533fbed2960e195e3c82f1c1165dfc52b0';
+String _$detailsNotifierHash() => r'7d0673b99a2248b81c08941f0ffaa28ce2682f53';
 
 abstract class _$DetailsNotifier extends $AsyncNotifier<Details> {
   FutureOr<Details> build();
@@ -126,6 +194,10 @@ final class _MarkAsReadProvider
          $allTransitiveDependencies: null,
        );
 
+  static final $allTransitiveDependencies0 = detailSiteTypeProvider;
+  static final $allTransitiveDependencies1 =
+      DetailSiteTypeProvider.$allTransitiveDependencies0;
+
   @override
   String debugGetCreateSourceHash() => _$_markAsReadHash();
 
@@ -158,7 +230,7 @@ final class _MarkAsReadProvider
   }
 }
 
-String _$_markAsReadHash() => r'8ba56bf4538ae91b0ae6ad423f8d9a1e3a0c81bf';
+String _$_markAsReadHash() => r'485325e6a48a369cc16c2f436b9ca07548a91c31';
 
 final class _MarkAsReadFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<int>, ListItem> {
@@ -166,8 +238,11 @@ final class _MarkAsReadFamily extends $Family
     : super(
         retry: null,
         name: r'_markAsReadProvider',
-        dependencies: null,
-        $allTransitiveDependencies: null,
+        dependencies: <ProviderOrFamily>[detailSiteTypeProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          _MarkAsReadProvider.$allTransitiveDependencies0,
+          _MarkAsReadProvider.$allTransitiveDependencies1,
+        ],
         isAutoDispose: true,
       );
 
@@ -208,15 +283,24 @@ final class DetailSmallTitleProvider
         retry: null,
         name: r'detailSmallTitleProvider',
         isAutoDispose: true,
-        dependencies: <ProviderOrFamily>[listItemProvider, detailTitleProvider],
-        $allTransitiveDependencies: <ProviderOrFamily>[
+        dependencies: <ProviderOrFamily>[
+          listItemProvider,
+          detailTitleProvider,
+          detailSiteTypeProvider,
+        ],
+        $allTransitiveDependencies: <ProviderOrFamily>{
           DetailSmallTitleProvider.$allTransitiveDependencies0,
           DetailSmallTitleProvider.$allTransitiveDependencies1,
-        ],
+          DetailSmallTitleProvider.$allTransitiveDependencies2,
+          DetailSmallTitleProvider.$allTransitiveDependencies3,
+        },
       );
 
   static final $allTransitiveDependencies0 = listItemProvider;
   static final $allTransitiveDependencies1 = detailTitleProvider;
+  static final $allTransitiveDependencies2 = detailSiteTypeProvider;
+  static final $allTransitiveDependencies3 =
+      DetailSiteTypeProvider.$allTransitiveDependencies0;
 
   @override
   String debugGetCreateSourceHash() => _$detailSmallTitleHash();
@@ -240,7 +324,7 @@ final class DetailSmallTitleProvider
   }
 }
 
-String _$detailSmallTitleHash() => r'73de9f9f6cc12067b6b9e251b24e55ae7da6d439';
+String _$detailSmallTitleHash() => r'07abe0c3048f069781e6ed8a8210a8ec398c47a8';
 
 @ProviderFor(DetailTitleStateNotifier)
 final detailTitleStateProvider = DetailTitleStateNotifierProvider._();
@@ -361,16 +445,19 @@ final class DetailUrlProvider
         isAutoDispose: true,
         dependencies: <ProviderOrFamily>[
           listItemProvider,
-          currentSiteTypeProvider,
+          detailSiteTypeProvider,
         ],
         $allTransitiveDependencies: <ProviderOrFamily>[
           DetailUrlProvider.$allTransitiveDependencies0,
           DetailUrlProvider.$allTransitiveDependencies1,
+          DetailUrlProvider.$allTransitiveDependencies2,
         ],
       );
 
   static final $allTransitiveDependencies0 = listItemProvider;
-  static final $allTransitiveDependencies1 = currentSiteTypeProvider;
+  static final $allTransitiveDependencies1 = detailSiteTypeProvider;
+  static final $allTransitiveDependencies2 =
+      DetailSiteTypeProvider.$allTransitiveDependencies0;
 
   @override
   String debugGetCreateSourceHash() => _$detailUrlHash();
@@ -394,7 +481,7 @@ final class DetailUrlProvider
   }
 }
 
-String _$detailUrlHash() => r'e8d8b65b390da45d78b52b2fa4cafe7415b04d7a';
+String _$detailUrlHash() => r'fee3df6fa1be8c8a6da47bc21ff1c0a921a44bef';
 
 /// 상세 앱바의 expandedHeight.
 ///

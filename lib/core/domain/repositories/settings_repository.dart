@@ -16,6 +16,14 @@ abstract class SettingsRepository() {
   bool isShowQuickJump();
   void setShowQuickJump(bool showQuickJump);
 
+  /// 본문 링크가 지원 사이트의 글이면 브라우저 대신 앱 상세 화면으로 열지.
+  bool isOpenSiteLinksInApp();
+  void setOpenSiteLinksInApp(bool openInApp);
+
+  /// 본문의 유튜브 · 영상 파일 링크를 앱 안 플레이어로 재생할지.
+  bool isPlayVideosInApp();
+  void setPlayVideosInApp(bool playInApp);
+
   /// 접어둔 카페 소구획 키 목록('{siteType}_{부모board}').
   /// 그룹 접힘과 마찬가지로 앱을 다시 켜도 유지한다.
   List<String> getCollapsedSubSections();

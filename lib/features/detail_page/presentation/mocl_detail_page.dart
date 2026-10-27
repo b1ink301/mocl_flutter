@@ -8,6 +8,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/widgets/detail_scope.dart';
 
 import '../../../config/mocl_text_styles.dart';
@@ -18,10 +19,15 @@ import 'mocl_detail_view.dart';
 import 'state/detail_event_mixin.dart';
 
 class const DetailPage({super.key}) extends StatelessWidget {
-  static Widget init(double width, ListItem item) => ProviderScope(
-    overrides: DetailEvent.overridesProviderScope(width, item),
-    child: const DetailPage(),
-  );
+  static Widget init(double width, ListItem item, {SiteType? siteType}) =>
+      ProviderScope(
+        overrides: DetailEvent.overridesProviderScope(
+          width,
+          item,
+          siteType: siteType,
+        ),
+        child: const DetailPage(),
+      );
 
   @override
   Widget build(BuildContext context) {

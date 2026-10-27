@@ -22,6 +22,12 @@ mixin class SettingsState() {
 
   bool showQuickJumpState(WidgetRef ref) => ref.watch(showQuickJumpProvider);
 
+  bool openSiteLinksInAppState(WidgetRef ref) =>
+      ref.watch(openSiteLinksInAppProvider);
+
+  bool playVideosInAppState(WidgetRef ref) =>
+      ref.watch(playVideosInAppProvider);
+
   ThemeMode themeModeState(WidgetRef ref) => ref.watch(themeModeProvider);
 
   double fontSizeDeltaState(WidgetRef ref) => ref.watch(fontSizeDeltaProvider);

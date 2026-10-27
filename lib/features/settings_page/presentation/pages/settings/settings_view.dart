@@ -41,6 +41,28 @@ class const SettingsView({super.key})
                 ),
                 const _TileDivider(),
                 _SettingsTile(
+                  icon: Icons.link,
+                  title: '지원 사이트 링크는 앱에서 열기',
+                  onTap: () => handleToggleOpenSiteLinksInApp(ref),
+                  trailing: Switch(
+                    value: openSiteLinksInAppState(ref),
+                    activeThumbColor: theme.colorScheme.primary,
+                    onChanged: (_) => handleToggleOpenSiteLinksInApp(ref),
+                  ),
+                ),
+                const _TileDivider(),
+                _SettingsTile(
+                  icon: Icons.smart_display_outlined,
+                  title: '동영상 링크는 앱에서 재생',
+                  onTap: () => handleTogglePlayVideosInApp(ref),
+                  trailing: Switch(
+                    value: playVideosInAppState(ref),
+                    activeThumbColor: theme.colorScheme.primary,
+                    onChanged: (_) => handleTogglePlayVideosInApp(ref),
+                  ),
+                ),
+                const _TileDivider(),
+                _SettingsTile(
                   icon: Icons.brightness_6_outlined,
                   title: '테마',
                   trailing: _ThemeModeSelector(
@@ -90,7 +112,6 @@ class const SettingsView({super.key})
             //     ),
             //   ],
             // ),
-
             const _SectionHeader('데이터'),
             _SettingsCard(
               children: [
