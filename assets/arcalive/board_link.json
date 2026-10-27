@@ -1,0 +1,7 @@
+[
+  {"board":"live","title":"베스트 라이브","type":0,"url":"https://arca.live/b/live","no":0},
+  {"board":"umamusume","title":"우마무스메","type":0,"url":"https://arca.live/b/umamusume","no":1},
+  {"board":"nikke","title":"니케","type":0,"url":"https://arca.live/b/nikke","no":2},
+  {"board":"lostark","title":"로스트아크","type":0,"url":"https://arca.live/b/lostark","no":3},
+  {"board":"fpsgame","title":"FPS 게임","type":0,"url":"https://arca.live/b/fpsgame","no":4}
+]

@@ -1,0 +1,381 @@
+// GENERATED CODE - DO NOT MODIFY BY HAND
+
+part of 'favorite_providers.dart';
+
+// **************************************************************************
+// RiverpodGenerator
+// **************************************************************************
+
+// GENERATED CODE - DO NOT MODIFY BY HAND
+// ignore_for_file: type=lint, type=warning
+
+@ProviderFor(favoriteRepository)
+final favoriteRepositoryProvider = FavoriteRepositoryProvider._();
+
+final class FavoriteRepositoryProvider
+    extends
+        $FunctionalProvider<
+          FavoriteRepository,
+          FavoriteRepository,
+          FavoriteRepository
+        >
+    with $Provider<FavoriteRepository> {
+  FavoriteRepositoryProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'favoriteRepositoryProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$favoriteRepositoryHash();
+
+  @$internal
+  @override
+  $ProviderElement<FavoriteRepository> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  FavoriteRepository create(Ref ref) {
+    return favoriteRepository(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(FavoriteRepository value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<FavoriteRepository>(value),
+    );
+  }
+}
+
+String _$favoriteRepositoryHash() =>
+    r'2dad519ba7f5abc1a266d529b35070e9df56834d';
+
+/// 즐겨찾기 그룹(카테고리) 목록. 최초에는 사이트 카테고리 기반 기본 그룹이 시드된다.
+
+@ProviderFor(FavoriteGroupsNotifier)
+final favoriteGroupsProvider = FavoriteGroupsNotifierProvider._();
+
+/// 즐겨찾기 그룹(카테고리) 목록. 최초에는 사이트 카테고리 기반 기본 그룹이 시드된다.
+final class FavoriteGroupsNotifierProvider
+    extends
+        $AsyncNotifierProvider<FavoriteGroupsNotifier, List<FavoriteGroup>> {
+  /// 즐겨찾기 그룹(카테고리) 목록. 최초에는 사이트 카테고리 기반 기본 그룹이 시드된다.
+  FavoriteGroupsNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'favoriteGroupsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$favoriteGroupsNotifierHash();
+
+  @$internal
+  @override
+  FavoriteGroupsNotifier create() => FavoriteGroupsNotifier();
+}
+
+String _$favoriteGroupsNotifierHash() =>
+    r'fe5095156f2fe8ba05eaffe66b83847cd1271468';
+
+/// 즐겨찾기 그룹(카테고리) 목록. 최초에는 사이트 카테고리 기반 기본 그룹이 시드된다.
+
+abstract class _$FavoriteGroupsNotifier
+    extends $AsyncNotifier<List<FavoriteGroup>> {
+  FutureOr<List<FavoriteGroup>> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref =
+        this.ref as $Ref<AsyncValue<List<FavoriteGroup>>, List<FavoriteGroup>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<List<FavoriteGroup>>, List<FavoriteGroup>>,
+              AsyncValue<List<FavoriteGroup>>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// 즐겨찾기한 게시판 전체. 메인 화면의 유일한 데이터 소스다.
+
+@ProviderFor(FavoritesNotifier)
+final favoritesProvider = FavoritesNotifierProvider._();
+
+/// 즐겨찾기한 게시판 전체. 메인 화면의 유일한 데이터 소스다.
+final class FavoritesNotifierProvider
+    extends $AsyncNotifierProvider<FavoritesNotifier, List<FavoriteData>> {
+  /// 즐겨찾기한 게시판 전체. 메인 화면의 유일한 데이터 소스다.
+  FavoritesNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'favoritesProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$favoritesNotifierHash();
+
+  @$internal
+  @override
+  FavoritesNotifier create() => FavoritesNotifier();
+}
+
+String _$favoritesNotifierHash() => r'2ea6f4b60c94ace39f7f853e906fa7b34dc95a77';
+
+/// 즐겨찾기한 게시판 전체. 메인 화면의 유일한 데이터 소스다.
+
+abstract class _$FavoritesNotifier extends $AsyncNotifier<List<FavoriteData>> {
+  FutureOr<List<FavoriteData>> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref =
+        this.ref as $Ref<AsyncValue<List<FavoriteData>>, List<FavoriteData>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<List<FavoriteData>>, List<FavoriteData>>,
+              AsyncValue<List<FavoriteData>>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// 게시판 추가 화면이 '이미 담긴 게시판'을 표시하는 데 쓰는 키 집합.
+/// (사이트+게시판 조합)
+
+@ProviderFor(favoriteBoardKeys)
+final favoriteBoardKeysProvider = FavoriteBoardKeysProvider._();
+
+/// 게시판 추가 화면이 '이미 담긴 게시판'을 표시하는 데 쓰는 키 집합.
+/// (사이트+게시판 조합)
+
+final class FavoriteBoardKeysProvider
+    extends $FunctionalProvider<Set<String>, Set<String>, Set<String>>
+    with $Provider<Set<String>> {
+  /// 게시판 추가 화면이 '이미 담긴 게시판'을 표시하는 데 쓰는 키 집합.
+  /// (사이트+게시판 조합)
+  FavoriteBoardKeysProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'favoriteBoardKeysProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$favoriteBoardKeysHash();
+
+  @$internal
+  @override
+  $ProviderElement<Set<String>> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  Set<String> create(Ref ref) {
+    return favoriteBoardKeys(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Set<String> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Set<String>>(value),
+    );
+  }
+}
+
+String _$favoriteBoardKeysHash() => r'a791484d4ce82413fe51391bccd87c57bb363469';
+
+/// 지금 보고 있는 사이트의 담은 게시판. 홈 화면의 유일한 데이터 소스다.
+///
+/// 순서는 사용자가 정한 [FavoriteData.orderBy] 를 따른다. 그룹 홈 시절에
+/// 그룹별로 매겨진 값이라 사이트 안에서 동률이 생길 수 있어, 그때는 담은
+/// 시각으로 갈라 순서가 매번 흔들리지 않게 한다(정렬 한 번이면 0..n 으로
+/// 다시 매겨진다).
+
+@ProviderFor(siteFavorites)
+final siteFavoritesProvider = SiteFavoritesProvider._();
+
+/// 지금 보고 있는 사이트의 담은 게시판. 홈 화면의 유일한 데이터 소스다.
+///
+/// 순서는 사용자가 정한 [FavoriteData.orderBy] 를 따른다. 그룹 홈 시절에
+/// 그룹별로 매겨진 값이라 사이트 안에서 동률이 생길 수 있어, 그때는 담은
+/// 시각으로 갈라 순서가 매번 흔들리지 않게 한다(정렬 한 번이면 0..n 으로
+/// 다시 매겨진다).
+
+final class SiteFavoritesProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<FavoriteData>>,
+          List<FavoriteData>,
+          FutureOr<List<FavoriteData>>
+        >
+    with
+        $FutureModifier<List<FavoriteData>>,
+        $FutureProvider<List<FavoriteData>> {
+  /// 지금 보고 있는 사이트의 담은 게시판. 홈 화면의 유일한 데이터 소스다.
+  ///
+  /// 순서는 사용자가 정한 [FavoriteData.orderBy] 를 따른다. 그룹 홈 시절에
+  /// 그룹별로 매겨진 값이라 사이트 안에서 동률이 생길 수 있어, 그때는 담은
+  /// 시각으로 갈라 순서가 매번 흔들리지 않게 한다(정렬 한 번이면 0..n 으로
+  /// 다시 매겨진다).
+  SiteFavoritesProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'siteFavoritesProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$siteFavoritesHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<List<FavoriteData>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<List<FavoriteData>> create(Ref ref) {
+    return siteFavorites(ref);
+  }
+}
+
+String _$siteFavoritesHash() => r'b962aef0d73b4b902b044f1cb69882a8e99bdd12';
+
+/// 사이트별로 담아둔 게시판 개수. 드로어 칩과 빠른 이동 레일이 "갈 곳이 있는
+/// 사이트"를 가리는 데 쓴다.
+
+@ProviderFor(favoriteCountBySite)
+final favoriteCountBySiteProvider = FavoriteCountBySiteProvider._();
+
+/// 사이트별로 담아둔 게시판 개수. 드로어 칩과 빠른 이동 레일이 "갈 곳이 있는
+/// 사이트"를 가리는 데 쓴다.
+
+final class FavoriteCountBySiteProvider
+    extends
+        $FunctionalProvider<
+          Map<SiteType, int>,
+          Map<SiteType, int>,
+          Map<SiteType, int>
+        >
+    with $Provider<Map<SiteType, int>> {
+  /// 사이트별로 담아둔 게시판 개수. 드로어 칩과 빠른 이동 레일이 "갈 곳이 있는
+  /// 사이트"를 가리는 데 쓴다.
+  FavoriteCountBySiteProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'favoriteCountBySiteProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$favoriteCountBySiteHash();
+
+  @$internal
+  @override
+  $ProviderElement<Map<SiteType, int>> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  Map<SiteType, int> create(Ref ref) {
+    return favoriteCountBySite(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(Map<SiteType, int> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<Map<SiteType, int>>(value),
+    );
+  }
+}
+
+String _$favoriteCountBySiteHash() =>
+    r'a6513df4111ac5a3363f9e4910c297ec98997015';
+
+/// 그룹 순서대로 묶은 메인 화면용 섹션 목록.
+/// 그룹이 삭제되는 등으로 소속을 잃은 항목은 같은 이름의 사이트 그룹으로,
+/// 그마저 없으면 첫 그룹으로 보내 화면에서 사라지지 않게 한다.
+
+@ProviderFor(favoriteSections)
+final favoriteSectionsProvider = FavoriteSectionsProvider._();
+
+/// 그룹 순서대로 묶은 메인 화면용 섹션 목록.
+/// 그룹이 삭제되는 등으로 소속을 잃은 항목은 같은 이름의 사이트 그룹으로,
+/// 그마저 없으면 첫 그룹으로 보내 화면에서 사라지지 않게 한다.
+
+final class FavoriteSectionsProvider
+    extends
+        $FunctionalProvider<
+          AsyncValue<List<FavoriteSection>>,
+          List<FavoriteSection>,
+          FutureOr<List<FavoriteSection>>
+        >
+    with
+        $FutureModifier<List<FavoriteSection>>,
+        $FutureProvider<List<FavoriteSection>> {
+  /// 그룹 순서대로 묶은 메인 화면용 섹션 목록.
+  /// 그룹이 삭제되는 등으로 소속을 잃은 항목은 같은 이름의 사이트 그룹으로,
+  /// 그마저 없으면 첫 그룹으로 보내 화면에서 사라지지 않게 한다.
+  FavoriteSectionsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'favoriteSectionsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$favoriteSectionsHash();
+
+  @$internal
+  @override
+  $FutureProviderElement<List<FavoriteSection>> $createElement(
+    $ProviderPointer pointer,
+  ) => $FutureProviderElement(pointer);
+
+  @override
+  FutureOr<List<FavoriteSection>> create(Ref ref) {
+    return favoriteSections(ref);
+  }
+}
+
+String _$favoriteSectionsHash() => r'7a5175c9d41a2ffc538e7404608a5df94667d0df';

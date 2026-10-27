@@ -1,34 +1,26 @@
 import 'dart:ui';
 
-import 'package:flutter/cupertino.dart';
+import 'package:cupertino_ui/cupertino_ui.dart';
 
-class CupertinoModalPopupPage<T> extends Page<T> {
-  final Offset? anchorPoint;
-  final Color? barrierColor;
-  final bool barrierDismissible;
-  final String barrierLabel;
-  final bool semanticsDismissible;
-  final WidgetBuilder builder;
-  final ImageFilter? filter;
-
-  const CupertinoModalPopupPage(
-      {required this.builder,
-      this.anchorPoint,
-      this.barrierColor = kCupertinoModalBarrierColor,
-      this.barrierDismissible = true,
-      this.barrierLabel = "Dismiss",
-      this.semanticsDismissible = true,
-      this.filter,
-      super.key});
-
+class const CupertinoModalPopupPage<T>({
+  required final WidgetBuilder builder,
+  final Offset? anchorPoint,
+  final Color? barrierColor = kCupertinoModalBarrierColor,
+  final bool barrierDismissible = true,
+  final String barrierLabel = "Dismiss",
+  final bool semanticsDismissible = true,
+  final ImageFilter? filter,
+  super.key,
+}) extends Page<T> {
   @override
   Route<T> createRoute(BuildContext context) => CupertinoModalPopupRoute<T>(
-      builder: builder,
-      barrierDismissible: barrierDismissible,
-      anchorPoint: anchorPoint,
-      barrierLabel: barrierLabel,
-      barrierColor: barrierColor,
-      filter: filter,
-      semanticsDismissible: semanticsDismissible,
-      settings: this);
+    builder: builder,
+    barrierDismissible: barrierDismissible,
+    anchorPoint: anchorPoint,
+    barrierLabel: barrierLabel,
+    barrierColor: barrierColor,
+    filter: filter,
+    semanticsDismissible: semanticsDismissible,
+    settings: this,
+  );
 }

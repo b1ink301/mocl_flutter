@@ -1,152 +1,139 @@
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
 
-class MoclTheme {
-  static CupertinoThemeData get lightCupertinoTheme =>
-      MaterialBasedCupertinoThemeData(materialTheme: lightTheme).copyWith(
-        brightness: Brightness.light,
-        primaryColor: const Color(0xFF0E7EA3),
-        textTheme: CupertinoTextThemeData(
-          navActionTextStyle: TextStyle(
-            inherit: false,
-            fontFamily: 'CupertinoSystemText',
-            fontSize: 17.0,
-            letterSpacing: -0.41,
-            color: const Color(0xFF0E7EA3),
-            decoration: TextDecoration.none,
-          ),
-          navLargeTitleTextStyle: TextStyle(
-            inherit: false,
-            fontFamily: 'CupertinoSystemDisplay',
-            fontSize: 34.0,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.38,
-            color: Colors.black,
-          ),
-        ),
-      );
+/// "Paper" 디자인 테마.
+///
+/// 웜 뉴트럴(종이) 배경 + 단일 코랄 강조 + 밝은 앱바(잉크 텍스트).
+/// 경계는 굵은 선이 아니라 헤어라인(1px)과 여백으로 표현한다.
+class MoclTheme() {
+  static final ThemeData lightTheme = ThemeData.light().copyWith(
+    extensions: [AppTextStyles.light],
+    appBarTheme: const AppBarTheme(
+      backgroundColor: MoclColors.bgLight,
+      foregroundColor: MoclColors.inkLight,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      shadowColor: Colors.black,
+      scrolledUnderElevation: 1,
+      systemOverlayStyle: SystemUiOverlayStyle(
+        statusBarColor: MoclColors.bgLight,
+        systemNavigationBarColor: MoclColors.bgLight,
+        systemNavigationBarIconBrightness: Brightness.dark,
+        statusBarIconBrightness: Brightness.dark,
+        statusBarBrightness: Brightness.light,
+        systemStatusBarContrastEnforced: false,
+        systemNavigationBarContrastEnforced: false,
+      ),
+    ),
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: <TargetPlatform, PageTransitionsBuilder>{
+        TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
+      },
+    ),
+    focusColor: MoclColors.accentLight,
+    highlightColor: MoclColors.faintLight,
+    primaryColor: MoclColors.accentLight,
+    scaffoldBackgroundColor: MoclColors.bgLight,
+    canvasColor: MoclColors.bgLight,
+    popupMenuTheme: const PopupMenuThemeData(
+      color: MoclColors.surfaceLight,
+      surfaceTintColor: Colors.transparent,
+      position: PopupMenuPosition.under,
+      menuPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      textStyle: TextStyle(color: MoclColors.inkLight, fontSize: 13),
+      labelTextStyle: WidgetStatePropertyAll(
+        TextStyle(color: MoclColors.inkLight, fontSize: 15),
+      ),
+    ),
+    dividerColor: MoclColors.lineLight,
+    dividerTheme: const DividerThemeData(
+      color: MoclColors.lineLight,
+      space: 1,
+      thickness: 1,
+    ),
+    textTheme: const TextTheme(
+      bodyMedium: TextStyle(color: MoclColors.inkLight, fontSize: 16),
+      bodySmall: TextStyle(color: MoclColors.subLight, fontSize: 14),
+      headlineSmall: TextStyle(color: MoclColors.inkLight, fontSize: 13),
+      headlineMedium: TextStyle(color: MoclColors.inkLight, fontSize: 16),
+      // 앱바 크럼브(작은 제목)는 코랄 강조 라벨로 쓴다.
+      labelSmall: TextStyle(
+        color: MoclColors.accentLight,
+        fontSize: 11.5,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.3,
+      ),
+      titleLarge: TextStyle(color: MoclColors.inkLight, fontSize: 18),
+      titleMedium: TextStyle(color: MoclColors.inkLight, fontSize: 16),
+      titleSmall: TextStyle(color: MoclColors.inkLight, fontSize: 14),
+      // 검색창 힌트/입력 텍스트.
+      labelMedium: TextStyle(color: MoclColors.subLight, fontSize: 14),
+      labelLarge: TextStyle(color: MoclColors.inkLight, fontSize: 17),
+    ),
+  );
 
-  static CupertinoThemeData get dartCupertinoTheme =>
-      MaterialBasedCupertinoThemeData(materialTheme: darkTheme).copyWith(
-        brightness: Brightness.dark,
-        applyThemeToAll: true,
-        primaryColor: const Color(0xFFFF4081),
-        textTheme: CupertinoTextThemeData(
-          navActionTextStyle: TextStyle(
-            inherit: false,
-            fontFamily: 'CupertinoSystemText',
-            fontSize: 17.0,
-            letterSpacing: -0.41,
-            color: const Color(0xFFFF4081),
-            decoration: TextDecoration.none,
-          ),
-          navLargeTitleTextStyle: const TextStyle(
-            inherit: false,
-            fontFamily: 'CupertinoSystemDisplay',
-            fontSize: 34.0,
-            fontWeight: FontWeight.w700,
-            letterSpacing: 0.38,
-            color: Colors.white,
-          ),
-        ),
-      );
-
-  static ThemeData get lightTheme => ThemeData.light().copyWith(
-        extensions: [
-          MoclTextStyles.light(),
-        ],
-        appBarTheme: const AppBarTheme(
-          color: Color(0xFF595D66),
-          foregroundColor: Colors.white,
-          surfaceTintColor: Colors.white,
-          systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarColor: Color(0xFF4d5057),
-            systemNavigationBarColor: Color(0xFFEAEBE6),
-            systemNavigationBarIconBrightness: Brightness.dark,
-            statusBarIconBrightness: Brightness.light,
-            statusBarBrightness: Brightness.light,
-            systemStatusBarContrastEnforced: false,
-            systemNavigationBarContrastEnforced: false,
-          ),
-        ),
-        // listTileTheme: ListTileThemeData(),
-        focusColor: const Color(0xFF0E7EA3),
-        highlightColor: const Color(0xFFAAAAAA),
-        primaryColor: const Color(0xFF595D66),
-        scaffoldBackgroundColor: const Color(0xFFEAEBE6),
-        popupMenuTheme: const PopupMenuThemeData(
-          color: Color(0xFFEAEBE6),
-          textStyle: TextStyle(color: Color(0xFF111111), fontSize: 17),
-        ),
-        dividerTheme: const DividerThemeData(
-          color: Color(0xFFC9CAC5),
-          space: 1,
-          thickness: 1,
-        ),
-        textTheme: const TextTheme(
-          bodyMedium: TextStyle(color: Color(0xFF111111), fontSize: 17),
-          bodySmall: TextStyle(color: Color(0xFF888888), fontSize: 14),
-          labelSmall: TextStyle(color: Color(0xFF888888), fontSize: 11),
-          headlineSmall: TextStyle(color: Color(0xFF000000), fontSize: 15),
-          headlineMedium: TextStyle(color: Color(0xFF111111), fontSize: 16),
-          labelMedium: TextStyle(color: Colors.white, fontSize: 16),
-          labelLarge: TextStyle(color: Colors.white, fontSize: 17),
-        ),
-        // pageTransitionsTheme: const PageTransitionsTheme(
-        //   builders: {
-        //     TargetPlatform.android: CupertinoPageTransitionsBuilder(),
-        //     TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-        //   },
-        // ),
-      );
-
-  static ThemeData get darkTheme => ThemeData.dark().copyWith(
-        extensions: [
-          MoclTextStyles.dark(),
-        ],
-        appBarTheme: const AppBarTheme(
-          color: Color(0xFF292929),
-          foregroundColor: Colors.white,
-          surfaceTintColor: Colors.white,
-          systemOverlayStyle: SystemUiOverlayStyle(
-            statusBarColor: Color(0xFF1f1f1f),
-            systemNavigationBarColor: Color(0xFF333333),
-            systemNavigationBarIconBrightness: Brightness.dark,
-            statusBarIconBrightness: Brightness.light,
-            statusBarBrightness: Brightness.dark,
-            systemStatusBarContrastEnforced: false,
-            systemNavigationBarContrastEnforced: false,
-          ),
-        ),
-        dividerTheme: const DividerThemeData(
-          color: Color(0xFF222222),
-          space: 1,
-          thickness: 1,
-        ),
-        focusColor: const Color(0xFFFF4081),
-        highlightColor: const Color(0xFF888888),
-        textTheme: const TextTheme(
-          bodyMedium: TextStyle(color: Color(0xFFEEEEEE), fontSize: 17),
-          bodySmall: TextStyle(color: Color(0xFFAAAAAA), fontSize: 14),
-          labelSmall: TextStyle(color: Color(0xFFAAAAAA), fontSize: 11),
-          headlineSmall: TextStyle(color: Color(0xFFFFFFFF), fontSize: 16),
-          headlineMedium: TextStyle(color: Colors.white, fontSize: 16),
-          labelMedium: TextStyle(color: Colors.white, fontSize: 16),
-          labelLarge: TextStyle(color: Colors.white, fontSize: 17),
-        ),
-        primaryColor: const Color(0xFF292929),
-        scaffoldBackgroundColor: const Color(0xFF333333),
-        popupMenuTheme: PopupMenuThemeData(
-          color: const Color(0xFF333333),
-          textStyle: const TextStyle(color: Color(0xFFEEEEEE), fontSize: 17),
-        ),
-        // pageTransitionsTheme: const PageTransitionsTheme(
-        //   builders: {
-        //     TargetPlatform.android: FadeUpwardsPageTransitionsBuilder(),
-        //     TargetPlatform.iOS: CupertinoPageTransitionsBuilder(),
-        //   },
-        // ),
-      );
+  static final ThemeData darkTheme = ThemeData.dark().copyWith(
+    extensions: [AppTextStyles.dark],
+    appBarTheme: const AppBarTheme(
+      backgroundColor: MoclColors.bgDark,
+      foregroundColor: MoclColors.inkDark,
+      surfaceTintColor: Colors.transparent,
+      elevation: 0,
+      shadowColor: Colors.black,
+      scrolledUnderElevation: 1,
+      systemOverlayStyle: SystemUiOverlayStyle(
+        statusBarColor: MoclColors.bgDark,
+        systemNavigationBarColor: MoclColors.bgDark,
+        systemNavigationBarIconBrightness: Brightness.light,
+        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.dark,
+        systemStatusBarContrastEnforced: false,
+        systemNavigationBarContrastEnforced: false,
+      ),
+    ),
+    dividerColor: MoclColors.lineDark,
+    dividerTheme: const DividerThemeData(
+      color: MoclColors.lineDark,
+      space: 1,
+      thickness: 1,
+    ),
+    pageTransitionsTheme: const PageTransitionsTheme(
+      builders: <TargetPlatform, PageTransitionsBuilder>{
+        TargetPlatform.android: PredictiveBackPageTransitionsBuilder(),
+      },
+    ),
+    focusColor: MoclColors.accentDark,
+    highlightColor: MoclColors.faintDark,
+    textTheme: const TextTheme(
+      bodyMedium: TextStyle(color: MoclColors.inkDark, fontSize: 16),
+      bodySmall: TextStyle(color: MoclColors.subDark, fontSize: 14),
+      headlineSmall: TextStyle(color: MoclColors.inkDark, fontSize: 13),
+      headlineMedium: TextStyle(color: MoclColors.inkDark, fontSize: 16),
+      labelSmall: TextStyle(
+        color: MoclColors.accentDark,
+        fontSize: 11.5,
+        fontWeight: FontWeight.w700,
+        letterSpacing: 0.3,
+      ),
+      titleLarge: TextStyle(color: MoclColors.inkDark, fontSize: 18),
+      titleMedium: TextStyle(color: MoclColors.inkDark, fontSize: 16),
+      titleSmall: TextStyle(color: MoclColors.inkDark, fontSize: 14),
+      labelMedium: TextStyle(color: MoclColors.subDark, fontSize: 14),
+      labelLarge: TextStyle(color: MoclColors.inkDark, fontSize: 17),
+    ),
+    primaryColor: MoclColors.accentDark,
+    scaffoldBackgroundColor: MoclColors.bgDark,
+    canvasColor: MoclColors.bgDark,
+    popupMenuTheme: const PopupMenuThemeData(
+      color: MoclColors.surfaceDark,
+      surfaceTintColor: Colors.transparent,
+      textStyle: TextStyle(color: MoclColors.inkDark, fontSize: 13),
+      position: PopupMenuPosition.under,
+      menuPadding: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+      labelTextStyle: WidgetStatePropertyAll(
+        TextStyle(color: MoclColors.inkDark, fontSize: 15),
+      ),
+    ),
+  );
 }

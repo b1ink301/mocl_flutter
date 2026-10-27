@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'mocl_recents.dart';
@@ -9,6 +9,7 @@ part of 'mocl_recents.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $RecentsCopyWith<Recents> get copyWith => _$RecentsCopyWithImpl<Recents>(this as
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Recents&&const DeepCollectionEquality().equals(other.articles, articles)&&const DeepCollectionEquality().equals(other.comments, comments));
+  final _this = this as Recents;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Recents&&const DeepCollectionEquality().equals(other.articles, _this.articles)&&const DeepCollectionEquality().equals(other.comments, _this.comments));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(articles),const DeepCollectionEquality().hash(comments));
+int get hashCode {
+  final _this = this as Recents;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.articles),const DeepCollectionEquality().hash(_this.comments));
+}
 
 @override
 String toString() {
-  return 'Recents(articles: $articles, comments: $comments)';
+  final _this = this as Recents;
+  return 'Recents(articles: ${_this.articles}, comments: ${_this.comments})';
 }
 
 
@@ -63,7 +69,7 @@ class _$RecentsCopyWithImpl<$Res>
 /// Create a copy of Recents
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? articles = null,Object? comments = null,}) {
-  return _then(_self.copyWith(
+  return _then(Recents(
 articles: null == articles ? _self.articles : articles // ignore: cast_nullable_to_non_nullable
 as List<Recent>,comments: null == comments ? _self.comments : comments // ignore: cast_nullable_to_non_nullable
 as List<Recent>,
@@ -207,7 +213,7 @@ return $default(_that.articles,_that.comments);case _:
 
 
 class _Recents implements Recents {
-  const _Recents({final  List<Recent> articles = const [], final  List<Recent> comments = const []}): _articles = articles,_comments = comments;
+  const _Recents({ List<Recent> articles = const [],  List<Recent> comments = const []}): _articles = articles,_comments = comments;
   
 
  final  List<Recent> _articles;
@@ -235,16 +241,18 @@ _$RecentsCopyWith<_Recents> get copyWith => __$RecentsCopyWithImpl<_Recents>(thi
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Recents&&const DeepCollectionEquality().equals(other._articles, _articles)&&const DeepCollectionEquality().equals(other._comments, _comments));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Recents&&const DeepCollectionEquality().equals(other.articles, _articles)&&const DeepCollectionEquality().equals(other.comments, _comments));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_articles),const DeepCollectionEquality().hash(_comments));
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(_articles),const DeepCollectionEquality().hash(_comments));
+}
 
 @override
 String toString() {
-  return 'Recents(articles: $articles, comments: $comments)';
+    return 'Recents(articles: $articles, comments: $comments)';
 }
 
 
@@ -297,16 +305,21 @@ $RecentCopyWith<Recent> get copyWith => _$RecentCopyWithImpl<Recent>(this as Rec
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Recent&&(identical(other.title, title) || other.title == title)&&(identical(other.time, time) || other.time == time)&&const DeepCollectionEquality().equals(other.extraData, extraData));
+  final _this = this as Recent;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Recent&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.time, _this.time) || other.time == _this.time)&&const DeepCollectionEquality().equals(other.extraData, _this.extraData));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,time,const DeepCollectionEquality().hash(extraData));
+int get hashCode {
+  final _this = this as Recent;
+  return Object.hash(runtimeType,_this.title,_this.time,const DeepCollectionEquality().hash(_this.extraData));
+}
 
 @override
 String toString() {
-  return 'Recent(title: $title, time: $time, extraData: $extraData)';
+  final _this = this as Recent;
+  return 'Recent(title: ${_this.title}, time: ${_this.time}, extraData: ${_this.extraData})';
 }
 
 
@@ -335,7 +348,7 @@ class _$RecentCopyWithImpl<$Res>
 /// Create a copy of Recent
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? time = null,Object? extraData = null,}) {
-  return _then(_self.copyWith(
+  return _then(Recent(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,time: null == time ? _self.time : time // ignore: cast_nullable_to_non_nullable
 as String,extraData: null == extraData ? _self.extraData : extraData // ignore: cast_nullable_to_non_nullable
@@ -480,7 +493,7 @@ return $default(_that.title,_that.time,_that.extraData);case _:
 
 
 class _Recent implements Recent {
-  const _Recent({this.title = '', this.time = '', final  Map<String, dynamic> extraData = const {}}): _extraData = extraData;
+  const _Recent({this.title = '', this.time = '',  Map<String, dynamic> extraData = const {}}): _extraData = extraData;
   
 
 @override@JsonKey() final  String title;
@@ -503,16 +516,18 @@ _$RecentCopyWith<_Recent> get copyWith => __$RecentCopyWithImpl<_Recent>(this, _
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _Recent&&(identical(other.title, title) || other.title == title)&&(identical(other.time, time) || other.time == time)&&const DeepCollectionEquality().equals(other._extraData, _extraData));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Recent&&(identical(other.title, title) || other.title == title)&&(identical(other.time, time) || other.time == time)&&const DeepCollectionEquality().equals(other.extraData, _extraData));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,title,time,const DeepCollectionEquality().hash(_extraData));
+int get hashCode {
+    return Object.hash(runtimeType,title,time,const DeepCollectionEquality().hash(_extraData));
+}
 
 @override
 String toString() {
-  return 'Recent(title: $title, time: $time, extraData: $extraData)';
+    return 'Recent(title: $title, time: $time, extraData: $extraData)';
 }
 
 

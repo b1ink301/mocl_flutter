@@ -52,7 +52,7 @@ jobs:
       
       # 7. Flutter 릴리즈 빌드
       - name: Build Release
-        run: flutter build apk --flavor prd -t lib/main_prd.dart
+        run: flutter build apk --flavor prd
 
       # 8. GitHub Release 생성 및 파일 업로드
       - name: Create GitHub Release

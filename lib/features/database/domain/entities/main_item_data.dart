@@ -1,15 +1,14 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:mocl_flutter/features/database/data/models/main_item_model.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/database/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/database/data/models/model_mapper.dart';
 
 part 'main_item_data.freezed.dart';
-
 part 'main_item_data.g.dart';
 
 @freezed
 abstract class MainItemData with _$MainItemData {
-  const factory MainItemData({
+  const factory({
     required String board,
     required String text,
     required String url,
@@ -18,8 +17,7 @@ abstract class MainItemData with _$MainItemData {
     required int type,
   }) = _MainItemData;
 
-  factory MainItemData.fromJson(Map<String, Object?> json) =>
-      _$MainItemDataFromJson(json);
+  factory fromJson(Map<String, dynamic> json) => _$MainItemDataFromJson(json);
 }
 
 extension MainItemDataExtention on MainItemData {

@@ -1,0 +1,351 @@
+import 'package:mocl_flutter/core/application/app_provider.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/database/application/datasource_provider.dart';
+import 'package:mocl_flutter/features/database/domain/entities/favorite_data.dart';
+import 'package:mocl_flutter/features/database/domain/entities/favorite_group.dart';
+import 'package:mocl_flutter/features/favorite/data/repositories/favorite_repository_impl.dart';
+import 'package:mocl_flutter/features/favorite/domain/repositories/favorite_repository.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+
+part 'favorite_providers.g.dart';
+
+/// 같은 게시판인지 판별하는 키(사이트+게시판 조합으로 유일).
+String _keyOf(SiteType siteType, String board) => '${siteType.name}_$board';
+
+@Riverpod(keepAlive: true)
+FavoriteRepository favoriteRepository(Ref ref) =>
+    FavoriteRepositoryImpl(ref.watch(localDatabaseProvider));
+
+/// 즐겨찾기 그룹(카테고리) 목록. 최초에는 사이트 카테고리 기반 기본 그룹이 시드된다.
+@riverpod
+class FavoriteGroupsNotifier() extends _$FavoriteGroupsNotifier {
+  @override
+  Future<List<FavoriteGroup>> build() =>
+      ref.watch(favoriteRepositoryProvider).getGroups();
+
+  Future<void> addGroup(String name) async {
+    final String trimmed = name.trim();
+    if (trimmed.isEmpty) return;
+
+    final repo = ref.read(favoriteRepositoryProvider);
+    final List<FavoriteGroup> groups = await repo.getGroups();
+    // 사용자가 만든 그룹은 시각(ms)으로 유일한 ID 를 부여한다.
+    final String id = 'g${DateTime.now().millisecondsSinceEpoch}';
+    await repo.saveGroups([
+      ...groups,
+      FavoriteGroup(id: id, name: trimmed, orderBy: groups.length),
+    ]);
+    ref.invalidateSelf();
+  }
+
+  Future<void> rename(String id, String name) async {
+    final String trimmed = name.trim();
+    if (trimmed.isEmpty) return;
+
+    final repo = ref.read(favoriteRepositoryProvider);
+    final List<FavoriteGroup> groups = await repo.getGroups();
+    await repo.saveGroups([
+      for (final FavoriteGroup group in groups)
+        group.id == id ? group.copyWith(name: trimmed) : group,
+    ]);
+    ref.invalidateSelf();
+  }
+
+  /// 그룹을 지운다. 마지막 그룹은 남겨두고(갈 곳이 없어짐), 소속 게시판은
+  /// 사라지지 않도록 첫 번째 남은 그룹으로 옮긴다.
+  Future<void> removeGroup(String id) async {
+    final repo = ref.read(favoriteRepositoryProvider);
+    final List<FavoriteGroup> groups = await repo.getGroups();
+    if (groups.length <= 1) return;
+
+    final List<FavoriteGroup> remain = groups
+        .where((group) => group.id != id)
+        .toList();
+    final String fallbackId = remain.first.id;
+
+    final List<FavoriteData> favorites = await repo.getAll();
+    final List<FavoriteData> orphans = favorites
+        .where((favorite) => favorite.group == id)
+        .toList();
+    if (orphans.isNotEmpty) {
+      int order = _nextOrderIn(favorites, fallbackId);
+      await repo.updateAll([
+        for (final FavoriteData favorite in orphans)
+          favorite.copyWith(group: fallbackId, orderBy: order++),
+      ]);
+    }
+
+    await repo.saveGroups([
+      for (int i = 0; i < remain.length; i++) remain[i].copyWith(orderBy: i),
+    ]);
+    ref.invalidateSelf();
+    ref.invalidate(favoritesProvider);
+  }
+
+  /// 그룹을 접거나 펼친다. 화면을 먼저 바꾸고 저장해 즉각 반응하게 한다.
+  Future<void> toggleCollapsed(String id) async {
+    final List<FavoriteGroup>? current = state.asData?.value;
+    if (current != null) {
+      state = AsyncData([
+        for (final FavoriteGroup group in current)
+          group.id == id ? group.copyWith(collapsed: !group.collapsed) : group,
+      ]);
+    }
+
+    final repo = ref.read(favoriteRepositoryProvider);
+    final List<FavoriteGroup> stored = await repo.getGroups();
+    await repo.saveGroups([
+      for (final FavoriteGroup group in stored)
+        group.id == id ? group.copyWith(collapsed: !group.collapsed) : group,
+    ]);
+    ref.invalidateSelf();
+  }
+
+  Future<void> reorder(int oldIndex, int newIndex) async {
+    final List<FavoriteGroup>? current = state.asData?.value;
+    if (current == null || oldIndex == newIndex) return;
+
+    final List<FavoriteGroup> list = List<FavoriteGroup>.of(current);
+    final FavoriteGroup moved = list.removeAt(oldIndex);
+    list.insert(newIndex, moved);
+
+    final List<FavoriteGroup> reordered = [
+      for (int i = 0; i < list.length; i++) list[i].copyWith(orderBy: i),
+    ];
+    state = AsyncData(reordered);
+    await ref.read(favoriteRepositoryProvider).saveGroups(reordered);
+    ref.invalidateSelf();
+  }
+}
+
+/// 즐겨찾기한 게시판 전체. 메인 화면의 유일한 데이터 소스다.
+@riverpod
+class FavoritesNotifier() extends _$FavoritesNotifier {
+  @override
+  Future<List<FavoriteData>> build() =>
+      ref.watch(favoriteRepositoryProvider).getAll();
+
+  /// 게시판 담기/빼기를 한 번에 처리한다(게시판 추가 화면의 칩 탭).
+  /// 담을 때는 그 사이트의 그룹을 찾고, 없으면 사이트 이름으로 새로 만든다.
+  Future<void> toggleBoard(MainItem item) async {
+    final repo = ref.read(favoriteRepositoryProvider);
+    final List<FavoriteData> current = await repo.getAll();
+    final String key = _keyOf(item.siteType, item.board);
+    final bool exists = current.any(
+      (favorite) => _keyOf(favorite.siteType, favorite.board) == key,
+    );
+
+    if (exists) {
+      await repo.remove(item.siteType, item.board);
+    } else {
+      final String groupId = await _ensureSiteGroup(repo, item.siteType);
+      await repo.addAll([
+        FavoriteData.fromMainItem(
+          item,
+          DateTime.now().millisecondsSinceEpoch,
+          group: groupId,
+          orderBy: _nextOrderIn(current, groupId),
+        ),
+      ]);
+    }
+
+    ref.invalidateSelf();
+    ref.invalidate(favoriteGroupsProvider);
+  }
+
+  /// 사이트에 대응하는 그룹 ID. 없으면 맨 뒤에 새로 만들어 저장한다.
+  Future<String> _ensureSiteGroup(
+    FavoriteRepository repo,
+    SiteType siteType,
+  ) async {
+    final List<FavoriteGroup> groups = await repo.getGroups();
+    final bool exists = groups.any((group) => group.id == siteType.name);
+    if (!exists) {
+      await repo.saveGroups([...groups, siteGroupOf(siteType, groups.length)]);
+    }
+    return siteType.name;
+  }
+
+  Future<void> remove(SiteType siteType, String board) async {
+    await ref.read(favoriteRepositoryProvider).remove(siteType, board);
+    ref.invalidateSelf();
+  }
+
+  /// 게시판을 다른 그룹으로 옮긴다(대상 그룹의 맨 뒤로).
+  Future<void> moveToGroup(FavoriteData favorite, String groupId) async {
+    if (favorite.group == groupId) return;
+
+    final repo = ref.read(favoriteRepositoryProvider);
+    final List<FavoriteData> current = await repo.getAll();
+    await repo.updateAll([
+      favorite.copyWith(
+        group: groupId,
+        orderBy: _nextOrderIn(current, groupId),
+      ),
+    ]);
+    ref.invalidateSelf();
+  }
+
+  /// 사이트 안에서 순서를 바꾼다(홈은 사이트 하나만 보여주므로 이 경로를 쓴다).
+  ///
+  /// [siteItems] 는 화면에 보이는 그대로의(정렬된) 그 사이트 게시판 목록이다.
+  /// 그룹이 뒤섞여 있어도 화면 순서를 그대로 0..n 으로 다시 매겨 저장하므로,
+  /// 저장된 순서가 곧 다음에 보게 될 순서가 된다.
+  Future<void> reorderInSite(
+    List<FavoriteData> siteItems,
+    int oldIndex,
+    int newIndex,
+  ) async {
+    if (oldIndex == newIndex) return;
+
+    // onReorderItem 콜백은 제거 후 인덱스를 이미 보정해 넘겨준다(별도 -1 불필요).
+    final List<FavoriteData> list = List<FavoriteData>.of(siteItems);
+    final FavoriteData moved = list.removeAt(oldIndex);
+    list.insert(newIndex, moved);
+
+    final List<FavoriteData> reordered = [
+      for (int i = 0; i < list.length; i++) list[i].copyWith(orderBy: i),
+    ];
+
+    // 낙관적 갱신: 저장을 기다리지 않고 화면을 먼저 바꾼다.
+    final List<FavoriteData>? current = state.asData?.value;
+    if (current != null) {
+      final Map<String, FavoriteData> updated = {
+        for (final FavoriteData favorite in reordered)
+          _keyOf(favorite.siteType, favorite.board): favorite,
+      };
+      state = AsyncData([
+        for (final FavoriteData favorite in current)
+          updated[_keyOf(favorite.siteType, favorite.board)] ?? favorite,
+      ]);
+    }
+
+    await ref.read(favoriteRepositoryProvider).updateAll(reordered);
+    ref.invalidateSelf();
+  }
+
+  /// 그룹 안에서 순서를 바꾼다. 낙관적으로 화면을 먼저 갱신한 뒤
+  /// orderBy 를 0..n 으로 재부여해 저장한다(저장 순서가 곧 표시 순서).
+  Future<void> reorderInGroup(
+    String groupId,
+    List<FavoriteData> groupItems,
+    int oldIndex,
+    int newIndex,
+  ) async {
+    if (oldIndex == newIndex) return;
+
+    // onReorderItem 콜백은 제거 후 인덱스를 이미 보정해 넘겨준다(별도 -1 불필요).
+    final List<FavoriteData> list = List<FavoriteData>.of(groupItems);
+    final FavoriteData moved = list.removeAt(oldIndex);
+    list.insert(newIndex, moved);
+
+    final List<FavoriteData> reordered = [
+      for (int i = 0; i < list.length; i++) list[i].copyWith(orderBy: i),
+    ];
+
+    final List<FavoriteData>? current = state.asData?.value;
+    if (current != null) {
+      final Map<String, FavoriteData> updated = {
+        for (final FavoriteData favorite in reordered)
+          _keyOf(favorite.siteType, favorite.board): favorite,
+      };
+      state = AsyncData([
+        for (final FavoriteData favorite in current)
+          updated[_keyOf(favorite.siteType, favorite.board)] ?? favorite,
+      ]);
+    }
+
+    await ref.read(favoriteRepositoryProvider).updateAll(reordered);
+    ref.invalidateSelf();
+  }
+}
+
+/// 게시판 추가 화면이 '이미 담긴 게시판'을 표시하는 데 쓰는 키 집합.
+/// (사이트+게시판 조합)
+@riverpod
+Set<String> favoriteBoardKeys(Ref ref) {
+  final List<FavoriteData> favorites =
+      ref.watch(favoritesProvider).value ?? const [];
+  return {
+    for (final FavoriteData favorite in favorites)
+      _keyOf(favorite.siteType, favorite.board),
+  };
+}
+
+/// 지금 보고 있는 사이트의 담은 게시판. 홈 화면의 유일한 데이터 소스다.
+///
+/// 순서는 사용자가 정한 [FavoriteData.orderBy] 를 따른다. 그룹 홈 시절에
+/// 그룹별로 매겨진 값이라 사이트 안에서 동률이 생길 수 있어, 그때는 담은
+/// 시각으로 갈라 순서가 매번 흔들리지 않게 한다(정렬 한 번이면 0..n 으로
+/// 다시 매겨진다).
+@riverpod
+Future<List<FavoriteData>> siteFavorites(Ref ref) async {
+  final SiteType siteType = ref.watch(currentSiteTypeProvider);
+  final List<FavoriteData> favorites = await ref.watch(
+    favoritesProvider.future,
+  );
+
+  return favorites.where((favorite) => favorite.siteType == siteType).toList()
+    ..sort((a, b) {
+      final int byOrder = a.orderBy.compareTo(b.orderBy);
+      return byOrder != 0 ? byOrder : a.savedAt.compareTo(b.savedAt);
+    });
+}
+
+/// 사이트별로 담아둔 게시판 개수. 드로어 칩과 빠른 이동 레일이 "갈 곳이 있는
+/// 사이트"를 가리는 데 쓴다.
+@riverpod
+Map<SiteType, int> favoriteCountBySite(Ref ref) {
+  final List<FavoriteData> favorites =
+      ref.watch(favoritesProvider).value ?? const [];
+  final Map<SiteType, int> counts = <SiteType, int>{};
+  for (final FavoriteData favorite in favorites) {
+    counts[favorite.siteType] = (counts[favorite.siteType] ?? 0) + 1;
+  }
+  return counts;
+}
+
+/// 그룹 순서대로 묶은 메인 화면용 섹션 목록.
+/// 그룹이 삭제되는 등으로 소속을 잃은 항목은 같은 이름의 사이트 그룹으로,
+/// 그마저 없으면 첫 그룹으로 보내 화면에서 사라지지 않게 한다.
+@riverpod
+Future<List<FavoriteSection>> favoriteSections(Ref ref) async {
+  final List<FavoriteGroup> groups = await ref.watch(
+    favoriteGroupsProvider.future,
+  );
+  if (groups.isEmpty) return const [];
+
+  final List<FavoriteData> favorites = await ref.watch(
+    favoritesProvider.future,
+  );
+  final Set<String> groupIds = {for (final FavoriteGroup g in groups) g.id};
+  final Map<String, List<FavoriteData>> byGroup = {
+    for (final FavoriteGroup group in groups) group.id: <FavoriteData>[],
+  };
+
+  for (final FavoriteData favorite in favorites) {
+    String id = favorite.group;
+    if (!groupIds.contains(id)) {
+      final String fallback = favorite.siteType.name;
+      id = groupIds.contains(fallback) ? fallback : groups.first.id;
+    }
+    byGroup[id]!.add(favorite);
+  }
+
+  return [
+    for (final FavoriteGroup group in groups)
+      (group: group, items: byGroup[group.id]!),
+  ];
+}
+
+/// 그룹 안에서 다음에 쓸 orderBy(맨 뒤에 붙이기 위한 값).
+int _nextOrderIn(List<FavoriteData> favorites, String groupId) {
+  int max = -1;
+  for (final FavoriteData favorite in favorites) {
+    if (favorite.group == groupId && favorite.orderBy > max) {
+      max = favorite.orderBy;
+    }
+  }
+  return max + 1;
+}

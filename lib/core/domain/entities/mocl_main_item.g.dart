@@ -15,6 +15,9 @@ _MainItem _$MainItemFromJson(Map<String, dynamic> json) => _MainItem(
   type: (json['type'] as num?)?.toInt() ?? 0,
   hasItem: json['hasItem'] as bool? ?? false,
   icon: json['icon'] as String? ?? '',
+  category: json['category'] as String? ?? '',
+  parentBoard: json['parentBoard'] as String? ?? '',
+  parentText: json['parentText'] as String? ?? '',
 );
 
 Map<String, dynamic> _$MainItemToJson(_MainItem instance) => <String, dynamic>{
@@ -26,14 +29,28 @@ Map<String, dynamic> _$MainItemToJson(_MainItem instance) => <String, dynamic>{
   'type': instance.type,
   'hasItem': instance.hasItem,
   'icon': instance.icon,
+  'category': instance.category,
+  'parentBoard': instance.parentBoard,
+  'parentText': instance.parentText,
 };
 
 const _$SiteTypeEnumMap = {
+  SiteType.arcalive: 'arcalive',
+  SiteType.bobaedream: 'bobaedream',
   SiteType.clien: 'clien',
+  SiteType.cook82: 'cook82',
   SiteType.damoang: 'damoang',
+  SiteType.dcinside: 'dcinside',
+  SiteType.dogdrip: 'dogdrip',
+  SiteType.geekNews: 'geekNews',
+  SiteType.instiz: 'instiz',
+  SiteType.inven: 'inven',
   SiteType.meeco: 'meeco',
+  SiteType.mlbpark: 'mlbpark',
+  SiteType.nate: 'nate',
   SiteType.naverCafe: 'naverCafe',
+  SiteType.ppomppu: 'ppomppu',
   SiteType.reddit: 'reddit',
+  SiteType.ruliweb: 'ruliweb',
   SiteType.theqoo: 'theqoo',
-  SiteType.settings: 'settings',
 };

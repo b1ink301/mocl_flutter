@@ -4,7 +4,7 @@ part 'mocl_user_info.freezed.dart';
 
 @freezed
 abstract class UserInfo with _$UserInfo {
-  const factory UserInfo({
+  const factory({
     required String id,
     required String nickName,
     required String nickImage,
