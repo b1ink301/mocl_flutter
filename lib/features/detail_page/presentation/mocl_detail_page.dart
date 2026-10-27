@@ -53,8 +53,8 @@ class const _DetailScaffold() extends ConsumerWidget with DetailEvent {
     final systemOverlayStyle =
         theme.appBarTheme.systemOverlayStyle ?? SystemUiOverlayStyle.light;
 
-    final String hexColor = theme.focusColor.stringHexColor;
-    final focusColor = theme.focusColor;
+    final String hexColor = theme.colorScheme.primary.stringHexColor;
+    final focusColor = theme.colorScheme.primary;
     final AppTextStyles styles = ref.watch(appTextStylesFontSizeProvider);
 
     return AnnotatedRegion<SystemUiOverlayStyle>(

@@ -39,15 +39,18 @@ class const SettingsRepositoryImpl({required final SharedPreferences _prefs})
   void setShowNickImage(bool showNickImage) =>
       _prefs.setBool(_extraShowNickImage, showNickImage);
 
+  // 설정 화면에서 "게시판 아이콘 보기" · "사이트 빠른 이동" 토글을 숨겼으므로
+  // 예전에 꺼 둔 값은 무시하고 항상 켠다(끈 사용자가 되돌릴 방법이 없어서).
+  // 토글을 다시 노출하면 저장된 값을 읽도록 되돌린다.
   @override
-  bool isShowBoardIcon() => _prefs.getBool(_extraShowBoardIcon) ?? true;
+  bool isShowBoardIcon() => true;
 
   @override
   void setShowBoardIcon(bool showBoardIcon) =>
       _prefs.setBool(_extraShowBoardIcon, showBoardIcon);
 
   @override
-  bool isShowQuickJump() => _prefs.getBool(_extraShowQuickJump) ?? true;
+  bool isShowQuickJump() => true;
 
   @override
   void setShowQuickJump(bool showQuickJump) =>

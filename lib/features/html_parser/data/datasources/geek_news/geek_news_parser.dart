@@ -62,7 +62,7 @@ class const GeekNewsParser() extends BaseParser {
       final String timeTitle = timeEl?.attributes['title'] ?? '';
 
       // Body content
-      final bodyEl = document.querySelector('div#topic_contents');
+      final bodyEl = document.querySelector('#topic_contents');
       String bodyHtml = bodyEl?.innerHtml.trim() ?? '';
 
       // If there's an external URL, prepend it as a link

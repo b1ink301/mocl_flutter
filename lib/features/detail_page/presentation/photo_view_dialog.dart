@@ -75,7 +75,7 @@ class _PhotoViewDialogState() extends State<PhotoViewDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final focusColor = theme.focusColor;
+    final focusColor = theme.colorScheme.primary;
     // 모달 바텀시트(useSafeArea:false)는 콘텐츠를 MediaQuery.removePadding(removeTop:true)
     // 로 감싸 padding.top 을 0 으로 만든다. removePadding 은 viewPadding 도 함께 깎기
     // 때문에 이 컨텍스트에서는 viewPadding·SafeArea 도 소용없다. removePadding 래퍼보다

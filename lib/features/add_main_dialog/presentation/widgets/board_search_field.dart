@@ -44,7 +44,8 @@ class _BoardSearchFieldState()
     final Color fill = isDark
         ? Colors.white.withValues(alpha: 0.06)
         : Colors.black.withValues(alpha: 0.04);
-    final Color hintColor = theme.textTheme.bodySmall?.color ?? theme.hintColor;
+    final Color hintColor =
+        theme.textTheme.bodySmall?.color ?? theme.colorScheme.onSurfaceVariant;
     final String query = searchQuery(ref);
     // 단계를 오가면 검색어가 비워진다(범위가 달라지므로). 입력창에 남은
     // 글자도 같이 지워 화면과 실제 필터가 어긋나지 않게 한다.
@@ -89,7 +90,10 @@ class _BoardSearchFieldState()
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(22),
-              borderSide: BorderSide(color: theme.focusColor, width: 1.4),
+              borderSide: BorderSide(
+                color: theme.colorScheme.primary,
+                width: 1.4,
+              ),
             ),
           ),
         ),

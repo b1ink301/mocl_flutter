@@ -39,7 +39,7 @@ class const ArcaliveApi(super.dio, super.userAgent) extends BaseApi {
       );
       return await parser.detail(response);
     } on DioException catch (e) {
-      return Left(NetworkFailure(message: e.message ?? 'Unknown Error'));
+      return Left(failureFromDio(e));
     } catch (e) {
       return Left(GetDetailFailure(message: e.toString()));
     }

@@ -3,7 +3,7 @@ import 'package:mocl_flutter/core/presentation/widgets/plain_text.dart';
 
 /// 닉네임과 메타([info]: 시간ㆍ조회수 등)를 한 줄로 조합해 보여준다.
 ///
-/// 닉네임은 항상 볼드로, 원글 작성자(OP)일 때는 [Theme.focusColor](코랄)로 칠한다.
+/// 닉네임은 항상 볼드로, 원글 작성자(OP)일 때는 [ColorScheme.primary](코랄)로 칠한다.
 /// [info] 에는 더 이상 닉네임이 포함되지 않으며(파서 단계에서 제거), 닉네임은
 /// [nickName] 으로 별도 전달받아 여기서 조합한다.
 ///
@@ -30,9 +30,9 @@ class const AuthorInfoText({
       );
     }
 
-    // final nickColor = Theme.of(context).focusColor;
+    // final nickColor = Theme.of(context).colorScheme.primary;
     final Color nickColor = isAuthor
-        ? Theme.of(context).focusColor
+        ? Theme.of(context).colorScheme.primary
         : (style.color ?? const Color(0xFF181A1F));
     final TextStyle nickStyle = style.copyWith(
       fontWeight: FontWeight.w500,

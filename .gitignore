@@ -65,3 +65,5 @@ native/**/target/
 
 # FVM Version Cache
 .fvm/
+# AdMob 실제 ID — 커밋 금지(ads.example.json 참고)
+ads.json

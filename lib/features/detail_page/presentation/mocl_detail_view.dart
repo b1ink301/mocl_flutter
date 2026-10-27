@@ -20,6 +20,7 @@ import 'package:mocl_flutter/features/network/data/datasources/base_api.dart'
     show userAgentMobile;
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/core/util/utilities.dart';
+import 'package:mocl_flutter/features/ads/presentation/widgets/detail_ad_card.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/state/detail_event_mixin.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/state/detail_state_mixin.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/widgets/detail_header_bar.dart';
@@ -211,6 +212,8 @@ class const _DetailView({
                 onTapUrl: (url) => url.openUrl(context),
               ),
               const _SpaceWidget(),
+              // 본문을 다 읽고 댓글로 넘어가는 자리에 광고 하나.
+              SliverToBoxAdapter(child: DetailAdCard(styles: styles)),
               if (detail.comments.isNotEmpty) ...[
                 const PlainDividerWidget(indent: 0, endIndent: 0),
                 _CommentHeader(
@@ -312,7 +315,7 @@ class const _CommentHeader({
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final focusColor = Theme.of(context).focusColor;
+    final focusColor = Theme.of(context).colorScheme.primary;
     // "댓글 N" 은 볼드 코랄 라벨로 강조해 본문/댓글 섹션 경계를 명확히 한다.
     final bodyMedium_ = bodyMedium!.copyWith(
       color: focusColor,
@@ -414,7 +417,7 @@ class const _HtmlLoadingWidget({
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final dividerColor = theme.dividerTheme.color;
-    final focusColor = theme.focusColor;
+    final focusColor = theme.colorScheme.primary;
 
     if (src.isEmpty || progress == null) return const SizedBox.shrink();
 
@@ -641,7 +644,7 @@ class const _HtmlImageErrorWidget({
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final focusColor = Theme.of(context).focusColor;
+    final focusColor = Theme.of(context).colorScheme.primary;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -803,7 +806,7 @@ class const _RefreshButton({
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final focusColor = Theme.of(context).focusColor;
+    final focusColor = Theme.of(context).colorScheme.primary;
     final textStyle = this.textStyle!.copyWith(color: focusColor);
 
     return InkWell(

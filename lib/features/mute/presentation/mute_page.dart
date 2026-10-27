@@ -227,7 +227,7 @@ class const _MuteInputField({
                   contentPadding: const EdgeInsets.symmetric(vertical: 14),
                   border: _border(scheme.outlineVariant, 1),
                   enabledBorder: _border(scheme.outlineVariant, 1),
-                  focusedBorder: _border(theme.focusColor, 1.6),
+                  focusedBorder: _border(theme.colorScheme.primary, 1.6),
                 ),
               );
             },
@@ -240,7 +240,7 @@ class const _MuteInputField({
                   ? '제목에 이 키워드가 들어간 글을 목록에서 숨깁니다.'
                   : '이 작성자가 쓴 글을 목록에서 숨깁니다.',
               style: theme.textTheme.bodySmall?.copyWith(
-                color: theme.hintColor,
+                color: theme.colorScheme.onSurfaceVariant,
               ),
             ),
           ),
@@ -310,7 +310,7 @@ class const _MuteEmptyView({required final bool isKeyword})
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final Color muted = theme.hintColor;
+    final Color muted = theme.colorScheme.onSurfaceVariant;
 
     return Center(
       child: Padding(

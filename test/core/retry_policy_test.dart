@@ -10,6 +10,10 @@ void main() {
       expect(retry(0, const GetDetailFailure(message: '파싱 실패')), isNull);
     });
 
+    test('429 는 재시도하지 않는다 (곧바로 다시 두드리면 더 오래 막힌다)', () {
+      expect(retry(0, const RateLimitFailure(message: '요청이 너무 잦아요')), isNull);
+    });
+
     test('일시적 오류는 지수 백오프로 3번까지 재시도한다', () {
       const error = NetworkFailure(message: '인터넷에 연결할 수 없어요.');
       expect(retry(0, error), const Duration(milliseconds: 300));
