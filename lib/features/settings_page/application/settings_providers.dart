@@ -106,3 +106,19 @@ class PlayVideosInAppNotifier() extends _$PlayVideosInAppNotifier {
     settings.setPlayVideosInApp(state);
   }
 }
+
+/// 목록 · 상세 제목에 말머리 태그를 보인다. 끄면 태그 없이 제목만 보인다.
+@Riverpod(keepAlive: true)
+class ShowCategoryNotifier() extends _$ShowCategoryNotifier {
+  @override
+  bool build() {
+    final settings = ref.watch(settingsRepositoryProvider);
+    return settings.isShowCategory();
+  }
+
+  void toggle() {
+    final settings = ref.read(settingsRepositoryProvider);
+    state = !state;
+    settings.setShowCategory(state);
+  }
+}

@@ -197,9 +197,14 @@ class const GeekNewsParser() extends BaseParser {
         final String title = titleEl?.text.trim() ?? '';
         if (title.isEmpty) continue;
 
-        // Source domain
+        // 출처 도메인은 말머리가 아니라 태그 대신 정보 줄 끝에 붙인다.
+        // 정보 줄은 말줄임되지 않으므로 긴 도메인은 여기서 자른다.
         final urlSpan = row.querySelector('span.topicurl');
-        final String category = urlSpan?.text.trim() ?? '';
+        var domain = (urlSpan?.text.trim() ?? '').replaceAll(
+          RegExp(r'^\(|\)$'),
+          '',
+        );
+        if (domain.length > 24) domain = '${domain.substring(0, 23)}…';
 
         // Points
         final pointsEl = row.querySelector('div.topicinfo span[id^="tp"]');
@@ -241,14 +246,16 @@ class const GeekNewsParser() extends BaseParser {
         }
 
         final String url = '$baseUrl/topic?id=$id';
-        final String info = '$timeTextㆍ${points}P';
+        final String info = domain.isEmpty
+            ? '$timeTextㆍ${points}P'
+            : '$timeTextㆍ${points}Pㆍ$domain';
 
         items.add(
           ListItem(
             id: id,
             title: title,
             reply: reply,
-            category: category,
+            category: '',
             time: timeText,
             url: url,
             info: info,

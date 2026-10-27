@@ -28,6 +28,8 @@ mixin class SettingsState() {
   bool playVideosInAppState(WidgetRef ref) =>
       ref.watch(playVideosInAppProvider);
 
+  bool showCategoryState(WidgetRef ref) => ref.watch(showCategoryProvider);
+
   ThemeMode themeModeState(WidgetRef ref) => ref.watch(themeModeProvider);
 
   double fontSizeDeltaState(WidgetRef ref) => ref.watch(fontSizeDeltaProvider);

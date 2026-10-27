@@ -24,6 +24,10 @@ abstract class SettingsRepository() {
   bool isPlayVideosInApp();
   void setPlayVideosInApp(bool playInApp);
 
+  /// 목록 · 상세 제목에 말머리 태그를 보일지.
+  bool isShowCategory();
+  void setShowCategory(bool showCategory);
+
   /// 접어둔 카페 소구획 키 목록('{siteType}_{부모board}').
   /// 그룹 접힘과 마찬가지로 앱을 다시 켜도 유지한다.
   List<String> getCollapsedSubSections();

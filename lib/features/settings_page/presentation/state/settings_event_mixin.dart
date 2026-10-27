@@ -24,6 +24,9 @@ mixin class SettingsEvent() {
   void handleTogglePlayVideosInApp(WidgetRef ref) =>
       ref.read(playVideosInAppProvider.notifier).toggle();
 
+  void handleToggleShowCategory(WidgetRef ref) =>
+      ref.read(showCategoryProvider.notifier).toggle();
+
   void handleChangeThemeMode(WidgetRef ref, ThemeMode mode) =>
       ref.read(themeModeProvider.notifier).change(mode);
 

@@ -6,6 +6,7 @@ import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 
+import '../../../settings_page/application/settings_providers.dart';
 import '../../application/list_providers.dart';
 
 mixin class ListState() {
@@ -28,6 +29,9 @@ mixin class ListState() {
   /// 페이지네이션이 없는 게시판 여부 — '더 불러오기' 버튼 노출 판단용.
   bool isSinglePageBoardState(WidgetRef ref) =>
       ref.watch(isSinglePageBoardProvider);
+
+  /// 설정 "말머리 보기".
+  bool showCategoryState(WidgetRef ref) => ref.watch(showCategoryProvider);
 
   AppTextStyles appTextStyles(WidgetRef ref) =>
       ref.watch(appTextStylesFontSizeProvider);

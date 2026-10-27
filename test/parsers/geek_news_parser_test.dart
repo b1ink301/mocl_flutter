@@ -27,7 +27,9 @@ void main() {
       final first = items[0];
       expect(first.id, 21001);
       expect(first.title, '긱뉴스 첫 번째 토픽');
-      expect(first.category, '(example.com)');
+      // 출처 도메인은 말머리 태그가 아니라 정보 줄 끝에 괄호 없이 붙는다.
+      expect(first.category, isEmpty);
+      expect(first.info, '3시간전ㆍ42Pㆍexample.com');
       expect(first.like, '42');
       expect(first.reply, '7');
       expect(first.time, '3시간전');

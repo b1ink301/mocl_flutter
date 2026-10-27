@@ -72,6 +72,13 @@ class const SettingsRepositoryImpl({required final SharedPreferences _prefs})
       _prefs.setBool(_extraPlayVideosInApp, playInApp);
 
   @override
+  bool isShowCategory() => _prefs.getBool(_extraShowCategory) ?? true;
+
+  @override
+  void setShowCategory(bool showCategory) =>
+      _prefs.setBool(_extraShowCategory, showCategory);
+
+  @override
   ThemeMode getThemeMode() {
     final String? name = _prefs.getString(_extraThemeMode);
     return ThemeMode.values.firstWhere(
@@ -91,6 +98,7 @@ class const SettingsRepositoryImpl({required final SharedPreferences _prefs})
   static final String _extraShowQuickJump = 'show_quick_jump';
   static final String _extraOpenSiteLinksInApp = 'open_site_links_in_app';
   static final String _extraPlayVideosInApp = 'play_videos_in_app';
+  static final String _extraShowCategory = 'show_category';
   static final String _extraCollapsedSubSections = 'collapsed_sub_sections';
   static final String _extraThemeMode = 'theme_mode';
 }

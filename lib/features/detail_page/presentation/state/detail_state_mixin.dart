@@ -7,6 +7,7 @@ import 'package:mocl_flutter/features/bookmark/application/bookmark_providers.da
 import '../../../../config/mocl_text_styles.dart';
 import '../../../../core/application/app_provider.dart';
 import '../../../html_parser/application/datasource_provider.dart';
+import '../../../settings_page/application/settings_providers.dart';
 import '../../application/detail_providers.dart';
 
 mixin class DetailState() {
@@ -25,6 +26,11 @@ mixin class DetailState() {
   }
 
   String titleState(WidgetRef ref) => ref.watch(detailTitleStateProvider);
+
+  /// 제목 위 말머리 태그. 설정 "말머리 보기" 가 꺼져 있으면 빈 문자열.
+  String categoryState(WidgetRef ref) => ref.watch(showCategoryProvider)
+      ? ref.watch(detailCategoryStateProvider)
+      : '';
 
   String smallTitleState(WidgetRef ref) => ref.watch(detailSmallTitleProvider);
 

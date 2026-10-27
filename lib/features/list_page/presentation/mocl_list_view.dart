@@ -50,6 +50,7 @@ class const MoclListView({super.key})
 
     return ListStyleScope(
       styles: styles,
+      showCategory: showCategoryState(ref),
       child: RefreshIndicator.adaptive(
         color: focusColor,
         onRefresh: () async => handleRefresh(ref),

@@ -137,6 +137,7 @@ class const DetailView({super.key})
     return detailState(ref).maybeMap(
       data: (state) => _DetailView(
         detail: state.value,
+        category: categoryState(ref),
         onRefresh: () => handleRefresh(ref),
         onOpenUrl: (url) => handleOpenLink(context, ref, url),
       ),
@@ -180,6 +181,7 @@ class const _LoadingView() extends StatelessWidget {
 
 class const _DetailView({
   required final Details detail,
+  required final String category,
   required final VoidCallback onRefresh,
   required final Future<bool> Function(String url) onOpenUrl,
 }) extends StatelessWidget with DetailEvent {
@@ -198,7 +200,12 @@ class const _DetailView({
     return MultiSliver(
       children: [
         SliverToBoxAdapter(
-          child: DetailHeaderBar(detail: detail, style: bodySmall),
+          child: DetailHeaderBar(
+            detail: detail,
+            category: category,
+            brightness: styles.brightness,
+            style: bodySmall,
+          ),
         ),
         SliverPadding(
           padding: const EdgeInsets.only(left: 16, right: 8),

@@ -45,6 +45,17 @@ class const SettingsView({super.key})
                 ),
                 const _TileDivider(),
                 _SettingsTile(
+                  icon: Icons.sell_outlined,
+                  title: '말머리 보기',
+                  onTap: () => handleToggleShowCategory(ref),
+                  trailing: Switch(
+                    value: showCategoryState(ref),
+                    activeThumbColor: theme.colorScheme.primary,
+                    onChanged: (_) => handleToggleShowCategory(ref),
+                  ),
+                ),
+                const _TileDivider(),
+                _SettingsTile(
                   icon: Icons.link,
                   title: '지원 사이트 링크는 앱에서 열기',
                   onTap: () => handleToggleOpenSiteLinksInApp(ref),

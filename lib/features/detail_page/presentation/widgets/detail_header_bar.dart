@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/core/presentation/widgets/author_info_text.dart';
+import 'package:mocl_flutter/core/presentation/widgets/category_tag.dart';
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/plain_divider_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/plain_icon.dart';
@@ -12,10 +13,16 @@ import 'package:mocl_flutter/core/presentation/widgets/plain_text.dart';
 /// 메인 · 목록과 같이 제목만 쓴다([DetailAppBar]). 스크롤 중에도 필요한
 /// 북마크는 앱바 액션에 있다. 배경과 스크롤 그림자는 앱바가 담당하므로
 /// (`appBarTheme.scrolledUnderElevation`) 자체 Material/elevation 을 두지 않는다.
+///
+/// 말머리는 앱바가 아니라 이 줄 맨 앞에 태그로 둔다. 목록은 제목 앞, 상세는
+/// 글 정보 묶음 앞으로 자리는 다르지만 태그 모양 · 색은 같다.
 class const DetailHeaderBar({
   super.key,
   required final Details detail,
   required final TextStyle style,
+  required final Brightness brightness,
+  // 비어 있으면(말머리 없음 · 설정에서 끔) 태그를 두지 않는다.
+  final String category = '',
 }) extends StatelessWidget {
   /// 행 최소 높이. 북마크 버튼(아이콘 20 + 상하 패딩 4)이 있던 시절의 높이를
   /// 유지해, 닉네임 이미지가 없는 글에서도 헤더 높이가 들쭉날쭉하지 않게 한다.
@@ -53,6 +60,16 @@ class const DetailHeaderBar({
             constraints: const BoxConstraints(minHeight: _kRowMinHeight),
             child: Row(
               children: [
+                if (category.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(right: 6),
+                    child: CategoryTag(
+                      category,
+                      brightness: brightness,
+                      // 메타 글자(13)에 맞춘 목록 태그 크기(11.5). 글자 크기 설정을 따른다.
+                      fontSize: (style.fontSize ?? 13) * 0.88,
+                    ),
+                  ),
                 if (nickImage.isNotEmpty) NickImageWidget(url: nickImage),
                 Expanded(
                   child: AuthorInfoText(

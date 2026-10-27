@@ -358,3 +358,62 @@ abstract class _$PlayVideosInAppNotifier extends $Notifier<bool> {
     return element.handleCreate(ref, build);
   }
 }
+
+/// 목록 · 상세 제목에 말머리 태그를 보인다. 끄면 태그 없이 제목만 보인다.
+
+@ProviderFor(ShowCategoryNotifier)
+final showCategoryProvider = ShowCategoryNotifierProvider._();
+
+/// 목록 · 상세 제목에 말머리 태그를 보인다. 끄면 태그 없이 제목만 보인다.
+final class ShowCategoryNotifierProvider
+    extends $NotifierProvider<ShowCategoryNotifier, bool> {
+  /// 목록 · 상세 제목에 말머리 태그를 보인다. 끄면 태그 없이 제목만 보인다.
+  ShowCategoryNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'showCategoryProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$showCategoryNotifierHash();
+
+  @$internal
+  @override
+  ShowCategoryNotifier create() => ShowCategoryNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$showCategoryNotifierHash() =>
+    r'4bf5cd1f55a0475d4b3e478f474f79996f7f4edb';
+
+/// 목록 · 상세 제목에 말머리 태그를 보인다. 끄면 태그 없이 제목만 보인다.
+
+abstract class _$ShowCategoryNotifier extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}

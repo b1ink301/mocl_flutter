@@ -5,6 +5,7 @@ import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/presentation/widgets/adaptive_popup_menu.dart';
 import 'package:mocl_flutter/core/presentation/widgets/appbar_actions_icon_theme.dart';
 import 'package:mocl_flutter/core/presentation/widgets/appbar_back_button.dart';
+import 'package:mocl_flutter/core/presentation/widgets/category_tag.dart';
 import 'package:mocl_flutter/core/presentation/widgets/large_title_flexible_space.dart';
 import 'package:mocl_flutter/core/presentation/widgets/plain_icon_button.dart';
 import 'package:mocl_flutter/core/presentation/widgets/scroll_to_top_title.dart';
@@ -27,7 +28,11 @@ class const DetailAppBar({super.key})
     with DetailState, DetailEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final String title = titleState(ref);
+    // 말머리는 작성자 헤더의 태그로 보여주므로 제목 앞 "[말머리]" 는 뗀다.
+    final String title = stripCategoryPrefix(
+      titleState(ref),
+      categoryState(ref),
+    );
     // 제목 줄 수에 따라 확장 높이가 달라진다(최대 3줄).
     final double height = appbarHeight(ref, title);
 

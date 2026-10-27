@@ -1,10 +1,10 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:mocl_flutter/core/presentation/widgets/category_tag.dart';
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/round_text_widget.dart';
 import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mixin.dart';
 
 import '../../../../core/presentation/widgets/author_info_text.dart';
-import '../../../../core/presentation/widgets/plain_text.dart';
 import 'list_scope.dart';
 
 class const MoclListItem({super.key}) extends StatelessWidget with ListEvent {
@@ -15,6 +15,7 @@ class const MoclListItem({super.key}) extends StatelessWidget with ListEvent {
     // 스타일은 폰트 크기 등 글로벌 설정이라 Riverpod 으로 watch
     final styles = ListStyleScope.of(context);
     final isRead = item.isRead;
+    final showCategory = ListStyleScope.showCategoryOf(context);
 
     final titleStyle = styles.title(isRead);
     final infoStyle = styles.smallTitle(isRead);
@@ -52,12 +53,14 @@ class const MoclListItem({super.key}) extends StatelessWidget with ListEvent {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title
-            PlainText(
-              item.title,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
+            // Title (말머리가 있으면 첫 줄 앞에 태그)
+            CategoryTitleText(
+              title: item.title,
+              category: showCategory ? item.category : '',
               style: titleStyle,
+              brightness: styles.brightness,
+              dimmed: isRead,
+              maxLines: 3,
             ),
 
             // Bottom Info (Merged for performance)

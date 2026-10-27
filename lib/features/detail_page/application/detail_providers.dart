@@ -29,6 +29,7 @@ SiteType detailSiteType(Ref ref) => ref.watch(currentSiteTypeProvider);
     listItem,
     detailSiteType,
     DetailTitleStateNotifier,
+    DetailCategoryStateNotifier,
     _markAsRead,
   ],
 )
@@ -42,6 +43,7 @@ class DetailsNotifier() extends _$DetailsNotifier {
     final data = result.getOrElse((f) => throw f);
     await ref.watch(_markAsReadProvider(listItem).future);
     ref.read(detailTitleStateProvider.notifier).update(data.title);
+    ref.read(detailCategoryStateProvider.notifier).update(data.category);
     return data;
   }
 
@@ -89,6 +91,20 @@ class DetailTitleStateNotifier() extends _$DetailTitleStateNotifier {
   void update(String title) {
     if (title.isNotEmpty && state != title) {
       state = title;
+    }
+  }
+}
+
+/// 상세 제목 위 말머리 태그. 목록 아이템 값으로 시작하고, 상세 파서가 말머리를
+/// 찾으면 그 값으로 바꾼다(링크로 연 글처럼 목록 값이 없는 경우).
+@Riverpod(dependencies: [listItem])
+class DetailCategoryStateNotifier() extends _$DetailCategoryStateNotifier {
+  @override
+  String build() => ref.watch(listItemProvider.select((item) => item.category));
+
+  void update(String category) {
+    if (category.isNotEmpty && state != category) {
+      state = category;
     }
   }
 }

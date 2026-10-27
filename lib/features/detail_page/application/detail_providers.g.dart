@@ -128,6 +128,7 @@ final class DetailsNotifierProvider
           listItemProvider,
           detailSiteTypeProvider,
           detailTitleStateProvider,
+          detailCategoryStateProvider,
           _markAsReadProvider,
         ],
         $allTransitiveDependencies: <ProviderOrFamily>{
@@ -137,6 +138,7 @@ final class DetailsNotifierProvider
           DetailsNotifierProvider.$allTransitiveDependencies3,
           DetailsNotifierProvider.$allTransitiveDependencies4,
           DetailsNotifierProvider.$allTransitiveDependencies5,
+          DetailsNotifierProvider.$allTransitiveDependencies6,
         },
       );
 
@@ -147,7 +149,8 @@ final class DetailsNotifierProvider
   static final $allTransitiveDependencies3 = detailTitleStateProvider;
   static final $allTransitiveDependencies4 =
       DetailTitleStateNotifierProvider.$allTransitiveDependencies1;
-  static final $allTransitiveDependencies5 = _markAsReadProvider;
+  static final $allTransitiveDependencies5 = detailCategoryStateProvider;
+  static final $allTransitiveDependencies6 = _markAsReadProvider;
 
   @override
   String debugGetCreateSourceHash() => _$detailsNotifierHash();
@@ -157,7 +160,7 @@ final class DetailsNotifierProvider
   DetailsNotifier create() => DetailsNotifier();
 }
 
-String _$detailsNotifierHash() => r'7d0673b99a2248b81c08941f0ffaa28ce2682f53';
+String _$detailsNotifierHash() => r'5c4467b58e09d6616c78cbe9409d8bba4ce2ec2c';
 
 abstract class _$DetailsNotifier extends $AsyncNotifier<Details> {
   FutureOr<Details> build();
@@ -368,6 +371,73 @@ String _$detailTitleStateNotifierHash() =>
     r'528e0c2ff0c6a5cc8ffe7b3c0cca04889232ff5d';
 
 abstract class _$DetailTitleStateNotifier extends $Notifier<String> {
+  String build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<String, String>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String, String>,
+              String,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// 상세 제목 위 말머리 태그. 목록 아이템 값으로 시작하고, 상세 파서가 말머리를
+/// 찾으면 그 값으로 바꾼다(링크로 연 글처럼 목록 값이 없는 경우).
+
+@ProviderFor(DetailCategoryStateNotifier)
+final detailCategoryStateProvider = DetailCategoryStateNotifierProvider._();
+
+/// 상세 제목 위 말머리 태그. 목록 아이템 값으로 시작하고, 상세 파서가 말머리를
+/// 찾으면 그 값으로 바꾼다(링크로 연 글처럼 목록 값이 없는 경우).
+final class DetailCategoryStateNotifierProvider
+    extends $NotifierProvider<DetailCategoryStateNotifier, String> {
+  /// 상세 제목 위 말머리 태그. 목록 아이템 값으로 시작하고, 상세 파서가 말머리를
+  /// 찾으면 그 값으로 바꾼다(링크로 연 글처럼 목록 값이 없는 경우).
+  DetailCategoryStateNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'detailCategoryStateProvider',
+        isAutoDispose: true,
+        dependencies: <ProviderOrFamily>[listItemProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          DetailCategoryStateNotifierProvider.$allTransitiveDependencies0,
+        ],
+      );
+
+  static final $allTransitiveDependencies0 = listItemProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$detailCategoryStateNotifierHash();
+
+  @$internal
+  @override
+  DetailCategoryStateNotifier create() => DetailCategoryStateNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String>(value),
+    );
+  }
+}
+
+String _$detailCategoryStateNotifierHash() =>
+    r'6b795e24b455c9841f08b5c4803c47c51037fed8';
+
+/// 상세 제목 위 말머리 태그. 목록 아이템 값으로 시작하고, 상세 파서가 말머리를
+/// 찾으면 그 값으로 바꾼다(링크로 연 글처럼 목록 값이 없는 경우).
+
+abstract class _$DetailCategoryStateNotifier extends $Notifier<String> {
   String build();
   @$mustCallSuper
   @override

@@ -20,13 +20,19 @@ class const ListItemScope({
 
 class const ListStyleScope({
   required final AppTextStyles styles,
+  // 설정 "말머리 보기". 스타일처럼 목록 전체에 같은 값이라 여기서 함께 내린다.
+  final bool showCategory = true,
   required super.child,
   super.key,
 }) extends InheritedWidget {
   static AppTextStyles of(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<ListStyleScope>()!.styles;
 
+  static bool showCategoryOf(BuildContext context) => context
+      .dependOnInheritedWidgetOfExactType<ListStyleScope>()!
+      .showCategory;
+
   @override
   bool updateShouldNotify(ListStyleScope oldWidget) =>
-      styles != oldWidget.styles;
+      styles != oldWidget.styles || showCategory != oldWidget.showCategory;
 }
