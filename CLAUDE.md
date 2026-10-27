@@ -106,9 +106,11 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   - 상세 본문과 댓글 사이 하나 — `DetailAdCard`, 모양 `DetailAdStyle` ↔ `DetailNativeAdFactory.kt`(`detailCard`)
 - Dart 스타일과 Kotlin 팩토리는 같은 여백 상수로 높이를 맞춘다(한쪽을 바꾸면 다른 쪽도 함께).
   한 자리에 하나만 두는 광고는 `SingleNativeAd` 를 쓴다.
-- ID: 앱 ID 는 `android/app/build.gradle.kts`(`-PmoclAdmobAppId` 로 교체 가능), 광고 단위는
-  `AdUnitIds`(release 만 실제 단위, debug · profile 은 테스트 단위).
-  개발 중 실제 ID 로 노출/클릭하지 말 것(계정 정지).
+- ID 는 **저장소에 두지 않는다.** 루트의 `ads.json`(gitignore, 형식은 `ads.example.json`)에 두고
+  `--dart-define-from-file=ads.json` 으로 넣는다. 앱 ID 는 `build.gradle.kts` 가 같은
+  define(`MOCL_ADMOB_APP_ID`) 또는 `-PmoclAdmobAppId` 에서 읽고, 광고 단위는 `AdUnitIds` 가 읽는다.
+  값이 없으면 Google 테스트 ID 로 떨어진다. CI 는 Secrets `ADS_JSON` 으로 `ads.json` 을 만든다.
+  debug · profile 은 값이 있어도 테스트 단위만 쓴다. 개발 중 실제 ID 로 노출/클릭하지 말 것(계정 정지).
 - 광고 요청은 동의(UMP) 확인 → `canRequestAds()` → SDK 초기화가 끝난 뒤(`mobileAdsReady`)
   에만 한다. 이 순서를 건너뛰고 `NativeAd` 를 만들지 말 것. 동의 화면 문구는 AdMob 콘솔
   "개인 정보 보호 및 메시지" 의 GDPR 메시지로 관리한다.

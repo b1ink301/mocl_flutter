@@ -1,3 +1,4 @@
+import java.util.Base64
 import java.util.Properties
 import java.io.FileNotFoundException
 
@@ -52,13 +53,23 @@ android {
         versionCode = flutter.versionCode
         versionName = flutter.versionName
 
-        // AdMob 앱 ID(비밀값 아님). debug 도 실제 앱 ID 를 쓰고, 테스트 광고 여부는
-        // Dart 의 AdUnitIds 가 광고 단위로 가른다. `-PmoclAdmobAppId=…` 로 바꿔 끼울 수 있다.
+        // AdMob 앱 ID. 저장소에는 넣지 않고 빌드할 때 주입한다.
+        //   1) `-PmoclAdmobAppId=…`  2) `--dart-define(-from-file)` 의 MOCL_ADMOB_APP_ID
+        // 둘 다 없으면 Google 테스트 앱 ID 로 빌드한다(광고는 테스트 광고, 수익 없음).
+        val dartDefines = (project.findProperty("dart-defines") as String?)
+            ?.split(',')
+            ?.mapNotNull {
+                String(Base64.getDecoder().decode(it)).split('=', limit = 2)
+                    .takeIf { kv -> kv.size == 2 }
+            }
+            ?.associate { it[0] to it[1] }
+            ?: emptyMap()
         val admobAppId = (project.findProperty("moclAdmobAppId") as String?)
-            ?: "ca-app-pub-0000000000000000~0000000000"
+            ?: dartDefines["MOCL_ADMOB_APP_ID"]
+            ?: "ca-app-pub-3940256099942544~3347511713"
         // 앱 ID 는 `~`, 광고 단위 ID 는 `/`. 헷갈려 넣으면 SDK 가 시작 시 죽으므로 빌드에서 막는다.
         require(Regex("^ca-app-pub-\\d+~\\d+$").matches(admobAppId)) {
-            "moclAdmobAppId 는 AdMob 앱 ID(ca-app-pub-…~…) 여야 합니다: $admobAppId"
+            "AdMob 앱 ID(ca-app-pub-…~…) 형식이 아닙니다: $admobAppId"
         }
         manifestPlaceholders["admobAppId"] = admobAppId
     }
