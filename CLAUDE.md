@@ -116,3 +116,16 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   "개인 정보 보호 및 메시지" 의 GDPR 메시지로 관리한다.
 - play-services-ads 가 끌어오는 room-runtime 2.2.5 는 keep 규칙이 없어
   `proguard-rules.pro` 의 RoomDatabase keep 이 필요하다(빠지면 release 가 시작 즉시 죽는다).
+
+## 앱 업데이트 (`features/app_update/`)
+
+- 우리 서버가 아니라 **스토어 버전과 비교**한다. 앱 실행 3초 뒤 `AppUpdateGate` 가 한 번 확인하고,
+  설정 "앱 정보 → 업데이트 확인" 으로 직접 확인한다(미룸 무시).
+  - Android: `in_app_update`(Play 인앱 업데이트). 유연 업데이트로 받고, 다 받으면 "다시 시작"
+    스낵바. Play 우선순위(Developer API 의 `inAppUpdatePriority`) 4 이상이면 즉시 업데이트.
+    Play 에서 설치하지 않은 빌드(debug · 사이드로드 · dev flavor)는 확인 불가로 조용히 끝난다.
+    실제 동작은 Play 내부 앱 공유 · 내부 테스트 트랙으로 확인한다.
+  - iOS: `upgrader` 를 **조회 엔진으로만** 쓴다(iTunes lookup, KR 스토어). 패키지의 `UpgradeAlert`
+    는 `package:flutter/material` 다이얼로그라 `material_ui` 테마 · 지역화를 못 보므로 쓰지 말고,
+    안내 다이얼로그는 `AppUpdateGate` 가 `AlertDialog.adaptive` 로 그린다.
+- 같은 버전은 `AppUpdatePromptStore.interval`(3일) 동안 다시 묻지 않는다(두 플랫폼 공통).

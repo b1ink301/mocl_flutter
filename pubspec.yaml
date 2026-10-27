@@ -1,7 +1,7 @@
 name: mocl_flutter
 description: "Mocl Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.5.2+390
+version: 1.5.0+390
 
 environment:
   sdk: ">=3.13.0"
@@ -161,6 +161,8 @@ dependencies:
   cupertino_ui: ^1.1.4
   intl: any
   google_mobile_ads: ^9.2.0
+  in_app_update: ^5.0.0
+  upgrader: ^13.7.0
 
 dev_dependencies:
   flutter_test:
