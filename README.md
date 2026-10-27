@@ -1,10 +1,16 @@
 # mocl_flutter
 
+<p align="center">
+  <a href="https://play.google.com/store/apps/details?id=kr.b1ink.mocl">
+    <img src="store/graphics/readme-banner-1280x640.png" alt="Mocl — 여러 커뮤니티를 한곳에서 가볍게 눈팅하세요" width="100%">
+  </a>
+</p>
+
 간단한 눈팅 앱으로 Arcalive, Bobaedream, Clien, Cook82, DCInside, Damoang, Dogdrip,
 GeekNews, Instiz, Inven, Meeco, MLBPark, Nate, NaverCafe, Ppomppu, Reddit, Ruliweb, TheQoo
 사이트를 제한적으로 지원합니다.
 
-https://play.google.com/store/apps/details?id=kr.b1ink.mocl
+<a href="https://play.google.com/store/apps/details?id=kr.b1ink.mocl"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/ko_badge_web_generic.png" alt="Google Play에서 다운로드" height="64"></a>
 
 ## 기술 스택
 
@@ -19,6 +25,7 @@ https://play.google.com/store/apps/details?id=kr.b1ink.mocl
 - **코드 생성**: freezed, json_serializable, riverpod_generator
 - **빌드 플레이버**: dev, prd
 - **데이터베이스**: sembast
+- **광고**: Google AdMob 네이티브 광고(Android 만, UMP 동의 → SDK 초기화 후 요청)
 - **앱 아이콘/스플래시**: flutter_launcher_icons + flutter_native_splash (소스: `branding/`)
 
 ## 프로젝트 구조
@@ -41,6 +48,7 @@ lib/
 │   ├── login_page/                # 로그인 (InAppWebView)
 │   ├── add_main_dialog/           # 게시판 추가 다이얼로그
 │   ├── settings_page/             # 설정
+│   ├── ads/                       # AdMob 네이티브 광고 (목록 · 메인 · 상세)
 │   ├── html_parser/               # HTML 파싱
 │   ├── database/                  # 로컬 DB (sembast)
 │   ├── network/                   # 네트워크 에러 처리
