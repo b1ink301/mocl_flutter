@@ -29,5 +29,6 @@
   {"board":"expert","title":"전문가","type":1,"url":"https://damoang.net/expert","no":51},
   {"board":"recipe","title":"레시피","type":1,"url":"https://damoang.net/recipe","no":52},
   {"board":"music","title":"앙뮤직","type":1,"url":"https://damoang.net/music","no":53},
-  {"board":"angtt","title":"다모앙 평점","type":1,"url":"https://damoang.net/angtt","no":54}
+  {"board":"rockmetal","title":"Rock & Metal 음악당","type":1,"url":"https://damoang.net/rockmetal","no":54},
+  {"board":"angtt","title":"다모앙 평점","type":1,"url":"https://damoang.net/angtt","no":55}
 ]

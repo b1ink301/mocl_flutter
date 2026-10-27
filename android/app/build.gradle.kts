@@ -7,9 +7,14 @@ plugins {
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
     // END: FlutterFire Configuration
-    id("kotlin-android")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
+}
+
+kotlin {
+    compilerOptions {
+        jvmTarget = org.jetbrains.kotlin.gradle.dsl.JvmTarget.JVM_21
+    }
 }
 
 android {
@@ -33,16 +38,11 @@ android {
 
     namespace = "net.b1ink.mocl_flutter"
     compileSdk = flutter.compileSdkVersion
-//    ndkVersion = flutter.ndkVersion
-    ndkVersion = "27.0.12077973"
+    ndkVersion = flutter.ndkVersion
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_17.toString()
+        sourceCompatibility = JavaVersion.VERSION_21
+        targetCompatibility = JavaVersion.VERSION_21
     }
 
     defaultConfig {
@@ -77,6 +77,7 @@ android {
         getByName("release") {
             signingConfig = signingConfigs.getByName("key")
             isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
         }
         getByName("debug") {
@@ -85,9 +86,14 @@ android {
         }
         getByName("profile") {
             signingConfig = signingConfigs.getByName("key")
-            isMinifyEnabled = true
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            // 프로파일 빌드는 축소하지 않으므로 proguardFiles 는 지정하지 않는다 (적용되지 않음).
+            isMinifyEnabled = false
         }
+    }
+
+    buildFeatures {
+        resValues = true
+        buildConfig = true
     }
 }
 

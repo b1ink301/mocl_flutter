@@ -1,68 +1,123 @@
-import 'package:flutter/material.dart';
+import 'package:equatable/equatable.dart';
+import 'package:material_ui/material_ui.dart';
 
-class MoclColors {
-  static const Color title = Color(0xFF111111);
-  static const Color readTitle = Color(0xFFAAAAAA);
-  static const Color small = Color(0xFF888888);
-  static const Color readSmall = Color(0xFFAAAAAA);
-  static const Color badge = Color(0xFF888888);
-  static const Color readBadge = Color(0xFFAAAAAA);
+/// 앱 내에서 사용되는 시맨틱 컬러 정의 — "Paper" 디자인 시스템.
+///
+/// 웜 뉴트럴(종이) 배경 위에 단일 강조색(코랄)을 쓰는 읽기 중심 팔레트.
+class MoclColors() {
+  // ── Paper 공용 토큰 (Light) ──
+  static const Color bgLight = Color(0xFFFBFAF9); // 배경(종이)
+  static const Color surfaceLight = Color(0xFFFFFFFF); // 카드/표면
+  static const Color accentLight = Color(0xFFE8552D); // 강조(코랄)
+  static const Color accentWeakLight = Color(0xFFFCEBE5); // 강조 약(칩 배경)
+  static const Color inkLight = Color(0xFF181A1F); // 본문 잉크
+  static const Color subLight = Color(0xFF8B8F98); // 보조 텍스트
+  static const Color faintLight = Color(0xFFB7BBC2); // 읽음/비활성
+  static const Color lineLight = Color(0xFFEDEAE5); // 구분선
 
-  // Dark theme colors
-  static const Color darkTitle = Color(0xFFEEEEEE);
-  static const Color darkReadTitle = Color(0xFF888888);
-  static const Color darkSmall = Color(0xFFAAAAAA);
-  static const Color darkReadSmall = Color(0xFF888888);
-  static const Color darkBadge = Color(0xFFAAAAAA);
-  static const Color darkReadBadge = Color(0xFF888888);
+  // ── Paper 공용 토큰 (Dark) ──
+  static const Color bgDark = Color(0xFF121316);
+  static const Color surfaceDark = Color(0xFF1B1D22);
+  static const Color accentDark = Color(0xFFFF7A57);
+  static const Color accentWeakDark = Color(0xFF2A211D);
+  static const Color inkDark = Color(0xFFECECEE);
+  static const Color subDark = Color(0xFF8E929C);
+  static const Color faintDark = Color(0xFF5C606A);
+  static const Color lineDark = Color(0xFF26282E);
+
+  // Light Theme Colors (시맨틱)
+  static const Color title = inkLight;
+  static const Color readTitle = faintLight;
+  static const Color small = subLight;
+  static const Color readSmall = faintLight;
+  static const Color badge = accentLight;
+  static const Color readBadge = faintLight;
+
+  // Dark Theme Colors (시맨틱)
+  static const Color darkTitle = inkDark;
+  static const Color darkReadTitle = faintDark;
+  static const Color darkSmall = subDark;
+  static const Color darkReadSmall = faintDark;
+  static const Color darkBadge = accentDark;
+  static const Color darkReadBadge = faintDark;
 }
 
-class MoclSizes {
-  static const double titleFontSize = 16.4;
-  static const double smallFontSize = 14.0;
-  static const double badgeFontSize = 11.0;
+/// 기본 폰트 사이즈 정의
+/// Flutter의 Text 위젯이 시스템 폰트 설정을 자동으로 반영하므로 기준값만 정의합니다.
+class _AppFontSizes() {
+  static const double title = 16.0;
+  static const double small = 13.0;
+  static const double badge = 11.0;
 }
 
-class MoclTextStyles extends ThemeExtension<MoclTextStyles> {
-  final TextStyle titleTextStyle;
-  final TextStyle readTitleTextStyle;
-  final TextStyle smallTextStyle;
-  final TextStyle readSmallTextStyle;
-  final TextStyle badgeTextStyle;
-  final TextStyle readBadgeTextStyle;
-
-  const MoclTextStyles({
-    required this.titleTextStyle,
-    required this.readTitleTextStyle,
-    required this.smallTextStyle,
-    required this.readSmallTextStyle,
-    required this.badgeTextStyle,
-    required this.readBadgeTextStyle,
-  });
-
-  static TextStyle _createTextStyle({
-    required Color color,
-    required double fontSize,
-    FontWeight? fontWeight,
-    double? height,
-  }) {
-    return TextStyle(
-      color: color,
-      fontSize: fontSize,
-      fontWeight: fontWeight,
-      height: height,
+class const AppTextStyles({
+  required final TextStyle titleTextStyle,
+  required final TextStyle readTitleTextStyle,
+  required final TextStyle smallTextStyle,
+  required final TextStyle readSmallTextStyle,
+  required final TextStyle badgeTextStyle,
+  required final TextStyle readBadgeTextStyle,
+}) extends ThemeExtension<AppTextStyles> with Equatable {
+  /// 모든 텍스트 스타일의 크기를 비율로 조절한다.
+  AppTextStyles scaled(double factor) {
+    if (factor == 1.0) return this;
+    return AppTextStyles(
+      titleTextStyle: _scale(titleTextStyle, factor),
+      readTitleTextStyle: _scale(readTitleTextStyle, factor),
+      smallTextStyle: _scale(smallTextStyle, factor),
+      readSmallTextStyle: _scale(readSmallTextStyle, factor),
+      badgeTextStyle: _scale(badgeTextStyle, factor),
+      readBadgeTextStyle: _scale(readBadgeTextStyle, factor),
     );
   }
 
+  static TextStyle _scale(TextStyle style, double factor) =>
+      style.copyWith(fontSize: (style.fontSize ?? 14.0) * factor);
+
+  /// Light Theme 인스턴스
+  static final AppTextStyles light = AppTextStyles(
+    titleTextStyle: _create(
+      MoclColors.title,
+      _AppFontSizes.title,
+    ).copyWith(fontWeight: FontWeight.w400),
+    readTitleTextStyle: _create(MoclColors.readTitle, _AppFontSizes.title),
+    smallTextStyle: _create(
+      MoclColors.small,
+      _AppFontSizes.small,
+    ).copyWith(fontWeight: FontWeight.w300),
+    readSmallTextStyle: _create(MoclColors.readSmall, _AppFontSizes.small),
+    badgeTextStyle: _create(
+      MoclColors.badge,
+      _AppFontSizes.badge,
+    ).copyWith(fontWeight: FontWeight.w500),
+    readBadgeTextStyle: _create(
+      MoclColors.readBadge,
+      _AppFontSizes.badge,
+    ).copyWith(fontWeight: FontWeight.w300),
+  );
+
+  /// Dark Theme 인스턴스
+  static final AppTextStyles dark = AppTextStyles(
+    titleTextStyle: _create(MoclColors.darkTitle, _AppFontSizes.title),
+    readTitleTextStyle: _create(MoclColors.darkReadTitle, _AppFontSizes.title),
+    smallTextStyle: _create(MoclColors.darkSmall, _AppFontSizes.small),
+    readSmallTextStyle: _create(MoclColors.darkReadSmall, _AppFontSizes.small),
+    badgeTextStyle: _create(MoclColors.darkBadge, _AppFontSizes.badge),
+    readBadgeTextStyle: _create(MoclColors.darkReadBadge, _AppFontSizes.badge),
+  );
+
+  static TextStyle _create(Color color, double fontSize) =>
+      TextStyle(color: color, fontSize: fontSize);
+
   @override
-  ThemeExtension<MoclTextStyles> copyWith({
+  AppTextStyles copyWith({
     TextStyle? titleTextStyle,
     TextStyle? readTitleTextStyle,
     TextStyle? smallTextStyle,
     TextStyle? readSmallTextStyle,
     TextStyle? badgeTextStyle,
     TextStyle? readBadgeTextStyle,
-  }) => MoclTextStyles(
+  }) => AppTextStyles(
     titleTextStyle: titleTextStyle ?? this.titleTextStyle,
     readTitleTextStyle: readTitleTextStyle ?? this.readTitleTextStyle,
     smallTextStyle: smallTextStyle ?? this.smallTextStyle,
@@ -72,12 +127,9 @@ class MoclTextStyles extends ThemeExtension<MoclTextStyles> {
   );
 
   @override
-  ThemeExtension<MoclTextStyles> lerp(
-    ThemeExtension<MoclTextStyles>? other,
-    double t,
-  ) {
-    if (other is! MoclTextStyles) return this;
-    return MoclTextStyles(
+  AppTextStyles lerp(ThemeExtension<AppTextStyles>? other, double t) {
+    if (other is! AppTextStyles) return this;
+    return AppTextStyles(
       titleTextStyle: TextStyle.lerp(titleTextStyle, other.titleTextStyle, t)!,
       readTitleTextStyle: TextStyle.lerp(
         readTitleTextStyle,
@@ -99,67 +151,27 @@ class MoclTextStyles extends ThemeExtension<MoclTextStyles> {
     );
   }
 
-  TextStyle badge(bool isRead) => isRead ? readBadgeTextStyle : badgeTextStyle;
-
+  // Convenience methods for conditional styles
   TextStyle title(bool isRead) => isRead ? readTitleTextStyle : titleTextStyle;
-
   TextStyle smallTitle(bool isRead) =>
       isRead ? readSmallTextStyle : smallTextStyle;
+  TextStyle badge(bool isRead) => isRead ? readBadgeTextStyle : badgeTextStyle;
 
-  static MoclTextStyles of(BuildContext context) =>
-      Theme.of(context).extension<MoclTextStyles>()!;
+  static AppTextStyles _of(BuildContext context) =>
+      Theme.of(context).extension<AppTextStyles>() ?? light;
 
-  static MoclTextStyles light() => MoclTextStyles(
-    titleTextStyle: _createTextStyle(
-      color: MoclColors.title,
-      fontSize: MoclSizes.titleFontSize,
-    ),
-    readTitleTextStyle: _createTextStyle(
-      color: MoclColors.readTitle,
-      fontSize: MoclSizes.titleFontSize,
-    ),
-    smallTextStyle: _createTextStyle(
-      color: MoclColors.small,
-      fontSize: MoclSizes.smallFontSize,
-    ),
-    readSmallTextStyle: _createTextStyle(
-      color: MoclColors.readSmall,
-      fontSize: MoclSizes.smallFontSize,
-    ),
-    badgeTextStyle: _createTextStyle(
-      color: MoclColors.badge,
-      fontSize: MoclSizes.badgeFontSize,
-    ),
-    readBadgeTextStyle: _createTextStyle(
-      color: MoclColors.readBadge,
-      fontSize: MoclSizes.badgeFontSize,
-    ),
-  );
+  @override
+  List<Object?> get props => [
+    titleTextStyle,
+    readTitleTextStyle,
+    smallTextStyle,
+    readSmallTextStyle,
+    badgeTextStyle,
+    readBadgeTextStyle,
+  ];
+}
 
-  static MoclTextStyles dark() => MoclTextStyles(
-    titleTextStyle: _createTextStyle(
-      color: MoclColors.darkTitle,
-      fontSize: MoclSizes.titleFontSize,
-    ),
-    readTitleTextStyle: _createTextStyle(
-      color: MoclColors.darkReadTitle,
-      fontSize: MoclSizes.titleFontSize, // Fixed font size consistency
-    ),
-    smallTextStyle: _createTextStyle(
-      color: MoclColors.darkSmall,
-      fontSize: MoclSizes.smallFontSize,
-    ),
-    readSmallTextStyle: _createTextStyle(
-      color: MoclColors.darkReadSmall,
-      fontSize: MoclSizes.smallFontSize,
-    ),
-    badgeTextStyle: _createTextStyle(
-      color: MoclColors.darkBadge,
-      fontSize: MoclSizes.badgeFontSize,
-    ),
-    readBadgeTextStyle: _createTextStyle(
-      color: MoclColors.darkReadBadge,
-      fontSize: MoclSizes.badgeFontSize,
-    ),
-  );
+/// BuildContext를 통한 편리한 접근을 위한 Extension
+extension AppTextStylesContextExtension on BuildContext {
+  AppTextStyles get textStyles => AppTextStyles._of(this);
 }

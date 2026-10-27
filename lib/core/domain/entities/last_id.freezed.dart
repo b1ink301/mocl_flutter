@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'last_id.dart';
@@ -9,6 +9,7 @@ part of 'last_id.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 /// @nodoc
@@ -25,16 +26,21 @@ $LastIdCopyWith<LastId> get copyWith => _$LastIdCopyWithImpl<LastId>(this as Las
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is LastId&&const DeepCollectionEquality().equals(other.extra, extra)&&(identical(other.intId, intId) || other.intId == intId)&&(identical(other.stringId, stringId) || other.stringId == stringId));
+  final _this = this as LastId;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is LastId&&const DeepCollectionEquality().equals(other.extra, _this.extra)&&(identical(other.intId, _this.intId) || other.intId == _this.intId)&&(identical(other.stringId, _this.stringId) || other.stringId == _this.stringId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(extra),intId,stringId);
+int get hashCode {
+  final _this = this as LastId;
+  return Object.hash(runtimeType,const DeepCollectionEquality().hash(_this.extra),_this.intId,_this.stringId);
+}
 
 @override
 String toString() {
-  return 'LastId(extra: $extra, intId: $intId, stringId: $stringId)';
+  final _this = this as LastId;
+  return 'LastId(extra: ${_this.extra}, intId: ${_this.intId}, stringId: ${_this.stringId})';
 }
 
 
@@ -63,7 +69,7 @@ class _$LastIdCopyWithImpl<$Res>
 /// Create a copy of LastId
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? extra = freezed,Object? intId = null,Object? stringId = null,}) {
-  return _then(_self.copyWith(
+  return _then(LastId(
 extra: freezed == extra ? _self.extra : extra // ignore: cast_nullable_to_non_nullable
 as dynamic,intId: null == intId ? _self.intId : intId // ignore: cast_nullable_to_non_nullable
 as int,stringId: null == stringId ? _self.stringId : stringId // ignore: cast_nullable_to_non_nullable
@@ -225,16 +231,18 @@ _$LastIdCopyWith<_LastId> get copyWith => __$LastIdCopyWithImpl<_LastId>(this, _
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _LastId&&const DeepCollectionEquality().equals(other.extra, extra)&&(identical(other.intId, intId) || other.intId == intId)&&(identical(other.stringId, stringId) || other.stringId == stringId));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _LastId&&const DeepCollectionEquality().equals(other.extra, extra)&&(identical(other.intId, intId) || other.intId == intId)&&(identical(other.stringId, stringId) || other.stringId == stringId));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(extra),intId,stringId);
+int get hashCode {
+    return Object.hash(runtimeType,const DeepCollectionEquality().hash(extra),intId,stringId);
+}
 
 @override
 String toString() {
-  return 'LastId(extra: $extra, intId: $intId, stringId: $stringId)';
+    return 'LastId(extra: $extra, intId: $intId, stringId: $stringId)';
 }
 
 

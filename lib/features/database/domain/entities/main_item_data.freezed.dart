@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'main_item_data.dart';
@@ -9,6 +9,7 @@ part of 'main_item_data.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 
@@ -28,16 +29,21 @@ $MainItemDataCopyWith<MainItemData> get copyWith => _$MainItemDataCopyWithImpl<M
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MainItemData&&(identical(other.board, board) || other.board == board)&&(identical(other.text, text) || other.text == text)&&(identical(other.url, url) || other.url == url)&&(identical(other.siteType, siteType) || other.siteType == siteType)&&(identical(other.orderBy, orderBy) || other.orderBy == orderBy)&&(identical(other.type, type) || other.type == type));
+  final _this = this as MainItemData;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MainItemData&&(identical(other.board, _this.board) || other.board == _this.board)&&(identical(other.text, _this.text) || other.text == _this.text)&&(identical(other.url, _this.url) || other.url == _this.url)&&(identical(other.siteType, _this.siteType) || other.siteType == _this.siteType)&&(identical(other.orderBy, _this.orderBy) || other.orderBy == _this.orderBy)&&(identical(other.type, _this.type) || other.type == _this.type));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,board,text,url,siteType,orderBy,type);
+int get hashCode {
+  final _this = this as MainItemData;
+  return Object.hash(runtimeType,_this.board,_this.text,_this.url,_this.siteType,_this.orderBy,_this.type);
+}
 
 @override
 String toString() {
-  return 'MainItemData(board: $board, text: $text, url: $url, siteType: $siteType, orderBy: $orderBy, type: $type)';
+  final _this = this as MainItemData;
+  return 'MainItemData(board: ${_this.board}, text: ${_this.text}, url: ${_this.url}, siteType: ${_this.siteType}, orderBy: ${_this.orderBy}, type: ${_this.type})';
 }
 
 
@@ -66,7 +72,7 @@ class _$MainItemDataCopyWithImpl<$Res>
 /// Create a copy of MainItemData
 /// with the given fields replaced by the non-null parameter values.
 @pragma('vm:prefer-inline') @override $Res call({Object? board = null,Object? text = null,Object? url = null,Object? siteType = null,Object? orderBy = null,Object? type = null,}) {
-  return _then(_self.copyWith(
+  return _then(MainItemData(
 board: null == board ? _self.board : board // ignore: cast_nullable_to_non_nullable
 as String,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
 as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
@@ -237,16 +243,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MainItemData&&(identical(other.board, board) || other.board == board)&&(identical(other.text, text) || other.text == text)&&(identical(other.url, url) || other.url == url)&&(identical(other.siteType, siteType) || other.siteType == siteType)&&(identical(other.orderBy, orderBy) || other.orderBy == orderBy)&&(identical(other.type, type) || other.type == type));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MainItemData&&(identical(other.board, board) || other.board == board)&&(identical(other.text, text) || other.text == text)&&(identical(other.url, url) || other.url == url)&&(identical(other.siteType, siteType) || other.siteType == siteType)&&(identical(other.orderBy, orderBy) || other.orderBy == orderBy)&&(identical(other.type, type) || other.type == type));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,board,text,url,siteType,orderBy,type);
+int get hashCode {
+    return Object.hash(runtimeType,board,text,url,siteType,orderBy,type);
+}
 
 @override
 String toString() {
-  return 'MainItemData(board: $board, text: $text, url: $url, siteType: $siteType, orderBy: $orderBy, type: $type)';
+    return 'MainItemData(board: $board, text: $text, url: $url, siteType: $siteType, orderBy: $orderBy, type: $type)';
 }
 
 

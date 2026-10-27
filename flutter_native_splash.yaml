@@ -1,16 +1,23 @@
 flutter_native_splash:
-  color: "#626262"
-  image: assets/icon.png
-#  branding: assets/branding-production.png
-#  branding_bottom_padding: 24
-  color_dark: "#626262"
-  image_dark: assets/icon.png
-#  branding_dark: assets/branding-production.png
+  # 라이트 / 다크 배경색
+  color: "#FBFAF9"
+  color_dark: "#121316"
 
+  # 중앙 아이콘: 투명 배경 오렌지 m (라이트/다크 공통, 배경색만 분기)
+  image: branding/splash.png
+  image_dark: branding/splash.png
+
+  # Android 12+ SplashScreen API
   android_12:
-    image: assets/icon.png
-    icon_background_color: "#626262"
-    image_dark: assets/icon.png
-    icon_background_color_dark: "#626262"
+    image: branding/splash.png
+    image_dark: branding/splash.png
+    color: "#FBFAF9"
+    color_dark: "#121316"
+    # 아이콘 뒤 원형 배경 = 배경색과 동일 → 사실상 투명(원 안 보임)
+    icon_background_color: "#FBFAF9"
+    icon_background_color_dark: "#121316"
 
+  android: true
+  ios: true
   web: false
+  fullscreen: false

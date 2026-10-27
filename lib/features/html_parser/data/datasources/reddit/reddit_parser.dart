@@ -1,0 +1,289 @@
+import 'dart:async';
+import 'dart:convert';
+import 'dart:isolate';
+
+import 'package:dio/dio.dart';
+import 'package:fpdart/fpdart.dart';
+import 'package:html/parser.dart';
+import 'package:html_unescape/html_unescape.dart';
+import 'package:mocl_flutter/core/domain/entities/last_id.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
+import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
+import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/core/util/mocl_logger.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_ext.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_isolate_client.dart';
+import 'package:mocl_flutter/features/html_parser/data/datasources/base/parser_isolate_message.dart';
+import 'package:timeago/timeago.dart' as timeago;
+
+import '../base/base_parser.dart';
+
+class const RedditParser() extends BaseParser {
+  @override
+  String get baseUrl => 'https://www.reddit.com';
+
+  @override
+  Future<Either<Failure, Details>> detail(Response<dynamic> response) async {
+    final responseData = response.data;
+    return Isolate.run(() => _parseDetail(responseData));
+  }
+
+  static Either<Failure, Details> _parseDetail(dynamic json) {
+    if (json == null || json.isEmpty == true) {
+      return Right<Failure, Details>(Details.empty());
+    }
+
+    timeago.setLocaleMessages('ko', timeago.KoMessages());
+    final htmlUnescape = HtmlUnescape();
+
+    final detailData =
+        (json[0]['data']['children'] as List<dynamic>).first['data'];
+
+    // selftext_html 은 링크/이미지 게시물에선 null → "null" 문자열 방지.
+    final rawBody = detailData['selftext_html'];
+    final bodyHtml = rawBody is String ? htmlUnescape.convert(rawBody) : '';
+    final title = detailData['title'].toString();
+    final viewCount = '';
+    final likeCount = detailData['ups'].toString();
+    final nickImage = '';
+    final userId = detailData['author_fullname'].toString();
+    final nickName = detailData['author'].toString();
+    final double created = detailData['created'] as double;
+    final int milliseconds = (created * 1000).toInt();
+    final date = DateTime.fromMillisecondsSinceEpoch(milliseconds).toLocal();
+    final parsedTime = timeago.format(date, locale: 'ko');
+    final info = BaseParser.parserInfo(parsedTime, viewCount);
+
+    final comment = json[1]['data']['children'] as List<dynamic>?;
+    final comments =
+        comment
+            ?.map((element) => _parseComment(element, htmlUnescape))
+            .whereType<CommentItem>()
+            .toList() ??
+        const [];
+
+    // final translator = GoogleTranslator();
+    // final html = htmlUnescape.convert(bodyHtml);
+    // final translation = await translator.translate(html, to: 'ko');
+
+    final detail = Details(
+      title: title,
+      viewCount: viewCount,
+      likeCount: likeCount,
+      csrf: '',
+      time: created.toString(),
+      info: info,
+      userInfo: UserInfo(id: userId, nickName: nickName, nickImage: nickImage),
+      comments: comments,
+      bodyHtml: bodyHtml,
+    );
+
+    return Right<Failure, Details>(detail);
+  }
+
+  static CommentItem? _parseComment(
+    dynamic element,
+    HtmlUnescape htmlUnescape,
+  ) {
+    final json = element as Map<String, dynamic>;
+    // "more"(더보기 placeholder) 등 실제 댓글(t1)이 아닌 노드는 건너뛴다.
+    if (json['kind'] != 't1') return null;
+    final data = json['data'] as Map<String, dynamic>;
+    final rawBody = data['body_html'];
+    final bodyHtml = rawBody is String ? htmlUnescape.convert(rawBody) : '';
+    final id = data['id'].toString();
+    final likeCount = data['ups'].toString();
+    final userId = data['author_fullname'].toString();
+    final nickName = data['author'].toString();
+    final double created = (data['created'] as num?)?.toDouble() ?? 0;
+    final int depth = (data['depth'] as num?)?.toInt() ?? 0;
+    final replies = data['replies'];
+
+    final int milliseconds = (created * 1000).toInt();
+    final date = DateTime.fromMillisecondsSinceEpoch(milliseconds).toLocal();
+    final parsedTime = timeago.format(date, locale: 'ko');
+    final info = BaseParser.parserInfo(parsedTime, '');
+
+    List<CommentItem> repliesList = [];
+    if (replies is Map<String, dynamic>) {
+      final repliesData = replies['data']['children'] as List;
+      repliesList = repliesData
+          .map((replyJson) => _parseComment(replyJson, htmlUnescape))
+          .whereType<CommentItem>()
+          .toList();
+    }
+
+    return CommentItem(
+      id: id.hashCode,
+      isReply: depth > 0,
+      bodyHtml: bodyHtml,
+      likeCount: likeCount,
+      mediaHtml: '',
+      isVideo: false,
+      time: created.toString(),
+      info: info,
+      userInfo: UserInfo(id: userId, nickName: nickName, nickImage: ''),
+      authorId: '',
+      replies: repliesList,
+    );
+  }
+
+  @override
+  Future<Either<Failure, List<ListItem>>> list(
+    Response<dynamic> response,
+    LastId lastId,
+    String boardTitle,
+    Future<List<int>> Function(SiteType p1, List<int> p2) isReads,
+  ) async {
+    try {
+      final items = await ParserIsolateClient.instance.parseList(
+        siteType: siteType,
+        responseData: response.data as Object,
+        lastId: const LastId(intId: -1),
+        boardTitle: boardTitle,
+        baseUrl: baseUrl,
+        isShowNickImage: false,
+        isReads: isReads,
+      );
+      return Right(items);
+    } catch (e) {
+      return Left(GetListFailure(message: e.toString()));
+    }
+  }
+
+  static Future<void> parseListInWorker(ParseListMessage message) async {
+    final replyPort = message.replyPort;
+    final dynamic json = message.responseData;
+    final boardTitle = message.boardTitle;
+
+    final list = json['data']['children'] as List<dynamic>?;
+
+    if (list == null) {
+      replyPort.send(List<ListItem>.empty());
+      return;
+    }
+
+    final htmlUnescape = HtmlUnescape();
+
+    final items = list
+        .map((element) {
+          final data = element['data'];
+          if (data == null) return null;
+
+          final double created = data['created'] as double;
+          final int milliseconds = (created * 1000).toInt();
+          final date = DateTime.fromMillisecondsSinceEpoch(milliseconds)
+              .toLocal();
+          final parsedTime = timeago.format(date, locale: 'ko');
+          final hit = '';
+          final nickName = data['author'].toString();
+          final info = BaseParser.parserInfo(parsedTime, hit);
+          final id = data['id'].toString();
+          final title = data['title'].toString();
+          final category = data['link_flair_text'].toString();
+          final reply = data['num_comments'].toString();
+          final userId = data['author_fullname'].toString();
+          final board = data['subreddit'].toString();
+
+          return ListItem(
+            id: id.hashCode,
+            title: htmlUnescape.convert(title),
+            reply: reply,
+            category: category,
+            time: milliseconds.toString(),
+            url: id,
+            info: info,
+            board: board,
+            boardTitle: boardTitle,
+            like: '',
+            hit: hit,
+            userInfo: UserInfo(id: userId, nickName: nickName, nickImage: ''),
+            hasImage: false,
+            isRead: false,
+          );
+        })
+        .whereType<ListItem>()
+        .toList();
+
+    replyPort.send(items);
+  }
+
+  @override
+  Future<Either<Failure, List<MainItem>>> main(
+    Response<dynamic> response,
+  ) async {
+    final responseData = response.data;
+    final document = parse(responseData).body;
+    final container = document?.querySelector(
+      'left-nav-communities-controller',
+    );
+    if (container == null) {
+      return Left(NotLoginFailure(message: '로그인하지 않았습니다. #1'));
+    }
+    MoclLogger.d(() => 'container=${container.outerHtml}');
+    final initialStateJson = container.attributes['initialstatejson'];
+    if (initialStateJson == null || initialStateJson == "[]") {
+      return Left(NotLoginFailure(message: '로그인하지 않았습니다. #2'));
+    }
+    final list = jsonDecode(initialStateJson) as List<dynamic>;
+    var orderBy = 0;
+    final List<MainItem> result = list
+        .map((item) {
+          final prefixedName = item['prefixedName'].toString();
+          final mainItem = MainItem(
+            siteType: SiteType.reddit,
+            orderBy: orderBy++,
+            url: 'https://www.reddit.com/$prefixedName',
+            board: item['id'].toString(),
+            text: prefixedName,
+            icon: item['styles']['icon64'].toString(),
+            type: 0,
+          );
+          return mainItem;
+        })
+        .whereType<MainItem>()
+        .toList();
+
+    MoclLogger.d(() => '[main]#3 result=$result');
+
+    return Right(result);
+  }
+
+  @override
+  SiteType get siteType => SiteType.reddit;
+
+  @override
+  String urlByDetail(String url, String board, int id) =>
+      'https://www.reddit.com/r/$board/comments/$url.json';
+
+  @override
+  String urlByList(
+    String url,
+    String board,
+    int page,
+    SortType sortType,
+    LastId lastId,
+  ) {
+    final sort = sortType.toQuery(siteType);
+    final extra = page > 1 ? '&after=t3_${lastId.stringId}' : '';
+    return 'https://www.reddit.com/$board/$sort/.json?limit=25$extra';
+  }
+
+  @override
+  String urlByMain() =>
+      'https://www.reddit.com/svc/shreddit/left-nav-communities-section';
+
+  @override
+  String urlBySearchList(
+    String url,
+    String board,
+    int page,
+    String keyword,
+    LastId lastId,
+  ) => url;
+}

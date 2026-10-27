@@ -1,54 +1,24 @@
 import 'package:equatable/equatable.dart';
 
-abstract class Failure extends Equatable {
-  final String message;
+// Re-export feature-specific failures for backward compatibility.
+// New code should import directly from the feature's error file.
+export 'package:mocl_flutter/features/html_parser/domain/errors/parser_failures.dart';
+export 'package:mocl_flutter/features/main_page/domain/errors/main_failures.dart';
 
-  const Failure({required this.message});
-
+abstract class const Failure({required final String message})
+    extends Equatable {
   @override
   List<Object> get props => [message];
 }
 
-class ServerFailure extends Failure {
-  const ServerFailure({required super.message});
-}
+class const ServerFailure({required super.message}) extends Failure;
 
-class NetworkFailure extends Failure {
-  const NetworkFailure({required super.message});
-}
+class const NetworkFailure({required super.message}) extends Failure;
 
-class GetMainFailure extends Failure {
-  const GetMainFailure({required super.message});
-}
+class const NotLoginFailure({required super.message}) extends Failure;
 
-class NotLoginFailure extends Failure {
-  const NotLoginFailure({required super.message});
-}
+/// 로그인은 돼 있으나 권한(등급/멤버 레벨)이 모자라 읽을 수 없는 경우.
+/// 재시도해도 결과가 같으므로 UI 는 재시도 대신 안내를 보여준다.
+class const PermissionFailure({required super.message}) extends Failure;
 
-class GetListFailure extends Failure {
-  const GetListFailure({required super.message});
-}
-
-class GetDetailFailure extends Failure {
-  const GetDetailFailure({required super.message});
-}
-
-class GetCommentsFailure extends Failure {
-  const GetCommentsFailure({required super.message});
-}
-
-class SetMainFailure extends Failure {
-  const SetMainFailure({required super.message});
-}
-
-class UnknownFailure extends Failure {
-  const UnknownFailure({required super.message});
-}
-
-class ServerException implements Exception {}
-
-class GetMainException implements Exception {}
-
-class GetVersionFailure extends Failure {
-  const GetVersionFailure({required super.message});
-}
+class const UnknownFailure({required super.message}) extends Failure;

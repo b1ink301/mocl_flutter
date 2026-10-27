@@ -1,0 +1,35 @@
+{
+  "kind": "Listing",
+  "data": {
+    "children": [
+      {
+        "kind": "t3",
+        "data": {
+          "id": "abc123",
+          "title": "First post &amp; title",
+          "author": "reddit_user1",
+          "author_fullname": "t2_user1",
+          "subreddit": "flutterdev",
+          "link_flair_text": "Discussion",
+          "num_comments": 15,
+          "ups": 120,
+          "created": 1765500000.0
+        }
+      },
+      {
+        "kind": "t3",
+        "data": {
+          "id": "def456",
+          "title": "Second post",
+          "author": "reddit_user2",
+          "author_fullname": "t2_user2",
+          "subreddit": "flutterdev",
+          "link_flair_text": null,
+          "num_comments": 0,
+          "ups": 3,
+          "created": 1765400000.0
+        }
+      }
+    ]
+  }
+}

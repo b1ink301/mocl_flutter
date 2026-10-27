@@ -1,6 +1,6 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // coverage:ignore-file
-// ignore_for_file: type=lint
+// ignore_for_file: type=lint, type=warning, deprecated_member_use, deprecated_member_use_from_same_package
 // ignore_for_file: unused_element, deprecated_member_use, deprecated_member_use_from_same_package, use_function_type_syntax_for_parameters, unnecessary_const, avoid_init_to_null, invalid_override_different_default_values_named, prefer_expression_function_bodies, annotate_overrides, invalid_annotation_target, unnecessary_question_mark
 
 part of 'main_item_model.dart';
@@ -9,6 +9,7 @@ part of 'main_item_model.dart';
 // FreezedGenerator
 // **************************************************************************
 
+// GENERATED CODE - DO NOT MODIFY BY HAND
 // dart format off
 T _$identity<T>(T value) => value;
 MainItemModel _$MainItemModelFromJson(
@@ -22,7 +23,7 @@ MainItemModel _$MainItemModelFromJson(
 /// @nodoc
 mixin _$MainItemModel {
 
-@JsonKey(name: 'no') int get orderBy; String get board; int get type;@JsonKey(name: 'title') String get text; String get url; SiteType? get siteType;
+ int get no; String get board; int get type; String get title; String get url; SiteType? get siteType; bool get hasItem; List<MainItemModel> get children;
 /// Create a copy of MainItemModel
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -35,16 +36,21 @@ $MainItemModelCopyWith<MainItemModel> get copyWith => _$MainItemModelCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is MainItemModel&&(identical(other.orderBy, orderBy) || other.orderBy == orderBy)&&(identical(other.board, board) || other.board == board)&&(identical(other.type, type) || other.type == type)&&(identical(other.text, text) || other.text == text)&&(identical(other.url, url) || other.url == url)&&(identical(other.siteType, siteType) || other.siteType == siteType));
+  final _this = this as MainItemModel;
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is MainItemModel&&(identical(other.no, _this.no) || other.no == _this.no)&&(identical(other.board, _this.board) || other.board == _this.board)&&(identical(other.type, _this.type) || other.type == _this.type)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.url, _this.url) || other.url == _this.url)&&(identical(other.siteType, _this.siteType) || other.siteType == _this.siteType)&&(identical(other.hasItem, _this.hasItem) || other.hasItem == _this.hasItem)&&const DeepCollectionEquality().equals(other.children, _this.children));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,orderBy,board,type,text,url,siteType);
+int get hashCode {
+  final _this = this as MainItemModel;
+  return Object.hash(runtimeType,_this.no,_this.board,_this.type,_this.title,_this.url,_this.siteType,_this.hasItem,const DeepCollectionEquality().hash(_this.children));
+}
 
 @override
 String toString() {
-  return 'MainItemModel(orderBy: $orderBy, board: $board, type: $type, text: $text, url: $url, siteType: $siteType)';
+  final _this = this as MainItemModel;
+  return 'MainItemModel(no: ${_this.no}, board: ${_this.board}, type: ${_this.type}, title: ${_this.title}, url: ${_this.url}, siteType: ${_this.siteType}, hasItem: ${_this.hasItem}, children: ${_this.children})';
 }
 
 
@@ -55,7 +61,7 @@ abstract mixin class $MainItemModelCopyWith<$Res>  {
   factory $MainItemModelCopyWith(MainItemModel value, $Res Function(MainItemModel) _then) = _$MainItemModelCopyWithImpl;
 @useResult
 $Res call({
-@JsonKey(name: 'no') int orderBy, String board, int type,@JsonKey(name: 'title') String text, String url, SiteType? siteType
+ int no, String board, int type, String title, String url, SiteType? siteType, bool hasItem, List<MainItemModel> children
 });
 
 
@@ -72,15 +78,17 @@ class _$MainItemModelCopyWithImpl<$Res>
 
 /// Create a copy of MainItemModel
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? orderBy = null,Object? board = null,Object? type = null,Object? text = null,Object? url = null,Object? siteType = freezed,}) {
-  return _then(_self.copyWith(
-orderBy: null == orderBy ? _self.orderBy : orderBy // ignore: cast_nullable_to_non_nullable
+@pragma('vm:prefer-inline') @override $Res call({Object? no = null,Object? board = null,Object? type = null,Object? title = null,Object? url = null,Object? siteType = freezed,Object? hasItem = null,Object? children = null,}) {
+  return _then(MainItemModel(
+no: null == no ? _self.no : no // ignore: cast_nullable_to_non_nullable
 as int,board: null == board ? _self.board : board // ignore: cast_nullable_to_non_nullable
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
-as int,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
+as int,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
 as String,siteType: freezed == siteType ? _self.siteType : siteType // ignore: cast_nullable_to_non_nullable
-as SiteType?,
+as SiteType?,hasItem: null == hasItem ? _self.hasItem : hasItem // ignore: cast_nullable_to_non_nullable
+as bool,children: null == children ? _self.children : children // ignore: cast_nullable_to_non_nullable
+as List<MainItemModel>,
   ));
 }
 
@@ -165,10 +173,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function(@JsonKey(name: 'no')  int orderBy,  String board,  int type, @JsonKey(name: 'title')  String text,  String url,  SiteType? siteType)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int no,  String board,  int type,  String title,  String url,  SiteType? siteType,  bool hasItem,  List<MainItemModel> children)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _MainItemData() when $default != null:
-return $default(_that.orderBy,_that.board,_that.type,_that.text,_that.url,_that.siteType);case _:
+return $default(_that.no,_that.board,_that.type,_that.title,_that.url,_that.siteType,_that.hasItem,_that.children);case _:
   return orElse();
 
 }
@@ -186,10 +194,10 @@ return $default(_that.orderBy,_that.board,_that.type,_that.text,_that.url,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function(@JsonKey(name: 'no')  int orderBy,  String board,  int type, @JsonKey(name: 'title')  String text,  String url,  SiteType? siteType)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int no,  String board,  int type,  String title,  String url,  SiteType? siteType,  bool hasItem,  List<MainItemModel> children)  $default,) {final _that = this;
 switch (_that) {
 case _MainItemData():
-return $default(_that.orderBy,_that.board,_that.type,_that.text,_that.url,_that.siteType);case _:
+return $default(_that.no,_that.board,_that.type,_that.title,_that.url,_that.siteType,_that.hasItem,_that.children);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -206,10 +214,10 @@ return $default(_that.orderBy,_that.board,_that.type,_that.text,_that.url,_that.
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function(@JsonKey(name: 'no')  int orderBy,  String board,  int type, @JsonKey(name: 'title')  String text,  String url,  SiteType? siteType)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int no,  String board,  int type,  String title,  String url,  SiteType? siteType,  bool hasItem,  List<MainItemModel> children)?  $default,) {final _that = this;
 switch (_that) {
 case _MainItemData() when $default != null:
-return $default(_that.orderBy,_that.board,_that.type,_that.text,_that.url,_that.siteType);case _:
+return $default(_that.no,_that.board,_that.type,_that.title,_that.url,_that.siteType,_that.hasItem,_that.children);case _:
   return null;
 
 }
@@ -221,15 +229,23 @@ return $default(_that.orderBy,_that.board,_that.type,_that.text,_that.url,_that.
 @JsonSerializable()
 
 class _MainItemData implements MainItemModel {
-  const _MainItemData({@JsonKey(name: 'no') required this.orderBy, required this.board, required this.type, @JsonKey(name: 'title') required this.text, required this.url, this.siteType});
+  const _MainItemData({required this.no, required this.board, required this.type, required this.title, required this.url, this.siteType, this.hasItem = false,  List<MainItemModel> children = const <MainItemModel>[]}): _children = children;
   factory _MainItemData.fromJson(Map<String, dynamic> json) => _$MainItemDataFromJson(json);
 
-@override@JsonKey(name: 'no') final  int orderBy;
+@override final  int no;
 @override final  String board;
 @override final  int type;
-@override@JsonKey(name: 'title') final  String text;
+@override final  String title;
 @override final  String url;
 @override final  SiteType? siteType;
+@override@JsonKey() final  bool hasItem;
+ final  List<MainItemModel> _children;
+@override@JsonKey() List<MainItemModel> get children {
+  if (_children is EqualUnmodifiableListView) return _children;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_children);
+}
+
 
 /// Create a copy of MainItemModel
 /// with the given fields replaced by the non-null parameter values.
@@ -244,16 +260,18 @@ Map<String, dynamic> toJson() {
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _MainItemData&&(identical(other.orderBy, orderBy) || other.orderBy == orderBy)&&(identical(other.board, board) || other.board == board)&&(identical(other.type, type) || other.type == type)&&(identical(other.text, text) || other.text == text)&&(identical(other.url, url) || other.url == url)&&(identical(other.siteType, siteType) || other.siteType == siteType));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _MainItemData&&(identical(other.no, no) || other.no == no)&&(identical(other.board, board) || other.board == board)&&(identical(other.type, type) || other.type == type)&&(identical(other.title, title) || other.title == title)&&(identical(other.url, url) || other.url == url)&&(identical(other.siteType, siteType) || other.siteType == siteType)&&(identical(other.hasItem, hasItem) || other.hasItem == hasItem)&&const DeepCollectionEquality().equals(other.children, _children));
 }
 
 @JsonKey(includeFromJson: false, includeToJson: false)
 @override
-int get hashCode => Object.hash(runtimeType,orderBy,board,type,text,url,siteType);
+int get hashCode {
+    return Object.hash(runtimeType,no,board,type,title,url,siteType,hasItem,const DeepCollectionEquality().hash(_children));
+}
 
 @override
 String toString() {
-  return 'MainItemModel(orderBy: $orderBy, board: $board, type: $type, text: $text, url: $url, siteType: $siteType)';
+    return 'MainItemModel(no: $no, board: $board, type: $type, title: $title, url: $url, siteType: $siteType, hasItem: $hasItem, children: $children)';
 }
 
 
@@ -264,7 +282,7 @@ abstract mixin class _$MainItemDataCopyWith<$Res> implements $MainItemModelCopyW
   factory _$MainItemDataCopyWith(_MainItemData value, $Res Function(_MainItemData) _then) = __$MainItemDataCopyWithImpl;
 @override @useResult
 $Res call({
-@JsonKey(name: 'no') int orderBy, String board, int type,@JsonKey(name: 'title') String text, String url, SiteType? siteType
+ int no, String board, int type, String title, String url, SiteType? siteType, bool hasItem, List<MainItemModel> children
 });
 
 
@@ -281,15 +299,17 @@ class __$MainItemDataCopyWithImpl<$Res>
 
 /// Create a copy of MainItemModel
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? orderBy = null,Object? board = null,Object? type = null,Object? text = null,Object? url = null,Object? siteType = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? no = null,Object? board = null,Object? type = null,Object? title = null,Object? url = null,Object? siteType = freezed,Object? hasItem = null,Object? children = null,}) {
   return _then(_MainItemData(
-orderBy: null == orderBy ? _self.orderBy : orderBy // ignore: cast_nullable_to_non_nullable
+no: null == no ? _self.no : no // ignore: cast_nullable_to_non_nullable
 as int,board: null == board ? _self.board : board // ignore: cast_nullable_to_non_nullable
 as String,type: null == type ? _self.type : type // ignore: cast_nullable_to_non_nullable
-as int,text: null == text ? _self.text : text // ignore: cast_nullable_to_non_nullable
+as int,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,url: null == url ? _self.url : url // ignore: cast_nullable_to_non_nullable
 as String,siteType: freezed == siteType ? _self.siteType : siteType // ignore: cast_nullable_to_non_nullable
-as SiteType?,
+as SiteType?,hasItem: null == hasItem ? _self.hasItem : hasItem // ignore: cast_nullable_to_non_nullable
+as bool,children: null == children ? _self._children : children // ignore: cast_nullable_to_non_nullable
+as List<MainItemModel>,
   ));
 }
 

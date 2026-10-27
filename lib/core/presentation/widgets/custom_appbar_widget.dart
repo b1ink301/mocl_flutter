@@ -1,10 +1,8 @@
-import 'package:flutter/material.dart';
+import 'package:material_ui/material_ui.dart';
 
-class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const CustomAppBar({super.key, required this.title});
-
-  final Widget title;
-
+class const CustomAppBar({super.key, required final Widget title})
+    extends StatelessWidget
+    implements PreferredSizeWidget {
   @override
   Size get preferredSize => Size.fromHeight(_calculateHeight());
 
@@ -34,10 +32,11 @@ class CustomAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final backgroundColor = Theme.of(context).appBarTheme.backgroundColor;
     return Container(
       padding: const EdgeInsets.all(16.0), // 예시 padding 값
       decoration: BoxDecoration(
-        color: Theme.of(context).appBarTheme.backgroundColor,
+        color: backgroundColor,
         boxShadow: const [
           // AppBar 그림자 효과 추가 (선택 사항)
           // ...

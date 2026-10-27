@@ -10,21 +10,21 @@ part 'mocl_details.freezed.dart';
 
 @freezed
 abstract class Details with _$Details {
-  const factory Details({
+  const factory({
     required String title,
     required String time,
     required String viewCount,
     required String likeCount,
     required String bodyHtml,
-    required String csrf,
     required String info,
     required UserInfo userInfo,
     required List<CommentItem> comments,
     @Default(null) Recents? recents,
-    dynamic extraData,
+    @Default('') String csrf,
+    Map<String, dynamic>? extraData,
   }) = _Details;
 
-  factory Details.empty() => const Details(
+  factory empty() => const Details(
     title: '',
     time: '',
     viewCount: '',

@@ -4,11 +4,11 @@ part 'last_id.freezed.dart';
 
 @freezed
 abstract class LastId with _$LastId {
-  const factory LastId({
+  const factory({
     dynamic extra,
     @Default(-1) int intId,
     @Default('') String stringId,
   }) = _LastId;
 
-  factory LastId.empty() => const LastId();
+  factory empty() => const LastId();
 }

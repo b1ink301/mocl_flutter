@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<body>
+<nav class="navigation">
+  <div class="dropdown-menu">
+    <form><input name="_csrf" value="csrf-token-123"></form>
+  </div>
+</nav>
+<div class="nav_container">
+  <div class="content_view">
+    <div class="post_title">
+      <div class="post_subject"><span>상세 글 제목</span></div>
+    </div>
+    <div class="post_information">
+      <div class="post_time">
+        <div class="post_date"><i class="fa fa-clock"></i>2026-06-11 10:00:00</div>
+        <div class="view_count"><i class="fa fa-eye"></i>4321</div>
+      </div>
+    </div>
+    <div class="post_view">
+      <div class="post_contact">
+        <span class="contact_name">
+          <span class="nickname">글쓴이닉</span>
+          <span class="nickimg"><img src="/img/writer.png" alt="글쓴이닉"></span>
+        </span>
+        <span class="contact_note">
+          <div class="post_memo"><div class="memo_box"><button class="button_input" onclick="memo('writer_id')"></button></div></div>
+        </span>
+      </div>
+      <div class="post_content">
+        <article>
+          <div class="post_article">
+            <p>본문 내용입니다.</p>
+            <input type="hidden" value="x">
+            <button>지워질 버튼</button>
+          </div>
+        </article>
+      </div>
+    </div>
+    <div class="post_button">
+      <div class="symph_area"><button class="symph_count"><strong>42</strong></button></div>
+    </div>
+    <div class="post_comment">
+      <div class="comment">
+        <div class="comment_row" data-author-id="commenter1">
+          <div class="comment_info">
+            <div class="post_contact">
+              <span class="contact_name"><span class="nickname">댓글러1</span></span>
+            </div>
+            <div class="comment_info_area">
+              <div class="comment_time"><span class="timestamp">x</span>2026-06-11 11:00:00</div>
+            </div>
+          </div>
+          <div class="comment_content_symph"><button><strong>3</strong></button></div>
+          <div class="comment_content"><div class="comment_view">첫 번째 댓글</div></div>
+        </div>
+        <div class="comment_row re" data-author-id="commenter2">
+          <div class="comment_info">
+            <div class="post_contact">
+              <span class="contact_name"><span class="nickname">댓글러2</span></span>
+            </div>
+            <div class="comment_info_area">
+              <div class="comment_time">2026-06-11 11:05:00</div>
+            </div>
+          </div>
+          <div class="comment_content"><div class="comment_view">답글입니다</div></div>
+        </div>
+        <div class="comment_row" data-author-id=""><span>삭제 되었습니다.</span></div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

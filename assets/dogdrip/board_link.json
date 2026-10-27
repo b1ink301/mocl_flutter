@@ -1,0 +1,22 @@
+[
+  {"board":"dogdrip","title":"개드립","type":0,"url":"https://www.dogdrip.net/dogdrip","no":0},
+  {"board":"userdog","title":"유저 개드립","type":0,"url":"https://www.dogdrip.net/userdog","no":1},
+  {"board":"boomupbest","title":"붐업 베스트","type":0,"url":"https://www.dogdrip.net/boomupbest","no":2},
+  {"board":"doc","title":"읽을 거리","type":0,"url":"https://www.dogdrip.net/doc","no":3},
+  {"board":"pic","title":"놀이터","type":0,"url":"https://www.dogdrip.net/pic","no":4},
+  {"board":"hotdeal","title":"핫딜","type":0,"url":"https://www.dogdrip.net/hotdeal","no":5},
+  {"board":"free","title":"익명 판","type":0,"url":"https://www.dogdrip.net/free","no":6},
+  {"board":"computer","title":"컴퓨터/IT","type":0,"url":"https://www.dogdrip.net/computer","no":7},
+  {"board":"movie","title":"영상 판","type":0,"url":"https://www.dogdrip.net/movie","no":8},
+  {"board":"stock","title":"주식/재테크","type":0,"url":"https://www.dogdrip.net/stock","no":9},
+  {"board":"coin","title":"코인 판","type":0,"url":"https://www.dogdrip.net/coin","no":10},
+  {"board":"sports","title":"스포츠 판","type":0,"url":"https://www.dogdrip.net/sports","no":11},
+  {"board":"cook","title":"요리 판","type":0,"url":"https://www.dogdrip.net/cook","no":12},
+  {"board":"duck","title":"덕후 판","type":0,"url":"https://www.dogdrip.net/duck","no":13},
+  {"board":"music","title":"음악 판","type":0,"url":"https://www.dogdrip.net/music","no":14},
+  {"board":"vehicle","title":"탈것 판","type":0,"url":"https://www.dogdrip.net/vehicle","no":15},
+  {"board":"consultation","title":"고민 상담","type":0,"url":"https://www.dogdrip.net/consultation","no":16},
+  {"board":"creation","title":"창작 판","type":0,"url":"https://www.dogdrip.net/creation","no":17},
+  {"board":"ib","title":"인터넷 방송","type":0,"url":"https://www.dogdrip.net/ib","no":18},
+  {"board":"politics","title":"정치 사회","type":0,"url":"https://www.dogdrip.net/politics","no":19}
+]
