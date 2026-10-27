@@ -41,7 +41,9 @@ fi
 adb_() { adb -s "$serial" "$@"; }
 
 if [ "${SKIP_BUILD:-0}" != 1 ]; then
-  fvm flutter build apk --release --flavor "$FLAVOR"
+  defines=()
+  [ -f ads.json ] && defines=(--dart-define-from-file=ads.json)
+  fvm flutter build apk --release --flavor "$FLAVOR" ${defines[@]+"${defines[@]}"}
 fi
 [ -f "$APK" ] || fail "APK 가 없습니다: $APK"
 
