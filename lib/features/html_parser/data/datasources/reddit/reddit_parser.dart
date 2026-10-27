@@ -185,7 +185,8 @@ class const RedditParser() extends BaseParser {
           final info = BaseParser.parserInfo(parsedTime, hit);
           final id = data['id'].toString();
           final title = data['title'].toString();
-          final category = data['link_flair_text'].toString();
+          // flair 가 없으면 null 이 와서 toString() 하면 "null" 태그가 붙는다.
+          final category = (data['link_flair_text'] as String?)?.trim() ?? '';
           final reply = data['num_comments'].toString();
           final userId = data['author_fullname'].toString();
           final board = data['subreddit'].toString();
