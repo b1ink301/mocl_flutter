@@ -34,10 +34,24 @@ Failure failureFromDio(DioException e) => switch (e.type) {
     message: '보안 인증서를 확인할 수 없어요.',
   ),
   DioExceptionType.cancel => const NetworkFailure(message: '요청이 취소되었어요.'),
+  DioExceptionType.badResponse when e.response?.statusCode == 429 =>
+    const RateLimitFailure(message: '요청이 너무 잦아 잠시 막혔어요.'),
   DioExceptionType.badResponse => ServerFailure(
     message: '서버 오류 (HTTP ${e.response?.statusCode ?? '?'})',
   ),
   _ => const NetworkFailure(message: '연결에 실패했어요.'),
+};
+
+/// 코드 결함이 아니라 네트워크 상태나 사이트 정책 때문에 생기는 실패인지.
+/// 이런 실패는 Crashlytics 로 올리지 않는다(진짜 결함이 묻힌다).
+bool isExpectedDioFailure(DioException e) => switch (e.type) {
+  DioExceptionType.connectionTimeout ||
+  DioExceptionType.sendTimeout ||
+  DioExceptionType.receiveTimeout ||
+  DioExceptionType.connectionError ||
+  DioExceptionType.cancel => true,
+  DioExceptionType.badResponse => e.response?.statusCode == 429,
+  _ => false,
 };
 
 abstract class const BaseApi(final Dio _dio, final String userAgent)
@@ -191,7 +205,14 @@ abstract class const BaseApi(final Dio _dio, final String userAgent)
       _dio.interceptors.add(interceptor);
       return await action();
     } on DioException catch (e) {
-      MoclLogger.e('DioException', error: e);
+      // 연결 끊김 · 타임아웃 · 429 는 운영 중 늘 생기는 일이라 버그 리포트에서 뺀다.
+      if (isExpectedDioFailure(e)) {
+        MoclLogger.w(
+          () => 'DioException ${e.type.name} ${e.response?.statusCode ?? ''}',
+        );
+      } else {
+        MoclLogger.e('DioException', error: e);
+      }
       return Left(failureFromDio(e));
     } on Failure catch (e) {
       MoclLogger.e('DioException', error: e);

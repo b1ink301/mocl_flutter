@@ -187,7 +187,7 @@ class const _DrawerSiteTag({
     final theme = Theme.of(context);
     final isDark = theme.brightness == Brightness.dark;
     final bool isSelected = isSiteType(ref, siteType);
-    final Color focusColor = theme.focusColor;
+    final Color focusColor = theme.colorScheme.primary;
     final baseStyle = smallTextStyleState(ref);
 
     final Color bg = isSelected
@@ -257,11 +257,9 @@ class const _AddBoardButton({required final double bottomPadding})
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final primaryColor = theme.primaryColor;
-    final TextStyle fontStyle =
-        (theme.textTheme.bodySmall ?? const TextStyle()).copyWith(
-          color: primaryColor,
-        );
+    final primaryColor = theme.colorScheme.primary;
+    final TextStyle fontStyle = (theme.textTheme.bodySmall ?? const TextStyle())
+        .copyWith(color: primaryColor);
     return Container(
       padding: EdgeInsets.fromLTRB(16, 2, 16, 10 + bottomPadding),
       decoration: BoxDecoration(

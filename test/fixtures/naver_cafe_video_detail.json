@@ -1,0 +1,31 @@
+{
+ "result": {
+  "cafeId": 1,
+  "articleId": 617321,
+  "article": {
+   "id": 617321,
+   "menu": {
+    "id": 1,
+    "name": "자유",
+    "menuType": "B",
+    "boardType": "L"
+   },
+   "writer": {
+    "memberKey": "k",
+    "nick": "작성자"
+   },
+   "writeDate": 1790500891460,
+   "readCount": 125,
+   "commentCount": 0,
+   "isMarket": false,
+   "customElements": [],
+   "subject": "Q25 진와 부트루프 해결방법 있을까요ㅜㅜ",
+   "existScrapAddContent": false,
+   "contentHtml": "<div class=\"se-viewer se-theme-default\" lang=\"ko-KR\">\n    <!-- SE_DOC_HEADER_START -->\n    <!--@CONTENTS_HEADER-->\n    <!-- SE_DOC_HEADER_END -->\n    <div class=\"se-main-container\"><div class=\"se-component se-text se-l-default\"><div class=\"se-component-content\"><div class=\"se-section se-section-text se-l-default\"><div class=\"se-module se-module-text\"><!-- SE-TEXT { --><p class=\"se-text-paragraph se-text-paragraph-align- \"><span class=\"se-fs- se-ff-   \">안녕하세요</span></p>\n<!-- } SE-TEXT --></div></div></div><script type=\"text/data\" class=\"__se_module_data\" data-module-v2='{\"type\": \"v2_text\", \"id\": \"SE-t\", \"data\": {\"ctype\": \"text\"  }}'></script></div><div class=\"se-component se-video se-l-default\"><div class=\"se-component-content se-component-content-extend\"><div class=\"se-section se-section-video se-section-align- se-l-default\" ><div class=\"se-module se-module-video\" id=\"SE-b76cb575-ba54-11f1-bf20-a995d62cbbbe\"></div></div></div><script type=\"text/data\" class=\"__se_module_data\" data-module='{\"type\":\"v2_video\", \"id\" :\"SE-b76cb575-ba54-11f1-bf20-a995d62cbbbe\", \"data\" : { \"videoType\" : \"player\", \"vid\" : \"CBE7DC2BBD5B4D4037D41D86645858D78A44\", \"inkey\" : \"V128c8d9670109a3cd0c0b915120ecaa4c9cf\", \"thumbnail\": \"https://phinf.pstatic.net/image.nmv/cafe_2026_09_27_3433/nqEtS6DYsE_03.jpg\", \"originalWidth\": \"1080\", \"originalHeight\": \"1920\", \"width\": \"1080\", \"height\": \"1920\", \"contentMode\": \"extend\", \"format\": \"normal\", \"mediaMeta\": {\"@ctype\":\"mediaMeta\",\"title\":\"Q25 진와 부트루프 해결방법 있을까요ㅜㅜ\",\"tags\":[],\"description\":null}, \"useServiceData\": \"false\"}}' data-module-v2='{\"type\": \"v2_video\", \"id\": \"SE-b76cb575-ba54-11f1-bf20-a995d62cbbbe\", \"data\": {\"ctype\": \"video\", \"ai\": \"false\", \"videoType\": \"player\", \"vid\": \"CBE7DC2BBD5B4D4037D41D86645858D78A44\", \"inkey\": \"V128c8d9670109a3cd0c0b915120ecaa4c9cf\", \"thumbnail\": \"https://phinf.pstatic.net/image.nmv/cafe_2026_09_27_3433/nqEtS6DYsE_03.jpg\", \"originalWidth\": \"1080\", \"originalHeight\": \"1920\", \"width\": \"1080\", \"height\": \"1920\", \"contentMode\": \"extend\", \"format\": \"normal\", \"mediaMeta\": {\"@ctype\":\"mediaMeta\",\"title\":\"Q25 진와 부트루프 해결방법 있을까요ㅜㅜ\",\"tags\":[],\"description\":null}, \"useServiceData\": \"false\" }}'></script></div><div class=\"se-component se-text se-l-default\"><div class=\"se-component-content\"><div class=\"se-section se-section-text se-l-default\"><div class=\"se-module se-module-text\"><!-- SE-TEXT { --><p class=\"se-text-paragraph se-text-paragraph-align- \"><span class=\"se-fs- se-ff-   \">감사합니다~</span></p>\n<!-- } SE-TEXT --></div></div></div><script type=\"text/data\" class=\"__se_module_data\" data-module-v2='{\"type\": \"v2_text\", \"id\": \"SE-t\", \"data\": {\"ctype\": \"text\"  }}'></script></div>    </div>\n</div>\n"
+  },
+  "comments": {
+   "items": []
+  },
+  "attaches": []
+ }
+}

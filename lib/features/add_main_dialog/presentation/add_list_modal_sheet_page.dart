@@ -103,7 +103,7 @@ class const _Breadcrumb() extends ConsumerWidget with AddState, AddEvent {
     if (parent == null) return const SizedBox.shrink();
 
     final theme = Theme.of(context);
-    final Color focusColor = theme.focusColor;
+    final Color focusColor = theme.colorScheme.primary;
     final bool canSwitch = siblingContainers(ref).length > 1;
     final bool pickerOpen = containerPickerOpen(ref);
 
@@ -180,7 +180,7 @@ class _ContainerPickerState()
     if (!containerPickerOpen(ref)) return const SizedBox.shrink();
 
     final theme = Theme.of(context);
-    final Color focusColor = theme.focusColor;
+    final Color focusColor = theme.colorScheme.primary;
     final MainItem? parent = drillParent(ref);
     final String query = _filter.trim().toLowerCase();
     final List<MainItem> containers = siblingContainers(ref)
@@ -192,7 +192,7 @@ class _ContainerPickerState()
       right: 8,
       top: 48,
       child: Material(
-        color: theme.cardColor,
+        color: theme.colorScheme.surfaceContainerLowest,
         elevation: 8,
         borderRadius: BorderRadius.circular(12),
         clipBehavior: Clip.antiAlias,
@@ -210,11 +210,14 @@ class _ContainerPickerState()
                   filled: true,
                   fillColor: theme.scaffoldBackgroundColor,
                   hintText: '이동할 목록 검색',
-                  hintStyle: TextStyle(fontSize: 13, color: theme.hintColor),
+                  hintStyle: TextStyle(
+                    fontSize: 13,
+                    color: theme.colorScheme.onSurfaceVariant,
+                  ),
                   prefixIcon: Icon(
                     Icons.search,
                     size: 17,
-                    color: theme.hintColor,
+                    color: theme.colorScheme.onSurfaceVariant,
                   ),
                   prefixIconConstraints: const BoxConstraints(minWidth: 34),
                   contentPadding: const EdgeInsets.symmetric(vertical: 10),
@@ -304,7 +307,7 @@ class const _TopBar() extends ConsumerWidget with AddState, AddEvent {
                 style: TextStyle(
                   fontSize: 12,
                   fontWeight: FontWeight.w700,
-                  color: theme.focusColor,
+                  color: theme.colorScheme.primary,
                 ),
               ),
             // 로그인은 사이트마다 필요하므로 여기(사이트를 고르는 화면)에 둔다.
@@ -364,7 +367,7 @@ class const _RailItem({
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final Color focusColor = theme.focusColor;
+    final Color focusColor = theme.colorScheme.primary;
 
     return Material(
       color: isSelected ? theme.scaffoldBackgroundColor : Colors.transparent,
@@ -524,7 +527,8 @@ class const _LoadingBoards({required final SiteType site})
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final Color subColor = theme.textTheme.bodySmall?.color ?? theme.hintColor;
+    final Color subColor =
+        theme.textTheme.bodySmall?.color ?? theme.colorScheme.onSurfaceVariant;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 48),
@@ -550,7 +554,8 @@ class const _LoginRequired({required final SiteType site})
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final Color subColor = theme.textTheme.bodySmall?.color ?? theme.hintColor;
+    final Color subColor =
+        theme.textTheme.bodySmall?.color ?? theme.colorScheme.onSurfaceVariant;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 8),
@@ -577,7 +582,7 @@ class const _LoginRequired({required final SiteType site})
             icon: const Icon(Icons.login, size: 18),
             label: const Text('로그인하기'),
             style: FilledButton.styleFrom(
-              backgroundColor: theme.focusColor,
+              backgroundColor: theme.colorScheme.primary,
               foregroundColor: Colors.white,
             ),
           ),
@@ -594,7 +599,8 @@ class const _LoadFailed({required final String message})
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
-    final Color subColor = theme.textTheme.bodySmall?.color ?? theme.hintColor;
+    final Color subColor =
+        theme.textTheme.bodySmall?.color ?? theme.colorScheme.onSurfaceVariant;
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 8),
@@ -642,13 +648,13 @@ class const _BoardChip({
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final Color focusColor = theme.focusColor;
+    final Color focusColor = theme.colorScheme.primary;
     final bool isContainer = board.hasItem;
 
     return Material(
       color: isAdded
           ? focusColor.withValues(alpha: 0.10)
-          : theme.cardColor,
+          : theme.colorScheme.surfaceContainerLowest,
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(19),
         side: BorderSide(

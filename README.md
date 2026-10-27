@@ -1,10 +1,16 @@
 # mocl_flutter
 
+<p align="center">
+  <a href="https://play.google.com/store/apps/details?id=kr.b1ink.mocl">
+    <img src="store/graphics/readme-banner-1280x640.png" alt="Mocl — 여러 커뮤니티를 한곳에서 가볍게 눈팅하세요" width="100%">
+  </a>
+</p>
+
 간단한 눈팅 앱으로 Arcalive, Bobaedream, Clien, Cook82, DCInside, Damoang, Dogdrip,
 GeekNews, Instiz, Inven, Meeco, MLBPark, Nate, NaverCafe, Ppomppu, Reddit, Ruliweb, TheQoo
 사이트를 제한적으로 지원합니다.
 
-https://play.google.com/store/apps/details?id=kr.b1ink.mocl
+<a href="https://play.google.com/store/apps/details?id=kr.b1ink.mocl"><img src="https://play.google.com/intl/en_us/badges/static/images/badges/ko_badge_web_generic.png" alt="Google Play에서 다운로드" height="64"></a>
 
 ## 기술 스택
 
@@ -19,6 +25,7 @@ https://play.google.com/store/apps/details?id=kr.b1ink.mocl
 - **코드 생성**: freezed, json_serializable, riverpod_generator
 - **빌드 플레이버**: dev, prd
 - **데이터베이스**: sembast
+- **광고**: Google AdMob 네이티브 광고(Android 만, UMP 동의 → SDK 초기화 후 요청)
 - **앱 아이콘/스플래시**: flutter_launcher_icons + flutter_native_splash (소스: `branding/`)
 
 ## 프로젝트 구조
@@ -41,6 +48,7 @@ lib/
 │   ├── login_page/                # 로그인 (InAppWebView)
 │   ├── add_main_dialog/           # 게시판 추가 다이얼로그
 │   ├── settings_page/             # 설정
+│   ├── ads/                       # AdMob 네이티브 광고 (목록 · 메인 · 상세)
 │   ├── html_parser/               # HTML 파싱
 │   ├── database/                  # 로컬 DB (sembast)
 │   ├── network/                   # 네트워크 에러 처리
@@ -161,21 +169,24 @@ fvm dart run build_runner build --delete-conflicting-outputs
 
 ```bash
 # 개발
-fvm flutter run --flavor dev
+fvm flutter run --flavor dev --dart-define-from-file=ads.json
 
 # 프로덕션
-fvm flutter run --flavor prd
+fvm flutter run --flavor prd --dart-define-from-file=ads.json
 
 # 프로파일
-fvm flutter run --profile --flavor prd
+fvm flutter run --profile --flavor prd --dart-define-from-file=ads.json
 ```
+
+`ads.json` 은 AdMob ID 파일입니다(저장소에 없음, [AdMob ID](#admob-id) 참고).
+없으면 `--dart-define-from-file` 을 빼고 실행하면 테스트 광고로 동작합니다.
 
 ### 빌드
 
 ```bash
-# Android
-fvm flutter build apk --flavor prd
-fvm flutter build appbundle --flavor prd
+# Android (ads.json 없이 빌드하면 테스트 ID 가 들어가 수익이 나지 않는다)
+fvm flutter build apk --flavor prd --dart-define-from-file=ads.json
+fvm flutter build appbundle --flavor prd --dart-define-from-file=ads.json
 
 # iOS (XCode에서 인증서 세팅 필요)
 cd ios && pod install && cd ..
@@ -247,6 +258,22 @@ Google Cloud IAM · Firebase Security Rules · App Check 가 담당합니다
 
 우변에 해당하는 값이 실수로 커밋되면 히스토리를 되돌리는 것만으로는 부족합니다.
 **해당 자격증명을 즉시 폐기하고 재발급**해야 합니다.
+
+### AdMob ID
+
+실제 AdMob 앱 ID · 광고 단위 ID 는 저장소에 없습니다. 루트에 `ads.json` 을 만들어
+(`ads.example.json` 복사) 빌드에 넣습니다. 없으면 Google 테스트 ID 로 빌드되어 테스트
+광고만 나옵니다. **포크해서 배포한다면 본인 AdMob ID 를 쓰세요.**
+
+- debug · profile 빌드는 `ads.json` 이 있어도 테스트 단위만 씁니다(실제 광고를 누르면 계정 정지).
+- 앱 ID 는 `android/app/build.gradle.kts`, 광고 단위는 `AdUnitIds` 가 읽습니다.
+
+```bash
+fvm flutter run --flavor dev --dart-define-from-file=ads.json
+fvm flutter build appbundle --flavor prd --dart-define-from-file=ads.json
+```
+
+GitHub Actions 는 Secrets `ADS_JSON`(위 JSON 전체)으로 `ads.json` 을 만듭니다.
 
 ### 서명 키 취급
 

@@ -50,9 +50,19 @@ jobs:
           echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
           echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
       
+      # 6-1. AdMob 실제 ID (Secrets 의 ADS_JSON = ads.example.json 형식)
+      #      스크립트에 직접 보간하지 않고 env 로 넘긴다(따옴표가 섞이면 깨진다).
+      #      비어 있으면 테스트 ID 로 조용히 배포되므로 여기서 멈춘다.
+      - name: Create ads.json
+        env:
+          ADS_JSON: ${{ secrets.ADS_JSON }}
+        run: |
+          [ -n "$ADS_JSON" ] || { echo "::error::Secrets ADS_JSON 이 비어 있습니다"; exit 1; }
+          printf '%s' "$ADS_JSON" > ads.json
+
       # 7. Flutter 릴리즈 빌드
       - name: Build Release
-        run: flutter build apk --flavor prd
+        run: flutter build apk --flavor prd --dart-define-from-file=ads.json
 
       # 8. GitHub Release 생성 및 파일 업로드
       - name: Create GitHub Release

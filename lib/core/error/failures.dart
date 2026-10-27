@@ -15,6 +15,10 @@ class const ServerFailure({required super.message}) extends Failure;
 
 class const NetworkFailure({required super.message}) extends Failure;
 
+/// 사이트가 요청이 너무 잦다며 막은 경우(HTTP 429).
+/// 곧바로 다시 요청하면 더 오래 막히므로 자동 재시도하지 않는다.
+class const RateLimitFailure({required super.message}) extends Failure;
+
 class const NotLoginFailure({required super.message}) extends Failure;
 
 /// 로그인은 돼 있으나 권한(등급/멤버 레벨)이 모자라 읽을 수 없는 경우.

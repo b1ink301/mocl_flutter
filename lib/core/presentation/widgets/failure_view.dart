@@ -31,6 +31,12 @@ class const FailureInfo({
       description: _humanize(message, '네트워크 상태를 확인한 뒤 다시 시도해 주세요.'),
       retryable: true,
     ),
+    RateLimitFailure(:final message) => FailureInfo(
+      icon: Icons.hourglass_empty,
+      title: '잠시 쉬었다 와 주세요',
+      description: _humanize(message, '요청이 너무 잦아 사이트가 잠시 막았어요.'),
+      retryable: true,
+    ),
     ServerFailure(:final message) => FailureInfo(
       icon: Icons.cloud_off_outlined,
       title: '사이트에 문제가 있어요',
@@ -156,7 +162,7 @@ class const FailureView({
           spacing: 8,
           children: [
             if (showRetry)
-              ElevatedButton(
+              FilledButton.tonal(
                 onPressed: retry,
                 child: PlainText('다시 시도', style: style),
               ),

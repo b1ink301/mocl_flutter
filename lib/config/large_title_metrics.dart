@@ -20,7 +20,7 @@ const double kLargeTitleEndInset = 4.0;
 const double kLargeTitleBottomSpace = 6.0;
 
 /// 제목 위 여백(툴바와의 간격).
-const double kLargeTitleTopSpace = 2.0;
+const double kLargeTitleTopSpace = 4.0;
 
 const EdgeInsetsDirectional kLargeTitlePadding = EdgeInsetsDirectional.only(
   top: kLargeTitleTopSpace,

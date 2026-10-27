@@ -3,7 +3,7 @@ import 'package:material_ui/material_ui.dart';
 class const LoadingWidget({super.key}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final focusColor = Theme.of(context).focusColor;
+    final focusColor = Theme.of(context).colorScheme.primary;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 0, vertical: 16),
       child: Center(
