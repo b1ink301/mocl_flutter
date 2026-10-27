@@ -2515,5 +2515,7 @@
   {"board": "healer", "title": "힐러", "type": 0, "url": "https://m.dcinside.com/board/healer", "no": 2513},
   {"board": "dobongsoon", "title": "힘쎈여자 도봉순", "type": 0, "url": "https://m.dcinside.com/board/dobongsoon", "no": 2514},
   {"board": "heap08", "title": "힙하게 (드라마)", "type": 0, "url": "https://m.dcinside.com/board/heap08", "no": 2515},
-  {"board": "hiphop_new1", "title": "힙합", "type": 0, "url": "https://m.dcinside.com/board/hiphop_new1", "no": 2516}
+  {"board": "hiphop_new1", "title": "힙합", "type": 0, "url": "https://m.dcinside.com/board/hiphop_new1", "no": 2516},
+  {"board": "galaxy", "title": "갤럭시", "type": 0, "url": "https://m.dcinside.com/board/galaxy", "no": 2517},
+  {"board": "mvnogallery", "title": "알뜰폰", "type": 0, "url": "https://m.dcinside.com/board/mvnogallery", "no": 2518}
 ]
