@@ -1,7 +1,7 @@
 name: mocl_flutter
 description: "Mocl Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.5.1+389
+version: 1.5.2+390
 
 environment:
   sdk: ">=3.13.0"
@@ -114,6 +114,10 @@ dependencies:
 
   # webview
   flutter_inappwebview: ^6.2.0-beta.3
+
+  # video (본문 <video> 는 fwfh_chewie 가 이미 끌어온다. 링크 재생 화면에서 직접 쓴다)
+  chewie: ^1.17.4
+  video_player: ^2.14.1
 
   # photo view
   photo_view: ^0.15.0

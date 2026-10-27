@@ -72,3 +72,37 @@ class ShowQuickJumpNotifier() extends _$ShowQuickJumpNotifier {
     settings.setShowQuickJump(state);
   }
 }
+
+/// 본문 링크가 모클이 지원하는 사이트의 글이면 인앱 브라우저 대신 상세 화면으로
+/// 파싱해서 연다. 끄면 예전처럼 모든 링크를 브라우저로 연다.
+@Riverpod(keepAlive: true)
+class OpenSiteLinksInAppNotifier() extends _$OpenSiteLinksInAppNotifier {
+  @override
+  bool build() {
+    final settings = ref.watch(settingsRepositoryProvider);
+    return settings.isOpenSiteLinksInApp();
+  }
+
+  void toggle() {
+    final settings = ref.read(settingsRepositoryProvider);
+    state = !state;
+    settings.setOpenSiteLinksInApp(state);
+  }
+}
+
+/// 본문의 유튜브 · 영상 파일 링크를 앱 안 플레이어로 재생한다. 끄면 유튜브는
+/// 유튜브 앱으로, 파일은 브라우저로 연다.
+@Riverpod(keepAlive: true)
+class PlayVideosInAppNotifier() extends _$PlayVideosInAppNotifier {
+  @override
+  bool build() {
+    final settings = ref.watch(settingsRepositoryProvider);
+    return settings.isPlayVideosInApp();
+  }
+
+  void toggle() {
+    final settings = ref.read(settingsRepositoryProvider);
+    state = !state;
+    settings.setPlayVideosInApp(state);
+  }
+}

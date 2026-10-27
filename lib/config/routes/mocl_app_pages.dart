@@ -5,9 +5,11 @@ import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/presentation/widgets/bottom_sheet_page.dart';
 import 'package:mocl_flutter/features/add_main_dialog/presentation/add_list_modal_sheet_page.dart';
 import 'package:mocl_flutter/features/bookmark/presentation/bookmarks_page.dart';
+import 'package:mocl_flutter/features/detail_page/domain/site_link_resolver.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/mocl_detail_page.dart';
 import 'package:mocl_flutter/features/mute/presentation/mute_page.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/photo_view_dialog.dart';
+import 'package:mocl_flutter/features/detail_page/presentation/video_player_page.dart';
 import 'package:mocl_flutter/features/list_page/presentation/mocl_list_page.dart';
 import 'package:mocl_flutter/features/login_page/presentation/login_page.dart';
 import 'package:mocl_flutter/features/main_page/presentation/mocl_main_page.dart';
@@ -73,10 +75,17 @@ class AppPages._() {
         pageBuilder: (BuildContext context, GoRouterState state) =>
             SwipeablePage(
               builder: (BuildContext context) {
-                final ListItem item =
-                    GoRouterState.of(context).extra as ListItem;
                 final width = MediaQuery.of(context).size.width;
-                return DetailPage.init(width, item);
+                final Object? extra = GoRouterState.of(context).extra;
+                // 본문 링크로 들어오면 사이트가 함께 온다(다른 사이트 글일 수 있음).
+                if (extra is SiteLink) {
+                  return DetailPage.init(
+                    width,
+                    extra.item,
+                    siteType: extra.siteType,
+                  );
+                }
+                return DetailPage.init(width, extra as ListItem);
               },
             ),
         routes: [
@@ -122,6 +131,12 @@ class AppPages._() {
         path: Routes.mute,
         pageBuilder: (BuildContext context, GoRouterState state) =>
             SwipeablePage(builder: (BuildContext context) => const MutePage()),
+      ),
+      GoRoute(
+        path: Routes.video,
+        // 탐색 막대를 좌우로 끄는 동작과 겹치지 않게 스와이프 뒤로가기는 쓰지 않는다.
+        builder: (BuildContext context, GoRouterState state) =>
+            VideoPlayerPage(args: state.extra as VideoPlayerArgs),
       ),
       GoRoute(
         path: Routes.login,

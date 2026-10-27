@@ -19,7 +19,7 @@ mixin class DetailState() {
   /// (디시 등 일부 CDN 은 Referer 가 사이트 도메인이어야 이미지를 준다.)
   /// presentation 위젯이 application provider 를 직접 참조하지 않도록 여기서 노출.
   String imageRefererState(WidgetRef ref) {
-    final siteType = ref.watch(currentSiteTypeProvider);
+    final siteType = ref.watch(detailSiteTypeProvider);
     final (parser, _) = ref.watch(currentParserProvider(siteType));
     return parser.baseUrl;
   }
@@ -35,7 +35,7 @@ mixin class DetailState() {
   ListItem listItemState(WidgetRef ref) => ref.watch(listItemProvider);
 
   SiteType currentSiteTypeState(WidgetRef ref) =>
-      ref.watch(currentSiteTypeProvider);
+      ref.watch(detailSiteTypeProvider);
 
   /// 현재 게시물의 스크랩(북마크) 여부. 북마크 버튼이 사용한다.
   bool isBookmarkedState(WidgetRef ref, SiteType siteType, int id) =>
