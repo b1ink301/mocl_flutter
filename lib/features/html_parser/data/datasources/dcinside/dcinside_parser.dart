@@ -169,6 +169,7 @@ class const DcinsideParser() extends BaseParser {
 
   static final RegExp _readPath = RegExp(r'/board/([^/?#]+)/(\d+)');
   static final RegExp _timeLike = RegExp(r'^\d{1,2}[:.]\d{1,2}');
+  static final RegExp _detailCategory = RegExp(r'^\s*\[([^\]\n]+)\][ \t]*\n');
 
   static Future<void> parseListInWorker(ParseListMessage message) async {
     final replyPort = message.replyPort;
@@ -194,15 +195,19 @@ class const DcinsideParser() extends BaseParser {
       if (id <= 0 || (lastId > 0 && id >= lastId)) continue;
       final url = href.startsWith('http') ? href : '$baseUrl$href';
 
-      // 제목/카테고리: span.subjectin (앞에 <b>[갤]</b> 카테고리가 올 수 있음).
+      // 제목/카테고리: 실베는 span.subjectin 앞의 <b>[갤]</b>, 일반 갤러리는
+      // 말머리가 ul.ginfo 의 첫 li(클래스 없음)에 온다.
       final subjectEl = anchor.querySelector('span.subjectin');
+      final firstInfo = lnktb.querySelector('ul.ginfo > li');
       final category =
           subjectEl
               ?.querySelector('b')
               ?.text
               .replaceAll(RegExp(r'[\[\]]'), '')
               .trim() ??
-          '';
+          (firstInfo != null && firstInfo.classes.isEmpty
+              ? firstInfo.text.trim()
+              : '');
       String title = subjectEl?.text.trim() ?? '';
       if (category.isNotEmpty && title.startsWith('[$category]')) {
         title = title.substring(category.length + 2).trim();
@@ -277,7 +282,16 @@ class const DcinsideParser() extends BaseParser {
 
     final titleEl = titleBox.querySelector('span.tit');
     titleEl.removeAll('button, span');
-    final title = titleEl?.text.trim() ?? '';
+    // span.tit 안에서 "[말머리]" 는 줄바꿈 · 탭으로 제목과 떨어진 별도 텍스트다.
+    // 말머리는 떼어 태그로 보여주고, 제목은 공백을 한 칸으로 접는다.
+    // 줄바꿈까지 확인해야 "[속보] ..." 처럼 대괄호로 시작하는 제목을 떼지 않는다.
+    final rawTitle = titleEl?.text ?? '';
+    final categoryMatch = _detailCategory.firstMatch(rawTitle);
+    final category = categoryMatch?.group(1)?.trim() ?? '';
+    final title = rawTitle
+        .substring(categoryMatch?.end ?? 0)
+        .replaceAll(RegExp(r'\s+'), ' ')
+        .trim();
 
     final nickName = titleBox.qText('ul.ginfo2 button.nick');
     var time = '';
@@ -353,6 +367,7 @@ class const DcinsideParser() extends BaseParser {
 
     final detail = Details(
       title: title,
+      category: category,
       viewCount: viewCount,
       likeCount: likeCount,
       csrf: '',

@@ -21,6 +21,8 @@ abstract class Details with _$Details {
     required List<CommentItem> comments,
     @Default(null) Recents? recents,
     @Default('') String csrf,
+    // 상세에서 찾은 말머리. 비어 있으면 목록 아이템의 말머리를 쓴다.
+    @Default('') String category,
     Map<String, dynamic>? extraData,
   }) = _Details;
 
