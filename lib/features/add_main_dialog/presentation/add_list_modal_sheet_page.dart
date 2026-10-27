@@ -35,8 +35,7 @@ class const AddListBottomSheet({super.key})
     // 컨테이너 안에 들어가 있으면 뒤로가기가 시트를 닫는 대신 한 단계만
     // 나간다. 이게 없으면 카페 안에서 백키를 눌렀을 때 담던 화면이 통째로
     // 사라진다.
-    final bool canPop =
-        drillParent(ref) == null && !containerPickerOpen(ref);
+    final bool canPop = drillParent(ref) == null && !containerPickerOpen(ref);
 
     return PopScope(
       canPop: canPop,
@@ -44,50 +43,50 @@ class const AddListBottomSheet({super.key})
         if (!didPop) handleBack(ref);
       },
       child: FractionallySizedBox(
-      heightFactor: 0.9,
-      alignment: Alignment.bottomCenter,
-      // ListTile 이 ink/배경을 가장 가까운 Material 에 그리므로, 배경색은
-      // Container 가 아니라 Material 에 줘서 assertion(배경/잉크 가림)을 막는다.
-      child: Material(
-        borderRadius: const BorderRadiusGeometry.vertical(
-          top: Radius.circular(24),
-        ),
-        color: theme.scaffoldBackgroundColor,
-        clipBehavior: Clip.antiAlias,
-        child: SafeArea(
-          top: false,
-          child: Column(
-            children: [
-              const _TopBar(),
-              const PlainDividerWidget(),
-              Expanded(
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    const _SiteRail(),
-                    // 컨테이너 전환 드롭다운은 오른쪽 패널 위에만 떠야 한다
-                    // (레일은 계속 눌러 사이트를 바꿀 수 있어야 하므로).
-                    Expanded(
-                      child: Stack(
-                        children: [
-                          Column(
-                            children: [
-                              const _Breadcrumb(),
-                              const BoardSearchField(),
-                              const Expanded(child: _BoardChips()),
-                            ],
-                          ),
-                          const _ContainerPicker(),
-                        ],
+        heightFactor: 0.9,
+        alignment: Alignment.bottomCenter,
+        // ListTile 이 ink/배경을 가장 가까운 Material 에 그리므로, 배경색은
+        // Container 가 아니라 Material 에 줘서 assertion(배경/잉크 가림)을 막는다.
+        child: Material(
+          borderRadius: const BorderRadiusGeometry.vertical(
+            top: Radius.circular(24),
+          ),
+          color: theme.scaffoldBackgroundColor,
+          clipBehavior: Clip.antiAlias,
+          child: SafeArea(
+            top: false,
+            child: Column(
+              children: [
+                const _TopBar(),
+                const PlainDividerWidget(),
+                Expanded(
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      const _SiteRail(),
+                      // 컨테이너 전환 드롭다운은 오른쪽 패널 위에만 떠야 한다
+                      // (레일은 계속 눌러 사이트를 바꿀 수 있어야 하므로).
+                      Expanded(
+                        child: Stack(
+                          children: [
+                            Column(
+                              children: [
+                                const _Breadcrumb(),
+                                const BoardSearchField(),
+                                const Expanded(child: _BoardChips()),
+                              ],
+                            ),
+                            const _ContainerPicker(),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
         ),
-      ),
       ),
     );
   }
@@ -414,107 +413,229 @@ class const _RailItem({
 }
 
 /// 오른쪽 게시판 칩 목록. 담긴 칩은 강조색으로 채워진다.
-class const _BoardChips() extends ConsumerWidget with AddState, AddEvent {
+class const _BoardChips() extends ConsumerWidget with AddState {
   @override
   Widget build(BuildContext context, WidgetRef ref) =>
       // 로딩 · 에러 · 목록 중 무엇을 그리든 스크롤 뷰는 트리에 그대로 둔다.
       // 분기마다 Scrollable 이 사라졌다 다시 생기면 사이트를 바꾸는 순간
       // 스크롤 위치와 상태가 통째로 갈아끼워진다.
-      SingleChildScrollView(
-        padding: const EdgeInsets.fromLTRB(12, 10, 12, 24),
-        child: _buildContent(context, ref),
+      CustomScrollView(
+        slivers: [
+          SliverPadding(
+            padding: const EdgeInsets.fromLTRB(12, 10, 12, 24),
+            sliver: visibleBoardsState(ref).when(
+              // 사이트를 바꾸면 목록을 새로 받아오는 데 시간이 걸린다. 직전
+              // 사이트의 목록을 남겨두면 아무 반응이 없는 것처럼 보이므로,
+              // 로딩을 그대로 노출한다(칩 담기/빼기는 이 provider 를 다시
+              // 읽지 않으므로 깜빡임이 없다).
+              loading: () => SliverToBoxAdapter(
+                child: _LoadingBoards(site: currentSite(ref)),
+              ),
+              // 레딧 · 네이버카페처럼 로그인해야 목록을 주는 사이트는 원문
+              // 에러 대신 무엇을 해야 하는지 알려주고 바로 로그인으로 보낸다.
+              error: (error, _) => SliverToBoxAdapter(
+                child: error is NotLoginFailure
+                    ? _LoginRequired(site: currentSite(ref))
+                    : _LoadFailed(message: error.toString()),
+              ),
+              data: (boards) => _BoardChipRows(
+                boards: boards,
+                query: searchQuery(ref).trim().toLowerCase(),
+                parent: drillParent(ref),
+              ),
+            ),
+          ),
+        ],
       );
+}
 
-  Widget _buildContent(BuildContext context, WidgetRef ref) {
-    final textStyle = Theme.of(context).textTheme.bodyMedium;
+/// 칩 목록의 한 줄. 섹션 제목이거나 한 줄에 들어갈 칩 묶음이다.
+sealed class const _ChipRow();
 
-    return visibleBoardsState(ref).when(
-      // 사이트를 바꾸면 목록을 새로 받아오는 데 시간이 걸린다. 직전 사이트의
-      // 목록을 남겨두면 아무 반응이 없는 것처럼 보이므로, 로딩을 그대로 노출한다
-      // (칩 담기/빼기는 이 provider 를 다시 읽지 않으므로 깜빡임이 없다).
-      loading: () => _LoadingBoards(site: currentSite(ref)),
-      // 레딧 · 네이버카페처럼 로그인해야 목록을 주는 사이트는 원문 에러 대신
-      // 무엇을 해야 하는지 알려주고 바로 로그인으로 보낸다.
-      error: (error, _) => error is NotLoginFailure
-          ? _LoginRequired(site: currentSite(ref))
-          : _LoadFailed(message: error.toString()),
-      data: (boards) {
-        final String query = searchQuery(ref).trim().toLowerCase();
-        final List<MainItem> items = query.isEmpty
-            ? boards
-            : boards
-                  .where(
-                    (board) =>
-                        board.text.toLowerCase().contains(query) ||
-                        board.category.toLowerCase().contains(query),
-                  )
-                  .toList();
+class const _SectionTitleRow(final String title) implements _ChipRow;
 
-        if (items.isEmpty) {
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 48),
-            child: Text(
-              query.isEmpty ? '게시판이 없습니다' : "'$query' 검색 결과가 없습니다",
-              textAlign: TextAlign.center,
-              style: textStyle,
+class const _ChipsRow(final List<MainItem> boards, {final bool isLast = false})
+    implements _ChipRow;
+
+/// 게시판 칩을 줄 단위로 나눠 보이는 줄만 빌드한다.
+///
+/// 디시인사이드처럼 게시판이 수천 개인 사이트에서 `Wrap` 하나로 그리면
+/// 화면 밖 칩까지 한 번에 빌드 · 레이아웃 · 페인트해서 스크롤이 버벅인다.
+/// 칩 너비를 글자 크기로 미리 재서 줄을 나눠 두고 `SliverList` 로 지연 빌드한다.
+/// 측정은 담긴 칩(굵은 글씨) 기준이라 담기/빼기로 줄이 바뀌지 않는다.
+class const _BoardChipRows({
+  required final List<MainItem> boards,
+  required final String query,
+  required final MainItem? parent,
+}) extends StatefulWidget {
+  @override
+  State<_BoardChipRows> createState() => _BoardChipRowsState();
+}
+
+class _BoardChipRowsState() extends State<_BoardChipRows> {
+  static const double _spacing = 8;
+  static const double _chipTextSize = 13.5;
+
+  // 줄 나눔 결과는 입력이 그대로면 다시 계산하지 않는다.
+  List<MainItem>? _boards;
+  String? _query;
+  double? _width;
+  TextStyle? _style;
+  TextScaler? _scaler;
+  List<_ChipRow> _rows = const [];
+  int _itemCount = 0;
+
+  // 글자 너비 측정은 비싸므로 게시판 이름별로 기억한다(너비가 바뀌어도 재사용).
+  final Map<String, double> _textWidths = {};
+
+  List<MainItem> _filter(List<MainItem> boards, String query) => query.isEmpty
+      ? boards
+      : boards
+            .where(
+              (board) =>
+                  board.text.toLowerCase().contains(query) ||
+                  board.category.toLowerCase().contains(query),
+            )
+            .toList();
+
+  void _ensureRows(double width, TextStyle style, TextScaler scaler) {
+    if (identical(_boards, widget.boards) &&
+        _query == widget.query &&
+        _width == width &&
+        _style == style &&
+        _scaler == scaler) {
+      return;
+    }
+    if (_style != style || _scaler != scaler) _textWidths.clear();
+    _boards = widget.boards;
+    _query = widget.query;
+    _width = width;
+    _style = style;
+    _scaler = scaler;
+
+    final List<MainItem> items = _filter(widget.boards, widget.query);
+    _itemCount = items.length;
+
+    // 컨테이너가 게시판을 폴더로 묶어 주면(네이버카페의 메뉴 폴더 등)
+    // 계층을 더 파고들지 않고 섹션 제목으로 눕힌다. 폴더가 없으면
+    // 섹션이 하나뿐이라 예전과 똑같은 칩 무더기로 보인다.
+    final Map<String, List<MainItem>> sections = {};
+    for (final MainItem board in items) {
+      sections.putIfAbsent(board.category, () => []).add(board);
+    }
+
+    final TextPainter painter = TextPainter(
+      textDirection: TextDirection.ltr,
+      textScaler: scaler,
+      maxLines: 1,
+    );
+    final List<_ChipRow> rows = [];
+    for (final MapEntry<String, List<MainItem>> section in sections.entries) {
+      if (sections.length > 1 && section.key.isNotEmpty) {
+        rows.add(_SectionTitleRow(section.key));
+      }
+      List<MainItem> line = [];
+      double lineWidth = 0;
+      for (final MainItem board in section.value) {
+        final double chipWidth = _chipWidth(board, painter, style, width);
+        if (line.isNotEmpty && lineWidth + _spacing + chipWidth > width) {
+          rows.add(_ChipsRow(line));
+          line = [];
+          lineWidth = 0;
+        }
+        lineWidth += (line.isEmpty ? 0 : _spacing) + chipWidth;
+        line.add(board);
+      }
+      if (line.isNotEmpty) rows.add(_ChipsRow(line, isLast: true));
+    }
+    painter.dispose();
+    _rows = rows;
+  }
+
+  /// `_BoardChip` 의 패딩 · 아이콘 배치와 맞춰 칩 너비를 계산한다.
+  double _chipWidth(
+    MainItem board,
+    TextPainter painter,
+    TextStyle style,
+    double maxWidth,
+  ) {
+    final double textWidth = _textWidths.putIfAbsent(board.text, () {
+      painter
+        ..text = TextSpan(text: board.text, style: style)
+        ..layout();
+      return painter.width;
+    });
+    final bool isContainer = board.hasItem;
+    double width = 14 + textWidth + (isContainer ? 8 + 17 : 14);
+    if (board.icon.isNotEmpty && isContainer) width += 16 + 7;
+    // 반올림 오차로 줄이 넘치지 않게 약간 여유를 둔다.
+    return (width + 2).clamp(0, maxWidth);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    // Text 가 실제로 쓰는 스타일(앱 글꼴 포함)과 같은 스타일로 잰다.
+    final TextStyle style = DefaultTextStyle.of(context).style.merge(
+      const TextStyle(fontSize: _chipTextSize, fontWeight: FontWeight.w700),
+    );
+    final TextScaler scaler = MediaQuery.textScalerOf(context);
+    final MainItem? parent = widget.parent;
+
+    return SliverLayoutBuilder(
+      builder: (context, constraints) {
+        _ensureRows(constraints.crossAxisExtent, style, scaler);
+
+        if (_itemCount == 0) {
+          return SliverToBoxAdapter(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 48),
+              child: Text(
+                widget.query.isEmpty
+                    ? '게시판이 없습니다'
+                    : "'${widget.query}' 검색 결과가 없습니다",
+                textAlign: TextAlign.center,
+                style: theme.textTheme.bodyMedium,
+              ),
             ),
           );
         }
 
-        final Set<String> added = addedBoardKeys(ref);
-        final MainItem? parent = drillParent(ref);
-        final theme = Theme.of(context);
-
-        // 컨테이너가 게시판을 폴더로 묶어 주면(네이버카페의 메뉴 폴더 등)
-        // 계층을 더 파고들지 않고 섹션 제목으로 눕힌다. 폴더가 없으면
-        // 섹션이 하나뿐이라 예전과 똑같은 칩 무더기로 보인다.
-        final Map<String, List<MainItem>> sections = {};
-        for (final MainItem board in items) {
-          sections.putIfAbsent(board.category, () => []).add(board);
-        }
-
-        Widget chipsOf(List<MainItem> group) => Wrap(
-          spacing: 8,
-          runSpacing: 8,
-          children: [
-            for (final MainItem board in group)
-              _BoardChip(
-                board: board,
-                isAdded: added.contains(
-                  '${board.siteType.name}_${board.board}',
+        final List<_ChipRow> rows = _rows;
+        return SliverList.builder(
+          itemCount: rows.length,
+          itemBuilder: (context, index) => switch (rows[index]) {
+            _SectionTitleRow(:final String title) => Padding(
+              padding: const EdgeInsets.fromLTRB(2, 12, 2, 6),
+              child: Text(
+                title,
+                style: TextStyle(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  color: theme.textTheme.bodySmall?.color,
                 ),
-                // 부모와 board 가 같은 항목이 그 컨테이너의 '전체글'이다.
-                isWholeContainer:
-                    parent != null && board.board == parent.board,
-                onTap: () => tapBoard(ref, board),
               ),
-          ],
-        );
-
-        if (sections.length == 1) {
-          return chipsOf(items);
-        }
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            for (final MapEntry<String, List<MainItem>> section
-                in sections.entries) ...[
-              if (section.key.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(2, 12, 2, 6),
-                  child: Text(
-                    section.key,
-                    style: TextStyle(
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      color: theme.textTheme.bodySmall?.color,
-                    ),
-                  ),
+            ),
+            // 측정이 조금 어긋나도 넘치지 않도록 줄 안에서도 Wrap 을 쓴다.
+            _ChipsRow(:final List<MainItem> boards, :final bool isLast) =>
+              Padding(
+                padding: EdgeInsets.only(bottom: isLast ? 0 : _spacing),
+                child: Wrap(
+                  spacing: _spacing,
+                  runSpacing: _spacing,
+                  children: [
+                    for (final MainItem board in boards)
+                      _BoardChip(
+                        key: ValueKey('${board.siteType.name}_${board.board}'),
+                        board: board,
+                        // 부모와 board 가 같은 항목이 그 컨테이너의 '전체글'이다.
+                        isWholeContainer:
+                            parent != null && board.board == parent.board,
+                      ),
+                  ],
                 ),
-              chipsOf(section.value),
-            ],
-          ],
+              ),
+          },
         );
       },
     );
@@ -639,64 +760,73 @@ class const _LoadFailed({required final String message})
 /// - 담김: 강조색 배경 + 실선
 /// - 컨테이너(하위 메뉴 보유): 배경 없이 강조색 테두리 + `›` → 담기가 아니라 진입
 /// - 전체글: 컨테이너 안에서 그 컨테이너 자체를 담는 항목
+///
+/// 담김 여부는 칩이 직접 구독한다. 목록 전체가 구독하면 하나를 담을 때마다
+/// 보이는 칩이 모두 다시 빌드된다.
 class const _BoardChip({
+  super.key,
   required final MainItem board,
-  required final bool isAdded,
-  required final VoidCallback onTap,
   final bool isWholeContainer = false,
-}) extends StatelessWidget {
+}) extends ConsumerWidget with AddState, AddEvent {
+  static const BorderRadius _radius = BorderRadius.all(Radius.circular(19));
+
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final theme = Theme.of(context);
     final Color focusColor = theme.colorScheme.primary;
     final bool isContainer = board.hasItem;
+    final bool isAdded = isBoardAdded(ref, board);
 
-    return Material(
-      color: isAdded
-          ? focusColor.withValues(alpha: 0.10)
-          : theme.colorScheme.surfaceContainerLowest,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(19),
-        side: BorderSide(
+    // 칩마다 Material 로 모양을 잘라내면(clip) 칩 수만큼 클립 레이어가 생겨
+    // 스크롤 중 래스터 비용이 커진다. 배경 · 테두리는 DecoratedBox 로 그리고,
+    // 물결은 투명 Material 위에서 customBorder 로만 모양을 맞춘다.
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: isAdded
+            ? focusColor.withValues(alpha: 0.10)
+            : theme.colorScheme.surfaceContainerLowest,
+        borderRadius: _radius,
+        border: Border.all(
           color: isAdded ? focusColor : theme.dividerColor,
           width: 1,
         ),
       ),
-      clipBehavior: Clip.antiAlias,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: EdgeInsets.fromLTRB(14, 9, isContainer ? 8 : 14, 9),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              if (board.icon.isNotEmpty && isContainer) ...[
-                SiteAvatar(
-                  siteType: board.siteType,
-                  iconUrl: board.icon,
-                  radius: 8,
-                ),
-                const SizedBox(width: 7),
-              ],
-              Flexible(
-                child: Text(
-                  board.text,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(
-                    fontSize: 13.5,
-                    color: isAdded
-                        ? focusColor
-                        : theme.textTheme.bodyMedium?.color,
-                    fontWeight: isAdded
-                        ? FontWeight.w700
-                        : FontWeight.normal,
+      child: Material(
+        type: MaterialType.transparency,
+        child: InkWell(
+          onTap: () => tapBoard(ref, board),
+          customBorder: const RoundedRectangleBorder(borderRadius: _radius),
+          child: Padding(
+            padding: EdgeInsets.fromLTRB(14, 9, isContainer ? 8 : 14, 9),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                if (board.icon.isNotEmpty && isContainer) ...[
+                  SiteAvatar(
+                    siteType: board.siteType,
+                    iconUrl: board.icon,
+                    radius: 8,
+                  ),
+                  const SizedBox(width: 7),
+                ],
+                Flexible(
+                  child: Text(
+                    board.text,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: TextStyle(
+                      fontSize: 13.5,
+                      color: isAdded
+                          ? focusColor
+                          : theme.textTheme.bodyMedium?.color,
+                      fontWeight: isAdded ? FontWeight.w700 : FontWeight.normal,
+                    ),
                   ),
                 ),
-              ),
-              if (isContainer)
-                Icon(Icons.chevron_right, size: 17, color: focusColor),
-            ],
+                if (isContainer)
+                  Icon(Icons.chevron_right, size: 17, color: focusColor),
+              ],
+            ),
           ),
         ),
       ),

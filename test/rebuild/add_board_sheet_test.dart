@@ -213,6 +213,86 @@ void main() {
     expect(find.text('카페B메뉴0'), findsOneWidget);
     expect(find.text('카페A메뉴0'), findsNothing);
   });
+
+  testWidgets('게시판이 수천 개여도 보이는 칩만 빌드한다', (tester) async {
+    useFixedSurface(tester);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: <Override>[
+          ...await commonOverrides(siteType: SiteType.clien),
+          mainRepositoryProvider.overrideWith(
+            (Ref ref, SiteType siteType) => _FakeMainRepository(count: 3000),
+          ),
+          favoriteRepositoryProvider.overrideWithValue(
+            _InMemoryFavoriteRepository(),
+          ),
+        ],
+        child: MaterialApp(
+          theme: MoclTheme.lightTheme,
+          home: const _SheetHost(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('시트 열기'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('게시판0'), findsOneWidget);
+    // Wrap 하나로 그리면 3000개가 전부 트리에 올라온다.
+    expect(find.textContaining('게시판'), findsWidgets);
+    expect(
+      find.textContaining(RegExp(r'^게시판\d+$')).evaluate().length,
+      lessThan(300),
+    );
+    expect(find.text('게시판2999'), findsNothing);
+
+    // 끝까지 스크롤하면 마지막 칩이 보인다(줄 나눔이 빠뜨린 칩이 없다).
+    await tester.scrollUntilVisible(
+      find.text('게시판2999'),
+      2000,
+      scrollable: find.byType(Scrollable).last,
+    );
+    expect(find.text('게시판2999'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('검색어는 입력이 멈춘 뒤에 반영된다', (tester) async {
+    useFixedSurface(tester);
+    await tester.pumpWidget(
+      ProviderScope(
+        overrides: <Override>[
+          ...await commonOverrides(siteType: SiteType.clien),
+          mainRepositoryProvider.overrideWith(
+            (Ref ref, SiteType siteType) => _FakeMainRepository(),
+          ),
+          favoriteRepositoryProvider.overrideWithValue(
+            _InMemoryFavoriteRepository(),
+          ),
+        ],
+        child: MaterialApp(
+          theme: MoclTheme.lightTheme,
+          home: const _SheetHost(),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('시트 열기'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextField), '게시판11');
+    await tester.pump();
+    // 아직 반영 전이라 다른 칩도 그대로 보인다.
+    expect(find.text('게시판0'), findsOneWidget);
+
+    await tester.pump(const Duration(milliseconds: 250));
+    expect(find.text('게시판0'), findsNothing);
+    expect(find.text('게시판11'), findsWidgets);
+
+    // 지우기는 기다리지 않고 바로 되돌린다.
+    await tester.tap(find.byIcon(Icons.cancel));
+    await tester.pump();
+    expect(find.text('게시판0'), findsOneWidget);
+  });
 }
 
 Future<void> _pumpSheet(
@@ -229,10 +309,7 @@ Future<void> _pumpSheet(
         ),
         favoriteRepositoryProvider.overrideWithValue(favoriteRepository),
       ],
-      child: MaterialApp(
-        theme: MoclTheme.lightTheme,
-        home: const _SheetHost(),
-      ),
+      child: MaterialApp(theme: MoclTheme.lightTheme, home: const _SheetHost()),
     ),
   );
   await tester.pumpAndSettle();
@@ -266,14 +343,15 @@ class const _SheetHost() extends StatelessWidget {
   );
 }
 
-class _FakeMainRepository({final Duration? delay}) implements MainRepository {
+class _FakeMainRepository({final Duration? delay, final int count = 12})
+    implements MainRepository {
   @override
   Future<Either<Failure, List<MainItem>>> getMainListFromJson({
     required SiteType siteType,
   }) async {
     if (delay != null) await Future<void>.delayed(delay!);
     return Right(<MainItem>[
-      for (int i = 0; i < 12; i++)
+      for (int i = 0; i < count; i++)
         MainItem(
           siteType: siteType,
           board: 'board$i',

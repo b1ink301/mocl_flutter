@@ -22,8 +22,9 @@ mixin class AddState() {
   MainItem? readDrillParent(WidgetRef ref) => ref.read(addDrillDownProvider);
 
   /// 같은 사이트에서 옮겨 다닐 수 있는 컨테이너 목록(카페 전환 드롭다운용).
-  List<MainItem> siblingContainers(WidgetRef ref) =>
-      ref.watch(addBoardListProvider).maybeWhen(
+  List<MainItem> siblingContainers(WidgetRef ref) => ref
+      .watch(addBoardListProvider)
+      .maybeWhen(
         data: (boards) => boards.where((board) => board.hasItem).toList(),
         orElse: () => const [],
       );
@@ -48,4 +49,12 @@ mixin class AddState() {
   /// 이미 담아둔 게시판 키(사이트+게시판) 집합.
   Set<String> addedBoardKeys(WidgetRef ref) =>
       ref.watch(favoriteBoardKeysProvider);
+
+  /// 게시판 하나가 담겨 있는지만 구독한다. 칩마다 이걸 쓰면 하나를 담거나
+  /// 빼도 그 칩만 다시 빌드된다(집합 전체를 구독하면 칩 수천 개가 다 빌드된다).
+  bool isBoardAdded(WidgetRef ref, MainItem board) => ref.watch(
+    favoriteBoardKeysProvider.select(
+      (keys) => keys.contains('${board.siteType.name}_${board.board}'),
+    ),
+  );
 }
