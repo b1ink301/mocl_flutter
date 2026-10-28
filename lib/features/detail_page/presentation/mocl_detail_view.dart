@@ -279,18 +279,16 @@ class const _DetailView({
                   onReply: detail.isLoggedIn ? onWriteComment : null,
                 ),
               ],
-              if (onWriteComment case final write?) ...[
-                const PlainDividerWidget(indent: 0, endIndent: 0),
-                SliverToBoxAdapter(
-                  child: _TextActionButton(
-                    label: detail.isLoggedIn ? '댓글 쓰기' : '로그인하고 댓글 쓰기',
-                    onTap: () => write(null),
-                    textStyle: bodySmall,
-                  ),
-                ),
-              ],
               const PlainDividerWidget(indent: 0, endIndent: 0),
-              _RefreshButton(onRefresh: onRefresh, textStyle: bodySmall),
+              _FooterActions(
+                onRefresh: onRefresh,
+                writeLabel: detail.isLoggedIn ? '댓글 쓰기' : '로그인하고 댓글 쓰기',
+                onWrite: switch (onWriteComment) {
+                  final write? => () => write(null),
+                  null => null,
+                },
+                textStyle: bodySmall,
+              ),
               const PlainDividerWidget(indent: 0, endIndent: 0),
               if (bottom > 0)
                 SliverPadding(padding: EdgeInsets.only(bottom: bottom)),
@@ -881,48 +879,79 @@ class const _HtmlWidget({
   }
 }
 
-/// [_RefreshButton] 과 같은 모양의 글자 버튼.
-class const _TextActionButton({
-  required final String label,
-  required final VoidCallback onTap,
-  required final TextStyle? textStyle,
-}) extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final focusColor = Theme.of(context).colorScheme.primary;
-    final textStyle = this.textStyle!.copyWith(
-      color: focusColor,
-      fontWeight: FontWeight.w800,
-    );
-    return InkWell(
-      onTap: onTap,
-      child: SizedBox(
-        width: double.infinity,
-        height: 58,
-        child: Center(child: PlainText(label, style: textStyle)),
-      ),
-    );
-  }
-}
-
-class const _RefreshButton({
+/// 상세 맨 아래 한 줄.
+///
+/// 댓글을 쓸 수 있는 사이트면 `[ ✎ 댓글 쓰기 ···· │ ↻ ]` 로 한 줄에 둘을 두고,
+/// 아니면 지금처럼 "새로고침" 한 줄만 둔다. 새로고침은 위에서 당기기 · 앱바
+/// 메뉴로도 되지만, 댓글을 다 읽은 자리에서 새 댓글을 보려고 여기에 남긴다.
+class const _FooterActions({
   required final VoidCallback onRefresh,
+  required final String writeLabel,
   required final TextStyle? textStyle,
+
+  /// 댓글 쓰기. 사이트가 지원하지 않으면 null.
+  final VoidCallback? onWrite,
 }) extends StatelessWidget {
+  static const double _kHeight = 58;
+
   @override
   Widget build(BuildContext context) {
-    final focusColor = Theme.of(context).colorScheme.primary;
+    final theme = Theme.of(context);
+    final focusColor = theme.colorScheme.primary;
     final textStyle = this.textStyle!.copyWith(
       color: focusColor,
       fontWeight: FontWeight.w800,
     );
 
-    return InkWell(
-      onTap: onRefresh,
-      child: SizedBox(
-        width: double.infinity,
-        height: 58,
-        child: Center(child: PlainText('새로고침', style: textStyle)),
+    final VoidCallback? onWrite = this.onWrite;
+    if (onWrite == null) {
+      return InkWell(
+        onTap: onRefresh,
+        child: SizedBox(
+          width: double.infinity,
+          height: _kHeight,
+          child: Center(child: PlainText('새로고침', style: textStyle)),
+        ),
+      );
+    }
+
+    return SizedBox(
+      height: _kHeight,
+      child: Row(
+        children: [
+          Expanded(
+            child: InkWell(
+              onTap: onWrite,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  PlainIcon(Icons.edit_outlined, color: focusColor, size: 18),
+                  const SizedBox(width: 6),
+                  PlainText(writeLabel, style: textStyle),
+                ],
+              ),
+            ),
+          ),
+          VerticalDivider(
+            width: 1,
+            thickness: 1,
+            indent: 16,
+            endIndent: 16,
+            color: theme.dividerTheme.color,
+          ),
+          Tooltip(
+            message: '새로고침',
+            child: InkWell(
+              onTap: onRefresh,
+              child: SizedBox.square(
+                dimension: _kHeight,
+                child: Center(
+                  child: PlainIcon(Icons.refresh, color: focusColor, size: 22),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
