@@ -3,6 +3,8 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
+// 메인 맨 아래 광고는 광고가 너무 많아 잠시 꺼 뒀다(mocl_main_widgets.dart). 다시 켤 때 쓴다.
+// ignore: unused_import
 import 'package:mocl_flutter/features/ads/presentation/widgets/main_ad_tile.dart';
 import 'package:mocl_flutter/features/favorite/presentation/state/favorite_event_mixin.dart';
 import 'package:mocl_flutter/features/favorite/presentation/state/favorite_state_mixin.dart';
