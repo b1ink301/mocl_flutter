@@ -1,7 +1,7 @@
 name: mocl_flutter
 description: "Mocl Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.5.3+391
+version: 1.5.3+392
 
 environment:
   sdk: ">=3.13.0"
@@ -64,7 +64,7 @@ dependencies:
   # 이미지 캐시
   cached_network_image: ^4.0.5
   # image: ^4.2.0
-  flutter_cache_manager: ^3.4.5
+  flutter_cache_manager: ^3.4.6
 
   # URL 런처
   url_launcher: ^6.3.3
