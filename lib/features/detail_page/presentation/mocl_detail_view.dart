@@ -758,6 +758,12 @@ class const _HtmlWidget({
       },
       factoryBuilder: () =>
           _MoclWidgetFactory(openUrl: openUrl, referer: referer),
+      // `<a>` 탭도 [openUrl](동영상 플레이어 · 앱 상세 · 브라우저 분기)로 보낸다.
+      // 넘기지 않으면 fwfh 기본 동작(url_launcher)이 바로 인앱 브라우저를 연다.
+      onTapUrl: (url) {
+        openUrl(url);
+        return true;
+      },
       textStyle: textStyle,
       customStylesBuilder: (element) {
         if (element.localName == 'a') {
