@@ -2,17 +2,19 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/login_page/presentation/state/login_event_mixin.dart';
 import 'package:mocl_flutter/features/login_page/presentation/state/login_state_mixin.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class const LoginView({super.key})
+/// [siteType] 이 없으면 지금 고른 사이트에 로그인한다.
+class const LoginView({super.key, final SiteType? siteType})
     extends ConsumerWidget
     with LoginState, LoginEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final siteType = siteTypeState(ref);
+    final siteType = this.siteType ?? siteTypeState(ref);
     return InAppWebView(
       initialSettings: inAppWebViewSettings(),
       initialUrlRequest: urlRequest(siteType),

@@ -106,6 +106,86 @@ void main() {
       expect(details.comments[0].likeCount, '3');
       expect(details.comments[0].bodyHtml, contains('첫 번째 댓글'));
       expect(details.comments[1].isReply, isTrue);
+      // 비로그인 페이지(IS_LOGIN 없음)는 댓글을 쓸 수 없는 상태로 본다.
+      expect(details.isLoggedIn, isFalse);
+    });
+
+    test('IS_LOGIN 을 false 로 선언만 하고 다시 대입하지 않으면 비로그인', () async {
+      final fixture = File('test/fixtures/clien_detail.html')
+          .readAsStringSync()
+          .replaceFirst('<body>', '''<body>
+<script>
+  let IS_LOGIN = false;
+  let sessionUserId = '';
+</script>''');
+      const parser = ClienParser(false);
+      final result = await parser.detail(
+        Response(
+          data: fixture,
+          requestOptions: RequestOptions(path: ''),
+        ),
+      );
+      final details = result.fold(
+        (failure) => fail('파싱 실패: $failure'),
+        (details) => details,
+      );
+      expect(details.isLoggedIn, isFalse);
+    });
+
+    test('댓글 쓰기에 필요한 CSRF · 로그인 · 게시판 값과 댓글 번호를 읽는다', () async {
+      final fixture = File('test/fixtures/clien_detail.html')
+          .readAsStringSync()
+          .replaceFirst('<body>', '''<body>
+<script>
+  let IS_LOGIN = false;
+  let sessionUserId = '';
+
+    IS_LOGIN = true;
+    sessionUserId = "writer_id";
+  \$.ajaxSetup({
+    beforeSend: function(xhr, settings) {
+      xhr.setRequestHeader("X-CSRF-TOKEN", "ajax-csrf-456");
+    }
+  });
+</script>
+<input type="hidden" value="writer_id" id="writer">
+<input type="hidden" value="writer_id" id="loginUserId">
+<input type="hidden" value="park" id="boardCd">
+<input type="hidden" value="19000001" id="boardSn">''')
+          .replaceFirst(
+            'data-author-id="commenter1"',
+            'data-author-id="commenter1" data-comment-sn="111"',
+          )
+          .replaceFirst(
+            'data-author-id="commenter2"',
+            'data-author-id="commenter2" data-comment-sn="112"',
+          );
+      const parser = ClienParser(false);
+
+      final result = await parser.detail(
+        Response(
+          data: fixture,
+          requestOptions: RequestOptions(path: ''),
+        ),
+      );
+      final details = result.fold(
+        (failure) => fail('파싱 실패: $failure'),
+        (details) => details,
+      );
+
+      // 로그아웃 폼 값보다 ajaxSetup 의 값을 먼저 쓴다.
+      expect(details.csrf, 'ajax-csrf-456');
+      expect(details.isLoggedIn, isTrue);
+      expect(details.commentParams, {
+        'boardCd': 'park',
+        'boardSn': '19000001',
+        'writer': 'writer_id',
+      });
+      expect(details.comments[0].commentId, '111');
+      expect(details.comments[0].parentCommentId, isEmpty);
+      // 대댓글의 부모는 바로 위 원댓글이다.
+      expect(details.comments[1].commentId, '112');
+      expect(details.comments[1].parentCommentId, '111');
     });
   });
 }

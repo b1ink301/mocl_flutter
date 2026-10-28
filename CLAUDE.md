@@ -130,3 +130,16 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
     는 `package:flutter/material` 다이얼로그라 `material_ui` 테마 · 지역화를 못 보므로 쓰지 말고,
     안내 다이얼로그는 `AppUpdateGate` 가 `AlertDialog.adaptive` 로 그린다.
 - 같은 버전은 `AppUpdatePromptStore.interval`(3일) 동안 다시 묻지 않는다(두 플랫폼 공통).
+
+## 댓글 쓰기 (클리앙 · 다모앙)
+
+- 사이트별 `BaseApi.writeComment` 오버라이드 + `supportsCommentWrite => true` 로 켠다.
+  나머지 사이트는 기본 구현(미지원)이라 상세에 쓰기 버튼이 나오지 않는다.
+- 로그인 여부 · CSRF · 사이트별 값은 상세 파싱 때 `Details.isLoggedIn` / `csrf` /
+  `commentParams` 에 담고, 대댓글 부모는 `CommentItem.commentId`(클리앙은 한 단계만
+  받으므로 대댓글엔 `parentCommentId`)로 가리킨다.
+  - 클리앙: `POST /service/api/board/{boardCd}/{boardSn}/comment/regist`, form
+    `boardSn` + JSON `param`, 헤더 `X-CSRF-TOKEN`(페이지 `$.ajaxSetup` 값).
+  - 다모앙: `POST /api/v1/boards/{board}/posts/{id}/comments`, JSON `{content, parent_id}`,
+    `Authorization: Bearer {__data.json 의 accessToken}`. 401 이면 토큰을 다시 받아 한 번만 재시도.
+- 토큰 · CSRF · 댓글 본문은 로그에 남기지 않는다(헤더는 `redactHeaders`).

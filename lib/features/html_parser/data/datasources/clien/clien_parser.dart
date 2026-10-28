@@ -36,6 +36,42 @@ class const ClienParser(final bool isShowNickImage) extends BaseParser {
     return Isolate.run(() => _parseDetail(responseData, showNickImage));
   }
 
+  static final RegExp _kCsrfPattern = RegExp(
+    r'''setRequestHeader\(\s*["']X-CSRF-TOKEN["']\s*,\s*["']([^"']+)["']''',
+  );
+  static final RegExp _kIsLoginPattern = RegExp(
+    r'\bIS_LOGIN\s*=\s*(true|false)\b',
+  );
+  static final RegExp _kSessionUserPattern = RegExp(
+    r'''\bsessionUserId\s*=\s*["']([^"']*)["']''',
+  );
+
+  /// 페이지 스크립트로 로그인 여부를 판단한다.
+  ///
+  /// 클리앙은 `let IS_LOGIN = false;` 로 선언한 뒤 로그인 사용자에게만
+  /// `IS_LOGIN = true; sessionUserId = "...";` 를 다시 대입한다(서버 템플릿이
+  /// 그려 주므로 JS 를 실행하지 않아도 HTML 에 그대로 있다). 그래서 첫 값이
+  /// 아니라 **마지막** 대입을 보고, 세션 사용자 id 가 채워졌는지도 함께 본다.
+  ///
+  /// 셋 다 비어 있다면 파싱이 아니라 요청에 세션 쿠키(`CLIEN_SESSION`,
+  /// `Path=/service`)가 실리지 않은 것이다.
+  static bool _parseIsLoggedIn(String html) {
+    final String? lastIsLogin = _kIsLoginPattern
+        .allMatches(html)
+        .lastOrNull
+        ?.group(1);
+
+    MoclLogger.d(() => 'lastIsLogin = $lastIsLogin');
+
+    if (lastIsLogin == 'true') return true;
+    final String sessionUserId =
+        _kSessionUserPattern.allMatches(html).lastOrNull?.group(1) ?? '';
+
+    MoclLogger.d(() => 'sessionUserId = $sessionUserId');
+
+    return sessionUserId.isNotEmpty;
+  }
+
   static Either<Failure, Details> _parseDetail(
     String responseData,
     bool isShowNickImage,
@@ -49,10 +85,24 @@ class const ClienParser(final bool isShowNickImage) extends BaseParser {
     );
     // document.querySelector('body > div.nav_container > div.nav_body > div.nav_content > div.content_view');
 
-    final csrf = document.qAttr(
-      "body > nav.navigation > div.dropdown-menu > form > input[name=_csrf]",
-      'value',
-    );
+    // 댓글 쓰기 등 POST 에 붙일 CSRF. 페이지의 `$.ajaxSetup` 이 넣는 값을 쓴다
+    // (로그아웃 폼 값은 비로그인이면 없다).
+    final csrfMatch = _kCsrfPattern.firstMatch(responseData);
+    final csrf =
+        csrfMatch?.group(1) ??
+        document.qAttr(
+          "body > nav.navigation > div.dropdown-menu > form > input[name=_csrf]",
+          'value',
+        );
+
+    // 서버가 로그인 사용자에게만 채워 주는 값이라 스크립트 판단의 보조로 쓴다.
+    final isLoggedIn =
+        _parseIsLoggedIn(responseData) ||
+        document.qAttr('input#loginUserId', 'value').isNotEmpty;
+    final commentParams = <String, String>{
+      for (final key in const ['boardCd', 'boardSn', 'writer'])
+        key: document.qAttr('input#$key', 'value'),
+    };
     final title = container.qText("div.post_title > div.post_subject > span");
     final timeElement = container?.querySelector(
       "div.post_information > div.post_time > div.post_date",
@@ -121,17 +171,22 @@ class const ClienParser(final bool isShowNickImage) extends BaseParser {
     }
     final info = BaseParser.parserInfo(parsedTime, viewCount);
 
+    // 대댓글은 한 단계만 받으므로, 대댓글에 답글을 달 때는 바로 위 원댓글을
+    // 부모로 보낸다(웹도 같다).
+    var rootCommentSn = '';
     final comments =
         container
             ?.querySelectorAll(
               "div.post_comment > div.comment > div.comment_row",
             )
             .map((element) {
+              final commentSn = element.attributes['data-comment-sn'] ?? '';
+              final isReply = element.classes.contains('re');
+              if (!isReply) rootCommentSn = commentSn;
               if (element.innerHtml == "<span>삭제 되었습니다.</span>") {
                 return null;
               }
               final id = element.attributes['data-author-id'] ?? '';
-              final isReply = element.classes.contains('re');
 
               final timeElement = element.querySelector(
                 "div.comment_info > div.comment_info_area > div.comment_time",
@@ -182,6 +237,8 @@ class const ClienParser(final bool isShowNickImage) extends BaseParser {
                   nickImage: nickImage,
                 ),
                 authorId: '',
+                commentId: commentSn,
+                parentCommentId: isReply ? rootCommentSn : '',
               );
             })
             .whereType<CommentItem>()
@@ -214,6 +271,8 @@ class const ClienParser(final bool isShowNickImage) extends BaseParser {
       userInfo: UserInfo(id: user, nickName: nickName, nickImage: nickImage),
       comments: comments,
       bodyHtml: newBodyHtml,
+      isLoggedIn: isLoggedIn,
+      commentParams: commentParams,
     );
 
     return Right<Failure, Details>(detail);

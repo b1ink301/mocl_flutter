@@ -5,6 +5,7 @@ import 'package:dio_cookie_manager/dio_cookie_manager.dart' as diocookie;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart' as webview;
 import 'package:fpdart/fpdart.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_comment_write.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/util/mocl_logger.dart';
@@ -121,42 +122,69 @@ abstract class const BaseApi(final Dio _dio, final String userAgent)
     Object? data,
     ResponseType? responseType,
     String? contentType,
+
+    /// [get] 과 같다. 오류 상태코드 본문에 사유를 담아 주는 쓰기 API 에 쓴다.
+    bool Function(int?)? validateStatus,
   }) => _dio.postUri(
     Uri.parse(url),
     data: data,
-    options: headers != null
-        ? Options(
-            headers: headers,
-            responseType: responseType,
-            contentType: contentType,
-          )
-        : null,
+    options: Options(
+      headers: headers,
+      responseType: responseType,
+      contentType: contentType,
+      validateStatus: validateStatus,
+    ),
   );
+
+  /// 이 사이트에서 앱으로 댓글을 쓸 수 있는지. 쓸 수 있는 사이트만 오버라이드한다.
+  bool get supportsCommentWrite => false;
+
+  /// 댓글(또는 [CommentWrite.parent] 에 다는 대댓글)을 쓴다.
+  Future<Either<Failure, Unit>> writeComment(
+    CommentWrite write,
+    BaseParser parser,
+  ) async =>
+      const Left(WriteCommentFailure(message: '이 사이트는 앱에서 댓글을 쓸 수 없어요.'));
 
   Future<InterceptorsWrapper> _buildInterceptorCookie(String baseUrl) async {
     final webview.CookieManager cookieManager =
         webview.CookieManager.instance();
-    final webview.WebUri uri = webview.WebUri(baseUrl);
-
-    final List<webview.Cookie> cookies = await cookieManager.getCookies(
-      url: uri,
+    final Map<String, String> baseCookies = _cookieMap(
+      await cookieManager.getCookies(url: webview.WebUri(baseUrl)),
     );
 
-    // cookiejar.Cookie 생성자는 RFC 6265 검증을 하므로 값에 큰따옴표(예: Reddit
-    // 의 JSON 쿠키)가 들어가면 FormatException 을 던진다. 어차피 Cookie 헤더
-    // 문자열로만 쓰이므로 WebView 원본 name/value 로 직접 헤더를 구성한다.
-    final String cookieHeader = cookies
-        .map((cookie) => '${cookie.name}=${cookie.value}')
-        .join('; ');
-
+    // [baseUrl] 만으로 조회하면 경로가 `/` 라서 `Path=/service` 같은 하위 경로
+    // 쿠키가 빠진다(클리앙 로그인 세션 `CLIEN_SESSION` 이 그렇다). 그래서
+    // 요청마다 실제 URL 로도 조회해 합친다. 같은 이름이면 요청 URL 쪽이 이긴다.
     final InterceptorsWrapper interceptor = InterceptorsWrapper(
-      onRequest: (options, handler) {
-        options.headers['Cookie'] = cookieHeader;
-        return handler.next(options);
+      onRequest: (options, handler) async {
+        final Map<String, String> cookies = {...baseCookies};
+        try {
+          cookies.addAll(
+            _cookieMap(
+              await cookieManager.getCookies(
+                url: webview.WebUri.uri(options.uri),
+              ),
+            ),
+          );
+        } catch (e) {
+          MoclLogger.w(() => '[cookie] 요청 URL 쿠키 조회 실패: $e');
+        }
+        // cookiejar.Cookie 생성자는 RFC 6265 검증을 하므로 값에 큰따옴표(예:
+        // Reddit 의 JSON 쿠키)가 들어가면 FormatException 을 던진다. 어차피
+        // Cookie 헤더 문자열로만 쓰이므로 WebView 원본 name/value 로 직접 만든다.
+        options.headers['Cookie'] = cookies.entries
+            .map((e) => '${e.key}=${e.value}')
+            .join('; ');
+        handler.next(options);
       },
     );
     return interceptor;
   }
+
+  static Map<String, String> _cookieMap(List<webview.Cookie> cookies) => {
+    for (final cookie in cookies) cookie.name: '${cookie.value}',
+  };
 
   /// 웹뷰 쿠키스토어의 로그인 쿠키를 [cookieUrl] 도메인 기준으로 주입해 GET 한다.
   /// 비로그인 상태에선 쿠키가 비어 단순 GET 과 동일하게 동작하므로, 로그인이

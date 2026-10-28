@@ -23,6 +23,7 @@ import 'package:mocl_flutter/core/util/utilities.dart';
 import 'package:mocl_flutter/features/ads/presentation/widgets/detail_ad_card.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/state/detail_event_mixin.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/state/detail_state_mixin.dart';
+import 'package:mocl_flutter/features/detail_page/presentation/widgets/comment_composer_sheet.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/widgets/detail_header_bar.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/widgets/detail_scope.dart';
 import 'package:sliver_tools/sliver_tools.dart';
@@ -140,6 +141,9 @@ class const DetailView({super.key})
         category: categoryState(ref),
         onRefresh: () => handleRefresh(ref),
         onOpenUrl: (url) => handleOpenLink(context, ref, url),
+        onWriteComment: supportsCommentWriteState(ref)
+            ? (parent) => _writeComment(context, ref, state.value, parent)
+            : null,
       ),
       error: (state) => SliverFillRemaining(
         hasScrollBody: false,
@@ -157,6 +161,35 @@ class const DetailView({super.key})
       ),
       orElse: () => const _LoadingView(),
     );
+  }
+
+  /// 로그인 전이면 로그인 화면으로, 로그인 상태면 입력 시트로 보낸다.
+  Future<void> _writeComment(
+    BuildContext context,
+    WidgetRef ref,
+    Details detail,
+    CommentItem? parent,
+  ) async {
+    if (!detail.isLoggedIn) {
+      await loginForComment(context, ref);
+      return;
+    }
+    final bool? written = await CommentComposerSheet.show(
+      context,
+      replyTo: parent?.userInfo.nickName,
+      onSubmit: (content) =>
+          submitComment(ref, detail, content, parent: parent),
+    );
+    if (written == true && context.mounted) {
+      ScaffoldMessenger.maybeOf(context)
+        ?..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('댓글을 올렸어요.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+    }
   }
 }
 
@@ -184,6 +217,9 @@ class const _DetailView({
   required final String category,
   required final VoidCallback onRefresh,
   required final Future<bool> Function(String url) onOpenUrl,
+
+  /// 댓글 쓰기([parent] 가 있으면 대댓글). 사이트가 지원하지 않으면 null.
+  final void Function(CommentItem? parent)? onWriteComment,
 }) extends StatelessWidget with DetailEvent {
   @override
   Widget build(BuildContext context) {
@@ -240,6 +276,17 @@ class const _DetailView({
                   bodyMedium: bodyMedium,
                   hexColor: hexColor,
                   openUrl: onOpenUrl,
+                  onReply: detail.isLoggedIn ? onWriteComment : null,
+                ),
+              ],
+              if (onWriteComment case final write?) ...[
+                const PlainDividerWidget(indent: 0, endIndent: 0),
+                SliverToBoxAdapter(
+                  child: _TextActionButton(
+                    label: detail.isLoggedIn ? '댓글 쓰기' : '로그인하고 댓글 쓰기',
+                    onTap: () => write(null),
+                    textStyle: bodySmall,
+                  ),
                 ),
               ],
               const PlainDividerWidget(indent: 0, endIndent: 0),
@@ -265,6 +312,7 @@ class const _CommentList({
   required final TextStyle? bodyMedium,
   required final String hexColor,
   required final void Function(String) openUrl,
+  final void Function(CommentItem parent)? onReply,
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) => SliverList.separated(
@@ -282,6 +330,9 @@ class const _CommentList({
         hexColor: hexColor,
         depth: comment.isReply ? 1 : 0,
         openUrl: openUrl,
+        onReply: comment.commentId.isEmpty || onReply == null
+            ? null
+            : () => onReply!(comment),
       );
     },
   );
@@ -355,6 +406,9 @@ class const _CommentItem({
   required final String hexColor,
   required final int depth,
   required final void Function(String) openUrl,
+
+  /// 이 댓글에 답글 달기. 쓸 수 없으면 null.
+  final VoidCallback? onReply,
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -397,6 +451,17 @@ class const _CommentItem({
                   ),
                 ),
               ...?likeView,
+              if (onReply != null)
+                InkWell(
+                  onTap: onReply,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
+                    child: PlainText('답글', style: bodySmall!),
+                  ),
+                ),
             ],
           ),
           if (!isEmptyBody)
@@ -812,6 +877,30 @@ class const _HtmlWidget({
         if (data.sources.isEmpty) return;
         _openGallery(context, html, data.sources.first.url, referer);
       },
+    );
+  }
+}
+
+/// [_RefreshButton] 과 같은 모양의 글자 버튼.
+class const _TextActionButton({
+  required final String label,
+  required final VoidCallback onTap,
+  required final TextStyle? textStyle,
+}) extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final focusColor = Theme.of(context).colorScheme.primary;
+    final textStyle = this.textStyle!.copyWith(
+      color: focusColor,
+      fontWeight: FontWeight.w800,
+    );
+    return InkWell(
+      onTap: onTap,
+      child: SizedBox(
+        width: double.infinity,
+        height: 58,
+        child: Center(child: PlainText(label, style: textStyle)),
+      ),
     );
   }
 }

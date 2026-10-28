@@ -371,5 +371,8 @@ class _FakeParser() implements BaseParser {
 
 class _FakeApi() implements BaseApi {
   @override
+  bool get supportsCommentWrite => false;
+
+  @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

@@ -5,6 +5,9 @@ import 'package:material_ui/material_ui.dart' show BuildContext;
 import 'package:mocl_flutter/config/routes/mocl_app_pages.dart' show Routes;
 import 'package:url_launcher/url_launcher.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_comment_write.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/util/utilities.dart';
@@ -17,6 +20,7 @@ import 'package:mocl_flutter/features/html_parser/application/datasource_provide
 import 'package:mocl_flutter/features/settings_page/application/settings_providers.dart';
 
 import '../../application/detail_providers.dart';
+import '../../application/use_case_provider.dart';
 
 mixin class DetailEvent() {
   void handleRefresh(WidgetRef ref) =>
@@ -83,6 +87,39 @@ mixin class DetailEvent() {
     final siteType = ref.read(detailSiteTypeProvider);
     final (parser, _) = ref.read(currentParserProvider(siteType));
     return parser.baseUrl;
+  }
+
+  /// 댓글(또는 [parent] 에 다는 대댓글)을 쓴다. 성공하면 상세를 다시 받아
+  /// 새 댓글을 보여주고 `null` 을, 실패하면 화면에 보일 사유를 돌려준다.
+  Future<String?> submitComment(
+    WidgetRef ref,
+    Details details,
+    String content, {
+    CommentItem? parent,
+  }) async {
+    final siteType = ref.read(detailSiteTypeProvider);
+    final write = CommentWrite(
+      item: ref.read(listItemProvider),
+      details: details,
+      content: content,
+      parent: parent,
+    );
+    final result = await ref.read(writeCommentProvider(siteType))(write);
+    return result.fold((failure) => failure.message, (_) {
+      handleRefresh(ref);
+      return null;
+    });
+  }
+
+  /// 이 상세의 사이트로 로그인한다. 로그인을 마치면 상세를 다시 받아
+  /// 로그인 상태(댓글 쓰기 · 토큰)를 반영한다.
+  Future<void> loginForComment(BuildContext context, WidgetRef ref) async {
+    final siteType = ref.read(detailSiteTypeProvider);
+    final bool? result = await context.push<bool>(
+      Routes.login,
+      extra: siteType,
+    );
+    if (result == true) handleRefresh(ref);
   }
 
   Future<bool> handleShareUrl(WidgetRef ref) =>

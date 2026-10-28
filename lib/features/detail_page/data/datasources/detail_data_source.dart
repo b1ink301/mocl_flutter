@@ -1,4 +1,5 @@
 import 'package:fpdart/fpdart.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_comment_write.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
@@ -11,6 +12,10 @@ abstract class DetailDataSource() {
   Future<Either<Failure, Details>> getDetail(ListItem item);
 
   Future<int> setReadFlag(SiteType siteType, int id);
+
+  bool get supportsCommentWrite;
+
+  Future<Either<Failure, Unit>> writeComment(CommentWrite write);
 }
 
 class const DetailDataSourceImpl({
@@ -25,4 +30,11 @@ class const DetailDataSourceImpl({
   @override
   Future<int> setReadFlag(SiteType siteType, int id) async =>
       localDatabase.setRead(siteType, id);
+
+  @override
+  bool get supportsCommentWrite => apiClient.supportsCommentWrite;
+
+  @override
+  Future<Either<Failure, Unit>> writeComment(CommentWrite write) =>
+      apiClient.writeComment(write, parser);
 }

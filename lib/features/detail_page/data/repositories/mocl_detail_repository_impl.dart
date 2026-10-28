@@ -1,6 +1,7 @@
 import 'dart:core';
 
 import 'package:fpdart/fpdart.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_comment_write.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
@@ -17,4 +18,11 @@ class const DetailRepositoryImpl({required final DetailDataSource dataSource})
   @override
   Future<int> setReadFlag({required SiteType siteType, required int boardId}) =>
       dataSource.setReadFlag(siteType, boardId);
+
+  @override
+  bool get supportsCommentWrite => dataSource.supportsCommentWrite;
+
+  @override
+  Future<Either<Failure, Unit>> writeComment(CommentWrite write) =>
+      dataSource.writeComment(write);
 }

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$Details {
 
- String get title; String get time; String get viewCount; String get likeCount; String get bodyHtml; String get info; UserInfo get userInfo; List<CommentItem> get comments; Recents? get recents; String get csrf; String get category; Map<String, dynamic>? get extraData;
+ String get title; String get time; String get viewCount; String get likeCount; String get bodyHtml; String get info; UserInfo get userInfo; List<CommentItem> get comments; Recents? get recents; String get csrf; String get category; Map<String, dynamic>? get extraData; bool get isLoggedIn; Map<String, String> get commentParams;
 /// Create a copy of Details
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +27,20 @@ $DetailsCopyWith<Details> get copyWith => _$DetailsCopyWithImpl<Details>(this as
 @override
 bool operator ==(Object other) {
   final _this = this as Details;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is Details&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.time, _this.time) || other.time == _this.time)&&(identical(other.viewCount, _this.viewCount) || other.viewCount == _this.viewCount)&&(identical(other.likeCount, _this.likeCount) || other.likeCount == _this.likeCount)&&(identical(other.bodyHtml, _this.bodyHtml) || other.bodyHtml == _this.bodyHtml)&&(identical(other.info, _this.info) || other.info == _this.info)&&(identical(other.userInfo, _this.userInfo) || other.userInfo == _this.userInfo)&&const DeepCollectionEquality().equals(other.comments, _this.comments)&&(identical(other.recents, _this.recents) || other.recents == _this.recents)&&(identical(other.csrf, _this.csrf) || other.csrf == _this.csrf)&&(identical(other.category, _this.category) || other.category == _this.category)&&const DeepCollectionEquality().equals(other.extraData, _this.extraData));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is Details&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.time, _this.time) || other.time == _this.time)&&(identical(other.viewCount, _this.viewCount) || other.viewCount == _this.viewCount)&&(identical(other.likeCount, _this.likeCount) || other.likeCount == _this.likeCount)&&(identical(other.bodyHtml, _this.bodyHtml) || other.bodyHtml == _this.bodyHtml)&&(identical(other.info, _this.info) || other.info == _this.info)&&(identical(other.userInfo, _this.userInfo) || other.userInfo == _this.userInfo)&&const DeepCollectionEquality().equals(other.comments, _this.comments)&&(identical(other.recents, _this.recents) || other.recents == _this.recents)&&(identical(other.csrf, _this.csrf) || other.csrf == _this.csrf)&&(identical(other.category, _this.category) || other.category == _this.category)&&const DeepCollectionEquality().equals(other.extraData, _this.extraData)&&(identical(other.isLoggedIn, _this.isLoggedIn) || other.isLoggedIn == _this.isLoggedIn)&&const DeepCollectionEquality().equals(other.commentParams, _this.commentParams));
 }
 
 
 @override
 int get hashCode {
   final _this = this as Details;
-  return Object.hash(runtimeType,_this.title,_this.time,_this.viewCount,_this.likeCount,_this.bodyHtml,_this.info,_this.userInfo,const DeepCollectionEquality().hash(_this.comments),_this.recents,_this.csrf,_this.category,const DeepCollectionEquality().hash(_this.extraData));
+  return Object.hash(runtimeType,_this.title,_this.time,_this.viewCount,_this.likeCount,_this.bodyHtml,_this.info,_this.userInfo,const DeepCollectionEquality().hash(_this.comments),_this.recents,_this.csrf,_this.category,const DeepCollectionEquality().hash(_this.extraData),_this.isLoggedIn,const DeepCollectionEquality().hash(_this.commentParams));
 }
 
 @override
 String toString() {
   final _this = this as Details;
-  return 'Details(title: ${_this.title}, time: ${_this.time}, viewCount: ${_this.viewCount}, likeCount: ${_this.likeCount}, bodyHtml: ${_this.bodyHtml}, info: ${_this.info}, userInfo: ${_this.userInfo}, comments: ${_this.comments}, recents: ${_this.recents}, csrf: ${_this.csrf}, category: ${_this.category}, extraData: ${_this.extraData})';
+  return 'Details(title: ${_this.title}, time: ${_this.time}, viewCount: ${_this.viewCount}, likeCount: ${_this.likeCount}, bodyHtml: ${_this.bodyHtml}, info: ${_this.info}, userInfo: ${_this.userInfo}, comments: ${_this.comments}, recents: ${_this.recents}, csrf: ${_this.csrf}, category: ${_this.category}, extraData: ${_this.extraData}, isLoggedIn: ${_this.isLoggedIn}, commentParams: ${_this.commentParams})';
 }
 
 
@@ -51,7 +51,7 @@ abstract mixin class $DetailsCopyWith<$Res>  {
   factory $DetailsCopyWith(Details value, $Res Function(Details) _then) = _$DetailsCopyWithImpl;
 @useResult
 $Res call({
- String title, String time, String viewCount, String likeCount, String bodyHtml, String info, UserInfo userInfo, List<CommentItem> comments, Recents? recents, String csrf, String category, Map<String, dynamic>? extraData
+ String title, String time, String viewCount, String likeCount, String bodyHtml, String info, UserInfo userInfo, List<CommentItem> comments, Recents? recents, String csrf, String category, Map<String, dynamic>? extraData, bool isLoggedIn, Map<String, String> commentParams
 });
 
 
@@ -68,7 +68,7 @@ class _$DetailsCopyWithImpl<$Res>
 
 /// Create a copy of Details
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? time = null,Object? viewCount = null,Object? likeCount = null,Object? bodyHtml = null,Object? info = null,Object? userInfo = null,Object? comments = null,Object? recents = freezed,Object? csrf = null,Object? category = null,Object? extraData = freezed,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? title = null,Object? time = null,Object? viewCount = null,Object? likeCount = null,Object? bodyHtml = null,Object? info = null,Object? userInfo = null,Object? comments = null,Object? recents = freezed,Object? csrf = null,Object? category = null,Object? extraData = freezed,Object? isLoggedIn = null,Object? commentParams = null,}) {
   return _then(Details(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,time: null == time ? _self.time : time // ignore: cast_nullable_to_non_nullable
@@ -82,7 +82,9 @@ as List<CommentItem>,recents: freezed == recents ? _self.recents : recents // ig
 as Recents?,csrf: null == csrf ? _self.csrf : csrf // ignore: cast_nullable_to_non_nullable
 as String,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
 as String,extraData: freezed == extraData ? _self.extraData : extraData // ignore: cast_nullable_to_non_nullable
-as Map<String, dynamic>?,
+as Map<String, dynamic>?,isLoggedIn: null == isLoggedIn ? _self.isLoggedIn : isLoggedIn // ignore: cast_nullable_to_non_nullable
+as bool,commentParams: null == commentParams ? _self.commentParams : commentParams // ignore: cast_nullable_to_non_nullable
+as Map<String, String>,
   ));
 }
 /// Create a copy of Details
@@ -188,10 +190,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String title,  String time,  String viewCount,  String likeCount,  String bodyHtml,  String info,  UserInfo userInfo,  List<CommentItem> comments,  Recents? recents,  String csrf,  String category,  Map<String, dynamic>? extraData)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String title,  String time,  String viewCount,  String likeCount,  String bodyHtml,  String info,  UserInfo userInfo,  List<CommentItem> comments,  Recents? recents,  String csrf,  String category,  Map<String, dynamic>? extraData,  bool isLoggedIn,  Map<String, String> commentParams)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _Details() when $default != null:
-return $default(_that.title,_that.time,_that.viewCount,_that.likeCount,_that.bodyHtml,_that.info,_that.userInfo,_that.comments,_that.recents,_that.csrf,_that.category,_that.extraData);case _:
+return $default(_that.title,_that.time,_that.viewCount,_that.likeCount,_that.bodyHtml,_that.info,_that.userInfo,_that.comments,_that.recents,_that.csrf,_that.category,_that.extraData,_that.isLoggedIn,_that.commentParams);case _:
   return orElse();
 
 }
@@ -209,10 +211,10 @@ return $default(_that.title,_that.time,_that.viewCount,_that.likeCount,_that.bod
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String title,  String time,  String viewCount,  String likeCount,  String bodyHtml,  String info,  UserInfo userInfo,  List<CommentItem> comments,  Recents? recents,  String csrf,  String category,  Map<String, dynamic>? extraData)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String title,  String time,  String viewCount,  String likeCount,  String bodyHtml,  String info,  UserInfo userInfo,  List<CommentItem> comments,  Recents? recents,  String csrf,  String category,  Map<String, dynamic>? extraData,  bool isLoggedIn,  Map<String, String> commentParams)  $default,) {final _that = this;
 switch (_that) {
 case _Details():
-return $default(_that.title,_that.time,_that.viewCount,_that.likeCount,_that.bodyHtml,_that.info,_that.userInfo,_that.comments,_that.recents,_that.csrf,_that.category,_that.extraData);case _:
+return $default(_that.title,_that.time,_that.viewCount,_that.likeCount,_that.bodyHtml,_that.info,_that.userInfo,_that.comments,_that.recents,_that.csrf,_that.category,_that.extraData,_that.isLoggedIn,_that.commentParams);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -229,10 +231,10 @@ return $default(_that.title,_that.time,_that.viewCount,_that.likeCount,_that.bod
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String title,  String time,  String viewCount,  String likeCount,  String bodyHtml,  String info,  UserInfo userInfo,  List<CommentItem> comments,  Recents? recents,  String csrf,  String category,  Map<String, dynamic>? extraData)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String title,  String time,  String viewCount,  String likeCount,  String bodyHtml,  String info,  UserInfo userInfo,  List<CommentItem> comments,  Recents? recents,  String csrf,  String category,  Map<String, dynamic>? extraData,  bool isLoggedIn,  Map<String, String> commentParams)?  $default,) {final _that = this;
 switch (_that) {
 case _Details() when $default != null:
-return $default(_that.title,_that.time,_that.viewCount,_that.likeCount,_that.bodyHtml,_that.info,_that.userInfo,_that.comments,_that.recents,_that.csrf,_that.category,_that.extraData);case _:
+return $default(_that.title,_that.time,_that.viewCount,_that.likeCount,_that.bodyHtml,_that.info,_that.userInfo,_that.comments,_that.recents,_that.csrf,_that.category,_that.extraData,_that.isLoggedIn,_that.commentParams);case _:
   return null;
 
 }
@@ -244,7 +246,7 @@ return $default(_that.title,_that.time,_that.viewCount,_that.likeCount,_that.bod
 
 
 class _Details implements Details {
-  const _Details({required this.title, required this.time, required this.viewCount, required this.likeCount, required this.bodyHtml, required this.info, required this.userInfo, required  List<CommentItem> comments, this.recents = null, this.csrf = '', this.category = '',  Map<String, dynamic>? extraData}): _comments = comments,_extraData = extraData;
+  const _Details({required this.title, required this.time, required this.viewCount, required this.likeCount, required this.bodyHtml, required this.info, required this.userInfo, required  List<CommentItem> comments, this.recents = null, this.csrf = '', this.category = '',  Map<String, dynamic>? extraData, this.isLoggedIn = false,  Map<String, String> commentParams = const <String, String>{}}): _comments = comments,_extraData = extraData,_commentParams = commentParams;
   
 
 @override final  String title;
@@ -273,6 +275,14 @@ class _Details implements Details {
   return EqualUnmodifiableMapView(value);
 }
 
+@override@JsonKey() final  bool isLoggedIn;
+ final  Map<String, String> _commentParams;
+@override@JsonKey() Map<String, String> get commentParams {
+  if (_commentParams is EqualUnmodifiableMapView) return _commentParams;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableMapView(_commentParams);
+}
+
 
 /// Create a copy of Details
 /// with the given fields replaced by the non-null parameter values.
@@ -284,18 +294,18 @@ _$DetailsCopyWith<_Details> get copyWith => __$DetailsCopyWithImpl<_Details>(thi
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Details&&(identical(other.title, title) || other.title == title)&&(identical(other.time, time) || other.time == time)&&(identical(other.viewCount, viewCount) || other.viewCount == viewCount)&&(identical(other.likeCount, likeCount) || other.likeCount == likeCount)&&(identical(other.bodyHtml, bodyHtml) || other.bodyHtml == bodyHtml)&&(identical(other.info, info) || other.info == info)&&(identical(other.userInfo, userInfo) || other.userInfo == userInfo)&&const DeepCollectionEquality().equals(other.comments, _comments)&&(identical(other.recents, recents) || other.recents == recents)&&(identical(other.csrf, csrf) || other.csrf == csrf)&&(identical(other.category, category) || other.category == category)&&const DeepCollectionEquality().equals(other.extraData, _extraData));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _Details&&(identical(other.title, title) || other.title == title)&&(identical(other.time, time) || other.time == time)&&(identical(other.viewCount, viewCount) || other.viewCount == viewCount)&&(identical(other.likeCount, likeCount) || other.likeCount == likeCount)&&(identical(other.bodyHtml, bodyHtml) || other.bodyHtml == bodyHtml)&&(identical(other.info, info) || other.info == info)&&(identical(other.userInfo, userInfo) || other.userInfo == userInfo)&&const DeepCollectionEquality().equals(other.comments, _comments)&&(identical(other.recents, recents) || other.recents == recents)&&(identical(other.csrf, csrf) || other.csrf == csrf)&&(identical(other.category, category) || other.category == category)&&const DeepCollectionEquality().equals(other.extraData, _extraData)&&(identical(other.isLoggedIn, isLoggedIn) || other.isLoggedIn == isLoggedIn)&&const DeepCollectionEquality().equals(other.commentParams, _commentParams));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,title,time,viewCount,likeCount,bodyHtml,info,userInfo,const DeepCollectionEquality().hash(_comments),recents,csrf,category,const DeepCollectionEquality().hash(_extraData));
+    return Object.hash(runtimeType,title,time,viewCount,likeCount,bodyHtml,info,userInfo,const DeepCollectionEquality().hash(_comments),recents,csrf,category,const DeepCollectionEquality().hash(_extraData),isLoggedIn,const DeepCollectionEquality().hash(_commentParams));
 }
 
 @override
 String toString() {
-    return 'Details(title: $title, time: $time, viewCount: $viewCount, likeCount: $likeCount, bodyHtml: $bodyHtml, info: $info, userInfo: $userInfo, comments: $comments, recents: $recents, csrf: $csrf, category: $category, extraData: $extraData)';
+    return 'Details(title: $title, time: $time, viewCount: $viewCount, likeCount: $likeCount, bodyHtml: $bodyHtml, info: $info, userInfo: $userInfo, comments: $comments, recents: $recents, csrf: $csrf, category: $category, extraData: $extraData, isLoggedIn: $isLoggedIn, commentParams: $commentParams)';
 }
 
 
@@ -306,7 +316,7 @@ abstract mixin class _$DetailsCopyWith<$Res> implements $DetailsCopyWith<$Res> {
   factory _$DetailsCopyWith(_Details value, $Res Function(_Details) _then) = __$DetailsCopyWithImpl;
 @override @useResult
 $Res call({
- String title, String time, String viewCount, String likeCount, String bodyHtml, String info, UserInfo userInfo, List<CommentItem> comments, Recents? recents, String csrf, String category, Map<String, dynamic>? extraData
+ String title, String time, String viewCount, String likeCount, String bodyHtml, String info, UserInfo userInfo, List<CommentItem> comments, Recents? recents, String csrf, String category, Map<String, dynamic>? extraData, bool isLoggedIn, Map<String, String> commentParams
 });
 
 
@@ -323,7 +333,7 @@ class __$DetailsCopyWithImpl<$Res>
 
 /// Create a copy of Details
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? time = null,Object? viewCount = null,Object? likeCount = null,Object? bodyHtml = null,Object? info = null,Object? userInfo = null,Object? comments = null,Object? recents = freezed,Object? csrf = null,Object? category = null,Object? extraData = freezed,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? title = null,Object? time = null,Object? viewCount = null,Object? likeCount = null,Object? bodyHtml = null,Object? info = null,Object? userInfo = null,Object? comments = null,Object? recents = freezed,Object? csrf = null,Object? category = null,Object? extraData = freezed,Object? isLoggedIn = null,Object? commentParams = null,}) {
   return _then(_Details(
 title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
 as String,time: null == time ? _self.time : time // ignore: cast_nullable_to_non_nullable
@@ -337,7 +347,9 @@ as List<CommentItem>,recents: freezed == recents ? _self.recents : recents // ig
 as Recents?,csrf: null == csrf ? _self.csrf : csrf // ignore: cast_nullable_to_non_nullable
 as String,category: null == category ? _self.category : category // ignore: cast_nullable_to_non_nullable
 as String,extraData: freezed == extraData ? _self._extraData : extraData // ignore: cast_nullable_to_non_nullable
-as Map<String, dynamic>?,
+as Map<String, dynamic>?,isLoggedIn: null == isLoggedIn ? _self.isLoggedIn : isLoggedIn // ignore: cast_nullable_to_non_nullable
+as bool,commentParams: null == commentParams ? _self._commentParams : commentParams // ignore: cast_nullable_to_non_nullable
+as Map<String, String>,
   ));
 }
 

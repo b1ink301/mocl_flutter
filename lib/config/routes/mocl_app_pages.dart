@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/presentation/widgets/bottom_sheet_page.dart';
 import 'package:mocl_flutter/features/add_main_dialog/presentation/add_list_modal_sheet_page.dart';
 import 'package:mocl_flutter/features/bookmark/presentation/bookmarks_page.dart';
@@ -140,8 +141,10 @@ class AppPages._() {
       ),
       GoRoute(
         path: Routes.login,
+        // extra 로 사이트를 넘기면 그 사이트에 로그인한다(상세에서 댓글을 쓸 때).
+        // 없으면 지금 고른 사이트.
         builder: (BuildContext context, GoRouterState state) =>
-            const LoginPage(),
+            LoginPage(siteType: state.extra as SiteType?),
       ),
     ],
   );

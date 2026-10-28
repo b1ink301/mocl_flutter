@@ -244,6 +244,26 @@ class const DamoangParser(final bool isShowNickImage) extends BaseParser {
     return '';
   }
 
+  /// 레이아웃 노드의 로그인 정보 `(로그인 여부, accessToken, csrfToken)`.
+  ///
+  /// 쿠키를 실어 받은 `__data.json` 이면 로그인 사용자에게 토큰이 채워져 온다.
+  /// 댓글 쓰기 API 가 이 토큰을 `Authorization: Bearer` 로 받는다.
+  static (bool, String, String) parseAuth(String responseData) {
+    try {
+      final data = _findNodeDataByKey(_parseLines(responseData), 'isLoggedIn');
+      if (data == null) return (false, '', '');
+      final auth = _resolveObject(data, 0);
+      String text(String key) => auth[key] is String ? auth[key] as String : '';
+      return (
+        auth['isLoggedIn'] == true,
+        text('accessToken'),
+        text('csrfToken'),
+      );
+    } catch (_) {
+      return (false, '', '');
+    }
+  }
+
   /// Find the post data node from the initial data line (detail pages).
   /// Looks for a node whose root object has a "post" field.
   static List<dynamic>? _findPostNodeData(List<Map<String, dynamic>> lines) {
@@ -531,6 +551,7 @@ class const DamoangParser(final bool isShowNickImage) extends BaseParser {
                       : 0;
                   final String cCreatedAt = (comment['created_at'] ?? '')
                       .toString();
+                  final String cId = (comment['id'] ?? '').toString();
 
                   String cParsedTime = '';
                   try {
@@ -558,6 +579,7 @@ class const DamoangParser(final bool isShowNickImage) extends BaseParser {
                         nickImage: isShowNickImage ? cAuthorImage : '',
                       ),
                       authorId: '',
+                      commentId: cId,
                     ),
                   );
                 }
@@ -571,11 +593,15 @@ class const DamoangParser(final bool isShowNickImage) extends BaseParser {
         );
       }
 
+      final (isLoggedIn, accessToken, csrfToken) = parseAuth(responseData);
+
       final detail = Details(
         title: title,
         viewCount: viewCount,
         likeCount: likeCount,
-        csrf: '',
+        csrf: csrfToken,
+        isLoggedIn: isLoggedIn,
+        commentParams: {if (accessToken.isNotEmpty) 'accessToken': accessToken},
         time: createdAt,
         info: info,
         userInfo: UserInfo(id: author, nickName: author, nickImage: ''),

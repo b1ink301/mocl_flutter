@@ -26,3 +26,7 @@ class const NotLoginFailure({required super.message}) extends Failure;
 class const PermissionFailure({required super.message}) extends Failure;
 
 class const UnknownFailure({required super.message}) extends Failure;
+
+/// 댓글을 쓰지 못한 경우. [message] 는 사이트가 준 사유(금칙어 · 글자 수 등)라
+/// 그대로 보여준다.
+class const WriteCommentFailure({required super.message}) extends Failure;

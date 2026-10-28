@@ -9,6 +9,7 @@ import '../../../../core/application/app_provider.dart';
 import '../../../html_parser/application/datasource_provider.dart';
 import '../../../settings_page/application/settings_providers.dart';
 import '../../application/detail_providers.dart';
+import '../../application/use_case_provider.dart';
 
 mixin class DetailState() {
   AppTextStyles appTextStyles(WidgetRef ref) =>
@@ -42,6 +43,11 @@ mixin class DetailState() {
 
   SiteType currentSiteTypeState(WidgetRef ref) =>
       ref.watch(detailSiteTypeProvider);
+
+  /// 이 상세의 사이트가 앱에서 댓글 쓰기를 지원하는지.
+  bool supportsCommentWriteState(WidgetRef ref) => ref.watch(
+    supportsCommentWriteProvider(ref.watch(detailSiteTypeProvider)),
+  );
 
   /// 현재 게시물의 스크랩(북마크) 여부. 북마크 버튼이 사용한다.
   bool isBookmarkedState(WidgetRef ref, SiteType siteType, int id) =>

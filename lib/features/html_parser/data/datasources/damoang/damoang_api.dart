@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/domain/entities/last_id.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
+import 'package:mocl_flutter/core/domain/entities/mocl_comment_write.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
@@ -190,6 +191,7 @@ class const DamoangApi(super.dio, super.userAgent) extends BaseApi {
           info: parsedTime,
           userInfo: UserInfo(id: authorId, nickName: author, nickImage: ''),
           authorId: authorId,
+          commentId: (c['id'] ?? '').toString(),
         );
       }).toList();
 
@@ -320,5 +322,112 @@ class const DamoangApi(super.dio, super.userAgent) extends BaseApi {
     int page,
   ) {
     throw UnimplementedError();
+  }
+
+  @override
+  bool get supportsCommentWrite => true;
+
+  /// `POST /api/v1/boards/{board}/posts/{id}/comments` 에 JSON
+  /// `{content, parent_id}` 를 보낸다.
+  ///
+  /// 인증은 상세 `__data.json` 이 준 accessToken(Bearer) + 웹뷰 쿠키다.
+  /// 토큰이 만료돼 401 이 오면 레이아웃 `__data.json` 에서 새로 받아 한 번만
+  /// 다시 보낸다.
+  @override
+  Future<Either<Failure, Unit>> writeComment(
+    CommentWrite write,
+    BaseParser parser,
+  ) => withSyncCookie(parser.baseUrl, () async {
+    final Details details = write.details;
+    if (!details.isLoggedIn) {
+      return const Left(NotLoginFailure(message: '로그인이 필요해요.'));
+    }
+    final String url =
+        '${parser.baseUrl}/api/v1/boards/${write.item.board}'
+        '/posts/${write.item.id}/comments';
+    final int? parentId = int.tryParse(write.parent?.commentId ?? '');
+    final Map<String, dynamic> body = {
+      'content': write.content,
+      'parent_id': ?parentId,
+    };
+
+    Future<Response<dynamic>> send(String accessToken, String csrf) {
+      final Map<String, String> headers = {
+        'User-Agent': userAgent,
+        'Accept': 'application/json',
+        'Origin': parser.baseUrl,
+        'Referer': '${parser.baseUrl}/${write.item.board}/${write.item.id}',
+        if (accessToken.isNotEmpty) 'Authorization': 'Bearer $accessToken',
+        if (csrf.isNotEmpty) 'X-CSRF-Token': csrf,
+      };
+      MoclLogger.d(
+        () => '[writeComment] $url, ${MoclLogger.redactHeaders(headers)}',
+      );
+      return postUri(
+        url,
+        headers: headers,
+        data: jsonEncode(body),
+        contentType: Headers.jsonContentType,
+        responseType: ResponseType.plain,
+        validateStatus: (_) => true,
+      );
+    }
+
+    Response<dynamic> response = await send(
+      details.commentParams['accessToken'] ?? '',
+      details.csrf,
+    );
+    if (response.statusCode == 401) {
+      final (loggedIn, accessToken, csrf) = await _refreshAuth(parser.baseUrl);
+      if (!loggedIn) {
+        return const Left(NotLoginFailure(message: '로그인이 필요해요.'));
+      }
+      response = await send(accessToken, csrf);
+    }
+    MoclLogger.d(() => '[writeComment] response = ${response.statusCode}');
+
+    final int status = response.statusCode ?? 0;
+    if (status >= 200 && status < 300) return const Right(unit);
+    if (status == 401) {
+      return const Left(NotLoginFailure(message: '로그인이 필요해요.'));
+    }
+    final String message = _errorMessage(response.data);
+    return Left(
+      WriteCommentFailure(
+        message: message.isNotEmpty ? message : '댓글을 쓰지 못했어요 (HTTP $status).',
+      ),
+    );
+  });
+
+  /// 쿠키를 실어 레이아웃 `__data.json` 을 다시 받아 새 토큰을 꺼낸다.
+  Future<(bool, String, String)> _refreshAuth(String baseUrl) async {
+    final response = await get(
+      '$baseUrl/__data.json?x-sveltekit-invalidated=1',
+      headers: const {},
+      responseType: ResponseType.plain,
+      validateStatus: (_) => true,
+    );
+    if (response.statusCode != 200) return (false, '', '');
+    return DamoangParser.parseAuth(
+      response.data is String ? response.data as String : '',
+    );
+  }
+
+  /// `{"error": "..."}` · `{"error": {"message": "..."}}` · `{"message": "..."}`
+  /// 어느 꼴이든 사람이 읽을 사유를 꺼낸다.
+  static String _errorMessage(dynamic data) {
+    try {
+      final decoded = jsonDecode(data is String ? data : data.toString());
+      if (decoded is! Map) return '';
+      final error = decoded['error'];
+      if (error is String) return error;
+      if (error is Map && error['message'] is String) {
+        return error['message'] as String;
+      }
+      final message = decoded['message'];
+      return message is String ? message : '';
+    } catch (_) {
+      return '';
+    }
   }
 }
