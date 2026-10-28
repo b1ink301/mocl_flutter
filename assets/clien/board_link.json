@@ -112,5 +112,6 @@
   {"board":"cm_wow","title":"WOW당","type":1,"url":"https://m.clien.net/service/board/cm_wow","no":111},
   {"board":"cm_wp","title":"윈폰이당","type":1,"url":"https://m.clien.net/service/board/cm_wp","no":112},
   {"board":"cm_rasp","title":"라즈베리파이당","type":1,"url":"https://m.clien.net/service/board/cm_rasp","no":113},
-  {"board":"cm_iot","title":"IoT당","type":1,"url":"https://m.clien.net/service/board/cm_iot","no":114}
+  {"board":"cm_iot","title":"IoT당","type":1,"url":"https://m.clien.net/service/board/cm_iot","no":114},
+  {"board":"cl_test","title":"실험실","type":1,"url":"https://m.clien.net/service/board/cl_test","no":115}
 ]
