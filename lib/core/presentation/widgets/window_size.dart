@@ -36,9 +36,6 @@ abstract final class ReadableWidth._() {
   /// 목록 · 설정처럼 행이 나열되는 화면.
   static const double list = 840;
 
-  /// 바텀시트.
-  static const double sheet = 640;
-
   /// [available] 폭에서 [maxWidth] 를 가운데 두려면 양옆에 얼마씩 비워야 하는지.
   static double inset(double available, double maxWidth) =>
       math.max(0, (available - maxWidth) / 2);

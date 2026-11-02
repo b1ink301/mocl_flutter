@@ -1,3 +1,4 @@
+import 'package:mocl_flutter/core/presentation/widgets/window_size.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
@@ -31,7 +32,11 @@ class const MainView({super.key}) extends ConsumerWidget with FavoriteEvent {
       color: focusColor,
       onRefresh: () async => refreshFavorites(ref),
       child: const CustomScrollView(
-        slivers: <Widget>[MainAppBar(), _MainBody()],
+        slivers: <Widget>[
+          MainAppBar(),
+          // 넓은 화면에서는 게시판 목록을 읽기 좋은 폭으로 가운데 모은다.
+          SliverReadableWidth(sliver: _MainBody()),
+        ],
       ),
     );
   }

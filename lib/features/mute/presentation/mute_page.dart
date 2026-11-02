@@ -1,3 +1,4 @@
+import 'package:mocl_flutter/core/presentation/widgets/window_size.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -121,31 +122,37 @@ class _MutePageState()
               scrolledUnderElevation: 0,
               titleSpacing: 0,
             ),
-            body: Column(
-              children: [
-                _MuteInputField(
-                  controller: _controller,
-                  focusNode: _focusNode,
-                  isKeyword: _isKeyword,
-                  onSubmit: () => _add(allRules),
-                ),
-                Expanded(
-                  child: async.when(
-                    loading: () =>
-                        const Center(child: CircularProgressIndicator()),
-                    error: (e, _) => Center(child: Text('불러오기 실패: $e')),
-                    data: (rules) {
-                      final List<MuteRule> filtered = rules
-                          .where((r) => r.type == _type)
-                          .toList(growable: false);
-                      if (filtered.isEmpty) {
-                        return _MuteEmptyView(isKeyword: _isKeyword);
-                      }
-                      return _MuteRuleList(rules: filtered, onRemove: _remove);
-                    },
+            // 넓은 화면에서는 입력칸 · 목록을 읽기 좋은 폭으로 가운데 모은다.
+            body: BoxReadableWidth(
+              child: Column(
+                children: [
+                  _MuteInputField(
+                    controller: _controller,
+                    focusNode: _focusNode,
+                    isKeyword: _isKeyword,
+                    onSubmit: () => _add(allRules),
                   ),
-                ),
-              ],
+                  Expanded(
+                    child: async.when(
+                      loading: () =>
+                          const Center(child: CircularProgressIndicator()),
+                      error: (e, _) => Center(child: Text('불러오기 실패: $e')),
+                      data: (rules) {
+                        final List<MuteRule> filtered = rules
+                            .where((r) => r.type == _type)
+                            .toList(growable: false);
+                        if (filtered.isEmpty) {
+                          return _MuteEmptyView(isKeyword: _isKeyword);
+                        }
+                        return _MuteRuleList(
+                          rules: filtered,
+                          onRemove: _remove,
+                        );
+                      },
+                    ),
+                  ),
+                ],
+              ),
             ),
             bottomNavigationBar: FloatingPillTabBar(
               items: _muteTabs,
