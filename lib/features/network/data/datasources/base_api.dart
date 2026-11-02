@@ -1,6 +1,5 @@
 import 'package:cookie_jar/cookie_jar.dart' as cookiejar;
 import 'package:dio/dio.dart';
-import 'package:dio/io.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart' as diocookie;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart' as webview;
@@ -58,8 +57,6 @@ bool isExpectedDioFailure(DioException e) => switch (e.type) {
 abstract class const BaseApi(final Dio _dio, final String userAgent)
     with BaseAction {
   void init(cookiejar.CookieJar cookieJar) {
-    _dio.httpClientAdapter = IOHttpClientAdapter();
-
     if (!kIsWeb) {
       _dio.interceptors.clear();
       _dio.interceptors.add(diocookie.CookieManager(cookieJar));

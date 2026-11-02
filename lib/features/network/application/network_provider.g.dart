@@ -9,87 +9,6 @@ part of 'network_provider.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 
-@ProviderFor(dio)
-final dioProvider = DioProvider._();
-
-final class DioProvider extends $FunctionalProvider<Dio, Dio, Dio>
-    with $Provider<Dio> {
-  DioProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'dioProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$dioHash();
-
-  @$internal
-  @override
-  $ProviderElement<Dio> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  Dio create(Ref ref) {
-    return dio(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(Dio value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<Dio>(value),
-    );
-  }
-}
-
-String _$dioHash() => r'426f53783e39ce0a7f038449591bc45fc9b47b21';
-
-@ProviderFor(cookieJar)
-final cookieJarProvider = CookieJarProvider._();
-
-final class CookieJarProvider
-    extends $FunctionalProvider<CookieJar, CookieJar, CookieJar>
-    with $Provider<CookieJar> {
-  CookieJarProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'cookieJarProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$cookieJarHash();
-
-  @$internal
-  @override
-  $ProviderElement<CookieJar> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  CookieJar create(Ref ref) {
-    return cookieJar(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(CookieJar value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<CookieJar>(value),
-    );
-  }
-}
-
-String _$cookieJarHash() => r'faac22de9751ccb26d253ff2ac40f660f01b425c';
-
 @ProviderFor(theQooApiClient)
 final theQooApiClientProvider = TheQooApiClientProvider._();
 
@@ -129,7 +48,7 @@ final class TheQooApiClientProvider
   }
 }
 
-String _$theQooApiClientHash() => r'a3b1448e260f1548b209deeb727b6a40116bd609';
+String _$theQooApiClientHash() => r'1393e830c9493bce2d85bc576b353be4a6701419';
 
 @ProviderFor(ruliwebApiClient)
 final ruliwebApiClientProvider = RuliwebApiClientProvider._();
@@ -170,7 +89,7 @@ final class RuliwebApiClientProvider
   }
 }
 
-String _$ruliwebApiClientHash() => r'049c77d7ede03cf37547e87b8407782fc81f1145';
+String _$ruliwebApiClientHash() => r'c4de07b2f4c497fa3c25e7c31510ca12d28c608f';
 
 @ProviderFor(ppomppuApiClient)
 final ppomppuApiClientProvider = PpomppuApiClientProvider._();
@@ -211,7 +130,7 @@ final class PpomppuApiClientProvider
   }
 }
 
-String _$ppomppuApiClientHash() => r'2e8312e127bd7ddf0520be5226351897c48d5e13';
+String _$ppomppuApiClientHash() => r'f4fb6148d147be6db90d5827d51706d019bfc73f';
 
 @ProviderFor(invenApiClient)
 final invenApiClientProvider = InvenApiClientProvider._();
@@ -252,7 +171,7 @@ final class InvenApiClientProvider
   }
 }
 
-String _$invenApiClientHash() => r'2761ef15d823e04365e0dc952b051c04d4873d42';
+String _$invenApiClientHash() => r'b0aaf13d67b9d999415bffe1512c6f47c936b999';
 
 @ProviderFor(bobaedreamApiClient)
 final bobaedreamApiClientProvider = BobaedreamApiClientProvider._();
@@ -294,7 +213,7 @@ final class BobaedreamApiClientProvider
 }
 
 String _$bobaedreamApiClientHash() =>
-    r'9e8e104a670e18a287422c9cddcf29b034c6530b';
+    r'dc94ea8ec638d79335387209d044dbfee95704d5';
 
 @ProviderFor(cook82ApiClient)
 final cook82ApiClientProvider = Cook82ApiClientProvider._();
@@ -335,7 +254,7 @@ final class Cook82ApiClientProvider
   }
 }
 
-String _$cook82ApiClientHash() => r'5a6f148252a2c636e48077975af34e6046d1134d';
+String _$cook82ApiClientHash() => r'ec5a72e7efcbcbe9f89360d1ed4902dd35014a7d';
 
 @ProviderFor(dcinsideApiClient)
 final dcinsideApiClientProvider = DcinsideApiClientProvider._();
@@ -376,7 +295,7 @@ final class DcinsideApiClientProvider
   }
 }
 
-String _$dcinsideApiClientHash() => r'7b4995872b6d4bc38551df845d319046de1902a1';
+String _$dcinsideApiClientHash() => r'6b2719b08172322f7e4dc33785a43bb63d781735';
 
 @ProviderFor(dogdripApiClient)
 final dogdripApiClientProvider = DogdripApiClientProvider._();
@@ -417,7 +336,7 @@ final class DogdripApiClientProvider
   }
 }
 
-String _$dogdripApiClientHash() => r'4eb013504fda099d7241f02c26224a33573020bb';
+String _$dogdripApiClientHash() => r'710e59b7934e4b37b21723cffb5aa2052fa50de2';
 
 @ProviderFor(mlbparkApiClient)
 final mlbparkApiClientProvider = MlbparkApiClientProvider._();
@@ -458,7 +377,7 @@ final class MlbparkApiClientProvider
   }
 }
 
-String _$mlbparkApiClientHash() => r'a691bbe5deafe3ad6b5912bf4716d8481e184ffd';
+String _$mlbparkApiClientHash() => r'9cd3393d028a8850957fdf38e32e6552383340d8';
 
 @ProviderFor(instizApiClient)
 final instizApiClientProvider = InstizApiClientProvider._();
@@ -499,7 +418,7 @@ final class InstizApiClientProvider
   }
 }
 
-String _$instizApiClientHash() => r'66b8b2e81039726075dd332b9d261b630aa8da0c';
+String _$instizApiClientHash() => r'84b9ec320acb2b95cd2b526fb3ca5d686cd8fe10';
 
 @ProviderFor(nateApiClient)
 final nateApiClientProvider = NateApiClientProvider._();
@@ -540,7 +459,7 @@ final class NateApiClientProvider
   }
 }
 
-String _$nateApiClientHash() => r'088b8b3eb51c43bd137c7cb4fe149daa8d70aa58';
+String _$nateApiClientHash() => r'b6821a41111418fb841249d1e80305592784f249';
 
 @ProviderFor(arcaliveApiClient)
 final arcaliveApiClientProvider = ArcaliveApiClientProvider._();
@@ -581,7 +500,7 @@ final class ArcaliveApiClientProvider
   }
 }
 
-String _$arcaliveApiClientHash() => r'f68fe5be8c34774978a4d4778c1172cdb3926c03';
+String _$arcaliveApiClientHash() => r'ee2d2c170a54e0ea3498956598b0b67bc9531394';
 
 @ProviderFor(clienApiClient)
 final clienApiClientProvider = ClienApiClientProvider._();
@@ -622,7 +541,7 @@ final class ClienApiClientProvider
   }
 }
 
-String _$clienApiClientHash() => r'69e9a26c04d4586719c1d033537496c6deca13dd';
+String _$clienApiClientHash() => r'4c269634d1fd7027eb16e4dc03c823f119a2565b';
 
 @ProviderFor(damoangApiClient)
 final damoangApiClientProvider = DamoangApiClientProvider._();
@@ -663,7 +582,7 @@ final class DamoangApiClientProvider
   }
 }
 
-String _$damoangApiClientHash() => r'9f9a1416fb9d3d2075c7f50f6e2b31cee94722f8';
+String _$damoangApiClientHash() => r'85b30bea12e51c7d1d3457130b3baf5c82622c8f';
 
 @ProviderFor(naverCafeApiClient)
 final naverCafeApiClientProvider = NaverCafeApiClientProvider._();
@@ -705,7 +624,7 @@ final class NaverCafeApiClientProvider
 }
 
 String _$naverCafeApiClientHash() =>
-    r'e42004228c11a05a2f0e9649b0590afd09db7b43';
+    r'8e899f1c1355f2f9d317098aa6b8ee202e7c73e4';
 
 @ProviderFor(redditApiClient)
 final redditApiClientProvider = RedditApiClientProvider._();
@@ -746,7 +665,7 @@ final class RedditApiClientProvider
   }
 }
 
-String _$redditApiClientHash() => r'5bde1814ef36148bc3234c729b9814a760080332';
+String _$redditApiClientHash() => r'b054ae3860e25d0059de7bd458687c9896c8d119';
 
 @ProviderFor(geekNewsApiClient)
 final geekNewsApiClientProvider = GeekNewsApiClientProvider._();
@@ -787,7 +706,7 @@ final class GeekNewsApiClientProvider
   }
 }
 
-String _$geekNewsApiClientHash() => r'd81b05a79ef57be9630dea51327e79fe03398ea5';
+String _$geekNewsApiClientHash() => r'8a7127beb6283d8af519724160f195ddb4e6ea95';
 
 @ProviderFor(meecoApiClient)
 final meecoApiClientProvider = MeecoApiClientProvider._();
@@ -828,4 +747,4 @@ final class MeecoApiClientProvider
   }
 }
 
-String _$meecoApiClientHash() => r'70b0f3b891f308fb00fbad934dbf4b3cee9997ad';
+String _$meecoApiClientHash() => r'895ea47e828862805092c1b5798a5cb70ca27f5c';
