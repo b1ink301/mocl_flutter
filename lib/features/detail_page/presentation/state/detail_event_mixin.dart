@@ -134,12 +134,10 @@ mixin class DetailEvent() {
 
   /// [siteType] 은 본문 링크로 다른 사이트 글을 열 때만 넘긴다(없으면 전역 사이트).
   static List<Override> overridesProviderScope(
-    double width,
     ListItem item, {
     SiteType? siteType,
   }) => [
     listItemProvider.overrideWithValue(item),
-    screenWidthProvider.overrideWithValue(width),
     if (siteType != null) detailSiteTypeProvider.overrideWithValue(siteType),
   ];
 }

@@ -35,8 +35,8 @@ mixin class DetailState() {
 
   String smallTitleState(WidgetRef ref) => ref.watch(detailSmallTitleProvider);
 
-  double appbarHeight(WidgetRef ref, String title) =>
-      ref.watch(detailAppbarHeightProvider(title));
+  double appbarHeight(WidgetRef ref, String title, double width) =>
+      ref.watch(detailAppbarHeightProvider(title, width));
 
   /// 현재 상세 게시물(ProviderScope 로 주입된 listItemProvider).
   ListItem listItemState(WidgetRef ref) => ref.watch(listItemProvider);

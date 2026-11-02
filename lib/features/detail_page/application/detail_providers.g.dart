@@ -558,6 +558,9 @@ String _$detailUrlHash() => r'fee3df6fa1be8c8a6da47bc21ff1c0a921a44bef';
 /// 제목이 최대 3줄까지 늘어나므로 글마다 앱바 높이가 다르다. 실제로 그려지는
 /// 것과 같은 스타일 · 같은 폭으로 재야 제목이 툴바 위로 삐져나오지 않는다.
 /// 치수는 렌더 쪽(LargeTitleFlexibleSpace)과 같은 상수를 쓴다.
+///
+/// [width] 는 화면 폭이 아니라 앱바가 실제로 받은 폭이다. 목록 옆 상세 칸이나
+/// 폴드를 접고 펼친 뒤에도 제목 줄 수를 맞게 잰다.
 
 @ProviderFor(detailAppbarHeight)
 final detailAppbarHeightProvider = DetailAppbarHeightFamily._();
@@ -567,6 +570,9 @@ final detailAppbarHeightProvider = DetailAppbarHeightFamily._();
 /// 제목이 최대 3줄까지 늘어나므로 글마다 앱바 높이가 다르다. 실제로 그려지는
 /// 것과 같은 스타일 · 같은 폭으로 재야 제목이 툴바 위로 삐져나오지 않는다.
 /// 치수는 렌더 쪽(LargeTitleFlexibleSpace)과 같은 상수를 쓴다.
+///
+/// [width] 는 화면 폭이 아니라 앱바가 실제로 받은 폭이다. 목록 옆 상세 칸이나
+/// 폴드를 접고 펼친 뒤에도 제목 줄 수를 맞게 잰다.
 
 final class DetailAppbarHeightProvider
     extends $FunctionalProvider<double, double, double>
@@ -576,9 +582,12 @@ final class DetailAppbarHeightProvider
   /// 제목이 최대 3줄까지 늘어나므로 글마다 앱바 높이가 다르다. 실제로 그려지는
   /// 것과 같은 스타일 · 같은 폭으로 재야 제목이 툴바 위로 삐져나오지 않는다.
   /// 치수는 렌더 쪽(LargeTitleFlexibleSpace)과 같은 상수를 쓴다.
+  ///
+  /// [width] 는 화면 폭이 아니라 앱바가 실제로 받은 폭이다. 목록 옆 상세 칸이나
+  /// 폴드를 접고 펼친 뒤에도 제목 줄 수를 맞게 잰다.
   DetailAppbarHeightProvider._({
     required DetailAppbarHeightFamily super.from,
-    required String super.argument,
+    required (String, double) super.argument,
   }) : super(
          retry: null,
          name: r'detailAppbarHeightProvider',
@@ -594,7 +603,6 @@ final class DetailAppbarHeightProvider
       AppbarTextStyleProvider.$allTransitiveDependencies1;
   static final $allTransitiveDependencies3 =
       AppbarTextStyleProvider.$allTransitiveDependencies2;
-  static final $allTransitiveDependencies4 = screenWidthProvider;
 
   @override
   String debugGetCreateSourceHash() => _$detailAppbarHeightHash();
@@ -603,7 +611,7 @@ final class DetailAppbarHeightProvider
   String toString() {
     return r'detailAppbarHeightProvider'
         ''
-        '($argument)';
+        '$argument';
   }
 
   @$internal
@@ -613,8 +621,8 @@ final class DetailAppbarHeightProvider
 
   @override
   double create(Ref ref) {
-    final argument = this.argument as String;
-    return detailAppbarHeight(ref, argument);
+    final argument = this.argument as (String, double);
+    return detailAppbarHeight(ref, argument.$1, argument.$2);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -637,30 +645,29 @@ final class DetailAppbarHeightProvider
 }
 
 String _$detailAppbarHeightHash() =>
-    r'a6c01eeed92e77918800bc3210a8fa85e9983e7b';
+    r'c74ddc5011cc99242713599a93f1d29e4c3d2a1e';
 
 /// 상세 앱바의 expandedHeight.
 ///
 /// 제목이 최대 3줄까지 늘어나므로 글마다 앱바 높이가 다르다. 실제로 그려지는
 /// 것과 같은 스타일 · 같은 폭으로 재야 제목이 툴바 위로 삐져나오지 않는다.
 /// 치수는 렌더 쪽(LargeTitleFlexibleSpace)과 같은 상수를 쓴다.
+///
+/// [width] 는 화면 폭이 아니라 앱바가 실제로 받은 폭이다. 목록 옆 상세 칸이나
+/// 폴드를 접고 펼친 뒤에도 제목 줄 수를 맞게 잰다.
 
 final class DetailAppbarHeightFamily extends $Family
-    with $FunctionalFamilyOverride<double, String> {
+    with $FunctionalFamilyOverride<double, (String, double)> {
   DetailAppbarHeightFamily._()
     : super(
         retry: null,
         name: r'detailAppbarHeightProvider',
-        dependencies: <ProviderOrFamily>[
-          appbarTextStyleProvider,
-          screenWidthProvider,
-        ],
+        dependencies: <ProviderOrFamily>[appbarTextStyleProvider],
         $allTransitiveDependencies: <ProviderOrFamily>{
           DetailAppbarHeightProvider.$allTransitiveDependencies0,
           DetailAppbarHeightProvider.$allTransitiveDependencies1,
           DetailAppbarHeightProvider.$allTransitiveDependencies2,
           DetailAppbarHeightProvider.$allTransitiveDependencies3,
-          DetailAppbarHeightProvider.$allTransitiveDependencies4,
         },
         isAutoDispose: true,
       );
@@ -670,9 +677,12 @@ final class DetailAppbarHeightFamily extends $Family
   /// 제목이 최대 3줄까지 늘어나므로 글마다 앱바 높이가 다르다. 실제로 그려지는
   /// 것과 같은 스타일 · 같은 폭으로 재야 제목이 툴바 위로 삐져나오지 않는다.
   /// 치수는 렌더 쪽(LargeTitleFlexibleSpace)과 같은 상수를 쓴다.
+  ///
+  /// [width] 는 화면 폭이 아니라 앱바가 실제로 받은 폭이다. 목록 옆 상세 칸이나
+  /// 폴드를 접고 펼친 뒤에도 제목 줄 수를 맞게 잰다.
 
-  DetailAppbarHeightProvider call(String text) =>
-      DetailAppbarHeightProvider._(argument: text, from: this);
+  DetailAppbarHeightProvider call(String text, double width) =>
+      DetailAppbarHeightProvider._(argument: (text, width), from: this);
 
   @override
   String toString() => r'detailAppbarHeightProvider';

@@ -12,8 +12,8 @@ import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mi
 import 'mocl_list_view.dart';
 
 class const MoclListPage({super.key}) extends StatelessWidget {
-  static Widget init(double width, MainItem item) => ProviderScope(
-    overrides: ListEvent.overridesProviderScope(width, item),
+  static Widget init(MainItem item) => ProviderScope(
+    overrides: ListEvent.overridesProviderScope(item),
     child: const MoclListPage(),
   );
 

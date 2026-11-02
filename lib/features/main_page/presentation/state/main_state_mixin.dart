@@ -8,8 +8,6 @@ import 'package:mocl_flutter/features/settings_page/application/datasource_provi
 import 'package:mocl_flutter/features/settings_page/application/settings_providers.dart';
 
 mixin class MainState() {
-  double screenWidth(WidgetRef ref) => ref.watch(screenWidthProvider);
-
   SiteType currentSiteType(WidgetRef ref) => ref.watch(currentSiteTypeProvider);
 
   /// 앱바 제목(= 지금 보고 있는 사이트 이름).

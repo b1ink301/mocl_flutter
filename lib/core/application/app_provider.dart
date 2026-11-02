@@ -41,9 +41,6 @@ class ReadableStateNotifier() extends _$ReadableStateNotifier {
   void clear() => state = -1;
 }
 
-@Riverpod(keepAlive: true)
-double screenWidth(Ref ref) => throw UnimplementedError('screenWidth');
-
 /// 영속화된 테마 모드(시스템/라이트/다크). `AppWidget`의 themeMode 에 연결된다.
 @Riverpod(keepAlive: true)
 class ThemeModeNotifier() extends _$ThemeModeNotifier {

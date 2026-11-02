@@ -163,11 +163,13 @@ class _DetailHeightCache() {
 /// 제목이 최대 3줄까지 늘어나므로 글마다 앱바 높이가 다르다. 실제로 그려지는
 /// 것과 같은 스타일 · 같은 폭으로 재야 제목이 툴바 위로 삐져나오지 않는다.
 /// 치수는 렌더 쪽(LargeTitleFlexibleSpace)과 같은 상수를 쓴다.
-@Riverpod(dependencies: [appbarTextStyle, screenWidth])
-double detailAppbarHeight(Ref ref, String text) {
+///
+/// [width] 는 화면 폭이 아니라 앱바가 실제로 받은 폭이다. 목록 옆 상세 칸이나
+/// 폴드를 접고 펼친 뒤에도 제목 줄 수를 맞게 잰다.
+@Riverpod(dependencies: [appbarTextStyle])
+double detailAppbarHeight(Ref ref, String text, double width) {
   final TextStyle style = largeTitleStyle(ref.watch(appbarTextStyleProvider));
-  final double screenWidth = ref.watch(screenWidthProvider);
-  final double availableWidth = screenWidth - kLargeTitleHorizontalInset;
+  final double availableWidth = width - kLargeTitleHorizontalInset;
 
   return largeTitleExpandedHeight(
     _detailHeightCache.getOrCalculate(text, style, availableWidth),

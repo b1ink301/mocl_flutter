@@ -14,10 +14,7 @@ import 'state/main_event_mixin.dart';
 class const MainPage({super.key})
     extends ConsumerWidget
     with MainEvent, MainState {
-  static Widget init(double width) => ProviderScope(
-    overrides: MainEvent.overridesProviderScope(width),
-    child: const MainPage(),
-  );
+  static Widget init() => const ProviderScope(child: MainPage());
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -45,7 +42,7 @@ class const _ScaffoldWidget() extends ConsumerWidget with MainState, MainEvent {
         drawer: const DrawerWidget(),
         onDrawerChanged: (isOpen) =>
             isOpen ? sidebarOpen(ref) : sidebarClose(ref),
-        drawerEdgeDragWidth: screenWidth(ref) / 2,
+        drawerEdgeDragWidth: MediaQuery.sizeOf(context).width / 2,
         drawerEnableOpenDragGesture: true,
         body: const MainView(),
       ),

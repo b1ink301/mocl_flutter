@@ -28,13 +28,16 @@ class const DetailAppBar({super.key})
     with DetailState, DetailEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // 제목 줄 수는 화면 폭이 아니라 상세 화면이 받은 폭으로 잰다(목록 옆 상세 칸,
+    // 폴드 접기/펼치기).
+    final double width = DetailWidthScope.of(context);
     // 말머리는 작성자 헤더의 태그로 보여주므로 제목 앞 "[말머리]" 는 뗀다.
     final String title = stripCategoryPrefix(
       titleState(ref),
       categoryState(ref),
     );
     // 제목 줄 수에 따라 확장 높이가 달라진다(최대 3줄).
-    final double height = appbarHeight(ref, title);
+    final double height = appbarHeight(ref, title, width);
 
     final styleScope = DetailStyleScope.of(context).$1;
     final titleStyle = largeTitleStyle(styleScope.titleTextStyle);

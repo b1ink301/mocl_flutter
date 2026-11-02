@@ -29,10 +29,7 @@ class AppPages._() {
         path: Routes.main,
         pageBuilder: (BuildContext context, GoRouterState state) =>
             SwipeablePage(
-              builder: (BuildContext context) {
-                final width = MediaQuery.sizeOf(context).width;
-                return MainPage.init(width);
-              },
+              builder: (BuildContext context) => MainPage.init(),
             ),
         routes: [
           GoRoute(
@@ -54,8 +51,7 @@ class AppPages._() {
               builder: (BuildContext context) {
                 final MainItem item =
                     GoRouterState.of(context).extra as MainItem;
-                final width = MediaQuery.of(context).size.width;
-                return MoclListPage.init(width, item);
+                return MoclListPage.init(item);
               },
             ),
       ),
@@ -76,17 +72,15 @@ class AppPages._() {
         pageBuilder: (BuildContext context, GoRouterState state) =>
             SwipeablePage(
               builder: (BuildContext context) {
-                final width = MediaQuery.of(context).size.width;
                 final Object? extra = GoRouterState.of(context).extra;
                 // 본문 링크로 들어오면 사이트가 함께 온다(다른 사이트 글일 수 있음).
                 if (extra is SiteLink) {
                   return DetailPage.init(
-                    width,
                     extra.item,
                     siteType: extra.siteType,
                   );
                 }
-                return DetailPage.init(width, extra as ListItem);
+                return DetailPage.init(extra as ListItem);
               },
             ),
         routes: [

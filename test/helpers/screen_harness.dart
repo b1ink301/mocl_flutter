@@ -41,7 +41,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// 실제 구현이 그대로 돌아야 리빌드 회귀를 잡을 수 있다.
 const Size kTestSurface = Size(400, 800);
 
-/// 테스트 화면 크기를 고정한다(앱바 높이 계산이 screenWidth 에 의존한다).
+/// 테스트 화면 크기를 고정한다(앱바 높이 계산이 앱바 폭에 의존한다).
 void useFixedSurface(WidgetTester tester, {Size size = kTestSurface}) {
   tester.view.physicalSize = size * tester.view.devicePixelRatio;
   tester.view.devicePixelRatio = tester.view.devicePixelRatio;
@@ -195,7 +195,6 @@ Future<void> pumpDetailScreen(
 }
 
 /// 세 화면이 공통으로 필요한 최소 교체 목록.
-/// - `screenWidth`: 앱 루트에서 주입하는 값(원본은 UnimplementedError)
 /// - `sharedPreferences`: 설정 저장소의 데이터 경계(원본은 UnimplementedError)
 /// - `currentSiteType` / `fontSizeDelta`: 테스트가 값을 지정하기 위해
 ///
@@ -204,9 +203,7 @@ Future<void> pumpDetailScreen(
 /// 돌아가므로, 설정이 새로 추가될 때마다 하네스를 고칠 필요가 없다.
 Future<List<Override>> commonOverrides({
   SiteType siteType = SiteType.clien,
-  double width = 400,
 }) async => <Override>[
-  screenWidthProvider.overrideWithValue(width),
   sharedPreferencesProvider.overrideWithValue(await memoryPreferences()),
   currentSiteTypeProvider.overrideWith(() => _FakeSiteType(siteType)),
   fontSizeDeltaProvider.overrideWith(_FakeFontSizeDelta.new),

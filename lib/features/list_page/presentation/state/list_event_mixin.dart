@@ -59,8 +59,7 @@ mixin class ListEvent() {
     }
   }
 
-  static List<Override> overridesProviderScope(double width, MainItem item) => [
-    screenWidthProvider.overrideWithValue(width),
+  static List<Override> overridesProviderScope(MainItem item) => [
     mainItemProvider.overrideWithValue(item),
   ];
 }

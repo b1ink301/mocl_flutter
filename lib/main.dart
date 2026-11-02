@@ -13,6 +13,7 @@ import 'package:mocl_flutter/core/presentation/widgets/boot_failure_app.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/util/boot_guard.dart';
 import 'package:mocl_flutter/core/util/mocl_logger.dart';
+import 'package:mocl_flutter/core/util/orientation_policy.dart';
 import 'package:mocl_flutter/firebase_options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -74,10 +75,8 @@ Future<Widget> _prepareApp() async {
 Future<void> _initPlatform() async {
   try {
     await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    await SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
+    // 폰은 세로 고정, 태블릿 · iPad · 펼친 폴드는 회전 허용.
+    await OrientationPolicy.instance.install();
   } catch (e, st) {
     MoclLogger.e('화면 모드 설정 실패', error: e, stackTrace: st);
   }
