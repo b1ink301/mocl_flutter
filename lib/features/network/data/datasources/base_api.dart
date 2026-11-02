@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:cookie_jar/cookie_jar.dart' as cookiejar;
 import 'package:dio/dio.dart';
 import 'package:dio_cookie_manager/dio_cookie_manager.dart' as diocookie;
@@ -146,17 +148,24 @@ abstract class const BaseApi(final Dio _dio, final String userAgent)
   Future<InterceptorsWrapper> _buildInterceptorCookie(String baseUrl) async {
     final webview.CookieManager cookieManager =
         webview.CookieManager.instance();
-    final Map<String, String> baseCookies = _cookieMap(
-      await cookieManager.getCookies(url: webview.WebUri(baseUrl)),
-    );
-
     // [baseUrl] 만으로 조회하면 경로가 `/` 라서 `Path=/service` 같은 하위 경로
     // 쿠키가 빠진다(클리앙 로그인 세션 `CLIEN_SESSION` 이 그렇다). 그래서
     // 요청마다 실제 URL 로도 조회해 합친다. 같은 이름이면 요청 URL 쪽이 이긴다.
+    // 리다이렉트 중에 응답이 지우거나 바꾼 쿠키를 다음 요청에 반영해야 하므로
+    // 둘 다 요청마다 새로 읽는다(미리 읽어 두면 지운 만료 세션이 계속 실려 루프).
     final InterceptorsWrapper interceptor = InterceptorsWrapper(
       onRequest: (options, handler) async {
-        final Map<String, String> cookies = {...baseCookies};
+        final Map<String, String> cookies = {};
         try {
+          // http 로 내려가는 리다이렉트(클리앙 302 → http)에 https 쪽 Secure
+          // 쿠키가 평문으로 실리지 않게 한다. 요청 URL 조회는 웹뷰가 걸러 준다.
+          if (options.uri.scheme == 'https' || !baseUrl.startsWith('https')) {
+            cookies.addAll(
+              _cookieMap(
+                await cookieManager.getCookies(url: webview.WebUri(baseUrl)),
+              ),
+            );
+          }
           cookies.addAll(
             _cookieMap(
               await cookieManager.getCookies(
@@ -173,10 +182,138 @@ abstract class const BaseApi(final Dio _dio, final String userAgent)
         options.headers['Cookie'] = cookies.entries
             .map((e) => '${e.key}=${e.value}')
             .join('; ');
+        _takeOverRedirects(options);
         handler.next(options);
+      },
+      onResponse: (response, handler) async {
+        await _saveSetCookies(cookieManager, response);
+        final RequestOptions options = response.requestOptions;
+        final int status = response.statusCode ?? 0;
+        if (options.extra[_redirectHopsKey] == null ||
+            status < 300 ||
+            status >= 400) {
+          handler.next(response);
+          return;
+        }
+        final String? location = response.headers.value(
+          HttpHeaders.locationHeader,
+        );
+        final int hops = options.extra[_redirectHopsKey] as int;
+        final bool Function(int?) validateStatus =
+            options.extra[_validateStatusKey] as bool Function(int?);
+        if (location == null || hops >= options.maxRedirects) {
+          // 원래대로라면 dio 가 던졌을 응답이면 똑같이 던진다.
+          validateStatus(status)
+              ? handler.next(response)
+              : handler.reject(
+                  DioException.badResponse(
+                    statusCode: status,
+                    requestOptions: options,
+                    response: response,
+                  ),
+                );
+          return;
+        }
+        // 다시 이 인터셉터를 지나므로 쿠키는 방금 반영한 웹뷰 저장소에서 읽는다.
+        final Map<String, dynamic> headers = {...options.headers}
+          ..removeWhere((key, _) {
+            final String lower = key.toLowerCase();
+            return lower == 'host' || lower == 'cookie';
+          });
+        try {
+          handler.resolve(
+            await _dio.fetch<dynamic>(
+              options.copyWith(
+                path: options.uri.resolve(location).toString(),
+                queryParameters: const {},
+                headers: headers,
+                extra: {...options.extra, _redirectHopsKey: hops + 1},
+              ),
+            ),
+          );
+        } on DioException catch (e) {
+          handler.reject(e);
+        }
       },
     );
     return interceptor;
+  }
+
+  static const String _redirectHopsKey = 'mocl.redirectHops';
+  static const String _validateStatusKey = 'mocl.validateStatus';
+
+  /// GET 의 리다이렉트를 dart:io 대신 [_buildInterceptorCookie] 가 따라가게 한다.
+  ///
+  /// dart:io 가 따라가면 중간 응답(302)의 Set-Cookie 를 볼 수 없다. 클리앙은 만료된
+  /// `CLIEN_SESSION` 에 "쿠키 삭제 + 같은 주소로 302" 를 주는데, 이를 웹뷰
+  /// 저장소에 반영하지 못하면 매 요청이 만료 쿠키로 나가 로그인이 풀린 채로 남는다.
+  /// 지운 뒤 다시 요청하면 `remember-me` 로 새 세션을 받아 로그인이 이어진다.
+  static void _takeOverRedirects(RequestOptions options) {
+    if (options.method.toUpperCase() != 'GET') return;
+    if (options.extra[_redirectHopsKey] == null) {
+      if (!options.followRedirects) return;
+      options.extra[_redirectHopsKey] = 0;
+      options.extra[_validateStatusKey] = options.validateStatus;
+    }
+    final bool Function(int?) validateStatus =
+        options.extra[_validateStatusKey] as bool Function(int?);
+    options
+      ..followRedirects = false
+      ..validateStatus = (status) =>
+          (status != null && status >= 300 && status < 400) ||
+          validateStatus(status);
+  }
+
+  /// 응답의 Set-Cookie 를 웹뷰 쿠키 저장소에 반영한다. 요청 쿠키는 웹뷰 저장소에서
+  /// 읽으므로, 여기에 반영하지 않으면 서버가 지우거나 새로 준 쿠키가 무시된다.
+  static Future<void> _saveSetCookies(
+    webview.CookieManager cookieManager,
+    Response<dynamic> response,
+  ) async {
+    final List<String>? setCookies =
+        response.headers[HttpHeaders.setCookieHeader];
+    if (setCookies == null || setCookies.isEmpty) return;
+    final webview.WebUri url = webview.WebUri.uri(response.requestOptions.uri);
+    final DateTime now = DateTime.now();
+    for (final String raw in setCookies) {
+      try {
+        final Cookie cookie = Cookie.fromSetCookieValue(raw);
+        final int? maxAge = cookie.maxAge;
+        final DateTime? expires = cookie.expires;
+        final bool expired =
+            (maxAge != null && maxAge <= 0) ||
+            (maxAge == null && expires != null && expires.isBefore(now));
+        if (expired) {
+          await cookieManager.deleteCookie(
+            url: url,
+            name: cookie.name,
+            path: cookie.path ?? '/',
+            domain: cookie.domain,
+          );
+        } else {
+          await cookieManager.setCookie(
+            url: url,
+            name: cookie.name,
+            value: cookie.value,
+            path: cookie.path ?? '/',
+            domain: cookie.domain,
+            maxAge: maxAge,
+            expiresDate: expires?.millisecondsSinceEpoch,
+            isSecure: cookie.secure,
+            isHttpOnly: cookie.httpOnly,
+            sameSite: switch (cookie.sameSite) {
+              SameSite.lax => webview.HTTPCookieSameSitePolicy.LAX,
+              SameSite.strict => webview.HTTPCookieSameSitePolicy.STRICT,
+              SameSite.none => webview.HTTPCookieSameSitePolicy.NONE,
+              _ => null,
+            },
+          );
+        }
+      } catch (e) {
+        // 쿠키 값은 남기지 않는다.
+        MoclLogger.w(() => '[cookie] Set-Cookie 반영 실패: ${e.runtimeType}');
+      }
+    }
   }
 
   static Map<String, String> _cookieMap(List<webview.Cookie> cookies) => {
