@@ -32,6 +32,7 @@ class const DetailAppBar({super.key})
     // 제목 줄 수는 화면 폭이 아니라 상세 화면이 받은 폭으로 잰다(목록 옆 상세 칸,
     // 폴드 접기/펼치기).
     final double width = DetailWidthScope.of(context);
+    final bool inPane = ListDetailPane.isPane(context);
     // 말머리는 작성자 헤더의 태그로 보여주므로 제목 앞 "[말머리]" 는 뗀다.
     final String title = stripCategoryPrefix(
       titleState(ref),
@@ -48,7 +49,7 @@ class const DetailAppBar({super.key})
 
     return SliverAppBar(
       // 목록 옆 칸의 상세는 라우트가 아니라 닫을 것이 없다.
-      leading: ListDetailPane.isPane(context) ? null : const AppbarBackButton(),
+      leading: inPane ? null : const AppbarBackButton(),
       // scrolledUnderElevation: 1,
       expandedHeight: height,
       automaticallyImplyLeading: false,
@@ -61,7 +62,10 @@ class const DetailAppBar({super.key})
           overflow: TextOverflow.ellipsis,
         ),
       ),
-      titleSpacing: kAppbarCrumbTitleSpacing,
+      // 뒤로가기 버튼이 없으면 크럼브를 큰 제목과 같은 선에서 시작한다.
+      titleSpacing: inPane
+          ? kLargeTitlePadding.start
+          : kAppbarCrumbTitleSpacing,
       flexibleSpace: LargeTitleFlexibleSpace(
         title: title,
         style: titleStyle,
