@@ -7,6 +7,7 @@ import 'package:mocl_flutter/core/presentation/widgets/appbar_actions_icon_theme
 import 'package:mocl_flutter/core/presentation/widgets/appbar_back_button.dart';
 import 'package:mocl_flutter/core/presentation/widgets/category_tag.dart';
 import 'package:mocl_flutter/core/presentation/widgets/large_title_flexible_space.dart';
+import 'package:mocl_flutter/core/presentation/widgets/list_detail_layout.dart';
 import 'package:mocl_flutter/core/presentation/widgets/plain_icon_button.dart';
 import 'package:mocl_flutter/core/presentation/widgets/scroll_to_top_title.dart';
 
@@ -46,7 +47,8 @@ class const DetailAppBar({super.key})
     final crumbStyle = appbarCrumbStyle(styleScope.smallTextStyle);
 
     return SliverAppBar(
-      leading: const AppbarBackButton(),
+      // 목록 옆 칸의 상세는 라우트가 아니라 닫을 것이 없다.
+      leading: ListDetailPane.isPane(context) ? null : const AppbarBackButton(),
       // scrolledUnderElevation: 1,
       expandedHeight: height,
       automaticallyImplyLeading: false,

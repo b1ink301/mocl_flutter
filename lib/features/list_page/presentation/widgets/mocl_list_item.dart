@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/core/presentation/widgets/category_tag.dart';
+import 'package:mocl_flutter/core/presentation/widgets/list_detail_layout.dart';
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/round_text_widget.dart';
 import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mixin.dart';
@@ -41,7 +42,10 @@ class const MoclListItem({super.key}) extends StatelessWidget with ListEvent {
       );
     }
 
-    return InkWell(
+    // 넓은 화면에서 옆 칸에 열려 있는 글은 강조한다.
+    final bool selected = ListDetailScope.isSelected(context, item.id);
+
+    final Widget row = InkWell(
       onTap: () => handleItemTap(context, item),
       child: Padding(
         padding: const EdgeInsets.only(
@@ -89,5 +93,14 @@ class const MoclListItem({super.key}) extends StatelessWidget with ListEvent {
         ),
       ),
     );
+
+    // 잉크가 강조색 위에 보이도록 Material 로 칠한다(강조할 때만 만든다).
+    return selected
+        ? Material(
+            color: Theme.of(context).colorScheme.primary
+                .withValues(alpha: 0.08),
+            child: row,
+          )
+        : row;
   }
 }

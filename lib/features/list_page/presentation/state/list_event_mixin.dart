@@ -8,6 +8,7 @@ import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
+import 'package:mocl_flutter/core/presentation/widgets/list_detail_layout.dart';
 import 'package:mocl_flutter/features/list_page/presentation/list_search_delegate.dart';
 
 import '../../../../core/domain/entities/mocl_list_item.dart';
@@ -51,8 +52,10 @@ mixin class ListEvent() {
     });
   }
 
+  /// 넓은 화면이면 목록 옆 칸에서 열고, 아니면 상세 화면을 쌓는다.
   void handleItemTap(BuildContext context, ListItem item) {
     try {
+      if (ListDetailScope.tryOpen(context, item)) return;
       context.push(Routes.detail, extra: item);
     } catch (e) {
       MoclLogger.e('_handleItemTap', error: e);

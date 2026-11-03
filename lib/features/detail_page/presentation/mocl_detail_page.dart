@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/core/presentation/widgets/list_detail_layout.dart';
 import 'package:mocl_flutter/core/presentation/widgets/window_size.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/widgets/detail_scope.dart';
 
@@ -29,7 +30,9 @@ class const DetailPage({super.key}) extends StatelessWidget {
   Widget build(BuildContext context) {
     const child = _DetailScaffold();
 
-    return Platform.isMacOS || Platform.isAndroid
+    // 목록 옆 칸에서는 우클릭으로 닫지 않는다(닫히는 건 목록 화면이 된다).
+    return (Platform.isMacOS || Platform.isAndroid) &&
+            !ListDetailPane.isPane(context)
         ? Listener(
             behavior: HitTestBehavior.opaque,
             onPointerDown: (event) {
