@@ -4,7 +4,6 @@ import 'package:mocl_flutter/config/large_title_metrics.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/presentation/widgets/adaptive_popup_menu.dart';
 import 'package:mocl_flutter/core/presentation/widgets/appbar_actions_icon_theme.dart';
-import 'package:mocl_flutter/core/presentation/widgets/appbar_back_button.dart';
 import 'package:mocl_flutter/core/presentation/widgets/category_tag.dart';
 import 'package:mocl_flutter/core/presentation/widgets/large_title_flexible_space.dart';
 import 'package:mocl_flutter/core/presentation/widgets/list_detail_layout.dart';
@@ -49,10 +48,9 @@ class const DetailAppBar({super.key})
 
     return SliverAppBar(
       // 목록 옆 칸의 상세는 라우트가 아니라 닫을 것이 없다.
-      leading: inPane ? null : const AppbarBackButton(),
       // scrolledUnderElevation: 1,
       expandedHeight: height,
-      automaticallyImplyLeading: false,
+      automaticallyImplyLeading: !inPane,
       // 툴바에는 상위 경로만(= 사이트 › 게시판). 큰 제목은 글 제목을 쓴다.
       title: ScrollToTopTitle(
         child: PlainText(
