@@ -101,6 +101,17 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   R8 이 지우거나 줄이면 런타임에 멈춘다. `fvm dart run tool/check_jni_keep.dart` 가
   실패하면 `android/app/proguard-rules.pro` 의 "package:jni" 항목에 keep 을 추가한다.
 
+## iOS · macOS 네이티브 의존성 (Swift Package Manager)
+
+- CocoaPods 는 쓰지 않는다(`pubspec.yaml` 의 `flutter: config: enable-swift-package-manager: true`).
+  Podfile 을 다시 만들지 말 것. 버전 고정은 `Runner.xcworkspace/xcshareddata/swiftpm/Package.resolved`.
+- `firebase_core` 는 4.x 에 묶어 둔다. 5.x(firebase-ios-sdk 13) 는 `google_sign_in_ios`(GoogleSignIn 9.x)와
+  `gtm-session-fetcher` 범위가 충돌해 패키지 해석이 실패한다.
+- flavor 스킴(`dev` · `prd` · `Runner`)마다 빌드 pre-action "Run Prepare Flutter Framework Script" 가
+  있어야 한다. 스킴을 새로 만들면 같이 넣는다.
+- Crashlytics 심볼 업로드 빌드 단계는 `SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/upload-symbols`
+  를 찾아 쓰고, dSYM 이 없는 Debug 구성은 건너뛴다.
+
 ## 앱 아이콘 / 스플래시
 
 - 밀도별 리소스를 직접 수정하지 말 것. `branding/` 의 소스 PNG 교체 후 재생성:

@@ -64,7 +64,7 @@ dependencies:
   # 이미지 캐시
   cached_network_image: ^4.0.6
   # image: ^4.2.0
-  flutter_cache_manager: ^3.4.6
+  flutter_cache_manager: ^3.4.8
 
   # URL 런처
   url_launcher: ^6.3.3
@@ -83,8 +83,10 @@ dependencies:
   go_router: ^18.1.2
 
   # firebase
-  firebase_core: ^5.1.0
-  firebase_crashlytics: ^6.0.1
+  # 5.x(firebase-ios-sdk 13) 는 SPM 에서 GoogleSignIn 9.x 와 gtm-session-fetcher 범위가 겹치지 않는다.
+  # google_sign_in_ios 가 GoogleSignIn 10 을 받을 때까지 4.x(SDK 12.19) 에 둔다.
+  firebase_core: ^4.15.0
+  firebase_crashlytics: ^5.4.0
 
   # async
   async: ^2.13.1
@@ -155,7 +157,7 @@ dependencies:
 
   infinite_scroll_pagination: ^5.1.1
 #  translator: ^1.0.4+1
-  file_picker: ^13.3.1
+  file_picker: ^13.3.2
 
   material_ui: ^1.9.0
   cupertino_ui: ^1.1.5
@@ -193,6 +195,9 @@ dev_dependencies:
 #  flutter_flavorizr: ^2.4.1
 
 flutter:
+  # iOS · macOS 플러그인은 CocoaPods 대신 Swift Package Manager 로 받는다.
+  config:
+    enable-swift-package-manager: true
   uses-material-design: true
   generate: true
   assets:
