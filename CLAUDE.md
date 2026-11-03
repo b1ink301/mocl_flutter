@@ -70,6 +70,17 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
 - `PlatformDispatcher.onError` 에서 `true` 를 고정으로 돌려주지 말 것(디버그 콘솔까지
   사라져 원인이 숨는다). 무거운 작업(DB 정리 등)은 첫 프레임 뒤로 미룬다.
 
+## 큰 화면 (폴드 · 태블릿 · iPad)
+
+- 창 크기는 `WindowSize`(`core/presentation/widgets/window_size.dart`, 600 / 840 / 1200dp)로 판단한다.
+  화면 폭을 라우트 진입 시점에 provider 로 박아 두지 말 것 — 폴드 접기/펼치기 · 회전 · 분할 화면에서
+  폭이 바뀐다. 폭이 필요하면 레이아웃에서 읽는다(상세 앱바는 `DetailWidthScope`).
+- 방향: 폰(짧은 변 < 600dp)만 세로 고정, 그 외 회전 허용(`OrientationPolicy`, 창 크기 변화마다 재적용).
+- 본문 폭: 목록 · 설정류는 `SliverReadableWidth`(840dp), 상세 본문은 `ReadableWidth.detail`(720dp).
+- 840dp 이상이면 `ListDetailLayout` 이 목록 옆 칸에 상세를 연다(글 목록 · 스크랩).
+  항목 탭은 `ListDetailScope.tryOpen` 을 먼저 부르고 false 일 때만 push 한다.
+  옆 칸 안인지는 `ListDetailPane.isPane` 으로 본다(뒤로가기 버튼 · 우클릭 닫기 없음).
+
 ## 로컬 DB (sembast)
 
 - 저장 구조를 바꾸면 `database_migrations.dart` 의 `kAppDatabaseVersion` 을 올리고
