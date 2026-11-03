@@ -132,6 +132,9 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
 - ID 는 **저장소에 두지 않는다.** 루트의 `ads.json`(gitignore, 형식은 `ads.example.json`)에 두고
   `--dart-define-from-file=ads.json` 으로 넣는다. 앱 ID 는 `build.gradle.kts` 가 같은
   define(`MOCL_ADMOB_APP_ID`) 또는 `-PmoclAdmobAppId` 에서 읽고, 광고 단위는 `AdUnitIds` 가 읽는다.
+  iOS 앱 ID 는 따로(`MOCL_ADMOB_IOS_APP_ID`, AdMob 앱 ID 는 플랫폼마다 다름) —
+  `ios/scripts/inject_admob_app_id.sh` 빌드 단계가 `DART_DEFINES` 에서 꺼내 `Info.plist` 의
+  `GADApplicationIdentifier` 에 넣는다. 이 키가 없으면 SDK 가 시작 시 앱을 죽인다.
   값이 없으면 Google 테스트 ID 로 떨어진다. CI 는 Secrets `ADS_JSON` 으로 `ads.json` 을 만든다.
   debug · profile 은 값이 있어도 테스트 단위만 쓴다. 개발 중 실제 ID 로 노출/클릭하지 말 것(계정 정지).
 - 광고 요청은 동의(UMP) 확인 → `canRequestAds()` → SDK 초기화가 끝난 뒤(`mobileAdsReady`)
