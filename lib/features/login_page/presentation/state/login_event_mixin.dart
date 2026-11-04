@@ -27,7 +27,16 @@ mixin class LoginEvent() {
       SiteType.damoang => url.path == '/bbs/memo.php',
       SiteType.meeco => url.path == '/',
       SiteType.naverCafe => url.path == '/user2/help/myInfoV2',
-      SiteType.reddit => url.path == '/settings/',
+      // 로그인 뒤 이동하는 주소가 자주 바뀌어(/settings/ → /settings/account 등)
+      // 주소 대신 로그인 세션 쿠키로 판정한다. 이미 로그인돼 있으면 바로 닫힌다.
+      // 로그인 페이지에 머무는 동안은 보지 않는다 — 만료된 쿠키가 남아 있으면
+      // 화면이 곧바로 닫혀 다시 로그인할 수 없다(유효하면 레딧이 dest 로 넘긴다).
+      SiteType.reddit =>
+        url.host.endsWith('reddit.com') &&
+            !url.path.startsWith('/login') &&
+            cookies.any(
+              (c) => c.name == 'reddit_session' && '${c.value}'.isNotEmpty,
+            ),
       _ => false,
     };
   }
