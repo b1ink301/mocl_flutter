@@ -5,6 +5,7 @@ import 'dart:ui' show lerpDouble;
 import 'package:cupertino_ui/cupertino_ui.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/services.dart';
+import 'package:material_ui/material_ui.dart' show Brightness, Theme;
 
 /// 화면 어디서든 오른쪽(RTL 은 왼쪽)으로 끌면 뒤로 가는 페이지.
 ///
@@ -15,6 +16,7 @@ import 'package:flutter/services.dart';
 ///   움직여서, 가장자리에서 끌어도 손을 놓기 전에 이전 화면이 드러난다.
 ///
 /// 전환 모양은 [CupertinoPageTransition](오른쪽에서 밀려 들어오는 전환) 이다.
+/// 뒤 화면에는 어두운 막을 깔아서, 앞 화면이 걷힐수록 옅어지게 한다(두 화면의 경계).
 class const SwipeBackPage<T>({
   required final WidgetBuilder builder,
 
@@ -43,6 +45,14 @@ class SwipeBackPageRoute<T>({
   @override final bool maintainState = true,
   super.settings,
 }) extends PageRoute<T> {
+  /// 뒤 화면을 덮는 막의 가장 진한 불투명도. 어두운 테마는 배경이 어두워 더 진하게 한다.
+  static const double _kMaxScrimOpacityLight = 0.2;
+  static const double _kMaxScrimOpacityDark = 0.45;
+
+  /// 뒤 화면을 덮는 막. 테스트에서 찾을 때 쓴다.
+  @visibleForTesting
+  static const Key scrimKey = ValueKey<String>('SwipeBackPageRoute.scrim');
+
   // 손을 놓은 뒤 남은 거리를 마저 가는 시간(ms). CupertinoPageRoute 와 같은 값.
   static const int _kMaxDroppedSwipePageForwardAnimationTime = 800;
   static const int _kMaxPageBackAnimationTime = 300;
@@ -96,7 +106,30 @@ class SwipeBackPageRoute<T>({
     secondaryRouteAnimation: secondaryAnimation,
     // 제스처 중에는 손가락을 그대로 따라가도록 곡선을 빼고 선형으로 그린다.
     linearTransition: popGestureInProgress,
-    child: _SwipeBackGestureDetector<T>(route: this, child: child),
+    child: Stack(
+      fit: StackFit.passthrough,
+      children: [
+        _SwipeBackGestureDetector<T>(route: this, child: child),
+        // 이 화면 위에 다른 화면이 올라와 있는 정도(secondaryAnimation)만큼 어둡게 한다.
+        // 본문 드래그 · 시스템 제스처 · 버튼으로 닫기 모두 같은 값을 따른다.
+        Positioned.fill(
+          child: IgnorePointer(
+            child: FadeTransition(
+              key: scrimKey,
+              opacity: secondaryAnimation.drive(
+                Tween<double>(
+                  begin: 0,
+                  end: Theme.of(context).brightness == Brightness.dark
+                      ? _kMaxScrimOpacityDark
+                      : _kMaxScrimOpacityLight,
+                ),
+              ),
+              child: const ColoredBox(color: Color(0xFF000000)),
+            ),
+          ),
+        ),
+      ],
+    ),
   );
 
   // --- 제스처가 컨트롤러를 움직이는 부분 (본문 드래그 · 시스템 제스처 공통) ---

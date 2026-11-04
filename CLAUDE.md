@@ -88,6 +88,7 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   뒤로가기 제스처(predictive back)에 애니메이션이 붙지 않는다.
 - 본문 어디서든 오른쪽으로 끄는 드래그와 Android 시스템 제스처(양쪽 가장자리)가 **같은 라우트
   컨트롤러**를 움직인다. 전환 모양은 `CupertinoPageTransition`.
+  뒤 화면에는 `secondaryAnimation` 만큼 어두운 막을 깐다(라이트 0.2 · 다크 0.45, 경계 구분용).
 - 제스처 내비게이션의 가장자리(`MediaQuery.systemGestureInsets`)에서 시작한 터치는 본문 드래그로
   받지 않는다. OS 가 판정 전까지 터치를 앱에도 보내서, 받으면 시스템 제스처와 겹쳐 애니메이션 없이 닫힌다.
 - `didStartUserGesture` / `didStopUserGesture` 는 라우트의 `_startGesture` / `_stopGesture` 로만

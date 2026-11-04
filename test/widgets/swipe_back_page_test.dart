@@ -1,5 +1,6 @@
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:cupertino_ui/cupertino_ui.dart' show CupertinoPageTransition;
 import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/core/presentation/widgets/swipe_back_page.dart';
 
@@ -163,6 +164,94 @@ void main() {
         const Offset(400, 0),
         2000,
       );
+      await tester.pumpAndSettle();
+      expect(find.text('상세'), findsOneWidget);
+    });
+  });
+
+  group('뒤 화면 막(dim)', () {
+    Future<void> pumpStack(WidgetTester tester, {ThemeData? theme}) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          theme: theme,
+          home: Navigator(
+            onGenerateRoute: (_) => SwipeBackPageRoute<void>(
+              builder: (context) => Scaffold(
+                body: Center(
+                  child: TextButton(
+                    onPressed: () => Navigator.of(context).push(
+                      SwipeBackPageRoute<void>(
+                        builder: (_) =>
+                            const Scaffold(body: Center(child: Text('상세'))),
+                      ),
+                    ),
+                    child: const Text('목록'),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      await tester.tap(find.text('목록'));
+      await tester.pumpAndSettle();
+    }
+
+    /// 목록(뒤 화면)을 덮는 막의 불투명도.
+    double listScrim(WidgetTester tester) => tester
+        .widget<FadeTransition>(
+          find.descendant(
+            // 상세가 다 덮고 있으면 목록은 화면 밖(offstage)으로 빠져 있다.
+            of: find.ancestor(
+              of: find.text('목록', skipOffstage: false),
+              matching: find.byType(
+                CupertinoPageTransition,
+                skipOffstage: false,
+              ),
+            ),
+            matching: find.byKey(
+              SwipeBackPageRoute.scrimKey,
+              skipOffstage: false,
+            ),
+          ),
+        )
+        .opacity
+        .value;
+
+    testWidgets('상세가 덮고 있으면 진하고, 끄는 만큼 옅어지고, 닫히면 사라진다', (tester) async {
+      await pumpStack(tester);
+      expect(listScrim(tester), closeTo(0.2, 0.001));
+
+      final TestGesture gesture = await tester.startGesture(
+        const Offset(100, 300),
+      );
+      await gesture.moveBy(const Offset(40, 0));
+      await gesture.moveBy(const Offset(360, 0));
+      await tester.pump();
+      final double dragging = listScrim(tester);
+      expect(dragging, greaterThan(0));
+      expect(dragging, lessThan(0.2));
+
+      await gesture.up();
+      await tester.pumpAndSettle();
+      expect(find.text('상세'), findsNothing);
+      expect(listScrim(tester), 0);
+    });
+
+    testWidgets('어두운 테마는 더 진하게 덮는다', (tester) async {
+      await pumpStack(tester, theme: ThemeData(brightness: Brightness.dark));
+      expect(listScrim(tester), closeTo(0.45, 0.001));
+    });
+
+    testWidgets('막은 터치를 막지 않는다', (tester) async {
+      await pumpStack(tester);
+      // 맨 위 화면(상세)에도 막이 있지만 투명하고, 터치는 그대로 지나간다.
+      final NavigatorState navigator = tester.state(
+        find.byType(Navigator).last,
+      );
+      navigator.pop();
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('목록'));
       await tester.pumpAndSettle();
       expect(find.text('상세'), findsOneWidget);
     });
