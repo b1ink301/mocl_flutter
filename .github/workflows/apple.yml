@@ -59,6 +59,14 @@ jobs:
         if: matrix.platform == 'ios'
         run: flutter build ios --debug --no-codesign --flavor dev
 
+      # flutter build macos 에는 --no-codesign 이 없어 Debug 구성의 자동 서명(팀 인증서)을
+      # 찾다가 실패한다. 설정 파일만 만든 뒤 xcodebuild 로 서명 없이 빌드한다.
       - name: Build macOS
         if: matrix.platform == 'macos'
-        run: flutter build macos --debug --flavor dev
+        run: |
+          flutter build macos --debug --flavor dev --config-only
+          xcodebuild -workspace macos/Runner.xcworkspace -scheme dev \
+            -configuration Debug-dev -destination 'generic/platform=macOS' \
+            CODE_SIGNING_ALLOWED=NO CODE_SIGNING_REQUIRED=NO \
+            CODE_SIGN_IDENTITY="" DEVELOPMENT_TEAM="" \
+            build
