@@ -43,11 +43,14 @@ extension SiteTypeExtension on SiteType {
 
   /// 큐레이션된 게시판 목록(`board_link.json`)을 가진 사이트인지.
   ///
-  /// 네이버카페는 "담은 카페"가 계정마다 달라서 정적 목록을 만들 수 없고,
-  /// 로그인한 사용자의 카페 목록 API 로만 구할 수 있다. false 인 사이트는
-  /// 원격/번들 JSON 조회를 건너뛴다 — 없는 파일을 받으러 가는 404 왕복과
-  /// asset 로드 실패가 사라진다.
-  bool get hasCuratedBoardList => this != SiteType.naverCafe;
+  /// 네이버카페("담은 카페")와 레딧(구독 커뮤니티)은 목록이 계정마다 달라서
+  /// 정적 목록을 만들 수 없고, 로그인한 뒤 사이트에서 받아 와야 한다. false 인
+  /// 사이트는 원격/번들 JSON 조회를 건너뛴다 — 없는 파일을 받으러 가는 404
+  /// 왕복과 asset 로드 실패가 사라진다.
+  bool get hasCuratedBoardList => switch (this) {
+    SiteType.naverCafe || SiteType.reddit => false,
+    _ => true,
+  };
 
   /// 로그인(계정) 연동을 지원하는 사이트인지. 긱뉴스는 계정이 없고,
   /// settings 는 사이트가 아니므로 제외한다.

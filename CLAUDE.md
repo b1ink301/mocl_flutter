@@ -168,3 +168,16 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   - 다모앙: `POST /api/v1/boards/{board}/posts/{id}/comments`, JSON `{content, parent_id}`,
     `Authorization: Bearer {__data.json 의 accessToken}`. 401 이면 토큰을 다시 받아 한 번만 재시도.
 - 토큰 · CSRF · 댓글 본문은 로그에 남기지 않는다(헤더는 `redactHeaders`).
+
+## 레딧
+
+- 데이터는 **`api.reddit.com`** 에서 받는다(같은 `.reddit.com` 로그인 쿠키, 응답 형식 동일).
+  `www.reddit.com` 은 정렬을 경로에 넣은 `.json`(`/new/.json` · `/r/x/hot/.json`)을 로그인해도 403 으로 막는다.
+  접힌 댓글을 한꺼번에 주는 `morechildren` 은 두 호스트 모두 403 이라, 댓글 하나 + 스레드 조회
+  (`/comments/{글}/_/{댓글}`)로 펼친다(`RedditApi._expandMoreComments`, 요청 상한 있음).
+- 게시판 목록은 `board_link.json` 이 아니라 로그인한 계정의 구독 커뮤니티
+  (`/subreddits/mine/subscriber`, `after` 로 넘김)다. 네이버카페처럼
+  `hasCuratedBoardList` 가 false 이고, 로그인 안 됐으면 `NotLoginFailure` 로 로그인 화면을 띄운다.
+- reddit.com 첫 화면(홈 피드)은 `RedditParser.pinnedBoards` 로 목록 맨 앞에 항상 붙는다.
+- `.json` 요청은 `RedditApi._fetch`(4xx 를 응답으로 받음)를 쓰고, 401/403 은 `NotLoginFailure` 로 바꾼다.
+- 상세 댓글은 트리를 깊이 우선으로 펼친 평평한 목록이다(화면은 `replies` 를 그리지 않는다).

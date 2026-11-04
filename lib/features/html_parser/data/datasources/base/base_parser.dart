@@ -48,6 +48,10 @@ abstract class const BaseParser() {
   Future<Either<Failure, List<MainItem>>> main(Response<dynamic> response) =>
       throw UnimplementedError('main');
 
+  /// 게시판 목록 출처(원격/번들 board_link.json · 실시간 파싱)와 상관없이
+  /// 항상 맨 앞에 붙는 게시판. 레딧 홈 피드처럼 사이트 자체 화면이 여기 해당한다.
+  List<MainItem> get pinnedBoards => const [];
+
   /// 이 사이트가 실시간 하위 메뉴 조회를 지원하는지.
   /// UI 는 사이트를 직접 알지 못하므로(분기 금지) 이 값과 [MainItem.hasItem] 만 본다.
   bool get supportsSubMenu => false;

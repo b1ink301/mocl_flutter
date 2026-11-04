@@ -24,6 +24,9 @@ abstract class MainDataSource() {
   /// main() 미구현 사이트는 UnimplementedError 를 던진다.
   Future<List<MainItem>> getAllLive(SiteType siteType);
 
+  /// 목록 출처와 상관없이 맨 앞에 붙는 게시판([BaseParser.pinnedBoards]).
+  List<MainItem> get pinnedBoards;
+
   /// GitHub raw 에 호스팅된 큐레이션 게시판 목록(board_link.json)을 원격에서 받아온다.
   /// 앱 재배포 없이 목록을 갱신하기 위한 주 소스. 실패 시 번들 asset 으로 폴백한다.
   Future<List<MainItemModel>> getAllFromRemote(SiteType siteType);
@@ -45,6 +48,9 @@ class const MainDataSourceImpl({
   @override
   Future<List<MainItem>> getAllLive(SiteType siteType) async =>
       (await apiClient.main(parser)).getOrElse((Failure f) => throw f);
+
+  @override
+  List<MainItem> get pinnedBoards => parser.pinnedBoards;
 
   @override
   Future<List<MainItem>> getSubMenuLive(MainItem parent) async {
