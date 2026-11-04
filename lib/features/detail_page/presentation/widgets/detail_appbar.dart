@@ -15,6 +15,7 @@ import '../../../../core/presentation/widgets/plain_text.dart';
 import '../state/detail_event_mixin.dart';
 import '../state/detail_state_mixin.dart';
 import 'bookmark_icon_button.dart';
+import 'translate_icon_button.dart';
 import 'detail_scope.dart';
 
 /// 상세 화면 앱바.
@@ -75,6 +76,7 @@ class const DetailAppBar({super.key})
       actions: [
         AppbarActionsIconTheme(
           children: [
+            const TranslateIconButton(),
             const BookmarkIconButton(),
             _DetailPopupMenuButton(
               focusColor: primaryColor,

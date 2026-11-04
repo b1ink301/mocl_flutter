@@ -33,6 +33,9 @@ class const RedditParser() extends BaseParser {
   @override
   String get baseUrl => 'https://www.reddit.com';
 
+  @override
+  bool get supportsTranslation => true;
+
   /// board_link.json 에 없어도 레딧 첫 화면(홈 피드)을 볼 수 있게 항상 붙인다.
   @override
   List<MainItem> get pinnedBoards => [

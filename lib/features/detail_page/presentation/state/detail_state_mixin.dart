@@ -15,7 +15,25 @@ mixin class DetailState() {
   AppTextStyles appTextStyles(WidgetRef ref) =>
       ref.watch(appTextStylesFontSizeProvider);
 
-  AsyncValue<Details> detailState(WidgetRef ref) => ref.watch(detailsProvider);
+  /// 상세 글. 번역본을 보고 있으면 번역본(댓글은 번역된 만큼)을 준다.
+  AsyncValue<Details> detailState(WidgetRef ref) {
+    final AsyncValue<Details> original = ref.watch(detailsProvider);
+    final DetailTranslation translation = ref.watch(detailTranslationProvider);
+    final Details? translated = translation.isShowing
+        ? translation.details
+        : null;
+    return translated != null && original.hasValue
+        ? AsyncData(translated)
+        : original;
+  }
+
+  /// 상세 번역 상태(앱바 번역 버튼).
+  DetailTranslation translationState(WidgetRef ref) =>
+      ref.watch(detailTranslationProvider);
+
+  /// 이 상세에 번역 버튼을 둘지(레딧 · 번역을 지원하는 기기).
+  bool supportsTranslationState(WidgetRef ref) =>
+      ref.watch(supportsTranslationProvider(ref.watch(detailSiteTypeProvider)));
 
   /// 본문/댓글 이미지 로드 시 보낼 Referer = 현재 사이트의 baseUrl.
   /// (디시 등 일부 CDN 은 Referer 가 사이트 도메인이어야 이미지를 준다.)

@@ -10,6 +10,7 @@ import 'package:mocl_flutter/core/domain/entities/mocl_comment_write.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/core/util/mocl_logger.dart';
 import 'package:mocl_flutter/core/util/utilities.dart';
 import 'package:mocl_flutter/features/bookmark/application/bookmark_providers.dart';
 import 'package:mocl_flutter/features/database/domain/entities/bookmark_data.dart';
@@ -25,6 +26,17 @@ import '../../application/use_case_provider.dart';
 mixin class DetailEvent() {
   void handleRefresh(WidgetRef ref) =>
       ref.read(detailsProvider.notifier).refresh();
+
+  /// 번역본 ↔ 원문. 실패하면 false(원문으로 돌아가 있다).
+  Future<bool> toggleTranslation(WidgetRef ref) async {
+    try {
+      await ref.read(detailTranslationProvider.notifier).toggle();
+      return true;
+    } catch (e) {
+      MoclLogger.w(() => '[translate] 실패: $e');
+      return false;
+    }
+  }
 
   void adjustFontSize(WidgetRef ref, double step) =>
       ref.read(appTextStylesFontSizeProvider.notifier).adjustFontSize(step);

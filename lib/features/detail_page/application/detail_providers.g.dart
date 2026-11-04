@@ -180,6 +180,98 @@ abstract class _$DetailsNotifier extends $AsyncNotifier<Details> {
   }
 }
 
+/// 원문 ↔ 번역본 전환. 번역은 기기 안에서 하고, 한 번 끝낸 번역은 이 글을 보는
+/// 동안 다시 하지 않는다. 새로고침하면 처음부터 다시 번역한다.
+
+@ProviderFor(DetailTranslationNotifier)
+final detailTranslationProvider = DetailTranslationNotifierProvider._();
+
+/// 원문 ↔ 번역본 전환. 번역은 기기 안에서 하고, 한 번 끝낸 번역은 이 글을 보는
+/// 동안 다시 하지 않는다. 새로고침하면 처음부터 다시 번역한다.
+final class DetailTranslationNotifierProvider
+    extends $NotifierProvider<DetailTranslationNotifier, DetailTranslation> {
+  /// 원문 ↔ 번역본 전환. 번역은 기기 안에서 하고, 한 번 끝낸 번역은 이 글을 보는
+  /// 동안 다시 하지 않는다. 새로고침하면 처음부터 다시 번역한다.
+  DetailTranslationNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'detailTranslationProvider',
+        isAutoDispose: true,
+        dependencies: <ProviderOrFamily>[
+          detailsProvider,
+          detailTitleStateProvider,
+        ],
+        $allTransitiveDependencies: <ProviderOrFamily>{
+          DetailTranslationNotifierProvider.$allTransitiveDependencies0,
+          DetailTranslationNotifierProvider.$allTransitiveDependencies1,
+          DetailTranslationNotifierProvider.$allTransitiveDependencies2,
+          DetailTranslationNotifierProvider.$allTransitiveDependencies3,
+          DetailTranslationNotifierProvider.$allTransitiveDependencies4,
+          DetailTranslationNotifierProvider.$allTransitiveDependencies5,
+          DetailTranslationNotifierProvider.$allTransitiveDependencies6,
+          DetailTranslationNotifierProvider.$allTransitiveDependencies7,
+        },
+      );
+
+  static final $allTransitiveDependencies0 = detailsProvider;
+  static final $allTransitiveDependencies1 =
+      DetailsNotifierProvider.$allTransitiveDependencies0;
+  static final $allTransitiveDependencies2 =
+      DetailsNotifierProvider.$allTransitiveDependencies1;
+  static final $allTransitiveDependencies3 =
+      DetailsNotifierProvider.$allTransitiveDependencies2;
+  static final $allTransitiveDependencies4 =
+      DetailsNotifierProvider.$allTransitiveDependencies3;
+  static final $allTransitiveDependencies5 =
+      DetailsNotifierProvider.$allTransitiveDependencies4;
+  static final $allTransitiveDependencies6 =
+      DetailsNotifierProvider.$allTransitiveDependencies5;
+  static final $allTransitiveDependencies7 =
+      DetailsNotifierProvider.$allTransitiveDependencies6;
+
+  @override
+  String debugGetCreateSourceHash() => _$detailTranslationNotifierHash();
+
+  @$internal
+  @override
+  DetailTranslationNotifier create() => DetailTranslationNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(DetailTranslation value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<DetailTranslation>(value),
+    );
+  }
+}
+
+String _$detailTranslationNotifierHash() =>
+    r'66271beffd9f30c3679a3a05678169fd492e4979';
+
+/// 원문 ↔ 번역본 전환. 번역은 기기 안에서 하고, 한 번 끝낸 번역은 이 글을 보는
+/// 동안 다시 하지 않는다. 새로고침하면 처음부터 다시 번역한다.
+
+abstract class _$DetailTranslationNotifier
+    extends $Notifier<DetailTranslation> {
+  DetailTranslation build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<DetailTranslation, DetailTranslation>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<DetailTranslation, DetailTranslation>,
+              DetailTranslation,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
 @ProviderFor(_markAsRead)
 final _markAsReadProvider = _MarkAsReadFamily._();
 

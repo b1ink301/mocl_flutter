@@ -9,6 +9,8 @@ import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/detail_page/application/use_case_provider.dart';
 import 'package:mocl_flutter/features/detail_page/domain/usecases/set_read_flag.dart';
+import 'package:mocl_flutter/features/translation/application/translation_providers.dart';
+import 'package:mocl_flutter/features/translation/domain/details_translator.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'detail_providers.g.dart';
@@ -48,6 +50,84 @@ class DetailsNotifier() extends _$DetailsNotifier {
   }
 
   void refresh() => ref.invalidateSelf();
+}
+
+/// 상세 번역 상태. [details] 는 지금까지 번역된 글(댓글은 앞에서부터 채워진다).
+class const DetailTranslation({
+  final Details? details,
+  final bool isShowing = false,
+  final bool isTranslating = false,
+  final bool isComplete = false,
+});
+
+/// 원문 ↔ 번역본 전환. 번역은 기기 안에서 하고, 한 번 끝낸 번역은 이 글을 보는
+/// 동안 다시 하지 않는다. 새로고침하면 처음부터 다시 번역한다.
+@Riverpod(dependencies: [DetailsNotifier, DetailTitleStateNotifier])
+class DetailTranslationNotifier() extends _$DetailTranslationNotifier {
+  /// 진행 중인 번역을 가리킨다. 바뀌면 그 번역의 결과는 버린다.
+  int _run = 0;
+
+  @override
+  DetailTranslation build() {
+    ref.watch(detailsProvider);
+    _run++;
+    return const DetailTranslation();
+  }
+
+  /// 번역본과 원문을 오간다. 번역 중에 누르면 멈추고 원문으로 돌아간다.
+  /// 번역에 실패하면 원문으로 돌아가고 예외를 다시 던진다(화면이 안내한다).
+  Future<void> toggle() async {
+    final Details? original = ref.read(detailsProvider).value;
+    if (original == null) return;
+
+    if (state.isShowing) {
+      if (state.isTranslating) _run++;
+      state = DetailTranslation(
+        details: state.isComplete ? state.details : null,
+        isComplete: state.isComplete,
+      );
+      _updateTitle(original.title);
+      return;
+    }
+    if (state.isComplete && state.details != null) {
+      state = DetailTranslation(
+        details: state.details,
+        isShowing: true,
+        isComplete: true,
+      );
+      _updateTitle(state.details!.title);
+      return;
+    }
+
+    final int run = ++_run;
+    state = const DetailTranslation(isShowing: true, isTranslating: true);
+    try {
+      final translator = DetailsTranslator(ref.read(translatorProvider));
+      await for (final Details details in translator.translate(original)) {
+        if (!ref.mounted || run != _run) return;
+        if (state.details == null) _updateTitle(details.title);
+        state = DetailTranslation(
+          details: details,
+          isShowing: true,
+          isTranslating: true,
+        );
+      }
+      if (!ref.mounted || run != _run) return;
+      state = DetailTranslation(
+        details: state.details,
+        isShowing: true,
+        isComplete: true,
+      );
+    } catch (_) {
+      if (!ref.mounted || run != _run) return;
+      state = const DetailTranslation();
+      _updateTitle(original.title);
+      rethrow;
+    }
+  }
+
+  void _updateTitle(String title) =>
+      ref.read(detailTitleStateProvider.notifier).update(title);
 }
 
 @Riverpod(dependencies: [detailSiteType])
@@ -117,9 +197,14 @@ String detailTitle(Ref ref) =>
 String detailUrl(Ref ref) {
   final siteType = ref.watch(detailSiteTypeProvider);
   final listItem = ref.watch(listItemProvider);
-  return siteType == SiteType.naverCafe
-      ? 'https://m.cafe.naver.com/ca-fe/web/cafes/${listItem.board}/articles/${listItem.id}'
-      : listItem.url;
+  return switch (siteType) {
+    SiteType.naverCafe =>
+      'https://m.cafe.naver.com/ca-fe/web/cafes/${listItem.board}/articles/${listItem.id}',
+    // 레딧은 url 에 글 id(base36)만 담는다(목록 커서 · 상세 요청에 쓴다).
+    SiteType.reddit =>
+      'https://www.reddit.com/r/${listItem.board}/comments/${listItem.url}/',
+    _ => listItem.url,
+  };
 }
 
 /// 상세 앱바 높이 캐시.

@@ -121,3 +121,8 @@ android {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    // 레딧 상세 번역(기기 내, 무료). 언어 모델은 앱에 넣지 않고 처음 쓸 때 받는다.
+    implementation("com.google.mlkit:translate:17.0.3")
+}

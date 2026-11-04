@@ -357,10 +357,13 @@ class _FakeBookmarkRepository() implements BookmarkRepository {
   Future<List<BookmarkData>> getAll() async => const <BookmarkData>[];
 }
 
-/// `baseUrl` 만 사용되므로 나머지는 noSuchMethod 로 남긴다.
+/// `baseUrl` · `supportsTranslation` 만 사용되므로 나머지는 noSuchMethod 로 남긴다.
 class _FakeParser() implements BaseParser {
   @override
   final String baseUrl = 'https://example.com';
+
+  @override
+  bool get supportsTranslation => false;
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);

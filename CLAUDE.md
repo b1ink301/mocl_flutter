@@ -181,3 +181,8 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
 - reddit.com 첫 화면(홈 피드)은 `RedditParser.pinnedBoards` 로 목록 맨 앞에 항상 붙는다.
 - `.json` 요청은 `RedditApi._fetch`(4xx 를 응답으로 받음)를 쓰고, 401/403 은 `NotLoginFailure` 로 바꾼다.
 - 상세 댓글은 트리를 깊이 우선으로 펼친 평평한 목록이다(화면은 `replies` 를 그리지 않는다).
+- 상세 번역(앱바 번역 버튼)은 `BaseParser.supportsTranslation` 이 true 인 사이트(현재 레딧만)에서 보인다.
+  번역은 기기 안에서 한다(무료): Android 는 ML Kit(`TranslationChannel.kt`, gradle 의존성),
+  iOS 18+ · macOS 15+ 는 Apple Translation(`{ios,macos}/Runner/TranslationChannel.swift`, 두 파일은 같은 내용).
+  ML Kit Flutter 플러그인은 iOS 가 CocoaPods 전용이라 쓰지 않고 채널(`net.b1ink.mocl/translation`)을 직접 둔다.
+  HTML 은 `HtmlTextTranslator` 가 글자만 번역한다(코드 · 링크 · 이미지는 그대로).

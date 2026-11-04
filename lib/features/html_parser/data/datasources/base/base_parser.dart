@@ -48,6 +48,9 @@ abstract class const BaseParser() {
   Future<Either<Failure, List<MainItem>>> main(Response<dynamic> response) =>
       throw UnimplementedError('main');
 
+  /// 상세에 기기 내 번역 버튼을 둘지. 한국어가 아닌 글이 주인 사이트만 켠다.
+  bool get supportsTranslation => false;
+
   /// 게시판 목록 출처(원격/번들 board_link.json · 실시간 파싱)와 상관없이
   /// 항상 맨 앞에 붙는 게시판. 레딧 홈 피드처럼 사이트 자체 화면이 여기 해당한다.
   List<MainItem> get pinnedBoards => const [];

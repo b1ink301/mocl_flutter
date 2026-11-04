@@ -240,6 +240,93 @@ final class WriteCommentFamily extends $Family
   String toString() => r'writeCommentProvider';
 }
 
+/// 이 사이트 상세에 번역 버튼을 둘지. 사이트가 켜 두었고 기기가 지원해야 한다.
+
+@ProviderFor(supportsTranslation)
+final supportsTranslationProvider = SupportsTranslationFamily._();
+
+/// 이 사이트 상세에 번역 버튼을 둘지. 사이트가 켜 두었고 기기가 지원해야 한다.
+
+final class SupportsTranslationProvider
+    extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
+  /// 이 사이트 상세에 번역 버튼을 둘지. 사이트가 켜 두었고 기기가 지원해야 한다.
+  SupportsTranslationProvider._({
+    required SupportsTranslationFamily super.from,
+    required SiteType super.argument,
+  }) : super(
+         retry: null,
+         name: r'supportsTranslationProvider',
+         isAutoDispose: true,
+         dependencies: null,
+         $allTransitiveDependencies: null,
+       );
+
+  @override
+  String debugGetCreateSourceHash() => _$supportsTranslationHash();
+
+  @override
+  String toString() {
+    return r'supportsTranslationProvider'
+        ''
+        '($argument)';
+  }
+
+  @$internal
+  @override
+  $ProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  bool create(Ref ref) {
+    final argument = this.argument as SiteType;
+    return supportsTranslation(ref, argument);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return other is SupportsTranslationProvider && other.argument == argument;
+  }
+
+  @override
+  int get hashCode {
+    return argument.hashCode;
+  }
+}
+
+String _$supportsTranslationHash() =>
+    r'bdd85597cc3927693c87e86c8aca502dd57071de';
+
+/// 이 사이트 상세에 번역 버튼을 둘지. 사이트가 켜 두었고 기기가 지원해야 한다.
+
+final class SupportsTranslationFamily extends $Family
+    with $FunctionalFamilyOverride<bool, SiteType> {
+  SupportsTranslationFamily._()
+    : super(
+        retry: null,
+        name: r'supportsTranslationProvider',
+        dependencies: null,
+        $allTransitiveDependencies: null,
+        isAutoDispose: true,
+      );
+
+  /// 이 사이트 상세에 번역 버튼을 둘지. 사이트가 켜 두었고 기기가 지원해야 한다.
+
+  SupportsTranslationProvider call(SiteType siteType) =>
+      SupportsTranslationProvider._(argument: siteType, from: this);
+
+  @override
+  String toString() => r'supportsTranslationProvider';
+}
+
 /// 이 사이트에서 앱으로 댓글을 쓸 수 있는지.
 ///
 /// 저장소까지 만들면 로컬 DB 를 끌어오므로 API 객체에서 바로 읽는다.
