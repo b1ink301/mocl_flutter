@@ -41,6 +41,10 @@
         <meta-data
             android:name="com.google.android.gms.ads.APPLICATION_ID"
             android:value="${admobAppId}" />
+        <!-- 테스트 광고에 뜨는 "AdMob native ad validator" 팝업을 끈다(실제 광고에는 원래 안 뜸). -->
+        <meta-data
+            android:name="com.google.android.gms.ads.flag.NATIVE_AD_DEBUGGER_ENABLED"
+            android:value="false" />
         <meta-data
             android:name="io.flutter.embedding.android.AssetsPath"
             android:value="assets" />
