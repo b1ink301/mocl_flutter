@@ -107,6 +107,23 @@ class PlayVideosInAppNotifier() extends _$PlayVideosInAppNotifier {
   }
 }
 
+/// 번역을 지원하는 사이트(레딧)의 목록 제목을 번역해 보이고, 상세도 열자마자
+/// 번역한다. 목록 앱바의 번역 버튼으로 켜고 끄며 앱을 다시 켜도 유지한다.
+@Riverpod(keepAlive: true)
+class AutoTranslateNotifier() extends _$AutoTranslateNotifier {
+  @override
+  bool build() {
+    final settings = ref.watch(settingsRepositoryProvider);
+    return settings.isAutoTranslate();
+  }
+
+  void toggle() {
+    final settings = ref.read(settingsRepositoryProvider);
+    state = !state;
+    settings.setAutoTranslate(state);
+  }
+}
+
 /// 목록 · 상세 제목에 말머리 태그를 보인다. 끄면 태그 없이 제목만 보인다.
 @Riverpod(keepAlive: true)
 class ShowCategoryNotifier() extends _$ShowCategoryNotifier {

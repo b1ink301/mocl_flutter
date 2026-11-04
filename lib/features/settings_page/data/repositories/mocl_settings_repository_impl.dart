@@ -72,6 +72,13 @@ class const SettingsRepositoryImpl({required final SharedPreferences _prefs})
       _prefs.setBool(_extraPlayVideosInApp, playInApp);
 
   @override
+  bool isAutoTranslate() => _prefs.getBool(_extraAutoTranslate) ?? false;
+
+  @override
+  void setAutoTranslate(bool autoTranslate) =>
+      _prefs.setBool(_extraAutoTranslate, autoTranslate);
+
+  @override
   bool isShowCategory() => _prefs.getBool(_extraShowCategory) ?? true;
 
   @override
@@ -98,6 +105,7 @@ class const SettingsRepositoryImpl({required final SharedPreferences _prefs})
   static final String _extraShowQuickJump = 'show_quick_jump';
   static final String _extraOpenSiteLinksInApp = 'open_site_links_in_app';
   static final String _extraPlayVideosInApp = 'play_videos_in_app';
+  static final String _extraAutoTranslate = 'auto_translate';
   static final String _extraShowCategory = 'show_category';
   static final String _extraCollapsedSubSections = 'collapsed_sub_sections';
   static final String _extraThemeMode = 'theme_mode';

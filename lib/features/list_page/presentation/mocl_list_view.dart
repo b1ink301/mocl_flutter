@@ -24,6 +24,7 @@ class const MoclListView({super.key})
   Widget build(BuildContext context, WidgetRef ref) {
     // 리스트 아이템 읽음 처리 리스너 등록
     bindReadListener(ref);
+    bindTitleTranslation(ref);
 
     // 백그라운드 → 포그라운드 복귀 시 멈춘 fetch 강제 재시작.
     // (Doze 등으로 in-flight 요청이 영영 resolve 되지 않아 isLoading 이

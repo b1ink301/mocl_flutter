@@ -44,9 +44,47 @@ class const ListAppBar({super.key}) extends ConsumerWidget with ListState {
       centerTitle: false,
       actions: const [
         AppbarActionsIconTheme(
-          children: [_SearchButton(), _SortButton(), _MoreButton()],
+          children: [
+            _TranslateButton(),
+            _SearchButton(),
+            _SortButton(),
+            _MoreButton(),
+          ],
         ),
       ],
+    );
+  }
+}
+
+/// 목록 제목 번역 토글(레딧). 켜 두면 상세도 열자마자 번역한다(설정으로 기억).
+class const _TranslateButton()
+    extends ConsumerWidget
+    with ListState, ListEvent {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (!listTranslationSupportedState(ref)) return const SizedBox.shrink();
+    final Color primary = Theme.of(context).colorScheme.primary;
+    final bool on = listTranslationOnState(ref);
+
+    return PlainIconButton(
+      onPressed: () async {
+        final bool ok = await toggleListTranslation(ref);
+        if (ok || !context.mounted) return;
+        ScaffoldMessenger.maybeOf(context)
+          ?..hideCurrentSnackBar()
+          ..showSnackBar(
+            const SnackBar(
+              content: Text('번역하지 못했어요. 처음이면 번역 언어를 받을 인터넷 연결이 필요해요.'),
+              behavior: SnackBarBehavior.floating,
+            ),
+          );
+      },
+      icon: on && isTranslatingTitlesState(ref)
+          ? SizedBox.square(
+              dimension: 20,
+              child: CircularProgressIndicator(strokeWidth: 2, color: primary),
+            )
+          : PlainIcon(Icons.translate_rounded, color: on ? primary : null),
     );
   }
 }

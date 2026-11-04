@@ -201,3 +201,7 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   iOS 18+ · macOS 15+ 는 Apple Translation(`{ios,macos}/Runner/TranslationChannel.swift`, 두 파일은 같은 내용).
   ML Kit Flutter 플러그인은 iOS 가 CocoaPods 전용이라 쓰지 않고 채널(`net.b1ink.mocl/translation`)을 직접 둔다.
   HTML 은 `HtmlTextTranslator` 가 글자만 번역한다(코드 · 링크 · 이미지는 그대로).
+- 목록 앱바 번역 버튼은 설정 "번역해서 보기"(`AutoTranslateNotifier`, 앱을 다시 켜도 유지)를 켜고 끈다.
+  켜면 목록 제목을 쪽마다 묶어 번역하고(`TitleTranslationsNotifier`, 원문 제목 → 번역문, 앱이 떠 있는
+  동안 유지), 상세도 열자마자 번역한다. 행 데이터(`ListItem`)는 원문 그대로 두고 화면에서만 바꿔
+  그린다(스크랩 · 뮤트 · 상세 요청은 원문 기준).

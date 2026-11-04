@@ -570,6 +570,184 @@ final class ItemAtIndexFamily extends $Family
   String toString() => r'itemAtIndexProvider';
 }
 
+/// 이 목록에 번역 버튼을 둘지(번역을 켠 사이트 · 지원하는 기기).
+
+@ProviderFor(listTranslationSupported)
+final listTranslationSupportedProvider = ListTranslationSupportedProvider._();
+
+/// 이 목록에 번역 버튼을 둘지(번역을 켠 사이트 · 지원하는 기기).
+
+final class ListTranslationSupportedProvider
+    extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
+  /// 이 목록에 번역 버튼을 둘지(번역을 켠 사이트 · 지원하는 기기).
+  ListTranslationSupportedProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'listTranslationSupportedProvider',
+        isAutoDispose: true,
+        dependencies: <ProviderOrFamily>[mainItemProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          ListTranslationSupportedProvider.$allTransitiveDependencies0,
+        ],
+      );
+
+  static final $allTransitiveDependencies0 = mainItemProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$listTranslationSupportedHash();
+
+  @$internal
+  @override
+  $ProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  bool create(Ref ref) {
+    return listTranslationSupported(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$listTranslationSupportedHash() =>
+    r'a9ee984804dde0b9ce6eaae72f67b81512156912';
+
+/// 목록 제목을 번역해 보이는 중인지(설정 "번역해서 보기" + 지원 사이트).
+
+@ProviderFor(listTranslationOn)
+final listTranslationOnProvider = ListTranslationOnProvider._();
+
+/// 목록 제목을 번역해 보이는 중인지(설정 "번역해서 보기" + 지원 사이트).
+
+final class ListTranslationOnProvider
+    extends $FunctionalProvider<bool, bool, bool>
+    with $Provider<bool> {
+  /// 목록 제목을 번역해 보이는 중인지(설정 "번역해서 보기" + 지원 사이트).
+  ListTranslationOnProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'listTranslationOnProvider',
+        isAutoDispose: true,
+        dependencies: <ProviderOrFamily>[listTranslationSupportedProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          ListTranslationOnProvider.$allTransitiveDependencies0,
+          ListTranslationOnProvider.$allTransitiveDependencies1,
+        ],
+      );
+
+  static final $allTransitiveDependencies0 = listTranslationSupportedProvider;
+  static final $allTransitiveDependencies1 =
+      ListTranslationSupportedProvider.$allTransitiveDependencies0;
+
+  @override
+  String debugGetCreateSourceHash() => _$listTranslationOnHash();
+
+  @$internal
+  @override
+  $ProviderElement<bool> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  bool create(Ref ref) {
+    return listTranslationOn(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$listTranslationOnHash() => r'dc8fc69e59f28cd1f61db0e1e57f0176353f390b';
+
+/// 번역할 목록 제목. 번역이 꺼져 있으면 비어 있다. 쪽이 늘 때마다 바뀐다.
+
+@ProviderFor(listTitlesToTranslate)
+final listTitlesToTranslateProvider = ListTitlesToTranslateProvider._();
+
+/// 번역할 목록 제목. 번역이 꺼져 있으면 비어 있다. 쪽이 늘 때마다 바뀐다.
+
+final class ListTitlesToTranslateProvider
+    extends $FunctionalProvider<List<String>, List<String>, List<String>>
+    with $Provider<List<String>> {
+  /// 번역할 목록 제목. 번역이 꺼져 있으면 비어 있다. 쪽이 늘 때마다 바뀐다.
+  ListTitlesToTranslateProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'listTitlesToTranslateProvider',
+        isAutoDispose: true,
+        dependencies: <ProviderOrFamily>[
+          listTranslationOnProvider,
+          pagingItemsProvider,
+        ],
+        $allTransitiveDependencies: <ProviderOrFamily>{
+          ListTitlesToTranslateProvider.$allTransitiveDependencies0,
+          ListTitlesToTranslateProvider.$allTransitiveDependencies1,
+          ListTitlesToTranslateProvider.$allTransitiveDependencies2,
+          ListTitlesToTranslateProvider.$allTransitiveDependencies3,
+          ListTitlesToTranslateProvider.$allTransitiveDependencies4,
+          ListTitlesToTranslateProvider.$allTransitiveDependencies5,
+          ListTitlesToTranslateProvider.$allTransitiveDependencies6,
+          ListTitlesToTranslateProvider.$allTransitiveDependencies7,
+        },
+      );
+
+  static final $allTransitiveDependencies0 = listTranslationOnProvider;
+  static final $allTransitiveDependencies1 =
+      ListTranslationOnProvider.$allTransitiveDependencies0;
+  static final $allTransitiveDependencies2 =
+      ListTranslationOnProvider.$allTransitiveDependencies1;
+  static final $allTransitiveDependencies3 = pagingItemsProvider;
+  static final $allTransitiveDependencies4 =
+      PagingItemsProvider.$allTransitiveDependencies0;
+  static final $allTransitiveDependencies5 =
+      PagingItemsProvider.$allTransitiveDependencies2;
+  static final $allTransitiveDependencies6 =
+      PagingItemsProvider.$allTransitiveDependencies3;
+  static final $allTransitiveDependencies7 =
+      PagingItemsProvider.$allTransitiveDependencies4;
+
+  @override
+  String debugGetCreateSourceHash() => _$listTitlesToTranslateHash();
+
+  @$internal
+  @override
+  $ProviderElement<List<String>> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  List<String> create(Ref ref) {
+    return listTitlesToTranslate(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(List<String> value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<List<String>>(value),
+    );
+  }
+}
+
+String _$listTitlesToTranslateHash() =>
+    r'7bcc3ef7bad59a90912fbe922d964f7293c82a2e';
+
 @ProviderFor(SortTypeNotifier)
 final sortTypeProvider = SortTypeNotifierProvider._();
 

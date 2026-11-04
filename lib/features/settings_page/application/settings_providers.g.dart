@@ -359,6 +359,69 @@ abstract class _$PlayVideosInAppNotifier extends $Notifier<bool> {
   }
 }
 
+/// 번역을 지원하는 사이트(레딧)의 목록 제목을 번역해 보이고, 상세도 열자마자
+/// 번역한다. 목록 앱바의 번역 버튼으로 켜고 끄며 앱을 다시 켜도 유지한다.
+
+@ProviderFor(AutoTranslateNotifier)
+final autoTranslateProvider = AutoTranslateNotifierProvider._();
+
+/// 번역을 지원하는 사이트(레딧)의 목록 제목을 번역해 보이고, 상세도 열자마자
+/// 번역한다. 목록 앱바의 번역 버튼으로 켜고 끄며 앱을 다시 켜도 유지한다.
+final class AutoTranslateNotifierProvider
+    extends $NotifierProvider<AutoTranslateNotifier, bool> {
+  /// 번역을 지원하는 사이트(레딧)의 목록 제목을 번역해 보이고, 상세도 열자마자
+  /// 번역한다. 목록 앱바의 번역 버튼으로 켜고 끄며 앱을 다시 켜도 유지한다.
+  AutoTranslateNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'autoTranslateProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$autoTranslateNotifierHash();
+
+  @$internal
+  @override
+  AutoTranslateNotifier create() => AutoTranslateNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$autoTranslateNotifierHash() =>
+    r'6d2232a0592bfbc4152c08a39b9c72fa95fb94c6';
+
+/// 번역을 지원하는 사이트(레딧)의 목록 제목을 번역해 보이고, 상세도 열자마자
+/// 번역한다. 목록 앱바의 번역 버튼으로 켜고 끄며 앱을 다시 켜도 유지한다.
+
+abstract class _$AutoTranslateNotifier extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
 /// 목록 · 상세 제목에 말머리 태그를 보인다. 끄면 태그 없이 제목만 보인다.
 
 @ProviderFor(ShowCategoryNotifier)

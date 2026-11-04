@@ -8,6 +8,7 @@ import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
 
 import '../../../settings_page/application/settings_providers.dart';
 import '../../application/list_providers.dart';
+import '../../../translation/application/translation_providers.dart';
 
 mixin class ListState() {
   String smallTitleState(WidgetRef ref) => ref.watch(listSmallTitleProvider);
@@ -29,6 +30,27 @@ mixin class ListState() {
   /// 페이지네이션이 없는 게시판 여부 — '더 불러오기' 버튼 노출 판단용.
   bool isSinglePageBoardState(WidgetRef ref) =>
       ref.watch(isSinglePageBoardProvider);
+
+  /// 이 목록에 번역 버튼을 둘지(레딧 · 번역을 지원하는 기기).
+  bool listTranslationSupportedState(WidgetRef ref) =>
+      ref.watch(listTranslationSupportedProvider);
+
+  /// 목록 제목을 번역해 보이는 중인지.
+  bool listTranslationOnState(WidgetRef ref) =>
+      ref.watch(listTranslationOnProvider);
+
+  /// 제목 번역이 진행 중인지(앱바 번역 버튼의 진행 표시).
+  bool isTranslatingTitlesState(WidgetRef ref) =>
+      ref.watch(titleTranslationsProvider.select((s) => s.pending > 0));
+
+  /// 보여 줄 제목. 번역을 켰고 번역이 끝났으면 번역문, 아니면 원문.
+  String displayTitleState(WidgetRef ref, String title) =>
+      ref.watch(listTranslationOnProvider)
+      ? ref.watch(
+              titleTranslationsProvider.select((s) => s.translated[title]),
+            ) ??
+            title
+      : title;
 
   /// 설정 "말머리 보기".
   bool showCategoryState(WidgetRef ref) => ref.watch(showCategoryProvider);

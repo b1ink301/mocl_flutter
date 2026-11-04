@@ -15,6 +15,8 @@ import 'package:mocl_flutter/features/database/domain/entities/mute_rule.dart';
 import 'package:mocl_flutter/features/list_page/application/use_case_provider.dart';
 import 'package:mocl_flutter/features/list_page/domain/usecases/get_list.dart';
 import 'package:mocl_flutter/features/mute/application/mute_providers.dart';
+import 'package:mocl_flutter/features/settings_page/application/settings_providers.dart';
+import 'package:mocl_flutter/features/translation/application/translation_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'list_providers.g.dart';
@@ -291,6 +293,27 @@ ListItem? itemAtIndex(Ref ref, int index) {
     }),
   );
 }
+
+/// 이 목록에 번역 버튼을 둘지(번역을 켠 사이트 · 지원하는 기기).
+@Riverpod(dependencies: [mainItem])
+bool listTranslationSupported(Ref ref) => ref.watch(
+  siteTranslationSupportedProvider(
+    ref.watch(mainItemProvider.select((item) => item.siteType)),
+  ),
+);
+
+/// 목록 제목을 번역해 보이는 중인지(설정 "번역해서 보기" + 지원 사이트).
+@Riverpod(dependencies: [listTranslationSupported])
+bool listTranslationOn(Ref ref) =>
+    ref.watch(listTranslationSupportedProvider) &&
+    ref.watch(autoTranslateProvider);
+
+/// 번역할 목록 제목. 번역이 꺼져 있으면 비어 있다. 쪽이 늘 때마다 바뀐다.
+@Riverpod(dependencies: [listTranslationOn, PagingItems])
+List<String> listTitlesToTranslate(Ref ref) =>
+    ref.watch(listTranslationOnProvider)
+    ? [for (final ListItem item in ref.watch(pagingItemsProvider)) item.title]
+    : const [];
 
 @riverpod
 class SortTypeNotifier() extends _$SortTypeNotifier {

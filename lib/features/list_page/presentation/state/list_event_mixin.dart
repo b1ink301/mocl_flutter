@@ -14,6 +14,8 @@ import 'package:mocl_flutter/features/list_page/presentation/list_search_delegat
 import '../../../../core/domain/entities/mocl_list_item.dart';
 import '../../../../core/util/mocl_logger.dart';
 import '../../application/list_providers.dart';
+import '../../../settings_page/application/settings_providers.dart';
+import '../../../translation/application/translation_providers.dart';
 
 mixin class ListEvent() {
   void handleRefresh(WidgetRef ref) =>
@@ -50,6 +52,34 @@ mixin class ListEvent() {
       if (next <= 0 || prev == next) return;
       ref.read(listPagingControllerProvider.notifier).markAsReadById(next);
     });
+  }
+
+  /// 쪽이 늘 때마다 새 제목을 번역한다(번역을 켰을 때만 제목이 들어온다).
+  void bindTitleTranslation(WidgetRef ref) {
+    ref.listen<List<String>>(listTitlesToTranslateProvider, (_, titles) {
+      if (titles.isEmpty) return;
+      ref.read(titleTranslationsProvider.notifier).translate(titles).catchError(
+        (Object e) {
+          MoclLogger.w(() => '[translate] 목록 제목 번역 실패: $e');
+        },
+      );
+    });
+  }
+
+  /// 설정 "번역해서 보기"를 켜고 끈다. 켜면 지금 목록 제목을 바로 번역하고,
+  /// 실패하면 false(설정은 켜 둔 채, 다음 쪽에서 다시 시도한다).
+  Future<bool> toggleListTranslation(WidgetRef ref) async {
+    ref.read(autoTranslateProvider.notifier).toggle();
+    if (!ref.read(listTranslationOnProvider)) return true;
+    try {
+      await ref
+          .read(titleTranslationsProvider.notifier)
+          .translate(ref.read(listTitlesToTranslateProvider));
+      return true;
+    } catch (e) {
+      MoclLogger.w(() => '[translate] 목록 제목 번역 실패: $e');
+      return false;
+    }
   }
 
   /// 넓은 화면이면 목록 옆 칸에서 열고, 아니면 상세 화면을 쌓는다.

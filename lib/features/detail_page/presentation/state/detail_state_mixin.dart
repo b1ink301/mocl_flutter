@@ -10,6 +10,7 @@ import '../../../html_parser/application/datasource_provider.dart';
 import '../../../settings_page/application/settings_providers.dart';
 import '../../application/detail_providers.dart';
 import '../../application/use_case_provider.dart';
+import '../../../translation/application/translation_providers.dart';
 
 mixin class DetailState() {
   AppTextStyles appTextStyles(WidgetRef ref) =>
@@ -32,8 +33,9 @@ mixin class DetailState() {
       ref.watch(detailTranslationProvider);
 
   /// 이 상세에 번역 버튼을 둘지(레딧 · 번역을 지원하는 기기).
-  bool supportsTranslationState(WidgetRef ref) =>
-      ref.watch(supportsTranslationProvider(ref.watch(detailSiteTypeProvider)));
+  bool supportsTranslationState(WidgetRef ref) => ref.watch(
+    siteTranslationSupportedProvider(ref.watch(detailSiteTypeProvider)),
+  );
 
   /// 본문/댓글 이미지 로드 시 보낼 Referer = 현재 사이트의 baseUrl.
   /// (디시 등 일부 CDN 은 Referer 가 사이트 도메인이어야 이미지를 준다.)

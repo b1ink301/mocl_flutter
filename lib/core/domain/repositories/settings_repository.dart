@@ -24,6 +24,10 @@ abstract class SettingsRepository() {
   bool isPlayVideosInApp();
   void setPlayVideosInApp(bool playInApp);
 
+  /// 번역을 지원하는 사이트(레딧)의 목록 제목과 상세를 자동으로 번역해 보일지.
+  bool isAutoTranslate();
+  void setAutoTranslate(bool autoTranslate);
+
   /// 목록 · 상세 제목에 말머리 태그를 보일지.
   bool isShowCategory();
   void setShowCategory(bool showCategory);

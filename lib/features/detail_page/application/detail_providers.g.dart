@@ -202,6 +202,7 @@ final class DetailTranslationNotifierProvider
         dependencies: <ProviderOrFamily>[
           detailsProvider,
           detailTitleStateProvider,
+          detailSiteTypeProvider,
         ],
         $allTransitiveDependencies: <ProviderOrFamily>{
           DetailTranslationNotifierProvider.$allTransitiveDependencies0,
@@ -248,7 +249,7 @@ final class DetailTranslationNotifierProvider
 }
 
 String _$detailTranslationNotifierHash() =>
-    r'66271beffd9f30c3679a3a05678169fd492e4979';
+    r'e4eef357a7804c0ea80c456cdd6691d26b369f06';
 
 /// 원문 ↔ 번역본 전환. 번역은 기기 안에서 하고, 한 번 끝낸 번역은 이 글을 보는
 /// 동안 다시 하지 않는다. 새로고침하면 처음부터 다시 번역한다.
@@ -643,7 +644,7 @@ final class DetailUrlProvider
   }
 }
 
-String _$detailUrlHash() => r'fee3df6fa1be8c8a6da47bc21ff1c0a921a44bef';
+String _$detailUrlHash() => r'efff438ad02112ccac4d131b863ae3bb9f843fa2';
 
 /// 상세 앱바의 expandedHeight.
 ///

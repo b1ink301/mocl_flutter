@@ -9,6 +9,8 @@ import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/detail_page/application/use_case_provider.dart';
 import 'package:mocl_flutter/features/detail_page/domain/usecases/set_read_flag.dart';
+import 'package:mocl_flutter/core/util/mocl_logger.dart';
+import 'package:mocl_flutter/features/settings_page/application/settings_providers.dart';
 import 'package:mocl_flutter/features/translation/application/translation_providers.dart';
 import 'package:mocl_flutter/features/translation/domain/details_translator.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -62,17 +64,36 @@ class const DetailTranslation({
 
 /// 원문 ↔ 번역본 전환. 번역은 기기 안에서 하고, 한 번 끝낸 번역은 이 글을 보는
 /// 동안 다시 하지 않는다. 새로고침하면 처음부터 다시 번역한다.
-@Riverpod(dependencies: [DetailsNotifier, DetailTitleStateNotifier])
+@Riverpod(
+  dependencies: [DetailsNotifier, DetailTitleStateNotifier, detailSiteType],
+)
 class DetailTranslationNotifier() extends _$DetailTranslationNotifier {
   /// 진행 중인 번역을 가리킨다. 바뀌면 그 번역의 결과는 버린다.
   int _run = 0;
 
   @override
   DetailTranslation build() {
-    ref.watch(detailsProvider);
+    final AsyncValue<Details> details = ref.watch(detailsProvider);
     _run++;
+    // 설정 "번역해서 보기"(목록 앱바 번역 버튼)가 켜져 있으면 글을 받자마자 번역한다.
+    if (details.hasValue && !details.isLoading && _autoTranslate()) {
+      Future.microtask(() async {
+        if (!ref.mounted || state.isShowing) return;
+        try {
+          await toggle();
+        } catch (e) {
+          MoclLogger.w(() => '[translate] 자동 번역 실패: $e');
+        }
+      });
+    }
     return const DetailTranslation();
   }
+
+  bool _autoTranslate() =>
+      ref.read(autoTranslateProvider) &&
+      ref.read(
+        siteTranslationSupportedProvider(ref.read(detailSiteTypeProvider)),
+      );
 
   /// 번역본과 원문을 오간다. 번역 중에 누르면 멈추고 원문으로 돌아간다.
   /// 번역에 실패하면 원문으로 돌아가고 예외를 다시 던진다(화면이 안내한다).

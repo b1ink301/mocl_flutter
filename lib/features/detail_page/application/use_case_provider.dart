@@ -4,7 +4,6 @@ import 'package:mocl_flutter/features/detail_page/domain/usecases/get_detail.dar
 import 'package:mocl_flutter/features/detail_page/domain/usecases/set_read_flag.dart';
 import 'package:mocl_flutter/features/detail_page/domain/usecases/write_comment.dart';
 import 'package:mocl_flutter/features/html_parser/application/datasource_provider.dart';
-import 'package:mocl_flutter/features/translation/application/translation_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'use_case_provider.g.dart';
@@ -26,12 +25,6 @@ WriteComment writeComment(Ref ref, SiteType siteType) {
   final repository = ref.watch(detailRepositoryProvider(siteType));
   return WriteComment(detailRepository: repository);
 }
-
-/// 이 사이트 상세에 번역 버튼을 둘지. 사이트가 켜 두었고 기기가 지원해야 한다.
-@riverpod
-bool supportsTranslation(Ref ref, SiteType siteType) =>
-    ref.watch(currentParserProvider(siteType)).$1.supportsTranslation &&
-    (ref.watch(translationAvailableProvider).value ?? false);
 
 /// 이 사이트에서 앱으로 댓글을 쓸 수 있는지.
 ///
