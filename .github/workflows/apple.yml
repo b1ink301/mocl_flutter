@@ -1,0 +1,64 @@
+name: Apple build
+
+# iOS · macOS 는 Swift Package Manager 로 네이티브 의존성을 받는다. 플러그인 버전에 따라
+# 패키지 해석이 실패할 수 있어(예: firebase_core 5.x ↔ google_sign_in_ios) Android 빌드만으로는
+# 알 수 없으므로, 의존성이나 Apple 프로젝트가 바뀔 때 빌드까지 해 본다.
+# Debug 로 빌드한다 — Release 는 Crashlytics 심볼 업로드 단계가 flutterfire CLI 를 찾는다.
+on:
+  push:
+    branches: [develop, main]
+    paths: &apple_paths
+      - 'pubspec.yaml'
+      - 'pubspec.lock'
+      - 'ios/**'
+      - 'macos/**'
+      - '.github/workflows/apple.yml'
+  pull_request:
+    paths: *apple_paths
+  workflow_dispatch:
+
+concurrency:
+  group: apple-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: macos-latest
+    timeout-minutes: 60
+    strategy:
+      fail-fast: false
+      matrix:
+        platform: [ios, macos]
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Set up Xcode
+        uses: maxim-lobanov/setup-xcode@ed7a3b1fda3918c0306d1b724322adc0b8cc0a90 # v1.7.0
+        with:
+          xcode-version: latest-stable
+
+      - name: Read Flutter version
+        id: fvm
+        run: echo "version=$(jq -r .flutter .fvmrc)" >> "$GITHUB_OUTPUT"
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          channel: 'stable'
+          flutter-version: ${{ steps.fvm.outputs.version }}
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get --enforce-lockfile
+
+      - name: Build iOS
+        if: matrix.platform == 'ios'
+        run: flutter build ios --debug --no-codesign --flavor dev
+
+      - name: Build macOS
+        if: matrix.platform == 'macos'
+        run: flutter build macos --debug --flavor dev
