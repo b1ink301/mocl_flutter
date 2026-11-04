@@ -148,7 +148,7 @@ dependencies:
   #  rearch: ^1.16.0
 
   # nosql
-  sembast: ^3.9.0
+  sembast: ^3.10.0
   sembast_web: ^2.4.6+1
 
 #  cupertino_sidebar: ^1.0.1
@@ -159,8 +159,8 @@ dependencies:
 #  translator: ^1.0.4+1
   file_picker: ^13.3.2
 
-  material_ui: ^1.9.0
-  cupertino_ui: ^1.1.5
+  material_ui: ^1.10.0
+  cupertino_ui: ^1.1.6
   intl: any
   google_mobile_ads: ^9.2.0
   in_app_update: ^5.0.0
