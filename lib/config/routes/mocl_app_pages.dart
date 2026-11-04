@@ -15,7 +15,7 @@ import 'package:mocl_flutter/features/list_page/presentation/mocl_list_page.dart
 import 'package:mocl_flutter/features/login_page/presentation/login_page.dart';
 import 'package:mocl_flutter/features/main_page/presentation/mocl_main_page.dart';
 import 'package:mocl_flutter/features/settings_page/presentation/pages/settings/settings_page.dart';
-import 'package:swipeable_page_route/swipeable_page_route.dart';
+import 'package:mocl_flutter/core/presentation/widgets/swipe_back_page.dart';
 
 part 'mocl_routes.dart';
 
@@ -28,9 +28,7 @@ class AppPages._() {
       GoRoute(
         path: Routes.main,
         pageBuilder: (BuildContext context, GoRouterState state) =>
-            SwipeablePage(
-              builder: (BuildContext context) => MainPage.init(),
-            ),
+            SwipeBackPage(builder: (BuildContext context) => MainPage.init()),
         routes: [
           GoRoute(
             path: Routes.setMainDlg,
@@ -47,7 +45,7 @@ class AppPages._() {
         // redirect: (BuildContext context, GoRouterState state) =>
         //     state.extra is MainItem ? null : Routes.main,
         pageBuilder: (BuildContext context, GoRouterState state) =>
-            SwipeablePage(
+            SwipeBackPage(
               builder: (BuildContext context) {
                 final MainItem item =
                     GoRouterState.of(context).extra as MainItem;
@@ -70,15 +68,12 @@ class AppPages._() {
         //     ? null
         //     : Routes.main,
         pageBuilder: (BuildContext context, GoRouterState state) =>
-            SwipeablePage(
+            SwipeBackPage(
               builder: (BuildContext context) {
                 final Object? extra = GoRouterState.of(context).extra;
                 // 본문 링크로 들어오면 사이트가 함께 온다(다른 사이트 글일 수 있음).
                 if (extra is SiteLink) {
-                  return DetailPage.init(
-                    extra.item,
-                    siteType: extra.siteType,
-                  );
+                  return DetailPage.init(extra.item, siteType: extra.siteType);
                 }
                 return DetailPage.init(extra as ListItem);
               },
@@ -111,21 +106,21 @@ class AppPages._() {
       GoRoute(
         path: Routes.settings,
         pageBuilder: (BuildContext context, GoRouterState state) =>
-            SwipeablePage(
+            SwipeBackPage(
               builder: (BuildContext context) => SettingsPage.init(context),
             ),
       ),
       GoRoute(
         path: Routes.bookmarks,
         pageBuilder: (BuildContext context, GoRouterState state) =>
-            SwipeablePage(
+            SwipeBackPage(
               builder: (BuildContext context) => const BookmarksPage(),
             ),
       ),
       GoRoute(
         path: Routes.mute,
         pageBuilder: (BuildContext context, GoRouterState state) =>
-            SwipeablePage(builder: (BuildContext context) => const MutePage()),
+            SwipeBackPage(builder: (BuildContext context) => const MutePage()),
       ),
       GoRoute(
         path: Routes.video,

@@ -81,6 +81,20 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   항목 탭은 `ListDetailScope.tryOpen` 을 먼저 부르고 false 일 때만 push 한다.
   옆 칸 안인지는 `ListDetailPane.isPane` 으로 본다(뒤로가기 버튼 · 우클릭 닫기 없음).
 
+## 스와이프 뒤로가기 (`SwipeBackPage`)
+
+- 화면 라우트는 `SwipeBackPage`(`core/presentation/widgets/swipe_back_page.dart`)로 만든다.
+  패키지(`swipeable_page_route`)는 쓰지 않는다 — `CupertinoPageRoute` 기반이라 Android 시스템
+  뒤로가기 제스처(predictive back)에 애니메이션이 붙지 않는다.
+- 본문 어디서든 오른쪽으로 끄는 드래그와 Android 시스템 제스처(양쪽 가장자리)가 **같은 라우트
+  컨트롤러**를 움직인다. 전환 모양은 `CupertinoPageTransition`.
+- 제스처 내비게이션의 가장자리(`MediaQuery.systemGestureInsets`)에서 시작한 터치는 본문 드래그로
+  받지 않는다. OS 가 판정 전까지 터치를 앱에도 보내서, 받으면 시스템 제스처와 겹쳐 애니메이션 없이 닫힌다.
+- `didStartUserGesture` / `didStopUserGesture` 는 라우트의 `_startGesture` / `_stopGesture` 로만
+  부른다. 짝이 하나라도 어긋나면 Navigator 가 계속 제스처 중으로 남아 앱 전체에서 스와이프가 멈춘다.
+- 가로로 끄는 동작이 따로 있는 화면(영상 탐색 막대 등)은 `SwipeBackPage` 대신 `builder:` 를 쓰거나
+  `canSwipe: false` 로 끈다.
+
 ## 로컬 DB (sembast)
 
 - 저장 구조를 바꾸면 `database_migrations.dart` 의 `kAppDatabaseVersion` 을 올리고

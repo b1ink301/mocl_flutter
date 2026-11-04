@@ -69,9 +69,6 @@ dependencies:
   # URL 런처
   url_launcher: ^6.3.3
 
-  # swipe back
-  swipeable_page_route: ^0.4.8
-
   # splash
 #  flutter_native_splash: ^2.4.8
   #  gif: ^2.3.0
