@@ -706,7 +706,7 @@ final class GeekNewsApiClientProvider
   }
 }
 
-String _$geekNewsApiClientHash() => r'8a7127beb6283d8af519724160f195ddb4e6ea95';
+String _$geekNewsApiClientHash() => r'22e5b19b253a527fe15a34b1b528a492dd4edd48';
 
 @ProviderFor(meecoApiClient)
 final meecoApiClientProvider = MeecoApiClientProvider._();

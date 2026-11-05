@@ -130,7 +130,9 @@ BaseApi redditApiClient(Ref ref) {
 
 @riverpod
 BaseApi geekNewsApiClient(Ref ref) {
-  return GeekNewsApi(_buildDio(userAgentPc), userAgentPc);
+  // 긱뉴스 CloudFront 는 Mac PC Chrome UA 중 흔한 스크래퍼 값(Chrome/120 · 140 ·
+  // 150.0.0.0)을 정확히 맞춰 403 으로 막는다. 모바일 UA 도 같은 HTML 을 준다.
+  return GeekNewsApi(_buildDio(userAgentMobile), userAgentMobile);
 }
 
 @riverpod
