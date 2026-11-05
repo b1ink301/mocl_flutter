@@ -29,10 +29,12 @@ Future<void> main() async {
   final SiteFetcher fetcher = SiteFetcher(
     remoteConfig: () => configs.current.config,
   );
+  // 키워드 알림 · 레이더가 같은 게시판을 보면 한 번만 받는다.
+  final BoardCache boards = BoardCache(fetcher.fetchList);
   final AlertCrawler crawler = AlertCrawler(
     store: alerts,
     push: push,
-    fetch: (sub) => fetcher.fetchList(
+    fetch: (sub) => boards.fetch(
       sub.site,
       board: sub.board,
       url: sub.url,
@@ -40,8 +42,30 @@ Future<void> main() async {
     ),
   )..start();
 
+  final RadarStore radarStore = RadarStore(
+    await databaseFactoryIo.openDatabase('$dataDir/radar.db'),
+  );
+  final RadarFeed radarFeed = RadarFeed(radarStore);
+  late final RadarCollector radar;
+  radar = RadarCollector(
+    store: radarStore,
+    // 수집이 끝날 때마다 이슈 목록을 다시 계산해 둔다.
+    onCollected: () => radarFeed.rebuild(
+      DateTime.now().millisecondsSinceEpoch,
+      failing: radar.failing,
+    ),
+    fetch: (b) =>
+        boards.fetch(b.site, board: b.board, url: b.url, boardTitle: b.title),
+  )..start();
+
   final HttpServer server = await shelf_io.serve(
-    buildHandler(configs, alerts: alerts, crawlStatus: () => crawler.status),
+    buildHandler(
+      configs,
+      alerts: alerts,
+      crawlStatus: () =>
+          crawler.status.withRadar(radar.lastRunAt, radar.failing.length),
+      radarFeed: radarFeed,
+    ),
     InternetAddress.anyIPv4,
     port,
     poweredByHeader: null,
@@ -59,6 +83,7 @@ Future<void> main() async {
     await sigterm.cancel();
     await sigint.cancel();
     await crawler.stop();
+    await radar.stop();
     await server.close();
     fetcher.close();
     await push.close();

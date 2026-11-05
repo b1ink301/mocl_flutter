@@ -14,6 +14,8 @@ Mocl 앱 서버. **원격 설정**(`GET /v1/config`)과 **키워드 알림**(공
 | `GET /healthz` | `ok` |
 | `GET /healthz/crawl` | 크롤러 상태 JSON. 마지막 한 바퀴가 10분 넘게 지났으면 `503` |
 | `GET /v1/config` | 원격 설정 JSON. `ETag` 를 주고 `If-None-Match` 가 같으면 `304` |
+| `GET /v1/issues` | 이슈 레이더 목록(`IssueFeed`). ETag / `304`, 첫 수집 전에는 `503` |
+| `GET /v1/issues/{id}` | 이슈 하나 |
 | `PUT /v1/alerts/{installId}` | 기기의 키워드 알림 등록을 통째로 덮어쓴다(`AlertRegistration`). 구독이 비면 삭제. `204` |
 | `DELETE /v1/alerts/{installId}` | 등록 삭제. `204` |
 
@@ -53,6 +55,18 @@ Mocl 앱 서버. **원격 설정**(`GET /v1/config`)과 **키워드 알림**(공
   ```bash
   docker run --rm -v ~/mocl:/src -w /src/server dart:3.13.7 sh -c "dart pub get >/dev/null && dart run bin/probe.dart"
   ```
+
+## 이슈 레이더
+
+- `lib/src/radar/radar_boards.dart` 의 게시판을 5분마다 받아(`RadarCollector`) 글마다 처음 본 시각과
+  반응 기록을 48시간 쌓는다(`DATA_DIR/radar.db`). 키워드 알림과 같은 게시판은 `BoardCache` 로 한 번만 받는다.
+- 수집 직후 묶기(`Clusterer`) → 점수(`RadarRanker`) → JSON 캐시(`RadarFeed`). 요청은 캐시만 내보낸다.
+- 묶기 결과를 실제 데이터로 보기(임계값 튜닝):
+  ```bash
+  docker run --rm -v mocl_mocl_data:/data:ro -v ~/mocl:/src -v mocl_pubcache:/root/.pub-cache -w /src/server \
+    dart:3.13.7 sh -c "dart pub get >/dev/null && dart run bin/radar_eval.dart /data/radar.db 0.4 0.45 0.5"
+  ```
+- `/healthz/crawl` 은 레이더가 15분 넘게 멈춰도 503 이다(감시 스크립트가 함께 본다).
 
 ## 로컬 실행
 

@@ -112,6 +112,20 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   iOS 는 Xcode 에서 Push Notifications · Background Modes(remote notification) 와 Firebase 콘솔 APNs 키가 있어야 온다.
 - 서버 발송 키는 `server/secrets/firebase-service-account.json`(gitignore). 없으면 dry-run(로그만).
 
+## 이슈 레이더 (`features/issue_radar/` · `server/lib/src/radar/`)
+
+- 서버가 정해 둔 게시판(`radarBoards`, 베스트 위주 · 자유게시판은 가중치 낮게)을 5분마다 받아
+  48시간 쌓고(`radar.db`), 제목이 비슷한 글을 묶어 **2개 이상 커뮤니티**(또는 한 곳 3글 이상)에 걸친
+  묶음을 이슈로 보여 준다. 계약은 `mocl_shared/radar/issue_feed.dart`(`IssueFeed`, 앱은 모르는 사이트를 건너뜀).
+- 글 시각은 사이트 값(형식이 제각각)이 아니라 **서버가 처음 본 시각**. 반응(댓글 · 추천 · 조회)은 사이트마다
+  주는 게 달라 같은 사이트 안 순위로만 쓴다.
+- 묶기(`Clusterer`): 단어 · 이웃 단어 쌍 · 한글 2-gram 의 TF-IDF 코사인. 코사인 ≥ 0.45 이거나, ≥ 0.2 이면서
+  단어 쌍 또는 단어 2개 이상을 공유할 때만 묶는다(단어 하나만 겹치는 오탐 방지).
+  규칙을 바꾸면 `server/bin/radar_eval.dart` 로 **실제 쌓인 데이터**에 돌려 보고 골든 테스트(`radar_rank_test`)를 고친다.
+- 급상승은 데이터가 1시간 쌓이기 전(서버 재시작 직후)에는 표시하지 않는다.
+- 앱: 드로어 "지금 이슈" → 목록 → 이슈 상세(커뮤니티별 글) → `SiteLinkResolver` 로 앱 상세.
+  차단(뮤트) 제목 키워드로 글을 거른다(`filterMuted`). 본 이슈는 흐리게(`IssueReadStore`).
+
 ## 부팅 (`main.dart`)
 
 - 초기화는 `_prepareApp()` 안에서만 한다. `BootGuard` 가 감싸서, 던지면 실패 화면 +

@@ -7,6 +7,7 @@ import 'alerts/alert_crawler.dart';
 import 'alerts/alert_routes.dart';
 import 'alerts/alert_store.dart';
 import 'config_store.dart';
+import 'radar/radar_feed.dart';
 import 'rate_limiter.dart';
 import 'server_log.dart';
 
@@ -20,6 +21,7 @@ Handler buildHandler(
   AlertStore? alerts,
   RateLimiter? alertLimiter,
   CrawlStatus Function()? crawlStatus,
+  RadarFeed? radarFeed,
   Duration crawlStaleAfter = const Duration(minutes: 10),
 }) {
   final Router router = Router()
@@ -30,15 +32,20 @@ Handler buildHandler(
       final CrawlStatus? status = crawlStatus?.call();
       if (status == null) return Response.notFound('no crawler');
       final int now = DateTime.now().millisecondsSinceEpoch;
+      // 레이더는 5분 주기라 두 배 넘게 지나면 멈춘 것으로 본다.
       final bool stale =
           status.lastTickAt == 0 ||
-          now - status.lastTickAt > crawlStaleAfter.inMilliseconds;
+          now - status.lastTickAt > crawlStaleAfter.inMilliseconds ||
+          (status.radarLastRunAt != 0 &&
+              now - status.radarLastRunAt >
+                  crawlStaleAfter.inMilliseconds + 5 * 60 * 1000);
       return Response(
         stale ? 503 : 200,
         body: jsonEncode(status.toJson(now)),
         headers: _jsonHeaders,
       );
     });
+  radarFeed?.mount(router);
   if (alerts != null) {
     mountAlertRoutes(router, alerts, alertLimiter ?? RateLimiter());
   }

@@ -9,6 +9,8 @@ abstract class Routes._() {
   static const bookmarks = '/bookmarks';
   static const mute = '/mute';
   static const keywordAlerts = '/keyword-alerts';
+  static const issues = '/issues';
+  static const issueDetail = '/issue';
   static const login = '/login';
   static const video = '/video';
   static const viewPhotoDlg = 'viewPhotoDlg';

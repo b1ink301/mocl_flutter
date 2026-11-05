@@ -109,6 +109,7 @@ class SiteFetcher({
     required String board,
     required String url,
     String boardTitle = '',
+    SortType sort = SortType.recent,
   }) async {
     // 뽐뿌는 목록 페이지가 데이터센터 IP 를 막아 RSS 로 받는다(RSS 는 열려 있다).
     if (site == SiteType.ppomppu) return _ppomppuRss(board, boardTitle);
@@ -118,7 +119,7 @@ class SiteFetcher({
       url,
       board,
       1,
-      SortType.recent,
+      sort,
       const LastId(),
     );
     final Response<List<int>> response;

@@ -5,6 +5,7 @@ import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_category.dart';
 import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/favorite/presentation/state/favorite_state_mixin.dart';
+import 'package:mocl_flutter/features/issue_radar/presentation/state/issue_radar_state_mixin.dart';
 
 import '../../../../core/presentation/widgets/plain_icon.dart';
 import '../../../../core/presentation/widgets/plain_text.dart';
@@ -42,6 +43,7 @@ class const DrawerWidget({super.key})
               context.push(Routes.settings);
             },
           ),
+          const _IssueRadarButton(),
           Expanded(
             child: SingleChildScrollView(
               padding: EdgeInsets.fromLTRB(18, 4, 18, 18 + bottomPadding),
@@ -58,6 +60,63 @@ class const DrawerWidget({super.key})
           ),
           _AddBoardButton(bottomPadding: bottomPadding),
         ],
+      ),
+    );
+  }
+}
+
+/// 이슈 레이더로 가는 줄. 서버가 없는 빌드에서는 숨긴다.
+class const _IssueRadarButton() extends ConsumerWidget with IssueRadarState {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (!issueRadarAvailableState(ref)) return const SizedBox.shrink();
+    final theme = Theme.of(context);
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(18, 14, 18, 0),
+      child: Material(
+        color: theme.colorScheme.primaryContainer.withValues(alpha: 0.55),
+        borderRadius: BorderRadius.circular(14),
+        child: InkWell(
+          borderRadius: BorderRadius.circular(14),
+          onTap: () {
+            context.pop();
+            context.push(Routes.issues);
+          },
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+            child: Row(
+              children: [
+                PlainIcon(Icons.radar, color: theme.colorScheme.primary),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: PlainText(
+                    '지금 이슈',
+                    style: TextStyle(
+                      color: theme.colorScheme.onPrimaryContainer,
+                      fontSize: 15,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
+                ),
+                PlainText(
+                  '여러 커뮤니티 화제',
+                  style: TextStyle(
+                    color: theme.colorScheme.onPrimaryContainer.withValues(
+                      alpha: 0.7,
+                    ),
+                    fontSize: 12,
+                  ),
+                ),
+                const SizedBox(width: 4),
+                PlainIcon(
+                  Icons.chevron_right,
+                  size: 20,
+                  color: theme.colorScheme.onPrimaryContainer,
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

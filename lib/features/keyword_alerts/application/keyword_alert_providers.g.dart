@@ -113,7 +113,7 @@ final class KeywordAlertStoreProvider
         argument: null,
         retry: null,
         name: r'keywordAlertStoreProvider',
-        isAutoDispose: true,
+        isAutoDispose: false,
         dependencies: null,
         $allTransitiveDependencies: null,
       );
@@ -141,7 +141,7 @@ final class KeywordAlertStoreProvider
   }
 }
 
-String _$keywordAlertStoreHash() => r'0a3b313caa14071573e5cc258d3233961c5ea04e';
+String _$keywordAlertStoreHash() => r'c3f80d6be0d07c2d5e152ea8338dd4ae1fad4612';
 
 @ProviderFor(keywordAlertSync)
 final keywordAlertSyncProvider = KeywordAlertSyncProvider._();

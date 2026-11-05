@@ -20,13 +20,29 @@ class const CrawlStatus({
   /// 마지막 시도가 실패한 게시판 수.
   final int failingBoards = 0,
   final int devices = 0,
+
+  /// 이슈 레이더 수집(없으면 0).
+  final int radarLastRunAt = 0,
+  final int radarFailingBoards = 0,
 }) {
   Map<String, Object?> toJson(int now) => {
     'lastTickAgoSec': lastTickAt == 0 ? null : (now - lastTickAt) ~/ 1000,
     'boards': boards,
-    'failingBoards': failingBoards,
+    'failingBoards': failingBoards + radarFailingBoards,
     'devices': devices,
+    'radarLastRunAgoSec': radarLastRunAt == 0
+        ? null
+        : (now - radarLastRunAt) ~/ 1000,
   };
+
+  CrawlStatus withRadar(int lastRunAt, int failing) => CrawlStatus(
+    lastTickAt: lastTickAt,
+    boards: boards,
+    failingBoards: failingBoards,
+    devices: devices,
+    radarLastRunAt: lastRunAt,
+    radarFailingBoards: failing,
+  );
 }
 
 /// 구독된 게시판을 돌며 새 글을 찾아 키워드가 맞는 기기에 알린다.
