@@ -19,12 +19,19 @@ services:
       - mocl_data:/app/data
     environment:
       FIREBASE_SERVICE_ACCOUNT: /app/secrets/firebase-service-account.json
+    logging: &bounded-logs
+      # 로그가 끝없이 쌓이지 않게 용량으로 순환한다(오래된 것부터 지워짐).
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
     expose:
       - "8080"
 
   caddy:
     image: caddy:2.11
     restart: unless-stopped
+    logging: *bounded-logs
     depends_on:
       - api
     ports:

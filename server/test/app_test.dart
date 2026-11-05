@@ -96,4 +96,21 @@ void main() {
     final Response response = await get(buildHandler(store()), '/nope');
     expect(response.statusCode, 404);
   });
+
+  test('접속 로그 경로는 설치 id 를 가린다', () {
+    expect(redactPath('v1/alerts/abcdef0123456789'), '/v1/alerts/***');
+    expect(redactPath('v1/config'), '/v1/config');
+    expect(redactPath('v1/issues/i_1234'), '/v1/issues/i_1234');
+  });
+
+  test('요청 제한은 IP 를 1분 넘게 들고 있지 않는다', () {
+    DateTime now = DateTime(2026);
+    final RateLimiter limiter = RateLimiter(clock: () => now);
+    limiter.allow('1.1.1.1');
+    limiter.allow('2.2.2.2');
+    expect(limiter.trackedKeys, 2);
+    now = now.add(const Duration(seconds: 61));
+    limiter.allow('3.3.3.3');
+    expect(limiter.trackedKeys, 1, reason: '지난 창의 IP 는 지워진다');
+  });
 }

@@ -7,13 +7,18 @@ class RateLimiter({
   final DateTime Function() clock = DateTime.now,
 }) {
   final Map<String, (int start, int count)> _hits = {};
+  int _lastPrune = 0;
+
+  /// 지금 기억하고 있는 IP 수(테스트용).
+  int get trackedKeys => _hits.length;
 
   /// 허용하면 true.
+  ///
+  /// 창이 지난 기록은 창마다 한 번씩 지운다 — IP 를 [window] 넘게 들고 있지 않는다
+  /// (개인정보처리방침: 요청 수 제한을 위해 1분 동안만 쓰고 폐기).
   bool allow(String key) {
     final int now = clock().millisecondsSinceEpoch;
-    if (_hits.length > 10000) {
-      _hits.removeWhere((_, v) => now - v.$1 >= window.inMilliseconds);
-    }
+    if (now - _lastPrune >= window.inMilliseconds) prune();
     final (int, int)? hit = _hits[key];
     if (hit == null || now - hit.$1 >= window.inMilliseconds) {
       _hits[key] = (now, 1);
@@ -22,6 +27,13 @@ class RateLimiter({
     if (hit.$2 >= limit) return false;
     _hits[key] = (hit.$1, hit.$2 + 1);
     return true;
+  }
+
+  /// 창이 지난 기록을 지운다. 요청이 없을 때도 지워지도록 서버가 주기적으로 부른다.
+  void prune() {
+    final int now = clock().millisecondsSinceEpoch;
+    _hits.removeWhere((_, v) => now - v.$1 >= window.inMilliseconds);
+    _lastPrune = now;
   }
 
   /// Caddy 뒤에서는 X-Forwarded-For 의 첫 값이 실제 클라이언트다.

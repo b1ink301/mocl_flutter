@@ -58,10 +58,18 @@ Future<void> main() async {
         boards.fetch(b.site, board: b.board, url: b.url, boardTitle: b.title),
   )..start();
 
+  // 요청 제한용 IP 는 1분마다 비운다(요청이 없을 때도).
+  final RateLimiter limiter = RateLimiter();
+  final Timer pruneTimer = Timer.periodic(
+    const Duration(minutes: 1),
+    (_) => limiter.prune(),
+  );
+
   final HttpServer server = await shelf_io.serve(
     buildHandler(
       configs,
       alerts: alerts,
+      alertLimiter: limiter,
       crawlStatus: () =>
           crawler.status.withRadar(radar.lastRunAt, radar.failing.length),
       radarFeed: radarFeed,
@@ -82,6 +90,7 @@ Future<void> main() async {
     serverLog('[boot] $signal, shutting down');
     await sigterm.cancel();
     await sigint.cancel();
+    pruneTimer.cancel();
     await crawler.stop();
     await radar.stop();
     await server.close();

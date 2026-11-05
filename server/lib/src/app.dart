@@ -69,13 +69,14 @@ Response _config(Request request, ConfigStore configs) {
   return Response.ok(served.body, headers: {..._jsonHeaders, ...headers});
 }
 
-/// 접속 로그. 쿼리스트링 · 헤더는 남기지 않는다(앞으로 토큰이 실릴 수 있다).
+/// 접속 로그. IP · 쿼리스트링 · 헤더는 남기지 않고, 경로 속 설치 id 는 가린다
+/// (개인정보처리방침: 서버는 이용자 IP 를 저장하지 않는다).
 Middleware _accessLog() =>
     (Handler inner) => (Request request) async {
       final Stopwatch watch = Stopwatch()..start();
       final Response response = await inner(request);
       serverLog(
-        '${request.method} /${request.url.path} ${response.statusCode} '
+        '${request.method} ${redactPath(request.url.path)} ${response.statusCode} '
         '${watch.elapsedMilliseconds}ms',
       );
       return response;
@@ -96,3 +97,7 @@ Middleware _errorsAsJson() =>
         );
       }
     };
+
+/// 로그용 경로. `/v1/alerts/{installId}` 의 id 는 등록을 고칠 권한이라 가린다.
+String redactPath(String path) =>
+    '/${path.replaceFirstMapped(RegExp(r'^(v1/alerts/)[^/]+'), (m) => '${m[1]}***')}';
