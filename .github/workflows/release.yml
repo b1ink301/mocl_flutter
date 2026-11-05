@@ -93,6 +93,19 @@ jobs:
           [ -n "$ADS_JSON" ] || { echo "::error::Secrets ADS_JSON 이 비어 있습니다"; exit 1; }
           printf '%s' "$ADS_JSON" > ads.json
 
+      # 6-2. 서버 주소(키워드 알림 · 이슈 레이더 · 원격 설정). 비밀값이 아니므로 ADS_JSON 에
+      #      없으면 저장소 변수 MOCL_API_BASE_URL(없으면 기본 주소)로 채운다. 빠지면 출시 빌드에서
+      #      서버 기능이 통째로 꺼지므로 여기서 보장한다.
+      - name: Ensure server URL
+        env:
+          DEFAULT_API_BASE_URL: ${{ vars.MOCL_API_BASE_URL || 'https://api.example.com' }}
+        run: |
+          if [ "$(jq -r '.MOCL_API_BASE_URL // empty' ads.json)" = "" ]; then
+            jq --arg url "$DEFAULT_API_BASE_URL" '. + {MOCL_API_BASE_URL: $url}' ads.json > ads.tmp && mv ads.tmp ads.json
+            echo "::notice::ADS_JSON 에 서버 주소가 없어 $DEFAULT_API_BASE_URL 을 씁니다"
+          fi
+          echo "server: $(jq -r .MOCL_API_BASE_URL ads.json)"
+
       # 7. Flutter 릴리즈 빌드 — GitHub Release 용 APK, Play 용 AAB
       - name: Build Release
         run: |
