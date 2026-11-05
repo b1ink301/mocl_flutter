@@ -1,4 +1,3 @@
-import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/presentation/widgets/plain_divider_widget.dart';
@@ -6,9 +5,10 @@ import 'package:mocl_flutter/core/presentation/widgets/plain_divider_widget.dart
 import '../../domain/list_ad_placement.dart';
 import '../list_ad_slots.dart';
 import '../list_ad_style.dart';
+import 'native_ad_switcher.dart';
 
 /// 목록의 구분선 자리. 광고 자리([ListAdPlacement])면 구분선 사이에 광고를 넣는다.
-/// 광고가 아직 없거나 못 받았으면 평소처럼 구분선만 그린다.
+/// 광고를 받는 동안은 자리 표시로 칸을 잡아 두고, 못 받으면 구분선만 남긴다.
 class const ListAdSeparator({
   required final int index,
   required final AppTextStyles styles,
@@ -75,21 +75,31 @@ class _ListAdTileState() extends State<_ListAdTile> {
   }
 
   @override
-  Widget build(BuildContext context) => ValueListenableBuilder<NativeAd?>(
-    valueListenable: _entry.ad,
-    builder: (context, ad, _) {
-      if (ad == null) return const PlainDividerWidget();
-      return Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          const PlainDividerWidget(),
-          SizedBox(
-            height: widget.style.height,
-            child: AdWidget(key: ObjectKey(ad), ad: ad),
+  Widget build(BuildContext context) => ValueListenableBuilder<ListAdSlotState>(
+    valueListenable: _entry.state,
+    builder: (context, state, _) => Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        const PlainDividerWidget(),
+        // 광고가 오기 전에는 같은 높이의 자리 표시로 칸을 잡아 두어, 광고가
+        // 들어올 때 아래 글들이 밀리지 않게 한다. 못 받으면 칸을 접는다.
+        NativeAdCollapse(
+          collapsed: state.failed,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              // 자리(엔트리)가 바뀌면 전환 없이 새로 그린다. 옛 광고는
+              // 다음 프레임에 정리되므로 AdWidget 을 남겨 두면 안 된다.
+              NativeAdSwitcher(
+                key: ObjectKey(_entry),
+                ad: state.ad,
+                look: widget.style,
+              ),
+              const PlainDividerWidget(),
+            ],
           ),
-          const PlainDividerWidget(),
-        ],
-      );
-    },
+        ),
+      ],
+    ),
   );
 }

@@ -14,6 +14,10 @@ abstract interface class NativeAdLook() {
   NativeAdOptions get nativeAdOptions;
 
   Map<String, Object> toOptions();
+
+  /// 광고를 받는 동안 [height] 칸에 그리는 자리 표시. 광고와 같은 배치의
+  /// 회색 막대만 둔다(광고처럼 보이거나 눌리게 만들지 않는다).
+  Widget placeholder(BuildContext context);
 }
 
 /// `PlainText` 와 같은 조건(스케일 없음)으로 잰 한 줄 높이.
@@ -40,3 +44,30 @@ Map<String, Object> adTextOptions(
   '${prefix}Weight': (style.fontWeight ?? FontWeight.w400).value,
   '${prefix}LineHeight': lineHeight,
 };
+
+/// 자리 표시의 회색 막대 색.
+Color adSkeletonColor(BuildContext context) =>
+    Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.06);
+
+/// 한 줄([lineHeight]) 높이 안에서 세로 가운데에 놓는 둥근 막대.
+/// 너비는 칸의 [widthFactor] 만큼.
+Widget adSkeletonLine({
+  required double lineHeight,
+  required double widthFactor,
+  required Color color,
+}) => SizedBox(
+  height: lineHeight,
+  child: Align(
+    alignment: AlignmentDirectional.centerStart,
+    child: FractionallySizedBox(
+      widthFactor: widthFactor,
+      child: Container(
+        height: (lineHeight * 0.6).roundToDouble(),
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(4),
+        ),
+      ),
+    ),
+  ),
+);

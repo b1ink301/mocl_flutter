@@ -58,6 +58,39 @@ class ListAdStyle._({
   }
 
   @override
+  Widget placeholder(BuildContext context) {
+    final Color color = adSkeletonColor(context);
+    // 팩토리의 PADDING_START · PADDING_END 와 같다.
+    return ColoredBox(
+      color: background,
+      child: Padding(
+        padding: const EdgeInsetsDirectional.fromSTEB(
+          16,
+          _paddingVertical,
+          10,
+          _paddingVertical,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            adSkeletonLine(
+              lineHeight: titleLineHeight,
+              widthFactor: 0.6,
+              color: color,
+            ),
+            const SizedBox(height: _rowGap),
+            adSkeletonLine(
+              lineHeight: smallLineHeight,
+              widthFactor: 0.3,
+              color: color,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  @override
   Map<String, Object> toOptions() => {
     'background': background.toARGB32(),
     'iconSize': _iconSize,

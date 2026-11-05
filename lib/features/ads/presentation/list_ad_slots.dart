@@ -66,13 +66,13 @@ class ListAdSlots({required final String adUnitId}) {
       listener: NativeAdListener(
         onAdLoaded: (Ad ad) {
           if (entry._disposed) return;
-          entry._loaded.value = ad as NativeAd;
+          entry._state.value = (ad: ad as NativeAd, failed: false);
           MoclLogger.d(() => '[ads] slot $slot loaded');
         },
         onAdFailedToLoad: (Ad ad, LoadAdError error) {
-          // 광고가 없으면(no fill) 그 자리는 그냥 구분선으로 남는다.
+          // 광고가 없으면(no fill) 자리 표시를 접고 그냥 구분선으로 남는다.
           MoclLogger.w(() => '[ads] slot $slot failed: $error');
-          entry._dispose();
+          entry._dispose(failed: true);
         },
       ),
     )..load();
@@ -101,19 +101,25 @@ class ListAdSlots({required final String adUnitId}) {
   }
 }
 
-/// 광고 한 자리. 불러오기가 끝나면 [ad] 에 광고가 들어온다.
+/// 광고 자리 하나의 상태. 불러오는 중이면 `ad` 가 null 이고 `failed` 가 false.
+typedef ListAdSlotState = ({NativeAd? ad, bool failed});
+
+/// 광고 한 자리. 불러오기가 끝나면 [state] 에 광고(또는 실패)가 들어온다.
 class ListAdSlot._(final int index) {
   NativeAd? _ad;
-  final ValueNotifier<NativeAd?> _loaded = ValueNotifier<NativeAd?>(null);
+  final ValueNotifier<ListAdSlotState> _state = ValueNotifier<ListAdSlotState>((
+    ad: null,
+    failed: false,
+  ));
   int _mounts = 0;
   bool _disposed = false;
 
-  ValueListenable<NativeAd?> get ad => _loaded;
+  ValueListenable<ListAdSlotState> get state => _state;
 
-  void _dispose() {
+  void _dispose({bool failed = false}) {
     if (_disposed) return;
     _disposed = true;
-    _loaded.value = null;
+    _state.value = (ad: null, failed: failed);
     _ad?.dispose();
     _ad = null;
   }

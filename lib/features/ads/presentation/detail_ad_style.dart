@@ -60,13 +60,15 @@ class DetailAdStyle._({
     mediaAspectRatio: MediaAspectRatio.landscape,
   );
 
+  double get _topRowHeight => [
+    titleLineHeight,
+    _iconSize,
+    badgeLineHeight + _badgePaddingVertical * 2,
+  ].reduce((a, b) => a > b ? a : b);
+
   @override
   double get height {
-    final double topRow = [
-      titleLineHeight,
-      _iconSize,
-      badgeLineHeight + _badgePaddingVertical * 2,
-    ].reduce((a, b) => a > b ? a : b);
+    final double topRow = _topRowHeight;
     final double bottomRow = [
       smallLineHeight * 2,
       _ctaHeight,
@@ -78,6 +80,48 @@ class DetailAdStyle._({
         _sectionGap +
         bottomRow +
         _paddingVertical;
+  }
+
+  @override
+  Widget placeholder(BuildContext context) {
+    final Color color = adSkeletonColor(context);
+    return ColoredBox(
+      color: background,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: _paddingVertical),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            adSkeletonLine(
+              lineHeight: _topRowHeight,
+              widthFactor: 0.5,
+              color: color,
+            ),
+            const SizedBox(height: _sectionGap),
+            SizedBox(
+              height: mediaHeight,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: mediaBackground,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+            const SizedBox(height: _sectionGap),
+            adSkeletonLine(
+              lineHeight: smallLineHeight,
+              widthFactor: 0.7,
+              color: color,
+            ),
+            adSkeletonLine(
+              lineHeight: smallLineHeight,
+              widthFactor: 0.4,
+              color: color,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override

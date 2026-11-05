@@ -144,6 +144,11 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   - 상세 본문과 댓글 사이 하나 — `DetailAdCard`, 모양 `DetailAdStyle` ↔ `DetailNativeAdFactory.kt`(`detailCard`)
 - Dart 스타일과 Kotlin 팩토리는 같은 여백 상수로 높이를 맞춘다(한쪽을 바꾸면 다른 쪽도 함께).
   한 자리에 하나만 두는 광고는 `SingleNativeAd` 를 쓴다.
+- 광고를 받는 동안은 같은 높이의 자리 표시(`NativeAdLook.placeholder`, 회색 막대만)로 칸을 잡아 두고,
+  오면 자리 표시를 광고 **위에서** 페이드아웃한다(`NativeAdSwitcher` — 플랫폼 뷰는 투명도가 안 먹을 수
+  있어 광고를 페이드인하지 않는다). 못 받으면 `NativeAdCollapse` 로 칸을 접는다.
+  광고를 새로 받을 때(모양 변경 등)는 스위처 key 를 바꿔 전환 없이 그린다 — 옛 `AdWidget` 이
+  전환 중에 남아 있으면 다음 프레임에 정리된 광고를 그리게 된다.
 - ID 는 **저장소에 두지 않는다.** 루트의 `ads.json`(gitignore, 형식은 `ads.example.json`)에 두고
   `--dart-define-from-file=ads.json` 으로 넣는다. 앱 ID 는 `build.gradle.kts` 가 같은
   define(`MOCL_ADMOB_APP_ID`) 또는 `-PmoclAdmobAppId` 에서 읽고, 광고 단위는 `AdUnitIds` 가 읽는다.
