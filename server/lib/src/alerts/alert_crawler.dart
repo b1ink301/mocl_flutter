@@ -11,6 +11,24 @@ import 'push_sender.dart';
 
 typedef BoardFetch = Future<List<ListItem>> Function(AlertSubscription board);
 
+/// 크롤러 상태(감시용 `/healthz/crawl`).
+class const CrawlStatus({
+  /// 마지막으로 한 바퀴를 끝낸 시각(ms). 0 이면 아직 없다.
+  final int lastTickAt = 0,
+  final int boards = 0,
+
+  /// 마지막 시도가 실패한 게시판 수.
+  final int failingBoards = 0,
+  final int devices = 0,
+}) {
+  Map<String, Object?> toJson(int now) => {
+    'lastTickAgoSec': lastTickAt == 0 ? null : (now - lastTickAt) ~/ 1000,
+    'boards': boards,
+    'failingBoards': failingBoards,
+    'devices': devices,
+  };
+}
+
 /// 구독된 게시판을 돌며 새 글을 찾아 키워드가 맞는 기기에 알린다.
 ///
 /// - 같은 게시판은 구독자가 몇 명이든 한 번만 받는다(사이트 부담 = 게시판 수).
@@ -31,6 +49,9 @@ class AlertCrawler({
 }) {
   Timer? _timer;
   bool _running = false;
+
+  /// 마지막 한 바퀴의 상태.
+  CrawlStatus status = const CrawlStatus();
 
   void start({Duration every = const Duration(seconds: 30)}) {
     _timer ??= Timer.periodic(every, (_) => unawaited(_guardedTick()));
@@ -72,6 +93,7 @@ class AlertCrawler({
       }
     }
     await store.pruneBoards(boards.keys.toSet());
+    int failing = 0;
 
     bool first = true;
     for (final MapEntry<String, AlertSubscription> entry in boards.entries) {
@@ -79,6 +101,7 @@ class AlertCrawler({
       // 한 번도 안 받은 게시판(lastCrawlAt 0)은 바로 받는다.
       if (state.lastCrawlAt > 0 &&
           state.lastCrawlAt + _delayFor(state).inMilliseconds > now) {
+        if (state.failures > 0) failing++;
         continue;
       }
 
@@ -98,6 +121,7 @@ class AlertCrawler({
           lastError: '$e',
         );
         await store.putBoardState(entry.key, failed);
+        failing++;
         serverLog(
           '[crawl] ${entry.key} 실패(${failed.failures}회): $e',
           error: e is! FetchFailure || !e.isBlocked,
@@ -130,6 +154,12 @@ class AlertCrawler({
         subscribers[entry.key] ?? const [],
       );
     }
+    status = CrawlStatus(
+      lastTickAt: now,
+      boards: boards.length,
+      failingBoards: failing,
+      devices: devices.length,
+    );
   }
 
   Future<void> _notify(

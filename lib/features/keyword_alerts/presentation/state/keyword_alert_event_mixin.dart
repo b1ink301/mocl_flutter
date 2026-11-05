@@ -38,6 +38,9 @@ mixin class KeywordAlertEvent() {
   bool readKeywordAlertsAvailable(WidgetRef ref) =>
       ref.read(keywordAlertsAvailableProvider);
 
+  List<AlertSubscription> readKeywordAlerts(WidgetRef ref) =>
+      ref.read(keywordAlertsProvider);
+
   bool readHasKeywordAlerts(WidgetRef ref) =>
       ref.read(keywordAlertsProvider).isNotEmpty;
 }

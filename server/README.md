@@ -12,6 +12,7 @@ Mocl 앱 서버. **원격 설정**(`GET /v1/config`)과 **키워드 알림**(공
 | 경로 | 설명 |
 |---|---|
 | `GET /healthz` | `ok` |
+| `GET /healthz/crawl` | 크롤러 상태 JSON. 마지막 한 바퀴가 10분 넘게 지났으면 `503` |
 | `GET /v1/config` | 원격 설정 JSON. `ETag` 를 주고 `If-None-Match` 가 같으면 `304` |
 | `PUT /v1/alerts/{installId}` | 기기의 키워드 알림 등록을 통째로 덮어쓴다(`AlertRegistration`). 구독이 비면 삭제. `204` |
 | `DELETE /v1/alerts/{installId}` | 등록 삭제. `204` |
@@ -92,6 +93,26 @@ fvm flutter run --flavor dev --dart-define=MOCL_API_BASE_URL=http://10.0.2.2:808
    ```
 4. **갱신**: `git pull && docker compose up -d --build`
    (빌드 단계에서 `dart test` 를 돌리므로 테스트가 깨지면 이미지가 만들어지지 않는다)
+
+### 백업 · 감시 (`ops/`)
+
+```bash
+ops/install-cron.sh     # 한 번만(여러 번 실행해도 됨). crontab 의 "# mocl-ops" 줄만 바꾼다
+```
+
+| 스크립트 | 주기 | 하는 일 |
+|---|---|---|
+| `ops/backup.sh` | 매일 04:30 KST | 알림 DB(볼륨 `mocl_data`) + `config/` 를 `~/backup/mocl/mocl-날짜.tgz` 로. 14일 보관 |
+| `ops/healthcheck.sh` | 5분 | `/healthz` · `/healthz/crawl`(크롤러 10분 넘게 멈추면 503) · 실패 중인 게시판 · 디스크 85% |
+
+- 상태 알림: `server/.env` 의 `NTFY_TOPIC` 이 있으면 상태가 **바뀔 때만**(OK ↔ WARN ↔ DOWN) ntfy.sh 로 보낸다.
+  폰에 ntfy 앱을 깔고 같은 토픽을 구독한다. 토픽 이름이 비밀번호 구실이니 남에게 알리지 않는다.
+- 로그: `~/backup/mocl-ops.log`
+- 같은 서버 안의 검사라 인스턴스가 통째로 죽으면 알 수 없다. 외부 감시(UptimeRobot 무료 등)로
+  `https://도메인/healthz/crawl` 도 함께 본다.
+- 백업도 같은 디스크에 있다. 인스턴스를 잃는 경우까지 대비하려면 가끔 내려받는다:
+  `rsync -a <서버>:backup/mocl/ ./mocl-backup/`
+- 복원은 `ops/backup.sh` 맨 위 주석 참고.
 
 ### 무료 인스턴스 회수 주의
 

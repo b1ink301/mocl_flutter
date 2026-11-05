@@ -41,7 +41,7 @@ Future<void> main() async {
   )..start();
 
   final HttpServer server = await shelf_io.serve(
-    buildHandler(configs, alerts: alerts),
+    buildHandler(configs, alerts: alerts, crawlStatus: () => crawler.status),
     InternetAddress.anyIPv4,
     port,
     poweredByHeader: null,

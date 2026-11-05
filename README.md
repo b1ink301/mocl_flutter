@@ -26,6 +26,7 @@ GeekNews, Instiz, Inven, Meeco, MLBPark, Nate, NaverCafe, Ppomppu, Reddit, Ruliw
 - **빌드 플레이버**: dev, prd
 - **데이터베이스**: sembast
 - **광고**: Google AdMob 네이티브 광고(Android 만, UMP 동의 → SDK 초기화 후 요청)
+- **서버**: Dart(shelf) + Docker + Caddy, Oracle Cloud A1 — 원격 설정 · 키워드 알림(FCM). 앱과 파서를 `packages/mocl_shared` 로 공유
 - **앱 아이콘/스플래시**: flutter_launcher_icons + flutter_native_splash (소스: `branding/`)
 
 ## 프로젝트 구조
@@ -237,6 +238,92 @@ fvm dart run flutter_native_splash:create --path=flutter_native_splash.yaml
 - **스플래시 배경**: 라이트 `#FBFAF9` / 다크 `#121316` (m 은 오렌지 공통, 배경색만 테마별 분기)
 - **런처 아이콘**: 적응형(Android 8+) + 모노크롬(Android 13+ 테마 아이콘) 지원
 
+## 서버 (`server/`)
+
+앱만으로는 할 수 없는 기능(여러 커뮤니티를 가로지르는 알림 · 앱 업데이트 없는 설정 변경)을 위한
+자체 서버입니다. 상세 사용법 · 배포 · 운영은 [server/README.md](server/README.md) 를 보세요.
+
+**원칙**
+- 서버가 없거나 죽어도 앱의 기본 기능(목록 · 상세 · 스크랩 등)은 그대로 동작한다. 서버 기능은 모두 부가 기능이다.
+- 서버는 공개 페이지의 제목 · 링크 · 메타만 다룬다. 본문을 저장 · 재배포하지 않는다.
+- 사용자의 사이트 로그인 쿠키는 서버로 보내지 않는다.
+
+### 구성
+
+```mermaid
+flowchart LR
+  subgraph OCI["클라우드 VM (arm64)"]
+    Caddy["Caddy<br/>TLS 자동 발급"] --> API["mocl_server<br/>Dart shelf · AOT"]
+    API --> DB[("sembast<br/>alerts.db")]
+    API -->|3분마다| Sites["커뮤니티 공개 게시판"]
+    API -->|FCM HTTP v1| FCM["Firebase Cloud Messaging"]
+  end
+  App["Mocl 앱"] -->|"/v1/config · /v1/alerts"| Caddy
+  FCM --> App
+```
+
+- **공유 패키지** `packages/mocl_shared`: 엔티티 · 사이트 파서 · 원격 설정 · 알림 계약을 앱과 서버가 같이 쓴다(순수 Dart).
+  사이트 마크업이 바뀌면 한 번 고쳐서 앱과 서버에 함께 반영된다.
+- **배포**: Docker(AOT 컴파일, 빌드 중 테스트) + Caddy. `server/docker-compose.yml`.
+- **운영 주소**: `https://api.example.com` (앱은 `MOCL_API_BASE_URL` define 으로 받는다. 비면 서버 기능이 꺼진다)
+
+### 기능
+
+| 기능 | 내용 | 앱 |
+|---|---|---|
+| 원격 설정 | 사이트별 요청 UA 를 앱 업데이트 없이 바꾼다. 부팅 땐 저장된 값을 쓰고, 새 값은 **다음 실행부터** 적용 | `features/remote_config/` |
+| 키워드 알림 | 담은 게시판에 키워드를 걸면 서버가 3분마다 새 글을 보고, 제목이 맞으면 푸시. 누르면 그 글 상세로 이동 | `features/keyword_alerts/` (설정 → 키워드 알림, 목록 앱바 종 버튼) |
+
+### API
+
+| 경로 | 설명 |
+|---|---|
+| `GET /healthz` | `ok` |
+| `GET /healthz/crawl` | 크롤러 상태. 10분 넘게 멈추면 `503` |
+| `GET /v1/config` | 원격 설정(`RemoteConfig`). ETag / `304` |
+| `PUT /v1/alerts/{installId}` | 기기의 알림 구독 전체를 덮어쓴다(`AlertRegistration`). 구독이 비면 삭제 |
+| `DELETE /v1/alerts/{installId}` | 알림 등록 삭제 |
+
+알림 API 는 IP 당 분당 30회 · 본문 64KB 로 제한하고, 게시판 URL 은 지원 사이트 도메인만 받는다(SSRF 방지).
+
+### 키워드 알림이 지원하는 사이트
+
+서버(오라클 데이터센터 IP)에서 **실제로 받아 본 결과**로 정했습니다(`server/bin/probe.dart`).
+
+| 구분 | 사이트 |
+|---|---|
+| 지원 | 보배드림 · 클리앙 · 82쿡 · 다모앙 · 디시인사이드 · 개드립 · 긱뉴스 · 인벤 · 미코 · MLBPARK · 네이트판 · 뽐뿌(RSS) |
+| 서버 IP 차단 | 아카라이브 · 인스티즈 · 더쿠 · 루리웹 |
+| 로그인 필요 | 네이버카페 · 레딧 |
+
+- 같은 게시판은 구독자 수와 상관없이 3분에 한 번만 받는다(사이트 부담 = 게시판 수).
+- 게시판 첫 크롤은 지금 글을 기록만 한다(옛 글로 알림이 쏟아지지 않게). 실패하면 간격을 최대 60분까지 늘린다.
+- 무효 FCM 토큰(앱 삭제 등)이면 그 기기 등록을 지운다.
+
+### 배포 · 운영 요약
+
+```bash
+ssh <서버>
+cd ~/mocl/server && docker compose up -d --build   # 갱신
+docker compose logs -f api                          # 로그
+```
+
+| 항목 | 위치 / 주기 |
+|---|---|
+| 원격 설정 파일 | `server/config/remote_config.json` (고치면 재시작 없이 다시 읽음, 잘못되면 직전 설정 유지) |
+| FCM 발송 키 | 서버 `~/mocl/server/secrets/firebase-service-account.json` (**git 밖**. 없으면 dry-run) |
+| 도메인 · 알림 토픽 | 서버 `~/mocl/server/.env` (`MOCL_DOMAIN`, `NTFY_TOPIC`) |
+| 백업 | `ops/backup.sh` 매일 04:30 KST → `~/backup/mocl/`, 14일 보관 |
+| 감시 | `ops/healthcheck.sh` 5분마다. 상태가 바뀔 때만 ntfy 로 알림 |
+
+- 같은 서버 안의 검사라 인스턴스가 통째로 죽으면 알 수 없다 → 외부 감시(UptimeRobot 등)로 `/healthz/crawl` 도 본다.
+- Always Free 인스턴스는 사용률이 낮으면 회수될 수 있다 → 계정을 종량제(PAYG)로 두면 회수 대상에서 빠진다.
+
+### 남은 일
+
+- iOS 푸시: Firebase 콘솔 APNs 키 + Xcode Push Notifications · Background Modes (iOS 출시 때)
+- CI Secret `ADS_JSON` 에 `MOCL_API_BASE_URL` 추가(없으면 스토어 빌드에서 서버 기능이 꺼진다)
+
 ## 보안 / 시크릿 관리
 
 ### Firebase 설정 파일은 시크릿이 아닙니다
@@ -258,7 +345,7 @@ Google Cloud IAM · Firebase Security Rules · App Check 가 담당합니다
 |---|---|
 | `lib/firebase_options.dart` | 서비스 계정 JSON (Admin SDK) |
 | `android/app/google-services.json` | 릴리스 키스토어 (`*.jks`), `key.properties` |
-| `{ios,macos}/Runner/GoogleService-Info.plist` | OAuth **client secret**, 서버 API 키 |
+| `{ios,macos}/Runner/GoogleService-Info.plist` | OAuth **client secret**, 서버 API 키 · `server/secrets/` · `server/.env` |
 | OAuth client **ID** | Play / App Store Connect API 키 |
 
 우변에 해당하는 값이 실수로 커밋되면 히스토리를 되돌리는 것만으로는 부족합니다.
@@ -279,6 +366,7 @@ fvm flutter build appbundle --flavor prd --dart-define-from-file=ads.json
 ```
 
 GitHub Actions 는 Secrets `ADS_JSON`(위 JSON 전체)으로 `ads.json` 을 만듭니다.
+서버 주소(`MOCL_API_BASE_URL`)도 같은 파일에 넣습니다(비밀값은 아니지만 빌드마다 다를 수 있어 define 으로 받는다).
 
 ### 서명 키 취급
 

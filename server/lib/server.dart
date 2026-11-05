@@ -1,4 +1,5 @@
-export 'src/alerts/alert_crawler.dart' show AlertCrawler, BoardFetch;
+export 'src/alerts/alert_crawler.dart'
+    show AlertCrawler, BoardFetch, CrawlStatus;
 export 'src/alerts/alert_store.dart' show AlertStore, BoardState, Device;
 export 'src/alerts/push_sender.dart'
     show DryRunPushSender, FcmPushSender, PushMessage, PushResult, PushSender;

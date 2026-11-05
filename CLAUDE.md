@@ -102,6 +102,8 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
 - 앱이 원본이다: 구독은 SharedPreferences 에 두고, 바뀔 때마다 `PUT /v1/alerts/{installId}` 로 통째로 올린다
   (`KeywordAlertSync`, 같으면 안 보냄, 비면 DELETE). 실행할 때와 FCM 토큰이 바뀔 때도 다시 맞춘다.
   `installId` 는 앱이 만든 무작위 값이고 곧 등록을 고칠 권한이다(로그에 남기지 말 것).
+- 들어가는 곳: 설정 → 키워드 알림(관리), 목록 앱바의 종 버튼(그 게시판, 지원 게시판에서만 보임 ·
+  걸려 있으면 채운 종). 켜기 · 고치기 · 끄기 흐름은 `KeywordAlertFlow`(권한 · 서버 반영 · 스낵바) 하나로 모은다.
 - 알림 data 의 `url` 을 `SiteLinkResolver` 로 열어 상세로 간다(`KeywordAlertGate`, `AppUpdateGate` 안쪽).
   앱이 앞에 있으면 시스템이 띄우지 않으므로 스낵바로 보여 준다.
 - 서버는 사용자가 준 게시판 URL 을 요청하므로 호스트를 `KeywordAlerts.isAllowedBoardUrl` 로 제한한다(SSRF).

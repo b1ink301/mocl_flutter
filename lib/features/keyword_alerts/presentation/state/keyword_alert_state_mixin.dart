@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/features/database/domain/entities/favorite_data.dart';
 import 'package:mocl_flutter/features/keyword_alerts/application/keyword_alert_providers.dart';
 import 'package:mocl_shared/alerts/keyword_alerts.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 
 mixin class KeywordAlertState() {
   /// 키워드 알림을 쓸 수 있는 빌드인지(서버 주소 · 모바일).
@@ -10,6 +11,18 @@ mixin class KeywordAlertState() {
 
   List<AlertSubscription> keywordAlertsState(WidgetRef ref) =>
       ref.watch(keywordAlertsProvider);
+
+  /// [site] · [board] 에 걸린 알림(없으면 null). 그 게시판 버튼만 다시 그리게 고른다.
+  AlertSubscription? keywordAlertForState(
+    WidgetRef ref,
+    SiteType site,
+    String board,
+  ) => ref.watch(
+    keywordAlertsProvider.select(
+      (subs) =>
+          subs.where((s) => s.site == site && s.board == board).firstOrNull,
+    ),
+  );
 
   /// 알림을 걸 수 있는 내 게시판.
   AsyncValue<List<FavoriteData>> keywordAlertCandidatesState(WidgetRef ref) =>

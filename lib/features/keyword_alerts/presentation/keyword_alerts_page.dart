@@ -10,6 +10,7 @@ import 'package:mocl_shared/entities/mocl_site_type.dart';
 
 import 'state/keyword_alert_event_mixin.dart';
 import 'state/keyword_alert_state_mixin.dart';
+import 'widgets/keyword_alert_editor.dart';
 
 /// 키워드 알림 관리. 담은 게시판 중 하나를 골라 키워드를 걸면, 서버가 그 게시판의
 /// 새 글을 보고 제목에 키워드가 있으면 푸시로 알려 준다.
@@ -21,30 +22,8 @@ class const KeywordAlertsPage({super.key}) extends ConsumerStatefulWidget {
 class _KeywordAlertsPageState()
     extends ConsumerState<KeywordAlertsPage>
     with KeywordAlertState, KeywordAlertEvent {
-  void _showMessage(String message, {SnackBarAction? action}) {
-    final messenger = ScaffoldMessenger.of(context);
-    messenger.hideCurrentSnackBar();
-    messenger.showSnackBar(
-      SnackBar(
-        content: Text(message),
-        behavior: SnackBarBehavior.floating,
-        margin: const EdgeInsets.fromLTRB(16, 0, 16, 96),
-        action: action,
-      ),
-    );
-  }
-
-  void _reportSync(AlertSyncResult result) {
-    if (!mounted) return;
-    switch (result) {
-      case AlertSyncResult.synced || AlertSyncResult.noServer:
-        break;
-      case AlertSyncResult.noToken:
-        _showMessage('알림 토큰을 받지 못했어요. 잠시 뒤 앱을 다시 열면 다시 시도합니다.');
-      case AlertSyncResult.failed:
-        _showMessage('서버에 반영하지 못했어요. 다음에 앱을 열 때 다시 시도합니다.');
-    }
-  }
+  void _showMessage(String message, {SnackBarAction? action}) =>
+      KeywordAlertFlow.showMessage(context, message, action: action);
 
   Future<void> _addBoard(List<AlertSubscription> current) async {
     if (current.length >= KeywordAlerts.maxBoards) {
@@ -67,45 +46,18 @@ class _KeywordAlertsPageState()
         title: board.text,
         keywords: const [],
       ),
-      isNew: true,
     );
   }
 
-  Future<void> _editKeywords(
-    AlertSubscription sub, {
-    bool isNew = false,
-  }) async {
-    final List<String>? keywords = await showModalBottomSheet<List<String>>(
-      context: context,
-      showDragHandle: true,
-      isScrollControlled: true,
-      builder: (_) => _KeywordEditorSheet(subscription: sub),
-    );
-    if (keywords == null || !mounted) return;
-
-    if (isNew && keywordAlertsState(ref).isEmpty) {
-      final bool granted = await requestAlertPermission(ref);
-      if (!granted && mounted) {
-        _showMessage('알림 권한이 꺼져 있어요. 시스템 설정에서 켜야 알림이 옵니다.');
-      }
-    }
-    final AlertSyncResult result = await saveKeywordAlert(
-      ref,
-      AlertSubscription(
-        site: sub.site,
-        board: sub.board,
-        url: sub.url,
-        title: sub.title,
-        keywords: keywords,
-      ),
-    );
-    _reportSync(result);
-  }
+  Future<void> _editKeywords(AlertSubscription sub) =>
+      KeywordAlertFlow.edit(context, ref, sub);
 
   Future<void> _remove(AlertSubscription sub, int index) async {
     final AlertSyncResult result = await removeKeywordAlert(ref, sub);
     if (!mounted) return;
-    if (result == AlertSyncResult.failed) return _reportSync(result);
+    if (result == AlertSyncResult.failed) {
+      return KeywordAlertFlow.reportSync(context, result);
+    }
     _showMessage(
       '\'${sub.title}\' 알림을 껐습니다.',
       action: SnackBarAction(
@@ -220,7 +172,7 @@ class const _SubscriptionCard({
             runSpacing: 6,
             children: [
               for (final String k in subscription.keywords)
-                _KeywordChip(label: k),
+                KeywordChip(label: k),
             ],
           ),
         ),
@@ -230,25 +182,6 @@ class const _SubscriptionCard({
           onPressed: onRemove,
         ),
       ),
-    );
-  }
-}
-
-class const _KeywordChip({
-  required final String label,
-  final VoidCallback? onDeleted,
-}) extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    return InputChip(
-      label: Text(label),
-      onDeleted: onDeleted,
-      visualDensity: VisualDensity.compact,
-      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-      backgroundColor: scheme.secondaryContainer.withValues(alpha: 0.6),
-      side: BorderSide.none,
-      shape: const StadiumBorder(),
     );
   }
 }
@@ -356,128 +289,6 @@ class const _BoardPickerSheet({required final Set<String> taken})
             );
           },
         ),
-      ),
-    );
-  }
-}
-
-/// 키워드 편집. 저장하면 키워드 목록을 돌려준다(취소하면 null).
-class const _KeywordEditorSheet({required final AlertSubscription subscription})
-    extends StatefulWidget {
-  @override
-  State<_KeywordEditorSheet> createState() => _KeywordEditorSheetState();
-}
-
-class _KeywordEditorSheetState() extends State<_KeywordEditorSheet> {
-  final TextEditingController _controller = TextEditingController();
-  late final List<String> _keywords = [...widget.subscription.keywords];
-  String? _error;
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _add() {
-    final String k = _controller.text.trim();
-    if (k.isEmpty) return;
-    String? error;
-    if (k.length > KeywordAlerts.maxKeywordLength) {
-      error = '키워드는 ${KeywordAlerts.maxKeywordLength}자까지예요.';
-    } else if (_keywords.length >= KeywordAlerts.maxKeywordsPerBoard) {
-      error = '게시판마다 키워드는 ${KeywordAlerts.maxKeywordsPerBoard}개까지예요.';
-    } else if (_keywords.any(
-      (e) => KeywordAlerts.normalize(e) == KeywordAlerts.normalize(k),
-    )) {
-      error = '이미 있는 키워드예요.';
-    }
-    setState(() {
-      _error = error;
-      if (error == null) {
-        _keywords.add(k);
-        _controller.clear();
-      }
-    });
-  }
-
-  /// 입력칸에 남은 글자는 키워드로 넣고 닫는다("추가" 를 안 눌러도 잃지 않게).
-  void _save() {
-    if (_controller.text.trim().isNotEmpty) _add();
-    if (_error != null || _keywords.isEmpty) return;
-    Navigator.of(context).pop(List<String>.of(_keywords));
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final AlertSubscription sub = widget.subscription;
-    return Padding(
-      padding: EdgeInsets.fromLTRB(
-        24,
-        0,
-        24,
-        MediaQuery.of(context).viewInsets.bottom + 24,
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            '${sub.title} · ${sub.site.title}',
-            style: theme.textTheme.titleMedium,
-          ),
-          const SizedBox(height: 4),
-          Text(
-            '제목에 키워드가 들어간 새 글을 알려 드려요. 띄어쓰기와 대소문자는 구분하지 않아요.',
-            style: theme.textTheme.bodySmall?.copyWith(
-              color: theme.colorScheme.onSurfaceVariant,
-            ),
-          ),
-          const SizedBox(height: 12),
-          TextField(
-            controller: _controller,
-            autofocus: _keywords.isEmpty,
-            textInputAction: TextInputAction.done,
-            onSubmitted: (_) => _add(),
-            onChanged: (_) => setState(() {}),
-            decoration: InputDecoration(
-              hintText: '키워드 (예: 에어팟)',
-              errorText: _error,
-              prefixIcon: const Icon(Icons.tag, size: 20),
-              suffixIcon: IconButton(
-                tooltip: '추가',
-                icon: const Icon(Icons.add),
-                onPressed: _add,
-              ),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(28),
-              ),
-            ),
-          ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 6,
-            runSpacing: 6,
-            children: [
-              for (final String k in _keywords)
-                _KeywordChip(
-                  label: k,
-                  onDeleted: () => setState(() => _keywords.remove(k)),
-                ),
-            ],
-          ),
-          const SizedBox(height: 16),
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton(
-              onPressed: _keywords.isEmpty && _controller.text.trim().isEmpty
-                  ? null
-                  : _save,
-              child: const Text('저장'),
-            ),
-          ),
-        ],
       ),
     );
   }

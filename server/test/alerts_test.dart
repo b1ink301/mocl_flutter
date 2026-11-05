@@ -272,4 +272,40 @@ void main() {
     );
     expect(items.single.userInfo.nickName, '애옹이10');
   });
+
+  test('/healthz/crawl 은 크롤러가 멈추면 503', () async {
+    CrawlStatus status = const CrawlStatus();
+    final Handler h = buildHandler(configs, crawlStatus: () => status);
+    Future<int> code() async =>
+        (await h(Request('GET', Uri.parse('http://localhost/healthz/crawl'))))
+            .statusCode;
+
+    expect(await code(), 503, reason: '아직 한 바퀴도 안 돌았다');
+    status = CrawlStatus(
+      lastTickAt: DateTime.now().millisecondsSinceEpoch,
+      boards: 2,
+    );
+    expect(await code(), 200);
+    status = CrawlStatus(
+      lastTickAt: DateTime.now()
+          .subtract(const Duration(minutes: 11))
+          .millisecondsSinceEpoch,
+    );
+    expect(await code(), 503);
+  });
+
+  test('크롤러는 한 바퀴마다 상태를 남긴다', () async {
+    await store.putDevice(_install, AlertRegistration.fromJson(_reg()), 0);
+    final AlertCrawler c = AlertCrawler(
+      store: store,
+      push: DryRunPushSender(),
+      politeDelay: Duration.zero,
+      fetch: (_) async => throw const FetchFailure('HTTP', statusCode: 403),
+    );
+    await c.tick(1000);
+    expect(c.status.lastTickAt, 1000);
+    expect(c.status.boards, 1);
+    expect(c.status.failingBoards, 1);
+    expect(c.status.devices, 1);
+  });
 }

@@ -4,6 +4,7 @@ import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_shared/entities/mocl_list_item.dart';
+import 'package:mocl_shared/entities/mocl_main_item.dart';
 import 'package:mocl_shared/entities/sort_type.dart';
 
 import '../../../settings_page/application/settings_providers.dart';
@@ -14,6 +15,9 @@ mixin class ListState() {
   String smallTitleState(WidgetRef ref) => ref.watch(listSmallTitleProvider);
 
   String titleState(WidgetRef ref) => ref.watch(listTitleProvider);
+
+  /// 지금 보고 있는 게시판.
+  MainItem currentBoardState(WidgetRef ref) => ref.watch(mainItemProvider);
 
   SortType sortTypeState(WidgetRef ref) => ref.watch(sortTypeProvider);
 

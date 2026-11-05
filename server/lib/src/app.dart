@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
+import 'alerts/alert_crawler.dart';
 import 'alerts/alert_routes.dart';
 import 'alerts/alert_store.dart';
 import 'config_store.dart';
@@ -18,10 +19,26 @@ Handler buildHandler(
   ConfigStore configs, {
   AlertStore? alerts,
   RateLimiter? alertLimiter,
+  CrawlStatus Function()? crawlStatus,
+  Duration crawlStaleAfter = const Duration(minutes: 10),
 }) {
   final Router router = Router()
     ..get('/healthz', (Request request) => Response.ok('ok'))
-    ..get('/v1/config', (Request request) => _config(request, configs));
+    ..get('/v1/config', (Request request) => _config(request, configs))
+    // 크롤러가 멈췄는지(감시용). 마지막 한 바퀴가 오래됐으면 503.
+    ..get('/healthz/crawl', (Request request) {
+      final CrawlStatus? status = crawlStatus?.call();
+      if (status == null) return Response.notFound('no crawler');
+      final int now = DateTime.now().millisecondsSinceEpoch;
+      final bool stale =
+          status.lastTickAt == 0 ||
+          now - status.lastTickAt > crawlStaleAfter.inMilliseconds;
+      return Response(
+        stale ? 503 : 200,
+        body: jsonEncode(status.toJson(now)),
+        headers: _jsonHeaders,
+      );
+    });
   if (alerts != null) {
     mountAlertRoutes(router, alerts, alertLimiter ?? RateLimiter());
   }

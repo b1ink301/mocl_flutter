@@ -2,7 +2,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/config/large_title_metrics.dart';
 import 'package:mocl_shared/entities/sort_type.dart';
+import 'package:mocl_flutter/features/keyword_alerts/presentation/state/keyword_alert_state_mixin.dart';
+import 'package:mocl_flutter/features/keyword_alerts/presentation/widgets/keyword_alert_editor.dart';
 import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mixin.dart';
+import 'package:mocl_shared/alerts/keyword_alerts.dart';
+import 'package:mocl_shared/entities/mocl_main_item.dart';
 
 import '../../../../core/presentation/widgets/appbar_actions_icon_theme.dart';
 import '../../../../core/presentation/widgets/large_title_flexible_space.dart';
@@ -46,6 +50,7 @@ class const ListAppBar({super.key}) extends ConsumerWidget with ListState {
         AppbarActionsIconTheme(
           children: [
             _TranslateButton(),
+            _KeywordAlertButton(),
             _SearchButton(),
             _SortButton(),
             _MoreButton(),
@@ -85,6 +90,47 @@ class const _TranslateButton()
               child: CircularProgressIndicator(strokeWidth: 2, color: primary),
             )
           : PlainIcon(Icons.translate_rounded, color: on ? primary : null),
+    );
+  }
+}
+
+/// 이 게시판 키워드 알림(종). 알림을 받을 수 있는 게시판에서만 보인다.
+/// 걸려 있으면 채운 종으로 보이고, 누르면 키워드를 고치거나 끈다.
+class const _KeywordAlertButton()
+    extends ConsumerWidget
+    with ListState, KeywordAlertState {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (!keywordAlertsAvailableState(ref)) return const SizedBox.shrink();
+    final MainItem board = currentBoardState(ref);
+    if (board.parentBoard.isNotEmpty ||
+        !KeywordAlerts.sites.contains(board.siteType) ||
+        !KeywordAlerts.isAllowedBoardUrl(board.siteType, board.url)) {
+      return const SizedBox.shrink();
+    }
+    final AlertSubscription? sub = keywordAlertForState(
+      ref,
+      board.siteType,
+      board.board,
+    );
+    final bool on = sub != null;
+
+    return PlainIconButton(
+      onPressed: () => KeywordAlertFlow.edit(
+        context,
+        ref,
+        AlertSubscription(
+          site: board.siteType,
+          board: board.board,
+          url: board.url,
+          title: board.text,
+          keywords: const [],
+        ),
+      ),
+      icon: PlainIcon(
+        on ? Icons.notifications_active : Icons.notifications_none,
+        color: on ? Theme.of(context).colorScheme.primary : null,
+      ),
     );
   }
 }
