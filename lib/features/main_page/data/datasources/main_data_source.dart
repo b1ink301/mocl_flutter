@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/mocl_main_item.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/core/util/mocl_logger.dart';
+import 'package:mocl_shared/util/mocl_logger.dart';
 import 'package:mocl_flutter/core/util/read_json_from_assets.dart';
 import 'package:mocl_flutter/features/database/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/database/data/models/model_mapper.dart';
-import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_parser.dart';
+import 'package:mocl_shared/parser/base/base_parser.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 
 /// 원격 게시판 목록(board_link.json)의 base URL.

@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
+import 'package:mocl_shared/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 
 import '../../application/list_search_proivders.dart';

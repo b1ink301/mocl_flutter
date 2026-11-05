@@ -3,18 +3,18 @@ import 'dart:typed_data';
 import 'package:cp949_codec/cp949_codec.dart';
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:mocl_flutter/core/domain/entities/last_id.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
+import 'package:mocl_shared/entities/last_id.dart';
+import 'package:mocl_shared/entities/mocl_comment_item.dart';
+import 'package:mocl_shared/entities/mocl_details.dart';
+import 'package:mocl_shared/entities/mocl_list_item.dart';
+import 'package:mocl_shared/entities/mocl_main_item.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/sort_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/core/util/mocl_logger.dart';
+import 'package:mocl_shared/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 
-import '../base/base_parser.dart';
+import 'package:mocl_shared/parser/base/base_parser.dart';
 
 /// 뽐뿌는 EUC-KR(CP949) 인코딩이므로 응답을 bytes 로 받아 CP949 로 디코딩한 뒤
 /// UTF-8 String 으로 파서에 넘긴다. 로그인 시 회원 전용 글 열람을 위해

@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
+import 'package:mocl_shared/entities/mocl_main_item.dart';
 
 import '../state/add_event_mixin.dart';
 import '../state/add_state_mixin.dart';

@@ -1,7 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
+import 'package:mocl_shared/entities/mocl_list_item.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/mocl_user_info.dart';
 
 part 'bookmark_data.freezed.dart';
 part 'bookmark_data.g.dart';

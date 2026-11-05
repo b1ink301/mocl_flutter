@@ -2,7 +2,7 @@ import 'package:chewie/chewie.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
-import 'package:mocl_flutter/core/util/mocl_logger.dart';
+import 'package:mocl_shared/util/mocl_logger.dart';
 import 'package:mocl_flutter/core/util/utilities.dart';
 import 'package:mocl_flutter/features/detail_page/domain/video_link_resolver.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart'

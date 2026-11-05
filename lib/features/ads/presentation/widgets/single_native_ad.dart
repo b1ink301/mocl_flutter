@@ -1,6 +1,6 @@
 import 'package:google_mobile_ads/google_mobile_ads.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:mocl_flutter/core/util/mocl_logger.dart';
+import 'package:mocl_shared/util/mocl_logger.dart';
 
 import '../../data/mobile_ads_bootstrap.dart';
 import '../native_ad_look.dart';

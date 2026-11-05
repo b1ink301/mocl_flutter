@@ -2,7 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 import 'package:google_mobile_ads/google_mobile_ads.dart';
-import 'package:mocl_flutter/core/util/mocl_logger.dart';
+import 'package:mocl_shared/util/mocl_logger.dart';
 
 import '../domain/ad_unit_ids.dart';
 

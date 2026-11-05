@@ -1,5 +1,5 @@
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
-import 'package:mocl_flutter/core/util/mocl_logger.dart';
+import 'package:mocl_shared/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/settings_page/application/repository_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 

@@ -1,14 +1,14 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:mocl_flutter/core/domain/entities/last_id.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
+import 'package:mocl_shared/entities/last_id.dart';
+import 'package:mocl_shared/entities/mocl_comment_item.dart';
+import 'package:mocl_shared/entities/mocl_details.dart';
+import 'package:mocl_shared/entities/mocl_list_item.dart';
+import 'package:mocl_shared/entities/mocl_main_item.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/sort_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 
-import '../../../html_parser/data/datasources/base/base_parser.dart';
+import 'package:mocl_shared/parser/base/base_parser.dart';
 
 mixin BaseAction {
   Future<Either<Failure, List<MainItem>>> main(BaseParser parser);

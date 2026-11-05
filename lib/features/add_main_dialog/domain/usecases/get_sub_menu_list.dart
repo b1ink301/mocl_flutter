@@ -1,5 +1,5 @@
 import 'package:fpdart/fpdart.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
+import 'package:mocl_shared/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/usecases/usecase.dart';
 import 'package:mocl_flutter/features/main_page/domain/repositories/main_repository.dart';

@@ -1,5 +1,5 @@
-import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
+import 'package:mocl_shared/entities/mocl_comment_item.dart';
+import 'package:mocl_shared/entities/mocl_details.dart';
 import 'package:mocl_flutter/features/translation/domain/html_text_translator.dart';
 import 'package:mocl_flutter/features/translation/domain/translator.dart';
 

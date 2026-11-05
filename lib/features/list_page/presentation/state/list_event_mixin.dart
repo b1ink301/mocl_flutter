@@ -6,13 +6,13 @@ import 'package:flutter_riverpod/misc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
+import 'package:mocl_shared/entities/mocl_main_item.dart';
+import 'package:mocl_shared/entities/sort_type.dart';
 import 'package:mocl_flutter/core/presentation/widgets/list_detail_layout.dart';
 import 'package:mocl_flutter/features/list_page/presentation/list_search_delegate.dart';
 
-import '../../../../core/domain/entities/mocl_list_item.dart';
-import '../../../../core/util/mocl_logger.dart';
+import 'package:mocl_shared/entities/mocl_list_item.dart';
+import 'package:mocl_shared/util/mocl_logger.dart';
 import '../../application/list_providers.dart';
 import '../../../settings_page/application/settings_providers.dart';
 import '../../../translation/application/translation_providers.dart';

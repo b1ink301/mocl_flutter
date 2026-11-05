@@ -1,4 +1,4 @@
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/bookmark/data/repositories/bookmark_repository_impl.dart';
 import 'package:mocl_flutter/features/bookmark/domain/repositories/bookmark_repository.dart';
 import 'package:mocl_flutter/features/database/application/datasource_provider.dart';

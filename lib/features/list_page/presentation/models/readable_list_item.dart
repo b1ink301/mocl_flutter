@@ -1,6 +1,6 @@
 import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
+import 'package:mocl_shared/entities/mocl_list_item.dart';
 
 @immutable
 class const ReadableListItem({
@@ -20,5 +20,6 @@ class const ReadableListItem({
 }
 
 extension ReadableListItemExtension on ReadableListItem {
-  ValueKey<int> get key => item.key;
+  // 읽음이 바뀌면 다른 행으로 보이도록 id 와 읽음 여부를 함께 키로 쓴다.
+  ValueKey<int> get key => ValueKey<int>(Object.hash(item.id, item.isRead));
 }

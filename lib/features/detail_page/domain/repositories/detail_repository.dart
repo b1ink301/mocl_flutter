@@ -1,8 +1,8 @@
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_comment_write.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/mocl_details.dart';
+import 'package:mocl_shared/entities/mocl_list_item.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 
 abstract class DetailRepository() {

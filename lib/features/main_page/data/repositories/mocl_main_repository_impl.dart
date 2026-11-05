@@ -1,8 +1,8 @@
 import 'dart:core';
 
 import 'package:fpdart/fpdart.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/mocl_main_item.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/database/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/main_page/data/datasources/main_data_source.dart';

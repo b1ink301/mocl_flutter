@@ -1,9 +1,9 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
+import 'package:mocl_shared/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_category.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/plain_divider_widget.dart';

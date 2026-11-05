@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
+import 'package:mocl_shared/entities/mocl_list_item.dart';
+import 'package:mocl_shared/entities/sort_type.dart';
 
 import '../../../settings_page/application/settings_providers.dart';
 import '../../application/list_providers.dart';

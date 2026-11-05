@@ -1,5 +1,5 @@
 import 'package:material_ui/material_ui.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
+import 'package:mocl_shared/entities/mocl_details.dart';
 import 'package:mocl_flutter/core/presentation/widgets/author_info_text.dart';
 import 'package:mocl_flutter/core/presentation/widgets/category_tag.dart';
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';

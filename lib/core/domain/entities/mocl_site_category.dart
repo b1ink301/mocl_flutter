@@ -1,4 +1,4 @@
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 
 /// 사이트를 성격별로 묶은 기본 카테고리.
 /// 드로어의 사이트 목록 구성과, 즐겨찾기 그룹의 기본값(새로 추가한 게시판이

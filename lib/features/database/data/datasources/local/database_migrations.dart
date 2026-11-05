@@ -1,4 +1,4 @@
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:sembast/sembast.dart';
 
 /// 앱 DB 스키마 버전. 올릴 때마다 [onAppDatabaseVersionChanged] 에 단계를 더한다.

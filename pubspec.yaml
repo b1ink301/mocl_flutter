@@ -18,6 +18,10 @@ dependencies:
   # icons
   cupertino_icons: ^1.0.9
 
+  # 앱과 서버(server/)가 함께 쓰는 엔티티 · 파서 · 로거 (순수 Dart)
+  mocl_shared:
+    path: packages/mocl_shared
+
   # HTML 파서
   html: ^0.15.7
 

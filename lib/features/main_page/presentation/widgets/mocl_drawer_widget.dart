@@ -3,7 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_category.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/favorite/presentation/state/favorite_state_mixin.dart';
 
 import '../../../../core/presentation/widgets/plain_icon.dart';

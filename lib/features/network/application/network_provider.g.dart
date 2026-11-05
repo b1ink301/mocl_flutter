@@ -48,7 +48,7 @@ final class TheQooApiClientProvider
   }
 }
 
-String _$theQooApiClientHash() => r'1393e830c9493bce2d85bc576b353be4a6701419';
+String _$theQooApiClientHash() => r'2ede50838538c549c60853429480da5c2a855457';
 
 @ProviderFor(ruliwebApiClient)
 final ruliwebApiClientProvider = RuliwebApiClientProvider._();
@@ -89,7 +89,7 @@ final class RuliwebApiClientProvider
   }
 }
 
-String _$ruliwebApiClientHash() => r'c4de07b2f4c497fa3c25e7c31510ca12d28c608f';
+String _$ruliwebApiClientHash() => r'9c960bf220a9ce30b7ed183a99a40144ea621f5a';
 
 @ProviderFor(ppomppuApiClient)
 final ppomppuApiClientProvider = PpomppuApiClientProvider._();
@@ -130,7 +130,7 @@ final class PpomppuApiClientProvider
   }
 }
 
-String _$ppomppuApiClientHash() => r'f4fb6148d147be6db90d5827d51706d019bfc73f';
+String _$ppomppuApiClientHash() => r'c5126b0dc7643ac15c4e34ed977f74e3f3c1b64c';
 
 @ProviderFor(invenApiClient)
 final invenApiClientProvider = InvenApiClientProvider._();
@@ -171,7 +171,7 @@ final class InvenApiClientProvider
   }
 }
 
-String _$invenApiClientHash() => r'b0aaf13d67b9d999415bffe1512c6f47c936b999';
+String _$invenApiClientHash() => r'042abed8912bdb37feca6f30f14f877cdc9c4db5';
 
 @ProviderFor(bobaedreamApiClient)
 final bobaedreamApiClientProvider = BobaedreamApiClientProvider._();
@@ -213,7 +213,7 @@ final class BobaedreamApiClientProvider
 }
 
 String _$bobaedreamApiClientHash() =>
-    r'dc94ea8ec638d79335387209d044dbfee95704d5';
+    r'a4d7a402778d4f97ca61e421c4e9da089c57e626';
 
 @ProviderFor(cook82ApiClient)
 final cook82ApiClientProvider = Cook82ApiClientProvider._();
@@ -254,7 +254,7 @@ final class Cook82ApiClientProvider
   }
 }
 
-String _$cook82ApiClientHash() => r'ec5a72e7efcbcbe9f89360d1ed4902dd35014a7d';
+String _$cook82ApiClientHash() => r'867556fc8b6f1667d1215a2a22af7c8c06e95f04';
 
 @ProviderFor(dcinsideApiClient)
 final dcinsideApiClientProvider = DcinsideApiClientProvider._();
@@ -295,7 +295,7 @@ final class DcinsideApiClientProvider
   }
 }
 
-String _$dcinsideApiClientHash() => r'6b2719b08172322f7e4dc33785a43bb63d781735';
+String _$dcinsideApiClientHash() => r'302c930582cae96285bc272213f18f3b9d89cb93';
 
 @ProviderFor(dogdripApiClient)
 final dogdripApiClientProvider = DogdripApiClientProvider._();
@@ -336,7 +336,7 @@ final class DogdripApiClientProvider
   }
 }
 
-String _$dogdripApiClientHash() => r'710e59b7934e4b37b21723cffb5aa2052fa50de2';
+String _$dogdripApiClientHash() => r'30adcfdedc4a6acece1044000bf841a9154d7cc5';
 
 @ProviderFor(mlbparkApiClient)
 final mlbparkApiClientProvider = MlbparkApiClientProvider._();
@@ -377,7 +377,7 @@ final class MlbparkApiClientProvider
   }
 }
 
-String _$mlbparkApiClientHash() => r'9cd3393d028a8850957fdf38e32e6552383340d8';
+String _$mlbparkApiClientHash() => r'137ad7f23bcae427dd7f6ecfaeac69b56510f9f3';
 
 @ProviderFor(instizApiClient)
 final instizApiClientProvider = InstizApiClientProvider._();
@@ -418,7 +418,7 @@ final class InstizApiClientProvider
   }
 }
 
-String _$instizApiClientHash() => r'84b9ec320acb2b95cd2b526fb3ca5d686cd8fe10';
+String _$instizApiClientHash() => r'd13eee81f59bc5808b33a7c409192ef389277607';
 
 @ProviderFor(nateApiClient)
 final nateApiClientProvider = NateApiClientProvider._();
@@ -459,7 +459,7 @@ final class NateApiClientProvider
   }
 }
 
-String _$nateApiClientHash() => r'b6821a41111418fb841249d1e80305592784f249';
+String _$nateApiClientHash() => r'721afdb3495f8395b0cdf6043b097d2f7eed600e';
 
 @ProviderFor(arcaliveApiClient)
 final arcaliveApiClientProvider = ArcaliveApiClientProvider._();
@@ -500,7 +500,7 @@ final class ArcaliveApiClientProvider
   }
 }
 
-String _$arcaliveApiClientHash() => r'ee2d2c170a54e0ea3498956598b0b67bc9531394';
+String _$arcaliveApiClientHash() => r'8fc628ffdbc668c63088f7c2aa8ed80627925d65';
 
 @ProviderFor(clienApiClient)
 final clienApiClientProvider = ClienApiClientProvider._();
@@ -541,7 +541,7 @@ final class ClienApiClientProvider
   }
 }
 
-String _$clienApiClientHash() => r'4c269634d1fd7027eb16e4dc03c823f119a2565b';
+String _$clienApiClientHash() => r'39753a4294762dc7a913b675451135bfc85c2557';
 
 @ProviderFor(damoangApiClient)
 final damoangApiClientProvider = DamoangApiClientProvider._();
@@ -582,7 +582,7 @@ final class DamoangApiClientProvider
   }
 }
 
-String _$damoangApiClientHash() => r'85b30bea12e51c7d1d3457130b3baf5c82622c8f';
+String _$damoangApiClientHash() => r'a4317780bebdf8f7a25b766405539e1835e9e1b6';
 
 @ProviderFor(naverCafeApiClient)
 final naverCafeApiClientProvider = NaverCafeApiClientProvider._();
@@ -624,7 +624,7 @@ final class NaverCafeApiClientProvider
 }
 
 String _$naverCafeApiClientHash() =>
-    r'8e899f1c1355f2f9d317098aa6b8ee202e7c73e4';
+    r'46fa7f57f4bfafbd0a18baa46d1402c66c6b4fcc';
 
 @ProviderFor(redditApiClient)
 final redditApiClientProvider = RedditApiClientProvider._();
@@ -665,7 +665,7 @@ final class RedditApiClientProvider
   }
 }
 
-String _$redditApiClientHash() => r'b054ae3860e25d0059de7bd458687c9896c8d119';
+String _$redditApiClientHash() => r'a580a145e4a0baea775ab03940a19edf9f69fe22';
 
 @ProviderFor(geekNewsApiClient)
 final geekNewsApiClientProvider = GeekNewsApiClientProvider._();
@@ -706,7 +706,7 @@ final class GeekNewsApiClientProvider
   }
 }
 
-String _$geekNewsApiClientHash() => r'22e5b19b253a527fe15a34b1b528a492dd4edd48';
+String _$geekNewsApiClientHash() => r'738ddec6d0a0cff155763c4d649aac440d9b40b8';
 
 @ProviderFor(meecoApiClient)
 final meecoApiClientProvider = MeecoApiClientProvider._();
@@ -747,4 +747,4 @@ final class MeecoApiClientProvider
   }
 }
 
-String _$meecoApiClientHash() => r'895ea47e828862805092c1b5798a5cb70ca27f5c';
+String _$meecoApiClientHash() => r'1ae1cd6376d0c83cf20f03044c75a274e31eb7b8';

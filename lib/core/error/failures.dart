@@ -1,32 +1,4 @@
-import 'package:equatable/equatable.dart';
-
-// Re-export feature-specific failures for backward compatibility.
-// New code should import directly from the feature's error file.
-export 'package:mocl_flutter/features/html_parser/domain/errors/parser_failures.dart';
+// 실패 타입의 앱 쪽 입구. 공통 실패(서버 · 네트워크 · 파서)는 앱과 서버가 함께 쓰는
+// `mocl_shared` 에 있고, 앱에만 있는 실패를 여기서 함께 내보낸다.
+export 'package:mocl_shared/error/failures.dart';
 export 'package:mocl_flutter/features/main_page/domain/errors/main_failures.dart';
-
-abstract class const Failure({required final String message})
-    extends Equatable {
-  @override
-  List<Object> get props => [message];
-}
-
-class const ServerFailure({required super.message}) extends Failure;
-
-class const NetworkFailure({required super.message}) extends Failure;
-
-/// 사이트가 요청이 너무 잦다며 막은 경우(HTTP 429).
-/// 곧바로 다시 요청하면 더 오래 막히므로 자동 재시도하지 않는다.
-class const RateLimitFailure({required super.message}) extends Failure;
-
-class const NotLoginFailure({required super.message}) extends Failure;
-
-/// 로그인은 돼 있으나 권한(등급/멤버 레벨)이 모자라 읽을 수 없는 경우.
-/// 재시도해도 결과가 같으므로 UI 는 재시도 대신 안내를 보여준다.
-class const PermissionFailure({required super.message}) extends Failure;
-
-class const UnknownFailure({required super.message}) extends Failure;
-
-/// 댓글을 쓰지 못한 경우. [message] 는 사이트가 준 사유(금칙어 · 글자 수 등)라
-/// 그대로 보여준다.
-class const WriteCommentFailure({required super.message}) extends Failure;

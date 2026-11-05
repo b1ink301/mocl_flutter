@@ -4,7 +4,7 @@ import 'dart:ui' as ui;
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_test/flutter_test.dart';
 import 'package:material_ui/material_ui.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/presentation/widgets/site_avatar.dart';
 
 /// 뽐뿌는 원본 파비콘이 16×15 밖에 없어 일부러 로고 에셋을 만들지 않았다.

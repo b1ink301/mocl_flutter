@@ -6,7 +6,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
-import 'package:mocl_flutter/core/util/mocl_logger.dart';
+import 'package:mocl_shared/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart'
     show userAgentMobile;
 import 'package:path/path.dart' as p;

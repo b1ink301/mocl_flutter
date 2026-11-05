@@ -1,5 +1,5 @@
-import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/mocl_list_item.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 
 /// 본문 링크를 앱 상세 화면으로 열 때 넘기는 값.
 ///

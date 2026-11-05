@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/database/application/datasource_provider.dart';
 import 'package:mocl_flutter/features/database/data/datasources/local/database_migrations.dart';
 import 'package:mocl_flutter/features/database/data/datasources/local/local_database.dart';

@@ -49,11 +49,15 @@ lib/
 │   ├── add_main_dialog/           # 게시판 추가 다이얼로그
 │   ├── settings_page/             # 설정
 │   ├── ads/                       # AdMob 네이티브 광고 (목록 · 메인 · 상세)
-│   ├── html_parser/               # HTML 파싱
+│   ├── html_parser/               # 사이트별 HTTP(*_api.dart). 파서는 packages/mocl_shared
+│   ├── remote_config/             # 서버 원격 설정(UA 등) 캐시 · 갱신
 │   ├── database/                  # 로컬 DB (sembast)
 │   ├── network/                   # 네트워크 에러 처리
 │   └── google_drive/              # 구글 드라이브 백업
 └── i18n/                          # 다국어 지원
+
+packages/mocl_shared/              # 앱 · 서버 공용(순수 Dart): 엔티티, Failure, MoclLogger, 파서, RemoteConfig
+server/                            # Dart(shelf) 서버 — server/README.md
 ```
 
 ### Feature 모듈 구조 (Clean Architecture)
@@ -330,6 +334,6 @@ GitHub Actions 는 Secrets `ADS_JSON`(위 JSON 전체)으로 `ads.json` 을 만�
 - **PagingController 복구**: 리스트 화면은 `AppLifecycleState.resumed` 시
   `ListPagingController.kickIfStale()` 을 호출해 멈춘 fetch 를 강제 재시작
   ([mocl_list_view.dart](lib/features/list_page/presentation/mocl_list_view.dart)).
-- **사이트별 파서**: `lib/features/html_parser/data/datasources/{site}/`
-  하위에 `*_api.dart` (HTTP) 와 `*_parser.dart` (HTML → Entity) 가 한 쌍.
+- **사이트별 파서**: `*_api.dart` (HTTP) 는 `lib/features/html_parser/data/datasources/{site}/`,
+  `*_parser.dart` (HTML → Entity) 는 서버와 같이 쓰도록 `packages/mocl_shared/lib/parser/{site}/` 에 있다.
   파서는 워커 isolate (`ParserIsolateClient`) 에서 실행되어 메인 isolate 를 차단하지 않음.

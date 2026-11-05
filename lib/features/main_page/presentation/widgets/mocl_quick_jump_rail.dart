@@ -4,7 +4,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_category.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/presentation/widgets/site_avatar.dart';
 import 'package:mocl_flutter/features/favorite/presentation/state/favorite_state_mixin.dart';
 import 'package:mocl_flutter/features/main_page/presentation/state/main_event_mixin.dart';

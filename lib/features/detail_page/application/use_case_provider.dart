@@ -1,4 +1,4 @@
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/detail_page/application/repository_provider.dart';
 import 'package:mocl_flutter/features/detail_page/domain/usecases/get_detail.dart';
 import 'package:mocl_flutter/features/detail_page/domain/usecases/set_read_flag.dart';

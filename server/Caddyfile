@@ -1,0 +1,9 @@
+# 인증서는 Caddy 가 Let's Encrypt 로 자동 발급 · 갱신한다(80 · 443 이 열려 있어야 한다).
+{$MOCL_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy api:8080
+	log {
+		output stdout
+		format console
+	}
+}

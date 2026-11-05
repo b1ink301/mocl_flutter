@@ -1,0 +1,19 @@
+name: mocl_server
+description: Mocl 앱의 서버. 원격 설정을 내려주고, 이후 크롤링 · 알림 기능이 붙는다.
+publish_to: 'none'
+version: 0.1.0
+
+environment:
+  sdk: ">=3.13.0"
+
+dependencies:
+  crypto: ^3.0.6
+  # 앱과 같은 엔티티 · 파서 · 원격 설정 계약
+  mocl_shared:
+    path: ../packages/mocl_shared
+  shelf: ^1.4.2
+  shelf_router: ^1.1.4
+
+dev_dependencies:
+  lints: ^6.1.0
+  test: any

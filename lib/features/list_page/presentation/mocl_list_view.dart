@@ -5,7 +5,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mocl_flutter/features/ads/presentation/list_ad_slots.dart';
 import 'package:mocl_flutter/features/ads/presentation/widgets/list_ad_separator.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
+import 'package:mocl_shared/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/core/presentation/widgets/failure_view.dart';
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
 import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mixin.dart';

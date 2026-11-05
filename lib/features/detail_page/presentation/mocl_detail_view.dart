@@ -8,12 +8,12 @@ import 'package:go_router/go_router.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as html_parser;
 import 'package:mocl_flutter/config/routes/mocl_app_pages.dart' show Routes;
-import 'package:mocl_flutter/core/util/mocl_logger.dart';
+import 'package:mocl_shared/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/photo_view_dialog.dart'
     show GalleryArgs;
-import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
+import 'package:mocl_shared/entities/mocl_comment_item.dart';
+import 'package:mocl_shared/entities/mocl_details.dart';
+import 'package:mocl_shared/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/failure_view.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart'

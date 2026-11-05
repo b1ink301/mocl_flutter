@@ -5,7 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/presentation/widgets/list_detail_layout.dart';
 import 'package:mocl_flutter/features/database/domain/entities/bookmark_data.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/mocl_detail_page.dart';

@@ -38,6 +38,13 @@ jobs:
       - name: Install dependencies
         run: flutter pub get --enforce-lockfile
 
+      # 공유 패키지 · 서버는 따로 풀어야 루트 analyze 가 그 폴더도 분석할 수 있다.
+      # (패키지는 라이브러리라 lock 을 두지 않는다. 서버는 lock 을 지킨다)
+      - name: Install dependencies (mocl_shared · server)
+        run: |
+          (cd packages/mocl_shared && dart pub get)
+          (cd server && dart pub get --enforce-lockfile)
+
       # analysis_options 의 legacy 플러그인(custom_lint) 경고 하나는 알려진 것이라 빼고,
       # 그 밖의 이슈는 info 까지 하나라도 있으면 실패시킨다.
       - name: Analyze
@@ -58,3 +65,9 @@ jobs:
 
       - name: Test
         run: flutter test
+
+      # 파서 테스트는 공유 패키지에 있다(순수 Dart).
+      - name: Test (mocl_shared · server)
+        run: |
+          (cd packages/mocl_shared && dart test)
+          (cd server && dart test)

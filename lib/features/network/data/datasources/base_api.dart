@@ -7,10 +7,11 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart' as webview;
 import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_comment_write.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
+import 'package:mocl_shared/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/core/util/mocl_logger.dart';
-import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_parser.dart';
+import 'package:mocl_shared/remote_config/remote_config.dart';
+import 'package:mocl_shared/util/mocl_logger.dart';
+import 'package:mocl_shared/parser/base/base_parser.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_action.dart';
 
 // 차단 회피를 위해 최신 Chrome(2026.06 기준 150) UA 로 맞춘다. 웹뷰 식별
@@ -19,6 +20,13 @@ const String userAgentMobile =
     'Mozilla/5.0 (Linux; Android 16; Pixel 9) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Mobile Safari/537.36';
 const String userAgentPc =
     'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/150.0.0.0 Safari/537.36';
+
+/// 사이트 요청 UA 프리셋의 앱 기본값. 원격 설정(`RemoteConfig.userAgents`)이
+/// 있으면 그 값이 이긴다.
+const Map<UserAgentPreset, String> builtInUserAgents = {
+  UserAgentPreset.mobile: userAgentMobile,
+  UserAgentPreset.pc: userAgentPc,
+};
 
 /// [DioException] 을 사용자에게 그대로 보여줄 수 있는 짧은 한국어 사유의
 /// [Failure] 로 바꾼다. dio 의 기본 message 는 영문 설명 + MDN 링크까지 담긴

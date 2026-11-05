@@ -5,6 +5,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
@@ -12,7 +13,7 @@ import 'package:mocl_flutter/app_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/boot_failure_app.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/util/boot_guard.dart';
-import 'package:mocl_flutter/core/util/mocl_logger.dart';
+import 'package:mocl_shared/util/mocl_logger.dart';
 import 'package:mocl_flutter/core/util/orientation_policy.dart';
 import 'package:mocl_flutter/firebase_options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -20,6 +21,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'features/ads/data/mobile_ads_bootstrap.dart';
 import 'features/database/application/datasource_provider.dart';
 import 'features/database/data/datasources/local/local_database.dart';
+import 'features/remote_config/application/remote_config_providers.dart';
+import 'features/remote_config/data/remote_config_fetcher.dart';
+import 'features/remote_config/data/remote_config_store.dart';
 import 'features/settings_page/application/datasource_provider.dart';
 import 'flavors.dart';
 
@@ -60,12 +64,18 @@ Future<Widget> _prepareApp() async {
   _schedulePruneReads(localDatabase);
   scheduleMobileAdsInit();
 
+  // 원격 설정은 저장해 둔 것만 바로 쓰고, 서버에서 새로 받는 건 첫 화면 뒤에 한다.
+  final remoteConfigStore = RemoteConfigStore(sharedPrefs);
+  final remoteConfig = remoteConfigStore.load();
+  _scheduleRemoteConfigRefresh(remoteConfigStore);
+
   return ProviderScope(
     retry: retry,
     observers: [if (kDebugMode) Logger()],
     overrides: [
       sharedPreferencesProvider.overrideWithValue(sharedPrefs),
       localDatabaseProvider.overrideWithValue(localDatabase),
+      remoteConfigProvider.overrideWithValue(remoteConfig),
     ],
     child: const AppWidget(),
   );
@@ -105,6 +115,28 @@ void _schedulePruneReads(LocalDatabase localDatabase) {
         MoclLogger.d(() => '[pruneReads] removed=$removed');
       } catch (e, st) {
         MoclLogger.e('읽음 기록 정리 실패', error: e, stackTrace: st);
+      }
+    });
+  });
+}
+
+/// 서버에서 원격 설정을 받아 둔다(다음 실행부터 적용). 서버 주소가 없거나
+/// 실패해도 앱에는 영향이 없다.
+void _scheduleRemoteConfigRefresh(RemoteConfigStore store) {
+  if (moclApiBaseUrl.isEmpty) return;
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    Timer(const Duration(seconds: 2), () async {
+      final Dio dio = Dio(
+        BaseOptions(
+          connectTimeout: const Duration(seconds: 15),
+          receiveTimeout: const Duration(seconds: 15),
+          sendTimeout: const Duration(seconds: 15),
+        ),
+      );
+      try {
+        await RemoteConfigFetcher(dio, moclApiBaseUrl, store).refresh();
+      } finally {
+        dio.close();
       }
     });
   });
