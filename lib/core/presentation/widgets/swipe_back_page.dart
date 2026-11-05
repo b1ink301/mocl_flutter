@@ -150,8 +150,56 @@ class SwipeBackPageRoute<T>({
     navigator?.didStopUserGesture();
   }
 
+  // --- 위 화면이 닫히는 중일 때 이어서 뒤로 가기 ---
+  //
+  // 뒤로 가기를 놓은 뒤에도 닫히는 애니메이션이 잠깐(최대 0.8초) 이어지고, 그동안은
+  // 아래 화면이 제스처를 받을 수 없다(Navigator 가 아직 제스처 중이고 secondaryAnimation 도
+  // 안 끝남). 그 사이 바로 다시 엣지 스와이프하면 시스템 제스처가 거절되어 애니메이션 없이
+  // pop 됐다. 새 제스처가 오면 닫히던 화면을 그 자리에서 마저 닫고 이어 받는다.
+
+  /// Navigator 마다 지금 닫히는 중인 화면.
+  static final Expando<SwipeBackPageRoute<dynamic>> _closingRoutes =
+      Expando<SwipeBackPageRoute<dynamic>>('SwipeBackPageRoute.closing');
+
+  NavigatorState? _closingNavigator;
+
+  @override
+  bool didPop(T? result) {
+    final NavigatorState? navigator = this.navigator;
+    if (navigator != null) {
+      _closingRoutes[navigator] = this;
+      _closingNavigator = navigator;
+    }
+    return super.didPop(result);
+  }
+
+  /// 바로 위 화면이 닫히는 중인지.
+  bool get _hasClosingRouteAbove {
+    final NavigatorState? navigator = this.navigator;
+    if (navigator == null || !isCurrent) return false;
+    final SwipeBackPageRoute<dynamic>? closing = _closingRoutes[navigator];
+    return closing != null && !identical(closing, this);
+  }
+
+  /// 위 화면이 닫히는 중이면 지금 끝낸다. 그 뒤 이 화면이 제스처를 받을 수 있는지 돌려준다.
+  bool _settleClosingRouteAbove() {
+    if (_hasClosingRouteAbove) {
+      // 0 으로 두면 곧바로 dismissed 가 되어 화면이 빠지고 제스처 상태도 풀린다.
+      _closingRoutes[navigator!]!.controller?.value = 0;
+    }
+    return popGestureEnabled;
+  }
+
+  /// 지금 뒤로 가기 제스처를 시작할 수 있는지(위 화면이 닫히는 중이면 정리한 뒤 가능).
+  bool get _canStartGesture => popGestureEnabled || _hasClosingRouteAbove;
+
   @override
   void dispose() {
+    final NavigatorState? closingNavigator = _closingNavigator;
+    if (closingNavigator != null &&
+        identical(_closingRoutes[closingNavigator], this)) {
+      _closingRoutes[closingNavigator] = null;
+    }
     // 제스처 도중에 라우트가 사라지면(딥링크로 스택이 바뀌는 등) 상태를 풀어 준다.
     final NavigatorState? navigator = _gestureNavigator;
     if (navigator != null) {
@@ -272,7 +320,10 @@ class _SwipeBackGestureDetectorState<T>()
           ..onStart = _handleDragStart
           ..onUpdate = _handleDragUpdate
           ..onEnd = _handleDragEnd
-          ..onCancel = _handleDragCancel;
+          ..onCancel = _handleDragCancel
+          // 누른 자리에 다른 제스처가 없으면 누르는 순간 드래그가 시작된다.
+          // 그러면 탭만 해도 제스처가 시작되므로(닫히던 위 화면이 튀는 등) 실제로 끌 때만 시작한다.
+          ..onlyAcceptDragOnThreshold = true;
     WidgetsBinding.instance.addObserver(this);
   }
 
@@ -291,7 +342,7 @@ class _SwipeBackGestureDetectorState<T>()
   // --- 본문 드래그 ---
 
   void _handlePointerDown(PointerDownEvent event) {
-    if (_systemGesture || !_route.popGestureEnabled) return;
+    if (_systemGesture || !_route._canStartGesture) return;
     // 제스처 내비게이션의 양쪽 가장자리는 OS 가 뒤로가기 제스처로 가져간다.
     // OS 는 판정 전까지 터치를 앱에도 보내므로, 여기서 본문 드래그를 시작하면
     // 시스템 제스처와 겹친다. 이 영역은 시스템 제스처([handleStartBackGesture])에 맡긴다.
@@ -305,6 +356,9 @@ class _SwipeBackGestureDetectorState<T>()
   }
 
   void _handleDragStart(DragStartDetails details) {
+    // 위 화면이 닫히는 중이었으면 실제로 끌기 시작할 때 정리한다
+    // (누르기만 해도 정리하면 탭 · 스크롤에 화면이 튄다).
+    if (!_route._settleClosingRouteAbove()) return;
     _dragging = true;
     _route._startGesture();
   }
@@ -339,7 +393,7 @@ class _SwipeBackGestureDetectorState<T>()
       // 가장자리 터치가 본문 드래그로 먼저 잡혔다. 시스템 제스처가 넘겨받고,
       // 곧 올 포인터 취소는 무시한다.
       _dragging = false;
-    } else if (!_route.popGestureEnabled) {
+    } else if (!_route._settleClosingRouteAbove()) {
       return false;
     }
     _systemGesture = true;
@@ -420,11 +474,16 @@ class _BackDragGestureRecognizer({
     super.handleEvent(event);
   }
 
+  // 방향 검사는 드래그가 실제로 시작될 때까지 한다. 경쟁에서 이긴 시점(acceptGesture)은
+  // 혼자일 때 누르는 순간이라 너무 이르다.
   @override
-  void acceptGesture(int pointer) {
-    _started = true;
-    super.acceptGesture(pointer);
-  }
+  set onStart(GestureDragStartCallback? callback) =>
+      super.onStart = callback == null
+      ? null
+      : (DragStartDetails details) {
+          _started = true;
+          callback(details);
+        };
 
   @override
   void stopTrackingPointer(int pointer) {

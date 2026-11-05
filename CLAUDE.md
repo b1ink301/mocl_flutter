@@ -93,6 +93,9 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   받지 않는다. OS 가 판정 전까지 터치를 앱에도 보내서, 받으면 시스템 제스처와 겹쳐 애니메이션 없이 닫힌다.
 - `didStartUserGesture` / `didStopUserGesture` 는 라우트의 `_startGesture` / `_stopGesture` 로만
   부른다. 짝이 하나라도 어긋나면 Navigator 가 계속 제스처 중으로 남아 앱 전체에서 스와이프가 멈춘다.
+- 뒤로 가기를 놓은 뒤 닫히는 애니메이션 동안 아래 화면에서 다시 뒤로 가기를 시작하면, 닫히던 화면을
+  그 자리에서 마저 닫고(`_settleClosingRouteAbove`) 이어 받는다. 이걸 빼면 연달아 엣지 스와이프할 때
+  두 번째가 애니메이션 없이 pop 된다. 본문 드래그는 `onlyAcceptDragOnThreshold` 로 실제로 끌 때만 시작한다.
 - 가로로 끄는 동작이 따로 있는 화면(영상 탐색 막대 등)은 `SwipeBackPage` 대신 `builder:` 를 쓰거나
   `canSwipe: false` 로 끈다.
 

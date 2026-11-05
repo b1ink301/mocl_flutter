@@ -226,7 +226,8 @@ void main() {
         const Offset(100, 300),
       );
       await gesture.moveBy(const Offset(40, 0));
-      await gesture.moveBy(const Offset(360, 0));
+      // 드래그는 터치 슬롭을 넘긴 뒤부터 센다. 절반(400)을 넉넉히 넘긴다.
+      await gesture.moveBy(const Offset(460, 0));
       await tester.pump();
       final double dragging = listScrim(tester);
       expect(dragging, greaterThan(0));
@@ -413,6 +414,102 @@ void main() {
       await tester.pumpAndSettle();
       expect(find.text('상세'), findsOneWidget);
       expect(popAttempts, 1);
+    }, variant: TargetPlatformVariant.only(TargetPlatform.android));
+  });
+
+  group('연달아 뒤로 가기', () {
+    Route<void> page(String label, [Route<void> Function()? next]) =>
+        SwipeBackPageRoute<void>(
+          builder: (context) => Scaffold(
+            body: Center(
+              child: TextButton(
+                onPressed: () {
+                  if (next != null) Navigator.of(context).push(next());
+                },
+                child: Text(label),
+              ),
+            ),
+          ),
+        );
+
+    /// 메인 → 목록 → 상세를 쌓고, 상세를 시스템 제스처로 닫은 직후(닫히는 애니메이션 중)에서 멈춘다.
+    Future<NavigatorState> pumpClosingDetail(WidgetTester tester) async {
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Navigator(
+            onGenerateRoute: (_) =>
+                page('메인', () => page('목록', () => page('상세'))),
+          ),
+        ),
+      );
+      await tester.tap(find.text('메인'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('목록'));
+      await tester.pumpAndSettle();
+
+      await sendBackGesture(tester, 'startBackGesture', backEvent(0));
+      await sendBackGesture(
+        tester,
+        'updateBackGestureProgress',
+        backEvent(0.5),
+      );
+      await tester.pump();
+      await sendBackGesture(tester, 'commitBackGesture');
+      await tester.pump();
+      await tester.pump(const Duration(milliseconds: 50));
+      expect(find.text('상세'), findsOneWidget, reason: '아직 닫히는 중이어야 한다');
+      return tester.state(find.byType(Navigator).last);
+    }
+
+    testWidgets('상세가 닫히는 중에 목록에서 엣지 스와이프해도 애니메이션이 따라온다', (tester) async {
+      final NavigatorState navigator = await pumpClosingDetail(tester);
+
+      await sendBackGesture(tester, 'startBackGesture', backEvent(0));
+      await tester.pump();
+      // 닫히던 상세는 그 자리에서 마저 닫힌다.
+      expect(find.text('상세'), findsNothing);
+      final double start = tester.getTopLeft(find.text('목록')).dx;
+      await sendBackGesture(
+        tester,
+        'updateBackGestureProgress',
+        backEvent(0.4),
+      );
+      await tester.pump();
+      expect(tester.getTopLeft(find.text('목록')).dx, greaterThan(start));
+
+      await sendBackGesture(tester, 'commitBackGesture');
+      await tester.pumpAndSettle();
+      expect(find.text('목록'), findsNothing);
+      expect(find.text('메인'), findsOneWidget);
+      expect(navigator.userGestureInProgress, isFalse);
+    }, variant: TargetPlatformVariant.only(TargetPlatform.android));
+
+    testWidgets('상세가 닫히는 중에 목록을 끌어도 이어서 닫힌다', (tester) async {
+      final NavigatorState navigator = await pumpClosingDetail(tester);
+
+      await tester.flingFrom(
+        const Offset(100, 300),
+        const Offset(400, 0),
+        2000,
+      );
+      await tester.pumpAndSettle();
+      expect(find.text('목록'), findsNothing);
+      expect(find.text('메인'), findsOneWidget);
+      expect(navigator.userGestureInProgress, isFalse);
+    }, variant: TargetPlatformVariant.only(TargetPlatform.android));
+
+    testWidgets('닫히는 중에 누르기만 하면 닫히는 애니메이션을 건너뛰지 않는다', (tester) async {
+      await pumpClosingDetail(tester);
+
+      final TestGesture gesture = await tester.startGesture(
+        const Offset(100, 300),
+      );
+      await tester.pump(const Duration(milliseconds: 16));
+      expect(find.text('상세'), findsOneWidget);
+      await gesture.up();
+      await tester.pumpAndSettle();
+      expect(find.text('상세'), findsNothing);
+      expect(find.text('목록'), findsOneWidget);
     }, variant: TargetPlatformVariant.only(TargetPlatform.android));
   });
 }
