@@ -88,6 +88,8 @@ dependencies:
   # google_sign_in_ios 가 GoogleSignIn 10 을 받을 때까지 4.x(SDK 12.19) 에 둔다.
   firebase_core: ^4.15.0
   firebase_crashlytics: ^5.4.0
+  # 키워드 알림 푸시(서버 server/ 가 FCM HTTP v1 로 보낸다)
+  firebase_messaging: ^16.7.1
 
   # async
   async: ^2.13.1

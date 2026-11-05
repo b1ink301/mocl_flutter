@@ -48,6 +48,14 @@
         <meta-data
             android:name="io.flutter.embedding.android.AssetsPath"
             android:value="assets" />
+        <!-- 키워드 알림(FCM). 채널은 MainActivity 가 만든다. 아이콘은 런처 아이콘
+             생성기가 만든 단색 아이콘을 그대로 쓴다(직접 고치지 말 것). -->
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_channel_id"
+            android:value="keyword_alerts" />
+        <meta-data
+            android:name="com.google.firebase.messaging.default_notification_icon"
+            android:resource="@drawable/ic_launcher_monochrome" />
         <!--        <meta-data-->
         <!--            android:name= "io.flutter.embedding.android.EnableHcpp"-->
         <!--            android:value= "true" />-->

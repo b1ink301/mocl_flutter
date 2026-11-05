@@ -23,17 +23,22 @@ import 'package:mocl_flutter/features/html_parser/data/datasources/theqoo/theqoo
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 import 'package:mocl_flutter/features/remote_config/application/remote_config_providers.dart';
 import 'package:mocl_shared/entities/mocl_site_type.dart';
-import 'package:mocl_shared/remote_config/remote_config.dart';
+import 'package:mocl_shared/remote_config/user_agents.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 import '../../html_parser/data/datasources/clien/clien_api.dart';
 
 part 'network_provider.g.dart';
 
-/// [site] 요청 UA. 기본은 사이트마다 정한 [preset] 이고, 원격 설정이 있으면 따른다.
-String _userAgent(Ref ref, SiteType site, UserAgentPreset preset) => ref
+/// [site] 요청 UA. 기본은 사이트별 프리셋(`defaultUserAgentPreset`, 서버 크롤러와
+/// 같은 값)이고, 원격 설정이 있으면 따른다.
+String _userAgent(Ref ref, SiteType site) => ref
     .watch(remoteConfigProvider)
-    .userAgentFor(site, defaultPreset: preset, builtIn: builtInUserAgents);
+    .userAgentFor(
+      site,
+      defaultPreset: defaultUserAgentPreset(site),
+      builtIn: builtInUserAgents,
+    );
 
 /// 백그라운드 → 포그라운드 복귀 후 소켓이 죽어 요청이 영영 끝나지 않는 문제 방지.
 /// 모든 Dio 인스턴스가 동일한 timeout 정책을 갖도록 일원화.
@@ -56,101 +61,97 @@ Dio _buildDio(String userAgent) =>
 
 @riverpod
 BaseApi theQooApiClient(Ref ref) {
-  final String ua = _userAgent(ref, SiteType.theqoo, UserAgentPreset.mobile);
+  final String ua = _userAgent(ref, SiteType.theqoo);
   return TheQooApi(_buildDio(ua), ua);
 }
 
 @riverpod
 BaseApi ruliwebApiClient(Ref ref) {
-  final String ua = _userAgent(ref, SiteType.ruliweb, UserAgentPreset.mobile);
+  final String ua = _userAgent(ref, SiteType.ruliweb);
   return RuliwebApi(_buildDio(ua), ua);
 }
 
 @riverpod
 BaseApi ppomppuApiClient(Ref ref) {
-  final String ua = _userAgent(ref, SiteType.ppomppu, UserAgentPreset.mobile);
+  final String ua = _userAgent(ref, SiteType.ppomppu);
   return PpomppuApi(_buildDio(ua), ua);
 }
 
 @riverpod
 BaseApi invenApiClient(Ref ref) {
-  final String ua = _userAgent(ref, SiteType.inven, UserAgentPreset.mobile);
+  final String ua = _userAgent(ref, SiteType.inven);
   return InvenApi(_buildDio(ua), ua);
 }
 
 @riverpod
 BaseApi bobaedreamApiClient(Ref ref) {
-  final String ua = _userAgent(
-    ref,
-    SiteType.bobaedream,
-    UserAgentPreset.mobile,
-  );
+  final String ua = _userAgent(ref, SiteType.bobaedream);
   return BobaedreamApi(_buildDio(ua), ua);
 }
 
 @riverpod
 BaseApi cook82ApiClient(Ref ref) {
-  final String ua = _userAgent(ref, SiteType.cook82, UserAgentPreset.mobile);
+  final String ua = _userAgent(ref, SiteType.cook82);
   return Cook82Api(_buildDio(ua), ua);
 }
 
 @riverpod
 BaseApi dcinsideApiClient(Ref ref) {
-  final String ua = _userAgent(ref, SiteType.dcinside, UserAgentPreset.mobile);
+  final String ua = _userAgent(ref, SiteType.dcinside);
   return DcinsideApi(_buildDio(ua), ua);
 }
 
 @riverpod
 BaseApi dogdripApiClient(Ref ref) {
-  final String ua = _userAgent(ref, SiteType.dogdrip, UserAgentPreset.mobile);
+  final String ua = _userAgent(ref, SiteType.dogdrip);
   return DogdripApi(_buildDio(ua), ua);
 }
 
 @riverpod
 BaseApi mlbparkApiClient(Ref ref) {
-  final String ua = _userAgent(ref, SiteType.mlbpark, UserAgentPreset.mobile);
+  final String ua = _userAgent(ref, SiteType.mlbpark);
   return MlbparkApi(_buildDio(ua), ua);
 }
 
 @riverpod
 BaseApi instizApiClient(Ref ref) {
-  final String ua = _userAgent(ref, SiteType.instiz, UserAgentPreset.mobile);
+  final String ua = _userAgent(ref, SiteType.instiz);
   return InstizApi(_buildDio(ua), ua);
 }
 
 @riverpod
 BaseApi nateApiClient(Ref ref) {
-  final String ua = _userAgent(ref, SiteType.nate, UserAgentPreset.mobile);
+  final String ua = _userAgent(ref, SiteType.nate);
   return NateApi(_buildDio(ua), ua);
 }
 
 @riverpod
 BaseApi arcaliveApiClient(Ref ref) {
-  final String ua = _userAgent(ref, SiteType.arcalive, UserAgentPreset.mobile);
+  final String ua = _userAgent(ref, SiteType.arcalive);
   return ArcaliveApi(_buildDio(ua), ua)..init(CookieJar());
 }
 
 @riverpod
 BaseApi clienApiClient(Ref ref) {
-  final String ua = _userAgent(ref, SiteType.clien, UserAgentPreset.pc);
+  final String ua = _userAgent(ref, SiteType.clien);
   return ClienApi(_buildDio(ua), ua)..init(CookieJar());
 }
 
 @riverpod
 BaseApi damoangApiClient(Ref ref) {
-  final String ua = _userAgent(ref, SiteType.damoang, UserAgentPreset.pc);
+  final String ua = _userAgent(ref, SiteType.damoang);
   return DamoangApi(_buildDio(ua), ua)..init(CookieJar());
 }
 
 @riverpod
 BaseApi naverCafeApiClient(Ref ref) {
-  final String ua = _userAgent(ref, SiteType.naverCafe, UserAgentPreset.mobile);
+  final String ua = _userAgent(ref, SiteType.naverCafe);
   return NaverCafeApi(_buildDio(ua), ua)..init(CookieJar());
 }
 
 @riverpod
 BaseApi redditApiClient(Ref ref) {
-  final String ua = _userAgent(ref, SiteType.reddit, UserAgentPreset.pc);
+  final String ua = _userAgent(ref, SiteType.reddit);
   return RedditApi(_buildDio(ua), ua)..init(CookieJar());
 }
 
@@ -158,12 +159,12 @@ BaseApi redditApiClient(Ref ref) {
 BaseApi geekNewsApiClient(Ref ref) {
   // 긱뉴스 CloudFront 는 Mac PC Chrome UA 중 흔한 스크래퍼 값(Chrome/120 · 140 ·
   // 150.0.0.0)을 정확히 맞춰 403 으로 막는다. 모바일 UA 도 같은 HTML 을 준다.
-  final String ua = _userAgent(ref, SiteType.geekNews, UserAgentPreset.mobile);
+  final String ua = _userAgent(ref, SiteType.geekNews);
   return GeekNewsApi(_buildDio(ua), ua);
 }
 
 @riverpod
 BaseApi meecoApiClient(Ref ref) {
-  final String ua = _userAgent(ref, SiteType.meeco, UserAgentPreset.mobile);
+  final String ua = _userAgent(ref, SiteType.meeco);
   return MeecoApi(_buildDio(ua), ua)..init(CookieJar());
 }

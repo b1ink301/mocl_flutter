@@ -3,7 +3,10 @@ import 'dart:convert';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
+import 'alerts/alert_routes.dart';
+import 'alerts/alert_store.dart';
 import 'config_store.dart';
+import 'rate_limiter.dart';
 import 'server_log.dart';
 
 const Map<String, String> _jsonHeaders = {
@@ -11,10 +14,17 @@ const Map<String, String> _jsonHeaders = {
 };
 
 /// 서버 전체 핸들러. 테스트는 이 함수로 만든 핸들러를 직접 부른다.
-Handler buildHandler(ConfigStore configs) {
+Handler buildHandler(
+  ConfigStore configs, {
+  AlertStore? alerts,
+  RateLimiter? alertLimiter,
+}) {
   final Router router = Router()
     ..get('/healthz', (Request request) => Response.ok('ok'))
     ..get('/v1/config', (Request request) => _config(request, configs));
+  if (alerts != null) {
+    mountAlertRoutes(router, alerts, alertLimiter ?? RateLimiter());
+  }
 
   return const Pipeline()
       .addMiddleware(_accessLog())

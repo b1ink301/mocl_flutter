@@ -9,6 +9,7 @@ import 'package:mocl_flutter/src/generated/i18n/app_localizations.dart';
 import 'config/routes/mocl_app_pages.dart';
 import 'core/util/glyph_warmup_manager.dart';
 import 'features/app_update/presentation/widgets/app_update_gate.dart';
+import 'features/keyword_alerts/presentation/widgets/keyword_alert_gate.dart';
 
 class const AppWidget({super.key}) extends HookConsumerWidget {
   @override
@@ -53,7 +54,7 @@ class const AppWidget({super.key}) extends HookConsumerWidget {
           ),
           child: AppUpdateGate(
             navigatorKey: AppPages.router.routerDelegate.navigatorKey,
-            child: child!,
+            child: KeywordAlertGate(router: AppPages.router, child: child!),
           ),
         );
       },

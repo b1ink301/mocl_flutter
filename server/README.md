@@ -1,7 +1,7 @@
 # mocl_server
 
-Mocl 앱 서버. 지금은 **원격 설정**(`GET /v1/config`)만 내려준다.
-앞으로 공개 게시판 크롤링 · 키워드 알림 · 이슈 묶기가 여기에 붙는다.
+Mocl 앱 서버. **원격 설정**(`GET /v1/config`)과 **키워드 알림**(공개 게시판 크롤 → FCM)을 맡는다.
+앞으로 이슈 묶기 등이 여기에 붙는다.
 
 - 순수 Dart(shelf). 파서 · 엔티티는 앱과 같은 `packages/mocl_shared` 를 쓴다.
 - 서버가 죽어도 앱은 그대로 동작해야 한다. 앱은 마지막으로 받은 설정을 쓰고,
@@ -13,6 +13,10 @@ Mocl 앱 서버. 지금은 **원격 설정**(`GET /v1/config`)만 내려준다.
 |---|---|
 | `GET /healthz` | `ok` |
 | `GET /v1/config` | 원격 설정 JSON. `ETag` 를 주고 `If-None-Match` 가 같으면 `304` |
+| `PUT /v1/alerts/{installId}` | 기기의 키워드 알림 등록을 통째로 덮어쓴다(`AlertRegistration`). 구독이 비면 삭제. `204` |
+| `DELETE /v1/alerts/{installId}` | 등록 삭제. `204` |
+
+알림 API 는 IP 당 분당 30회로 제한하고(`429`), 본문은 64KB 까지 받는다.
 
 설정 형식은 `packages/mocl_shared/lib/remote_config/remote_config.dart` 의 `RemoteConfig`.
 
@@ -35,6 +39,19 @@ Mocl 앱 서버. 지금은 **원격 설정**(`GET /v1/config`)만 내려준다.
 서버는 설정을 **엄격하게** 검사한다. 모르는 사이트 · 프리셋, 잘못된 UA 가 있으면
 새 파일을 버리고 직전 설정을 계속 내보낸다(`docker compose logs api` 에 사유가 남는다).
 처음 뜰 때 파일이 깨져 있으면 서버가 뜨지 않는다.
+
+## 키워드 알림
+
+- 구독된 게시판을 3분마다(실패하면 최대 60분까지 늘려) 1쪽만 받는다. 같은 게시판은 구독자가 몇 명이든 한 번.
+- 첫 크롤은 기록만 하고, 이후 새 글 제목이 키워드에 맞으면 FCM 으로 보낸다. 무효 토큰이면 등록을 지운다.
+- 저장: sembast 파일 DB(`DATA_DIR/alerts.db`, 볼륨 `mocl_data`).
+- 발송 키: Firebase 콘솔 → 프로젝트 설정 → 서비스 계정 → "새 비공개 키 생성" 으로 받은 JSON 을
+  서버의 `~/mocl/server/secrets/firebase-service-account.json` 에 두고 `docker compose up -d` (재생성).
+  없으면 **dry-run**: 보낼 내용만 `[push:dry-run]` 로그로 남긴다.
+- 지원 사이트는 서버 IP 에서 받을 수 있는 곳만이다. 사이트가 막혔는지 확인:
+  ```bash
+  docker run --rm -v ~/mocl:/src -w /src/server dart:3.13.7 sh -c "dart pub get >/dev/null && dart run bin/probe.dart"
+  ```
 
 ## 로컬 실행
 
@@ -90,6 +107,9 @@ server/
 ├── lib/src/app.dart         # 라우터 · 미들웨어(접속 로그, 500 처리)
 ├── lib/src/config_store.dart# 설정 파일 읽기 · 검증 · ETag · 다시 읽기
 ├── lib/src/server_log.dart  # stdout 로그, MoclLogger 연결
+├── lib/src/crawl/           # 사이트 목록 받기(공유 파서 · 뽐뿌 RSS)
+├── lib/src/alerts/          # 알림 저장소 · API · 크롤 루프 · FCM 발송
+├── bin/probe.dart           # 서버 IP 에서 사이트별로 받아지는지 확인
 ├── config/remote_config.json
 ├── Dockerfile               # 빌드 컨텍스트 = 저장소 루트
 ├── docker-compose.yml       # api + caddy(TLS)

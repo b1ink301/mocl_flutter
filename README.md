@@ -51,6 +51,7 @@ lib/
 │   ├── ads/                       # AdMob 네이티브 광고 (목록 · 메인 · 상세)
 │   ├── html_parser/               # 사이트별 HTTP(*_api.dart). 파서는 packages/mocl_shared
 │   ├── remote_config/             # 서버 원격 설정(UA 등) 캐시 · 갱신
+│   ├── keyword_alerts/            # 키워드 알림 구독 · FCM 수신(서버가 크롤)
 │   ├── database/                  # 로컬 DB (sembast)
 │   ├── network/                   # 네트워크 에러 처리
 │   └── google_drive/              # 구글 드라이브 백업

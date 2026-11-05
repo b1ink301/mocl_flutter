@@ -13,6 +13,12 @@ services:
     # 바꿔 쓸 때 컨테이너가 옛 파일을 계속 본다. 서버는 수정 시각을 보고 다시 읽는다.
     volumes:
       - ./config:/app/config:ro
+      # FCM 서비스 계정 JSON(firebase-service-account.json). 없으면 dry-run 으로 돈다.
+      - ./secrets:/app/secrets:ro
+      # 알림 구독 · 크롤 상태(sembast)
+      - mocl_data:/app/data
+    environment:
+      FIREBASE_SERVICE_ACCOUNT: /app/secrets/firebase-service-account.json
     expose:
       - "8080"
 
@@ -33,5 +39,6 @@ services:
       - caddy_config:/config
 
 volumes:
+  mocl_data:
   caddy_data:
   caddy_config:

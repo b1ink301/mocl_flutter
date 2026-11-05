@@ -91,6 +91,25 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
 - 앱은 모르는 항목을 건너뛰고(느슨), 서버는 설정 파일을 엄격하게 검사한다. 호환이 깨지는 변경만
   `RemoteConfig.schemaVersion` 을 올린다(옛 앱은 그 설정을 버리고 기본값을 쓴다).
 
+## 키워드 알림 (`features/keyword_alerts/` · `server/lib/src/alerts/`)
+
+- 사용자가 담은 게시판에 키워드를 걸면 서버가 그 게시판 1쪽을 3분마다 받아, 새 글 제목에 키워드가
+  있으면 FCM 으로 보낸다. 계약(`AlertSubscription` · `AlertRegistration` · 지원 사이트 ·
+  키워드 매칭 `KeywordAlerts.matchedKeywords`)은 `mocl_shared/alerts/keyword_alerts.dart` 하나에 둔다.
+- 지원 사이트(`KeywordAlerts.sites`)는 **서버 IP 에서 실제로 받아 본 결과**다(`server/bin/probe.dart`).
+  아카라이브 · 인스티즈 · 더쿠 · 루리웹은 오라클 IP 를 막고, 네이버카페 · 레딧은 로그인이 필요해 뺐다.
+  뽐뿌는 목록이 막혀 RSS(`rss.php?id=`)로 받는다. 사이트를 넣고 빼기 전에 probe 를 서버에서 돌려 볼 것.
+- 앱이 원본이다: 구독은 SharedPreferences 에 두고, 바뀔 때마다 `PUT /v1/alerts/{installId}` 로 통째로 올린다
+  (`KeywordAlertSync`, 같으면 안 보냄, 비면 DELETE). 실행할 때와 FCM 토큰이 바뀔 때도 다시 맞춘다.
+  `installId` 는 앱이 만든 무작위 값이고 곧 등록을 고칠 권한이다(로그에 남기지 말 것).
+- 알림 data 의 `url` 을 `SiteLinkResolver` 로 열어 상세로 간다(`KeywordAlertGate`, `AppUpdateGate` 안쪽).
+  앱이 앞에 있으면 시스템이 띄우지 않으므로 스낵바로 보여 준다.
+- 서버는 사용자가 준 게시판 URL 을 요청하므로 호스트를 `KeywordAlerts.isAllowedBoardUrl` 로 제한한다(SSRF).
+  게시판 첫 크롤은 지금 글을 "본 것" 으로만 기록한다(옛 글로 알림 폭탄 방지). 실패하면 간격을 늘린다.
+- Android: 채널 `keyword_alerts` 는 `MainActivity` 가 만들고 매니페스트가 FCM 기본 채널 · 아이콘으로 지정한다.
+  iOS 는 Xcode 에서 Push Notifications · Background Modes(remote notification) 와 Firebase 콘솔 APNs 키가 있어야 온다.
+- 서버 발송 키는 `server/secrets/firebase-service-account.json`(gitignore). 없으면 dry-run(로그만).
+
 ## 부팅 (`main.dart`)
 
 - 초기화는 `_prepareApp()` 안에서만 한다. `BootGuard` 가 감싸서, 던지면 실패 화면 +

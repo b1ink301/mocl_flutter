@@ -21,6 +21,6 @@ COPY --from=build /runtime/ /
 COPY --from=build /out/server /app/server
 COPY server/config /app/config
 WORKDIR /app
-ENV PORT=8080 CONFIG_PATH=/app/config/remote_config.json
+ENV PORT=8080 CONFIG_PATH=/app/config/remote_config.json DATA_DIR=/app/data
 EXPOSE 8080
 CMD ["/app/server"]

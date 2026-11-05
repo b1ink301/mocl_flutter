@@ -89,6 +89,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.16.0"
+  cp949_codec:
+    dependency: "direct main"
+    description:
+      name: cp949_codec
+      sha256: a381b062b0727a22ac022a6562c49ea6e2eed487d6cb8a676b44cdc593716782
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.0.2"
   crypto:
     dependency: "direct main"
     description:
@@ -106,7 +114,7 @@ packages:
     source: hosted
     version: "1.0.2"
   dio:
-    dependency: transitive
+    dependency: "direct main"
     description:
       name: dio
       sha256: "852ec3b48cc431ac04fff978413c541502b67ffc3e26921e74e3d994694192c1"
@@ -177,6 +185,30 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.0"
+  google_cloud:
+    dependency: transitive
+    description:
+      name: google_cloud
+      sha256: b385e20726ef5315d302c5933bfb728103116c5be2d3d17094b01a82da538c1f
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.0"
+  google_identity_services_web:
+    dependency: transitive
+    description:
+      name: google_identity_services_web
+      sha256: "5d187c46dc59e02646e10fe82665fc3884a9b71bc1c90c2b8b749316d33ee454"
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.3.3+1"
+  googleapis_auth:
+    dependency: "direct main"
+    description:
+      name: googleapis_auth
+      sha256: e15d48204e2f3c852dc1091a49705a163a8ba5897823f9abe1c0795e512357c4
+      url: "https://pub.dev"
+    source: hosted
+    version: "2.3.5"
   html:
     dependency: transitive
     description:
@@ -193,6 +225,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.0.0"
+  http:
+    dependency: "direct main"
+    description:
+      name: http
+      sha256: "87721a4a50b19c7f1d49001e51409bddc46303966ce89a65af4f4e6004896412"
+      url: "https://pub.dev"
+    source: hosted
+    version: "1.6.0"
   http_methods:
     dependency: transitive
     description:
@@ -312,6 +352,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.9.1"
+  petitparser:
+    dependency: transitive
+    description:
+      name: petitparser
+      sha256: "2f1564aadb14215e478563b5406cb80729d022158c01dc50c96013c2f7eb4790"
+      url: "https://pub.dev"
+    source: hosted
+    version: "7.1.0"
   pool:
     dependency: transitive
     description:
@@ -328,6 +376,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.2.1"
+  sembast:
+    dependency: "direct main"
+    description:
+      name: sembast
+      sha256: "35775a26edbdf0d891bab304929a712e103c9d9a6e2fb5ebbd8437bb3139615a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.10.0"
   shelf:
     dependency: "direct main"
     description:
@@ -416,6 +472,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.4.1"
+  synchronized:
+    dependency: transitive
+    description:
+      name: synchronized
+      sha256: b3d516dbd3757ff2a458735e4f6cbac9ff261f576f6e87bcb17feabb39e657c5
+      url: "https://pub.dev"
+    source: hosted
+    version: "3.5.0"
   term_glyph:
     dependency: transitive
     description:
@@ -512,6 +576,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.2.1"
+  xml:
+    dependency: "direct main"
+    description:
+      name: xml
+      sha256: "971043b3a0d3da28727e40ed3e0b5d18b742fa5a68665cca88e74b7876d5e025"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.6.1"
   yaml:
     dependency: transitive
     description:

@@ -8,6 +8,7 @@ import 'package:mocl_flutter/features/add_main_dialog/presentation/add_list_moda
 import 'package:mocl_flutter/features/bookmark/presentation/bookmarks_page.dart';
 import 'package:mocl_flutter/features/detail_page/domain/site_link_resolver.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/mocl_detail_page.dart';
+import 'package:mocl_flutter/features/keyword_alerts/presentation/keyword_alerts_page.dart';
 import 'package:mocl_flutter/features/mute/presentation/mute_page.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/photo_view_dialog.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/video_player_page.dart';
@@ -121,6 +122,13 @@ class AppPages._() {
         path: Routes.mute,
         pageBuilder: (BuildContext context, GoRouterState state) =>
             SwipeBackPage(builder: (BuildContext context) => const MutePage()),
+      ),
+      GoRoute(
+        path: Routes.keywordAlerts,
+        pageBuilder: (BuildContext context, GoRouterState state) =>
+            SwipeBackPage(
+              builder: (BuildContext context) => const KeywordAlertsPage(),
+            ),
       ),
       GoRoute(
         path: Routes.video,
