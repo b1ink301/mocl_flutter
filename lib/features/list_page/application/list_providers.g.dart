@@ -297,7 +297,7 @@ final class IsSinglePageBoardProvider
   }
 }
 
-String _$isSinglePageBoardHash() => r'9a121c853f79ab65103ec7c10a2b3b88686cdefd';
+String _$isSinglePageBoardHash() => r'4bcea2c5a581b8b0c09d7f088417e86c2d9fbe56';
 
 /// infinite_scroll_pagination 의 PagingController 를 Riverpod 으로 감싼다.
 /// build() 는 mainItem/sortType 이 바뀔 때만 새 컨트롤러를 생성한다.

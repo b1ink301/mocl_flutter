@@ -65,10 +65,8 @@ Future<Either<Failure, List<ListItem>>> reqListData(
 @Riverpod(dependencies: [mainItem])
 bool isSinglePageBoard(Ref ref) {
   final MainItem mainItem = ref.watch(mainItemProvider);
-  return (mainItem.siteType == SiteType.clien &&
-          mainItem.board == 'recommend') ||
-      // 네이트판은 고정 랭킹 목록이라 페이지네이션이 없다.
-      mainItem.siteType == SiteType.nate;
+  // 네이트판은 고정 랭킹 목록이라 페이지네이션이 없다.
+  return mainItem.siteType == SiteType.nate;
 }
 
 /// infinite_scroll_pagination 의 PagingController 를 Riverpod 으로 감싼다.

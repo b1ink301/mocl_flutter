@@ -134,6 +134,34 @@ void main() {
     });
   });
 
+  group('v2 → v3 마이그레이션 (없어진 게시판)', () {
+    Future<void> seedV2Favorites(List<(String site, String board)> rows) async {
+      final Database db = await databaseFactoryMemory.openDatabase(
+        path,
+        version: 2,
+      );
+      final store = intMapStoreFactory.store('favorites');
+      for (final (String site, String board) in rows) {
+        await store.add(db, {'siteType': site, 'board': board});
+      }
+      await db.close();
+    }
+
+    test('클리앙 오늘의추천글만 빠지고 나머지는 남는다', () async {
+      await seedV2Favorites([
+        ('clien', 'recommend'),
+        ('clien', 'park'),
+        ('ppomppu', 'recommend'),
+      ]);
+
+      final LocalDatabase local = await open();
+      expect(await local.isFavorite(SiteType.clien, 'recommend'), isFalse);
+      expect(await local.isFavorite(SiteType.clien, 'park'), isTrue);
+      expect(await local.isFavorite(SiteType.ppomppu, 'recommend'), isTrue);
+      await local.dispose();
+    });
+  });
+
   group('읽음 기록 정리', () {
     const Duration ttl = Duration(days: 180);
     final DateTime now = DateTime(2026, 10, 22);

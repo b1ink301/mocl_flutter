@@ -466,9 +466,7 @@ class const ClienParser(final bool isShowNickImage) extends BaseParser {
     final int boardSn = sortType == SortType.recent && lastId.intId > 0
         ? lastId.intId
         : 0;
-    return board == "recommend"
-        ? url
-        : 'https://m.clien.net/service/api/board/under/list?category=0&boardSn=$boardSn&po=$page$sort&boardCd=$board';
+    return 'https://m.clien.net/service/api/board/under/list?category=0&boardSn=$boardSn&po=$page$sort&boardCd=$board';
   }
 
   @override

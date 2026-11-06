@@ -18,7 +18,7 @@ const List<(SiteType, String board, String url)> samples = [
     'best',
     'https://m.bobaedream.co.kr/board/new_writing/best',
   ),
-  (SiteType.clien, 'recommend', 'https://m.clien.net/service/recommend/list'),
+  (SiteType.clien, 'park', 'https://m.clien.net/service/board/park'),
   (SiteType.clien, 'jirum', 'https://m.clien.net/service/board/jirum'),
   (SiteType.cook82, '15', 'https://www.82cook.com/entiz/enti.php?bn=15'),
   (SiteType.damoang, 'free', 'https://damoang.net/free'),

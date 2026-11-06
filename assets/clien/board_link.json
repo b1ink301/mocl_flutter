@@ -1,5 +1,4 @@
 [
-  {"board":"recommend","title":"오늘의추천글","type":0,"url":"https://m.clien.net/service/recommend/list","no":0},
   {"board":"park","title":"모두의공원","type":0,"url":"https://m.clien.net/service/board/park","no":1},
   {"board":"kin","title":"아무거나질문","type":0,"url":"https://m.clien.net/service/board/kin","no":3},
   {"board":"news","title":"새로운소식","type":0,"url":"https://m.clien.net/service/board/news","no":4},
