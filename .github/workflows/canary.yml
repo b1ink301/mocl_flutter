@@ -1,0 +1,56 @@
+name: Site canary
+
+# 실제 사이트에서 목록 · 상세를 받아 파서가 아직 읽는지 매일 확인한다(server/bin/canary.dart).
+# 픽스처 테스트는 저장해 둔 옛 HTML 로 돌아서 사이트가 바뀌어도 통과한다 — 이걸로 잡는다.
+#
+# - 고장(파싱 실패 · 빈 목록/본문 · 404/410)이 있으면 실패한다. 예약 실행이 실패하면
+#   GitHub 가 워크플로 소유자에게 메일을 보낸다.
+# - 막힘(403 · 429 · 연결 실패)은 러너 IP 를 사이트가 막은 것이라 경고로만 남긴다.
+# - 결과 표는 실행 요약(Summary)에 남는다.
+on:
+  schedule:
+    - cron: '0 0 * * *' # 매일 09:00 KST
+  workflow_dispatch:
+    inputs:
+      sites:
+        description: '일부 사이트만(SiteType 이름, 공백 구분). 비우면 전체'
+        required: false
+        default: ''
+
+concurrency:
+  group: canary
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  canary:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: Read Flutter version
+        id: fvm
+        run: echo "version=$(jq -r .flutter .fvmrc)" >> "$GITHUB_OUTPUT"
+
+      # 서버는 순수 Dart 지만 로컬과 같은 Dart 버전을 쓰려고 .fvmrc 의 Flutter 를 깐다.
+      - name: Set up Flutter
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
+        with:
+          channel: 'stable'
+          flutter-version: ${{ steps.fvm.outputs.version }}
+          cache: true
+
+      - name: Install dependencies
+        working-directory: server
+        run: dart pub get --enforce-lockfile
+
+      - name: Run canary
+        working-directory: server
+        env:
+          SITES: ${{ github.event.inputs.sites }}
+        # SITES 는 공백으로 나눠 사이트 이름 인자로 넘긴다(따옴표 없이).
+        run: dart run bin/canary.dart --summary "$GITHUB_STEP_SUMMARY" $SITES

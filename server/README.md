@@ -146,6 +146,29 @@ docker compose logs api | grep admin                   # "[admin] 관리 화면 
   docker run --rm -v ~/mocl:/src -w /src/server dart:3.13.7 sh -c "dart pub get >/dev/null && dart run bin/probe.dart"
   ```
 
+## 사이트 카나리
+
+사이트가 HTML 을 바꿔 파서가 깨졌는지 **실제 사이트**로 확인한다. 픽스처 테스트(`mocl_shared/test`)는
+저장해 둔 옛 HTML 로 돌아서 사이트가 바뀌어도 통과하므로 이걸로 잡는다.
+
+- `lib/src/canary/canary.dart` 의 `canaryTargets` 게시판마다 목록 1쪽을 받고, 가운데 글(실패하면 다음 글)의
+  상세를 받아 앱과 같은 파서로 읽는다. 제목 · 본문이 비면 고장이다.
+- 판정: **고장**(파싱 실패 · 빈 목록/본문 · 404/410) / **막힘**(403 · 429 · 503 · 연결 실패 — 실행한 곳의 IP 를
+  사이트가 막은 것이라 파서 문제인지 모름) / 정상. 고장이 하나라도 있으면 종료 코드 1.
+- 상세는 `urlByDetail` 주소 하나만 받는다. 댓글을 따로 받는 사이트(다모앙 · 인벤 · 엠팍 · 더쿠)는 본문만 본다.
+  아카라이브는 앱이 웹뷰로 받으므로 목록만 본다. 로그인이 필요한 네이버카페 · 레딧은 넣지 않았다.
+- GitHub Actions `Site canary`(`.github/workflows/canary.yml`)가 매일 09:00 KST 에 돌고, 결과 표를 실행
+  요약에 남긴다. 실패하면 GitHub 가 메일을 보낸다. Actions 탭에서 사이트를 골라 직접 돌릴 수도 있다.
+
+```bash
+cd server
+fvm dart run bin/canary.dart                 # 전체
+fvm dart run bin/canary.dart clien nate      # 일부(SiteType 이름)
+```
+
+`bin/probe.dart` 와 다른 점: probe 는 **서버 IP 에서 목록이 받아지는지**(크롤 허용 목록 정하기),
+카나리는 **파서가 지금 사이트를 읽는지**(목록 + 상세)를 본다.
+
 ## 이슈 레이더
 
 - `lib/src/radar/radar_boards.dart` 의 게시판을 5분마다 받아(`RadarCollector`) 글마다 처음 본 시각과
@@ -247,6 +270,7 @@ server/
 ├── lib/src/crawl/           # 사이트 목록 받기(공유 파서 · 뽐뿌 RSS)
 ├── lib/src/alerts/          # 알림 저장소 · API · 크롤 루프 · FCM 발송
 ├── bin/probe.dart           # 서버 IP 에서 사이트별로 받아지는지 확인
+├── bin/canary.dart          # 실제 사이트로 파서가 아직 읽는지 확인(lib/src/canary/)
 ├── config/remote_config.json
 ├── Dockerfile               # 빌드 컨텍스트 = 저장소 루트
 ├── docker-compose.yml       # api + caddy(TLS)

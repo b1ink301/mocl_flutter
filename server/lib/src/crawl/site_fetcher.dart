@@ -6,6 +6,7 @@ import 'package:cp949_codec/cp949_codec.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
 import 'package:mocl_shared/entities/last_id.dart';
+import 'package:mocl_shared/entities/mocl_details.dart';
 import 'package:mocl_shared/entities/mocl_list_item.dart';
 import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_shared/entities/sort_type.dart';
@@ -57,7 +58,13 @@ BaseParser parserOf(SiteType site) => switch (site) {
 };
 
 /// 목록을 받아 오지 못한 이유. 사이트가 막았는지(403 · 429)를 구분해 둔다.
-class const FetchFailure(final String message, {final int? statusCode}) {
+///
+/// [network] 는 응답을 받기도 전에 실패한 경우(시간 초과 · 연결 실패)다.
+class const FetchFailure(
+  final String message, {
+  final int? statusCode,
+  final bool network = false,
+}) {
   bool get isBlocked => statusCode == 403 || statusCode == 429;
 
   @override
@@ -110,9 +117,14 @@ class SiteFetcher({
     required String url,
     String boardTitle = '',
     SortType sort = SortType.recent,
+
+    /// 뽐뿌를 RSS 로 받을지. 카나리는 앱과 같은 목록 페이지를 봐야 하므로 끈다.
+    bool ppomppuRss = true,
   }) async {
     // 뽐뿌는 목록 페이지가 데이터센터 IP 를 막아 RSS 로 받는다(RSS 는 열려 있다).
-    if (site == SiteType.ppomppu) return _ppomppuRss(board, boardTitle);
+    if (site == SiteType.ppomppu && ppomppuRss) {
+      return _ppomppuRss(board, boardTitle);
+    }
 
     final BaseParser parser = parserOf(site);
     final String listUrl = parser.urlByList(
@@ -134,7 +146,7 @@ class SiteFetcher({
         ),
       );
     } on DioException catch (e) {
-      throw FetchFailure('${e.type}');
+      throw FetchFailure('${e.type}', network: true);
     }
     final int status = response.statusCode ?? 0;
     if (status != 200) throw FetchFailure('HTTP', statusCode: status);
@@ -161,6 +173,59 @@ class SiteFetcher({
     );
   }
 
+  /// [site] 의 글 [item] 상세(본문 + 페이지에 같이 오는 댓글). 실패하면 [FetchFailure].
+  ///
+  /// 앱처럼 `urlByDetail` 주소 하나만 받는다. 댓글을 따로 받는 사이트(다모앙 ·
+  /// 인벤 · 엠팍 · 더쿠)의 추가 요청은 하지 않는다 — 본문 파싱만 확인한다.
+  Future<Details> fetchDetail(SiteType site, ListItem item) async {
+    final BaseParser parser = parserOf(site);
+    final String url = parser.urlByDetail(item.url, item.board, item.id);
+    final Response<List<int>> response;
+    try {
+      response = await _dioFor(userAgentOf(site)).get<List<int>>(
+        url,
+        options: Options(
+          headers: {
+            'Referer': parser.baseUrl,
+            'Accept-Language': 'ko-KR,ko;q=0.9',
+          },
+        ),
+      );
+    } on DioException catch (e) {
+      throw FetchFailure('${e.type}', network: true);
+    }
+    final int status = response.statusCode ?? 0;
+    if (status != 200) throw FetchFailure('HTTP', statusCode: status);
+
+    final String html = decodeBody(response.data ?? const []);
+    // 앱이 본문과 댓글을 따로 받아 [본문, 댓글] 로 넘기는 사이트는 댓글 칸을 비워 넘긴다.
+    final Object data = switch (site) {
+      SiteType.mlbpark => [html, ''],
+      SiteType.theqoo => [html, null],
+      _ => html,
+    };
+    try {
+      final result = await parser.detail(
+        Response<Object>(
+          data: data,
+          requestOptions: response.requestOptions,
+          statusCode: status,
+          headers: response.headers,
+        ),
+      );
+      final Details details = result.fold(
+        (Failure f) => throw FetchFailure('parse: ${f.message}'),
+        (Details d) => d,
+      );
+      return details;
+    } on FetchFailure {
+      rethrow;
+    } catch (e) {
+      // 파서가 Failure 대신 던지는 경우(형식이 바뀌어 캐스트 실패 등)도 고장이다.
+      throw FetchFailure('parse: $e');
+    }
+  }
+
   Future<List<ListItem>> _ppomppuRss(String board, String boardTitle) async {
     if (!RegExp(r'^[A-Za-z0-9_]+$').hasMatch(board)) {
       throw FetchFailure('잘못된 뽐뿌 게시판: $board');
@@ -170,7 +235,7 @@ class SiteFetcher({
       response = await _dioFor(userAgentOf(SiteType.ppomppu))
           .get<List<int>>('https://www.ppomppu.co.kr/rss.php?id=$board');
     } on DioException catch (e) {
-      throw FetchFailure('${e.type}');
+      throw FetchFailure('${e.type}', network: true);
     }
     final int status = response.statusCode ?? 0;
     if (status != 200) throw FetchFailure('HTTP', statusCode: status);

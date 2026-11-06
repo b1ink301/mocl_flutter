@@ -75,6 +75,9 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   ```
   파서 테스트 · 픽스처는 `packages/mocl_shared/test/` 에 있다(순수 Dart 로 돈다).
 - 서버는 `server/`(shelf, Docker + Caddy, arm64 클라우드 VM). 사용법 · 배포는 [server/README.md](server/README.md).
+- 사이트 카나리(`server/bin/canary.dart`, GitHub Actions `Site canary` 매일): 실제 사이트에서 목록 · 상세를 받아
+  파서가 아직 읽는지 본다. 파서를 고치면 `cd server && fvm dart run bin/canary.dart {site}` 로 확인한다.
+  사이트를 넣고 빼거나 기본 게시판을 바꾸면 `canaryTargets` 도 같이 고친다.
   서버 로그는 `print` 가 아니라 `serverLog`(운영에서도 남음) 또는 `MoclLogger`(개발 실행에서만).
   `pub workspace` 로 묶지 않는다 — 서버 Docker 빌드가 Flutter SDK 없이 의존성을 풀어야 한다.
 
