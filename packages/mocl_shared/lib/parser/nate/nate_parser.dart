@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 import 'dart:isolate';
 
 import 'package:dio/dio.dart';
@@ -24,7 +25,8 @@ import '../base/base_parser.dart';
 /// 리스트는 실시간 인기톡 랭킹(`/talk/ranking`)을 사용한다. 랭킹은 고정 top-N
 /// 목록이라 페이지네이션이 없으므로 단일 페이지 게시판으로 처리한다
 /// (list_providers 의 _isSinglePageBoard 참고).
-/// 상세 URL: `/talk/{id}`. 본문/베스트 댓글이 단일 GET 응답에 포함된다.
+/// 상세 URL: `/talk/{id}`. 본문 · 베스트 댓글은 글 페이지에, 전체 댓글은
+/// `/talk/reply/view` 에 있다([urlByReplies]).
 class const NateParser() extends BaseParser {
   @override
   SiteType get siteType => SiteType.nate;
@@ -147,33 +149,108 @@ class const NateParser() extends BaseParser {
     await sendListWithReadStatus(replyPort, items);
   }
 
+  /// [response] 의 data 는 글 HTML 문자열 또는 `[글 HTML, 댓글 HTML]`.
+  ///
+  /// 2026-11 개편 뒤 글 페이지는 베스트 댓글 3개만 주므로, 앱은 전체 댓글 페이지
+  /// (`/talk/reply/view`, 옛 마크업 그대로)를 같이 받아 넘긴다([urlByReplies]).
   @override
   Future<Either<Failure, Details>> detail(Response<dynamic> response) async {
-    final responseData = response.data as String;
-    return Isolate.run(() => _parseDetail(responseData));
+    final dynamic data = response.data;
+    final String html;
+    String replyHtml = '';
+    if (data is List) {
+      html = data.isNotEmpty ? '${data[0] ?? ''}' : '';
+      replyHtml = data.length > 1 ? '${data[1] ?? ''}' : '';
+    } else {
+      html = data as String;
+    }
+    return Isolate.run(() => _parseDetail(html, replyHtml));
   }
 
-  static Either<Failure, Details> _parseDetail(String responseData) {
-    final document = parse(responseData);
+  /// 글 [id] 의 전체 댓글(최신순) 페이지.
+  static String urlByReplies(int id) =>
+      'https://m.pann.nate.com/talk/reply/view?pann_id=$id&order=N&rankingType=total';
 
-    final String title = document.qText('h1.view-tit').isNotEmpty
-        ? document.qText('h1.view-tit')
-        : (document
+  static Either<Failure, Details> _parseDetail(String html, String replyHtml) {
+    final document = parse(html);
+    final Map<String, dynamic>? ld = _postingJsonLd(document);
+    final header = document.querySelector('#talk-article');
+
+    String ldString(Object? v) => v is String ? v.trim() : '';
+    final Map<String, dynamic>? ldAuthor = ld?['author'] is Map
+        ? ld!['author'] as Map<String, dynamic>
+        : null;
+
+    // 제목: 옛 화면 → 새 화면(h1) → 구조화 데이터 → og:title.
+    String title = document.qText('h1.view-tit');
+    if (title.isEmpty) title = header?.qText('h1') ?? '';
+    if (title.isEmpty) title = ldString(ld?['headline']);
+    if (title.isEmpty) {
+      title =
+          (document
                       .querySelector('meta[property="og:title"]')
                       ?.attributes['content'] ??
                   '')
               .replaceFirst(RegExp(r'\s*\|\s*네이트.*$'), '')
               .trim();
+    }
 
-    final String nickName = document.qText('div.writer span.nick');
-    final String likeCount = document
+    String nickName = document.qText('div.writer span.nick');
+    if (nickName.isEmpty) nickName = ldString(ldAuthor?['name']);
+
+    String likeCount = document
         .qText('div.updown div.btnbox.up span.count')
         .replaceAll(RegExp(r'[^0-9]'), '');
+    if (likeCount.isEmpty) likeCount = _ldCount(ld, 'LikeAction');
+    final String viewCount = _ldCount(ld, 'ViewAction');
+    final String time = header?.qText('time') ?? '';
 
-    final bodyEl = document.querySelector('#pann-content');
+    // 본문: 옛 화면은 #pann-content, 새 화면은 헤더 바로 다음 칸의 첫 div.
+    Element? bodyEl = document.querySelector('#pann-content');
+    if (bodyEl == null) {
+      final Element? next = header?.nextElementSibling;
+      bodyEl = next?.children.where((e) => e.localName == 'div').firstOrNull;
+    }
     bodyEl.removeAll('script, style, ins, iframe, .adv');
-    final String bodyHtml = bodyEl?.innerHtml ?? '';
+    String bodyHtml = bodyEl?.innerHtml.trim() ?? '';
+    if (bodyHtml.isEmpty) {
+      // 마크업을 못 찾으면 구조화 데이터의 글자만이라도 보여 준다.
+      final String text = ldString(ld?['text']);
+      if (text.isNotEmpty) {
+        bodyHtml = text
+            .split('\n')
+            .map(
+              (line) =>
+                  '<p>${const HtmlEscape(HtmlEscapeMode.element).convert(line)}</p>',
+            )
+            .join();
+      }
+    }
 
+    // 댓글: 전체 댓글 페이지 → (옛 화면이면) 글 페이지 → 구조화 데이터의 베스트 댓글.
+    List<CommentItem> comments = replyHtml.isEmpty
+        ? const []
+        : _parseReplyList(parse(replyHtml));
+    if (comments.isEmpty) comments = _parseReplyList(document);
+    if (comments.isEmpty) comments = _ldComments(ld);
+
+    final detail = Details(
+      title: title,
+      viewCount: viewCount,
+      likeCount: likeCount,
+      csrf: '',
+      time: time,
+      info: BaseParser.parserInfo('', ''),
+      userInfo: UserInfo(id: nickName, nickName: nickName, nickImage: ''),
+      comments: comments,
+      bodyHtml: bodyHtml,
+    );
+
+    return Right<Failure, Details>(detail);
+  }
+
+  /// 옛 마크업 댓글(`div.reply-list dl`). 전체 댓글 페이지가 아직 이 형식이다.
+  static List<CommentItem> _parseReplyList(Document document) {
     final comments = <CommentItem>[];
     var index = 0;
     for (final dl in document.querySelectorAll('div.reply-list dl')) {
@@ -197,38 +274,97 @@ class const NateParser() extends BaseParser {
       final String body = dd.text.trim();
       if (body.isEmpty) continue;
 
-      final cInfo = '${isBest ? '[베플] ' : ''}$cTime';
+      comments.add(_comment(index++, cNick, cTime, body, isBest: isBest));
+    }
+    return comments;
+  }
 
+  /// 구조화 데이터의 `comment`(베스트 댓글). 글 페이지에는 이것만 온다.
+  static List<CommentItem> _ldComments(Map<String, dynamic>? ld) {
+    final raw = ld?['comment'];
+    if (raw is! List) return const [];
+    final comments = <CommentItem>[];
+    var index = 0;
+    for (final c in raw) {
+      if (c is! Map) continue;
+      final String body = (c['text'] as String? ?? '').trim();
+      if (body.isEmpty) continue;
+      final author = c['author'];
+      final String nick = author is Map ? '${author['name'] ?? ''}'.trim() : '';
       comments.add(
-        CommentItem(
-          id: index++,
-          isReply: false,
-          bodyHtml: body,
-          likeCount: '',
-          mediaHtml: '',
-          isVideo: false,
-          info: cInfo,
-          time: cTime,
-          userInfo: UserInfo(id: cNick, nickName: cNick, nickImage: ''),
-          authorId: '',
+        _comment(
+          index++,
+          nick,
+          _ldTime(c['datePublished'] as String? ?? ''),
+          body,
+          isBest: true,
         ),
       );
     }
+    return comments;
+  }
 
-    final info = BaseParser.parserInfo('', '');
+  static CommentItem _comment(
+    int id,
+    String nick,
+    String time,
+    String body, {
+    required bool isBest,
+  }) => CommentItem(
+    id: id,
+    isReply: false,
+    bodyHtml: body,
+    likeCount: '',
+    mediaHtml: '',
+    isVideo: false,
+    info: '${isBest ? '[베플] ' : ''}$time',
+    time: time,
+    userInfo: UserInfo(id: nick, nickName: nick, nickImage: ''),
+    authorId: '',
+  );
 
-    final detail = Details(
-      title: title,
-      viewCount: '',
-      likeCount: likeCount,
-      csrf: '',
-      time: '',
-      info: info,
-      userInfo: UserInfo(id: nickName, nickName: nickName, nickImage: ''),
-      comments: comments,
-      bodyHtml: bodyHtml,
-    );
+  /// `<script type="application/ld+json">` 의 `DiscussionForumPosting`.
+  static Map<String, dynamic>? _postingJsonLd(Document document) {
+    for (final script in document.querySelectorAll(
+      'script[type="application/ld+json"]',
+    )) {
+      final Object? json;
+      try {
+        json = jsonDecode(script.text);
+      } on FormatException {
+        continue;
+      }
+      final List<Object?> nodes = switch (json) {
+        {'@graph': final List<Object?> graph} => graph,
+        final Map<String, dynamic> one => [one],
+        final List<Object?> many => many,
+        _ => const [],
+      };
+      for (final node in nodes) {
+        if (node is Map<String, dynamic> &&
+            node['@type'] == 'DiscussionForumPosting') {
+          return node;
+        }
+      }
+    }
+    return null;
+  }
 
-    return Right<Failure, Details>(detail);
+  /// `interactionStatistic` 에서 [action](ViewAction · LikeAction) 횟수.
+  static String _ldCount(Map<String, dynamic>? ld, String action) {
+    final stats = ld?['interactionStatistic'];
+    if (stats is! List) return '';
+    for (final s in stats) {
+      if (s is Map && '${s['interactionType']}'.endsWith('/$action')) {
+        return '${s['userInteractionCount'] ?? ''}';
+      }
+    }
+    return '';
+  }
+
+  /// `2026-11-05T10:28:36+09:00` → `11.05 10:28`(화면의 댓글 시각과 같은 모양).
+  static String _ldTime(String iso) {
+    final m = RegExp(r'^\d{4}-(\d{2})-(\d{2})T(\d{2}):(\d{2})').firstMatch(iso);
+    return m == null ? '' : '${m[1]}.${m[2]} ${m[3]}:${m[4]}';
   }
 }

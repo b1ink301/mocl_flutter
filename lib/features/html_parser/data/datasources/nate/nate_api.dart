@@ -12,6 +12,7 @@ import 'package:mocl_shared/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 
 import 'package:mocl_shared/parser/base/base_parser.dart';
+import 'package:mocl_shared/parser/nate/nate_parser.dart';
 
 /// 네이트판은 읽기에 로그인이 불필요하나, 일관성을 위해 [getWithCookies] 로
 /// 쿠키를 함께 보낸다. 게시판(랭킹) 목록은 asset JSON 사용.
@@ -28,19 +29,42 @@ class const NateApi(super.dio, super.userAgent) extends BaseApi {
         'Host': host,
         'User-Agent': userAgent,
       };
+      // 글 페이지는 베스트 댓글만 주므로 전체 댓글 페이지를 같이 받는다.
+      // 댓글 페이지가 실패해도 글은 보여 준다(파서가 베스트 댓글로 대신한다).
+      final Future<Response<dynamic>> replyFuture =
+          getWithCookies(
+            NateParser.urlByReplies(item.id),
+            parser.baseUrl,
+            headers: {'User-Agent': userAgent, 'Referer': url},
+          ).catchError(
+            (_) =>
+                Response<dynamic>(data: '', requestOptions: RequestOptions()),
+          );
       final Response<dynamic> response = await getWithCookies(
         url,
         parser.baseUrl,
         headers: headers,
       );
-      MoclLogger.d(() => '[detail] $url response = ${response.statusCode}');
-      return response.statusCode == 200
-          ? await parser.detail(response)
-          : Left(
-              GetDetailFailure(
-                message: 'response.statusCode = ${response.statusCode}',
-              ),
-            );
+      final Response<dynamic> replies = await replyFuture;
+      MoclLogger.d(
+        () =>
+            '[detail] $url response = ${response.statusCode}, '
+            'replies = ${replies.statusCode}',
+      );
+      if (response.statusCode != 200) {
+        return Left(
+          GetDetailFailure(
+            message: 'response.statusCode = ${response.statusCode}',
+          ),
+        );
+      }
+      return await parser.detail(
+        Response<List<dynamic>>(
+          data: [response.data, replies.statusCode == 200 ? replies.data : ''],
+          requestOptions: response.requestOptions,
+          statusCode: 200,
+        ),
+      );
     } on DioException catch (e) {
       return Left(failureFromDio(e));
     } catch (e) {
