@@ -159,7 +159,8 @@ class const _Card({
       identifier: 'main_issue_card',
       container: true,
       child: Padding(
-        padding: const EdgeInsets.fromLTRB(12, 4, 12, 8),
+        // 아래 16: 밑의 큰 사이트 제목과의 간격. 카드와 함께 접혀야 해서 카드 안에 둔다.
+        padding: const EdgeInsets.fromLTRB(12, 4, 12, 16),
         child: Material(
           color: scheme.primaryContainer.withValues(alpha: 0.55),
           borderRadius: BorderRadius.circular(14),

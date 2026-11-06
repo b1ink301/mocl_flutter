@@ -65,11 +65,13 @@ class _PinnedHeaderBoxState() extends State<_PinnedHeaderBox> {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           // 넓은 화면에서는 카드를 목록과 같은 폭으로 가운데 모은다.
+          // 카드와 제목 사이 간격은 카드 아래 여백에 있다(카드가 접히면 같이 사라져
+          // 제목이 기존 배치와 같은 자리에 온다).
           BoxReadableWidth(child: _MainIssueCard()),
-          SizedBox(height:8),
           // 큰 제목은 앱바 펼침 영역처럼 화면 폭 전체를 쓴다(기존 배치와 같은 자리).
           MainSiteTitle(),
-          SizedBox(height:4),
+          // 제목과 첫 게시판 사이.
+          SizedBox(height: 4),
         ],
       ),
     );
