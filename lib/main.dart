@@ -10,6 +10,7 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:mocl_flutter/app_widget.dart';
+import 'package:mocl_flutter/core/dev/marionette_setup.dart';
 import 'package:mocl_flutter/core/presentation/widgets/boot_failure_app.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/util/boot_guard.dart';
@@ -28,7 +29,7 @@ import 'features/settings_page/application/datasource_provider.dart';
 import 'flavors.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  ensureAppBinding();
   _tagErrorWidget();
   await BootGuard(
     prepare: _prepareApp,

@@ -160,6 +160,7 @@ dependencies:
   google_mobile_ads: ^9.2.0
   in_app_update: ^5.0.0
   upgrader: ^13.7.0
+  marionette_flutter: ^0.7.0
 
 dev_dependencies:
   flutter_test:

@@ -97,19 +97,30 @@ abstract class MoclLogger() {
     Object? error,
     StackTrace? stackTrace,
   }) {
-    final LogPrinter? custom = printer;
-    if (custom != null) {
-      custom(tag, level, message, error: error, stackTrace: stackTrace);
-      return;
-    }
-    developer.log(
+    (printer ?? consolePrinter)(
+      tag,
+      level,
       message,
-      name: tag,
-      level: level,
       error: error,
       stackTrace: stackTrace,
     );
   }
+
+  /// 기본 콘솔 출력(`dart:developer` 의 `log`). [printer] 를 바꾸면서 콘솔
+  /// 출력도 남기고 싶을 때 이걸 같이 부른다.
+  static void consolePrinter(
+    String tag,
+    int level,
+    String message, {
+    Object? error,
+    StackTrace? stackTrace,
+  }) => developer.log(
+    message,
+    name: tag,
+    level: level,
+    error: error,
+    stackTrace: stackTrace,
+  );
 
   /// 로그에 남기면 안 되는 헤더 키(소문자 비교).
   static const Set<String> _sensitiveHeaderKeys = {

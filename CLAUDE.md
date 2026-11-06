@@ -196,6 +196,15 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   화면 요소는 글자와 `Semantics(identifier:)`(Android resource-id)로 찾는다. 스크립트가 누르는 버튼의
   id(`main_drawer` · `main_add` · `add_board_close` · `drawer_settings` · `failure_view` · `detail_footer` · `flutter_error`)를 바꾸면 스크립트도 고친다.
   아이콘만 있는 `PlainIconButton` 에는 `semanticLabel` 을 준다(없으면 화면 낭독에서 이름 없는 버튼이 된다).
+- 개발 중 AI 확인(Marionette): debug 빌드는 `MarionetteBinding` 으로 뜬다(`core/dev/marionette_setup.dart`,
+  release 에는 들어가지 않음). AI 에이전트가 VM service 로 붙어 위젯 트리를 읽고 누르며 실제 사이트로 확인한다.
+  ```bash
+  fvm flutter run -d <기기> --flavor dev --dart-define-from-file=ads.json --vm-service-port=9101 --disable-service-auth-codes
+  marionette register mocl ws://127.0.0.1:9101/ws     # CLI(dart pub global activate marionette_cli)
+  marionette -i mocl tap --identifier main_drawer      # MCP 서버(marionette_mcp)로도 같은 동작
+  ```
+  `get_logs` 는 `MoclLogger` 로그를 돌려준다. Flutter 밖(AdMob 네이티브 광고 · 로그인 웹뷰 · 권한 창)은 보지 못한다.
+  binding 은 앱에 하나뿐이니 `main()` 에서 `WidgetsFlutterBinding.ensureInitialized` 대신 `ensureAppBinding()` 을 쓴다.
 - `package:jni` 를 쓰는 플러그인은 Dart 가 Java/Kotlin 클래스를 이름 문자열로 찾으므로
   R8 이 지우거나 줄이면 런타임에 멈춘다. `fvm dart run tool/check_jni_keep.dart` 가
   실패하면 `android/app/proguard-rules.pro` 의 "package:jni" 항목에 keep 을 추가한다.
