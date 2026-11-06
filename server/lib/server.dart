@@ -13,7 +13,7 @@ export 'src/radar/radar_boards.dart' show RadarBoard, radarBoards;
 export 'src/radar/clusterer.dart' show Cluster, ClusterInput, Clusterer;
 export 'src/radar/radar_collector.dart' show RadarCollector, RadarFetch;
 export 'src/radar/radar_feed.dart' show RadarFeed;
-export 'src/radar/radar_ranker.dart' show RadarRanker;
+export 'src/radar/radar_ranker.dart' show RadarRanker, ScoredIssue;
 export 'src/radar/radar_store.dart' show RadarPost, RadarSample, RadarStore;
 export 'src/rate_limiter.dart' show RateLimiter;
 export 'src/server_log.dart' show installServerLogging, serverLog;
