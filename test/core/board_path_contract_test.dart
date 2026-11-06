@@ -33,6 +33,32 @@ void main() {
 
       expect(offenders, isEmpty, reason: '합성 키와 충돌하는 board 값');
     });
+
+    // 담은 게시판 · 화면 키가 (사이트, board)로 게시판을 구분한다. 같은 board 가
+    // 둘이면 게시판 추가 화면이 Duplicate keys 로 깨지고 하나를 담으면 둘 다 담긴다.
+    // (인스티즈 카테고리 게시판이 모두 'pt' 였던 적이 있다)
+    test('board_link.json 안에서 board 는 겹치지 않는다', () {
+      final List<String> duplicates = [];
+      for (final SiteType siteType in SiteType.values) {
+        final File file = File(
+          'assets/${siteType.name.toLowerCase()}/board_link.json',
+        );
+        if (!file.existsSync()) continue;
+        final Set<String> seen = {};
+        void visit(List<dynamic> boards) {
+          for (final dynamic board in boards) {
+            final Map<dynamic, dynamic> map = board as Map;
+            final String value = map['board'].toString();
+            if (!seen.add(value)) duplicates.add('${siteType.name}: $value');
+            final dynamic children = map['children'];
+            if (children is List) visit(children);
+          }
+        }
+
+        visit(jsonDecode(file.readAsStringSync()) as List<dynamic>);
+      }
+      expect(duplicates, isEmpty, reason: '같은 사이트에 겹치는 board 값');
+    });
   });
 
   group('MainItemModel children', () {
@@ -58,13 +84,7 @@ void main() {
         'url': 'https://m.inven.co.kr/board/lol',
         'no': 0,
         'children': [
-          {
-            'board': '4625',
-            'title': '자유게시판',
-            'type': 0,
-            'url': '',
-            'no': 0,
-          },
+          {'board': '4625', 'title': '자유게시판', 'type': 0, 'url': '', 'no': 0},
         ],
       });
 
