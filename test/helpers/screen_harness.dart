@@ -127,6 +127,12 @@ Future<void> pumpMainScreen(
   WidgetTester tester, {
   List<MainItem>? items,
   SiteType siteType = SiteType.clien,
+
+  /// 추가 덮어쓰기(예: "지금 이슈" 배치를 켤 때).
+  List<Override> overrides = const <Override>[],
+
+  /// false 면 첫 프레임만 그리고 돌려준다(끝나지 않는 로딩을 볼 때).
+  bool settle = true,
 }) async {
   useFixedSurface(tester);
   await tester.pumpWidget(
@@ -136,11 +142,17 @@ Future<void> pumpMainScreen(
         favoriteRepositoryProvider.overrideWithValue(
           FakeFavoriteRepository(items ?? fakeMainItems()),
         ),
+        ...overrides,
       ],
       child: _app(const Scaffold(body: MainView())),
     ),
   );
-  await tester.pumpAndSettle();
+  if (settle) {
+    await tester.pumpAndSettle();
+  } else {
+    await tester.pump();
+    await tester.pump();
+  }
 }
 
 /// 리스트 화면(`MoclListView` = 앱바 + 페이징 목록).

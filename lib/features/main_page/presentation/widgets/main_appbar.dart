@@ -1,6 +1,13 @@
 import 'package:cupertino_ui/cupertino_ui.dart';
+
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
+import 'package:mocl_flutter/features/issue_radar/presentation/state/issue_radar_state_mixin.dart';
+import 'package:mocl_shared/radar/issue_feed.dart';
 
 import '../../../../config/large_title_metrics.dart';
 import '../../../../core/presentation/widgets/adaptive_popup_menu.dart';
@@ -16,7 +23,17 @@ import '../state/main_event_mixin.dart';
 import '../state/main_state_mixin.dart';
 import 'main_search_field.dart';
 
-class const MainAppBar({super.key})
+/// 메인 앱바. 배치가 둘이다.
+///
+/// - [issueFirst] false(기존): 펼침 영역에 큰 사이트 제목. 스크롤하면 스르륵
+///   사라지고 툴바 제목은 비어 있다.
+/// - [issueFirst] true("지금 이슈" 카드를 켠 경우): 툴바만 두고 고정한다.
+///   큰 제목은 카드 아래로 내려가 카드와 함께 고정되고(메인 뷰의 고정 머리),
+///   게시판 목록만 스크롤된다. 스크롤 그림자는 툴바가 아니라 고정 머리 아래에 둔다.
+///
+/// 두 배치 모두 맨 위에서 큰 제목의 자리 · 모양이 같아, 카드를 닫고 켤 때
+/// 제목이 움직이지 않는다.
+class const MainAppBar({super.key, final bool issueFirst = false})
     extends ConsumerWidget
     with MainState, MainEvent {
   @override
@@ -38,16 +55,17 @@ class const MainAppBar({super.key})
           semanticsId: 'main_drawer',
         ),
       ),
-      expandedHeight: kLargeTitleExpandedHeightSingleLine,
-      flexibleSpace: LargeTitleFlexibleSpace(
-        title: titleState(ref),
-        style: titleStyle,
-      ),
+      expandedHeight: issueFirst ? null : kLargeTitleExpandedHeightSingleLine,
+      flexibleSpace: issueFirst
+          ? null
+          : LargeTitleFlexibleSpace(title: titleState(ref), style: titleStyle),
       title: _MainAppBarTitle(style: menuStyle),
       titleTextStyle: menuStyle,
       titleSpacing: 0,
-      floating: true,
-      pinned: false,
+      floating: !issueFirst,
+      pinned: issueFirst,
+      // 고정 배치에서는 툴바 바로 밑이 고정 머리라, 그림자는 머리 아래에만 둔다.
+      scrolledUnderElevation: issueFirst ? 0 : null,
       centerTitle: false,
       toolbarHeight: kToolbarHeight,
       actions: const <Widget>[_MainActions()],
@@ -109,6 +127,7 @@ class const _MainActions() extends ConsumerWidget with MainState, MainEvent {
               ),
             ]
           : [
+              const _IssueRadarAction(),
               // 담은 게시판이 많아지면 스크롤보다 검색이 빠르다.
               PlainIconButton(
                 onPressed: () => openSearch(ref),
@@ -136,6 +155,34 @@ class const _MainActions() extends ConsumerWidget with MainState, MainEvent {
                 ),
               ),
             ],
+    );
+  }
+}
+
+/// "지금 이슈" 로 가는 레이더 아이콘. 메인 위 이슈 카드가 안 보일 때만 둔다
+/// (카드를 닫았거나, 이슈를 못 받았거나 없을 때). 카드를 켜 둔 채 받는 중에는
+/// 숨긴다 — 보였다가 카드가 오면 사라지며 앱바 아이콘이 들썩인다.
+/// 위쪽 이슈 중 안 본 게 있으면 점을 붙인다.
+class const _IssueRadarAction() extends ConsumerWidget with IssueRadarState {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (!issueRadarAvailableState(ref)) return const SizedBox.shrink();
+    final AsyncValue<IssueFeed> feed = issueFeedState(ref);
+    final bool cardShown =
+        issueHomeCardState(ref) &&
+        (feed.value?.issues.isNotEmpty ?? feed.isLoading);
+    if (cardShown) return const SizedBox.shrink();
+
+    final bool unread = hasUnreadTopIssuesState(ref);
+    return PlainIconButton(
+      onPressed: () => unawaited(context.push(Routes.issues)),
+      icon: Badge(
+        isLabelVisible: unread,
+        smallSize: 7,
+        child: const PlainIcon(Icons.radar),
+      ),
+      semanticLabel: unread ? '지금 이슈, 새 이슈 있음' : '지금 이슈',
+      semanticsId: 'main_issues',
     );
   }
 }

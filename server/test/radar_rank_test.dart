@@ -37,6 +37,13 @@ const List<String> _filler = [
   '노스포 5시간 플레이 후기',
 ];
 
+/// 흔한 말을 흔하다고 알 만큼 큰 배경 말뭉치(작은 말뭉치에서는 묶음 후보를 찾는
+/// 문서 빈도 상한이 3 으로 막혀 같은 말을 쓰는 글끼리도 서로 찾지 못한다).
+final List<String> _background = [
+  ..._filler,
+  for (int i = 0; i < 200; i++) '잡담 n${i}x 글',
+];
+
 List<ClusterInput> _inputs(List<(String site, String title)> items) => [
   for (int i = 0; i < items.length; i++)
     ClusterInput('${items[i].$1}|b|$i', items[i].$1, items[i].$2, i),
@@ -86,6 +93,39 @@ void main() {
       expect(clusterOf('노스포 5시간 플레이 후기').members, hasLength(1));
     });
 
+    test('순서 탓에 갈린 묶음은 다 묶은 뒤 합친다(첫 글 · 순서 유지)', () {
+      // 실제 수집분. "국대" 와 "국가대표" 로 갈려 두 묶음이 생기지만 중심끼리는 닮았다.
+      final List<(String, String)> split = [
+        for (final t in _background) ('dcinside', t),
+        ('mlbpark', '호날두 국대 은퇴'),
+        ('inven', '호날두 국가대표 은퇴선언'),
+        ('mlbpark', '호날두, 국대 공식 은퇴'),
+        ('dcinside', '[속보] 크리스티아누 호날두, 국가대표 선수 은퇴'),
+        ('mlbpark', '호날두  국대  은퇴하네유'),
+        ('clien', '호날두 국가대표 은퇴선언'),
+        ('inven', '호날두 국가대표 은퇴'),
+      ];
+      final List<ClusterInput> inputs = _inputs(split);
+      List<Cluster> about(List<Cluster> cs) => [
+        for (final c in cs)
+          if (c.members.any((m) => m.title.contains('호날두'))) c,
+      ];
+      expect(
+        about(const Clusterer(merge: false).run(inputs)),
+        hasLength(2),
+        reason: '합치기 전에는 갈려 있어야 의미 있는 테스트',
+      );
+      final List<Cluster> merged = const Clusterer().run(inputs);
+      final Cluster c = about(merged).single;
+      expect(c.members, hasLength(7));
+      expect(c.members.first.title, '호날두 국대 은퇴');
+      expect(
+        c.members.map((m) => m.at),
+        orderedEquals([...c.members.map((m) => m.at)]..sort()),
+      );
+      expect(merged.where((c) => c.members.length > 1), hasLength(1));
+    });
+
     test('대표 제목은 묶음 안의 글이다', () {
       final Cluster c = clusterOf('아이폰 듀오 힌지사태 의문');
       expect(c.members.map((m) => m.title), contains(c.representative.title));
@@ -102,6 +142,7 @@ void main() {
       String title, {
       int ageMin = 60,
       int reply = 5,
+      List<RadarSample>? samples,
     }) {
       seq++;
       return RadarPost(
@@ -112,7 +153,7 @@ void main() {
         url: 'https://x/$seq',
         firstSeenAt: now - ageMin * 60 * 1000,
         lastSeenAt: now,
-        samples: [RadarSample(now, reply, -1, -1, 0)],
+        samples: samples ?? [RadarSample(now, reply, -1, -1, 0)],
       );
     }
 
@@ -167,6 +208,71 @@ void main() {
           .id;
       expect(a, b);
       expect(a, startsWith('i_'));
+    });
+
+    test('늘 나오던 말뿐인 묶음은 새로 나온 말의 묶음보다 내려간다', () {
+      final List<RadarPost> posts = [
+        // 묶기 범위(24시간) 밖, 이슈 전 하루 동안 "내일 코스피" 가 꾸준히 나왔다.
+        for (int h = 25; h < 48; h++) ...[
+          post('mlbpark', '내일 코스피 어떨까요', ageMin: h * 60),
+          post('clien', '코스피 차트 보는 법', ageMin: h * 60 + 5),
+        ],
+        for (final t in _background) post('dcinside', t),
+        post('mlbpark', '내일 코스피 어떨까요 오늘', ageMin: 30),
+        post('clien', '내일 코스피 어떨까요 진짜', ageMin: 25),
+        post('inven', '서킷브레이커 발동 증시 폭락', ageMin: 30),
+        post('damoang', '서킷브레이커 발동 증시', ageMin: 25),
+      ];
+      final List<ScoredIssue> scored = const RadarRanker().score(posts, now);
+      ScoredIssue of(String word) =>
+          scored.firstWhere((s) => s.issue.title.contains(word));
+      expect(of('서킷브레이커').novelty, greaterThan(0.9));
+      expect(of('내일 코스피').novelty, lessThan(0.5));
+      expect(
+        scored.indexOf(of('서킷브레이커')),
+        lessThan(scored.indexOf(of('내일 코스피'))),
+      );
+
+      // 이슈 전 기록이 짧으면(서버를 막 켰을 때) 판단하지 않는다.
+      final List<ScoredIssue> early = const RadarRanker().score([
+        for (final t in _background) post('dcinside', t, ageMin: 40),
+        post('mlbpark', '내일 코스피 어떨까요 오늘', ageMin: 30),
+        post('clien', '내일 코스피 어떨까요 진짜', ageMin: 25),
+      ], now);
+      expect(early.single.novelty, 1);
+    });
+
+    test('반응 속도: 최근 30분에 늘어난 양 · 밀려난 글은 0 · 모르면 -1', () {
+      const int min = 60 * 1000;
+      RadarSample s(int agoMin, int reply) =>
+          RadarSample(now - agoMin * min, reply, -1, -1, 0);
+      double v(List<RadarSample> samples) => RadarRanker.velocity(
+        post('clien', 'x', samples: samples),
+        now,
+        const Duration(minutes: 30),
+      );
+      expect(v([s(60, 0), s(30, 10), s(15, 20), s(0, 40)]), 60);
+      expect(v([s(60, 0), s(20, 50)]), 0, reason: '1쪽에서 밀려남');
+      expect(v([s(2, 0), s(0, 10)]), -1, reason: '기록이 너무 짧음');
+      expect(v([s(0, 10)]), -1);
+    });
+
+    test('한 사이트가 같은 이야기를 많이 올려도 점수가 그만큼 불지 않는다', () {
+      final List<RadarPost> posts = [
+        for (final t in _background) post('dcinside', t),
+        for (int i = 0; i < 8; i++)
+          post('mlbpark', '나스닥 필반 폭락 하락 $i', ageMin: 30 + i),
+        post('clien', '나스닥 필반 폭락 하락 실화', ageMin: 30),
+      ];
+      final ScoredIssue decayed = const RadarRanker(noveltyWeight: 0)
+          .score(posts, now)
+          .first;
+      final ScoredIssue flat = const RadarRanker(
+        noveltyWeight: 0,
+        siteDecay: 0,
+      ).score(posts, now).first;
+      expect(decayed.issue.posts, hasLength(9));
+      expect(decayed.base, lessThan(flat.base * 0.6));
     });
 
     test('JSON 으로 왕복하고, 앱은 모르는 사이트 글만 건너뛴다', () {
