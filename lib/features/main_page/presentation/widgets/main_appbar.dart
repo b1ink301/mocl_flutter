@@ -34,6 +34,8 @@ class const MainAppBar({super.key})
         child: PlainIconButton(
           onPressed: () => openDrawer(ref),
           icon: const MenuLinesIcon(),
+          semanticLabel: '메뉴',
+          semanticsId: 'main_drawer',
         ),
       ),
       expandedHeight: kLargeTitleExpandedHeightSingleLine,
@@ -95,6 +97,7 @@ class const _MainActions() extends ConsumerWidget with MainState, MainEvent {
               PlainIconButton(
                 onPressed: () => closeSearch(ref),
                 icon: const PlainIcon(Icons.close),
+                semanticLabel: '검색 닫기',
               ),
             ]
           : editMode
@@ -102,6 +105,7 @@ class const _MainActions() extends ConsumerWidget with MainState, MainEvent {
               PlainIconButton(
                 onPressed: () => handleToggleEdit(ref),
                 icon: const PlainIcon(Icons.check),
+                semanticLabel: '편집 완료',
               ),
             ]
           : [
@@ -109,10 +113,13 @@ class const _MainActions() extends ConsumerWidget with MainState, MainEvent {
               PlainIconButton(
                 onPressed: () => openSearch(ref),
                 icon: const PlainIcon(Icons.search),
+                semanticLabel: '게시판 검색',
               ),
               PlainIconButton(
                 onPressed: () => handleAddButton(ref, context),
                 icon: const PlainIcon(Icons.add),
+                semanticLabel: '게시판 추가',
+                semanticsId: 'main_add',
               ),
               // 순서 변경 · 삭제는 평소엔 숨겨 두고 편집 모드에서만 연다.
               AdaptivePopupMenu(

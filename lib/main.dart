@@ -29,6 +29,7 @@ import 'flavors.dart';
 
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  _tagErrorWidget();
   await BootGuard(
     prepare: _prepareApp,
     failureBuilder: ({Object? error, VoidCallback? onRetry}) =>
@@ -140,6 +141,18 @@ void _scheduleRemoteConfigRefresh(RemoteConfigStore store) {
       }
     });
   });
+}
+
+/// 위젯 빌드 오류 화면(debug 빨강 · release 회색)에 id 를 단다. 기기 확인
+/// 스크립트(`tool/device_check.dart`)가 UI 트리에서 이 화면을 알아본다 — debug 의
+/// 오류 콘솔 출력이 logcat 에 남지 않는 경우가 있어 logcat 만으로는 놓친다.
+void _tagErrorWidget() {
+  final ErrorWidgetBuilder errorWidget = ErrorWidget.builder;
+  ErrorWidget.builder = (FlutterErrorDetails details) => Semantics(
+    identifier: 'flutter_error',
+    container: true,
+    child: errorWidget(details),
+  );
 }
 
 /// 잡히지 않은 예외와 [MoclLogger.e] 로 남긴 에러를 Crashlytics 로 보낸다.

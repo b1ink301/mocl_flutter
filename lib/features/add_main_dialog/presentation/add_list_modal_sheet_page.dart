@@ -290,6 +290,8 @@ class const _TopBar() extends ConsumerWidget with AddState, AddEvent {
               padding: const EdgeInsets.all(10),
               icon: const Icon(Icons.close),
               onPressed: () => context.pop(),
+              semanticLabel: '닫기',
+              semanticsId: 'add_board_close',
             ),
             const Expanded(
               child: Center(
@@ -780,52 +782,61 @@ class const _BoardChip({
     // 칩마다 Material 로 모양을 잘라내면(clip) 칩 수만큼 클립 레이어가 생겨
     // 스크롤 중 래스터 비용이 커진다. 배경 · 테두리는 DecoratedBox 로 그리고,
     // 물결은 투명 Material 위에서 customBorder 로만 모양을 맞춘다.
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        color: isAdded
-            ? focusColor.withValues(alpha: 0.10)
-            : theme.colorScheme.surfaceContainerLowest,
-        borderRadius: _radius,
-        border: Border.all(
-          color: isAdded ? focusColor : theme.dividerColor,
-          width: 1,
+    //
+    // 담김은 색으로만 보이므로 화면 낭독에도 알린다(selected). 폴더(하위 게시판)
+    // 칩은 담는 게 아니라 들어가는 것이라 알리지 않는다. 기기 확인 스크립트도
+    // 이 값(UI 트리의 selected)으로 이미 담긴 칩을 다시 누르지 않는다.
+    return Semantics(
+      selected: isContainer ? null : isAdded,
+      child: DecoratedBox(
+        decoration: BoxDecoration(
+          color: isAdded
+              ? focusColor.withValues(alpha: 0.10)
+              : theme.colorScheme.surfaceContainerLowest,
+          borderRadius: _radius,
+          border: Border.all(
+            color: isAdded ? focusColor : theme.dividerColor,
+            width: 1,
+          ),
         ),
-      ),
-      child: Material(
-        type: MaterialType.transparency,
-        child: InkWell(
-          onTap: () => tapBoard(ref, board),
-          customBorder: const RoundedRectangleBorder(borderRadius: _radius),
-          child: Padding(
-            padding: EdgeInsets.fromLTRB(14, 9, isContainer ? 8 : 14, 9),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (board.icon.isNotEmpty && isContainer) ...[
-                  SiteAvatar(
-                    siteType: board.siteType,
-                    iconUrl: board.icon,
-                    radius: 8,
-                  ),
-                  const SizedBox(width: 7),
-                ],
-                Flexible(
-                  child: Text(
-                    board.text,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 13.5,
-                      color: isAdded
-                          ? focusColor
-                          : theme.textTheme.bodyMedium?.color,
-                      fontWeight: isAdded ? FontWeight.w700 : FontWeight.normal,
+        child: Material(
+          type: MaterialType.transparency,
+          child: InkWell(
+            onTap: () => tapBoard(ref, board),
+            customBorder: const RoundedRectangleBorder(borderRadius: _radius),
+            child: Padding(
+              padding: EdgeInsets.fromLTRB(14, 9, isContainer ? 8 : 14, 9),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (board.icon.isNotEmpty && isContainer) ...[
+                    SiteAvatar(
+                      siteType: board.siteType,
+                      iconUrl: board.icon,
+                      radius: 8,
+                    ),
+                    const SizedBox(width: 7),
+                  ],
+                  Flexible(
+                    child: Text(
+                      board.text,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        fontSize: 13.5,
+                        color: isAdded
+                            ? focusColor
+                            : theme.textTheme.bodyMedium?.color,
+                        fontWeight: isAdded
+                            ? FontWeight.w700
+                            : FontWeight.normal,
+                      ),
                     ),
                   ),
-                ),
-                if (isContainer)
-                  Icon(Icons.chevron_right, size: 17, color: focusColor),
-              ],
+                  if (isContainer)
+                    Icon(Icons.chevron_right, size: 17, color: focusColor),
+                ],
+              ),
             ),
           ),
         ),

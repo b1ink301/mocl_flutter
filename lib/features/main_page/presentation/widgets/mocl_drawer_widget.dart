@@ -219,10 +219,14 @@ class const _DrawerHeader({
             icon: PlainIcon(Icons.bookmark_border, color: inkColor),
             onPressed: onBookmarksTap,
           ),
-          IconButton(
-            tooltip: '설정',
-            icon: PlainIcon(Icons.settings_outlined, color: inkColor),
-            onPressed: onSettingsTap,
+          // id 는 기기 확인 스크립트(tool/device_check.dart)용.
+          Semantics(
+            identifier: 'drawer_settings',
+            child: IconButton(
+              tooltip: '설정',
+              icon: PlainIcon(Icons.settings_outlined, color: inkColor),
+              onPressed: onSettingsTap,
+            ),
           ),
         ],
       ),

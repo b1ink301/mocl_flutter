@@ -187,6 +187,15 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   ```
   debug 는 R8 축소를 하지 않아 release 전용 문제가 보이지 않고, 빌드 성공도 런타임을
   보장하지 않는다.
+- 릴리스 전 기기 확인(수동): 실제 사이트로 사이트마다 게시판 → 글 → 끝까지 스크롤 · 오류 화면 ·
+  logcat 렌더 오류 · 글자 크기 범위를 본다. LLM 없이 adb 만 쓴다(debug 빌드, 스크린샷은 `build/device_check/`).
+  ```bash
+  fvm dart run tool/device_check.dart              # 전체(약 10분)
+  fvm dart run tool/device_check.dart nate clien   # 일부
+  ```
+  화면 요소는 글자와 `Semantics(identifier:)`(Android resource-id)로 찾는다. 스크립트가 누르는 버튼의
+  id(`main_drawer` · `main_add` · `add_board_close` · `drawer_settings` · `failure_view` · `detail_footer` · `flutter_error`)를 바꾸면 스크립트도 고친다.
+  아이콘만 있는 `PlainIconButton` 에는 `semanticLabel` 을 준다(없으면 화면 낭독에서 이름 없는 버튼이 된다).
 - `package:jni` 를 쓰는 플러그인은 Dart 가 Java/Kotlin 클래스를 이름 문자열로 찾으므로
   R8 이 지우거나 줄이면 런타임에 멈춘다. `fvm dart run tool/check_jni_keep.dart` 가
   실패하면 `android/app/proguard-rules.pro` 의 "package:jni" 항목에 keep 을 추가한다.

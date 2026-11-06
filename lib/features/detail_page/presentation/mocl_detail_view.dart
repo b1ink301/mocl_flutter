@@ -279,15 +279,20 @@ class const _DetailView({
                 ),
               ],
               const _SliverDivider(),
+              // id 는 기기 확인 스크립트(tool/device_check.dart)가 "끝까지 그려졌는지" 보는 표시.
               SliverToBoxAdapter(
-                child: _FooterActions(
-                  onRefresh: onRefresh,
-                  writeLabel: detail.isLoggedIn ? '댓글 쓰기' : '로그인하고 댓글 쓰기',
-                  onWrite: switch (onWriteComment) {
-                    final write? => () => write(null),
-                    null => null,
-                  },
-                  textStyle: bodySmall,
+                child: Semantics(
+                  identifier: 'detail_footer',
+                  container: true,
+                  child: _FooterActions(
+                    onRefresh: onRefresh,
+                    writeLabel: detail.isLoggedIn ? '댓글 쓰기' : '로그인하고 댓글 쓰기',
+                    onWrite: switch (onWriteComment) {
+                      final write? => () => write(null),
+                      null => null,
+                    },
+                    textStyle: bodySmall,
+                  ),
                 ),
               ),
               const _SliverDivider(),
