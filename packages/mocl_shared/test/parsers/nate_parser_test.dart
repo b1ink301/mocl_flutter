@@ -53,10 +53,21 @@ void main() {
 
   test('[글, 댓글 페이지] 로 받으면 전체 댓글을 쓴다(빈 댓글 · 버튼 글자 제외)', () async {
     final Details d = await parse([article, replies]);
-    expect(d.comments.map((c) => c.bodyHtml), ['베스트 댓글 하나', '일반 댓글']);
+    expect(d.comments.map((c) => c.bodyHtml), [
+      '베스트 댓글 하나',
+      '일반 댓글',
+      '사진 봐 &lt;진짜&gt; &amp; 대박'
+          '<p><img src="https://thumb.pann.com/tc_480/http://fimg6.pann.com/a.jpg"></p>',
+      '<p><img src="https://thumb.pann.com/b.jpg"></p>',
+    ]);
+    expect(
+      d.comments.map((c) => c.bodyHtml).join(),
+      isNot(contains('이미지확대보기')),
+      reason: '사진 댓글이 버튼 문구로 보이면 안 된다',
+    );
     expect(d.comments.first.info, '[베플] 2026.11.05 10:28');
-    expect(d.comments.last.userInfo.nickName, '댓글러');
-    expect(d.comments.last.info, '2026.11.05 11:00');
+    expect(d.comments[1].userInfo.nickName, '댓글러');
+    expect(d.comments[1].info, '2026.11.05 11:00');
   });
 
   test('본문 마크업을 못 찾으면 구조화 데이터 글자를 이스케이프해 보여 준다', () async {

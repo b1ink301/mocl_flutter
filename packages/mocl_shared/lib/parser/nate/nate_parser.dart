@@ -270,9 +270,25 @@ class const NateParser() extends BaseParser {
         if (!e.classes.contains('best')) cTime = e.text.trim();
       }
       final bool isBest = dl.classes.contains('best');
-      dd.removeAll('script, button');
-      final String body = dd.text.trim();
-      if (body.isEmpty) continue;
+      // 사진 댓글: `a.image > img` + "이미지확대보기" 글자. 글자만 읽으면 사진 대신
+      // 버튼 문구가 나오므로 사진은 꺼내 img 로 붙이고 링크째 지운다.
+      final List<String> images = [
+        for (final img in dd.querySelectorAll('a.image img'))
+          if ((img.attributes['src'] ?? '').startsWith('http'))
+            img.attributes['src']!,
+      ];
+      dd.removeAll('script, button, a.image');
+      final String text = dd.text.trim();
+      if (text.isEmpty && images.isEmpty) continue;
+      // 화면은 댓글을 HTML 로 그리므로 글자는 이스케이프한다.
+      final String body = [
+        if (text.isNotEmpty)
+          const HtmlEscape(HtmlEscapeMode.element)
+              .convert(text)
+              .replaceAll(RegExp(r'\s*\n\s*'), '<br>'),
+        for (final src in images)
+          '<p><img src="${const HtmlEscape(HtmlEscapeMode.attribute).convert(src)}"></p>',
+      ].join();
 
       comments.add(_comment(index++, cNick, cTime, body, isBest: isBest));
     }
@@ -296,7 +312,9 @@ class const NateParser() extends BaseParser {
           index++,
           nick,
           _ldTime(c['datePublished'] as String? ?? ''),
-          body,
+          const HtmlEscape(HtmlEscapeMode.element)
+              .convert(body)
+              .replaceAll(RegExp(r'\s*\n\s*'), '<br>'),
           isBest: true,
         ),
       );
