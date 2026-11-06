@@ -1,6 +1,7 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart';
+import 'package:material_ui/material_ui.dart';
 import 'package:marionette_flutter/marionette_flutter.dart';
+import 'package:mocl_flutter/core/presentation/widgets/failure_view.dart';
 import 'package:mocl_shared/util/mocl_logger.dart';
 
 /// 앱 binding 을 준비한다. debug 빌드에서만 Marionette binding 을 쓴다.
@@ -40,6 +41,18 @@ void ensureAppBinding() {
 
   MarionetteBinding.ensureInitialized(
     MarionetteConfiguration(
+      // 기본 목록에 없는 것을 보이게 한다.
+      // - Tooltip: 아이콘만 있는 버튼(글자 크기 ± · 새로고침 · 설정)의 이름
+      // - FailureView: 목록/상세 실패 화면을 기기 확인 스크립트가 알아보게
+      //   (위젯 빌드 오류 화면은 main.dart 의 Semantics(label) 로 나온다)
+      isInteractiveElement: (Element element) => switch (element.widget) {
+        Tooltip() || FailureView() => true,
+        _ => false,
+      },
+      extractText: (Element element) => switch (element.widget) {
+        Tooltip(:final String? message) => message,
+        _ => null,
+      },
       logCollector: logs,
       // 작업마다 .marionette/sessions/ 에 steps.md 를 남긴다(gitignore).
       enableSessionReports: true,

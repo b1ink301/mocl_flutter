@@ -187,14 +187,18 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   ```
   debug 는 R8 축소를 하지 않아 release 전용 문제가 보이지 않고, 빌드 성공도 런타임을
   보장하지 않는다.
-- 릴리스 전 기기 확인(수동): 실제 사이트로 사이트마다 게시판 → 글 → 끝까지 스크롤 · 오류 화면 ·
-  logcat 렌더 오류 · 글자 크기 범위를 본다. LLM 없이 adb 만 쓴다(debug 빌드, 스크린샷은 `build/device_check/`).
+- 릴리스 전 기기 확인(수동): 실제 사이트로 사이트마다 게시판 → 글 → 끝까지 스크롤 · 실패 화면 ·
+  Flutter 오류 · 글자 크기 범위를 본다. AI 없이 Marionette CLI(화면 읽기 · 누르기 · scroll-to)와
+  adb(설치 · 재시작 · VM service 포워딩)만 쓴다. debug 빌드, 스크린샷은 `build/device_check/`.
   ```bash
-  fvm dart run tool/device_check.dart              # 전체(약 10분)
-  fvm dart run tool/device_check.dart nate clien   # 일부
+  fvm dart pub global activate marionette_cli      # 한 번
+  fvm dart run tool/device_check.dart              # 전체
+  fvm dart run tool/device_check.dart nate clien   # 일부(SiteType 이름, font)
   ```
-  화면 요소는 글자와 `Semantics(identifier:)`(Android resource-id)로 찾는다. 스크립트가 누르는 버튼의
-  id(`main_drawer` · `main_add` · `add_board_close` · `drawer_settings` · `failure_view` · `detail_footer` · `flutter_error`)를 바꾸면 스크립트도 고친다.
+  화면 요소는 글자 · `Semantics(identifier:)` · 위젯 종류로 찾는다. 스크립트가 누르는 id
+  (`main_drawer` · `main_add` · `add_board_close` · `drawer_settings` · `detail_footer`)를 바꾸면 스크립트도 고친다.
+  Flutter 오류는 debug 에서 `MoclLogger` 로도 남겨(`main.dart`) `get-logs` 로 검사한다 — debug 의 오류 콘솔
+  출력이 logcat 에 남지 않고, 오류 화면(ErrorWidget)은 위젯 트리 목록에 나오지 않는다.
   아이콘만 있는 `PlainIconButton` 에는 `semanticLabel` 을 준다(없으면 화면 낭독에서 이름 없는 버튼이 된다).
 - 개발 중 AI 확인(Marionette): debug 빌드는 `MarionetteBinding` 으로 뜬다(`core/dev/marionette_setup.dart`,
   release 에는 들어가지 않음). AI 에이전트가 VM service 로 붙어 위젯 트리를 읽고 누르며 실제 사이트로 확인한다.
