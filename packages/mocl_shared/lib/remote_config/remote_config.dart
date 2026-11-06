@@ -1,5 +1,9 @@
 import 'package:mocl_shared/entities/mocl_site_type.dart';
 
+import 'ads_config.dart';
+
+export 'ads_config.dart';
+
 /// 사이트 요청에 쓰는 기본 UA 묶음. 값(실제 UA 문자열)은 앱이 갖고,
 /// 원격 설정은 이름으로 고르거나 값을 덮어쓴다.
 enum UserAgentPreset() {
@@ -27,25 +31,28 @@ class const SiteRemoteConfig({
 /// 앱과 서버가 같은 클래스로 읽고 쓴다. 앱 업데이트 없이 바꿀 값만 둔다.
 /// - [userAgents]: 프리셋 UA 를 통째로 바꾼다(브라우저 버전 올리기 등).
 /// - [sites]: 사이트별로 다른 프리셋이나 UA 를 쓴다(차단 회피).
+/// - [ads]: 광고 크기 · 목록 광고 간격([AdsRemoteConfig]).
 ///
 /// JSON 예:
 /// ```json
 /// {
 ///   "schemaVersion": 1,
 ///   "userAgents": { "mobile": "Mozilla/5.0 (Linux; Android 16; ...)" },
-///   "sites": { "geekNews": { "userAgent": "mobile" } }
+///   "sites": { "geekNews": { "userAgent": "mobile" } },
+///   "ads": { "detail": "small", "list": { "first": 5, "interval": 15 } }
 /// }
 /// ```
 class const RemoteConfig({
   final Map<UserAgentPreset, String> userAgents = const {},
   final Map<SiteType, SiteRemoteConfig> sites = const {},
+  final AdsRemoteConfig ads = AdsRemoteConfig.empty,
 }) {
   /// 이 형식의 버전. 호환되지 않게 바꿀 때만 올린다. 앱은 모르는 버전을 버린다.
   static const int schemaVersion = 1;
 
   static const RemoteConfig empty = RemoteConfig();
 
-  bool get isEmpty => userAgents.isEmpty && sites.isEmpty;
+  bool get isEmpty => userAgents.isEmpty && sites.isEmpty && ads.isEmpty;
 
   /// JSON 을 읽는다.
   ///
@@ -53,8 +60,14 @@ class const RemoteConfig({
   /// 잘못된 값에 [FormatException] 을 던져 운영자가 실수를 바로 알게 한다.
   /// false 면(앱) 그런 항목만 건너뛴다 — 서버가 앱보다 새 사이트를 먼저 알 수 있다.
   /// 어느 쪽이든 [schemaVersion] 이 다르면 던진다.
-  factory fromJson(Map<String, Object?> json, {bool strict = false}) {
+  /// [onIssue] 는 모르거나 잘못된 항목마다 불린다(관리 화면이 문제를 한꺼번에 보여 줄 때).
+  factory fromJson(
+    Map<String, Object?> json, {
+    bool strict = false,
+    void Function(String message)? onIssue,
+  }) {
     void fail(String message) {
+      onIssue?.call(message);
       if (strict) throw FormatException(message);
     }
 
@@ -100,7 +113,24 @@ class const RemoteConfig({
       fail('sites 는 객체여야 한다');
     }
 
-    return RemoteConfig(userAgents: userAgents, sites: sites);
+    return RemoteConfig(
+      userAgents: userAgents,
+      sites: sites,
+      ads: AdsRemoteConfig.fromJson(json['ads'], fail),
+    );
+  }
+
+  /// [json] 의 문제를 모두 모은다. 비어 있으면 서버가 받아들이는 설정이다
+  /// (`fromJson(strict: true)` 와 같은 규칙).
+  static List<String> validate(Object? json) {
+    if (json is! Map<String, Object?>) return ['최상위는 객체여야 한다'];
+    final List<String> issues = [];
+    try {
+      RemoteConfig.fromJson(json, onIssue: issues.add);
+    } on FormatException catch (e) {
+      issues.add(e.message);
+    }
+    return issues;
   }
 
   Map<String, Object?> toJson() => {
@@ -113,6 +143,7 @@ class const RemoteConfig({
       for (final MapEntry<SiteType, SiteRemoteConfig> e in sites.entries)
         e.key.name: e.value.toJson(),
     },
+    if (!ads.isEmpty) 'ads': ads.toJson(),
   };
 
   /// [site] 요청에 쓸 UA.

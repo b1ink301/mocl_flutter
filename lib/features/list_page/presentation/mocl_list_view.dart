@@ -4,6 +4,7 @@ import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mocl_flutter/features/ads/presentation/list_ad_slots.dart';
+import 'package:mocl_flutter/features/ads/presentation/state/ads_state_mixin.dart';
 import 'package:mocl_flutter/features/ads/presentation/widgets/list_ad_separator.dart';
 import 'package:mocl_shared/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/core/presentation/widgets/failure_view.dart';
@@ -19,7 +20,7 @@ import 'widgets/list_scope.dart';
 
 class const MoclListView({super.key})
     extends HookConsumerWidget
-    with ListEvent, ListState {
+    with ListEvent, ListState, AdsState {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // 리스트 아이템 읽음 처리 리스너 등록
@@ -40,7 +41,7 @@ class const MoclListView({super.key})
     final styles = appTextStyles(ref);
     final focusColor = Theme.of(context).colorScheme.primary;
     final bottom = MediaQuery.of(context).padding.bottom;
-    final adSlots = useListAdSlots();
+    final adSlots = useListAdSlots(listAdPlacementState(ref));
 
     // 에러 인디케이터 빌더 (중복 제거)
     Widget buildErrorIndicator(Object? error) => FailureView(

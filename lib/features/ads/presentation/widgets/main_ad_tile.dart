@@ -16,10 +16,7 @@ class const MainAdTile({required final AppTextStyles styles, super.key})
     look: ListAdStyle.from(styles, Theme.of(context).scaffoldBackgroundColor),
     frame: (ad) => Column(
       mainAxisSize: MainAxisSize.min,
-      children: [
-        ad,
-        const PlainDividerWidget(),
-      ],
+      children: [ad, const PlainDividerWidget()],
     ),
   );
 }

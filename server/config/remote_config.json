@@ -1,5 +1,9 @@
 {
   "schemaVersion": 1,
   "userAgents": {},
-  "sites": {}
+  "sites": {},
+  "ads": {
+    "detail": "small",
+    "list": { "first": 5, "interval": 15 }
+  }
 }

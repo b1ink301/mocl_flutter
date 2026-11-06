@@ -77,6 +77,9 @@ abstract class BaseNativeAdFactory(protected val context: Context) : NativeAdFac
 
     protected fun Map<String, Any>.num(key: String): Float = (this[key] as? Number)?.toFloat() ?: 0f
 
+    protected fun Map<String, Any>.numOr(key: String, fallback: Float): Float =
+        (this[key] as? Number)?.toFloat() ?: fallback
+
     // Dart 의 ARGB 는 32비트 부호 없는 값이라 Long 으로 넘어온다.
     protected fun Map<String, Any>.color(key: String): Int = (this[key] as? Number)?.toInt() ?: 0
 }

@@ -80,8 +80,9 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
 
 ## 원격 설정 (`features/remote_config/`)
 
-- 서버 `GET /v1/config`(ETag) 로 앱 업데이트 없이 바꿀 값을 받는다. 지금은 사이트 요청 UA
-  (`userAgents` 프리셋 덮어쓰기 · `sites.{site}.userAgent`)만 있다. 형식은 `RemoteConfig`.
+- 서버 `GET /v1/config`(ETag) 로 앱 업데이트 없이 바꿀 값을 받는다. 사이트 요청 UA
+  (`userAgents` 프리셋 덮어쓰기 · `sites.{site}.userAgent`)와 광고(`ads`, `AdsRemoteConfig`)가 있다.
+  형식은 `RemoteConfig`.
 - 부팅 때 저장된 설정만 동기로 읽어 `remoteConfigProvider` 를 덮어쓰고, 서버 요청은 첫 프레임 2초 뒤.
   **새 설정은 다음 실행부터** 적용된다(실행 중 UA 를 바꾸면 만든 클라이언트 · 쿠키와 어긋난다).
 - 서버 주소는 `MOCL_API_BASE_URL` define(`ads.json` 같은 define 파일에 넣는다). 비면 요청하지 않는다.
@@ -208,7 +209,13 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   - 게시판 목록 글 사이 — `ListAdPlacement` · `ListAdSlots`, 모양 `ListAdStyle` ↔ `ListNativeAdFactory.kt`(`listTile`)
   - 메인 게시판 목록 맨 아래 하나 — `MainAdTile`(편집 · 검색 중엔 없음), 모양은 `listTile` 재사용.
     **현재 꺼 둠**(광고가 너무 많아서). 소스는 남겨 두고 `mocl_main_widgets.dart` 에서 주석 처리했다.
-  - 상세 본문과 댓글 사이 하나 — `DetailAdCard`, 모양 `DetailAdStyle` ↔ `DetailNativeAdFactory.kt`(`detailCard`)
+  - 상세 본문과 댓글 사이 하나 — `DetailAdCard`. 크기는 원격 설정 `ads.detail`(`DetailAdSize`, 기본 small):
+    - compact(~71dp) — `ListAdStyle`(좌우 여백 0) ↔ `listTile`
+    - small(~144dp, 정사각 미디어 120) — `DetailSmallAdStyle` ↔ `DetailSmallNativeAdFactory.kt`(`detailSmall`)
+    - medium(미디어 폭×0.4, 120~160) · large(16:9, 120~280) — `DetailAdStyle` ↔ `DetailNativeAdFactory.kt`(`detailCard`)
+    - off — 넣지 않음
+- 목록 광고 자리(`ListAdPlacement`, 기본 5번째 글 뒤 · 15개마다)는 원격 설정 `ads.list.first` · `interval`.
+  위젯은 `AdsState` mixin(`ads/presentation/state/`)으로 읽는다. 미디어 칸은 120dp 아래로 줄이지 말 것(AdMob 정책).
 - Dart 스타일과 Kotlin 팩토리는 같은 여백 상수로 높이를 맞춘다(한쪽을 바꾸면 다른 쪽도 함께).
   한 자리에 하나만 두는 광고는 `SingleNativeAd` 를 쓴다.
 - 광고를 받는 동안은 같은 높이의 자리 표시(`NativeAdLook.placeholder`, 회색 막대만)로 칸을 잡아 두고,

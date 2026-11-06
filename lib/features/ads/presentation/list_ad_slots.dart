@@ -6,13 +6,17 @@ import 'package:mocl_shared/util/mocl_logger.dart';
 
 import '../data/mobile_ads_bootstrap.dart';
 import '../domain/ad_unit_ids.dart';
+import '../domain/list_ad_placement.dart';
 import 'list_ad_style.dart';
 
 /// 목록 한 화면이 쓰는 네이티브 광고들. 광고 자리(슬롯)마다 하나씩 불러 둔다.
 ///
 /// 스크롤로 멀어진 슬롯은 버리고, 다시 돌아오면 새로 불러온다. 같은 광고를
 /// 두 자리에 동시에 그릴 수는 없어서(AdWidget 제약) 슬롯끼리 나눠 쓰지 않는다.
-class ListAdSlots({required final String adUnitId}) {
+class ListAdSlots({
+  required final String adUnitId,
+  required final ListAdPlacement placement,
+}) {
   /// 화면에 붙어 있는 슬롯에서 이만큼 넘게 떨어진 슬롯은 버린다.
   static const int _keepDistance = 3;
 
@@ -127,13 +131,15 @@ class ListAdSlot._(final int index) {
 
 /// 이 목록 화면에서 쓸 광고 묶음. 광고를 쓰지 않는 빌드이거나 아직 광고를
 /// 요청할 수 없으면(동의 확인 · SDK 초기화 전) null.
-/// 화면이 사라질 때 광고도 함께 정리한다.
-ListAdSlots? useListAdSlots() {
+/// 화면이 사라질 때 광고도 함께 정리한다. [placement] 는 광고를 넣을 자리.
+ListAdSlots? useListAdSlots(ListAdPlacement placement) {
   final bool ready = useValueListenable(mobileAdsReady);
   final ListAdSlots? slots = useMemoized(() {
     final String? adUnitId = AdUnitIds.listNative;
-    return adUnitId == null || !ready ? null : ListAdSlots(adUnitId: adUnitId);
-  }, [ready]);
+    return adUnitId == null || !ready
+        ? null
+        : ListAdSlots(adUnitId: adUnitId, placement: placement);
+  }, [ready, placement.first, placement.interval]);
   useEffect(() => slots?.dispose, [slots]);
   return slots;
 }

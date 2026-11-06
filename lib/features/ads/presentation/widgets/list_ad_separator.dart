@@ -2,12 +2,11 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/presentation/widgets/plain_divider_widget.dart';
 
-import '../../domain/list_ad_placement.dart';
 import '../list_ad_slots.dart';
 import '../list_ad_style.dart';
 import 'native_ad_switcher.dart';
 
-/// 목록의 구분선 자리. 광고 자리([ListAdPlacement])면 구분선 사이에 광고를 넣는다.
+/// 목록의 구분선 자리. 광고 자리(`ListAdSlots.placement`)면 구분선 사이에 광고를 넣는다.
 /// 광고를 받는 동안은 자리 표시로 칸을 잡아 두고, 못 받으면 구분선만 남긴다.
 class const ListAdSeparator({
   required final int index,
@@ -16,10 +15,8 @@ class const ListAdSeparator({
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final int? slot = ListAdPlacement.slotAt(index);
-    final ListAdSlots? slots = slot == null
-        ? null
-        : ListAdScope.maybeOf(context);
+    final ListAdSlots? slots = ListAdScope.maybeOf(context);
+    final int? slot = slots?.placement.slotAt(index);
     if (slot == null || slots == null) return const PlainDividerWidget();
 
     return _ListAdTile(

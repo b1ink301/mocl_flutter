@@ -46,6 +46,11 @@ class MainActivity: FlutterActivity() {
             DetailNativeAdFactory.FACTORY_ID,
             DetailNativeAdFactory(this),
         )
+        GoogleMobileAdsPlugin.registerNativeAdFactory(
+            flutterEngine,
+            DetailSmallNativeAdFactory.FACTORY_ID,
+            DetailSmallNativeAdFactory(this),
+        )
     }
 
     override fun cleanUpFlutterEngine(flutterEngine: FlutterEngine) {
@@ -53,6 +58,7 @@ class MainActivity: FlutterActivity() {
         translationChannel = null
         GoogleMobileAdsPlugin.unregisterNativeAdFactory(flutterEngine, ListNativeAdFactory.FACTORY_ID)
         GoogleMobileAdsPlugin.unregisterNativeAdFactory(flutterEngine, DetailNativeAdFactory.FACTORY_ID)
+        GoogleMobileAdsPlugin.unregisterNativeAdFactory(flutterEngine, DetailSmallNativeAdFactory.FACTORY_ID)
         super.cleanUpFlutterEngine(flutterEngine)
     }
 }

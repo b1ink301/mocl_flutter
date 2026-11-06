@@ -18,10 +18,22 @@ class ListAdStyle._({
   required final double titleLineHeight,
   required final double smallLineHeight,
   required final double badgeLineHeight,
+  required final double paddingStart,
+  required final double paddingEnd,
 }) with Equatable implements NativeAdLook {
   /// 목록 행([AppTextStyles])의 안 읽은 글 스타일을 따른다.
-  factory from(AppTextStyles styles, Color background) => ListAdStyle._(
+  ///
+  /// 좌우 여백 기본값은 목록 행과 같다. 이미 좌우 여백이 있는 곳(글 상세)은
+  /// 0 으로 넘긴다.
+  factory from(
+    AppTextStyles styles,
+    Color background, {
+    double paddingStart = 16,
+    double paddingEnd = 10,
+  }) => ListAdStyle._(
     background: background,
+    paddingStart: paddingStart,
+    paddingEnd: paddingEnd,
     title: styles.titleTextStyle,
     small: styles.smallTextStyle,
     badge: styles.badgeTextStyle,
@@ -60,14 +72,13 @@ class ListAdStyle._({
   @override
   Widget placeholder(BuildContext context) {
     final Color color = adSkeletonColor(context);
-    // 팩토리의 PADDING_START · PADDING_END 와 같다.
     return ColoredBox(
       color: background,
       child: Padding(
-        padding: const EdgeInsetsDirectional.fromSTEB(
-          16,
+        padding: EdgeInsetsDirectional.fromSTEB(
+          paddingStart,
           _paddingVertical,
-          10,
+          paddingEnd,
           _paddingVertical,
         ),
         child: Column(
@@ -94,6 +105,8 @@ class ListAdStyle._({
   Map<String, Object> toOptions() => {
     'background': background.toARGB32(),
     'iconSize': _iconSize,
+    'paddingStart': paddingStart,
+    'paddingEnd': paddingEnd,
     ...adTextOptions('title', title, titleLineHeight),
     ...adTextOptions('small', small, smallLineHeight),
     ...adTextOptions('badge', badge, badgeLineHeight),
@@ -103,5 +116,12 @@ class ListAdStyle._({
   };
 
   @override
-  List<Object?> get props => [background, title, small, badge];
+  List<Object?> get props => [
+    background,
+    title,
+    small,
+    badge,
+    paddingStart,
+    paddingEnd,
+  ];
 }
