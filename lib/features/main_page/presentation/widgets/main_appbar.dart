@@ -23,7 +23,17 @@ import '../state/main_event_mixin.dart';
 import '../state/main_state_mixin.dart';
 import 'main_search_field.dart';
 
-class const MainAppBar({super.key})
+/// 메인 앱바. 배치가 둘이다.
+///
+/// - [issueFirst] false(기존): 펼침 영역에 큰 사이트 제목. 스크롤하면 스르륵
+///   사라지고 툴바 제목은 비어 있다.
+/// - [issueFirst] true("지금 이슈" 카드를 켠 경우): 툴바만 두고 고정한다.
+///   큰 제목은 카드 아래로 내려가 카드와 함께 고정되고(메인 뷰의 고정 머리),
+///   게시판 목록만 스크롤된다. 스크롤 그림자는 툴바가 아니라 고정 머리 아래에 둔다.
+///
+/// 두 배치 모두 맨 위에서 큰 제목의 자리 · 모양이 같아, 카드를 닫고 켤 때
+/// 제목이 움직이지 않는다.
+class const MainAppBar({super.key, final bool issueFirst = false})
     extends ConsumerWidget
     with MainState, MainEvent {
   @override
@@ -45,16 +55,17 @@ class const MainAppBar({super.key})
           semanticsId: 'main_drawer',
         ),
       ),
-      expandedHeight: kLargeTitleExpandedHeightSingleLine,
-      flexibleSpace: LargeTitleFlexibleSpace(
-        title: titleState(ref),
-        style: titleStyle,
-      ),
+      expandedHeight: issueFirst ? null : kLargeTitleExpandedHeightSingleLine,
+      flexibleSpace: issueFirst
+          ? null
+          : LargeTitleFlexibleSpace(title: titleState(ref), style: titleStyle),
       title: _MainAppBarTitle(style: menuStyle),
       titleTextStyle: menuStyle,
       titleSpacing: 0,
-      floating: true,
-      pinned: false,
+      floating: !issueFirst,
+      pinned: issueFirst,
+      // 고정 배치에서는 툴바 바로 밑이 고정 머리라, 그림자는 머리 아래에만 둔다.
+      scrolledUnderElevation: issueFirst ? 0 : null,
       centerTitle: false,
       toolbarHeight: kToolbarHeight,
       actions: const <Widget>[_MainActions()],

@@ -1,22 +1,92 @@
 part of '../mocl_main_view.dart';
 
-/// 게시판 목록 위 "지금 이슈" 카드 자리.
+/// "지금 이슈" 배치의 고정 머리: 이슈 카드 + 큰 사이트 제목.
 ///
-/// 서버가 없는 빌드, 카드를 닫은 경우, 편집 · 검색 중에는 비운다(그때 진입점은
-/// 앱바 레이더 아이콘과 드로어). 이슈를 받는 중이거나 없을 때는 카드가 스스로 접힌다.
-class const _MainIssueCard()
-    extends ConsumerWidget
-    with MainState, IssueRadarState {
+/// 툴바(고정) 바로 밑에 붙어 움직이지 않고, 게시판 목록만 그 밑으로 스크롤된다.
+/// 이슈는 늘 보이고, 목록과의 경계는 목록이 밑으로 지나갈 때 생기는 그림자가
+/// 맡는다(기존 배치에서 툴바가 받던 scrolledUnderElevation 과 같은 값).
+/// 높이는 내용을 따른다(자리 표시 → 이슈, 카드 접힘 · 펼침 애니메이션).
+class const _MainPinnedHeader() extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) =>
+      const PinnedHeaderSliver(child: _PinnedHeaderBox());
+}
+
+class const _PinnedHeaderBox() extends StatefulWidget {
+  @override
+  State<_PinnedHeaderBox> createState() => _PinnedHeaderBoxState();
+}
+
+class _PinnedHeaderBoxState() extends State<_PinnedHeaderBox> {
+  ScrollPosition? _position;
+  bool _scrolled = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final ScrollPosition? position = Scrollable.maybeOf(context)?.position;
+    if (position == _position) return;
+    _position?.removeListener(_onScroll);
+    _position = position?..addListener(_onScroll);
+    _scrolled = _isScrolled();
+  }
+
+  @override
+  void dispose() {
+    _position?.removeListener(_onScroll);
+    super.dispose();
+  }
+
+  bool _isScrolled() {
+    final ScrollPosition? position = _position;
+    return position != null &&
+        position.hasPixels &&
+        position.hasContentDimensions &&
+        position.pixels > position.minScrollExtent;
+  }
+
+  void _onScroll() {
+    final bool scrolled = _isScrolled();
+    if (scrolled != _scrolled && mounted) setState(() => _scrolled = scrolled);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final ThemeData theme = Theme.of(context);
+    return Material(
+      // 아래로 지나가는 게시판이 비치지 않게 툴바와 같은 바탕을 깐다.
+      color: theme.appBarTheme.backgroundColor ?? theme.scaffoldBackgroundColor,
+      shadowColor: theme.appBarTheme.shadowColor,
+      elevation: _scrolled
+          ? (theme.appBarTheme.scrolledUnderElevation ?? 1)
+          : 0,
+      child: const Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          // 넓은 화면에서는 카드를 목록과 같은 폭으로 가운데 모은다.
+          BoxReadableWidth(child: _MainIssueCard()),
+          SizedBox(height:8),
+          // 큰 제목은 앱바 펼침 영역처럼 화면 폭 전체를 쓴다(기존 배치와 같은 자리).
+          MainSiteTitle(),
+          SizedBox(height:4),
+        ],
+      ),
+    );
+  }
+}
+
+/// 고정 머리 안의 "지금 이슈" 카드 자리.
+///
+/// 편집 · 검색 중에는 비운다(그때 진입점은 앱바 레이더 아이콘과 드로어).
+/// 처음 받는 중에는 카드가 자리 표시로 칸을 잡고, 못 받았거나 없으면 스스로 접힌다.
+class const _MainIssueCard() extends ConsumerWidget with MainState {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final bool show =
-        issueRadarAvailableState(ref) &&
-        issueHomeCardState(ref) &&
-        !editModeState(ref) &&
-        !searchOpenState(ref);
-    return SliverToBoxAdapter(
-      child: show ? const IssueHomeCard() : const SizedBox.shrink(),
-    );
+    final bool show = !editModeState(ref) && !searchOpenState(ref);
+    return show
+        ? const IssueHomeCard()
+        : const SizedBox(width: double.infinity);
   }
 }
 
