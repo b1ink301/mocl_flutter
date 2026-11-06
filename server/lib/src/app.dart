@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
+import 'admin/admin_routes.dart';
 import 'alerts/alert_crawler.dart';
 import 'alerts/alert_routes.dart';
 import 'alerts/alert_store.dart';
@@ -22,6 +23,7 @@ Handler buildHandler(
   RateLimiter? alertLimiter,
   CrawlStatus Function()? crawlStatus,
   RadarFeed? radarFeed,
+  AdminRoutes? admin,
   Duration crawlStaleAfter = const Duration(minutes: 10),
 }) {
   final Router router = Router()
@@ -46,6 +48,7 @@ Handler buildHandler(
       );
     });
   radarFeed?.mount(router);
+  admin?.mount(router);
   if (alerts != null) {
     mountAlertRoutes(router, alerts, alertLimiter ?? RateLimiter());
   }

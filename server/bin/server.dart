@@ -10,6 +10,7 @@ import 'package:shelf/shelf_io.dart' as shelf_io;
 /// - `CONFIG_PATH`: 원격 설정 파일(기본 config/remote_config.json)
 /// - `DATA_DIR`: 알림 DB 위치(기본 data)
 /// - `FIREBASE_SERVICE_ACCOUNT`: FCM 발송용 서비스 계정 JSON 경로. 없으면 보내지 않고 로그만 남긴다.
+/// - `ADMIN_TOKEN`: 관리 화면(`/admin`) 토큰(32자 이상). 없거나 짧으면 관리 화면을 열지 않는다.
 Future<void> main() async {
   installServerLogging();
   final Map<String, String> env = Platform.environment;
@@ -58,21 +59,44 @@ Future<void> main() async {
         boards.fetch(b.site, board: b.board, url: b.url, boardTitle: b.title),
   )..start();
 
+  CrawlStatus crawlStatus() =>
+      crawler.status.withRadar(radar.lastRunAt, radar.failing.length);
+
+  final AdminAuth? adminAuth = AdminAuth.fromToken(env['ADMIN_TOKEN']);
+  final AdminRoutes? admin = adminAuth == null
+      ? null
+      : AdminRoutes(
+          configs: configs,
+          auth: adminAuth,
+          // 데이터 볼륨에 두어 매일 백업에 함께 묶인다.
+          history: ConfigHistory(Directory('$dataDir/config-history')),
+          status: () async => {
+            'crawl': crawlStatus().toJson(
+              DateTime.now().millisecondsSinceEpoch,
+            ),
+          },
+        );
+  serverLog(
+    admin == null
+        ? '[admin] ADMIN_TOKEN 이 없거나 ${AdminAuth.minLength}자 미만이라 관리 화면을 끈다'
+        : '[admin] 관리 화면 사용(/admin)',
+  );
+
   // 요청 제한용 IP 는 1분마다 비운다(요청이 없을 때도).
   final RateLimiter limiter = RateLimiter();
-  final Timer pruneTimer = Timer.periodic(
-    const Duration(minutes: 1),
-    (_) => limiter.prune(),
-  );
+  final Timer pruneTimer = Timer.periodic(const Duration(minutes: 1), (_) {
+    limiter.prune();
+    admin?.prune();
+  });
 
   final HttpServer server = await shelf_io.serve(
     buildHandler(
       configs,
       alerts: alerts,
       alertLimiter: limiter,
-      crawlStatus: () =>
-          crawler.status.withRadar(radar.lastRunAt, radar.failing.length),
+      crawlStatus: crawlStatus,
       radarFeed: radarFeed,
+      admin: admin,
     ),
     InternetAddress.anyIPv4,
     port,

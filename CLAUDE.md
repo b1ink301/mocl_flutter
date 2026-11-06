@@ -85,6 +85,9 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   형식은 `RemoteConfig`.
 - 부팅 때 저장된 설정만 동기로 읽어 `remoteConfigProvider` 를 덮어쓰고, 서버 요청은 첫 프레임 2초 뒤.
   **새 설정은 다음 실행부터** 적용된다(실행 중 UA 를 바꾸면 만든 클라이언트 · 쿠키와 어긋난다).
+- 운영 중 설정 편집은 서버 관리 화면(`/admin`, `server/lib/src/admin/`)으로 한다. 토큰(`ADMIN_TOKEN`)은
+  헤더로만 받고 쿠키를 쓰지 않는다. 설정 항목을 늘리면 관리 화면 폼(`admin_page.dart`)도 같이 고친다
+  (폼이 모르는 항목은 JSON 편집으로만 바뀐다). 검사 규칙은 `RemoteConfig.validate` 하나를 쓴다.
 - 서버 주소는 `MOCL_API_BASE_URL` define(`ads.json` 같은 define 파일에 넣는다). 비면 요청하지 않는다.
 - 서버가 없거나 실패해도 앱은 그대로여야 한다. 서버 쪽 실패(5xx · 오프라인 · 모르는 schemaVersion)는
   `MoclLogger.w` 로만 남기고 Crashlytics 로 올리지 않는다.

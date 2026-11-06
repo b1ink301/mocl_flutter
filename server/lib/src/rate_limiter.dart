@@ -29,6 +29,14 @@ class RateLimiter({
     return true;
   }
 
+  /// 세지 않고 이미 한도를 넘었는지만 본다.
+  bool exceeded(String key) {
+    final (int, int)? hit = _hits[key];
+    if (hit == null) return false;
+    final int now = clock().millisecondsSinceEpoch;
+    return now - hit.$1 < window.inMilliseconds && hit.$2 >= limit;
+  }
+
   /// 창이 지난 기록을 지운다. 요청이 없을 때도 지워지도록 서버가 주기적으로 부른다.
   void prune() {
     final int now = clock().millisecondsSinceEpoch;

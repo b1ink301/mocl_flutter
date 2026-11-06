@@ -1,3 +1,5 @@
+export 'src/admin/admin_routes.dart' show AdminAuth, AdminRoutes;
+export 'src/admin/config_history.dart' show ConfigHistory;
 export 'src/alerts/alert_crawler.dart'
     show AlertCrawler, BoardFetch, CrawlStatus;
 export 'src/alerts/alert_store.dart' show AlertStore, BoardState, Device;

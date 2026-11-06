@@ -51,6 +51,16 @@ class ConfigStore(
     return _current ?? (throw StateError('loadInitial 을 먼저 불러야 한다'));
   }
 
+  /// 관리 화면이 파일을 고친 직후 부른다. 수정 시각을 기다리지 않고 바로 읽는다.
+  /// 파일이 깨졌으면 던지고 지금 설정은 그대로 둔다.
+  void reloadNow() {
+    final (ServedConfig served, DateTime modified) = _read();
+    _current = served;
+    _loadedModified = modified;
+    _lastCheck = DateTime.now();
+    serverLog('[config] reloaded etag=${served.etag}');
+  }
+
   void _reloadIfChanged() {
     try {
       final DateTime modified = file.lastModifiedSync();
