@@ -74,7 +74,7 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   cd packages/mocl_shared && fvm dart run build_runner build --delete-conflicting-outputs && fvm dart test
   ```
   파서 테스트 · 픽스처는 `packages/mocl_shared/test/` 에 있다(순수 Dart 로 돈다).
-- 서버는 `server/`(shelf, Docker + Caddy, 오라클 A1 arm64). 사용법 · 배포는 [server/README.md](server/README.md).
+- 서버는 `server/`(shelf, Docker + Caddy, arm64 클라우드 VM). 사용법 · 배포는 [server/README.md](server/README.md).
   서버 로그는 `print` 가 아니라 `serverLog`(운영에서도 남음) 또는 `MoclLogger`(개발 실행에서만).
   `pub workspace` 로 묶지 않는다 — 서버 Docker 빌드가 Flutter SDK 없이 의존성을 풀어야 한다.
 
@@ -89,6 +89,7 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   헤더로만 받고 쿠키를 쓰지 않는다. 설정 항목을 늘리면 관리 화면 폼(`admin_page.dart`)도 같이 고친다
   (폼이 모르는 항목은 JSON 편집으로만 바뀐다). 검사 규칙은 `RemoteConfig.validate` 하나를 쓴다.
 - 서버 주소는 `MOCL_API_BASE_URL` define(`ads.json` 같은 define 파일에 넣는다). 비면 요청하지 않는다.
+  공개 저장소라 서버 주소 · ssh 호스트 · 인스턴스 정보는 소스 · 문서에 적지 않는다(`$MOCL_DOMAIN`, `<서버>` 로 쓴다).
 - 서버가 없거나 실패해도 앱은 그대로여야 한다. 서버 쪽 실패(5xx · 오프라인 · 모르는 schemaVersion)는
   `MoclLogger.w` 로만 남기고 Crashlytics 로 올리지 않는다.
 - 사이트 API 클라이언트는 UA 상수를 직접 쓰지 말고 `network_provider.dart` 의 `_userAgent(ref, site, preset)` 를 거친다.

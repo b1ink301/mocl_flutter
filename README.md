@@ -26,7 +26,7 @@ GeekNews, Instiz, Inven, Meeco, MLBPark, Nate, NaverCafe, Ppomppu, Reddit, Ruliw
 - **빌드 플레이버**: dev, prd
 - **데이터베이스**: sembast
 - **광고**: Google AdMob 네이티브 광고(Android 만, UMP 동의 → SDK 초기화 후 요청)
-- **서버**: Dart(shelf) + Docker + Caddy, Oracle Cloud A1 — 원격 설정 · 키워드 알림(FCM). 앱과 파서를 `packages/mocl_shared` 로 공유
+- **서버**: Dart(shelf) + Docker + Caddy, arm64 클라우드 VM — 원격 설정 · 키워드 알림(FCM). 앱과 파서를 `packages/mocl_shared` 로 공유
 - **앱 아이콘/스플래시**: flutter_launcher_icons + flutter_native_splash (소스: `branding/`)
 
 ## 프로젝트 구조
@@ -252,7 +252,7 @@ fvm dart run flutter_native_splash:create --path=flutter_native_splash.yaml
 
 ```mermaid
 flowchart LR
-  subgraph OCI["클라우드 VM (arm64)"]
+  subgraph VM["클라우드 VM (arm64)"]
     Caddy["Caddy<br/>TLS 자동 발급"] --> API["mocl_server<br/>Dart shelf · AOT"]
     API --> DB[("sembast<br/>alerts.db")]
     API -->|3분마다| Sites["커뮤니티 공개 게시판"]
@@ -265,7 +265,7 @@ flowchart LR
 - **공유 패키지** `packages/mocl_shared`: 엔티티 · 사이트 파서 · 원격 설정 · 알림 계약을 앱과 서버가 같이 쓴다(순수 Dart).
   사이트 마크업이 바뀌면 한 번 고쳐서 앱과 서버에 함께 반영된다.
 - **배포**: Docker(AOT 컴파일, 빌드 중 테스트) + Caddy. `server/docker-compose.yml`.
-- **운영 주소**: `https://api.example.com` (앱은 `MOCL_API_BASE_URL` define 으로 받는다. 비면 서버 기능이 꺼진다)
+- **서버 주소**: 저장소에 두지 않는다. 앱은 `MOCL_API_BASE_URL` define(`ads.json`)으로 받는다. 비면 서버 기능이 꺼진다.
 
 ### 기능
 
@@ -291,7 +291,7 @@ flowchart LR
 
 ### 키워드 알림이 지원하는 사이트
 
-서버(오라클 데이터센터 IP)에서 **실제로 받아 본 결과**로 정했습니다(`server/bin/probe.dart`).
+서버(클라우드 데이터센터 IP)에서 **실제로 받아 본 결과**로 정했습니다(`server/bin/probe.dart`).
 
 | 구분 | 사이트 |
 |---|---|
