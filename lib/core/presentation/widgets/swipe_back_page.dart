@@ -166,11 +166,15 @@ class SwipeBackPageRoute<T>({
   @override
   bool didPop(T? result) {
     final NavigatorState? navigator = this.navigator;
-    if (navigator != null) {
+    final bool popped = super.didPop(result);
+    // 드로어 · 지역 기록(LocalHistoryEntry)만 닫힌 pop 은 false 를 돌려주고 화면은 그대로다.
+    // 이걸 "닫히는 중" 으로 적어 두면, 다음 화면에서 뒤로 가기를 시작할 때
+    // 멀쩡한 이 화면의 컨트롤러를 0 으로 만들어 검은 화면이 된다.
+    if (popped && navigator != null) {
       _closingRoutes[navigator] = this;
       _closingNavigator = navigator;
     }
-    return super.didPop(result);
+    return popped;
   }
 
   /// 바로 위 화면이 닫히는 중인지.
@@ -178,7 +182,10 @@ class SwipeBackPageRoute<T>({
     final NavigatorState? navigator = this.navigator;
     if (navigator == null || !isCurrent) return false;
     final SwipeBackPageRoute<dynamic>? closing = _closingRoutes[navigator];
-    return closing != null && !identical(closing, this);
+    return closing != null &&
+        !identical(closing, this) &&
+        // 실제로 닫히는 애니메이션 중일 때만(이미 끝났거나 다시 열린 화면은 건드리지 않는다).
+        closing.controller?.status == AnimationStatus.reverse;
   }
 
   /// 위 화면이 닫히는 중이면 지금 끝낸다. 그 뒤 이 화면이 제스처를 받을 수 있는지 돌려준다.

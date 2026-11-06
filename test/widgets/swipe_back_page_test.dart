@@ -511,5 +511,58 @@ void main() {
       expect(find.text('상세'), findsNothing);
       expect(find.text('목록'), findsOneWidget);
     }, variant: TargetPlatformVariant.only(TargetPlatform.android));
+    testWidgets('드로어를 닫고 연 화면에서 뒤로 가도 아래 화면이 그대로 보인다', (tester) async {
+      // 드로어를 닫는 pop 은 화면을 닫지 않는다(LocalHistoryEntry). 이걸 "닫히는 중" 으로
+      // 잘못 적어 두면, 다음 화면의 뒤로 가기가 아래 화면을 닫아 검은 화면이 된다.
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Navigator(
+            onGenerateRoute: (_) => SwipeBackPageRoute<void>(
+              builder: (context) => Scaffold(
+                drawer: Drawer(
+                  child: Center(
+                    child: TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                        Navigator.of(context).push(page('이슈'));
+                      },
+                      child: const Text('드로어 항목'),
+                    ),
+                  ),
+                ),
+                body: Builder(
+                  builder: (context) => Center(
+                    child: TextButton(
+                      onPressed: () => Scaffold.of(context).openDrawer(),
+                      child: const Text('메인'),
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ),
+      );
+      final double mainLeft = tester.getTopLeft(find.text('메인')).dx;
+      await tester.tap(find.text('메인'));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('드로어 항목'));
+      await tester.pumpAndSettle();
+      expect(find.text('이슈'), findsOneWidget);
+
+      await sendBackGesture(tester, 'startBackGesture', backEvent(0));
+      await sendBackGesture(
+        tester,
+        'updateBackGestureProgress',
+        backEvent(0.5),
+      );
+      await tester.pump();
+      await sendBackGesture(tester, 'commitBackGesture');
+      await tester.pumpAndSettle();
+
+      expect(find.text('이슈'), findsNothing);
+      expect(find.text('메인'), findsOneWidget);
+      expect(tester.getTopLeft(find.text('메인')).dx, mainLeft);
+    }, variant: TargetPlatformVariant.only(TargetPlatform.android));
   });
 }
