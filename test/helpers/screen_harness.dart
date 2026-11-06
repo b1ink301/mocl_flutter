@@ -172,8 +172,11 @@ Future<void> pumpDetailScreen(
   Details? details,
   ListItem? item,
   SiteType siteType = SiteType.clien,
+
+  /// 화면 밖 sliver 는 만들어지지 않으므로, 끝까지 한 번에 보려면 길게 준다.
+  Size surface = kTestSurface,
 }) async {
-  useFixedSurface(tester);
+  useFixedSurface(tester, size: surface);
   await tester.pumpWidget(
     ProviderScope(
       overrides: <Override>[
