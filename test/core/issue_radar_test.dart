@@ -2,11 +2,13 @@ import 'dart:convert';
 import 'dart:typed_data';
 
 import 'package:dio/dio.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocl_flutter/features/issue_radar/application/issue_radar_providers.dart';
 import 'package:mocl_flutter/features/issue_radar/data/issue_radar_api.dart';
 import 'package:mocl_flutter/features/issue_radar/data/issue_read_store.dart';
 import 'package:mocl_flutter/features/issue_radar/presentation/widgets/issue_time.dart';
+import 'package:mocl_flutter/features/settings_page/application/datasource_provider.dart';
 import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_shared/radar/issue_feed.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -85,6 +87,48 @@ void main() {
     expect(read, hasLength(IssueReadStore.limit));
     expect(read, isNot(contains('i_0')));
     expect(read, contains('i_${IssueReadStore.limit + 4}'));
+  });
+
+  group('메인 이슈 카드', () {
+    Future<ProviderContainer> container(Map<String, Object> prefs) async {
+      SharedPreferences.setMockInitialValues(prefs);
+      final SharedPreferences sp = await SharedPreferences.getInstance();
+      final c = ProviderContainer(
+        overrides: [
+          sharedPreferencesProvider.overrideWithValue(sp),
+          visibleIssueFeedProvider.overrideWith((ref) async => _feed),
+        ],
+      );
+      addTearDown(c.dispose);
+      return c;
+    }
+
+    test('기본은 켜짐, 끄면 저장되어 다음 실행에도 꺼져 있다', () async {
+      final c = await container({});
+      expect(c.read(issueHomeCardProvider), isTrue);
+      await c.read(issueHomeCardProvider.notifier).set(false);
+      expect(c.read(issueHomeCardProvider), isFalse);
+
+      final SharedPreferences sp = await SharedPreferences.getInstance();
+      final c2 = ProviderContainer(
+        overrides: [sharedPreferencesProvider.overrideWithValue(sp)],
+      );
+      addTearDown(c2.dispose);
+      expect(c2.read(issueHomeCardProvider), isFalse);
+    });
+
+    test('위쪽 이슈를 다 보면 점이 사라진다', () async {
+      final c = await container({});
+      c.listen(hasUnreadTopIssuesProvider, (_, _) {});
+      expect(c.read(hasUnreadTopIssuesProvider), isFalse, reason: '받기 전');
+      await c.read(visibleIssueFeedProvider.future);
+      expect(c.read(hasUnreadTopIssuesProvider), isTrue);
+
+      await c.read(readIssuesProvider.notifier).markRead('i_1');
+      expect(c.read(hasUnreadTopIssuesProvider), isTrue);
+      await c.read(readIssuesProvider.notifier).markRead('i_2');
+      expect(c.read(hasUnreadTopIssuesProvider), isFalse);
+    });
   });
 
   test('IssueRadarApi: 304 면 지난 목록을 그대로 쓴다', () async {

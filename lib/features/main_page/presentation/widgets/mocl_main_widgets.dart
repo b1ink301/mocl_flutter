@@ -1,5 +1,25 @@
 part of '../mocl_main_view.dart';
 
+/// 게시판 목록 위 "지금 이슈" 카드 자리.
+///
+/// 서버가 없는 빌드, 카드를 닫은 경우, 편집 · 검색 중에는 비운다(그때 진입점은
+/// 앱바 레이더 아이콘과 드로어). 이슈를 받는 중이거나 없을 때는 카드가 스스로 접힌다.
+class const _MainIssueCard()
+    extends ConsumerWidget
+    with MainState, IssueRadarState {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final bool show =
+        issueRadarAvailableState(ref) &&
+        issueHomeCardState(ref) &&
+        !editModeState(ref) &&
+        !searchOpenState(ref);
+    return SliverToBoxAdapter(
+      child: show ? const IssueHomeCard() : const SizedBox.shrink(),
+    );
+  }
+}
+
 /// 홈 본문. 지금 고른 사이트에 담아둔 게시판을 한 줄씩 펼친다.
 ///
 /// 같은 카페(부모)의 게시판이 여럿이면 카페 소제목 아래로 한 번 더 묶는다
@@ -75,10 +95,10 @@ class const _MainBody() extends ConsumerWidget with MainState, FavoriteState {
           _ReorderableBoards(favorites: favorites)
         else //...[
           ..._buildSubSections(ref, favorites),
-          // 광고는 게시판들 맨 아래에 하나만. 편집(드래그) · 검색 중에는 두지 않는다.
-          // SliverToBoxAdapter(
-          //   child: MainAdTile(styles: appTextStylesState(ref)),
-          // ),
+        // 광고는 게시판들 맨 아래에 하나만. 편집(드래그) · 검색 중에는 두지 않는다.
+        // SliverToBoxAdapter(
+        //   child: MainAdTile(styles: appTextStylesState(ref)),
+        // ),
         //],
         // bottom 에는 떠 있는 탭바 높이가 들어온다(Scaffold extendBody).
         SliverToBoxAdapter(child: SizedBox(height: bottom)),

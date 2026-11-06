@@ -1,6 +1,13 @@
 import 'package:cupertino_ui/cupertino_ui.dart';
+
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
+import 'package:mocl_flutter/features/issue_radar/presentation/state/issue_radar_state_mixin.dart';
+import 'package:mocl_shared/radar/issue_feed.dart';
 
 import '../../../../config/large_title_metrics.dart';
 import '../../../../core/presentation/widgets/adaptive_popup_menu.dart';
@@ -109,6 +116,7 @@ class const _MainActions() extends ConsumerWidget with MainState, MainEvent {
               ),
             ]
           : [
+              const _IssueRadarAction(),
               // 담은 게시판이 많아지면 스크롤보다 검색이 빠르다.
               PlainIconButton(
                 onPressed: () => openSearch(ref),
@@ -136,6 +144,34 @@ class const _MainActions() extends ConsumerWidget with MainState, MainEvent {
                 ),
               ),
             ],
+    );
+  }
+}
+
+/// "지금 이슈" 로 가는 레이더 아이콘. 메인 위 이슈 카드가 안 보일 때만 둔다
+/// (카드를 닫았거나, 이슈를 못 받았거나 없을 때). 카드를 켜 둔 채 받는 중에는
+/// 숨긴다 — 보였다가 카드가 오면 사라지며 앱바 아이콘이 들썩인다.
+/// 위쪽 이슈 중 안 본 게 있으면 점을 붙인다.
+class const _IssueRadarAction() extends ConsumerWidget with IssueRadarState {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (!issueRadarAvailableState(ref)) return const SizedBox.shrink();
+    final AsyncValue<IssueFeed> feed = issueFeedState(ref);
+    final bool cardShown =
+        issueHomeCardState(ref) &&
+        (feed.value?.issues.isNotEmpty ?? feed.isLoading);
+    if (cardShown) return const SizedBox.shrink();
+
+    final bool unread = hasUnreadTopIssuesState(ref);
+    return PlainIconButton(
+      onPressed: () => unawaited(context.push(Routes.issues)),
+      icon: Badge(
+        isLabelVisible: unread,
+        smallSize: 7,
+        child: const PlainIcon(Icons.radar),
+      ),
+      semanticLabel: unread ? '지금 이슈, 새 이슈 있음' : '지금 이슈',
+      semanticsId: 'main_issues',
     );
   }
 }

@@ -80,6 +80,37 @@ IssueFeed filterMuted(IssueFeed feed, List<String> mutedKeywords) {
 IssueReadStore issueReadStore(Ref ref) =>
     IssueReadStore(ref.watch(sharedPreferencesProvider));
 
+/// 메인 화면 위에 "지금 이슈" 카드를 둘지. 끄면 앱바의 레이더 아이콘만 남는다.
+/// 카드의 닫기 버튼과 설정 "메인에 지금 이슈 보기" 가 함께 바꾼다.
+@Riverpod(keepAlive: true)
+class IssueHomeCardNotifier() extends _$IssueHomeCardNotifier {
+  static const String _key = 'issue_radar_home_card';
+
+  @override
+  bool build() => ref.watch(sharedPreferencesProvider).getBool(_key) ?? true;
+
+  Future<void> set(bool show) async {
+    if (state == show) return;
+    state = show;
+    await ref.read(sharedPreferencesProvider).setBool(_key, show);
+  }
+}
+
+/// 위쪽 이슈 중 아직 안 본 게 있는지(앱바 레이더 아이콘의 점).
+/// 이슈를 못 받았으면 false.
+@riverpod
+bool hasUnreadTopIssues(Ref ref) {
+  final IssueFeed? feed = ref.watch(visibleIssueFeedProvider).value;
+  if (feed == null) return false;
+  final Set<String> read = ref.watch(readIssuesProvider);
+  return feed.issues
+      .take(homeCardIssueCount)
+      .any((Issue i) => !read.contains(i.id));
+}
+
+/// 메인 카드에 보이는(점으로 알리는) 이슈 수.
+const int homeCardIssueCount = 3;
+
 /// 본 이슈 id.
 @Riverpod(keepAlive: true)
 class ReadIssuesNotifier() extends _$ReadIssuesNotifier {

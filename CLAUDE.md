@@ -138,6 +138,11 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   골든 테스트(`radar_rank_test`)를 고친다.
 - 급상승은 데이터가 1시간 쌓이기 전(서버 재시작 직후)에는 표시하지 않는다.
 - 앱: 드로어 "지금 이슈" → 목록 → 이슈 상세(커뮤니티별 글) → `SiteLinkResolver` 로 앱 상세.
+- 메인 진입점: 게시판 목록 위 `IssueHomeCard`(위쪽 3개 미리보기, 줄 탭 → 이슈 상세). 닫으면(설정
+  "메인에 지금 이슈 보기", `IssueHomeCardNotifier`) 앱바 레이더 아이콘(`main_issues`)만 남는다.
+  아이콘은 카드가 안 보일 때(닫음 · 이슈 없음 · 받기 실패)만 두고, 카드를 켠 채 받는 중엔 숨긴다(앱바 들썩임 방지).
+  안 본 위쪽 이슈가 있으면 점(`hasUnreadTopIssues`). 편집 · 검색 중엔 카드를 비운다.
+  앱 복귀 때 이슈가 10분 넘었으면 다시 받고, 메인 당겨서 새로고침도 이슈를 같이 받는다.
   차단(뮤트) 제목 키워드로 글을 거른다(`filterMuted`). 본 이슈는 흐리게(`IssueReadStore`).
 
 ## 부팅 (`main.dart`)
