@@ -4,7 +4,7 @@ import 'dart:isolate';
 
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:html_unescape/html_unescape.dart';
+import 'package:mocl_shared/util/html_unescape.dart';
 import 'package:mocl_shared/entities/last_id.dart';
 import 'package:mocl_shared/entities/mocl_comment_item.dart';
 import 'package:mocl_shared/entities/mocl_details.dart';
@@ -63,7 +63,6 @@ class const RedditParser() extends BaseParser {
     }
 
     timeago.setLocaleMessages('ko', timeago.KoMessages());
-    final htmlUnescape = HtmlUnescape();
 
     final detailData =
         (json[0]['data']['children'] as List<dynamic>).first['data'];
@@ -72,8 +71,8 @@ class const RedditParser() extends BaseParser {
     // 링크 · 이미지 · 동영상 · 갤러리 글은 글 본문이 없으므로 미디어로 본문을 채운다.
     final rawBody = detailData['selftext_html'];
     final bodyHtml =
-        _mediaHtml(detailData as Map<String, dynamic>, htmlUnescape) +
-        (rawBody is String ? htmlUnescape.convert(rawBody) : '');
+        _mediaHtml(detailData as Map<String, dynamic>) +
+        (rawBody is String ? unescapeHtml(rawBody) : '');
     final title = detailData['title'].toString();
     final viewCount = '';
     final likeCount = detailData['ups'].toString();
@@ -90,7 +89,7 @@ class const RedditParser() extends BaseParser {
     // 펼친다. replies 에 담아 두면 대댓글이 화면에 나오지 않는다.
     final comment = json[1]['data']['children'] as List<dynamic>?;
     final List<CommentItem> comments = [];
-    if (comment != null) _flattenComments(comment, htmlUnescape, comments);
+    if (comment != null) _flattenComments(comment, comments);
 
     // final translator = GoogleTranslator();
     // final html = htmlUnescape.convert(bodyHtml);
@@ -119,13 +118,13 @@ class const RedditParser() extends BaseParser {
   /// 글 본문이 아닌 첨부(갤러리 · 레딧 동영상 · 외부 임베드 · 이미지 · 링크)를
   /// 본문 HTML 로 만든다. 크로스포스트는 원글의 첨부를 쓴다.
   /// 레딧 JSON 의 미디어 주소는 `&` 가 `&amp;` 로 이스케이프되어 온다.
-  static String _mediaHtml(Map<String, dynamic> post, HtmlUnescape unescape) {
+  static String _mediaHtml(Map<String, dynamic> post) {
     final crossposts = post['crosspost_parent_list'];
     final Map<String, dynamic> src =
         crossposts is List && crossposts.isNotEmpty && crossposts.first is Map
         ? crossposts.first as Map<String, dynamic>
         : post;
-    String clean(Object? url) => unescape.convert('${url ?? ''}');
+    String clean(Object? url) => unescapeHtml('${url ?? ''}');
     String attr(String url) =>
         const HtmlEscape(HtmlEscapeMode.attribute).convert(url);
 
@@ -167,7 +166,7 @@ class const RedditParser() extends BaseParser {
 
     // 3) 외부 임베드(유튜브 등). 상세 화면이 iframe 을 썸네일로 그린다.
     final embed = src['secure_media_embed']?['content'];
-    final String embedHtml = embed is String ? unescape.convert(embed) : '';
+    final String embedHtml = embed is String ? unescapeHtml(embed) : '';
     if (embedHtml.contains('<iframe')) {
       return '$embedHtml'
           '<p><a href="${attr(url)}">${const HtmlEscape().convert(url)}</a></p>';
@@ -177,7 +176,7 @@ class const RedditParser() extends BaseParser {
       // 크로스포스트한 원글이 텍스트 글이면 원글 본문을 보여준다.
       final text = src['selftext_html'];
       return !identical(src, post) && text is String
-          ? unescape.convert(text)
+          ? unescapeHtml(text)
           : '';
     }
     if (url.isEmpty) return '';
@@ -199,12 +198,11 @@ class const RedditParser() extends BaseParser {
   /// 댓글 트리를 깊이 우선(부모 → 그 답글들 → 다음 부모)으로 [out] 에 펼친다.
   static void _flattenComments(
     List<dynamic> children,
-    HtmlUnescape htmlUnescape,
     List<CommentItem> out,
   ) {
     for (final element in children) {
       if (element is! Map<String, dynamic>) continue;
-      final item = _parseComment(element, htmlUnescape);
+      final item = _parseComment(element);
       if (item == null) continue;
       out.add(item);
 
@@ -212,7 +210,7 @@ class const RedditParser() extends BaseParser {
       if (replies is Map<String, dynamic>) {
         final repliesData = replies['data']?['children'];
         if (repliesData is List<dynamic>) {
-          _flattenComments(repliesData, htmlUnescape, out);
+          _flattenComments(repliesData, out);
         }
       }
     }
@@ -220,13 +218,12 @@ class const RedditParser() extends BaseParser {
 
   static CommentItem? _parseComment(
     Map<String, dynamic> json,
-    HtmlUnescape htmlUnescape,
   ) {
     // "more"(더보기 placeholder) 등 실제 댓글(t1)이 아닌 노드는 건너뛴다.
     if (json['kind'] != 't1') return null;
     final data = json['data'] as Map<String, dynamic>;
     final rawBody = data['body_html'];
-    final bodyHtml = rawBody is String ? htmlUnescape.convert(rawBody) : '';
+    final bodyHtml = rawBody is String ? unescapeHtml(rawBody) : '';
     final id = data['id'].toString();
     final likeCount = data['ups'].toString();
     final userId = data['author_fullname'].toString();
@@ -288,7 +285,6 @@ class const RedditParser() extends BaseParser {
       return;
     }
 
-    final htmlUnescape = HtmlUnescape();
 
     final items = list
         .map((element) {
@@ -316,7 +312,7 @@ class const RedditParser() extends BaseParser {
 
           return ListItem(
             id: id.hashCode,
-            title: htmlUnescape.convert(title),
+            title: unescapeHtml(title),
             reply: reply,
             category: category,
             time: milliseconds.toString(),
@@ -350,7 +346,6 @@ class const RedditParser() extends BaseParser {
       return const Left(GetMainFailure(message: '구독 커뮤니티 응답 형식이 달라요.'));
     }
 
-    final htmlUnescape = HtmlUnescape();
     final List<Map<String, dynamic>> subs = [
       for (final child in children)
         if (child is Map && child['kind'] == 't5' && child['data'] is Map)
@@ -373,7 +368,7 @@ class const RedditParser() extends BaseParser {
           // 키(FlutterDev)와 달라도 담아 둔 게시판은 DB 에 그대로 남아 동작한다.
           board: sub['display_name_prefixed'].toString(),
           text: sub['display_name_prefixed'].toString(),
-          icon: _iconOf(sub, htmlUnescape),
+          icon: _iconOf(sub),
         ),
     ];
 
@@ -383,11 +378,11 @@ class const RedditParser() extends BaseParser {
 
   /// 커뮤니티 아이콘. community_icon 이 우선이고 없으면 icon_img.
   /// community_icon 은 쿼리의 `&` 가 `&amp;` 로 이스케이프되어 온다.
-  static String _iconOf(Map<String, dynamic> sub, HtmlUnescape htmlUnescape) {
+  static String _iconOf(Map<String, dynamic> sub) {
     for (final key in ['community_icon', 'icon_img']) {
       final value = sub[key];
       if (value is String && value.isNotEmpty) {
-        return htmlUnescape.convert(value);
+        return unescapeHtml(value);
       }
     }
     return '';

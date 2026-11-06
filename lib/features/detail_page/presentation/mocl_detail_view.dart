@@ -26,7 +26,6 @@ import 'package:mocl_flutter/features/detail_page/presentation/state/detail_stat
 import 'package:mocl_flutter/features/detail_page/presentation/widgets/comment_composer_sheet.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/widgets/detail_header_bar.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/widgets/detail_scope.dart';
-import 'package:sliver_tools/sliver_tools.dart';
 
 import '../../../core/presentation/widgets/author_info_text.dart';
 import '../../../core/presentation/widgets/plain_divider_widget.dart';
@@ -233,8 +232,8 @@ class const _DetailView({
 
     // 작성자 헤더는 앱바가 아니라 본문 맨 위에 둔다. 앱바 확장 영역은
     // 제목만 쓰고(DetailAppBar), 헤더는 본문과 같이 스크롤된다.
-    return MultiSliver(
-      children: [
+    return SliverMainAxisGroup(
+      slivers: [
         SliverToBoxAdapter(
           child: DetailHeaderBar(
             detail: detail,
@@ -245,8 +244,8 @@ class const _DetailView({
         ),
         SliverPadding(
           padding: const EdgeInsets.only(left: 16, right: 8),
-          sliver: MultiSliver(
-            children: [
+          sliver: SliverMainAxisGroup(
+            slivers: [
               const _SpaceWidget(),
               // 본문은 sliver(SliverList)로 렌더돼 화면 밖 요소가 mount 되지
               // 않는다. RepaintBoundary 는 SliverListMode 가 자체적으로
@@ -261,13 +260,13 @@ class const _DetailView({
               // 본문을 다 읽고 댓글로 넘어가는 자리에 광고 하나.
               SliverToBoxAdapter(child: DetailAdCard(styles: styles)),
               if (detail.comments.isNotEmpty) ...[
-                const PlainDividerWidget(indent: 0, endIndent: 0),
+                const _SliverDivider(),
                 _CommentHeader(
                   commentCount: detail.comments.length,
                   totalCount: totalComments,
                   bodyMedium: bodySmall,
                 ),
-                const PlainDividerWidget(indent: 0, endIndent: 0),
+                const _SliverDivider(),
                 _CommentList(
                   comments: detail.comments,
                   authorId: detail.userInfo.id,
@@ -279,17 +278,19 @@ class const _DetailView({
                   onReply: detail.isLoggedIn ? onWriteComment : null,
                 ),
               ],
-              const PlainDividerWidget(indent: 0, endIndent: 0),
-              _FooterActions(
-                onRefresh: onRefresh,
-                writeLabel: detail.isLoggedIn ? '댓글 쓰기' : '로그인하고 댓글 쓰기',
-                onWrite: switch (onWriteComment) {
-                  final write? => () => write(null),
-                  null => null,
-                },
-                textStyle: bodySmall,
+              const _SliverDivider(),
+              SliverToBoxAdapter(
+                child: _FooterActions(
+                  onRefresh: onRefresh,
+                  writeLabel: detail.isLoggedIn ? '댓글 쓰기' : '로그인하고 댓글 쓰기',
+                  onWrite: switch (onWriteComment) {
+                    final write? => () => write(null),
+                    null => null,
+                  },
+                  textStyle: bodySmall,
+                ),
               ),
-              const PlainDividerWidget(indent: 0, endIndent: 0),
+              const _SliverDivider(),
               if (bottom > 0)
                 SliverPadding(padding: EdgeInsets.only(bottom: bottom)),
             ],
@@ -341,6 +342,14 @@ class const _CommentList({
     if (authorNick.isNotEmpty && u.nickName == authorNick) return true;
     return false;
   }
+}
+
+/// 본문 · 댓글 사이 구분선(sliver). 일반 위젯을 SliverMainAxisGroup 에 그대로 넣을 수 없다.
+class const _SliverDivider() extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => const SliverToBoxAdapter(
+    child: PlainDividerWidget(indent: 0, endIndent: 0),
+  );
 }
 
 class const _SpaceWidget() extends StatelessWidget {
