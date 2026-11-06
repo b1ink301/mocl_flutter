@@ -175,9 +175,7 @@ class const RedditParser() extends BaseParser {
     if (isSelf) {
       // 크로스포스트한 원글이 텍스트 글이면 원글 본문을 보여준다.
       final text = src['selftext_html'];
-      return !identical(src, post) && text is String
-          ? unescapeHtml(text)
-          : '';
+      return !identical(src, post) && text is String ? unescapeHtml(text) : '';
     }
     if (url.isEmpty) return '';
 
@@ -196,10 +194,7 @@ class const RedditParser() extends BaseParser {
   }
 
   /// 댓글 트리를 깊이 우선(부모 → 그 답글들 → 다음 부모)으로 [out] 에 펼친다.
-  static void _flattenComments(
-    List<dynamic> children,
-    List<CommentItem> out,
-  ) {
+  static void _flattenComments(List<dynamic> children, List<CommentItem> out) {
     for (final element in children) {
       if (element is! Map<String, dynamic>) continue;
       final item = _parseComment(element);
@@ -216,9 +211,7 @@ class const RedditParser() extends BaseParser {
     }
   }
 
-  static CommentItem? _parseComment(
-    Map<String, dynamic> json,
-  ) {
+  static CommentItem? _parseComment(Map<String, dynamic> json) {
     // "more"(더보기 placeholder) 등 실제 댓글(t1)이 아닌 노드는 건너뛴다.
     if (json['kind'] != 't1') return null;
     final data = json['data'] as Map<String, dynamic>;
@@ -284,7 +277,6 @@ class const RedditParser() extends BaseParser {
       replyPort.send(List<ListItem>.empty());
       return;
     }
-
 
     final items = list
         .map((element) {
