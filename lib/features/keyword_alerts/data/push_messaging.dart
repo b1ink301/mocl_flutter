@@ -45,10 +45,14 @@ class FirebasePushMessaging() implements PushMessaging {
         s.authorizationStatus == AuthorizationStatus.provisional;
   }
 
+  // firebase_messaging 17 은 register() · onRegistered(FID 직접 발송)를 권하지만,
+  // 서버(server/)는 FCM HTTP v1 에 등록 토큰으로 보낸다. 서버 발송을 FID 로 바꿀 때 함께 옮긴다.
   @override
+  // ignore: deprecated_member_use
   Future<String?> token() => _fm.getToken();
 
   @override
+  // ignore: deprecated_member_use
   Stream<String> get onTokenRefresh => _fm.onTokenRefresh;
 
   @override

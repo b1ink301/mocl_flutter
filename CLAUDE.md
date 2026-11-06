@@ -187,8 +187,8 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
 
 - CocoaPods 는 쓰지 않는다(`pubspec.yaml` 의 `flutter: config: enable-swift-package-manager: true`).
   Podfile 을 다시 만들지 말 것. 버전 고정은 `Runner.xcworkspace/xcshareddata/swiftpm/Package.resolved`.
-- `firebase_core` 는 4.x 에 묶어 둔다. 5.x(firebase-ios-sdk 13) 는 `google_sign_in_ios`(GoogleSignIn 9.x)와
-  `gtm-session-fetcher` 범위가 충돌해 패키지 해석이 실패한다.
+- `firebase_core` 5.x(firebase-ios-sdk 13)는 `google_sign_in_ios` 6.4.0+(GoogleSignIn 10)와만 SPM 해석이 된다
+  (`gtm-session-fetcher` 범위). 그래서 `google_sign_in_ios: ^6.4.0` 을 직접 의존성으로 둔다 — 낮추지 말 것.
 - flavor 스킴(`dev` · `prd` · `Runner`)마다 빌드 pre-action "Run Prepare Flutter Framework Script" 가
   있어야 한다. 스킴을 새로 만들면 같이 넣는다.
 - Crashlytics 심볼 업로드 빌드 단계는 `SourcePackages/checkouts/firebase-ios-sdk/Crashlytics/upload-symbols`
