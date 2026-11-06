@@ -5,7 +5,7 @@ import 'package:mocl_flutter/config/mocl_text_styles.dart';
 
 import 'native_ad_look.dart';
 
-/// 글 상세의 카드형 네이티브 광고 모양. Android 팩토리는
+/// 글 상세의 카드형 네이티브 광고 모양(medium · large). Android 팩토리는
 /// `DetailNativeAdFactory.kt`(`detailCard`)이고, 여백 상수는 그쪽과 같아야 한다.
 class DetailAdStyle._({
   required final Color background,
@@ -21,8 +21,16 @@ class DetailAdStyle._({
   required final double ctaLineHeight,
   required final double mediaHeight,
 }) with Equatable implements NativeAdLook {
-  /// [width] 는 광고가 들어갈 칸의 너비. 미디어는 16:9 로 맞춘다.
-  factory from(AppTextStyles styles, ThemeData theme, double width) {
+  /// [width] 는 광고가 들어갈 칸의 너비.
+  ///
+  /// 미디어 높이는 [compactMedia] 가 false(large)면 16:9(120~280dp),
+  /// true(medium)면 폭 × 0.4(120~160dp). 미디어 칸은 최소 120dp 여야 한다(AdMob 권장).
+  factory from(
+    AppTextStyles styles,
+    ThemeData theme,
+    double width, {
+    bool compactMedia = false,
+  }) {
     final Color accent = theme.colorScheme.primary;
     final TextStyle cta = styles.smallTextStyle.copyWith(
       color: accent,
@@ -40,8 +48,9 @@ class DetailAdStyle._({
       smallLineHeight: adLineHeight(styles.smallTextStyle),
       badgeLineHeight: adLineHeight(styles.badgeTextStyle),
       ctaLineHeight: adLineHeight(cta),
-      // 미디어 칸은 최소 120dp 여야 한다(AdMob 권장).
-      mediaHeight: (width * 9 / 16).clamp(120.0, 280.0).roundToDouble(),
+      mediaHeight: compactMedia
+          ? (width * 0.4).clamp(120.0, 160.0).roundToDouble()
+          : (width * 9 / 16).clamp(120.0, 280.0).roundToDouble(),
     );
   }
 
@@ -60,13 +69,15 @@ class DetailAdStyle._({
     mediaAspectRatio: MediaAspectRatio.landscape,
   );
 
+  double get _topRowHeight => [
+    titleLineHeight,
+    _iconSize,
+    badgeLineHeight + _badgePaddingVertical * 2,
+  ].reduce((a, b) => a > b ? a : b);
+
   @override
   double get height {
-    final double topRow = [
-      titleLineHeight,
-      _iconSize,
-      badgeLineHeight + _badgePaddingVertical * 2,
-    ].reduce((a, b) => a > b ? a : b);
+    final double topRow = _topRowHeight;
     final double bottomRow = [
       smallLineHeight * 2,
       _ctaHeight,
@@ -78,6 +89,48 @@ class DetailAdStyle._({
         _sectionGap +
         bottomRow +
         _paddingVertical;
+  }
+
+  @override
+  Widget placeholder(BuildContext context) {
+    final Color color = adSkeletonColor(context);
+    return ColoredBox(
+      color: background,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(vertical: _paddingVertical),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            adSkeletonLine(
+              lineHeight: _topRowHeight,
+              widthFactor: 0.5,
+              color: color,
+            ),
+            const SizedBox(height: _sectionGap),
+            SizedBox(
+              height: mediaHeight,
+              child: DecoratedBox(
+                decoration: BoxDecoration(
+                  color: mediaBackground,
+                  borderRadius: BorderRadius.circular(10),
+                ),
+              ),
+            ),
+            const SizedBox(height: _sectionGap),
+            adSkeletonLine(
+              lineHeight: smallLineHeight,
+              widthFactor: 0.7,
+              color: color,
+            ),
+            adSkeletonLine(
+              lineHeight: smallLineHeight,
+              widthFactor: 0.4,
+              color: color,
+            ),
+          ],
+        ),
+      ),
+    );
   }
 
   @override

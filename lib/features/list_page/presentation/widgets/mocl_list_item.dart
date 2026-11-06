@@ -1,10 +1,13 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:mocl_flutter/core/presentation/widgets/category_tag.dart';
+import 'package:mocl_flutter/core/presentation/widgets/list_detail_layout.dart';
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/round_text_widget.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mixin.dart';
+import 'package:mocl_flutter/features/list_page/presentation/state/list_state_mixin.dart';
 
 import '../../../../core/presentation/widgets/author_info_text.dart';
-import '../../../../core/presentation/widgets/plain_text.dart';
 import 'list_scope.dart';
 
 class const MoclListItem({super.key}) extends StatelessWidget with ListEvent {
@@ -15,6 +18,7 @@ class const MoclListItem({super.key}) extends StatelessWidget with ListEvent {
     // 스타일은 폰트 크기 등 글로벌 설정이라 Riverpod 으로 watch
     final styles = ListStyleScope.of(context);
     final isRead = item.isRead;
+    final showCategory = ListStyleScope.showCategoryOf(context);
 
     final titleStyle = styles.title(isRead);
     final infoStyle = styles.smallTitle(isRead);
@@ -40,7 +44,10 @@ class const MoclListItem({super.key}) extends StatelessWidget with ListEvent {
       );
     }
 
-    return InkWell(
+    // 넓은 화면에서 옆 칸에 열려 있는 글은 강조한다.
+    final bool selected = ListDetailScope.isSelected(context, item.id);
+
+    final Widget row = InkWell(
       onTap: () => handleItemTap(context, item),
       child: Padding(
         padding: const EdgeInsets.only(
@@ -52,12 +59,13 @@ class const MoclListItem({super.key}) extends StatelessWidget with ListEvent {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Title
-            PlainText(
-              item.title,
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
+            // Title (말머리가 있으면 첫 줄 앞에 태그)
+            _ListTitle(
+              title: item.title,
+              category: showCategory ? item.category : '',
               style: titleStyle,
+              brightness: styles.brightness,
+              dimmed: isRead,
             ),
 
             // Bottom Info (Merged for performance)
@@ -86,5 +94,34 @@ class const MoclListItem({super.key}) extends StatelessWidget with ListEvent {
         ),
       ),
     );
+
+    // 잉크가 강조색 위에 보이도록 Material 로 칠한다(강조할 때만 만든다).
+    return selected
+        ? Material(
+            color: Theme.of(context).colorScheme.primary
+                .withValues(alpha: 0.08),
+            child: row,
+          )
+        : row;
   }
+}
+
+/// 행 제목. 번역을 켰으면 번역문을 보인다(행 데이터는 원문 그대로라 스크랩 ·
+/// 뮤트 · 상세는 원문 기준). 번역이 끝난 행만 다시 그린다.
+class const _ListTitle({
+  required final String title,
+  required final String category,
+  required final TextStyle style,
+  required final Brightness brightness,
+  required final bool dimmed,
+}) extends ConsumerWidget with ListState {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => CategoryTitleText(
+    title: displayTitleState(ref, title),
+    category: category,
+    style: style,
+    brightness: brightness,
+    dimmed: dimmed,
+    maxLines: 3,
+  );
 }

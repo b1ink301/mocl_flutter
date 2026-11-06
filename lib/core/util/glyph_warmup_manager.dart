@@ -1,5 +1,5 @@
 import 'package:material_ui/material_ui.dart';
-import 'package:mocl_flutter/core/util/mocl_logger.dart';
+import 'package:mocl_shared/util/mocl_logger.dart';
 import 'package:mocl_flutter/core/util/warmup_glyphs.dart';
 
 import '../../config/mocl_text_styles.dart';

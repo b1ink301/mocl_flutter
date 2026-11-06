@@ -67,3 +67,6 @@ native/**/target/
 .fvm/
 # AdMob 실제 ID — 커밋 금지(ads.example.json 참고)
 ads.json
+
+# Marionette(AI 에이전트 앱 조작) 세션 기록
+.marionette/

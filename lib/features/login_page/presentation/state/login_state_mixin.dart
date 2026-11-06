@@ -2,7 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 
 // 로그인 웹뷰 UA. 구글 로그인은 웹뷰(`; wv`)/구버전 브라우저를 "안전하지 않은
 // 브라우저"로 차단하므로, 웹뷰 토큰 없는 최신 모바일 Chrome UA 를 사용한다.

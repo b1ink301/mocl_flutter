@@ -8,12 +8,12 @@ import 'package:go_router/go_router.dart';
 import 'package:html/dom.dart' as dom;
 import 'package:html/parser.dart' as html_parser;
 import 'package:mocl_flutter/config/routes/mocl_app_pages.dart' show Routes;
-import 'package:mocl_flutter/core/util/mocl_logger.dart';
+import 'package:mocl_shared/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/photo_view_dialog.dart'
     show GalleryArgs;
-import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
+import 'package:mocl_shared/entities/mocl_comment_item.dart';
+import 'package:mocl_shared/entities/mocl_details.dart';
+import 'package:mocl_shared/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/failure_view.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart'
@@ -23,10 +23,9 @@ import 'package:mocl_flutter/core/util/utilities.dart';
 import 'package:mocl_flutter/features/ads/presentation/widgets/detail_ad_card.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/state/detail_event_mixin.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/state/detail_state_mixin.dart';
+import 'package:mocl_flutter/features/detail_page/presentation/widgets/comment_composer_sheet.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/widgets/detail_header_bar.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/widgets/detail_scope.dart';
-import 'package:sliver_tools/sliver_tools.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/presentation/widgets/author_info_text.dart';
 import '../../../core/presentation/widgets/plain_divider_widget.dart';
@@ -136,8 +135,15 @@ class const DetailView({super.key})
   Widget build(BuildContext context, WidgetRef ref) {
     final smallTextStyle = DetailStyleScope.of(context).$1.smallTextStyle;
     return detailState(ref).maybeMap(
-      data: (state) =>
-          _DetailView(detail: state.value, onRefresh: () => handleRefresh(ref)),
+      data: (state) => _DetailView(
+        detail: state.value,
+        category: categoryState(ref),
+        onRefresh: () => handleRefresh(ref),
+        onOpenUrl: (url) => handleOpenLink(context, ref, url),
+        onWriteComment: supportsCommentWriteState(ref)
+            ? (parent) => _writeComment(context, ref, state.value, parent)
+            : null,
+      ),
       error: (state) => SliverFillRemaining(
         hasScrollBody: false,
         child: Center(
@@ -154,6 +160,35 @@ class const DetailView({super.key})
       ),
       orElse: () => const _LoadingView(),
     );
+  }
+
+  /// 로그인 전이면 로그인 화면으로, 로그인 상태면 입력 시트로 보낸다.
+  Future<void> _writeComment(
+    BuildContext context,
+    WidgetRef ref,
+    Details detail,
+    CommentItem? parent,
+  ) async {
+    if (!detail.isLoggedIn) {
+      await loginForComment(context, ref);
+      return;
+    }
+    final bool? written = await CommentComposerSheet.show(
+      context,
+      replyTo: parent?.userInfo.nickName,
+      onSubmit: (content) =>
+          submitComment(ref, detail, content, parent: parent),
+    );
+    if (written == true && context.mounted) {
+      ScaffoldMessenger.maybeOf(context)
+        ?..hideCurrentSnackBar()
+        ..showSnackBar(
+          const SnackBar(
+            content: Text('댓글을 올렸어요.'),
+            behavior: SnackBarBehavior.floating,
+          ),
+        );
+    }
   }
 }
 
@@ -178,7 +213,12 @@ class const _LoadingView() extends StatelessWidget {
 
 class const _DetailView({
   required final Details detail,
+  required final String category,
   required final VoidCallback onRefresh,
+  required final Future<bool> Function(String url) onOpenUrl,
+
+  /// 댓글 쓰기([parent] 가 있으면 대댓글). 사이트가 지원하지 않으면 null.
+  final void Function(CommentItem? parent)? onWriteComment,
 }) extends StatelessWidget with DetailEvent {
   @override
   Widget build(BuildContext context) {
@@ -192,15 +232,20 @@ class const _DetailView({
 
     // 작성자 헤더는 앱바가 아니라 본문 맨 위에 둔다. 앱바 확장 영역은
     // 제목만 쓰고(DetailAppBar), 헤더는 본문과 같이 스크롤된다.
-    return MultiSliver(
-      children: [
+    return SliverMainAxisGroup(
+      slivers: [
         SliverToBoxAdapter(
-          child: DetailHeaderBar(detail: detail, style: bodySmall),
+          child: DetailHeaderBar(
+            detail: detail,
+            category: category,
+            brightness: styles.brightness,
+            style: bodySmall,
+          ),
         ),
         SliverPadding(
           padding: const EdgeInsets.only(left: 16, right: 8),
-          sliver: MultiSliver(
-            children: [
+          sliver: SliverMainAxisGroup(
+            slivers: [
               const _SpaceWidget(),
               // 본문은 sliver(SliverList)로 렌더돼 화면 밖 요소가 mount 되지
               // 않는다. RepaintBoundary 는 SliverListMode 가 자체적으로
@@ -209,19 +254,19 @@ class const _DetailView({
                 detail: detail,
                 hexColor: hexColor,
                 bodyMedium: bodyMedium,
-                onTapUrl: (url) => url.openUrl(context),
+                onTapUrl: onOpenUrl,
               ),
               const _SpaceWidget(),
               // 본문을 다 읽고 댓글로 넘어가는 자리에 광고 하나.
               SliverToBoxAdapter(child: DetailAdCard(styles: styles)),
               if (detail.comments.isNotEmpty) ...[
-                const PlainDividerWidget(indent: 0, endIndent: 0),
+                const _SliverDivider(),
                 _CommentHeader(
                   commentCount: detail.comments.length,
                   totalCount: totalComments,
                   bodyMedium: bodySmall,
                 ),
-                const PlainDividerWidget(indent: 0, endIndent: 0),
+                const _SliverDivider(),
                 _CommentList(
                   comments: detail.comments,
                   authorId: detail.userInfo.id,
@@ -229,12 +274,28 @@ class const _DetailView({
                   bodySmall: bodySmall,
                   bodyMedium: bodyMedium,
                   hexColor: hexColor,
-                  openUrl: (String url) => url.openUrl(context),
+                  openUrl: onOpenUrl,
+                  onReply: detail.isLoggedIn ? onWriteComment : null,
                 ),
               ],
-              const PlainDividerWidget(indent: 0, endIndent: 0),
-              _RefreshButton(onRefresh: onRefresh, textStyle: bodySmall),
-              const PlainDividerWidget(indent: 0, endIndent: 0),
+              const _SliverDivider(),
+              // id 는 기기 확인 스크립트(tool/device_check.dart)가 "끝까지 그려졌는지" 보는 표시.
+              SliverToBoxAdapter(
+                child: Semantics(
+                  identifier: 'detail_footer',
+                  container: true,
+                  child: _FooterActions(
+                    onRefresh: onRefresh,
+                    writeLabel: detail.isLoggedIn ? '댓글 쓰기' : '로그인하고 댓글 쓰기',
+                    onWrite: switch (onWriteComment) {
+                      final write? => () => write(null),
+                      null => null,
+                    },
+                    textStyle: bodySmall,
+                  ),
+                ),
+              ),
+              const _SliverDivider(),
               if (bottom > 0)
                 SliverPadding(padding: EdgeInsets.only(bottom: bottom)),
             ],
@@ -255,6 +316,7 @@ class const _CommentList({
   required final TextStyle? bodyMedium,
   required final String hexColor,
   required final void Function(String) openUrl,
+  final void Function(CommentItem parent)? onReply,
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) => SliverList.separated(
@@ -272,6 +334,9 @@ class const _CommentList({
         hexColor: hexColor,
         depth: comment.isReply ? 1 : 0,
         openUrl: openUrl,
+        onReply: comment.commentId.isEmpty || onReply == null
+            ? null
+            : () => onReply!(comment),
       );
     },
   );
@@ -282,6 +347,14 @@ class const _CommentList({
     if (authorNick.isNotEmpty && u.nickName == authorNick) return true;
     return false;
   }
+}
+
+/// 본문 · 댓글 사이 구분선(sliver). 일반 위젯을 SliverMainAxisGroup 에 그대로 넣을 수 없다.
+class const _SliverDivider() extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) => const SliverToBoxAdapter(
+    child: PlainDividerWidget(indent: 0, endIndent: 0),
+  );
 }
 
 class const _SpaceWidget() extends StatelessWidget {
@@ -345,6 +418,9 @@ class const _CommentItem({
   required final String hexColor,
   required final int depth,
   required final void Function(String) openUrl,
+
+  /// 이 댓글에 답글 달기. 쓸 수 없으면 null.
+  final VoidCallback? onReply,
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -387,6 +463,17 @@ class const _CommentItem({
                   ),
                 ),
               ...?likeView,
+              if (onReply != null)
+                InkWell(
+                  onTap: onReply,
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 2,
+                    ),
+                    child: PlainText('답글', style: bodySmall!),
+                  ),
+                ),
             ],
           ),
           if (!isEmptyBody)
@@ -748,6 +835,12 @@ class const _HtmlWidget({
       },
       factoryBuilder: () =>
           _MoclWidgetFactory(openUrl: openUrl, referer: referer),
+      // `<a>` 탭도 [openUrl](동영상 플레이어 · 앱 상세 · 브라우저 분기)로 보낸다.
+      // 넘기지 않으면 fwfh 기본 동작(url_launcher)이 바로 인앱 브라우저를 연다.
+      onTapUrl: (url) {
+        openUrl(url);
+        return true;
+      },
       textStyle: textStyle,
       customStylesBuilder: (element) {
         if (element.localName == 'a') {
@@ -800,27 +893,86 @@ class const _HtmlWidget({
   }
 }
 
-class const _RefreshButton({
+/// 상세 맨 아래 한 줄.
+///
+/// 댓글을 쓸 수 있는 사이트면 `[ ✎ 댓글 쓰기 ···· │ ↻ ]` 로 한 줄에 둘을 두고,
+/// 아니면 지금처럼 "새로고침" 한 줄만 둔다. 새로고침은 위에서 당기기 · 앱바
+/// 메뉴로도 되지만, 댓글을 다 읽은 자리에서 새 댓글을 보려고 여기에 남긴다.
+class const _FooterActions({
   required final VoidCallback onRefresh,
+  required final String writeLabel,
   required final TextStyle? textStyle,
+
+  /// 댓글 쓰기. 사이트가 지원하지 않으면 null.
+  final VoidCallback? onWrite,
 }) extends StatelessWidget {
+  static const double _kHeight = 58;
+
   @override
   Widget build(BuildContext context) {
-    final focusColor = Theme.of(context).colorScheme.primary;
-    final textStyle = this.textStyle!.copyWith(color: focusColor);
+    final theme = Theme.of(context);
+    final focusColor = theme.colorScheme.primary;
+    final textStyle = this.textStyle!.copyWith(
+      color: focusColor,
+      fontWeight: FontWeight.w800,
+    );
 
-    return InkWell(
-      onTap: onRefresh,
-      child: SizedBox(
-        width: double.infinity,
-        height: 58,
-        child: Center(child: PlainText('새로고침', style: textStyle)),
+    final VoidCallback? onWrite = this.onWrite;
+    if (onWrite == null) {
+      return InkWell(
+        onTap: onRefresh,
+        child: SizedBox(
+          width: double.infinity,
+          height: _kHeight,
+          child: Center(child: PlainText('새로고침', style: textStyle)),
+        ),
+      );
+    }
+
+    return SizedBox(
+      height: _kHeight,
+      child: Row(
+        children: [
+          Expanded(
+            child: InkWell(
+              onTap: onWrite,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  PlainIcon(Icons.edit_outlined, color: focusColor, size: 18),
+                  const SizedBox(width: 6),
+                  PlainText(writeLabel, style: textStyle),
+                ],
+              ),
+            ),
+          ),
+          VerticalDivider(
+            width: 1,
+            thickness: 1,
+            indent: 16,
+            endIndent: 16,
+            color: theme.dividerTheme.color,
+          ),
+          Tooltip(
+            message: '새로고침',
+            child: InkWell(
+              onTap: onRefresh,
+              child: SizedBox.square(
+                dimension: _kHeight,
+                child: Center(
+                  child: PlainIcon(Icons.refresh, color: focusColor, size: 22),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
   }
 }
 
-/// YouTube iframe을 외부 앱으로 열고, 일반 미디어는 인라인 재생을 허용하는 WidgetFactory.
+/// YouTube iframe 은 썸네일로 그리고 탭하면 [openUrl] 로 넘기며(설정에 따라 앱
+/// 플레이어 또는 유튜브 앱), 일반 미디어는 인라인 재생을 허용하는 WidgetFactory.
 class _MoclWidgetFactory({
   required final void Function(String) openUrl,
 
@@ -917,7 +1069,8 @@ class _MoclWidgetFactory({
           : url;
 
       return GestureDetector(
-        onTap: () => _launchYouTube(watchUrl),
+        // 설정(동영상 링크는 앱에서 재생)에 따라 앱 플레이어 또는 유튜브 앱으로 간다.
+        onTap: () => openUrl(watchUrl),
         child: AspectRatio(
           aspectRatio: width != null && height != null && height > 0
               ? width / height
@@ -968,12 +1121,5 @@ class _MoclWidgetFactory({
       if (match != null) return match.group(1);
     }
     return null;
-  }
-
-  static Future<void> _launchYouTube(String url) async {
-    final uri = Uri.parse(url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    }
   }
 }

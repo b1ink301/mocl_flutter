@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:mocl_flutter/core/presentation/widgets/window_size.dart';
 import 'package:flutter/gestures.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
@@ -31,7 +32,10 @@ class const SettingsPage({super.key}) extends StatelessWidget {
                   : SystemUiOverlayStyle.dark),
           child: const Scaffold(
             body: CustomScrollView(
-              slivers: <Widget>[_SettingsAppBar(), SettingsView()],
+              slivers: <Widget>[
+                _SettingsAppBar(),
+                SliverReadableWidth(sliver: SettingsView()),
+              ],
             ),
           ),
         ),

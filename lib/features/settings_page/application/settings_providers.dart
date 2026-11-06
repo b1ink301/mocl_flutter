@@ -1,5 +1,5 @@
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
-import 'package:mocl_flutter/core/util/mocl_logger.dart';
+import 'package:mocl_shared/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/settings_page/application/repository_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -70,5 +70,72 @@ class ShowQuickJumpNotifier() extends _$ShowQuickJumpNotifier {
     final settings = ref.read(settingsRepositoryProvider);
     state = !state;
     settings.setShowQuickJump(state);
+  }
+}
+
+/// 본문 링크가 모클이 지원하는 사이트의 글이면 인앱 브라우저 대신 상세 화면으로
+/// 파싱해서 연다. 끄면 예전처럼 모든 링크를 브라우저로 연다.
+@Riverpod(keepAlive: true)
+class OpenSiteLinksInAppNotifier() extends _$OpenSiteLinksInAppNotifier {
+  @override
+  bool build() {
+    final settings = ref.watch(settingsRepositoryProvider);
+    return settings.isOpenSiteLinksInApp();
+  }
+
+  void toggle() {
+    final settings = ref.read(settingsRepositoryProvider);
+    state = !state;
+    settings.setOpenSiteLinksInApp(state);
+  }
+}
+
+/// 본문의 유튜브 · 영상 파일 링크를 앱 안 플레이어로 재생한다. 끄면 유튜브는
+/// 유튜브 앱으로, 파일은 브라우저로 연다.
+@Riverpod(keepAlive: true)
+class PlayVideosInAppNotifier() extends _$PlayVideosInAppNotifier {
+  @override
+  bool build() {
+    final settings = ref.watch(settingsRepositoryProvider);
+    return settings.isPlayVideosInApp();
+  }
+
+  void toggle() {
+    final settings = ref.read(settingsRepositoryProvider);
+    state = !state;
+    settings.setPlayVideosInApp(state);
+  }
+}
+
+/// 번역을 지원하는 사이트(레딧)의 목록 제목을 번역해 보이고, 상세도 열자마자
+/// 번역한다. 목록 앱바의 번역 버튼으로 켜고 끄며 앱을 다시 켜도 유지한다.
+@Riverpod(keepAlive: true)
+class AutoTranslateNotifier() extends _$AutoTranslateNotifier {
+  @override
+  bool build() {
+    final settings = ref.watch(settingsRepositoryProvider);
+    return settings.isAutoTranslate();
+  }
+
+  void toggle() {
+    final settings = ref.read(settingsRepositoryProvider);
+    state = !state;
+    settings.setAutoTranslate(state);
+  }
+}
+
+/// 목록 · 상세 제목에 말머리 태그를 보인다. 끄면 태그 없이 제목만 보인다.
+@Riverpod(keepAlive: true)
+class ShowCategoryNotifier() extends _$ShowCategoryNotifier {
+  @override
+  bool build() {
+    final settings = ref.watch(settingsRepositoryProvider);
+    return settings.isShowCategory();
+  }
+
+  void toggle() {
+    final settings = ref.read(settingsRepositoryProvider);
+    state = !state;
+    settings.setShowCategory(state);
   }
 }

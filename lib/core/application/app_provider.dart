@@ -1,7 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/domain/usecases/get_site_type.dart';
 import 'package:mocl_flutter/core/domain/usecases/set_site_type.dart';
 import 'package:mocl_flutter/core/usecases/usecase.dart';
@@ -40,9 +40,6 @@ class ReadableStateNotifier() extends _$ReadableStateNotifier {
 
   void clear() => state = -1;
 }
-
-@Riverpod(keepAlive: true)
-double screenWidth(Ref ref) => throw UnimplementedError('screenWidth');
 
 /// 영속화된 테마 모드(시스템/라이트/다크). `AppWidget`의 themeMode 에 연결된다.
 @Riverpod(keepAlive: true)

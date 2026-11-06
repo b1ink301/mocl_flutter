@@ -115,47 +115,6 @@ abstract class _$ReadableStateNotifier extends $Notifier<int> {
   }
 }
 
-@ProviderFor(screenWidth)
-final screenWidthProvider = ScreenWidthProvider._();
-
-final class ScreenWidthProvider
-    extends $FunctionalProvider<double, double, double>
-    with $Provider<double> {
-  ScreenWidthProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'screenWidthProvider',
-        isAutoDispose: false,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$screenWidthHash();
-
-  @$internal
-  @override
-  $ProviderElement<double> $createElement($ProviderPointer pointer) =>
-      $ProviderElement(pointer);
-
-  @override
-  double create(Ref ref) {
-    return screenWidth(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(double value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<double>(value),
-    );
-  }
-}
-
-String _$screenWidthHash() => r'f9429b6bf80fa9cf2ffb37cba2678dbfcafd523e';
-
 /// 영속화된 테마 모드(시스템/라이트/다크). `AppWidget`의 themeMode 에 연결된다.
 
 @ProviderFor(ThemeModeNotifier)

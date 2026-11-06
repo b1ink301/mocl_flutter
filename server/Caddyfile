@@ -1,0 +1,7 @@
+# 인증서는 Caddy 가 Let's Encrypt 로 자동 발급 · 갱신한다(80 · 443 이 열려 있어야 한다).
+# 접속 로그(log 지시어)는 두지 않는다 — 이용자 IP · 브라우저 정보를 남기지 않기 위해서다
+# (개인정보처리방침과 맞춰 둔 것). 오류 로그는 Caddy 기본값대로 남는다.
+{$MOCL_DOMAIN} {
+	encode zstd gzip
+	reverse_proxy api:8080
+}

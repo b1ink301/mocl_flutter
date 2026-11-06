@@ -1,5 +1,5 @@
 import 'package:material_ui/material_ui.dart' show ThemeMode;
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../domain/repositories/settings_repository.dart';
@@ -57,6 +57,35 @@ class const SettingsRepositoryImpl({required final SharedPreferences _prefs})
       _prefs.setBool(_extraShowQuickJump, showQuickJump);
 
   @override
+  bool isOpenSiteLinksInApp() =>
+      _prefs.getBool(_extraOpenSiteLinksInApp) ?? true;
+
+  @override
+  void setOpenSiteLinksInApp(bool openInApp) =>
+      _prefs.setBool(_extraOpenSiteLinksInApp, openInApp);
+
+  @override
+  bool isPlayVideosInApp() => _prefs.getBool(_extraPlayVideosInApp) ?? true;
+
+  @override
+  void setPlayVideosInApp(bool playInApp) =>
+      _prefs.setBool(_extraPlayVideosInApp, playInApp);
+
+  @override
+  bool isAutoTranslate() => _prefs.getBool(_extraAutoTranslate) ?? false;
+
+  @override
+  void setAutoTranslate(bool autoTranslate) =>
+      _prefs.setBool(_extraAutoTranslate, autoTranslate);
+
+  @override
+  bool isShowCategory() => _prefs.getBool(_extraShowCategory) ?? true;
+
+  @override
+  void setShowCategory(bool showCategory) =>
+      _prefs.setBool(_extraShowCategory, showCategory);
+
+  @override
   ThemeMode getThemeMode() {
     final String? name = _prefs.getString(_extraThemeMode);
     return ThemeMode.values.firstWhere(
@@ -74,6 +103,10 @@ class const SettingsRepositoryImpl({required final SharedPreferences _prefs})
   static final String _extraShowNickImage = 'show_nick_image';
   static final String _extraShowBoardIcon = 'show_board_icon';
   static final String _extraShowQuickJump = 'show_quick_jump';
+  static final String _extraOpenSiteLinksInApp = 'open_site_links_in_app';
+  static final String _extraPlayVideosInApp = 'play_videos_in_app';
+  static final String _extraAutoTranslate = 'auto_translate';
+  static final String _extraShowCategory = 'show_category';
   static final String _extraCollapsedSubSections = 'collapsed_sub_sections';
   static final String _extraThemeMode = 'theme_mode';
 }

@@ -46,6 +46,21 @@ class MoclColors() {
   static const Color darkReadSmall = faintDark;
   static const Color darkBadge = accentDark;
   static const Color darkReadBadge = faintDark;
+
+  // ── 말머리 태그(CategoryTag) 색 — 말머리 뜻별 6가지 ──
+  static const Color tagCoralLight = accentLight;
+  static const Color tagBlueLight = Color(0xFF2F6FEB);
+  static const Color tagGreenLight = Color(0xFF17905F);
+  static const Color tagAmberLight = Color(0xFFB9770E);
+  static const Color tagVioletLight = Color(0xFF7357D3);
+  static const Color tagSlateLight = Color(0xFF6B7079);
+
+  static const Color tagCoralDark = accentDark;
+  static const Color tagBlueDark = Color(0xFF6EA0FF);
+  static const Color tagGreenDark = Color(0xFF4CC596);
+  static const Color tagAmberDark = Color(0xFFE9A93A);
+  static const Color tagVioletDark = Color(0xFFA38BFF);
+  static const Color tagSlateDark = Color(0xFFA2A6AF);
 }
 
 /// 기본 폰트 사이즈 정의
@@ -63,6 +78,8 @@ class const AppTextStyles({
   required final TextStyle readSmallTextStyle,
   required final TextStyle badgeTextStyle,
   required final TextStyle readBadgeTextStyle,
+  // 말머리 태그처럼 라이트/다크 색이 따로 있는 요소가 Theme 조회 없이 고르도록 둔다.
+  final Brightness brightness = Brightness.light,
 }) extends ThemeExtension<AppTextStyles> with Equatable {
   /// 모든 텍스트 스타일의 크기를 비율로 조절한다.
   AppTextStyles scaled(double factor) {
@@ -74,6 +91,7 @@ class const AppTextStyles({
       readSmallTextStyle: _scale(readSmallTextStyle, factor),
       badgeTextStyle: _scale(badgeTextStyle, factor),
       readBadgeTextStyle: _scale(readBadgeTextStyle, factor),
+      brightness: brightness,
     );
   }
 
@@ -110,6 +128,7 @@ class const AppTextStyles({
     readSmallTextStyle: _create(MoclColors.darkReadSmall, _AppFontSizes.small),
     badgeTextStyle: _create(MoclColors.darkBadge, _AppFontSizes.badge),
     readBadgeTextStyle: _create(MoclColors.darkReadBadge, _AppFontSizes.badge),
+    brightness: Brightness.dark,
   );
 
   static TextStyle _create(Color color, double fontSize) =>
@@ -123,6 +142,7 @@ class const AppTextStyles({
     TextStyle? readSmallTextStyle,
     TextStyle? badgeTextStyle,
     TextStyle? readBadgeTextStyle,
+    Brightness? brightness,
   }) => AppTextStyles(
     titleTextStyle: titleTextStyle ?? this.titleTextStyle,
     readTitleTextStyle: readTitleTextStyle ?? this.readTitleTextStyle,
@@ -130,6 +150,7 @@ class const AppTextStyles({
     readSmallTextStyle: readSmallTextStyle ?? this.readSmallTextStyle,
     badgeTextStyle: badgeTextStyle ?? this.badgeTextStyle,
     readBadgeTextStyle: readBadgeTextStyle ?? this.readBadgeTextStyle,
+    brightness: brightness ?? this.brightness,
   );
 
   @override
@@ -154,6 +175,7 @@ class const AppTextStyles({
         other.readBadgeTextStyle,
         t,
       )!,
+      brightness: t < 0.5 ? brightness : other.brightness,
     );
   }
 
@@ -174,6 +196,7 @@ class const AppTextStyles({
     readSmallTextStyle,
     badgeTextStyle,
     readBadgeTextStyle,
+    brightness,
   ];
 }
 

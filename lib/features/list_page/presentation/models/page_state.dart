@@ -1,6 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
-import 'package:mocl_flutter/core/domain/entities/last_id.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
+import 'package:mocl_shared/entities/last_id.dart';
+import 'package:mocl_shared/entities/mocl_list_item.dart';
 
 part 'page_state.freezed.dart';
 

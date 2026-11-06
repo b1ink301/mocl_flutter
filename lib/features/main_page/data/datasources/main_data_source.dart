@@ -1,13 +1,13 @@
 import 'dart:convert';
 
-import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/mocl_main_item.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/core/util/mocl_logger.dart';
+import 'package:mocl_shared/util/mocl_logger.dart';
 import 'package:mocl_flutter/core/util/read_json_from_assets.dart';
 import 'package:mocl_flutter/features/database/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/database/data/models/model_mapper.dart';
-import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_parser.dart';
+import 'package:mocl_shared/parser/base/base_parser.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 
 /// 원격 게시판 목록(board_link.json)의 base URL.
@@ -23,6 +23,9 @@ abstract class MainDataSource() {
   /// 사이트에서 실시간으로 전체 게시판 목록을 파싱해 온다(main()).
   /// main() 미구현 사이트는 UnimplementedError 를 던진다.
   Future<List<MainItem>> getAllLive(SiteType siteType);
+
+  /// 목록 출처와 상관없이 맨 앞에 붙는 게시판([BaseParser.pinnedBoards]).
+  List<MainItem> get pinnedBoards;
 
   /// GitHub raw 에 호스팅된 큐레이션 게시판 목록(board_link.json)을 원격에서 받아온다.
   /// 앱 재배포 없이 목록을 갱신하기 위한 주 소스. 실패 시 번들 asset 으로 폴백한다.
@@ -45,6 +48,9 @@ class const MainDataSourceImpl({
   @override
   Future<List<MainItem>> getAllLive(SiteType siteType) async =>
       (await apiClient.main(parser)).getOrElse((Failure f) => throw f);
+
+  @override
+  List<MainItem> get pinnedBoards => parser.pinnedBoards;
 
   @override
   Future<List<MainItem>> getSubMenuLive(MainItem parent) async {

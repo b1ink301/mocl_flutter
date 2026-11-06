@@ -1,8 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
+import 'package:mocl_shared/entities/mocl_list_item.dart';
+import 'package:mocl_shared/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/presentation/widgets/divider_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
@@ -33,6 +33,7 @@ class ListSearchDelegate({required final MainItem item})
   @override
   List<Widget>? buildActions(BuildContext context) => [
     PlainIconButton(
+      semanticLabel: '검색어 지우기',
       icon: const PlainIcon(Icons.clear),
       onPressed: () {
         query = ''; // 검색어 초기화
@@ -42,6 +43,7 @@ class ListSearchDelegate({required final MainItem item})
 
   @override
   Widget? buildLeading(BuildContext context) => PlainIconButton(
+    semanticLabel: '뒤로 가기',
     icon: const PlainIcon(Icons.arrow_back),
     onPressed: () {
       close(context, ''); // 검색 종료

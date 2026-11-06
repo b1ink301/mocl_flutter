@@ -1,4 +1,4 @@
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/html_parser/application/datasource_provider.dart';
 import 'package:mocl_flutter/features/main_page/data/datasources/main_data_source.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';

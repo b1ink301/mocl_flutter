@@ -2,7 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
-import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
+import 'package:mocl_shared/entities/sort_type.dart';
 import 'package:mocl_flutter/features/list_page/application/list_providers.dart';
 import 'package:mocl_flutter/features/list_page/presentation/mocl_list_view.dart';
 import 'package:mocl_flutter/features/list_page/presentation/widgets/mocl_list_item.dart';

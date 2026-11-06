@@ -1,11 +1,12 @@
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:sembast/sembast.dart';
 
 /// 앱 DB 스키마 버전. 올릴 때마다 [onAppDatabaseVersionChanged] 에 단계를 더한다.
 ///
 /// - 1: 읽음 기록 = `자동 증가 키 → 글 id`
 /// - 2: 읽음 기록 = `글 id 키 → 읽은 시각(ms)`
-const int kAppDatabaseVersion = 2;
+/// - 3: 없어진 게시판(클리앙 오늘의추천글, 2026-11 사이트에서 410)을 담은 게시판에서 뺀다
+const int kAppDatabaseVersion = 3;
 
 /// 사이트별 읽음 기록 스토어. 키는 글 id, 값은 읽은 시각(epoch ms).
 StoreRef<int, int> readStoreOf(SiteType siteType) =>
@@ -28,6 +29,31 @@ Future<void> onAppDatabaseVersionChanged(
     await migrateReadStoresToV2(
       db,
       readAt: DateTime.now().millisecondsSinceEpoch,
+    );
+  }
+  if (oldVersion < 3) {
+    await removeDeadFavorites(db);
+  }
+}
+
+/// 사이트에서 없어진 게시판. 담아 둔 채로 두면 열 때마다 오류 화면이 나온다.
+const List<(SiteType, String board)> kDeadBoards = [
+  (SiteType.clien, 'recommend'),
+];
+
+/// 담은 게시판(`favorites`)에서 [kDeadBoards] 를 지운다.
+Future<void> removeDeadFavorites(DatabaseClient client) async {
+  final StoreRef<int, Map<String, Object?>> favorites = intMapStoreFactory
+      .store('favorites');
+  for (final (SiteType site, String board) in kDeadBoards) {
+    await favorites.delete(
+      client,
+      finder: Finder(
+        filter: Filter.and([
+          Filter.equals('siteType', site.name),
+          Filter.equals('board', board),
+        ]),
+      ),
     );
   }
 }

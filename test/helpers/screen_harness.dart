@@ -6,12 +6,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mocl_flutter/config/mocl_theme.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_user_info.dart';
+import 'package:mocl_shared/entities/mocl_comment_item.dart';
+import 'package:mocl_shared/entities/mocl_details.dart';
+import 'package:mocl_shared/entities/mocl_list_item.dart';
+import 'package:mocl_shared/entities/mocl_main_item.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/features/bookmark/application/bookmark_providers.dart';
 import 'package:mocl_flutter/features/bookmark/domain/repositories/bookmark_repository.dart';
 import 'package:mocl_flutter/features/database/domain/entities/bookmark_data.dart';
@@ -22,7 +22,7 @@ import 'package:mocl_flutter/features/favorite/domain/repositories/favorite_repo
 import 'package:mocl_flutter/features/detail_page/application/detail_providers.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/mocl_detail_page.dart';
 import 'package:mocl_flutter/features/html_parser/application/datasource_provider.dart';
-import 'package:mocl_flutter/features/html_parser/data/datasources/base/base_parser.dart';
+import 'package:mocl_shared/parser/base/base_parser.dart';
 import 'package:mocl_flutter/features/list_page/application/list_providers.dart';
 import 'package:mocl_flutter/features/list_page/presentation/mocl_list_view.dart';
 import 'package:mocl_flutter/features/main_page/presentation/mocl_main_view.dart';
@@ -41,7 +41,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 /// 실제 구현이 그대로 돌아야 리빌드 회귀를 잡을 수 있다.
 const Size kTestSurface = Size(400, 800);
 
-/// 테스트 화면 크기를 고정한다(앱바 높이 계산이 screenWidth 에 의존한다).
+/// 테스트 화면 크기를 고정한다(앱바 높이 계산이 앱바 폭에 의존한다).
 void useFixedSurface(WidgetTester tester, {Size size = kTestSurface}) {
   tester.view.physicalSize = size * tester.view.devicePixelRatio;
   tester.view.devicePixelRatio = tester.view.devicePixelRatio;
@@ -172,8 +172,11 @@ Future<void> pumpDetailScreen(
   Details? details,
   ListItem? item,
   SiteType siteType = SiteType.clien,
+
+  /// 화면 밖 sliver 는 만들어지지 않으므로, 끝까지 한 번에 보려면 길게 준다.
+  Size surface = kTestSurface,
 }) async {
-  useFixedSurface(tester);
+  useFixedSurface(tester, size: surface);
   await tester.pumpWidget(
     ProviderScope(
       overrides: <Override>[
@@ -195,7 +198,6 @@ Future<void> pumpDetailScreen(
 }
 
 /// 세 화면이 공통으로 필요한 최소 교체 목록.
-/// - `screenWidth`: 앱 루트에서 주입하는 값(원본은 UnimplementedError)
 /// - `sharedPreferences`: 설정 저장소의 데이터 경계(원본은 UnimplementedError)
 /// - `currentSiteType` / `fontSizeDelta`: 테스트가 값을 지정하기 위해
 ///
@@ -204,9 +206,7 @@ Future<void> pumpDetailScreen(
 /// 돌아가므로, 설정이 새로 추가될 때마다 하네스를 고칠 필요가 없다.
 Future<List<Override>> commonOverrides({
   SiteType siteType = SiteType.clien,
-  double width = 400,
 }) async => <Override>[
-  screenWidthProvider.overrideWithValue(width),
   sharedPreferencesProvider.overrideWithValue(await memoryPreferences()),
   currentSiteTypeProvider.overrideWith(() => _FakeSiteType(siteType)),
   fontSizeDeltaProvider.overrideWith(_FakeFontSizeDelta.new),
@@ -360,16 +360,22 @@ class _FakeBookmarkRepository() implements BookmarkRepository {
   Future<List<BookmarkData>> getAll() async => const <BookmarkData>[];
 }
 
-/// `baseUrl` 만 사용되므로 나머지는 noSuchMethod 로 남긴다.
+/// `baseUrl` · `supportsTranslation` 만 사용되므로 나머지는 noSuchMethod 로 남긴다.
 class _FakeParser() implements BaseParser {
   @override
   final String baseUrl = 'https://example.com';
+
+  @override
+  bool get supportsTranslation => false;
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }
 
 class _FakeApi() implements BaseApi {
+  @override
+  bool get supportsCommentWrite => false;
+
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
 }

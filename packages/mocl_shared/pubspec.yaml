@@ -1,0 +1,24 @@
+name: mocl_shared
+description: 앱(mocl_flutter)과 서버(server/)가 함께 쓰는 엔티티 · 실패 타입 · 로거 · 사이트 파서. 순수 Dart.
+publish_to: 'none'
+version: 1.0.0
+
+environment:
+  sdk: ">=3.13.0"
+
+# Flutter 를 의존하지 말 것. 서버(순수 Dart VM)가 이 패키지를 그대로 쓴다.
+dependencies:
+  dio: ^5.11.1
+  equatable: ^3.0.0
+  fpdart: ^1.2.0
+  freezed_annotation: ^3.1.0
+  html: ^0.15.7
+  json_annotation: ^4.12.0
+  timeago: ^3.7.1
+
+dev_dependencies:
+  build_runner: ^2.16.2
+  freezed: ^4.0.3
+  json_serializable: ^6.15.2
+  lints: ^6.1.0
+  test: any

@@ -1,8 +1,8 @@
 import 'dart:core';
 
 import 'package:fpdart/fpdart.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/mocl_main_item.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/features/database/data/models/main_item_model.dart';
 import 'package:mocl_flutter/features/main_page/data/datasources/main_data_source.dart';
@@ -13,7 +13,20 @@ class const MainRepositoryImpl({required final MainDataSource dataSource})
   @override
   Future<Either<Failure, List<MainItem>>> getMainListFromJson({
     required SiteType siteType,
-  }) async {
+  }) async => (await _getMainList(siteType)).map(_withPinned);
+
+  /// 고정 게시판(레딧 홈 등)을 맨 앞에 붙인다. 목록에 이미 있으면 그대로 둔다.
+  List<MainItem> _withPinned(List<MainItem> items) {
+    final Set<String> boards = {for (final item in items) item.board};
+    return [
+      ...dataSource.pinnedBoards.where((p) => !boards.contains(p.board)),
+      ...items,
+    ];
+  }
+
+  Future<Either<Failure, List<MainItem>>> _getMainList(
+    SiteType siteType,
+  ) async {
     // 큐레이션된 정의 목록을 우선한다. 예전엔 실시간 파싱(main())을 먼저 써서
     // "부분 파싱 성공"이 완전한 목록을 덮어써 항목이 누락됐다. 이제:
     //   1) 원격 큐레이션 JSON (GitHub raw) — 재배포 없이 갱신되는 주 소스

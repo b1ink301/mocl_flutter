@@ -2,19 +2,19 @@ import 'dart:isolate';
 
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
-import 'package:mocl_flutter/core/domain/entities/last_id.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_comment_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/core/domain/entities/sort_type.dart';
+import 'package:mocl_shared/entities/last_id.dart';
+import 'package:mocl_shared/entities/mocl_comment_item.dart';
+import 'package:mocl_shared/entities/mocl_details.dart';
+import 'package:mocl_shared/entities/mocl_list_item.dart';
+import 'package:mocl_shared/entities/mocl_main_item.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/sort_type.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/core/util/mocl_logger.dart';
+import 'package:mocl_shared/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
 
-import '../base/base_parser.dart';
-import 'naver_cafe_parser.dart';
+import 'package:mocl_shared/parser/base/base_parser.dart';
+import 'package:mocl_shared/parser/naver_cafe/naver_cafe_parser.dart';
 
 /// 오류 상태코드의 본문(사유 JSON)까지 읽기 위해 dio 의 상태코드 검증을 끈다.
 bool _acceptAnyStatus(int? status) => status != null;

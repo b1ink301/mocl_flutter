@@ -1,0 +1,10 @@
+# Docker 빌드 컨텍스트는 저장소 루트(server/Dockerfile 참고). 서버 빌드에
+# 필요한 것만 남기고 모두 뺀다.
+*
+!packages/mocl_shared/
+!server/
+**/.dart_tool/
+**/build/
+server/.env
+server/secrets/
+server/data/

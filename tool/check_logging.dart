@@ -1,17 +1,25 @@
 // ignore_for_file: avoid_print
-// lib/ 안에서 MoclLogger 를 우회하는 콘솔 로그를 검사합니다.
+// lib/ · packages/mocl_shared/lib/ · server/lib/ 안에서 MoclLogger 를 우회하는
+// 콘솔 로그를 검사합니다.
 //
 // 금지 대상:
 //   - print(...)            : 릴리즈에서도 stdout(logcat)으로 출력됨
 //   - debugPrint(...)       : 이름과 달리 릴리즈에서 제거되지 않음
 //   - import 'dart:developer' 후 bare log(...) 호출
 //
-// 허용: lib/core/util/mocl_logger.dart (로거 구현체 자신)
+// 허용: packages/mocl_shared/lib/util/mocl_logger.dart (로거 구현체 자신)
 //
 // 사용법: dart run tool/check_logging.dart
 import 'dart:io';
 
-const String loggerImplPath = 'lib/core/util/mocl_logger.dart';
+const String loggerImplPath = 'packages/mocl_shared/lib/util/mocl_logger.dart';
+
+/// 검사할 소스 루트. 없는 디렉터리는 건너뛴다(server/ 는 선택).
+const List<String> sourceRoots = [
+  'lib',
+  'packages/mocl_shared/lib',
+  'server/lib',
+];
 
 final RegExp _printCall = RegExp(r'(?<![\w.$])print\s*\(');
 final RegExp _debugPrintCall = RegExp(r'(?<![\w.$])debugPrint\s*\(');
@@ -19,15 +27,20 @@ final RegExp _bareLogCall = RegExp(r'(?<![\w.$])log\s*\(');
 final RegExp _developerImport = RegExp(r'''^\s*import\s+'dart:developer';''');
 
 void main() {
-  final libDir = Directory('lib');
-  if (!libDir.existsSync()) {
+  if (!Directory('lib').existsSync()) {
     print('lib 디렉토리를 찾을 수 없습니다.');
     exit(1);
   }
 
   final violations = <String>[];
 
-  for (final entity in libDir.listSync(recursive: true)) {
+  final files = [
+    for (final root in sourceRoots)
+      if (Directory(root).existsSync())
+        ...Directory(root).listSync(recursive: true),
+  ];
+
+  for (final entity in files) {
     if (entity is! File || !entity.path.endsWith('.dart')) continue;
 
     final path = entity.path.replaceAll('\\', '/');
@@ -53,7 +66,7 @@ void main() {
       if (_developerImport.hasMatch(line)) {
         report(
           'dart:developer',
-          "MoclLogger 를 사용하세요. (import 'package:mocl_flutter/core/util/mocl_logger.dart')",
+          "MoclLogger 를 사용하세요. (import 'package:mocl_shared/util/mocl_logger.dart')",
         );
       }
       if (_printCall.hasMatch(line)) {
@@ -75,7 +88,7 @@ void main() {
   }
 
   print('⚠️  ${violations.length}개의 위반 사항이 발견되었습니다:\n');
-  print('규칙: lib/ 안의 콘솔 로그는 MoclLogger 를 통해서만 출력\n');
+  print('규칙: 소스의 콘솔 로그는 MoclLogger 를 통해서만 출력\n');
   for (final v in violations) {
     print(v);
     print('');

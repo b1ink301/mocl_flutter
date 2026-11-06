@@ -1,18 +1,25 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_main_item.dart';
+import 'package:mocl_shared/entities/mocl_list_item.dart';
+import 'package:mocl_shared/entities/mocl_main_item.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/presentation/widgets/bottom_sheet_page.dart';
 import 'package:mocl_flutter/features/add_main_dialog/presentation/add_list_modal_sheet_page.dart';
 import 'package:mocl_flutter/features/bookmark/presentation/bookmarks_page.dart';
+import 'package:mocl_flutter/features/detail_page/domain/site_link_resolver.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/mocl_detail_page.dart';
+import 'package:mocl_flutter/features/issue_radar/presentation/issue_detail_page.dart';
+import 'package:mocl_flutter/features/issue_radar/presentation/issue_radar_page.dart';
+import 'package:mocl_flutter/features/keyword_alerts/presentation/keyword_alerts_page.dart';
+import 'package:mocl_shared/radar/issue_feed.dart';
 import 'package:mocl_flutter/features/mute/presentation/mute_page.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/photo_view_dialog.dart';
+import 'package:mocl_flutter/features/detail_page/presentation/video_player_page.dart';
 import 'package:mocl_flutter/features/list_page/presentation/mocl_list_page.dart';
 import 'package:mocl_flutter/features/login_page/presentation/login_page.dart';
 import 'package:mocl_flutter/features/main_page/presentation/mocl_main_page.dart';
 import 'package:mocl_flutter/features/settings_page/presentation/pages/settings/settings_page.dart';
-import 'package:swipeable_page_route/swipeable_page_route.dart';
+import 'package:mocl_flutter/core/presentation/widgets/swipe_back_page.dart';
 
 part 'mocl_routes.dart';
 
@@ -25,12 +32,7 @@ class AppPages._() {
       GoRoute(
         path: Routes.main,
         pageBuilder: (BuildContext context, GoRouterState state) =>
-            SwipeablePage(
-              builder: (BuildContext context) {
-                final width = MediaQuery.sizeOf(context).width;
-                return MainPage.init(width);
-              },
-            ),
+            SwipeBackPage(builder: (BuildContext context) => MainPage.init()),
         routes: [
           GoRoute(
             path: Routes.setMainDlg,
@@ -47,12 +49,11 @@ class AppPages._() {
         // redirect: (BuildContext context, GoRouterState state) =>
         //     state.extra is MainItem ? null : Routes.main,
         pageBuilder: (BuildContext context, GoRouterState state) =>
-            SwipeablePage(
+            SwipeBackPage(
               builder: (BuildContext context) {
                 final MainItem item =
                     GoRouterState.of(context).extra as MainItem;
-                final width = MediaQuery.of(context).size.width;
-                return MoclListPage.init(width, item);
+                return MoclListPage.init(item);
               },
             ),
       ),
@@ -71,12 +72,14 @@ class AppPages._() {
         //     ? null
         //     : Routes.main,
         pageBuilder: (BuildContext context, GoRouterState state) =>
-            SwipeablePage(
+            SwipeBackPage(
               builder: (BuildContext context) {
-                final ListItem item =
-                    GoRouterState.of(context).extra as ListItem;
-                final width = MediaQuery.of(context).size.width;
-                return DetailPage.init(width, item);
+                final Object? extra = GoRouterState.of(context).extra;
+                // 본문 링크로 들어오면 사이트가 함께 온다(다른 사이트 글일 수 있음).
+                if (extra is SiteLink) {
+                  return DetailPage.init(extra.item, siteType: extra.siteType);
+                }
+                return DetailPage.init(extra as ListItem);
               },
             ),
         routes: [
@@ -107,26 +110,57 @@ class AppPages._() {
       GoRoute(
         path: Routes.settings,
         pageBuilder: (BuildContext context, GoRouterState state) =>
-            SwipeablePage(
+            SwipeBackPage(
               builder: (BuildContext context) => SettingsPage.init(context),
             ),
       ),
       GoRoute(
         path: Routes.bookmarks,
         pageBuilder: (BuildContext context, GoRouterState state) =>
-            SwipeablePage(
+            SwipeBackPage(
               builder: (BuildContext context) => const BookmarksPage(),
             ),
       ),
       GoRoute(
         path: Routes.mute,
         pageBuilder: (BuildContext context, GoRouterState state) =>
-            SwipeablePage(builder: (BuildContext context) => const MutePage()),
+            SwipeBackPage(builder: (BuildContext context) => const MutePage()),
+      ),
+      GoRoute(
+        path: Routes.issues,
+        pageBuilder: (BuildContext context, GoRouterState state) =>
+            SwipeBackPage(
+              builder: (BuildContext context) => const IssueRadarPage(),
+            ),
+      ),
+      GoRoute(
+        path: Routes.issueDetail,
+        // 이슈 목록에서 Issue 를 extra 로 넘겨 들어온다.
+        pageBuilder: (BuildContext context, GoRouterState state) =>
+            SwipeBackPage(
+              builder: (BuildContext context) =>
+                  IssueDetailPage(issue: state.extra! as Issue),
+            ),
+      ),
+      GoRoute(
+        path: Routes.keywordAlerts,
+        pageBuilder: (BuildContext context, GoRouterState state) =>
+            SwipeBackPage(
+              builder: (BuildContext context) => const KeywordAlertsPage(),
+            ),
+      ),
+      GoRoute(
+        path: Routes.video,
+        // 탐색 막대를 좌우로 끄는 동작과 겹치지 않게 스와이프 뒤로가기는 쓰지 않는다.
+        builder: (BuildContext context, GoRouterState state) =>
+            VideoPlayerPage(args: state.extra as VideoPlayerArgs),
       ),
       GoRoute(
         path: Routes.login,
+        // extra 로 사이트를 넘기면 그 사이트에 로그인한다(상세에서 댓글을 쓸 때).
+        // 없으면 지금 고른 사이트.
         builder: (BuildContext context, GoRouterState state) =>
-            const LoginPage(),
+            LoginPage(siteType: state.extra as SiteType?),
       ),
     ],
   );

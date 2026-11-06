@@ -1,10 +1,9 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_riverpod/misc.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 
 import '../../application/main_providers.dart';
 
@@ -48,10 +47,6 @@ mixin class MainEvent() {
 
   void changeSiteType(WidgetRef ref, SiteType siteType) =>
       ref.read(currentSiteTypeProvider.notifier).changeSiteType(siteType);
-
-  static List<Override> overridesProviderScope(double width) => [
-    screenWidthProvider.overrideWithValue(width),
-  ];
 
   /// 뒤로가기는 '가장 최근에 연 것'부터 닫는다:
   /// 드로어 → 검색 → 다른 탭이면 첫 탭. 모두 닫혀 있으면 앱을 나간다.

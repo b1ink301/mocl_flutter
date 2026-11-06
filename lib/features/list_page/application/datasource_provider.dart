@@ -1,4 +1,4 @@
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/database/application/datasource_provider.dart';
 import 'package:mocl_flutter/features/html_parser/application/datasource_provider.dart';
 import 'package:mocl_flutter/features/list_page/data/datasources/list_data_source.dart';

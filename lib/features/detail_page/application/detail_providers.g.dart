@@ -50,6 +50,68 @@ final class ListItemProvider
 
 String _$listItemHash() => r'5979621f5fb9d6c055c046d194e6282673cf181e';
 
+/// 이 상세 화면이 읽는 사이트.
+///
+/// 보통은 전역 [currentSiteTypeProvider] 와 같다. 본문 링크로 다른 사이트 글을
+/// 열 때는 ProviderScope 에서 그 사이트로 교체한다 — 전역 값을 바꾸면 뒤에 쌓인
+/// 목록 화면까지 다른 사이트로 바뀌어 버린다.
+
+@ProviderFor(detailSiteType)
+final detailSiteTypeProvider = DetailSiteTypeProvider._();
+
+/// 이 상세 화면이 읽는 사이트.
+///
+/// 보통은 전역 [currentSiteTypeProvider] 와 같다. 본문 링크로 다른 사이트 글을
+/// 열 때는 ProviderScope 에서 그 사이트로 교체한다 — 전역 값을 바꾸면 뒤에 쌓인
+/// 목록 화면까지 다른 사이트로 바뀌어 버린다.
+
+final class DetailSiteTypeProvider
+    extends $FunctionalProvider<SiteType, SiteType, SiteType>
+    with $Provider<SiteType> {
+  /// 이 상세 화면이 읽는 사이트.
+  ///
+  /// 보통은 전역 [currentSiteTypeProvider] 와 같다. 본문 링크로 다른 사이트 글을
+  /// 열 때는 ProviderScope 에서 그 사이트로 교체한다 — 전역 값을 바꾸면 뒤에 쌓인
+  /// 목록 화면까지 다른 사이트로 바뀌어 버린다.
+  DetailSiteTypeProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'detailSiteTypeProvider',
+        isAutoDispose: true,
+        dependencies: <ProviderOrFamily>[currentSiteTypeProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          DetailSiteTypeProvider.$allTransitiveDependencies0,
+        ],
+      );
+
+  static final $allTransitiveDependencies0 = currentSiteTypeProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$detailSiteTypeHash();
+
+  @$internal
+  @override
+  $ProviderElement<SiteType> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  SiteType create(Ref ref) {
+    return detailSiteType(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(SiteType value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<SiteType>(value),
+    );
+  }
+}
+
+String _$detailSiteTypeHash() => r'6b1f8ff8b17b1f3b25aa4d3390217b69ba34b8f5';
+
 @ProviderFor(DetailsNotifier)
 final detailsProvider = DetailsNotifierProvider._();
 
@@ -64,7 +126,9 @@ final class DetailsNotifierProvider
         isAutoDispose: true,
         dependencies: <ProviderOrFamily>[
           listItemProvider,
+          detailSiteTypeProvider,
           detailTitleStateProvider,
+          detailCategoryStateProvider,
           _markAsReadProvider,
         ],
         $allTransitiveDependencies: <ProviderOrFamily>{
@@ -72,14 +136,21 @@ final class DetailsNotifierProvider
           DetailsNotifierProvider.$allTransitiveDependencies1,
           DetailsNotifierProvider.$allTransitiveDependencies2,
           DetailsNotifierProvider.$allTransitiveDependencies3,
+          DetailsNotifierProvider.$allTransitiveDependencies4,
+          DetailsNotifierProvider.$allTransitiveDependencies5,
+          DetailsNotifierProvider.$allTransitiveDependencies6,
         },
       );
 
   static final $allTransitiveDependencies0 = listItemProvider;
-  static final $allTransitiveDependencies1 = detailTitleStateProvider;
+  static final $allTransitiveDependencies1 = detailSiteTypeProvider;
   static final $allTransitiveDependencies2 =
+      DetailSiteTypeProvider.$allTransitiveDependencies0;
+  static final $allTransitiveDependencies3 = detailTitleStateProvider;
+  static final $allTransitiveDependencies4 =
       DetailTitleStateNotifierProvider.$allTransitiveDependencies1;
-  static final $allTransitiveDependencies3 = _markAsReadProvider;
+  static final $allTransitiveDependencies5 = detailCategoryStateProvider;
+  static final $allTransitiveDependencies6 = _markAsReadProvider;
 
   @override
   String debugGetCreateSourceHash() => _$detailsNotifierHash();
@@ -89,7 +160,7 @@ final class DetailsNotifierProvider
   DetailsNotifier create() => DetailsNotifier();
 }
 
-String _$detailsNotifierHash() => r'bee129533fbed2960e195e3c82f1c1165dfc52b0';
+String _$detailsNotifierHash() => r'5c4467b58e09d6616c78cbe9409d8bba4ce2ec2c';
 
 abstract class _$DetailsNotifier extends $AsyncNotifier<Details> {
   FutureOr<Details> build();
@@ -102,6 +173,99 @@ abstract class _$DetailsNotifier extends $AsyncNotifier<Details> {
             as $ClassProviderElement<
               AnyNotifier<AsyncValue<Details>, Details>,
               AsyncValue<Details>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// 원문 ↔ 번역본 전환. 번역은 기기 안에서 하고, 한 번 끝낸 번역은 이 글을 보는
+/// 동안 다시 하지 않는다. 새로고침하면 처음부터 다시 번역한다.
+
+@ProviderFor(DetailTranslationNotifier)
+final detailTranslationProvider = DetailTranslationNotifierProvider._();
+
+/// 원문 ↔ 번역본 전환. 번역은 기기 안에서 하고, 한 번 끝낸 번역은 이 글을 보는
+/// 동안 다시 하지 않는다. 새로고침하면 처음부터 다시 번역한다.
+final class DetailTranslationNotifierProvider
+    extends $NotifierProvider<DetailTranslationNotifier, DetailTranslation> {
+  /// 원문 ↔ 번역본 전환. 번역은 기기 안에서 하고, 한 번 끝낸 번역은 이 글을 보는
+  /// 동안 다시 하지 않는다. 새로고침하면 처음부터 다시 번역한다.
+  DetailTranslationNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'detailTranslationProvider',
+        isAutoDispose: true,
+        dependencies: <ProviderOrFamily>[
+          detailsProvider,
+          detailTitleStateProvider,
+          detailSiteTypeProvider,
+        ],
+        $allTransitiveDependencies: <ProviderOrFamily>{
+          DetailTranslationNotifierProvider.$allTransitiveDependencies0,
+          DetailTranslationNotifierProvider.$allTransitiveDependencies1,
+          DetailTranslationNotifierProvider.$allTransitiveDependencies2,
+          DetailTranslationNotifierProvider.$allTransitiveDependencies3,
+          DetailTranslationNotifierProvider.$allTransitiveDependencies4,
+          DetailTranslationNotifierProvider.$allTransitiveDependencies5,
+          DetailTranslationNotifierProvider.$allTransitiveDependencies6,
+          DetailTranslationNotifierProvider.$allTransitiveDependencies7,
+        },
+      );
+
+  static final $allTransitiveDependencies0 = detailsProvider;
+  static final $allTransitiveDependencies1 =
+      DetailsNotifierProvider.$allTransitiveDependencies0;
+  static final $allTransitiveDependencies2 =
+      DetailsNotifierProvider.$allTransitiveDependencies1;
+  static final $allTransitiveDependencies3 =
+      DetailsNotifierProvider.$allTransitiveDependencies2;
+  static final $allTransitiveDependencies4 =
+      DetailsNotifierProvider.$allTransitiveDependencies3;
+  static final $allTransitiveDependencies5 =
+      DetailsNotifierProvider.$allTransitiveDependencies4;
+  static final $allTransitiveDependencies6 =
+      DetailsNotifierProvider.$allTransitiveDependencies5;
+  static final $allTransitiveDependencies7 =
+      DetailsNotifierProvider.$allTransitiveDependencies6;
+
+  @override
+  String debugGetCreateSourceHash() => _$detailTranslationNotifierHash();
+
+  @$internal
+  @override
+  DetailTranslationNotifier create() => DetailTranslationNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(DetailTranslation value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<DetailTranslation>(value),
+    );
+  }
+}
+
+String _$detailTranslationNotifierHash() =>
+    r'e4eef357a7804c0ea80c456cdd6691d26b369f06';
+
+/// 원문 ↔ 번역본 전환. 번역은 기기 안에서 하고, 한 번 끝낸 번역은 이 글을 보는
+/// 동안 다시 하지 않는다. 새로고침하면 처음부터 다시 번역한다.
+
+abstract class _$DetailTranslationNotifier
+    extends $Notifier<DetailTranslation> {
+  DetailTranslation build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<DetailTranslation, DetailTranslation>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<DetailTranslation, DetailTranslation>,
+              DetailTranslation,
               Object?,
               Object?
             >;
@@ -125,6 +289,10 @@ final class _MarkAsReadProvider
          dependencies: null,
          $allTransitiveDependencies: null,
        );
+
+  static final $allTransitiveDependencies0 = detailSiteTypeProvider;
+  static final $allTransitiveDependencies1 =
+      DetailSiteTypeProvider.$allTransitiveDependencies0;
 
   @override
   String debugGetCreateSourceHash() => _$_markAsReadHash();
@@ -158,7 +326,7 @@ final class _MarkAsReadProvider
   }
 }
 
-String _$_markAsReadHash() => r'8ba56bf4538ae91b0ae6ad423f8d9a1e3a0c81bf';
+String _$_markAsReadHash() => r'485325e6a48a369cc16c2f436b9ca07548a91c31';
 
 final class _MarkAsReadFamily extends $Family
     with $FunctionalFamilyOverride<FutureOr<int>, ListItem> {
@@ -166,8 +334,11 @@ final class _MarkAsReadFamily extends $Family
     : super(
         retry: null,
         name: r'_markAsReadProvider',
-        dependencies: null,
-        $allTransitiveDependencies: null,
+        dependencies: <ProviderOrFamily>[detailSiteTypeProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          _MarkAsReadProvider.$allTransitiveDependencies0,
+          _MarkAsReadProvider.$allTransitiveDependencies1,
+        ],
         isAutoDispose: true,
       );
 
@@ -208,15 +379,24 @@ final class DetailSmallTitleProvider
         retry: null,
         name: r'detailSmallTitleProvider',
         isAutoDispose: true,
-        dependencies: <ProviderOrFamily>[listItemProvider, detailTitleProvider],
-        $allTransitiveDependencies: <ProviderOrFamily>[
+        dependencies: <ProviderOrFamily>[
+          listItemProvider,
+          detailTitleProvider,
+          detailSiteTypeProvider,
+        ],
+        $allTransitiveDependencies: <ProviderOrFamily>{
           DetailSmallTitleProvider.$allTransitiveDependencies0,
           DetailSmallTitleProvider.$allTransitiveDependencies1,
-        ],
+          DetailSmallTitleProvider.$allTransitiveDependencies2,
+          DetailSmallTitleProvider.$allTransitiveDependencies3,
+        },
       );
 
   static final $allTransitiveDependencies0 = listItemProvider;
   static final $allTransitiveDependencies1 = detailTitleProvider;
+  static final $allTransitiveDependencies2 = detailSiteTypeProvider;
+  static final $allTransitiveDependencies3 =
+      DetailSiteTypeProvider.$allTransitiveDependencies0;
 
   @override
   String debugGetCreateSourceHash() => _$detailSmallTitleHash();
@@ -240,7 +420,7 @@ final class DetailSmallTitleProvider
   }
 }
 
-String _$detailSmallTitleHash() => r'73de9f9f6cc12067b6b9e251b24e55ae7da6d439';
+String _$detailSmallTitleHash() => r'07abe0c3048f069781e6ed8a8210a8ec398c47a8';
 
 @ProviderFor(DetailTitleStateNotifier)
 final detailTitleStateProvider = DetailTitleStateNotifierProvider._();
@@ -284,6 +464,73 @@ String _$detailTitleStateNotifierHash() =>
     r'528e0c2ff0c6a5cc8ffe7b3c0cca04889232ff5d';
 
 abstract class _$DetailTitleStateNotifier extends $Notifier<String> {
+  String build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<String, String>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String, String>,
+              String,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// 상세 제목 위 말머리 태그. 목록 아이템 값으로 시작하고, 상세 파서가 말머리를
+/// 찾으면 그 값으로 바꾼다(링크로 연 글처럼 목록 값이 없는 경우).
+
+@ProviderFor(DetailCategoryStateNotifier)
+final detailCategoryStateProvider = DetailCategoryStateNotifierProvider._();
+
+/// 상세 제목 위 말머리 태그. 목록 아이템 값으로 시작하고, 상세 파서가 말머리를
+/// 찾으면 그 값으로 바꾼다(링크로 연 글처럼 목록 값이 없는 경우).
+final class DetailCategoryStateNotifierProvider
+    extends $NotifierProvider<DetailCategoryStateNotifier, String> {
+  /// 상세 제목 위 말머리 태그. 목록 아이템 값으로 시작하고, 상세 파서가 말머리를
+  /// 찾으면 그 값으로 바꾼다(링크로 연 글처럼 목록 값이 없는 경우).
+  DetailCategoryStateNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'detailCategoryStateProvider',
+        isAutoDispose: true,
+        dependencies: <ProviderOrFamily>[listItemProvider],
+        $allTransitiveDependencies: <ProviderOrFamily>[
+          DetailCategoryStateNotifierProvider.$allTransitiveDependencies0,
+        ],
+      );
+
+  static final $allTransitiveDependencies0 = listItemProvider;
+
+  @override
+  String debugGetCreateSourceHash() => _$detailCategoryStateNotifierHash();
+
+  @$internal
+  @override
+  DetailCategoryStateNotifier create() => DetailCategoryStateNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String>(value),
+    );
+  }
+}
+
+String _$detailCategoryStateNotifierHash() =>
+    r'6b795e24b455c9841f08b5c4803c47c51037fed8';
+
+/// 상세 제목 위 말머리 태그. 목록 아이템 값으로 시작하고, 상세 파서가 말머리를
+/// 찾으면 그 값으로 바꾼다(링크로 연 글처럼 목록 값이 없는 경우).
+
+abstract class _$DetailCategoryStateNotifier extends $Notifier<String> {
   String build();
   @$mustCallSuper
   @override
@@ -361,16 +608,19 @@ final class DetailUrlProvider
         isAutoDispose: true,
         dependencies: <ProviderOrFamily>[
           listItemProvider,
-          currentSiteTypeProvider,
+          detailSiteTypeProvider,
         ],
         $allTransitiveDependencies: <ProviderOrFamily>[
           DetailUrlProvider.$allTransitiveDependencies0,
           DetailUrlProvider.$allTransitiveDependencies1,
+          DetailUrlProvider.$allTransitiveDependencies2,
         ],
       );
 
   static final $allTransitiveDependencies0 = listItemProvider;
-  static final $allTransitiveDependencies1 = currentSiteTypeProvider;
+  static final $allTransitiveDependencies1 = detailSiteTypeProvider;
+  static final $allTransitiveDependencies2 =
+      DetailSiteTypeProvider.$allTransitiveDependencies0;
 
   @override
   String debugGetCreateSourceHash() => _$detailUrlHash();
@@ -394,13 +644,16 @@ final class DetailUrlProvider
   }
 }
 
-String _$detailUrlHash() => r'e8d8b65b390da45d78b52b2fa4cafe7415b04d7a';
+String _$detailUrlHash() => r'efff438ad02112ccac4d131b863ae3bb9f843fa2';
 
 /// 상세 앱바의 expandedHeight.
 ///
 /// 제목이 최대 3줄까지 늘어나므로 글마다 앱바 높이가 다르다. 실제로 그려지는
 /// 것과 같은 스타일 · 같은 폭으로 재야 제목이 툴바 위로 삐져나오지 않는다.
 /// 치수는 렌더 쪽(LargeTitleFlexibleSpace)과 같은 상수를 쓴다.
+///
+/// [width] 는 화면 폭이 아니라 앱바가 실제로 받은 폭이다. 목록 옆 상세 칸이나
+/// 폴드를 접고 펼친 뒤에도 제목 줄 수를 맞게 잰다.
 
 @ProviderFor(detailAppbarHeight)
 final detailAppbarHeightProvider = DetailAppbarHeightFamily._();
@@ -410,6 +663,9 @@ final detailAppbarHeightProvider = DetailAppbarHeightFamily._();
 /// 제목이 최대 3줄까지 늘어나므로 글마다 앱바 높이가 다르다. 실제로 그려지는
 /// 것과 같은 스타일 · 같은 폭으로 재야 제목이 툴바 위로 삐져나오지 않는다.
 /// 치수는 렌더 쪽(LargeTitleFlexibleSpace)과 같은 상수를 쓴다.
+///
+/// [width] 는 화면 폭이 아니라 앱바가 실제로 받은 폭이다. 목록 옆 상세 칸이나
+/// 폴드를 접고 펼친 뒤에도 제목 줄 수를 맞게 잰다.
 
 final class DetailAppbarHeightProvider
     extends $FunctionalProvider<double, double, double>
@@ -419,9 +675,12 @@ final class DetailAppbarHeightProvider
   /// 제목이 최대 3줄까지 늘어나므로 글마다 앱바 높이가 다르다. 실제로 그려지는
   /// 것과 같은 스타일 · 같은 폭으로 재야 제목이 툴바 위로 삐져나오지 않는다.
   /// 치수는 렌더 쪽(LargeTitleFlexibleSpace)과 같은 상수를 쓴다.
+  ///
+  /// [width] 는 화면 폭이 아니라 앱바가 실제로 받은 폭이다. 목록 옆 상세 칸이나
+  /// 폴드를 접고 펼친 뒤에도 제목 줄 수를 맞게 잰다.
   DetailAppbarHeightProvider._({
     required DetailAppbarHeightFamily super.from,
-    required String super.argument,
+    required (String, double) super.argument,
   }) : super(
          retry: null,
          name: r'detailAppbarHeightProvider',
@@ -437,7 +696,6 @@ final class DetailAppbarHeightProvider
       AppbarTextStyleProvider.$allTransitiveDependencies1;
   static final $allTransitiveDependencies3 =
       AppbarTextStyleProvider.$allTransitiveDependencies2;
-  static final $allTransitiveDependencies4 = screenWidthProvider;
 
   @override
   String debugGetCreateSourceHash() => _$detailAppbarHeightHash();
@@ -446,7 +704,7 @@ final class DetailAppbarHeightProvider
   String toString() {
     return r'detailAppbarHeightProvider'
         ''
-        '($argument)';
+        '$argument';
   }
 
   @$internal
@@ -456,8 +714,8 @@ final class DetailAppbarHeightProvider
 
   @override
   double create(Ref ref) {
-    final argument = this.argument as String;
-    return detailAppbarHeight(ref, argument);
+    final argument = this.argument as (String, double);
+    return detailAppbarHeight(ref, argument.$1, argument.$2);
   }
 
   /// {@macro riverpod.override_with_value}
@@ -480,30 +738,29 @@ final class DetailAppbarHeightProvider
 }
 
 String _$detailAppbarHeightHash() =>
-    r'a6c01eeed92e77918800bc3210a8fa85e9983e7b';
+    r'c74ddc5011cc99242713599a93f1d29e4c3d2a1e';
 
 /// 상세 앱바의 expandedHeight.
 ///
 /// 제목이 최대 3줄까지 늘어나므로 글마다 앱바 높이가 다르다. 실제로 그려지는
 /// 것과 같은 스타일 · 같은 폭으로 재야 제목이 툴바 위로 삐져나오지 않는다.
 /// 치수는 렌더 쪽(LargeTitleFlexibleSpace)과 같은 상수를 쓴다.
+///
+/// [width] 는 화면 폭이 아니라 앱바가 실제로 받은 폭이다. 목록 옆 상세 칸이나
+/// 폴드를 접고 펼친 뒤에도 제목 줄 수를 맞게 잰다.
 
 final class DetailAppbarHeightFamily extends $Family
-    with $FunctionalFamilyOverride<double, String> {
+    with $FunctionalFamilyOverride<double, (String, double)> {
   DetailAppbarHeightFamily._()
     : super(
         retry: null,
         name: r'detailAppbarHeightProvider',
-        dependencies: <ProviderOrFamily>[
-          appbarTextStyleProvider,
-          screenWidthProvider,
-        ],
+        dependencies: <ProviderOrFamily>[appbarTextStyleProvider],
         $allTransitiveDependencies: <ProviderOrFamily>{
           DetailAppbarHeightProvider.$allTransitiveDependencies0,
           DetailAppbarHeightProvider.$allTransitiveDependencies1,
           DetailAppbarHeightProvider.$allTransitiveDependencies2,
           DetailAppbarHeightProvider.$allTransitiveDependencies3,
-          DetailAppbarHeightProvider.$allTransitiveDependencies4,
         },
         isAutoDispose: true,
       );
@@ -513,9 +770,12 @@ final class DetailAppbarHeightFamily extends $Family
   /// 제목이 최대 3줄까지 늘어나므로 글마다 앱바 높이가 다르다. 실제로 그려지는
   /// 것과 같은 스타일 · 같은 폭으로 재야 제목이 툴바 위로 삐져나오지 않는다.
   /// 치수는 렌더 쪽(LargeTitleFlexibleSpace)과 같은 상수를 쓴다.
+  ///
+  /// [width] 는 화면 폭이 아니라 앱바가 실제로 받은 폭이다. 목록 옆 상세 칸이나
+  /// 폴드를 접고 펼친 뒤에도 제목 줄 수를 맞게 잰다.
 
-  DetailAppbarHeightProvider call(String text) =>
-      DetailAppbarHeightProvider._(argument: text, from: this);
+  DetailAppbarHeightProvider call(String text, double width) =>
+      DetailAppbarHeightProvider._(argument: (text, width), from: this);
 
   @override
   String toString() => r'detailAppbarHeightProvider';

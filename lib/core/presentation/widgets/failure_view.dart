@@ -99,6 +99,8 @@ class const FailureInfo({
 /// 오류 화면. 아이콘 + 제목 + 설명 + (재시도 / 보조) 버튼.
 ///
 /// sliver 가 필요한 곳에서는 호출부가 [SliverFillRemaining] 으로 감싼다.
+/// 루트에 [semanticsId] 를 달아 기기 확인 스크립트(`tool/device_check.dart`)가
+/// 목록 · 상세 실패를 알아본다.
 class const FailureView({
   super.key,
   required final Object? error,
@@ -108,6 +110,8 @@ class const FailureView({
   final TextStyle? titleStyle,
   final TextStyle? descriptionStyle,
 }) extends StatelessWidget {
+  static const String semanticsId = 'failure_view';
+
   @override
   Widget build(BuildContext context) {
     final FailureInfo info = FailureInfo.of(error);
@@ -124,23 +128,27 @@ class const FailureView({
           height: 1.4,
         );
 
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        crossAxisAlignment: CrossAxisAlignment.center,
-        spacing: 12,
-        children: [
-          PlainIcon(info.icon, size: 44, color: muted),
-          PlainText(info.title, style: title, textAlign: TextAlign.center),
-          PlainText(
-            info.description,
-            style: description,
-            maxLines: 3,
-            textAlign: TextAlign.center,
-          ),
-          ..._buildActions(info, description),
-        ],
+    return Semantics(
+      identifier: semanticsId,
+      container: true,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          spacing: 12,
+          children: [
+            PlainIcon(info.icon, size: 44, color: muted),
+            PlainText(info.title, style: title, textAlign: TextAlign.center),
+            PlainText(
+              info.description,
+              style: description,
+              maxLines: 3,
+              textAlign: TextAlign.center,
+            ),
+            ..._buildActions(info, description),
+          ],
+        ),
       ),
     );
   }

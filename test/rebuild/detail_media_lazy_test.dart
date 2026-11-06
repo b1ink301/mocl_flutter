@@ -1,5 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_details.dart';
+import 'package:mocl_shared/entities/mocl_details.dart';
 
 import '../helpers/screen_harness.dart';
 

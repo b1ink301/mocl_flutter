@@ -18,6 +18,15 @@ mixin class SettingsEvent() {
   void handleToggleQuickJump(WidgetRef ref) =>
       ref.read(showQuickJumpProvider.notifier).toggle();
 
+  void handleToggleOpenSiteLinksInApp(WidgetRef ref) =>
+      ref.read(openSiteLinksInAppProvider.notifier).toggle();
+
+  void handleTogglePlayVideosInApp(WidgetRef ref) =>
+      ref.read(playVideosInAppProvider.notifier).toggle();
+
+  void handleToggleShowCategory(WidgetRef ref) =>
+      ref.read(showCategoryProvider.notifier).toggle();
+
   void handleChangeThemeMode(WidgetRef ref, ThemeMode mode) =>
       ref.read(themeModeProvider.notifier).change(mode);
 

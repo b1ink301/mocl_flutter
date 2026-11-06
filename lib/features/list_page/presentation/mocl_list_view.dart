@@ -1,10 +1,12 @@
+import 'package:mocl_flutter/core/presentation/widgets/window_size.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mocl_flutter/features/ads/presentation/list_ad_slots.dart';
+import 'package:mocl_flutter/features/ads/presentation/state/ads_state_mixin.dart';
 import 'package:mocl_flutter/features/ads/presentation/widgets/list_ad_separator.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_list_item.dart';
+import 'package:mocl_shared/entities/mocl_list_item.dart';
 import 'package:mocl_flutter/core/presentation/widgets/failure_view.dart';
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
 import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mixin.dart';
@@ -18,11 +20,12 @@ import 'widgets/list_scope.dart';
 
 class const MoclListView({super.key})
     extends HookConsumerWidget
-    with ListEvent, ListState {
+    with ListEvent, ListState, AdsState {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // 리스트 아이템 읽음 처리 리스너 등록
     bindReadListener(ref);
+    bindTitleTranslation(ref);
 
     // 백그라운드 → 포그라운드 복귀 시 멈춘 fetch 강제 재시작.
     // (Doze 등으로 in-flight 요청이 영영 resolve 되지 않아 isLoading 이
@@ -38,7 +41,7 @@ class const MoclListView({super.key})
     final styles = appTextStyles(ref);
     final focusColor = Theme.of(context).colorScheme.primary;
     final bottom = MediaQuery.of(context).padding.bottom;
-    final adSlots = useListAdSlots();
+    final adSlots = useListAdSlots(listAdPlacementState(ref));
 
     // 에러 인디케이터 빌더 (중복 제거)
     Widget buildErrorIndicator(Object? error) => FailureView(
@@ -50,6 +53,7 @@ class const MoclListView({super.key})
 
     return ListStyleScope(
       styles: styles,
+      showCategory: showCategoryState(ref),
       child: RefreshIndicator.adaptive(
         color: focusColor,
         onRefresh: () async => handleRefresh(ref),
@@ -61,34 +65,40 @@ class const MoclListView({super.key})
               shrinkWrap: false,
               slivers: <Widget>[
                 const ListAppBar(),
-                PagedSliverList<int, ListItem>.separated(
-                  state: state,
-                  fetchNextPage: fetchNextPage,
-                  builderDelegate: PagedChildBuilderDelegate<ListItem>(
-                    itemBuilder: (context, item, index) =>
-                        ListItemScope(item: item, child: const MoclListItem()),
-                    firstPageProgressIndicatorBuilder: (_) =>
-                        const _FirstPageLoading(),
-                    newPageProgressIndicatorBuilder: (_) =>
-                        const _NewPageLoading(),
-                    firstPageErrorIndicatorBuilder: (_) =>
-                        buildErrorIndicator(state.error),
-                    newPageErrorIndicatorBuilder: (_) =>
-                        buildErrorIndicator(state.error),
-                    noItemsFoundIndicatorBuilder: (_) => const _NoItemsFound(),
-                    // 뮤트/중복 필터로 페이징이 잘못 종료된 경우를 위한 복구 수단.
-                    // 단일 페이지 게시판은 실제로 끝이므로 버튼을 노출하지 않는다.
-                    noMoreItemsIndicatorBuilder: (context) => singlePageBoard
-                        ? SizedBox(height: bottom)
-                        : _NoMoreItems(
-                            bottomPadding: bottom,
-                            onLoadMore: () => handleForceLoadMore(ref),
-                            textStyle: styles.smallTextStyle,
-                          ),
+                // 넓은 화면에서는 글 목록을 읽기 좋은 폭으로 가운데 모은다.
+                SliverReadableWidth(
+                  sliver: PagedSliverList<int, ListItem>.separated(
+                    state: state,
+                    fetchNextPage: fetchNextPage,
+                    builderDelegate: PagedChildBuilderDelegate<ListItem>(
+                      itemBuilder: (context, item, index) => ListItemScope(
+                        item: item,
+                        child: const MoclListItem(),
+                      ),
+                      firstPageProgressIndicatorBuilder: (_) =>
+                          const _FirstPageLoading(),
+                      newPageProgressIndicatorBuilder: (_) =>
+                          const _NewPageLoading(),
+                      firstPageErrorIndicatorBuilder: (_) =>
+                          buildErrorIndicator(state.error),
+                      newPageErrorIndicatorBuilder: (_) =>
+                          buildErrorIndicator(state.error),
+                      noItemsFoundIndicatorBuilder: (_) =>
+                          const _NoItemsFound(),
+                      // 뮤트/중복 필터로 페이징이 잘못 종료된 경우를 위한 복구 수단.
+                      // 단일 페이지 게시판은 실제로 끝이므로 버튼을 노출하지 않는다.
+                      noMoreItemsIndicatorBuilder: (context) => singlePageBoard
+                          ? SizedBox(height: bottom)
+                          : _NoMoreItems(
+                              bottomPadding: bottom,
+                              onLoadMore: () => handleForceLoadMore(ref),
+                              textStyle: styles.smallTextStyle,
+                            ),
+                    ),
+                    // 글 사이사이에 목록 행 모양의 네이티브 광고를 넣는다.
+                    separatorBuilder: (_, index) =>
+                        ListAdSeparator(index: index, styles: styles),
                   ),
-                  // 글 사이사이에 목록 행 모양의 네이티브 광고를 넣는다.
-                  separatorBuilder: (_, index) =>
-                      ListAdSeparator(index: index, styles: styles),
                 ),
               ],
             ),

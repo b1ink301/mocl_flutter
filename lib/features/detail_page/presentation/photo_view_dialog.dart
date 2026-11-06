@@ -6,7 +6,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:go_router/go_router.dart';
 import 'package:http/http.dart' as http;
 import 'package:mocl_flutter/core/presentation/widgets/loading_widget.dart';
-import 'package:mocl_flutter/core/util/mocl_logger.dart';
+import 'package:mocl_shared/util/mocl_logger.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart'
     show userAgentMobile;
 import 'package:path/path.dart' as p;
@@ -118,14 +118,17 @@ class _PhotoViewDialogState() extends State<PhotoViewDialog> {
             mainAxisSize: MainAxisSize.min,
             children: [
               PlainIconButton(
+                semanticLabel: '이미지 저장',
                 onPressed: () => _saveImage(context),
                 icon: PlainIcon(Icons.save_alt, color: focusColor),
               ),
               PlainIconButton(
+                semanticLabel: '이미지 공유',
                 onPressed: () => _shareImage(context),
                 icon: PlainIcon(Icons.share, color: focusColor),
               ),
               PlainIconButton(
+                semanticLabel: '닫기',
                 onPressed: () => context.pop(),
                 icon: PlainIcon(Icons.close, color: focusColor),
               ),

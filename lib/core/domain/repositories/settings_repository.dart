@@ -1,5 +1,5 @@
 import 'package:material_ui/material_ui.dart' show ThemeMode;
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 
 abstract class SettingsRepository() {
   SiteType getSiteType();
@@ -15,6 +15,22 @@ abstract class SettingsRepository() {
   /// 메인 화면 오른쪽의 사이트 빠른 이동 레일을 보일지.
   bool isShowQuickJump();
   void setShowQuickJump(bool showQuickJump);
+
+  /// 본문 링크가 지원 사이트의 글이면 브라우저 대신 앱 상세 화면으로 열지.
+  bool isOpenSiteLinksInApp();
+  void setOpenSiteLinksInApp(bool openInApp);
+
+  /// 본문의 유튜브 · 영상 파일 링크를 앱 안 플레이어로 재생할지.
+  bool isPlayVideosInApp();
+  void setPlayVideosInApp(bool playInApp);
+
+  /// 번역을 지원하는 사이트(레딧)의 목록 제목과 상세를 자동으로 번역해 보일지.
+  bool isAutoTranslate();
+  void setAutoTranslate(bool autoTranslate);
+
+  /// 목록 · 상세 제목에 말머리 태그를 보일지.
+  bool isShowCategory();
+  void setShowCategory(bool showCategory);
 
   /// 접어둔 카페 소구획 키 목록('{siteType}_{부모board}').
   /// 그룹 접힘과 마찬가지로 앱을 다시 켜도 유지한다.

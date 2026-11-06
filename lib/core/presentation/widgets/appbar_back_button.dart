@@ -15,6 +15,7 @@ class const AppbarBackButton({super.key}) extends StatelessWidget {
   Widget build(BuildContext context) => AppbarFixedIconTheme(
     child: Center(
       child: PlainIconButton(
+        semanticLabel: '뒤로 가기',
         onPressed: () => context.pop(),
         padding: EdgeInsets.zero,
         icon: const PlainIcon(Icons.arrow_back_rounded),

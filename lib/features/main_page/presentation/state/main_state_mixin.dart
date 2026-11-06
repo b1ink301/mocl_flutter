@@ -2,14 +2,12 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_site_type.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/main_page/application/main_providers.dart';
 import 'package:mocl_flutter/features/settings_page/application/datasource_provider.dart';
 import 'package:mocl_flutter/features/settings_page/application/settings_providers.dart';
 
 mixin class MainState() {
-  double screenWidth(WidgetRef ref) => ref.watch(screenWidthProvider);
-
   SiteType currentSiteType(WidgetRef ref) => ref.watch(currentSiteTypeProvider);
 
   /// 앱바 제목(= 지금 보고 있는 사이트 이름).

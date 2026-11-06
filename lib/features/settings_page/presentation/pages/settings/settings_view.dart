@@ -1,9 +1,14 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
+import 'package:mocl_flutter/features/app_update/domain/app_update_status.dart';
+import 'package:mocl_flutter/features/app_update/presentation/state/app_update_event_mixin.dart';
+import 'package:mocl_flutter/features/app_update/presentation/state/app_update_state_mixin.dart';
+import 'package:mocl_flutter/features/keyword_alerts/presentation/state/keyword_alert_state_mixin.dart';
 
 import '../../state/settings_event_mixin.dart';
 import '../../state/settings_state_mixin.dart';
@@ -37,6 +42,39 @@ class const SettingsView({super.key})
                     value: showNickImageState(ref),
                     activeThumbColor: theme.colorScheme.primary,
                     onChanged: (_) => handleToggleNickImage(ref),
+                  ),
+                ),
+                const _TileDivider(),
+                _SettingsTile(
+                  icon: Icons.sell_outlined,
+                  title: '말머리 보기',
+                  onTap: () => handleToggleShowCategory(ref),
+                  trailing: Switch(
+                    value: showCategoryState(ref),
+                    activeThumbColor: theme.colorScheme.primary,
+                    onChanged: (_) => handleToggleShowCategory(ref),
+                  ),
+                ),
+                const _TileDivider(),
+                _SettingsTile(
+                  icon: Icons.link,
+                  title: '지원 사이트 링크는 앱에서 열기',
+                  onTap: () => handleToggleOpenSiteLinksInApp(ref),
+                  trailing: Switch(
+                    value: openSiteLinksInAppState(ref),
+                    activeThumbColor: theme.colorScheme.primary,
+                    onChanged: (_) => handleToggleOpenSiteLinksInApp(ref),
+                  ),
+                ),
+                const _TileDivider(),
+                _SettingsTile(
+                  icon: Icons.smart_display_outlined,
+                  title: '동영상 링크는 앱에서 재생',
+                  onTap: () => handleTogglePlayVideosInApp(ref),
+                  trailing: Switch(
+                    value: playVideosInAppState(ref),
+                    activeThumbColor: theme.colorScheme.primary,
+                    onChanged: (_) => handleTogglePlayVideosInApp(ref),
                   ),
                 ),
                 const _TileDivider(),
@@ -90,7 +128,6 @@ class const SettingsView({super.key})
             //     ),
             //   ],
             // ),
-
             const _SectionHeader('데이터'),
             _SettingsCard(
               children: [
@@ -102,6 +139,7 @@ class const SettingsView({super.key})
                   onTap: () => context.push(Routes.mute),
                 ),
                 const _TileDivider(),
+                const _KeywordAlertTile(),
                 cacheSizeState(ref).maybeWhen(
                   orElse: () => const _SettingsTile(
                     icon: Icons.cleaning_services_outlined,
@@ -170,6 +208,9 @@ class const SettingsView({super.key})
                   ),
                 ],
               ),
+
+            const _SectionHeader('앱 정보'),
+            const _SettingsCard(children: [_AppUpdateTile()]),
 
             const SizedBox(height: 28),
             Center(
@@ -403,6 +444,111 @@ class const _FontSizeButton({
 }
 
 /// 타일 오른쪽에 값을 담는 작은 칩(캐시 크기 등).
+/// 스토어 버전과 비교한 업데이트 상태. 누르면 확인하고, 새 버전이 있으면
+/// Android 는 Play 인앱 업데이트를, iOS 는 App Store 를 연다.
+/// 키워드 알림 관리로 가는 줄. 서버가 없는 빌드 · 데스크톱에서는 숨긴다.
+class const _KeywordAlertTile() extends ConsumerWidget with KeywordAlertState {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (!keywordAlertsAvailableState(ref)) return const SizedBox.shrink();
+    final int count = keywordAlertsState(ref).length;
+    final AppTextStyles styles = ref.watch(appTextStylesFontSizeProvider);
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        _SettingsTile(
+          icon: Icons.notifications_active_outlined,
+          title: '키워드 알림',
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (count > 0) ...[
+                _ValueChip(text: '$count개', style: styles.smallTextStyle),
+                const SizedBox(width: 4),
+              ],
+              const Icon(Icons.chevron_right, size: 22),
+            ],
+          ),
+          onTap: () => context.push(Routes.keywordAlerts),
+        ),
+        const _TileDivider(),
+      ],
+    );
+  }
+}
+
+class const _AppUpdateTile()
+    extends ConsumerWidget
+    with AppUpdateState, AppUpdateEvent {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final AppTextStyles styles = ref.watch(appTextStylesFontSizeProvider);
+    final AppUpdateStatus status = appUpdateState(ref);
+    final String? version = status.storeVersion;
+
+    final Widget trailing = switch (status.phase) {
+      AppUpdatePhase.checking || AppUpdatePhase.downloading => SizedBox(
+        width: 18,
+        height: 18,
+        child: CircularProgressIndicator(
+          strokeWidth: 2,
+          color: theme.colorScheme.primary,
+        ),
+      ),
+      AppUpdatePhase.available => _ValueChip(
+        text: version == null ? '새 버전' : '새 버전 $version',
+        style: styles.smallTextStyle.copyWith(color: theme.colorScheme.primary),
+      ),
+      AppUpdatePhase.downloaded => _ValueChip(
+        text: '다시 시작',
+        style: styles.smallTextStyle.copyWith(color: theme.colorScheme.primary),
+      ),
+      AppUpdatePhase.upToDate => _ValueChip(
+        text: '최신 버전',
+        style: styles.smallTextStyle,
+      ),
+      _ => const Icon(Icons.chevron_right, size: 22),
+    };
+
+    return _SettingsTile(
+      icon: Icons.system_update_outlined,
+      title: status.phase == AppUpdatePhase.downloading
+          ? '업데이트 받는 중'
+          : '업데이트 확인',
+      trailing: trailing,
+      onTap: () => _onTap(ref, status.phase),
+    );
+  }
+
+  Future<void> _onTap(WidgetRef ref, AppUpdatePhase phase) async {
+    switch (phase) {
+      case AppUpdatePhase.checking:
+      case AppUpdatePhase.downloading:
+        return;
+      case AppUpdatePhase.available:
+      case AppUpdatePhase.downloaded:
+        await handleInstallUpdate(ref);
+      default:
+        final AppUpdatePhase result = await handleCheckUpdate(ref);
+        final String? message = switch (result) {
+          AppUpdatePhase.upToDate => '최신 버전입니다.',
+          AppUpdatePhase.unavailable => '스토어에서 업데이트를 확인할 수 없습니다.',
+          _ => null,
+        };
+        if (message != null) {
+          Fluttertoast.showToast(
+            msg: message,
+            toastLength: Toast.LENGTH_SHORT,
+            gravity: ToastGravity.BOTTOM,
+            backgroundColor: Colors.black54,
+            textColor: Colors.white,
+          );
+        }
+    }
+  }
+}
+
 class const _ValueChip({
   required final String text,
   required final TextStyle style,

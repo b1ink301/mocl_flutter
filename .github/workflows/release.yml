@@ -3,60 +3,88 @@ name: Build and Release Flutter Android
 on:
   push:
     tags:
-      - 'v*.*.*' # v1.0.0과 같은 태그가 푸시될 때 실행
-#  pull_request:
-#    types: [ closed ] # PR이 닫혔을 때 워크플로우 실행
-#    branches:
-#      - main # main 브랜치에 대한 PR만 해당
+      - 'v*.*.*' # v1.5.4+394 처럼 pubspec 의 version 앞에 v 를 붙인 태그
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
 
 jobs:
   build-and-release:
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     permissions:
       contents: write # GitHub Release 생성, 수정 등 콘텐츠 쓰기 권한 부여
+    env:
+      # Play 업로드용 서비스 계정 키(JSON). 비어 있으면 Play 업로드만 건너뛴다.
+      PLAY_SERVICE_ACCOUNT_JSON: ${{ secrets.PLAY_SERVICE_ACCOUNT_JSON }}
+      MAPPING: build/app/outputs/mapping/prdRelease/mapping.txt
 
     steps:
       # 1. 소스 코드 체크아웃
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
 
-      # 2. 자바(JDK) 설치
+      # 2. 태그와 pubspec 의 version 이 같은지 — 버전을 안 올리고 태그만 찍으면
+      #    같은 versionCode 로 배포되어 Play 업로드가 거절된다.
+      - name: Check version
+        id: version
+        run: |
+          pubspec=$(grep -E '^version:' pubspec.yaml | awk '{print $2}')
+          tag="${GITHUB_REF_NAME#v}"
+          if [ "$pubspec" != "$tag" ]; then
+            echo "::error::태그($tag)와 pubspec version($pubspec)이 다릅니다"
+            exit 1
+          fi
+          echo "code=${pubspec#*+}" >> "$GITHUB_OUTPUT"
+
+      # 3. 자바(JDK) 설치
       - name: Set up JDK
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@b843ebf9b913146b38da2eaa7aeddf76074ae1ad # v6.1.0
         with:
           distribution: 'temurin'
           java-version: '21' # build.gradle.kts 의 JVM_21 과 맞춘다(17 이면 컴파일 실패)
+          cache: gradle
 
-      # 3. Flutter SDK 설치 — 로컬과 같은 버전(.fvmrc)으로 고정한다
+      # 4. Flutter SDK 설치 — 로컬과 같은 버전(.fvmrc)으로 고정한다
       - name: Read Flutter version
         id: fvm
         run: echo "version=$(jq -r .flutter .fvmrc)" >> "$GITHUB_OUTPUT"
 
       - name: Set up Flutter
-        uses: subosito/flutter-action@v2
+        uses: subosito/flutter-action@1a449444c387b1966244ae4d4f8c696479add0b2 # v2.23.0
         with:
           channel: 'stable'
           flutter-version: ${{ steps.fvm.outputs.version }}
           cache: true
 
-      # 4. 의존성 설치
+      # 5. 의존성 설치 — 스모크 테스트를 통과한 pubspec.lock 그대로
       - name: Install dependencies
-        run: flutter pub get
+        run: flutter pub get --enforce-lockfile
 
-      # 5. Keystore 디코딩 (Secrets 사용)
-      - name: Decode Keystore
-        run: echo "${{ secrets.KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
-
-      # 6. key.properties 파일 생성 (Secrets 사용)
-      - name: Create key.properties
+      # 6. 서명 키 (Secrets 사용)
+      #    스크립트에 직접 보간하지 않고 env 로 넘긴다($ · 따옴표가 섞이면 깨진다).
+      #    비어 있으면 빈 keystore 로 알기 어려운 Gradle 오류가 나므로 여기서 멈춘다.
+      - name: Create keystore and key.properties
+        env:
+          KEYSTORE_BASE64: ${{ secrets.KEYSTORE_BASE64 }}
+          KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+          KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+          KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
         run: |
-          echo "storeFile=upload-keystore.jks" > android/key.properties
-          echo "storePassword=${{ secrets.KEYSTORE_PASSWORD }}" >> android/key.properties
-          echo "keyPassword=${{ secrets.KEY_PASSWORD }}" >> android/key.properties
-          echo "keyAlias=${{ secrets.KEY_ALIAS }}" >> android/key.properties
-      
+          for name in KEYSTORE_BASE64 KEYSTORE_PASSWORD KEY_PASSWORD KEY_ALIAS; do
+            eval "value=\${$name}"
+            [ -n "$value" ] || { echo "::error::Secrets $name 이 비어 있습니다"; exit 1; }
+          done
+          printf '%s' "$KEYSTORE_BASE64" | base64 --decode > android/app/upload-keystore.jks
+          {
+            echo "storeFile=upload-keystore.jks"
+            printf 'storePassword=%s\n' "$KEYSTORE_PASSWORD"
+            printf 'keyPassword=%s\n' "$KEY_PASSWORD"
+            printf 'keyAlias=%s\n' "$KEY_ALIAS"
+          } > android/key.properties
+
       # 6-1. AdMob 실제 ID (Secrets 의 ADS_JSON = ads.example.json 형식)
-      #      스크립트에 직접 보간하지 않고 env 로 넘긴다(따옴표가 섞이면 깨진다).
       #      비어 있으면 테스트 ID 로 조용히 배포되므로 여기서 멈춘다.
       - name: Create ads.json
         env:
@@ -65,26 +93,80 @@ jobs:
           [ -n "$ADS_JSON" ] || { echo "::error::Secrets ADS_JSON 이 비어 있습니다"; exit 1; }
           printf '%s' "$ADS_JSON" > ads.json
 
-      # 7. Flutter 릴리즈 빌드
-      - name: Build Release
-        run: flutter build apk --flavor prd --dart-define-from-file=ads.json
+      # 6-2. 서버 주소(키워드 알림 · 이슈 레이더 · 원격 설정). ADS_JSON 에 없으면 저장소 변수
+      #      MOCL_API_BASE_URL 로 채운다. 둘 다 없으면 출시 빌드에서 서버 기능이 통째로 꺼지므로
+      #      빌드를 멈춘다. 공개 저장소라 주소는 저장소 · 로그에 남기지 않는다(로그에서는 가린다).
+      - name: Ensure server URL
+        env:
+          FALLBACK_API_BASE_URL: ${{ vars.MOCL_API_BASE_URL }}
+        run: |
+          url="$(jq -r '.MOCL_API_BASE_URL // empty' ads.json)"
+          if [ -z "$url" ]; then
+            [ -n "$FALLBACK_API_BASE_URL" ] || { echo "::error::ADS_JSON 이나 저장소 변수 MOCL_API_BASE_URL 에 서버 주소를 넣어 주세요"; exit 1; }
+            url="$FALLBACK_API_BASE_URL"
+            jq --arg url "$url" '. + {MOCL_API_BASE_URL: $url}' ads.json > ads.tmp && mv ads.tmp ads.json
+          fi
+          echo "::add-mask::$url"
+          echo "server URL: set"
 
-      # 8. GitHub Release 생성 및 파일 업로드
+      # 7. Flutter 릴리즈 빌드 — GitHub Release 용 APK, Play 용 AAB
+      - name: Build Release
+        run: |
+          flutter build apk --flavor prd --dart-define-from-file=ads.json
+          flutter build appbundle --flavor prd --dart-define-from-file=ads.json
+
+      # 8. R8 이 JNI 로만 쓰이는 클래스를 지우거나 줄이면 빌드는 통과하고 앱만 멈춘다.
+      #    기기 없이 잡을 수 있는 부분이라 배포 전에 mapping.txt 로 확인한다.
+      - name: Check R8 keep rules
+        run: dart run tool/check_jni_keep.dart "$MAPPING"
+
+      # 9. 릴리스 노트 — store/ko-KR/changelogs/{versionCode}.txt 가 있으면 쓴다.
+      - name: Prepare release notes
+        id: notes
+        run: |
+          src="store/ko-KR/changelogs/${{ steps.version.outputs.code }}.txt"
+          mkdir -p whatsnew
+          if [ -f "$src" ]; then
+            cp "$src" release_notes.md
+            cp "$src" whatsnew/whatsnew-ko-KR
+            echo "found=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "::warning::$src 이 없어 Play 변경 사항 없이 올립니다"
+            : > release_notes.md
+            echo "found=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      # 10. GitHub Release 생성 및 파일 업로드
       - name: Create GitHub Release
-        uses: ncipollo/release-action@v1
+        uses: ncipollo/release-action@339a81892b84b4eeb0f6e744e4574d79d0d9b8dd # v1.21.0
         with:
-          # 워크플로우를 실행시킨 Git 태그를 릴리즈 태그로 사용
           tag: ${{ github.ref_name }}
-          # 릴리즈 이름
           name: Release ${{ github.ref_name }}
-          # 릴리즈 노트 (비워두면 태그의 커밋 메시지가 자동으로 사용됨)
-          body: ""
-          # 드래프트(초안) 상태로 생성할지 여부
+          # 스토어 변경 사항 + 이전 태그 이후 커밋 요약
+          bodyFile: release_notes.md
+          generateReleaseNotes: true
           draft: false
-          # Prerelease로 표시할지 여부
           prerelease: false
-          # 업로드할 파일들 (줄바꿈으로 여러 개 지정 가능)
           artifacts: |
             build/app/outputs/flutter-apk/app-prd-release.apk
-          # GitHub API 인증 토큰
+            build/app/outputs/bundle/prdRelease/app-prd-release.aab
           token: ${{ secrets.GITHUB_TOKEN }}
+
+      # 11. Play 내부 테스트 트랙 업로드 (Secrets PLAY_SERVICE_ACCOUNT_JSON 이 있을 때만)
+      #     처음 한 번은 Play Console 에서 직접 올려야 API 업로드가 된다.
+      #     프로덕션 승격은 Play Console 에서 사람이 한다.
+      - name: Upload to Google Play (internal)
+        if: env.PLAY_SERVICE_ACCOUNT_JSON != ''
+        uses: r0adkll/upload-google-play@e738b9dd8f2476ea806d921b64aacd24f34515a5 # v1.1.5
+        with:
+          serviceAccountJsonPlainText: ${{ env.PLAY_SERVICE_ACCOUNT_JSON }}
+          packageName: kr.b1ink.mocl
+          releaseFiles: build/app/outputs/bundle/prdRelease/app-prd-release.aab
+          track: internal
+          status: completed
+          mappingFile: ${{ env.MAPPING }}
+          whatsNewDirectory: ${{ steps.notes.outputs.found == 'true' && 'whatsnew' || '' }}
+
+      - name: Skip Google Play upload
+        if: env.PLAY_SERVICE_ACCOUNT_JSON == ''
+        run: echo "::notice::Secrets PLAY_SERVICE_ACCOUNT_JSON 이 없어 Play 업로드를 건너뜁니다"

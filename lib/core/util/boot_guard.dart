@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
-import 'package:mocl_flutter/core/util/mocl_logger.dart';
+import 'package:mocl_shared/util/mocl_logger.dart';
 
 /// 부팅이 [timeout] 안에 끝나지 않았을 때 [BootGuard] 가 리포트하는 예외.
 class const BootTimeoutException(final Duration timeout) implements Exception {

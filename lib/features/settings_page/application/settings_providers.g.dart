@@ -232,3 +232,251 @@ abstract class _$ShowQuickJumpNotifier extends $Notifier<bool> {
     return element.handleCreate(ref, build);
   }
 }
+
+/// 본문 링크가 모클이 지원하는 사이트의 글이면 인앱 브라우저 대신 상세 화면으로
+/// 파싱해서 연다. 끄면 예전처럼 모든 링크를 브라우저로 연다.
+
+@ProviderFor(OpenSiteLinksInAppNotifier)
+final openSiteLinksInAppProvider = OpenSiteLinksInAppNotifierProvider._();
+
+/// 본문 링크가 모클이 지원하는 사이트의 글이면 인앱 브라우저 대신 상세 화면으로
+/// 파싱해서 연다. 끄면 예전처럼 모든 링크를 브라우저로 연다.
+final class OpenSiteLinksInAppNotifierProvider
+    extends $NotifierProvider<OpenSiteLinksInAppNotifier, bool> {
+  /// 본문 링크가 모클이 지원하는 사이트의 글이면 인앱 브라우저 대신 상세 화면으로
+  /// 파싱해서 연다. 끄면 예전처럼 모든 링크를 브라우저로 연다.
+  OpenSiteLinksInAppNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'openSiteLinksInAppProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$openSiteLinksInAppNotifierHash();
+
+  @$internal
+  @override
+  OpenSiteLinksInAppNotifier create() => OpenSiteLinksInAppNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$openSiteLinksInAppNotifierHash() =>
+    r'69dce6e5ad8f69caea6bc27150c5f74e20c62395';
+
+/// 본문 링크가 모클이 지원하는 사이트의 글이면 인앱 브라우저 대신 상세 화면으로
+/// 파싱해서 연다. 끄면 예전처럼 모든 링크를 브라우저로 연다.
+
+abstract class _$OpenSiteLinksInAppNotifier extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// 본문의 유튜브 · 영상 파일 링크를 앱 안 플레이어로 재생한다. 끄면 유튜브는
+/// 유튜브 앱으로, 파일은 브라우저로 연다.
+
+@ProviderFor(PlayVideosInAppNotifier)
+final playVideosInAppProvider = PlayVideosInAppNotifierProvider._();
+
+/// 본문의 유튜브 · 영상 파일 링크를 앱 안 플레이어로 재생한다. 끄면 유튜브는
+/// 유튜브 앱으로, 파일은 브라우저로 연다.
+final class PlayVideosInAppNotifierProvider
+    extends $NotifierProvider<PlayVideosInAppNotifier, bool> {
+  /// 본문의 유튜브 · 영상 파일 링크를 앱 안 플레이어로 재생한다. 끄면 유튜브는
+  /// 유튜브 앱으로, 파일은 브라우저로 연다.
+  PlayVideosInAppNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'playVideosInAppProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$playVideosInAppNotifierHash();
+
+  @$internal
+  @override
+  PlayVideosInAppNotifier create() => PlayVideosInAppNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$playVideosInAppNotifierHash() =>
+    r'7cd5fc8934d29ac444b1292f5a2142ef3076cd0a';
+
+/// 본문의 유튜브 · 영상 파일 링크를 앱 안 플레이어로 재생한다. 끄면 유튜브는
+/// 유튜브 앱으로, 파일은 브라우저로 연다.
+
+abstract class _$PlayVideosInAppNotifier extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// 번역을 지원하는 사이트(레딧)의 목록 제목을 번역해 보이고, 상세도 열자마자
+/// 번역한다. 목록 앱바의 번역 버튼으로 켜고 끄며 앱을 다시 켜도 유지한다.
+
+@ProviderFor(AutoTranslateNotifier)
+final autoTranslateProvider = AutoTranslateNotifierProvider._();
+
+/// 번역을 지원하는 사이트(레딧)의 목록 제목을 번역해 보이고, 상세도 열자마자
+/// 번역한다. 목록 앱바의 번역 버튼으로 켜고 끄며 앱을 다시 켜도 유지한다.
+final class AutoTranslateNotifierProvider
+    extends $NotifierProvider<AutoTranslateNotifier, bool> {
+  /// 번역을 지원하는 사이트(레딧)의 목록 제목을 번역해 보이고, 상세도 열자마자
+  /// 번역한다. 목록 앱바의 번역 버튼으로 켜고 끄며 앱을 다시 켜도 유지한다.
+  AutoTranslateNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'autoTranslateProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$autoTranslateNotifierHash();
+
+  @$internal
+  @override
+  AutoTranslateNotifier create() => AutoTranslateNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$autoTranslateNotifierHash() =>
+    r'6d2232a0592bfbc4152c08a39b9c72fa95fb94c6';
+
+/// 번역을 지원하는 사이트(레딧)의 목록 제목을 번역해 보이고, 상세도 열자마자
+/// 번역한다. 목록 앱바의 번역 버튼으로 켜고 끄며 앱을 다시 켜도 유지한다.
+
+abstract class _$AutoTranslateNotifier extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// 목록 · 상세 제목에 말머리 태그를 보인다. 끄면 태그 없이 제목만 보인다.
+
+@ProviderFor(ShowCategoryNotifier)
+final showCategoryProvider = ShowCategoryNotifierProvider._();
+
+/// 목록 · 상세 제목에 말머리 태그를 보인다. 끄면 태그 없이 제목만 보인다.
+final class ShowCategoryNotifierProvider
+    extends $NotifierProvider<ShowCategoryNotifier, bool> {
+  /// 목록 · 상세 제목에 말머리 태그를 보인다. 끄면 태그 없이 제목만 보인다.
+  ShowCategoryNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'showCategoryProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$showCategoryNotifierHash();
+
+  @$internal
+  @override
+  ShowCategoryNotifier create() => ShowCategoryNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(bool value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<bool>(value),
+    );
+  }
+}
+
+String _$showCategoryNotifierHash() =>
+    r'4bf5cd1f55a0475d4b3e478f474f79996f7f4edb';
+
+/// 목록 · 상세 제목에 말머리 태그를 보인다. 끄면 태그 없이 제목만 보인다.
+
+abstract class _$ShowCategoryNotifier extends $Notifier<bool> {
+  bool build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<bool, bool>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<bool, bool>,
+              bool,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}

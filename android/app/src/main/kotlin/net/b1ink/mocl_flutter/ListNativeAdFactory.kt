@@ -20,6 +20,8 @@ class ListNativeAdFactory(context: Context) : BaseNativeAdFactory(context) {
     companion object {
         const val FACTORY_ID = "listTile"
 
+        // 좌우 여백 기본값. Dart 가 `paddingStart` · `paddingEnd` 로 넘기면 그 값을 쓴다
+        // (글 상세의 compact 광고는 본문 여백 안에 들어가므로 0).
         private const val PADDING_START = 16f
         private const val PADDING_END = 10f
         private const val PADDING_VERTICAL = 14f
@@ -40,7 +42,12 @@ class ListNativeAdFactory(context: Context) : BaseNativeAdFactory(context) {
 
         val column = LinearLayout(context).apply {
             orientation = LinearLayout.VERTICAL
-            setPadding(dp(PADDING_START), dp(PADDING_VERTICAL), dp(PADDING_END), dp(PADDING_VERTICAL))
+            setPaddingRelative(
+                dp(o.numOr("paddingStart", PADDING_START)),
+                dp(PADDING_VERTICAL),
+                dp(o.numOr("paddingEnd", PADDING_END)),
+                dp(PADDING_VERTICAL),
+            )
         }
 
         val headline = textView(o, "title").apply {

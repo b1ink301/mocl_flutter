@@ -5,25 +5,31 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_riverpod/misc.dart';
 import 'package:mocl_flutter/app_widget.dart';
+import 'package:mocl_flutter/core/dev/marionette_setup.dart';
 import 'package:mocl_flutter/core/presentation/widgets/boot_failure_app.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
 import 'package:mocl_flutter/core/util/boot_guard.dart';
-import 'package:mocl_flutter/core/util/mocl_logger.dart';
+import 'package:mocl_shared/util/mocl_logger.dart';
+import 'package:mocl_flutter/core/util/orientation_policy.dart';
 import 'package:mocl_flutter/firebase_options.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'features/ads/data/mobile_ads_bootstrap.dart';
 import 'features/database/application/datasource_provider.dart';
 import 'features/database/data/datasources/local/local_database.dart';
+import 'features/remote_config/application/remote_config_providers.dart';
+import 'features/remote_config/data/remote_config_fetcher.dart';
+import 'features/remote_config/data/remote_config_store.dart';
 import 'features/settings_page/application/datasource_provider.dart';
 import 'flavors.dart';
 
 Future<void> main() async {
-  WidgetsFlutterBinding.ensureInitialized();
+  ensureAppBinding();
   await BootGuard(
     prepare: _prepareApp,
     failureBuilder: ({Object? error, VoidCallback? onRetry}) =>
@@ -59,12 +65,18 @@ Future<Widget> _prepareApp() async {
   _schedulePruneReads(localDatabase);
   scheduleMobileAdsInit();
 
+  // 원격 설정은 저장해 둔 것만 바로 쓰고, 서버에서 새로 받는 건 첫 화면 뒤에 한다.
+  final remoteConfigStore = RemoteConfigStore(sharedPrefs);
+  final remoteConfig = remoteConfigStore.load();
+  _scheduleRemoteConfigRefresh(remoteConfigStore);
+
   return ProviderScope(
     retry: retry,
     observers: [if (kDebugMode) Logger()],
     overrides: [
       sharedPreferencesProvider.overrideWithValue(sharedPrefs),
       localDatabaseProvider.overrideWithValue(localDatabase),
+      remoteConfigProvider.overrideWithValue(remoteConfig),
     ],
     child: const AppWidget(),
   );
@@ -74,10 +86,8 @@ Future<Widget> _prepareApp() async {
 Future<void> _initPlatform() async {
   try {
     await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
-    await SystemChrome.setPreferredOrientations([
-      DeviceOrientation.portraitUp,
-      DeviceOrientation.portraitDown,
-    ]);
+    // 폰은 세로 고정, 태블릿 · iPad · 펼친 폴드는 회전 허용.
+    await OrientationPolicy.instance.install();
   } catch (e, st) {
     MoclLogger.e('화면 모드 설정 실패', error: e, stackTrace: st);
   }
@@ -111,6 +121,28 @@ void _schedulePruneReads(LocalDatabase localDatabase) {
   });
 }
 
+/// 서버에서 원격 설정을 받아 둔다(다음 실행부터 적용). 서버 주소가 없거나
+/// 실패해도 앱에는 영향이 없다.
+void _scheduleRemoteConfigRefresh(RemoteConfigStore store) {
+  if (moclApiBaseUrl.isEmpty) return;
+  WidgetsBinding.instance.addPostFrameCallback((_) {
+    Timer(const Duration(seconds: 2), () async {
+      final Dio dio = Dio(
+        BaseOptions(
+          connectTimeout: const Duration(seconds: 15),
+          receiveTimeout: const Duration(seconds: 15),
+          sendTimeout: const Duration(seconds: 15),
+        ),
+      );
+      try {
+        await RemoteConfigFetcher(dio, moclApiBaseUrl, store).refresh();
+      } finally {
+        dio.close();
+      }
+    });
+  });
+}
+
 /// 잡히지 않은 예외와 [MoclLogger.e] 로 남긴 에러를 Crashlytics 로 보낸다.
 ///
 /// 디버그 빌드에서는 수집을 끄고 콘솔 출력만 남긴다. 릴리즈에서는 로그가
@@ -126,7 +158,13 @@ void _installErrorReporting() {
 
   FlutterError.onError = (FlutterErrorDetails details) {
     // 디버그에서는 프레임워크 기본 출력을 살린다. 릴리즈 콘솔에는 남기지 않는다.
-    if (kDebugMode) FlutterError.presentError(details);
+    // MoclLogger 에도 한 줄 남겨 Marionette get_logs(기기 확인 스크립트)가 보게 한다.
+    if (kDebugMode) {
+      FlutterError.presentError(details);
+      MoclLogger.w(
+        () => 'FlutterError: ${details.exceptionAsString().split('\n').first}',
+      );
+    }
     crashlytics.recordFlutterFatalError(details);
   };
   PlatformDispatcher.instance.onError = (Object error, StackTrace stackTrace) {
