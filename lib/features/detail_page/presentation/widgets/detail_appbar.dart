@@ -147,11 +147,13 @@ class const _FontSizeDialog({
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           PlainIconButton(
+            semanticLabel: '글자 작게',
             icon: PlainIcon(Icons.exposure_minus_1, color: focusColor),
             onPressed: onDecrease,
           ),
           PlainText(_label(delta), style: textStyle),
           PlainIconButton(
+            semanticLabel: '글자 크게',
             icon: PlainIcon(Icons.exposure_plus_1, color: focusColor),
             onPressed: onIncrease,
           ),

@@ -115,6 +115,7 @@ class const _Breadcrumb() extends ConsumerWidget with AddState, AddEvent {
         child: Row(
           children: [
             PlainIconButton(
+              semanticLabel: '상위 목록으로',
               padding: const EdgeInsets.all(8),
               icon: const Icon(Icons.arrow_back, size: 18),
               onPressed: () => exitBoard(ref),
@@ -151,6 +152,7 @@ class const _Breadcrumb() extends ConsumerWidget with AddState, AddEvent {
               ),
             ),
             PlainIconButton(
+              semanticLabel: '하위 게시판 새로고침',
               padding: const EdgeInsets.all(8),
               icon: const Icon(Icons.refresh, size: 18),
               onPressed: () => refreshSubMenu(ref),
@@ -315,6 +317,7 @@ class const _TopBar() extends ConsumerWidget with AddState, AddEvent {
             // 로그인 화면은 지금 고른 사이트로 들어간다.
             if (site.supportsLogin)
               PlainIconButton(
+                semanticLabel: '로그인',
                 padding: const EdgeInsets.all(10),
                 icon: const Icon(Icons.login),
                 onPressed: () => login(ref, context),

@@ -21,6 +21,7 @@ class const BookmarkIconButton({super.key})
     final bool isOn = isBookmarkedState(ref, siteType, item.id);
 
     return PlainIconButton(
+      semanticLabel: isOn ? '스크랩 해제' : '스크랩',
       onPressed: () {
         final data = BookmarkData.fromListItem(
           siteType,

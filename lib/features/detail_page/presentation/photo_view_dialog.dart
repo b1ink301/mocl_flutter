@@ -118,14 +118,17 @@ class _PhotoViewDialogState() extends State<PhotoViewDialog> {
             mainAxisSize: MainAxisSize.min,
             children: [
               PlainIconButton(
+                semanticLabel: '이미지 저장',
                 onPressed: () => _saveImage(context),
                 icon: PlainIcon(Icons.save_alt, color: focusColor),
               ),
               PlainIconButton(
+                semanticLabel: '이미지 공유',
                 onPressed: () => _shareImage(context),
                 icon: PlainIcon(Icons.share, color: focusColor),
               ),
               PlainIconButton(
+                semanticLabel: '닫기',
                 onPressed: () => context.pop(),
                 icon: PlainIcon(Icons.close, color: focusColor),
               ),

@@ -358,6 +358,7 @@ class const _BoardTile({
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       PlainIconButton(
+                        semanticLabel: '게시판 빼기',
                         icon: const PlainIcon(Icons.close_rounded),
                         onPressed: () => removeFavorite(
                           ref,

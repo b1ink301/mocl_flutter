@@ -19,6 +19,7 @@ class const TranslateIconButton({super.key})
     final Color primary = Theme.of(context).colorScheme.primary;
 
     return PlainIconButton(
+      semanticLabel: translation.isShowing ? '원문 보기' : '번역하기',
       onPressed: () async {
         final bool ok = await toggleTranslation(ref);
         if (ok || !context.mounted) return;

@@ -33,6 +33,7 @@ class ListSearchDelegate({required final MainItem item})
   @override
   List<Widget>? buildActions(BuildContext context) => [
     PlainIconButton(
+      semanticLabel: '검색어 지우기',
       icon: const PlainIcon(Icons.clear),
       onPressed: () {
         query = ''; // 검색어 초기화
@@ -42,6 +43,7 @@ class ListSearchDelegate({required final MainItem item})
 
   @override
   Widget? buildLeading(BuildContext context) => PlainIconButton(
+    semanticLabel: '뒤로 가기',
     icon: const PlainIcon(Icons.arrow_back),
     onPressed: () {
       close(context, ''); // 검색 종료

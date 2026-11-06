@@ -72,6 +72,7 @@ class const _TranslateButton()
     final bool on = listTranslationOnState(ref);
 
     return PlainIconButton(
+      semanticLabel: on ? '제목 번역 끄기' : '제목 번역하기',
       onPressed: () async {
         final bool ok = await toggleListTranslation(ref);
         if (ok || !context.mounted) return;
@@ -116,6 +117,7 @@ class const _KeywordAlertButton()
     final bool on = sub != null;
 
     return PlainIconButton(
+      semanticLabel: on ? '키워드 알림 고치기' : '키워드 알림 켜기',
       onPressed: () => KeywordAlertFlow.edit(
         context,
         ref,
@@ -139,6 +141,7 @@ class const _KeywordAlertButton()
 class const _SearchButton() extends ConsumerWidget with ListEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) => PlainIconButton(
+    semanticLabel: '글 검색',
     icon: const PlainIcon(Icons.search),
     onPressed: () => handleShowSearch(ref, context),
   );
