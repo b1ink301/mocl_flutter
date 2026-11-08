@@ -239,6 +239,72 @@ void main() {
       expect(await store.devices(), isEmpty);
     });
 
+    group('기한', () {
+      const int day = 24 * 60 * 60 * 1000;
+      Duration? ttl = const Duration(days: 3);
+
+      AlertCrawler withTtl(PushSender push) => AlertCrawler(
+        store: store,
+        push: push,
+        politeDelay: Duration.zero,
+        ttl: () => ttl,
+        fetch: (AlertSubscription sub) async {
+          fetches++;
+          return page;
+        },
+      );
+
+      Future<void> register({int? startedAt, required int updatedAt}) =>
+          store.putDevice(
+            _install,
+            AlertRegistration.fromJson({
+              ..._reg(),
+              'subscriptions': [
+                {
+                  ...(_reg()['subscriptions']! as List).single as Map,
+                  'startedAt': ?startedAt,
+                },
+              ],
+            }),
+            updatedAt,
+          );
+
+      setUp(() => ttl = const Duration(days: 3));
+
+      test('기한이 지난 구독은 보지 않고 게시판 상태도 지운다', () async {
+        await register(startedAt: 0, updatedAt: 0);
+        final AlertCrawler c = withTtl(DryRunPushSender());
+        await c.tick(3 * day - 1);
+        expect(fetches, 1);
+        await c.tick(3 * day);
+        expect(fetches, 1);
+        expect(c.status.boards, 0);
+        expect(c.status.expiredSubscriptions, 1);
+        expect((await store.boardState('ppomppu|ppomppu')).isSeeded, isFalse);
+      });
+
+      test('기한 없음(0일)이면 계속 본다', () async {
+        await register(startedAt: 0, updatedAt: 0);
+        ttl = null;
+        final AlertCrawler c = withTtl(DryRunPushSender());
+        await c.tick(100 * day);
+        expect(fetches, 1);
+      });
+
+      test('startedAt 이 없거나(옛 앱) 서버 시각보다 앞서면 등록 시각으로 센다', () async {
+        await register(updatedAt: 10 * day);
+        final AlertCrawler c = withTtl(DryRunPushSender());
+        await c.tick(12 * day);
+        expect(fetches, 1, reason: '등록 시각부터 2일');
+        await c.tick(13 * day);
+        expect(fetches, 1);
+
+        await register(startedAt: 100 * day, updatedAt: 20 * day);
+        await c.tick(23 * day);
+        expect(fetches, 1, reason: '기기 시계가 앞서도 기한을 미래로 늘리지 못한다');
+      });
+    });
+
     test('구독자가 없어진 게시판 상태는 지운다', () async {
       final AlertCrawler c = crawler(DryRunPushSender());
       await c.tick(0);

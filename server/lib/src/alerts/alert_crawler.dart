@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:mocl_shared/alerts/keyword_alerts.dart';
 import 'package:mocl_shared/entities/mocl_list_item.dart';
+import 'package:mocl_shared/remote_config/alerts_config.dart';
 
 import '../crawl/site_fetcher.dart';
 import '../server_log.dart';
@@ -21,6 +22,9 @@ class const CrawlStatus({
   final int failingBoards = 0,
   final int devices = 0,
 
+  /// 기한이 지나 보지 않는 구독 수.
+  final int expiredSubscriptions = 0,
+
   /// 이슈 레이더 수집(없으면 0).
   final int radarLastRunAt = 0,
   final int radarFailingBoards = 0,
@@ -30,6 +34,7 @@ class const CrawlStatus({
     'boards': boards,
     'failingBoards': failingBoards + radarFailingBoards,
     'devices': devices,
+    'expiredSubscriptions': expiredSubscriptions,
     'radarLastRunAgoSec': radarLastRunAt == 0
         ? null
         : (now - radarLastRunAt) ~/ 1000,
@@ -40,6 +45,7 @@ class const CrawlStatus({
     boards: boards,
     failingBoards: failingBoards,
     devices: devices,
+    expiredSubscriptions: expiredSubscriptions,
     radarLastRunAt: lastRunAt,
     radarFailingBoards: failing,
   );
@@ -50,6 +56,8 @@ class const CrawlStatus({
 /// - 같은 게시판은 구독자가 몇 명이든 한 번만 받는다(사이트 부담 = 게시판 수).
 /// - 게시판 첫 크롤은 지금 있는 글을 "본 것" 으로 기록만 한다(옛 글로 알림 폭탄 X).
 /// - 실패하면 간격을 늘린다(최대 [maxBackoff]). 차단당했을 때 계속 두드리지 않는다.
+/// - 기한([ttl], 원격 설정 `alerts.ttlDays`)이 지난 구독은 보지 않는다. 구독이 모두 끝난
+///   게시판은 받지 않고 상태도 지운다(연장하면 첫 크롤부터 다시).
 class AlertCrawler({
   required final AlertStore store,
   required final BoardFetch fetch,
@@ -62,7 +70,21 @@ class AlertCrawler({
 
   /// 한 번에 알릴 새 글 상한(게시판당). 처음 보는 대량 갱신에 폭주하지 않게.
   final int maxNewPerBoard = 30,
+
+  /// 알림 기한. null 이면 기한 없음. 관리 화면에서 바꾸면 다음 바퀴부터 따른다.
+  final Duration? Function() ttl = _defaultTtl,
 }) {
+  static Duration? _defaultTtl() => AlertsRemoteConfig.empty.ttl;
+
+  /// 구독이 시작된 시각. 앱이 준 값이 없거나(옛 앱) 기기 시계가 앞서 있으면
+  /// 서버가 등록을 받은 시각으로 센다(기한을 미래로 늘릴 수 없게).
+  static int startedAtOf(Device device, AlertSubscription sub) {
+    final int? started = sub.startedAt;
+    return started == null || started > device.updatedAt
+        ? device.updatedAt
+        : started;
+  }
+
   Timer? _timer;
   bool _running = false;
 
@@ -102,8 +124,14 @@ class AlertCrawler({
     // 게시판별 구독자 묶기
     final Map<String, AlertSubscription> boards = {};
     final Map<String, List<(Device, AlertSubscription)>> subscribers = {};
+    final Duration? ttl = this.ttl();
+    int expired = 0;
     for (final Device device in devices) {
       for (final AlertSubscription sub in device.registration.subscriptions) {
+        if (KeywordAlerts.isExpired(startedAtOf(device, sub), now, ttl)) {
+          expired++;
+          continue;
+        }
         boards.putIfAbsent(sub.boardKey, () => sub);
         (subscribers[sub.boardKey] ??= []).add((device, sub));
       }
@@ -175,6 +203,7 @@ class AlertCrawler({
       boards: boards.length,
       failingBoards: failing,
       devices: devices.length,
+      expiredSubscriptions: expired,
     );
   }
 

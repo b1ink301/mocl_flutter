@@ -166,6 +166,19 @@ button:disabled { opacity: .45; cursor: default; }
   </section>
 
   <section class="card">
+    <h2>키워드 알림 기한</h2>
+    <p class="desc">알림을 걸거나 연장한 뒤 며칠 동안 보낼지. <b>0</b> 이면 기한 없음. 서버는 저장 즉시, 앱(남은 기간 표시)은 다음 실행부터 따릅니다.</p>
+    <div>
+      <label class="field">기한(일) <span id="ttlRange" class="muted"></span></label>
+      <div class="stepper" data-key="ttlDays">
+        <button type="button" data-step="-1">−</button><input id="ttlDays" type="number"><button type="button" data-step="1">+</button>
+      </div>
+      <label class="muted"><input id="ttlDaysDefault" type="checkbox"> 기본값</label>
+    </div>
+    <p id="ttlSummary" class="muted" style="margin:12px 0 0"></p>
+  </section>
+
+  <section class="card">
     <h2>사이트 요청 UA</h2>
     <p class="desc">비우면 앱에 박힌 값을 씁니다. 사이트별로 프리셋(mobile · pc) 또는 UA 문자열을 지정할 수 있습니다.</p>
     <div id="presetFields"></div>
@@ -305,6 +318,13 @@ function setBase(data) {
 }
 const clone = (o) => JSON.parse(JSON.stringify(o));
 function ads() { return cfg.ads || {}; }
+function alerts() { return cfg.alerts || {}; }
+function setAlerts(mut) {
+  const next = clone(alerts());
+  mut(next);
+  if (Object.keys(next).length === 0) delete cfg.alerts; else cfg.alerts = next;
+  render();
+}
 function setAds(mut) {
   const next = clone(ads());
   mut(next);
@@ -329,7 +349,9 @@ function renderStatic() {
   const f = meta.limits.listFirst, n = meta.limits.listInterval;
   $('firstRange').textContent = `(${f[0]}~${f[1]})`;
   $('intervalRange').textContent = `(${n[0]}~${n[1]})`;
-  for (const id of ['listFirst', 'listInterval']) {
+  const t = meta.limits.ttlDays;
+  $('ttlRange').textContent = `(${t[0]}~${t[1]}, 기본 ${meta.defaults.ttlDays})`;
+  for (const id of ['listFirst', 'listInterval', 'ttlDays']) {
     const range = meta.limits[id];
     $(id).min = range[0]; $(id).max = range[1];
   }
@@ -370,6 +392,16 @@ function render() {
   $('listPreview').replaceChildren(
     ...Array.from({ length: 60 }, (_, idx) => el('span', { class: slots.includes(idx + 1) ? 'ad' : '', title: `${idx + 1}` })),
   );
+
+  // 키워드 알림 기한
+  const ttl = alerts().ttlDays;
+  const days = ttl ?? def.ttlDays;
+  $('ttlDays').value = days;
+  $('ttlDays').disabled = ttl == null;
+  $('ttlDaysDefault').checked = ttl == null;
+  $('ttlSummary').textContent = days === 0
+    ? '기한 없이 계속 보냅니다.'
+    : `알림을 걸거나 연장하면 ${days}일 동안 보냅니다. 지난 알림은 앱에서 연장해야 다시 옵니다.`;
 
   // UA 프리셋
   $('presetFields').replaceChildren(
@@ -511,7 +543,7 @@ async function loadStatus() {
   const c = data.crawl;
   if (c) {
     rows.push(`키워드 알림 등록 기기: ${c.devices}`);
-    rows.push(`감시 게시판: ${c.boards}개 · 실패 중: ${c.failingBoards}개`);
+    rows.push(`감시 게시판: ${c.boards}개 · 실패 중: ${c.failingBoards}개 · 기한 지난 구독: ${c.expiredSubscriptions ?? 0}개`);
     rows.push(`알림 크롤 마지막: ${ago(c.lastTickAgoSec)} · 이슈 레이더 마지막: ${ago(c.radarLastRunAgoSec)}`);
   }
   rows.push(`적용 중인 설정 ETag: ${data.servedEtag}`);
@@ -585,6 +617,19 @@ for (const key of ['listFirst', 'listInterval']) {
   $(key + 'Default').addEventListener('change', (e) => setAds((x) => {
     x.list = { ...(x.list || {}) };
     if (e.target.checked) delete x.list[field]; else x.list[field] = meta.defaults[key];
+  }));
+}
+{
+  const clamp = (v) => Math.min(meta.limits.ttlDays[1], Math.max(meta.limits.ttlDays[0], v));
+  const set = (v) => setAlerts((x) => { x.ttlDays = clamp(v); });
+  $('ttlDays').addEventListener('change', (e) => { const v = parseInt(e.target.value, 10); if (!Number.isNaN(v)) set(v); else render(); });
+  document.querySelector('.stepper[data-key=ttlDays]').addEventListener('click', (e) => {
+    const step = Number(e.target.dataset.step);
+    if (!step) return;
+    set((alerts().ttlDays ?? meta.defaults.ttlDays) + step);
+  });
+  $('ttlDaysDefault').addEventListener('change', (e) => setAlerts((x) => {
+    if (e.target.checked) delete x.ttlDays; else x.ttlDays = meta.defaults.ttlDays;
   }));
 }
 document.addEventListener('keydown', (e) => {

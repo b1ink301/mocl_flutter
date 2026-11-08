@@ -93,4 +93,29 @@ void main() {
       );
     });
   });
+
+  group('기한', () {
+    test('startedAt 은 선택이고 왕복한다 · 음수나 문자열은 거절한다', () {
+      expect(AlertSubscription.fromJson(_sub()).startedAt, isNull);
+      final s = AlertSubscription.fromJson({..._sub(), 'startedAt': 123});
+      expect(s.startedAt, 123);
+      expect(AlertSubscription.fromJson(s.toJson()).startedAt, 123);
+      expect(
+        () => AlertSubscription.fromJson({..._sub(), 'startedAt': -1}),
+        throwsFormatException,
+      );
+      expect(
+        () => AlertSubscription.fromJson({..._sub(), 'startedAt': '1'}),
+        throwsFormatException,
+      );
+    });
+
+    test('isExpired', () {
+      const Duration day = Duration(days: 1);
+      final int ms = day.inMilliseconds;
+      expect(KeywordAlerts.isExpired(0, ms - 1, day), isFalse);
+      expect(KeywordAlerts.isExpired(0, ms, day), isTrue);
+      expect(KeywordAlerts.isExpired(0, ms * 1000, null), isFalse);
+    });
+  });
 }

@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/features/keyword_alerts/data/keyword_alert_sync.dart';
+import 'package:mocl_flutter/features/keyword_alerts/domain/keyword_alert_expiry.dart';
 import 'package:mocl_shared/alerts/keyword_alerts.dart';
 import 'package:mocl_shared/entities/mocl_site_type.dart';
 
@@ -79,6 +80,7 @@ class const _Flow() with KeywordAlertState, KeywordAlertEvent {
       builder: (_) => KeywordEditorSheet(
         subscription: existing ?? board,
         canTurnOff: existing != null,
+        ttl: readKeywordAlertTtl(ref),
       ),
     );
     if (keywords == null || !context.mounted) return;
@@ -117,9 +119,11 @@ class const _Flow() with KeywordAlertState, KeywordAlertEvent {
     );
     if (!context.mounted) return;
     if (result == AlertSyncResult.synced && existing == null) {
+      final String? ttl = keywordAlertTtlLabel(readKeywordAlertTtl(ref));
       KeywordAlertFlow.showMessage(
         context,
-        '\'${board.title}\' 에 키워드 알림을 걸었어요.',
+        '\'${board.title}\' 에 키워드 알림을 걸었어요.'
+        '${ttl == null ? '' : ' $ttl 동안 알려 드려요.'}',
       );
     } else {
       KeywordAlertFlow.reportSync(context, result);
@@ -152,6 +156,9 @@ class const KeywordEditorSheet({
   super.key,
   required final AlertSubscription subscription,
   final bool canTurnOff = false,
+
+  /// 알림 기한(null = 기한 없음). 저장하면 지금부터 다시 센다는 안내에 쓴다.
+  final Duration? ttl,
 }) extends StatefulWidget {
   @override
   State<KeywordEditorSheet> createState() => KeywordEditorSheetState2();
@@ -218,7 +225,8 @@ class KeywordEditorSheetState2() extends State<KeywordEditorSheet> {
           ),
           const SizedBox(height: 4),
           Text(
-            '제목에 키워드가 들어간 새 글을 알려 드려요. 띄어쓰기와 대소문자는 구분하지 않아요.',
+            '제목에 키워드가 들어간 새 글을 알려 드려요. 띄어쓰기와 대소문자는 구분하지 않아요.'
+            '${widget.ttl == null ? '' : ' 저장하면 오늘부터 ${keywordAlertTtlLabel(widget.ttl)} 동안 알려 드려요.'}',
             style: theme.textTheme.bodySmall?.copyWith(
               color: theme.colorScheme.onSurfaceVariant,
             ),

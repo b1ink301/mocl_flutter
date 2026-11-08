@@ -5,6 +5,7 @@ import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/presentation/widgets/window_size.dart';
 import 'package:mocl_flutter/features/database/domain/entities/favorite_data.dart';
 import 'package:mocl_flutter/features/keyword_alerts/data/keyword_alert_sync.dart';
+import 'package:mocl_flutter/features/keyword_alerts/domain/keyword_alert_expiry.dart';
 import 'package:mocl_shared/alerts/keyword_alerts.dart';
 import 'package:mocl_shared/entities/mocl_site_type.dart';
 
@@ -52,6 +53,18 @@ class _KeywordAlertsPageState()
   Future<void> _editKeywords(AlertSubscription sub) =>
       KeywordAlertFlow.edit(context, ref, sub);
 
+  Future<void> _renew(AlertSubscription sub) async {
+    final AlertSyncResult result = await renewKeywordAlert(ref, sub);
+    if (!mounted) return;
+    if (result != AlertSyncResult.synced) {
+      return KeywordAlertFlow.reportSync(context, result);
+    }
+    final String? ttl = keywordAlertTtlLabel(readKeywordAlertTtl(ref));
+    _showMessage(
+      '\'${sub.title}\' 알림을 다시 켰어요.${ttl == null ? '' : ' $ttl 동안 알려 드려요.'}',
+    );
+  }
+
   Future<void> _remove(AlertSubscription sub, int index) async {
     final AlertSyncResult result = await removeKeywordAlert(ref, sub);
     if (!mounted) return;
@@ -70,6 +83,8 @@ class _KeywordAlertsPageState()
   @override
   Widget build(BuildContext context) {
     final List<AlertSubscription> subs = keywordAlertsState(ref);
+    final Duration? ttl = keywordAlertTtlState(ref);
+    final DateTime now = DateTime.now();
     final theme = Theme.of(context);
     final systemOverlayStyle =
         theme.appBarTheme.systemOverlayStyle ?? SystemUiOverlayStyle.light;
@@ -106,11 +121,13 @@ class _KeywordAlertsPageState()
                       itemCount: subs.length + 1,
                       separatorBuilder: (_, _) => const SizedBox(height: 8),
                       itemBuilder: (context, i) {
-                        if (i == 0) return const _Description();
+                        if (i == 0) return _Description(ttl: ttl);
                         final AlertSubscription sub = subs[i - 1];
                         return _SubscriptionCard(
                           subscription: sub,
+                          expiry: KeywordAlertExpiry.of(sub, ttl, now),
                           onTap: () => _editKeywords(sub),
+                          onRenew: () => _renew(sub),
                           onRemove: () => _remove(sub, i - 1),
                         );
                       },
@@ -123,15 +140,18 @@ class _KeywordAlertsPageState()
   }
 }
 
-class const _Description() extends StatelessWidget {
+class const _Description({required final Duration? ttl})
+    extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final String? days = keywordAlertTtlLabel(ttl);
     return Padding(
       padding: const EdgeInsets.fromLTRB(4, 4, 4, 8),
       child: Text(
         '게시판에 키워드가 들어간 새 글이 올라오면 알려 드려요. '
-        '서버가 몇 분마다 확인하므로 조금 늦게 올 수 있어요.',
+        '서버가 몇 분마다 확인하므로 조금 늦게 올 수 있어요.'
+        '${days == null ? '' : ' 알림은 걸거나 고친 뒤 $days 동안 오고, 끝나면 다시 켜야 해요.'}',
         style: theme.textTheme.bodySmall?.copyWith(
           color: theme.colorScheme.onSurfaceVariant,
         ),
@@ -142,12 +162,16 @@ class const _Description() extends StatelessWidget {
 
 class const _SubscriptionCard({
   required final AlertSubscription subscription,
+  required final KeywordAlertExpiry expiry,
   required final VoidCallback onTap,
+  required final VoidCallback onRenew,
   required final VoidCallback onRemove,
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final bool expired = expiry.isExpired;
+    final String? label = expiry.label;
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest.withValues(
@@ -164,17 +188,63 @@ class const _SubscriptionCard({
           '${subscription.title} · ${subscription.site.title}',
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
+          style: expired
+              ? TextStyle(color: theme.colorScheme.onSurfaceVariant)
+              : null,
         ),
-        subtitle: Padding(
-          padding: const EdgeInsets.only(top: 6),
-          child: Wrap(
-            spacing: 6,
-            runSpacing: 6,
-            children: [
-              for (final String k in subscription.keywords)
-                KeywordChip(label: k),
-            ],
-          ),
+        subtitle: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 6),
+              child: Opacity(
+                opacity: expired ? 0.5 : 1,
+                child: Wrap(
+                  spacing: 6,
+                  runSpacing: 6,
+                  children: [
+                    for (final String k in subscription.keywords)
+                      KeywordChip(label: k),
+                  ],
+                ),
+              ),
+            ),
+            if (label != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: Row(
+                  children: [
+                    Icon(
+                      expired
+                          ? Icons.notifications_off_outlined
+                          : Icons.schedule,
+                      size: 14,
+                      color: expired
+                          ? theme.colorScheme.error
+                          : theme.colorScheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: 4),
+                    Text(
+                      expired ? '알림 기간이 끝났어요' : label,
+                      style: theme.textTheme.bodySmall?.copyWith(
+                        color: expired
+                            ? theme.colorScheme.error
+                            : theme.colorScheme.onSurfaceVariant,
+                      ),
+                    ),
+                    const Spacer(),
+                    TextButton(
+                      onPressed: onRenew,
+                      style: TextButton.styleFrom(
+                        visualDensity: VisualDensity.compact,
+                        tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                      ),
+                      child: Text(expired ? '다시 켜기' : '연장'),
+                    ),
+                  ],
+                ),
+              ),
+          ],
         ),
         trailing: IconButton(
           tooltip: '알림 끄기',

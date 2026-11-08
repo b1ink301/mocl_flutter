@@ -226,7 +226,7 @@ final class KeywordAlertsNotifierProvider
 }
 
 String _$keywordAlertsNotifierHash() =>
-    r'19bcc09c2080505ec7acfb2b6b5387d6e2250323';
+    r'6e95a03af75b1569af2e5c4808dbeca3f2e86498';
 
 /// 구독 목록. 바꾸면 기기에 저장하고 서버에 맞춘다.
 

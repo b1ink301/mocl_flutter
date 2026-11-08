@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/config/large_title_metrics.dart';
 import 'package:mocl_shared/entities/sort_type.dart';
+import 'package:mocl_flutter/features/keyword_alerts/domain/keyword_alert_expiry.dart';
 import 'package:mocl_flutter/features/keyword_alerts/presentation/state/keyword_alert_state_mixin.dart';
 import 'package:mocl_flutter/features/keyword_alerts/presentation/widgets/keyword_alert_editor.dart';
 import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mixin.dart';
@@ -114,10 +115,21 @@ class const _KeywordAlertButton()
       board.siteType,
       board.board,
     );
-    final bool on = sub != null;
+    final bool expired =
+        sub != null &&
+        KeywordAlertExpiry.of(
+          sub,
+          keywordAlertTtlState(ref),
+          DateTime.now(),
+        ).isExpired;
+    final bool on = sub != null && !expired;
 
     return PlainIconButton(
-      semanticLabel: on ? '키워드 알림 고치기' : '키워드 알림 켜기',
+      semanticLabel: on
+          ? '키워드 알림 고치기'
+          : expired
+          ? '키워드 알림 다시 켜기'
+          : '키워드 알림 켜기',
       onPressed: () => KeywordAlertFlow.edit(
         context,
         ref,
@@ -130,7 +142,11 @@ class const _KeywordAlertButton()
         ),
       ),
       icon: PlainIcon(
-        on ? Icons.notifications_active : Icons.notifications_none,
+        on
+            ? Icons.notifications_active
+            : expired
+            ? Icons.notifications_off_outlined
+            : Icons.notifications_none,
         color: on ? Theme.of(context).colorScheme.primary : null,
       ),
     );

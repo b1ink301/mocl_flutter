@@ -35,6 +35,7 @@ Future<void> main() async {
   final AlertCrawler crawler = AlertCrawler(
     store: alerts,
     push: push,
+    ttl: () => configs.current.config.alerts.ttl,
     fetch: (sub) => boards.fetch(
       sub.site,
       board: sub.board,

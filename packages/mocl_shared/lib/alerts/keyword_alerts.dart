@@ -56,6 +56,13 @@ abstract final class KeywordAlerts() {
     return _hosts[site]?.contains(uri.host.toLowerCase()) ?? false;
   }
 
+  /// [startedAt](걸거나 연장한 시각, ms)부터 [ttl] 이 지나 끝났는지. [ttl] 이 null 이면 기한 없음.
+  static bool isExpired(int startedAt, int now, Duration? ttl) =>
+      ttl != null && now >= expiresAt(startedAt, ttl);
+
+  static int expiresAt(int startedAt, Duration ttl) =>
+      startedAt + ttl.inMilliseconds;
+
   /// 키워드 비교용으로 다듬는다: 소문자, 공백 제거.
   /// "에어팟 프로" 와 "에어팟프로" 를 같은 것으로 본다.
   static String normalize(String text) =>
@@ -78,6 +85,10 @@ class const AlertSubscription({
   required final String url,
   required final String title,
   required final List<String> keywords,
+
+  /// 알림을 걸거나 연장한 시각(ms, 기기 시계). 기한(원격 설정 `alerts.ttlDays`)은 여기서 센다.
+  /// 이 값을 모르는 옛 앱이 올린 구독은 null — 서버는 등록을 받은 시각으로 센다.
+  final int? startedAt,
 }) {
   /// 같은 게시판인지 가르는 키(서버 크롤 단위).
   String get boardKey => '${site.name}|$board';
@@ -88,7 +99,18 @@ class const AlertSubscription({
     'url': url,
     'title': title,
     'keywords': keywords,
+    'startedAt': ?startedAt,
   };
+
+  AlertSubscription copyWith({List<String>? keywords, int? startedAt}) =>
+      AlertSubscription(
+        site: site,
+        board: board,
+        url: url,
+        title: title,
+        keywords: keywords ?? this.keywords,
+        startedAt: startedAt ?? this.startedAt,
+      );
 
   /// 검증하며 읽는다. 잘못되면 [FormatException].
   factory fromJson(Object? json) {
@@ -127,12 +149,17 @@ class const AlertSubscription({
         keywords.length > KeywordAlerts.maxKeywordsPerBoard) {
       throw const FormatException('키워드 수가 잘못됐다');
     }
+    final Object? startedAt = json['startedAt'];
+    if (startedAt != null && (startedAt is! int || startedAt < 0)) {
+      throw const FormatException('startedAt 이 잘못됐다');
+    }
     return AlertSubscription(
       site: site,
       board: board,
       url: url,
       title: title,
       keywords: keywords,
+      startedAt: startedAt as int?,
     );
   }
 }

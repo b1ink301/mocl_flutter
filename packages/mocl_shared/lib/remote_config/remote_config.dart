@@ -1,8 +1,10 @@
 import 'package:mocl_shared/entities/mocl_site_type.dart';
 
 import 'ads_config.dart';
+import 'alerts_config.dart';
 
 export 'ads_config.dart';
+export 'alerts_config.dart';
 
 /// 사이트 요청에 쓰는 기본 UA 묶음. 값(실제 UA 문자열)은 앱이 갖고,
 /// 원격 설정은 이름으로 고르거나 값을 덮어쓴다.
@@ -32,6 +34,7 @@ class const SiteRemoteConfig({
 /// - [userAgents]: 프리셋 UA 를 통째로 바꾼다(브라우저 버전 올리기 등).
 /// - [sites]: 사이트별로 다른 프리셋이나 UA 를 쓴다(차단 회피).
 /// - [ads]: 광고 크기 · 목록 광고 간격([AdsRemoteConfig]).
+/// - [alerts]: 키워드 알림 기한([AlertsRemoteConfig]). 서버 크롤러도 이 값을 따른다.
 ///
 /// JSON 예:
 /// ```json
@@ -39,20 +42,23 @@ class const SiteRemoteConfig({
 ///   "schemaVersion": 1,
 ///   "userAgents": { "mobile": "Mozilla/5.0 (Linux; Android 16; ...)" },
 ///   "sites": { "geekNews": { "userAgent": "mobile" } },
-///   "ads": { "detail": "small", "list": { "first": 5, "interval": 15 } }
+///   "ads": { "detail": "small", "list": { "first": 5, "interval": 15 } },
+///   "alerts": { "ttlDays": 3 }
 /// }
 /// ```
 class const RemoteConfig({
   final Map<UserAgentPreset, String> userAgents = const {},
   final Map<SiteType, SiteRemoteConfig> sites = const {},
   final AdsRemoteConfig ads = AdsRemoteConfig.empty,
+  final AlertsRemoteConfig alerts = AlertsRemoteConfig.empty,
 }) {
   /// 이 형식의 버전. 호환되지 않게 바꿀 때만 올린다. 앱은 모르는 버전을 버린다.
   static const int schemaVersion = 1;
 
   static const RemoteConfig empty = RemoteConfig();
 
-  bool get isEmpty => userAgents.isEmpty && sites.isEmpty && ads.isEmpty;
+  bool get isEmpty =>
+      userAgents.isEmpty && sites.isEmpty && ads.isEmpty && alerts.isEmpty;
 
   /// JSON 을 읽는다.
   ///
@@ -117,6 +123,7 @@ class const RemoteConfig({
       userAgents: userAgents,
       sites: sites,
       ads: AdsRemoteConfig.fromJson(json['ads'], fail),
+      alerts: AlertsRemoteConfig.fromJson(json['alerts'], fail),
     );
   }
 
@@ -144,6 +151,7 @@ class const RemoteConfig({
         e.key.name: e.value.toJson(),
     },
     if (!ads.isEmpty) 'ads': ads.toJson(),
+    if (!alerts.isEmpty) 'alerts': alerts.toJson(),
   };
 
   /// [site] 요청에 쓸 UA.

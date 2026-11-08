@@ -85,7 +85,7 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
 
 - 서버 `GET /v1/config`(ETag) 로 앱 업데이트 없이 바꿀 값을 받는다. 사이트 요청 UA
   (`userAgents` 프리셋 덮어쓰기 · `sites.{site}.userAgent`)와 광고(`ads`, `AdsRemoteConfig`)가 있다.
-  형식은 `RemoteConfig`.
+  형식은 `RemoteConfig`. 키워드 알림 기한(`alerts.ttlDays`)도 여기 있다(서버 크롤러는 저장 즉시 따른다).
 - 부팅 때 저장된 설정만 동기로 읽어 `remoteConfigProvider` 를 덮어쓰고, 서버 요청은 첫 프레임 2초 뒤.
   **새 설정은 다음 실행부터** 적용된다(실행 중 UA 를 바꾸면 만든 클라이언트 · 쿠키와 어긋난다).
 - 운영 중 설정 편집은 서버 관리 화면(`/admin`, `server/lib/src/admin/`)으로 한다. 토큰(`ADMIN_TOKEN`)은
@@ -114,6 +114,11 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   걸려 있으면 채운 종). 켜기 · 고치기 · 끄기 흐름은 `KeywordAlertFlow`(권한 · 서버 반영 · 스낵바) 하나로 모은다.
 - 알림 data 의 `url` 을 `SiteLinkResolver` 로 열어 상세로 간다(`KeywordAlertGate`, `AppUpdateGate` 안쪽).
   앱이 앞에 있으면 시스템이 띄우지 않으므로 스낵바로 보여 준다.
+- 알림에는 기한이 있다(원격 설정 `alerts.ttlDays`, 기본 3일, 0 = 기한 없음, 관리 화면 "키워드 알림 기한").
+  구독의 `startedAt`(걸거나 고치거나 연장한 시각)부터 세고, 서버 크롤러가 지난 구독을 건너뛴다
+  (`KeywordAlerts.isExpired`). `startedAt` 이 없거나(옛 앱) 서버가 받은 시각보다 앞서면 등록 시각으로 센다.
+  앱은 키워드 저장 · "연장" · "다시 켜기" 때 `startedAt` 을 지금으로 바꾸고(`KeywordAlertsNotifier.upsert`),
+  남은 기간은 `KeywordAlertExpiry` 로 보여 준다. 기한이 끝난 게시판은 크롤하지 않고 상태도 지운다(다시 켜면 첫 크롤부터).
 - 서버는 사용자가 준 게시판 URL 을 요청하므로 호스트를 `KeywordAlerts.isAllowedBoardUrl` 로 제한한다(SSRF).
   게시판 첫 크롤은 지금 글을 "본 것" 으로만 기록한다(옛 글로 알림 폭탄 방지). 실패하면 간격을 늘린다.
 - Android: 채널 `keyword_alerts` 는 `MainActivity` 가 만들고 매니페스트가 FCM 기본 채널 · 아이콘으로 지정한다.

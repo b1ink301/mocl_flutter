@@ -49,20 +49,37 @@ KeywordAlertSync keywordAlertSync(Ref ref) {
 @Riverpod(keepAlive: true)
 class KeywordAlertsNotifier() extends _$KeywordAlertsNotifier {
   @override
-  List<AlertSubscription> build() =>
-      ref.watch(keywordAlertStoreProvider).subscriptions();
+  List<AlertSubscription> build() {
+    final KeywordAlertStore store = ref.watch(keywordAlertStoreProvider);
+    final List<AlertSubscription> saved = store.subscriptions();
+    // 기한이 생기기 전에 건 알림은 시작 시각이 없다. 지금부터 센다(다음 동기화 때 서버에 올라간다).
+    if (saved.every((s) => s.startedAt != null)) return saved;
+    final int now = DateTime.now().millisecondsSinceEpoch;
+    final List<AlertSubscription> migrated = [
+      for (final s in saved)
+        s.startedAt == null ? s.copyWith(startedAt: now) : s,
+    ];
+    store.saveSubscriptions(migrated);
+    return migrated;
+  }
 
-  /// 같은 게시판이 있으면 바꾸고, 없으면 끝에 붙인다.
+  /// 같은 게시판이 있으면 바꾸고, 없으면 끝에 붙인다. 저장하면 기한을 지금부터 다시 센다.
   Future<AlertSyncResult> upsert(AlertSubscription sub) {
+    final AlertSubscription renewed = sub.copyWith(
+      startedAt: DateTime.now().millisecondsSinceEpoch,
+    );
     final List<AlertSubscription> next = [...state];
     final int index = next.indexWhere((s) => s.boardKey == sub.boardKey);
     if (index >= 0) {
-      next[index] = sub;
+      next[index] = renewed;
     } else {
-      next.add(sub);
+      next.add(renewed);
     }
     return _commit(next);
   }
+
+  /// 키워드는 그대로 두고 기한만 지금부터 다시 센다.
+  Future<AlertSyncResult> renew(AlertSubscription sub) => upsert(sub);
 
   Future<AlertSyncResult> remove(AlertSubscription sub) =>
       _commit(state.where((s) => s.boardKey != sub.boardKey).toList());

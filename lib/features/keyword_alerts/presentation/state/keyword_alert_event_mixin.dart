@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/features/keyword_alerts/application/keyword_alert_providers.dart';
 import 'package:mocl_flutter/features/keyword_alerts/data/keyword_alert_sync.dart';
 import 'package:mocl_flutter/features/keyword_alerts/data/push_messaging.dart';
+import 'package:mocl_flutter/features/remote_config/application/remote_config_providers.dart';
 import 'package:mocl_shared/alerts/keyword_alerts.dart';
 
 mixin class KeywordAlertEvent() {
@@ -9,6 +10,16 @@ mixin class KeywordAlertEvent() {
     WidgetRef ref,
     AlertSubscription sub,
   ) => ref.read(keywordAlertsProvider.notifier).upsert(sub);
+
+  /// 끝난(또는 곧 끝날) 알림을 지금부터 다시 센다.
+  Future<AlertSyncResult> renewKeywordAlert(
+    WidgetRef ref,
+    AlertSubscription sub,
+  ) => ref.read(keywordAlertsProvider.notifier).renew(sub);
+
+  /// 알림 기한(원격 설정, null = 기한 없음). 흐름 안에서 한 번 읽을 때.
+  Duration? readKeywordAlertTtl(WidgetRef ref) =>
+      ref.read(remoteConfigProvider).alerts.ttl;
 
   Future<AlertSyncResult> removeKeywordAlert(
     WidgetRef ref,

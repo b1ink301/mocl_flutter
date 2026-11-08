@@ -206,6 +206,7 @@ class AdminRoutes({
       'detail': AdsRemoteConfig.defaultDetail.name,
       'listFirst': AdsRemoteConfig.defaultListFirst,
       'listInterval': AdsRemoteConfig.defaultListInterval,
+      'ttlDays': AlertsRemoteConfig.defaultTtlDays,
     },
     'limits': {
       'listFirst': [AdsRemoteConfig.minListFirst, AdsRemoteConfig.maxListFirst],
@@ -213,6 +214,7 @@ class AdminRoutes({
         AdsRemoteConfig.minListInterval,
         AdsRemoteConfig.maxListInterval,
       ],
+      'ttlDays': [AlertsRemoteConfig.minTtlDays, AlertsRemoteConfig.maxTtlDays],
     },
   };
 
