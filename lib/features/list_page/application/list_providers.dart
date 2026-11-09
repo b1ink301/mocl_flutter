@@ -245,10 +245,11 @@ class ListPagingController() extends _$ListPagingController {
       final page = pages[p];
       final idx = page.indexWhere((e) => e.id == id);
       if (idx < 0) continue;
-      if (page[idx].isRead) return;
+      // 다시 연 글은 새 댓글 표시도 지운다.
+      if (page[idx].isRead && page[idx].newReplyCount == 0) return;
 
       final newPage = List<ListItem>.from(page);
-      newPage[idx] = page[idx].copyWith(isRead: true);
+      newPage[idx] = page[idx].copyWith(isRead: true, newReplyCount: 0);
       final newPages = List<List<ListItem>>.from(pages);
       newPages[p] = newPage;
 

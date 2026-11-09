@@ -39,9 +39,9 @@ mixin class ListSearchEvent() {
 
   /// 검색 결과에서 연 글을 읽음으로 표시한다(상세가 읽은 글 id 를 알려 준다).
   void bindSearchReadListener(WidgetRef ref) {
-    ref.listen<int>(readableStateProvider, (prev, next) {
-      if (next <= 0 || prev == next) return;
-      ref.read(searchPagingControllerProvider.notifier).markAsReadById(next);
+    ref.listen<({int id, int seq})>(readableStateProvider, (prev, next) {
+      if (next.id <= 0 || prev == next) return;
+      ref.read(searchPagingControllerProvider.notifier).markAsReadById(next.id);
     });
   }
 

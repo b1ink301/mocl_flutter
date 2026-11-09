@@ -226,6 +226,11 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   타므로 옛 백업도 자동으로 옮겨진다. 마이그레이션은 데이터 문제로 던지지 않는다
   (던지면 DB 열기가 실패해 앱이 안 뜬다).
 - 읽음 기록 `{site}_read` 는 `글 id → 읽은 시각(ms)`. 180일 지난 기록은 하루 한 번 정리.
+- 본 댓글 수 `{site}_read_reply` 는 `글 id → {c: 댓글 수, t: 기록 시각}`, 14일 보관(같은 정리에서 지운다).
+  상세를 받은 뒤 한 번 남기고(목록 값 · 상세 댓글 수 중 큰 값, 같으면 쓰지 않음), 목록을 받을 때
+  `ListDataSourceImpl` 이 비교해 `ListItem.newReplyCount` 를 채운다. 목록 행은 읽은 글에
+  `[17 | +3]` 배지(`_NewReplyBadge`, +N 칸은 안 읽은 댓글 배지와 같은 색)로 보이고, 다시 열면 지운다(`readableStateProvider` 는 같은 글도 알리게 순번을 붙인다).
+  댓글 수 문자열은 `parseReplyCount`(정확한 수가 아니면 null → 비교 안 함).
 
 ## release 빌드 / 의존성 업그레이드
 
@@ -300,6 +305,9 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   있어 광고를 페이드인하지 않는다). 못 받으면 `NativeAdCollapse` 로 칸을 접는다.
   광고를 새로 받을 때(모양 변경 등)는 스위처 key 를 바꿔 전환 없이 그린다 — 옛 `AdWidget` 이
   전환 중에 남아 있으면 다음 프레임에 정리된 광고를 그리게 된다.
+  스위처는 **스크롤 중에는 광고 뷰를 붙이지 않고** 자리 표시를 두었다가 멈추면 붙인다. 플랫폼 뷰를
+  붙이는 동안 Android 메인 스레드가 15~20ms 막혀 vsync 가 밀리기 때문이다(S24 Ultra 실측, 플링 중
+  2~3 프레임 손실). 이 대기를 빼지 말 것.
 - ID 는 **저장소에 두지 않는다.** 루트의 `ads.json`(gitignore, 형식은 `ads.example.json`)에 두고
   `--dart-define-from-file=ads.json` 으로 넣는다. 앱 ID 는 `build.gradle.kts` 가 같은
   define(`MOCL_ADMOB_APP_ID`) 또는 `-PmoclAdmobAppId` 에서 읽고, 광고 단위는 `AdUnitIds` 가 읽는다.

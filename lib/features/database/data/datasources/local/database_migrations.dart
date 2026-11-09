@@ -12,6 +12,12 @@ const int kAppDatabaseVersion = 3;
 StoreRef<int, int> readStoreOf(SiteType siteType) =>
     StoreRef<int, int>('${siteType.name}_read');
 
+/// 사이트별 "글을 열었을 때 본 댓글 수" 스토어. 키는 글 id,
+/// 값은 `{c: 댓글 수, t: 기록한 시각(epoch ms)}`. 읽음 기록보다 짧게 둔다
+/// (목록에 다시 나오는 글은 대개 최근 글이라). 새 스토어라 버전은 그대로.
+StoreRef<int, Map<String, Object?>> seenReplyStoreOf(SiteType siteType) =>
+    StoreRef<int, Map<String, Object?>>('${siteType.name}_read_reply');
+
 /// sembast 의 `onVersionChanged`. DB 를 열 때 파일의 버전이 [kAppDatabaseVersion]
 /// 과 다르면 한 트랜잭션 안에서 불린다. 여기서 던지면 열기 자체가 실패하므로
 /// 데이터 문제로는 던지지 않는다.

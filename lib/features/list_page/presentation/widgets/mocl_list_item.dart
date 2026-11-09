@@ -1,7 +1,9 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/presentation/widgets/category_tag.dart';
 import 'package:mocl_flutter/core/presentation/widgets/list_detail_layout.dart';
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
+import 'package:mocl_flutter/core/presentation/widgets/plain_text.dart';
 import 'package:mocl_flutter/core/presentation/widgets/round_text_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mixin.dart';
@@ -34,14 +36,23 @@ class const MoclListItem({super.key}) extends StatelessWidget with ListEvent {
       final badgeBg = (badgeStyle.color ?? const Color(0xFFE8552D)).withValues(
         alpha: 0.12,
       );
-      replyBadge = RoundTextWidget(
-        text: item.reply,
-        textStyle: badgeStyle,
-        backgroundColor: badgeBg,
-        borderColor: Colors.transparent,
-        borderRadius: 999,
-        padding: const EdgeInsets.symmetric(horizontal: 7, vertical: 1.5),
-      );
+      final int newReplies = isRead ? item.newReplyCount : 0;
+      replyBadge = newReplies > 0
+          ? _NewReplyBadge(
+              reply: item.reply,
+              newReplies: newReplies,
+              style: badgeStyle,
+              background: badgeBg,
+              accentStyle: styles.badge(false),
+            )
+          : RoundTextWidget(
+              text: item.reply,
+              textStyle: badgeStyle,
+              backgroundColor: badgeBg,
+              borderColor: Colors.transparent,
+              borderRadius: 999,
+              padding: _badgePadding(badgeStyle, left: 7, right: 7),
+            );
     }
 
     // 넓은 화면에서 옆 칸에 열려 있는 글은 강조한다.
@@ -104,6 +115,89 @@ class const MoclListItem({super.key}) extends StatelessWidget with ListEvent {
             child: row,
           )
         : row;
+  }
+}
+
+/// 댓글 배지 여백. 숫자는 아래 꼬리(디센더)가 없는데 글자 칸은 그 자리까지 잡아서
+/// 위아래를 같게 주면 숫자가 알약 가운데보다 아래로 처진다(S24 Ultra 실측 약 0.7dp,
+/// 글자 크기의 6~7%). 위를 그만큼 덜고 아래에 더해 높이는 그대로 두고 가운데로 올린다.
+EdgeInsets _badgePadding(
+  TextStyle style, {
+  required double left,
+  required double right,
+}) {
+  const double vertical = 1.5;
+  final double lift = (style.fontSize ?? 11) * _digitLift;
+  return EdgeInsets.fromLTRB(left, vertical - lift, right, vertical + lift);
+}
+
+/// 숫자를 올릴 비율(글자 크기 대비).
+const double _digitLift = 0.065;
+
+/// 읽은 글에 새 댓글이 붙었을 때의 배지: `[ 17 | +3 ]` 한 덩어리.
+/// 왼쪽(댓글 수)은 읽은 행처럼 흐리게, 오른쪽(+N)은 안 읽은 글의 댓글 배지와 같은
+/// 모양(강조색 글자 · 12% 배경)으로 그려 "새로 읽을 것" 으로 보이게 한다. 꽉 채운
+/// 강조색은 목록에서 너무 튀어서 쓰지 않는다.
+/// `+` 는 뜻만 남기고 작고 가늘게 그려 두 칸의 폭 · 무게가 비슷해 보이게 한다.
+class const _NewReplyBadge({
+  required final String reply,
+  required final int newReplies,
+  required final TextStyle style,
+  required final Color background,
+  required final TextStyle accentStyle,
+}) extends StatelessWidget {
+
+  /// `+` 크기(숫자 대비).
+  static const double _plusScale = 0.75;
+
+  @override
+  Widget build(BuildContext context) {
+    // 안 읽은 글의 댓글 배지(RoundTextWidget)와 같은 글자 · 배경.
+    final Color accentBg = (accentStyle.color ?? const Color(0xFFE8552D))
+        .withValues(alpha: 0.12);
+    final TextStyle newStyle = accentStyle.fontFamily == null
+        ? accentStyle.copyWith(fontFamily: kAppFontFamily)
+        : accentStyle;
+    final TextStyle plusStyle = newStyle.copyWith(
+      fontSize: (newStyle.fontSize ?? 11) * _plusScale,
+      fontWeight: FontWeight.w400,
+    );
+    return Semantics(
+      label: '댓글 $reply개, 새 댓글 $newReplies개',
+      excludeSemantics: true,
+      child: ClipRRect(
+        borderRadius: BorderRadius.circular(999),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            ColoredBox(
+              color: background,
+              child: Padding(
+                padding: _badgePadding(style, left: 7, right: 5),
+                child: PlainText(reply, maxLines: 1, style: style),
+              ),
+            ),
+            ColoredBox(
+              color: accentBg,
+              child: Padding(
+                padding: _badgePadding(newStyle, left: 3, right: 7),
+                child: RichText(
+                  textDirection: TextDirection.ltr,
+                  maxLines: 1,
+                  text: TextSpan(
+                    style: newStyle,
+                    children: [
+                      TextSpan(text: '+', style: plusStyle),
+                      TextSpan(text: '$newReplies'),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }
 

@@ -8,7 +8,12 @@ import 'package:mocl_flutter/core/error/failures.dart';
 abstract class DetailRepository() {
   Future<Either<Failure, Details>> getDetail({required ListItem item});
 
-  Future<int> setReadFlag({required SiteType siteType, required int boardId});
+  Future<int> setReadFlag({
+    required SiteType siteType,
+    required int boardId,
+    int? replyCount,
+    bool alreadyRead = false,
+  });
 
   /// 이 사이트에서 앱으로 댓글을 쓸 수 있는지.
   bool get supportsCommentWrite;

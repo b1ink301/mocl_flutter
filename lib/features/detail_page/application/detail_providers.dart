@@ -10,6 +10,7 @@ import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/detail_page/application/use_case_provider.dart';
 import 'package:mocl_flutter/features/detail_page/domain/usecases/set_read_flag.dart';
 import 'package:mocl_shared/util/mocl_logger.dart';
+import 'package:mocl_shared/util/reply_count.dart';
 import 'package:mocl_flutter/features/settings_page/application/settings_providers.dart';
 import 'package:mocl_flutter/features/translation/application/translation_providers.dart';
 import 'package:mocl_flutter/features/translation/domain/details_translator.dart';
@@ -45,7 +46,9 @@ class DetailsNotifier() extends _$DetailsNotifier {
     final siteType = ref.watch(detailSiteTypeProvider);
     final result = await ref.read(getDetailProvider(siteType))(listItem);
     final data = result.getOrElse((f) => throw f);
-    await ref.watch(_markAsReadProvider(listItem).future);
+    await ref.watch(
+      _markAsReadProvider(listItem, _seenReplyCount(listItem, data)).future,
+    );
     ref.read(detailTitleStateProvider.notifier).update(data.title);
     ref.read(detailCategoryStateProvider.notifier).update(data.category);
     return data;
@@ -151,20 +154,34 @@ class DetailTranslationNotifier() extends _$DetailTranslationNotifier {
       ref.read(detailTitleStateProvider.notifier).update(title);
 }
 
+/// 이번에 본 댓글 수. 목록 값을 기준으로, 상세에서 더 많이 받았으면 그 값으로
+/// 올린다(목록이 오래돼 실제로는 더 본 경우 다음 새로 고침에 거짓 `+N` 이 뜨지 않게).
+/// 목록 값을 정확히 읽을 수 없으면(스크랩 · 링크로 연 글 등) 남기지 않는다.
+int? _seenReplyCount(ListItem listItem, Details details) {
+  final int? fromList = parseReplyCount(listItem.reply);
+  if (fromList == null) return null;
+  return max(fromList, details.comments.length);
+}
+
+/// 읽음과 본 댓글 수를 한 번에 남긴다(상세를 받은 뒤 한 번).
 @Riverpod(dependencies: [detailSiteType])
-Future<int> _markAsRead(Ref ref, ListItem listItem) async {
-  if (!listItem.isRead) {
-    final siteType = ref.read(detailSiteTypeProvider);
-    final params = SetReadFlagParams(siteType: siteType, boardId: listItem.id);
-    final int result = await ref.read(setReadFlagProvider(siteType))(params);
-    // 목록의 읽음 표시는 같은 사이트일 때만 갱신한다(다른 사이트 글의 id 가
-    // 우연히 같으면 엉뚱한 행이 읽음 처리된다).
-    if (siteType == ref.read(currentSiteTypeProvider)) {
-      ref.read(readableStateProvider.notifier).update(listItem.id);
-    }
-    return result;
+Future<int> _markAsRead(Ref ref, ListItem listItem, int? replyCount) async {
+  // 이미 읽은 글이고 댓글 수도 모르면 남길 것이 없다.
+  if (listItem.isRead && replyCount == null) return -1;
+  final siteType = ref.read(detailSiteTypeProvider);
+  final params = SetReadFlagParams(
+    siteType: siteType,
+    boardId: listItem.id,
+    replyCount: replyCount,
+    alreadyRead: listItem.isRead,
+  );
+  final int result = await ref.read(setReadFlagProvider(siteType))(params);
+  // 목록의 읽음 표시는 같은 사이트일 때만 갱신한다(다른 사이트 글의 id 가
+  // 우연히 같으면 엉뚱한 행이 읽음 처리된다).
+  if (siteType == ref.read(currentSiteTypeProvider)) {
+    ref.read(readableStateProvider.notifier).update(listItem.id);
   }
-  return -1;
+  return result;
 }
 
 /// 툴바 크럼브: `클리앙 › 모두의공원`.

@@ -160,7 +160,7 @@ final class DetailsNotifierProvider
   DetailsNotifier create() => DetailsNotifier();
 }
 
-String _$detailsNotifierHash() => r'5c4467b58e09d6616c78cbe9409d8bba4ce2ec2c';
+String _$detailsNotifierHash() => r'53b51ad2c1cd141e639ccd353b41d351440cc322';
 
 abstract class _$DetailsNotifier extends $AsyncNotifier<Details> {
   FutureOr<Details> build();
@@ -273,15 +273,20 @@ abstract class _$DetailTranslationNotifier
   }
 }
 
+/// 읽음과 본 댓글 수를 한 번에 남긴다(상세를 받은 뒤 한 번).
+
 @ProviderFor(_markAsRead)
 final _markAsReadProvider = _MarkAsReadFamily._();
+
+/// 읽음과 본 댓글 수를 한 번에 남긴다(상세를 받은 뒤 한 번).
 
 final class _MarkAsReadProvider
     extends $FunctionalProvider<AsyncValue<int>, int, FutureOr<int>>
     with $FutureModifier<int>, $FutureProvider<int> {
+  /// 읽음과 본 댓글 수를 한 번에 남긴다(상세를 받은 뒤 한 번).
   _MarkAsReadProvider._({
     required _MarkAsReadFamily super.from,
-    required ListItem super.argument,
+    required (ListItem, int?) super.argument,
   }) : super(
          retry: null,
          name: r'_markAsReadProvider',
@@ -301,7 +306,7 @@ final class _MarkAsReadProvider
   String toString() {
     return r'_markAsReadProvider'
         ''
-        '($argument)';
+        '$argument';
   }
 
   @$internal
@@ -311,8 +316,8 @@ final class _MarkAsReadProvider
 
   @override
   FutureOr<int> create(Ref ref) {
-    final argument = this.argument as ListItem;
-    return _markAsRead(ref, argument);
+    final argument = this.argument as (ListItem, int?);
+    return _markAsRead(ref, argument.$1, argument.$2);
   }
 
   @override
@@ -326,10 +331,12 @@ final class _MarkAsReadProvider
   }
 }
 
-String _$_markAsReadHash() => r'485325e6a48a369cc16c2f436b9ca07548a91c31';
+String _$_markAsReadHash() => r'202e860efa212d391c1c001bdd89c5254ec30fe9';
+
+/// 읽음과 본 댓글 수를 한 번에 남긴다(상세를 받은 뒤 한 번).
 
 final class _MarkAsReadFamily extends $Family
-    with $FunctionalFamilyOverride<FutureOr<int>, ListItem> {
+    with $FunctionalFamilyOverride<FutureOr<int>, (ListItem, int?)> {
   _MarkAsReadFamily._()
     : super(
         retry: null,
@@ -342,8 +349,10 @@ final class _MarkAsReadFamily extends $Family
         isAutoDispose: true,
       );
 
-  _MarkAsReadProvider call(ListItem listItem) =>
-      _MarkAsReadProvider._(argument: listItem, from: this);
+  /// 읽음과 본 댓글 수를 한 번에 남긴다(상세를 받은 뒤 한 번).
+
+  _MarkAsReadProvider call(ListItem listItem, int? replyCount) =>
+      _MarkAsReadProvider._(argument: (listItem, replyCount), from: this);
 
   @override
   String toString() => r'_markAsReadProvider';

@@ -62,11 +62,18 @@ abstract class _$CurrentSiteTypeNotifier extends $Notifier<SiteType> {
   }
 }
 
+/// 상세에서 글을 열었다는 신호(목록 행을 읽음으로 바꾸고 새 댓글 `+N` 을 지운다).
+/// 같은 글을 다시 열어도 알리도록 순번을 붙인다.
+
 @ProviderFor(ReadableStateNotifier)
 final readableStateProvider = ReadableStateNotifierProvider._();
 
+/// 상세에서 글을 열었다는 신호(목록 행을 읽음으로 바꾸고 새 댓글 `+N` 을 지운다).
+/// 같은 글을 다시 열어도 알리도록 순번을 붙인다.
 final class ReadableStateNotifierProvider
-    extends $NotifierProvider<ReadableStateNotifier, int> {
+    extends $NotifierProvider<ReadableStateNotifier, ({int id, int seq})> {
+  /// 상세에서 글을 열었다는 신호(목록 행을 읽음으로 바꾸고 새 댓글 `+N` 을 지운다).
+  /// 같은 글을 다시 열어도 알리도록 순번을 붙인다.
   ReadableStateNotifierProvider._()
     : super(
         from: null,
@@ -86,28 +93,31 @@ final class ReadableStateNotifierProvider
   ReadableStateNotifier create() => ReadableStateNotifier();
 
   /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(int value) {
+  Override overrideWithValue(({int id, int seq}) value) {
     return $ProviderOverride(
       origin: this,
-      providerOverride: $SyncValueProvider<int>(value),
+      providerOverride: $SyncValueProvider<({int id, int seq})>(value),
     );
   }
 }
 
 String _$readableStateNotifierHash() =>
-    r'44146b800b60d84b6ec94230767d704f4bea2217';
+    r'4e6f742d4b2c54c53ede793495e0ab8092e907d2';
 
-abstract class _$ReadableStateNotifier extends $Notifier<int> {
-  int build();
+/// 상세에서 글을 열었다는 신호(목록 행을 읽음으로 바꾸고 새 댓글 `+N` 을 지운다).
+/// 같은 글을 다시 열어도 알리도록 순번을 붙인다.
+
+abstract class _$ReadableStateNotifier extends $Notifier<({int id, int seq})> {
+  ({int id, int seq}) build();
   @$mustCallSuper
   @override
   WhenComplete runBuild() {
-    final ref = this.ref as $Ref<int, int>;
+    final ref = this.ref as $Ref<({int id, int seq}), ({int id, int seq})>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<int, int>,
-              int,
+              AnyNotifier<({int id, int seq}), ({int id, int seq})>,
+              ({int id, int seq}),
               Object?,
               Object?
             >;

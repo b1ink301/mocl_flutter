@@ -15,7 +15,9 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ListItem {
 
- int get id; String get title; String get reply; String get category; String get time; String get url; String get info; String get board; String get boardTitle; String get like; String get hit; UserInfo get userInfo; bool get hasImage; bool get isRead;
+ int get id; String get title; String get reply; String get category; String get time; String get url; String get info; String get board; String get boardTitle; String get like; String get hit; UserInfo get userInfo; bool get hasImage; bool get isRead;/// 읽은 글에서, 마지막으로 열었을 때보다 늘어난 댓글 수. 파서는 채우지 않고
+/// 앱이 목록을 받은 뒤 로컬 기록과 비교해 넣는다.
+ int get newReplyCount;
 /// Create a copy of ListItem
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -27,20 +29,20 @@ $ListItemCopyWith<ListItem> get copyWith => _$ListItemCopyWithImpl<ListItem>(thi
 @override
 bool operator ==(Object other) {
   final _this = this as ListItem;
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ListItem&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.reply, _this.reply) || other.reply == _this.reply)&&(identical(other.category, _this.category) || other.category == _this.category)&&(identical(other.time, _this.time) || other.time == _this.time)&&(identical(other.url, _this.url) || other.url == _this.url)&&(identical(other.info, _this.info) || other.info == _this.info)&&(identical(other.board, _this.board) || other.board == _this.board)&&(identical(other.boardTitle, _this.boardTitle) || other.boardTitle == _this.boardTitle)&&(identical(other.like, _this.like) || other.like == _this.like)&&(identical(other.hit, _this.hit) || other.hit == _this.hit)&&(identical(other.userInfo, _this.userInfo) || other.userInfo == _this.userInfo)&&(identical(other.hasImage, _this.hasImage) || other.hasImage == _this.hasImage)&&(identical(other.isRead, _this.isRead) || other.isRead == _this.isRead));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ListItem&&(identical(other.id, _this.id) || other.id == _this.id)&&(identical(other.title, _this.title) || other.title == _this.title)&&(identical(other.reply, _this.reply) || other.reply == _this.reply)&&(identical(other.category, _this.category) || other.category == _this.category)&&(identical(other.time, _this.time) || other.time == _this.time)&&(identical(other.url, _this.url) || other.url == _this.url)&&(identical(other.info, _this.info) || other.info == _this.info)&&(identical(other.board, _this.board) || other.board == _this.board)&&(identical(other.boardTitle, _this.boardTitle) || other.boardTitle == _this.boardTitle)&&(identical(other.like, _this.like) || other.like == _this.like)&&(identical(other.hit, _this.hit) || other.hit == _this.hit)&&(identical(other.userInfo, _this.userInfo) || other.userInfo == _this.userInfo)&&(identical(other.hasImage, _this.hasImage) || other.hasImage == _this.hasImage)&&(identical(other.isRead, _this.isRead) || other.isRead == _this.isRead)&&(identical(other.newReplyCount, _this.newReplyCount) || other.newReplyCount == _this.newReplyCount));
 }
 
 
 @override
 int get hashCode {
   final _this = this as ListItem;
-  return Object.hash(runtimeType,_this.id,_this.title,_this.reply,_this.category,_this.time,_this.url,_this.info,_this.board,_this.boardTitle,_this.like,_this.hit,_this.userInfo,_this.hasImage,_this.isRead);
+  return Object.hash(runtimeType,_this.id,_this.title,_this.reply,_this.category,_this.time,_this.url,_this.info,_this.board,_this.boardTitle,_this.like,_this.hit,_this.userInfo,_this.hasImage,_this.isRead,_this.newReplyCount);
 }
 
 @override
 String toString() {
   final _this = this as ListItem;
-  return 'ListItem(id: ${_this.id}, title: ${_this.title}, reply: ${_this.reply}, category: ${_this.category}, time: ${_this.time}, url: ${_this.url}, info: ${_this.info}, board: ${_this.board}, boardTitle: ${_this.boardTitle}, like: ${_this.like}, hit: ${_this.hit}, userInfo: ${_this.userInfo}, hasImage: ${_this.hasImage}, isRead: ${_this.isRead})';
+  return 'ListItem(id: ${_this.id}, title: ${_this.title}, reply: ${_this.reply}, category: ${_this.category}, time: ${_this.time}, url: ${_this.url}, info: ${_this.info}, board: ${_this.board}, boardTitle: ${_this.boardTitle}, like: ${_this.like}, hit: ${_this.hit}, userInfo: ${_this.userInfo}, hasImage: ${_this.hasImage}, isRead: ${_this.isRead}, newReplyCount: ${_this.newReplyCount})';
 }
 
 
@@ -51,7 +53,7 @@ abstract mixin class $ListItemCopyWith<$Res>  {
   factory $ListItemCopyWith(ListItem value, $Res Function(ListItem) _then) = _$ListItemCopyWithImpl;
 @useResult
 $Res call({
- int id, String title, String reply, String category, String time, String url, String info, String board, String boardTitle, String like, String hit, UserInfo userInfo, bool hasImage, bool isRead
+ int id, String title, String reply, String category, String time, String url, String info, String board, String boardTitle, String like, String hit, UserInfo userInfo, bool hasImage, bool isRead, int newReplyCount
 });
 
 
@@ -68,7 +70,7 @@ class _$ListItemCopyWithImpl<$Res>
 
 /// Create a copy of ListItem
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? reply = null,Object? category = null,Object? time = null,Object? url = null,Object? info = null,Object? board = null,Object? boardTitle = null,Object? like = null,Object? hit = null,Object? userInfo = null,Object? hasImage = null,Object? isRead = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? id = null,Object? title = null,Object? reply = null,Object? category = null,Object? time = null,Object? url = null,Object? info = null,Object? board = null,Object? boardTitle = null,Object? like = null,Object? hit = null,Object? userInfo = null,Object? hasImage = null,Object? isRead = null,Object? newReplyCount = null,}) {
   return _then(ListItem(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -84,7 +86,8 @@ as String,hit: null == hit ? _self.hit : hit // ignore: cast_nullable_to_non_nul
 as String,userInfo: null == userInfo ? _self.userInfo : userInfo // ignore: cast_nullable_to_non_nullable
 as UserInfo,hasImage: null == hasImage ? _self.hasImage : hasImage // ignore: cast_nullable_to_non_nullable
 as bool,isRead: null == isRead ? _self.isRead : isRead // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,newReplyCount: null == newReplyCount ? _self.newReplyCount : newReplyCount // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 /// Create a copy of ListItem
@@ -178,10 +181,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String title,  String reply,  String category,  String time,  String url,  String info,  String board,  String boardTitle,  String like,  String hit,  UserInfo userInfo,  bool hasImage,  bool isRead)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( int id,  String title,  String reply,  String category,  String time,  String url,  String info,  String board,  String boardTitle,  String like,  String hit,  UserInfo userInfo,  bool hasImage,  bool isRead,  int newReplyCount)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ListItem() when $default != null:
-return $default(_that.id,_that.title,_that.reply,_that.category,_that.time,_that.url,_that.info,_that.board,_that.boardTitle,_that.like,_that.hit,_that.userInfo,_that.hasImage,_that.isRead);case _:
+return $default(_that.id,_that.title,_that.reply,_that.category,_that.time,_that.url,_that.info,_that.board,_that.boardTitle,_that.like,_that.hit,_that.userInfo,_that.hasImage,_that.isRead,_that.newReplyCount);case _:
   return orElse();
 
 }
@@ -199,10 +202,10 @@ return $default(_that.id,_that.title,_that.reply,_that.category,_that.time,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String title,  String reply,  String category,  String time,  String url,  String info,  String board,  String boardTitle,  String like,  String hit,  UserInfo userInfo,  bool hasImage,  bool isRead)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( int id,  String title,  String reply,  String category,  String time,  String url,  String info,  String board,  String boardTitle,  String like,  String hit,  UserInfo userInfo,  bool hasImage,  bool isRead,  int newReplyCount)  $default,) {final _that = this;
 switch (_that) {
 case _ListItem():
-return $default(_that.id,_that.title,_that.reply,_that.category,_that.time,_that.url,_that.info,_that.board,_that.boardTitle,_that.like,_that.hit,_that.userInfo,_that.hasImage,_that.isRead);case _:
+return $default(_that.id,_that.title,_that.reply,_that.category,_that.time,_that.url,_that.info,_that.board,_that.boardTitle,_that.like,_that.hit,_that.userInfo,_that.hasImage,_that.isRead,_that.newReplyCount);case _:
   throw StateError('Unexpected subclass');
 
 }
@@ -219,10 +222,10 @@ return $default(_that.id,_that.title,_that.reply,_that.category,_that.time,_that
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String title,  String reply,  String category,  String time,  String url,  String info,  String board,  String boardTitle,  String like,  String hit,  UserInfo userInfo,  bool hasImage,  bool isRead)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( int id,  String title,  String reply,  String category,  String time,  String url,  String info,  String board,  String boardTitle,  String like,  String hit,  UserInfo userInfo,  bool hasImage,  bool isRead,  int newReplyCount)?  $default,) {final _that = this;
 switch (_that) {
 case _ListItem() when $default != null:
-return $default(_that.id,_that.title,_that.reply,_that.category,_that.time,_that.url,_that.info,_that.board,_that.boardTitle,_that.like,_that.hit,_that.userInfo,_that.hasImage,_that.isRead);case _:
+return $default(_that.id,_that.title,_that.reply,_that.category,_that.time,_that.url,_that.info,_that.board,_that.boardTitle,_that.like,_that.hit,_that.userInfo,_that.hasImage,_that.isRead,_that.newReplyCount);case _:
   return null;
 
 }
@@ -234,7 +237,7 @@ return $default(_that.id,_that.title,_that.reply,_that.category,_that.time,_that
 
 
 class _ListItem implements ListItem {
-  const _ListItem({required this.id, required this.title, required this.reply, required this.category, required this.time, required this.url, required this.info, required this.board, required this.boardTitle, required this.like, required this.hit, required this.userInfo, required this.hasImage, required this.isRead});
+  const _ListItem({required this.id, required this.title, required this.reply, required this.category, required this.time, required this.url, required this.info, required this.board, required this.boardTitle, required this.like, required this.hit, required this.userInfo, required this.hasImage, required this.isRead, this.newReplyCount = 0});
   
 
 @override final  int id;
@@ -251,6 +254,9 @@ class _ListItem implements ListItem {
 @override final  UserInfo userInfo;
 @override final  bool hasImage;
 @override final  bool isRead;
+/// 읽은 글에서, 마지막으로 열었을 때보다 늘어난 댓글 수. 파서는 채우지 않고
+/// 앱이 목록을 받은 뒤 로컬 기록과 비교해 넣는다.
+@override@JsonKey() final  int newReplyCount;
 
 /// Create a copy of ListItem
 /// with the given fields replaced by the non-null parameter values.
@@ -262,18 +268,18 @@ _$ListItemCopyWith<_ListItem> get copyWith => __$ListItemCopyWithImpl<_ListItem>
 
 @override
 bool operator ==(Object other) {
-    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ListItem&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.reply, reply) || other.reply == reply)&&(identical(other.category, category) || other.category == category)&&(identical(other.time, time) || other.time == time)&&(identical(other.url, url) || other.url == url)&&(identical(other.info, info) || other.info == info)&&(identical(other.board, board) || other.board == board)&&(identical(other.boardTitle, boardTitle) || other.boardTitle == boardTitle)&&(identical(other.like, like) || other.like == like)&&(identical(other.hit, hit) || other.hit == hit)&&(identical(other.userInfo, userInfo) || other.userInfo == userInfo)&&(identical(other.hasImage, hasImage) || other.hasImage == hasImage)&&(identical(other.isRead, isRead) || other.isRead == isRead));
+    return identical(this, other) || (other.runtimeType == runtimeType&&other is _ListItem&&(identical(other.id, id) || other.id == id)&&(identical(other.title, title) || other.title == title)&&(identical(other.reply, reply) || other.reply == reply)&&(identical(other.category, category) || other.category == category)&&(identical(other.time, time) || other.time == time)&&(identical(other.url, url) || other.url == url)&&(identical(other.info, info) || other.info == info)&&(identical(other.board, board) || other.board == board)&&(identical(other.boardTitle, boardTitle) || other.boardTitle == boardTitle)&&(identical(other.like, like) || other.like == like)&&(identical(other.hit, hit) || other.hit == hit)&&(identical(other.userInfo, userInfo) || other.userInfo == userInfo)&&(identical(other.hasImage, hasImage) || other.hasImage == hasImage)&&(identical(other.isRead, isRead) || other.isRead == isRead)&&(identical(other.newReplyCount, newReplyCount) || other.newReplyCount == newReplyCount));
 }
 
 
 @override
 int get hashCode {
-    return Object.hash(runtimeType,id,title,reply,category,time,url,info,board,boardTitle,like,hit,userInfo,hasImage,isRead);
+    return Object.hash(runtimeType,id,title,reply,category,time,url,info,board,boardTitle,like,hit,userInfo,hasImage,isRead,newReplyCount);
 }
 
 @override
 String toString() {
-    return 'ListItem(id: $id, title: $title, reply: $reply, category: $category, time: $time, url: $url, info: $info, board: $board, boardTitle: $boardTitle, like: $like, hit: $hit, userInfo: $userInfo, hasImage: $hasImage, isRead: $isRead)';
+    return 'ListItem(id: $id, title: $title, reply: $reply, category: $category, time: $time, url: $url, info: $info, board: $board, boardTitle: $boardTitle, like: $like, hit: $hit, userInfo: $userInfo, hasImage: $hasImage, isRead: $isRead, newReplyCount: $newReplyCount)';
 }
 
 
@@ -284,7 +290,7 @@ abstract mixin class _$ListItemCopyWith<$Res> implements $ListItemCopyWith<$Res>
   factory _$ListItemCopyWith(_ListItem value, $Res Function(_ListItem) _then) = __$ListItemCopyWithImpl;
 @override @useResult
 $Res call({
- int id, String title, String reply, String category, String time, String url, String info, String board, String boardTitle, String like, String hit, UserInfo userInfo, bool hasImage, bool isRead
+ int id, String title, String reply, String category, String time, String url, String info, String board, String boardTitle, String like, String hit, UserInfo userInfo, bool hasImage, bool isRead, int newReplyCount
 });
 
 
@@ -301,7 +307,7 @@ class __$ListItemCopyWithImpl<$Res>
 
 /// Create a copy of ListItem
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? reply = null,Object? category = null,Object? time = null,Object? url = null,Object? info = null,Object? board = null,Object? boardTitle = null,Object? like = null,Object? hit = null,Object? userInfo = null,Object? hasImage = null,Object? isRead = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? id = null,Object? title = null,Object? reply = null,Object? category = null,Object? time = null,Object? url = null,Object? info = null,Object? board = null,Object? boardTitle = null,Object? like = null,Object? hit = null,Object? userInfo = null,Object? hasImage = null,Object? isRead = null,Object? newReplyCount = null,}) {
   return _then(_ListItem(
 id: null == id ? _self.id : id // ignore: cast_nullable_to_non_nullable
 as int,title: null == title ? _self.title : title // ignore: cast_nullable_to_non_nullable
@@ -317,7 +323,8 @@ as String,hit: null == hit ? _self.hit : hit // ignore: cast_nullable_to_non_nul
 as String,userInfo: null == userInfo ? _self.userInfo : userInfo // ignore: cast_nullable_to_non_nullable
 as UserInfo,hasImage: null == hasImage ? _self.hasImage : hasImage // ignore: cast_nullable_to_non_nullable
 as bool,isRead: null == isRead ? _self.isRead : isRead // ignore: cast_nullable_to_non_nullable
-as bool,
+as bool,newReplyCount: null == newReplyCount ? _self.newReplyCount : newReplyCount // ignore: cast_nullable_to_non_nullable
+as int,
   ));
 }
 

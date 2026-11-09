@@ -44,19 +44,71 @@ class LocalDatabase({
   }
 
   /// 읽음으로 표시한다. 같은 글을 다시 열면 읽은 시각만 갱신된다.
-  Future<int> setRead(SiteType siteType, int id) async {
-    await readStoreOf(siteType)
-        .record(id)
-        .put(_db, DateTime.now().millisecondsSinceEpoch);
+  /// [replyCount] 가 있으면 그때 본 댓글 수도 같은 트랜잭션에서 남긴다.
+  Future<int> setRead(SiteType siteType, int id, {int? replyCount}) async {
+    final int nowMs = DateTime.now().millisecondsSinceEpoch;
+    await _db.transaction((txn) async {
+      await readStoreOf(siteType).record(id).put(txn, nowMs);
+      if (replyCount != null) {
+        await _putSeenReplies(txn, siteType, id, replyCount, nowMs);
+      }
+    });
     return id;
   }
 
-  /// [ttl] 보다 오래전에 읽은 기록을 지우고 지운 개수를 돌려준다.
+  // ===== 본 댓글 수 — 사이트별 `{site}_read_reply` 스토어 =====
+
+  static const String _replyCountField = 'c';
+  static const String _replySavedAtField = 't';
+
+  /// 이미 읽은 글을 다시 열었을 때 본 댓글 수만 남긴다.
+  Future<void> setSeenReplies(SiteType siteType, int id, int replyCount) =>
+      _putSeenReplies(
+        _db,
+        siteType,
+        id,
+        replyCount,
+        DateTime.now().millisecondsSinceEpoch,
+      );
+
+  /// 값이 같으면 쓰지 않는다. sembast 는 고칠 때마다 파일 끝에 한 줄을
+  /// 덧붙이므로 같은 글을 여러 번 열어도 줄이 늘지 않게 한다.
+  Future<void> _putSeenReplies(
+    DatabaseClient client,
+    SiteType siteType,
+    int id,
+    int replyCount,
+    int nowMs,
+  ) async {
+    final record = seenReplyStoreOf(siteType).record(id);
+    final Map<String, Object?>? old = await record.get(client);
+    if (old?[_replyCountField] == replyCount) return;
+    await record.put(client, {
+      _replyCountField: replyCount,
+      _replySavedAtField: nowMs,
+    });
+  }
+
+  /// [ids] 중 기록이 있는 글의 `id → 본 댓글 수`. 키 조회라 스토어 크기와 무관하다.
+  Future<Map<int, int>> seenReplies(SiteType siteType, List<int> ids) async {
+    if (ids.isEmpty) return const {};
+    final List<Map<String, Object?>?> values = await seenReplyStoreOf(
+      siteType,
+    ).records(ids).get(_db);
+    return {
+      for (int i = 0; i < ids.length; i++)
+        if (values[i]?[_replyCountField] case final int count) ids[i]: count,
+    };
+  }
+
+  /// [ttl] 보다 오래전에 읽은 기록과 [replyTtl] 보다 오래된 본 댓글 수를 지우고
+  /// 지운 개수를 돌려준다.
   ///
   /// 지난 정리 후 [interval] 이 지나지 않았으면 아무것도 하지 않는다.
   /// 스토어 전체를 훑으므로 앱 시작 직후가 아니라 첫 프레임 뒤에 부를 것.
   Future<int> pruneReadsIfDue({
     required Duration ttl,
+    required Duration replyTtl,
     Duration interval = const Duration(days: 1),
     DateTime? now,
   }) async {
@@ -69,10 +121,20 @@ class LocalDatabase({
     final Finder expired = Finder(
       filter: Filter.lessThan(Field.value, nowMs - ttl.inMilliseconds),
     );
+    final Finder expiredReplies = Finder(
+      filter: Filter.lessThan(
+        _replySavedAtField,
+        nowMs - replyTtl.inMilliseconds,
+      ),
+    );
     final int removed = await _db.transaction((txn) async {
       int count = 0;
       for (final SiteType siteType in SiteType.values) {
         count += await readStoreOf(siteType).delete(txn, finder: expired);
+        count += await seenReplyStoreOf(siteType).delete(
+          txn,
+          finder: expiredReplies,
+        );
       }
       await _metaStore.record(_readsPrunedAtKey).put(txn, nowMs);
       return count;

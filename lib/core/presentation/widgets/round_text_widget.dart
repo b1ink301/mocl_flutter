@@ -27,10 +27,13 @@ class const RoundTextWidget({
     return DecoratedBox(
       decoration: BoxDecoration(
         color: backgroundColor,
-        border: Border.all(
-          color: effectiveBorderColor,
-          strokeAlign: BorderSide.strokeAlignOutside,
-        ),
+        // 투명 테두리(목록 댓글 배지 등)는 보이지 않으니 그리지 않는다.
+        border: effectiveBorderColor.a == 0
+            ? null
+            : Border.all(
+                color: effectiveBorderColor,
+                strokeAlign: BorderSide.strokeAlignOutside,
+              ),
         borderRadius: BorderRadius.circular(borderRadius),
       ),
       child: Padding(

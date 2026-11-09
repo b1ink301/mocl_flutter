@@ -40,6 +40,10 @@ Future<void> main() async {
 /// 오래된 읽음 기록의 보존 기간. 정리는 하루 한 번만 돈다.
 const Duration _readHistoryTtl = Duration(days: 180);
 
+/// 읽은 글의 본 댓글 수(새 댓글 `+N` 비교용) 보관 기간. 목록에 다시 나오는 글은
+/// 대개 최근 글이라 짧게 둔다.
+const Duration _seenRepliesTtl = Duration(days: 14);
+
 /// `runApp` 에 넘길 앱을 만든다. 여기서 던지거나 멈추면 [BootGuard] 가
 /// 스플래시 대신 실패 화면을 띄운다. 재시도 때 다시 불리므로 여러 번
 /// 불려도 안전해야 한다.
@@ -112,6 +116,7 @@ void _schedulePruneReads(LocalDatabase localDatabase) {
       try {
         final int removed = await localDatabase.pruneReadsIfDue(
           ttl: _readHistoryTtl,
+          replyTtl: _seenRepliesTtl,
         );
         MoclLogger.d(() => '[pruneReads] removed=$removed');
       } catch (e, st) {

@@ -27,18 +27,16 @@ class CurrentSiteTypeNotifier() extends _$CurrentSiteTypeNotifier {
   }
 }
 
+/// 상세에서 글을 열었다는 신호(목록 행을 읽음으로 바꾸고 새 댓글 `+N` 을 지운다).
+/// 같은 글을 다시 열어도 알리도록 순번을 붙인다.
 @riverpod
 class ReadableStateNotifier() extends _$ReadableStateNotifier {
   @override
-  int build() => -1;
+  ({int id, int seq}) build() => (id: -1, seq: 0);
 
-  void update(int newId) {
-    if (state != newId) {
-      state = newId;
-    }
-  }
+  void update(int newId) => state = (id: newId, seq: state.seq + 1);
 
-  void clear() => state = -1;
+  void clear() => state = (id: -1, seq: state.seq);
 }
 
 /// 영속화된 테마 모드(시스템/라이트/다크). `AppWidget`의 themeMode 에 연결된다.

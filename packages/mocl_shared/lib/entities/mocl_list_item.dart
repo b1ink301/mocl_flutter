@@ -23,6 +23,10 @@ abstract class ListItem with _$ListItem {
     required UserInfo userInfo,
     required bool hasImage,
     required bool isRead,
+
+    /// 읽은 글에서, 마지막으로 열었을 때보다 늘어난 댓글 수. 파서는 채우지 않고
+    /// 앱이 목록을 받은 뒤 로컬 기록과 비교해 넣는다.
+    @Default(0) int newReplyCount,
   }) = _ListItem;
 
   factory empty() => const ListItem(

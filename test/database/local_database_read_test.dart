@@ -164,6 +164,7 @@ void main() {
 
   group('읽음 기록 정리', () {
     const Duration ttl = Duration(days: 180);
+    const Duration replyTtl = Duration(days: 14);
     final DateTime now = DateTime(2026, 10, 22);
 
     test('TTL 이 지난 기록만 지우고, 하루 안에는 다시 돌지 않는다', () async {
@@ -183,19 +184,83 @@ void main() {
       await readAt(1, const Duration(days: 181));
       await readAt(2, const Duration(days: 179));
 
-      expect(await local.pruneReadsIfDue(ttl: ttl, now: now), 1);
+      expect(await local.pruneReadsIfDue(ttl: ttl, replyTtl: replyTtl, now: now), 1);
       expect(await local.isReads(SiteType.clien, [1, 2]), [2]);
 
       // 하루가 지나지 않았으면 만료 기록이 있어도 건너뛴다.
       await readAt(3, const Duration(days: 365));
       final DateTime soon = now.add(const Duration(hours: 23));
-      expect(await local.pruneReadsIfDue(ttl: ttl, now: soon), 0);
+      expect(await local.pruneReadsIfDue(ttl: ttl, replyTtl: replyTtl, now: soon), 0);
       expect(await local.isRead(SiteType.clien, 3), isTrue);
 
       final DateTime tomorrow = now.add(const Duration(days: 1));
-      expect(await local.pruneReadsIfDue(ttl: ttl, now: tomorrow), 1);
+      expect(await local.pruneReadsIfDue(ttl: ttl, replyTtl: replyTtl, now: tomorrow), 1);
       expect(await local.isRead(SiteType.clien, 3), isFalse);
       await local.dispose();
+    });
+    test('본 댓글 수는 짧은 기한으로 따로 지운다', () async {
+      final Database db = await openVersionedDatabase(
+        databaseFactoryMemory,
+        path,
+      );
+      final LocalDatabase local = LocalDatabase(
+        database: db,
+        opener: () => openVersionedDatabase(databaseFactoryMemory, path),
+      );
+      Future<void> seenAt(int id, Duration ago) => seenReplyStoreOf(
+        SiteType.clien,
+      ).record(id).put(db, {
+        'c': 5,
+        't': now.subtract(ago).millisecondsSinceEpoch,
+      });
+
+      await seenAt(1, const Duration(days: 15));
+      await seenAt(2, const Duration(days: 13));
+
+      expect(
+        await local.pruneReadsIfDue(ttl: ttl, replyTtl: replyTtl, now: now),
+        1,
+      );
+      expect(await local.seenReplies(SiteType.clien, [1, 2]), {2: 5});
+      await local.dispose();
+    });
+  });
+
+  group('본 댓글 수', () {
+    test('읽음과 함께 남기고, 이미 읽은 글은 댓글 수만 바꾼다', () async {
+      final LocalDatabase local = await open();
+      await local.setRead(SiteType.clien, 1, replyCount: 10);
+      await local.setRead(SiteType.clien, 2);
+      expect(await local.seenReplies(SiteType.clien, [1, 2, 3]), {1: 10});
+
+      await local.setSeenReplies(SiteType.clien, 1, 17);
+      expect(await local.seenReplies(SiteType.clien, [1]), {1: 17});
+      expect(await local.seenReplies(SiteType.clien, []), isEmpty);
+      expect(await local.seenReplies(SiteType.damoang, [1]), isEmpty);
+      await local.dispose();
+    });
+
+    test('같은 수면 다시 쓰지 않는다(기록 시각 유지)', () async {
+      final LocalDatabase local = await open();
+      await local.setSeenReplies(SiteType.clien, 1, 3);
+      await local.dispose();
+
+      Future<Object?> savedAt() async {
+        final Database db = await openVersionedDatabase(
+          databaseFactoryMemory,
+          path,
+        );
+        final value = await seenReplyStoreOf(SiteType.clien).record(1).get(db);
+        await db.close();
+        return value?['t'];
+      }
+
+      final Object? before = await savedAt();
+      await Future<void>.delayed(const Duration(milliseconds: 5));
+      final LocalDatabase again = await open();
+      await again.setSeenReplies(SiteType.clien, 1, 3);
+      await again.dispose();
+      expect(await savedAt(), before);
     });
   });
 }

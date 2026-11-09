@@ -16,8 +16,17 @@ class const DetailRepositoryImpl({required final DetailDataSource dataSource})
       dataSource.getDetail(item);
 
   @override
-  Future<int> setReadFlag({required SiteType siteType, required int boardId}) =>
-      dataSource.setReadFlag(siteType, boardId);
+  Future<int> setReadFlag({
+    required SiteType siteType,
+    required int boardId,
+    int? replyCount,
+    bool alreadyRead = false,
+  }) => dataSource.setReadFlag(
+    siteType,
+    boardId,
+    replyCount: replyCount,
+    alreadyRead: alreadyRead,
+  );
 
   @override
   bool get supportsCommentWrite => dataSource.supportsCommentWrite;

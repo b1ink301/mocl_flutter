@@ -21,5 +21,6 @@ class const ReadableListItem({
 
 extension ReadableListItemExtension on ReadableListItem {
   // 읽음이 바뀌면 다른 행으로 보이도록 id 와 읽음 여부를 함께 키로 쓴다.
-  ValueKey<int> get key => ValueKey<int>(Object.hash(item.id, item.isRead));
+  ValueKey<int> get key =>
+      ValueKey<int>(Object.hash(item.id, item.isRead, item.newReplyCount));
 }

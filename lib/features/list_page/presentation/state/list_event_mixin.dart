@@ -46,9 +46,9 @@ mixin class ListEvent() {
   }
 
   void bindReadListener(WidgetRef ref) {
-    ref.listen<int>(readableStateProvider, (prev, next) {
-      if (next <= 0 || prev == next) return;
-      ref.read(listPagingControllerProvider.notifier).markAsReadById(next);
+    ref.listen<({int id, int seq})>(readableStateProvider, (prev, next) {
+      if (next.id <= 0 || prev == next) return;
+      ref.read(listPagingControllerProvider.notifier).markAsReadById(next.id);
     });
   }
 

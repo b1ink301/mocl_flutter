@@ -16,7 +16,9 @@ class const ListItemScope({
 
   @override
   bool updateShouldNotify(ListItemScope oldWidget) =>
-      item.id != oldWidget.item.id || item.isRead != oldWidget.item.isRead;
+      item.id != oldWidget.item.id ||
+      item.isRead != oldWidget.item.isRead ||
+      item.newReplyCount != oldWidget.item.newReplyCount;
 }
 
 class const ListStyleScope({

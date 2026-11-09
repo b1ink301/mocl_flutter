@@ -121,9 +121,10 @@ class SearchPagingController() extends _$SearchPagingController {
     for (int p = 0; p < pages.length; p++) {
       final int idx = pages[p].indexWhere((e) => e.id == id);
       if (idx < 0) continue;
-      if (pages[p][idx].isRead) return;
+      // 다시 연 글은 새 댓글 표시도 지운다.
+      if (pages[p][idx].isRead && pages[p][idx].newReplyCount == 0) return;
       final List<ListItem> page = List<ListItem>.from(pages[p]);
-      page[idx] = page[idx].copyWith(isRead: true);
+      page[idx] = page[idx].copyWith(isRead: true, newReplyCount: 0);
       final List<List<ListItem>> next = List<List<ListItem>>.from(pages);
       next[p] = page;
       ctrl.value = ctrl.value.copyWith(pages: next);
