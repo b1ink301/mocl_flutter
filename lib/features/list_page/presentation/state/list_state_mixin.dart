@@ -9,6 +9,7 @@ import 'package:mocl_shared/entities/sort_type.dart';
 
 import '../../../settings_page/application/settings_providers.dart';
 import '../../application/list_providers.dart';
+import '../../application/list_search_providers.dart';
 import '../../../translation/application/translation_providers.dart';
 
 mixin class ListState() {
@@ -34,6 +35,10 @@ mixin class ListState() {
   /// 페이지네이션이 없는 게시판 여부 — '더 불러오기' 버튼 노출 판단용.
   bool isSinglePageBoardState(WidgetRef ref) =>
       ref.watch(isSinglePageBoardProvider);
+
+  /// 이 게시판에서 글 검색을 할 수 있는지(검색 버튼을 보일지).
+  bool listSearchSupportedState(WidgetRef ref) =>
+      ref.watch(listSearchSupportedProvider);
 
   /// 이 목록에 번역 버튼을 둘지(레딧 · 번역을 지원하는 기기).
   bool listTranslationSupportedState(WidgetRef ref) =>

@@ -470,6 +470,12 @@ class const ClienParser(final bool isShowNickImage) extends BaseParser {
   }
 
   @override
+  bool get supportsSearch => true;
+
+  @override
+  int get firstSearchPage => 0;
+
+  @override
   String urlBySearchList(
     String url,
     String board,
@@ -477,7 +483,9 @@ class const ClienParser(final bool isShowNickImage) extends BaseParser {
     String keyword,
     LastId lastId,
   ) {
-    final String searchUrl = url.replaceFirst('board', 'search/board');
-    return '$searchUrl?sk=title&sv=$keyword&po=$page';
+    // 옛 `/service/search/board/{board}?sk=title&sv=` 는 404 다. 지금 검색은
+    // 게시판 한정 통합 검색이고, 결과 행이 목록과 같은 `a.list_item` 이다.
+    return 'https://m.clien.net/service/search'
+        '?q=$keyword&sort=recency&boardCd=$board&isBoard=true&p=$page';
   }
 }

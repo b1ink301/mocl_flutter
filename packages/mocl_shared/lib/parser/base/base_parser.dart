@@ -31,6 +31,32 @@ abstract class const BaseParser() {
     LastId lastId,
   ) => throw UnimplementedError('urlByList');
 
+  /// 게시판 안 글 검색을 지원하는지. 켠 파서는 [urlBySearchList] 를 구현하고,
+  /// 검색 결과 페이지를 [list] 로 읽을 수 있어야 한다(카나리 `search` 단계로 확인).
+  /// UI 는 이 값으로 검색 버튼을 보일지 정한다.
+  bool get supportsSearch => false;
+
+  /// 검색 첫 쪽 번호. 목록과 같은 규칙(대부분 1, 0 부터 세는 사이트만 덮어쓴다).
+  int get firstSearchPage => 1;
+
+  /// 검색 URL. 호출하는 쪽은 이 함수를 쓴다 — 검색어를 쿼리 인코딩해
+  /// [urlBySearchList] 에 넘긴다(`&` `#` `+` `%` 가 쿼리를 깨지 않게).
+  String searchListUrl(
+    String url,
+    String board,
+    int page,
+    String keyword,
+    LastId lastId,
+  ) => urlBySearchList(
+    url,
+    board,
+    page,
+    Uri.encodeQueryComponent(keyword.trim()),
+    lastId,
+  );
+
+  /// [keyword] 는 **이미 쿼리 인코딩된 값**이다. 그대로 쿼리에 넣는다.
+  /// 직접 부르지 말고 [searchListUrl] 을 쓴다.
   String urlBySearchList(
     String url,
     String board,

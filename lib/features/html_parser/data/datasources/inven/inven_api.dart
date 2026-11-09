@@ -151,7 +151,7 @@ class const InvenApi(super.dio, super.userAgent) extends BaseApi {
     Future<List<int>> Function(SiteType, List<int>) isReads,
   ) async {
     try {
-      final String url = parser.urlBySearchList(
+      final String url = parser.searchListUrl(
         item.url,
         item.board,
         page,

@@ -130,6 +130,9 @@ class const DcinsideParser() extends BaseParser {
   }
 
   @override
+  bool get supportsSearch => true;
+
+  @override
   String urlBySearchList(
     String url,
     String board,

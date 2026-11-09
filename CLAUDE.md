@@ -75,8 +75,8 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   ```
   파서 테스트 · 픽스처는 `packages/mocl_shared/test/` 에 있다(순수 Dart 로 돈다).
 - 서버는 `server/`(shelf, Docker + Caddy, arm64 클라우드 VM). 사용법 · 배포는 [server/README.md](server/README.md).
-- 사이트 카나리(`server/bin/canary.dart`, GitHub Actions `Site canary` 매일): 실제 사이트에서 목록 · 상세를 받아
-  파서가 아직 읽는지 본다. 파서를 고치면 `cd server && fvm dart run bin/canary.dart {site}` 로 확인한다.
+- 사이트 카나리(`server/bin/canary.dart`, GitHub Actions `Site canary` 매일): 실제 사이트에서 목록 · 상세
+  (`--search` 는 게시판 검색)를 받아 파서가 아직 읽는지 본다. 파서를 고치면 `cd server && fvm dart run bin/canary.dart {site}` 로 확인한다.
   사이트를 넣고 빼거나 기본 게시판을 바꾸면 `canaryTargets` 도 같이 고친다.
   서버 로그는 `print` 가 아니라 `serverLog`(운영에서도 남음) 또는 `MoclLogger`(개발 실행에서만).
   `pub workspace` 로 묶지 않는다 — 서버 Docker 빌드가 Flutter SDK 없이 의존성을 풀어야 한다.
@@ -158,6 +158,21 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   오류는 `FailureView`(같은 `MessageView` 로 그림). 스크롤뷰 안에서는 `SliverMessageView` 로 감싼다
   (떠 있는 탭바만큼 올려 보이는 영역 가운데에 둔다). 글자 크기 설정을 따르도록 제목 · 설명 스타일을 넘긴다.
   차단(뮤트) 제목 키워드로 글을 거른다(`filterMuted`). 본 이슈는 흐리게(`IssueReadStore`).
+
+## 게시판 글 검색 (`list_page` · `ListSearchPage`)
+
+- 목록 앱바의 검색 버튼 → `Routes.search`(`ListSearchPage`, `SwipeBackPage`, 넓은 화면은 `ListDetailLayout`).
+  `showSearch`(SearchDelegate)로 되돌리지 말 것 — 루트 Navigator 에 떠서 결과 행이 쓰는 `ListStyleScope` 가 없다.
+- 사이트 지원은 `BaseParser.supportsSearch`(기본 false)로 정하고, 끈 사이트는 검색 버튼을 숨긴다.
+  지금 끈 곳: 긱뉴스(검색 없음) · 네이버카페(별도 API) · 보배드림(모바일 게시판 검색이 검색어를 무시).
+- 검색 URL 은 `parser.searchListUrl(...)` 로 만든다. 검색어를 쿼리 인코딩해 `urlBySearchList` 에 넘기므로
+  `urlBySearchList` 는 받은 값을 그대로 쿼리에 넣는다(직접 부르지 말 것). 첫 쪽은 `firstSearchPage`(클리앙 0, 그 외 1).
+- 결과 페이지는 목록 파서(`list`)로 읽는다. 사이트가 로그인해야 검색되면(다모앙 · 인스티즈) 빈 목록 대신
+  `NotLoginFailure` 를 돌려줘 화면이 "로그인" 버튼을 보이게 한다.
+- 입력 중에는 요청하지 않고 제출할 때만 받는다(`SearchQuery`). 쪽은 받은 글 id 로 중복을 거르고 새 글이 없으면 끝.
+  최근 검색어는 게시판마다 10개(`SearchHistoryStore`). 결과 제목의 검색어는 `SearchHighlightScope` 로 강조한다.
+- 검색 주소 · 파서를 고치면 `cd server && fvm dart run bin/canary.dart --search {site}` 로 실제 사이트를 확인한다
+  (CI 카나리도 매일 검색 단계를 돈다). URL 규칙 테스트는 `packages/mocl_shared/test/parsers/search_test.dart`.
 
 ## 부팅 (`main.dart`)
 

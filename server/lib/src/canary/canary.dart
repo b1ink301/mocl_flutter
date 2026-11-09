@@ -22,7 +22,8 @@ enum CanaryStatus() {
   /// 목록 · 상세 모두 읽힘.
   ok,
 
-  /// 사이트가 막았거나(403 · 429 · 503) 연결이 안 됨. 파서 문제인지 알 수 없다.
+  /// 사이트가 막았거나(403 · 429 · 503) 연결이 안 됨, 또는 로그인해야 보이는
+  /// 페이지(401, 검색). 파서 문제인지 알 수 없다.
   unreachable,
 
   /// 응답은 받았는데 읽지 못했다(파싱 실패 · 빈 목록 · 빈 본문 · 404/410 등).
@@ -188,6 +189,65 @@ class Canary({
     return last!;
   }
 
+  /// 게시판 검색이 읽히는지. 목록 1쪽 제목에서 고른 단어로 검색해 결과가 1개 이상이고
+  /// 그 제목 중 하나에 검색어가 들어 있으면 통과. 검색을 지원하지 않는 사이트는 null.
+  Future<CanaryResult?> checkSearch(CanaryTarget target) async {
+    if (!parserOf(target.site).supportsSearch) return null;
+    final List<ListItem> items;
+    try {
+      items = await fetcher.fetchList(
+        target.site,
+        board: target.board,
+        url: target.url,
+        ppomppuRss: false,
+      );
+    } on FetchFailure catch (e) {
+      return CanaryResult(target, _statusOf(e), '검색 앞 목록: $e');
+    }
+    final String? keyword = searchKeywordOf(items);
+    if (keyword == null) {
+      return CanaryResult(target, CanaryStatus.broken, '검색어를 고르지 못함');
+    }
+    await Future<void>.delayed(pause);
+    final List<ListItem> found;
+    try {
+      found = await fetcher.fetchSearch(
+        target.site,
+        board: target.board,
+        url: target.url,
+        keyword: keyword,
+      );
+    } on FetchFailure catch (e) {
+      return CanaryResult(target, _statusOf(e), '검색 "$keyword": $e');
+    }
+    if (found.isEmpty) {
+      return CanaryResult(target, CanaryStatus.broken, '검색 "$keyword": 0개');
+    }
+    final String needle = keyword.toLowerCase();
+    final bool hit = found.any((i) => i.title.toLowerCase().contains(needle));
+    return CanaryResult(
+      target,
+      hit ? CanaryStatus.ok : CanaryStatus.broken,
+      hit ? '검색 "$keyword"' : '검색 "$keyword": 제목에 검색어 없음(목록을 그대로 준 듯)',
+      listCount: found.length,
+      sampleTitle: found.first.title,
+    );
+  }
+
+  /// 목록 제목에서 검색어로 쓸 단어(2~10자, 한글이나 영문). 가운데 글부터 본다.
+  static String? searchKeywordOf(List<ListItem> items) {
+    final RegExp word = RegExp(r'[가-힣]{2,10}|[A-Za-z]{3,10}');
+    final int mid = items.length ~/ 2;
+    for (int k = 0; k < items.length; k++) {
+      final ListItem item = items[(mid + k) % items.length];
+      final List<String> words = [
+        for (final m in word.allMatches(item.title)) m.group(0)!,
+      ]..sort((a, b) => b.length.compareTo(a.length));
+      if (words.isNotEmpty) return words.first;
+    }
+    return null;
+  }
+
   static CanaryResult _broken(
     CanaryTarget target,
     List<ListItem> items,
@@ -200,7 +260,7 @@ class Canary({
   );
 
   static CanaryStatus _statusOf(FetchFailure e) =>
-      e.network || const {403, 429, 503}.contains(e.statusCode)
+      e.network || const {401, 403, 429, 503}.contains(e.statusCode)
       ? CanaryStatus.unreachable
       : CanaryStatus.broken;
 }

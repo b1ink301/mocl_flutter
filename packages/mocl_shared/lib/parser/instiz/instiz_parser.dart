@@ -46,6 +46,9 @@ class const InstizParser() extends BaseParser {
   }
 
   @override
+  bool get supportsSearch => true;
+
+  @override
   String urlBySearchList(
     String url,
     String board,
@@ -65,11 +68,16 @@ class const InstizParser() extends BaseParser {
     Future<List<int>> Function(SiteType, List<int>) isReads,
   ) async {
     try {
+      final String html = response.data is String
+          ? response.data as String
+          : response.data.toString();
+      // 검색은 회원만 된다. 안 했으면 결과 없이 안내 문구만 온다.
+      if (html.contains('검색은 회원만')) {
+        return const Left(NotLoginFailure(message: '인스티즈는 로그인해야 검색할 수 있어요.'));
+      }
       final items = await ParserIsolateClient.instance.parseList(
         siteType: siteType,
-        responseData: response.data is String
-            ? response.data as String
-            : response.data.toString(),
+        responseData: html,
         lastId: lastId,
         boardTitle: boardTitle,
         baseUrl: baseUrl,

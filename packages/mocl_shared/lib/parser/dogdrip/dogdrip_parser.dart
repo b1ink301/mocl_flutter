@@ -50,6 +50,9 @@ class const DogdripParser() extends BaseParser {
   }
 
   @override
+  bool get supportsSearch => true;
+
+  @override
   String urlBySearchList(
     String url,
     String board,

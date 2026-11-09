@@ -9,10 +9,10 @@ import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_shared/entities/mocl_main_item.dart';
 import 'package:mocl_shared/entities/sort_type.dart';
 import 'package:mocl_flutter/core/presentation/widgets/list_detail_layout.dart';
-import 'package:mocl_flutter/features/list_page/presentation/list_search_delegate.dart';
 
 import 'package:mocl_shared/entities/mocl_list_item.dart';
 import 'package:mocl_shared/util/mocl_logger.dart';
+
 import '../../application/list_providers.dart';
 import '../../../settings_page/application/settings_providers.dart';
 import '../../../translation/application/translation_providers.dart';
@@ -36,11 +36,9 @@ mixin class ListEvent() {
   void handleAppResumed(WidgetRef ref) =>
       ref.read(listPagingControllerProvider.notifier).kickIfStale();
 
+  /// 이 게시판 안 글 검색 화면을 연다.
   Future<void> handleShowSearch(WidgetRef ref, BuildContext context) =>
-      showSearch(
-        context: context,
-        delegate: ListSearchDelegate(item: ref.watch(mainItemProvider)),
-      );
+      context.push<void>(Routes.search, extra: ref.read(mainItemProvider));
 
   void handleChangeSortType(WidgetRef ref, SortType sortType) {
     ref.read(sortTypeProvider.notifier).changeSortType(sortType);

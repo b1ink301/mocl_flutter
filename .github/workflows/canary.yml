@@ -1,6 +1,6 @@
 name: Site canary
 
-# 실제 사이트에서 목록 · 상세를 받아 파서가 아직 읽는지 매일 확인한다(server/bin/canary.dart).
+# 실제 사이트에서 목록 · 상세 · 게시판 검색을 받아 파서가 아직 읽는지 매일 확인한다(server/bin/canary.dart).
 # 픽스처 테스트는 저장해 둔 옛 HTML 로 돌아서 사이트가 바뀌어도 통과한다 — 이걸로 잡는다.
 #
 # - 고장(파싱 실패 · 빈 목록/본문 · 404/410)이 있으면 실패한다. 예약 실행이 실패하면
@@ -54,3 +54,12 @@ jobs:
           SITES: ${{ github.event.inputs.sites }}
         # SITES 는 공백으로 나눠 사이트 이름 인자로 넘긴다(따옴표 없이).
         run: dart run bin/canary.dart --summary "$GITHUB_STEP_SUMMARY" $SITES
+
+      # 게시판 검색도 본다(목록 제목에서 고른 단어로 검색 → 결과에 그 단어가 있는지).
+      # 목록 단계가 실패해도 따로 돌린다. 로그인해야 검색되는 사이트는 막힘으로 남는다.
+      - name: Run search canary
+        if: ${{ !cancelled() }}
+        working-directory: server
+        env:
+          SITES: ${{ github.event.inputs.sites }}
+        run: dart run bin/canary.dart --search --summary "$GITHUB_STEP_SUMMARY" $SITES

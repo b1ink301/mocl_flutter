@@ -1,6 +1,7 @@
 import 'package:material_ui/material_ui.dart';
 
 import '../../../../config/mocl_text_styles.dart';
+
 import 'package:mocl_shared/entities/mocl_list_item.dart';
 
 /// 행에 해당하는 [ListItem] 을 InheritedWidget 으로 전달.
@@ -35,4 +36,21 @@ class const ListStyleScope({
   @override
   bool updateShouldNotify(ListStyleScope oldWidget) =>
       styles != oldWidget.styles || showCategory != oldWidget.showCategory;
+}
+
+/// 검색 결과 목록에서 제목에 강조할 검색어. 일반 목록에는 없다(빈 문자열).
+class const SearchHighlightScope({
+  required final String query,
+  required super.child,
+  super.key,
+}) extends InheritedWidget {
+  static String of(BuildContext context) =>
+      context
+          .dependOnInheritedWidgetOfExactType<SearchHighlightScope>()
+          ?.query ??
+      '';
+
+  @override
+  bool updateShouldNotify(SearchHighlightScope oldWidget) =>
+      query != oldWidget.query;
 }

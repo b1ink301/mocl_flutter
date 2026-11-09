@@ -103,6 +103,9 @@ class const Cook82Parser() extends BaseParser {
   }
 
   @override
+  bool get supportsSearch => true;
+
+  @override
   String urlBySearchList(
     String url,
     String board,

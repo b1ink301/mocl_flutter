@@ -51,6 +51,9 @@ class const MlbparkParser() extends BaseParser {
   }
 
   @override
+  bool get supportsSearch => true;
+
+  @override
   String urlBySearchList(
     String url,
     String board,
@@ -59,8 +62,11 @@ class const MlbparkParser() extends BaseParser {
     LastId lastId,
   ) {
     final String code = board.isNotEmpty ? board : 'bullpen';
+    // select: stt=제목, sct=제목+본문, spf=말머리(검색어와 상관없는 글이 온다).
+    // p 는 쪽 번호가 아니라 글 오프셋(1, 31, 61 …, 한 쪽 30개)이다.
+    final int offset = (page < 1 ? 0 : page - 1) * 30 + 1;
     return 'https://mlbpark.donga.com/mp/b.php'
-        '?m=search&b=$code&select=spf&query=$keyword&p=$page';
+        '?m=search&b=$code&select=stt&query=$keyword&p=$offset';
   }
 
   @override

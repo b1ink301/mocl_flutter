@@ -158,7 +158,7 @@ class ListPagingController() extends _$ListPagingController {
         return result.fold((failure) => throw _PagingFailure(failure.message), (
           items,
         ) {
-          final List<ListItem> filtered = _applyMute(items, mutes);
+          final List<ListItem> filtered = applyMuteRules(items, mutes);
           // 새 항목을 만나면 강제 전진 모드 종료 → 정상 페이징 복귀.
           // (남은 허용량이 이후의 자연스러운 끝 감지를 늦추지 않도록)
           if (filtered.isNotEmpty) _forcedFetchAllowance = 0;
@@ -322,7 +322,7 @@ class SortTypeNotifier() extends _$SortTypeNotifier {
 }
 
 /// 뮤트 규칙에 걸리는 항목을 제거한다(제목 키워드 / 작성자 닉네임).
-List<ListItem> _applyMute(List<ListItem> items, List<MuteRule> mutes) {
+List<ListItem> applyMuteRules(List<ListItem> items, List<MuteRule> mutes) {
   if (mutes.isEmpty) return items;
   return items.where((item) {
     for (final MuteRule m in mutes) {

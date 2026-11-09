@@ -96,9 +96,7 @@ class const GeekNewsApi(super.dio, super.userAgent) extends BaseApi {
     String keyword,
     BaseParser parser,
     Future<List<int>> Function(SiteType, List<int>) isReads,
-  ) {
-    throw UnimplementedError('GeekNews does not support search');
-  }
+  ) async => const Left(GetListFailure(message: '긱뉴스는 게시판 검색을 지원하지 않아요.'));
 
   @override
   Future<Either<Failure, List<CommentItem>>> comments(

@@ -66,6 +66,7 @@ class const MoclListItem({super.key}) extends StatelessWidget with ListEvent {
               style: titleStyle,
               brightness: styles.brightness,
               dimmed: isRead,
+              highlight: SearchHighlightScope.of(context),
             ),
 
             // Bottom Info (Merged for performance)
@@ -114,6 +115,7 @@ class const _ListTitle({
   required final TextStyle style,
   required final Brightness brightness,
   required final bool dimmed,
+  final String highlight = '',
 }) extends ConsumerWidget with ListState {
   @override
   Widget build(BuildContext context, WidgetRef ref) => CategoryTitleText(
@@ -123,5 +125,9 @@ class const _ListTitle({
     brightness: brightness,
     dimmed: dimmed,
     maxLines: 3,
+    highlight: highlight,
+    highlightColor: highlight.isEmpty
+        ? null
+        : Theme.of(context).colorScheme.primary,
   );
 }

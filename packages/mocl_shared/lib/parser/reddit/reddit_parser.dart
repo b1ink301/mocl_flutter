@@ -415,11 +415,24 @@ class const RedditParser() extends BaseParser {
   static const String _apiUrl = 'https://api.reddit.com';
 
   @override
+  bool get supportsSearch => true;
+
+  /// 커뮤니티 안에서만(`restrict_sr`) 최신순으로 찾는다. 홈 피드는 레딧 전체 검색.
+  /// 응답은 목록과 같은 Listing 이라 [list] 로 읽고, 다음 쪽은 `after` 커서.
+  @override
   String urlBySearchList(
     String url,
     String board,
     int page,
     String keyword,
     LastId lastId,
-  ) => url;
+  ) {
+    final bool home = board == homeTitle;
+    final String path = home ? '' : '/$board';
+    final String restrict = home ? '' : '&restrict_sr=1';
+    final String extra = page > 1 && lastId.stringId.isNotEmpty
+        ? '&after=t3_${lastId.stringId}'
+        : '';
+    return '$_apiUrl$path/search?q=$keyword$restrict&sort=new&limit=25$extra';
+  }
 }

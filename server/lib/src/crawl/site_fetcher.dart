@@ -134,6 +134,35 @@ class SiteFetcher({
       sort,
       const LastId(),
     );
+    return _getList(site, parser, listUrl, boardTitle);
+  }
+
+  /// [site] 의 [board] 에서 [keyword] 로 검색한 [page] 쪽(앱 검색과 같은 URL · 파서).
+  /// 첫 쪽은 `parser.firstSearchPage`. 실패하면 [FetchFailure].
+  Future<List<ListItem>> fetchSearch(
+    SiteType site, {
+    required String board,
+    required String url,
+    required String keyword,
+    int? page,
+  }) {
+    final BaseParser parser = parserOf(site);
+    final String searchUrl = parser.searchListUrl(
+      url,
+      board,
+      page ?? parser.firstSearchPage,
+      keyword,
+      const LastId(),
+    );
+    return _getList(site, parser, searchUrl, '');
+  }
+
+  Future<List<ListItem>> _getList(
+    SiteType site,
+    BaseParser parser,
+    String listUrl,
+    String boardTitle,
+  ) async {
     final Response<List<int>> response;
     try {
       response = await _dioFor(userAgentOf(site)).get<List<int>>(
@@ -157,20 +186,32 @@ class SiteFetcher({
       statusCode: status,
       headers: response.headers,
     );
-    final result = await parser.list(
-      decoded,
-      const LastId(),
-      boardTitle,
-      (_, _) async => const <int>[],
-    );
-    return result.fold(
-      (Failure f) => throw FetchFailure('parse: ${f.message}'),
-      // 알림으로 보낸 주소를 앱이 그대로 열 수 있게 절대 주소로 맞춘다.
-      (List<ListItem> items) => [
-        for (final ListItem item in items)
-          item.copyWith(url: Uri.parse(listUrl).resolve(item.url).toString()),
-      ],
-    );
+    try {
+      final result = await parser.list(
+        decoded,
+        const LastId(),
+        boardTitle,
+        (_, _) async => const <int>[],
+      );
+      return result.fold<List<ListItem>>(
+        (Failure f) => throw f is NotLoginFailure
+            // 로그인해야 보이는 페이지(다모앙 · 인스티즈 검색). 서버는 로그인하지 않는다.
+            ? FetchFailure('login: ${f.message}', statusCode: 401)
+            : FetchFailure('parse: ${f.message}'),
+        // 알림으로 보낸 주소를 앱이 그대로 열 수 있게 절대 주소로 맞춘다.
+        (List<ListItem> items) => [
+          for (final ListItem item in items)
+            item.copyWith(
+              url: Uri.parse(listUrl).resolve(item.url).toString(),
+            ),
+        ],
+      );
+    } on FetchFailure {
+      rethrow;
+    } catch (e) {
+      // 파서가 Failure 대신 던지는 경우(형식이 바뀌어 캐스트 실패 등)도 고장이다.
+      throw FetchFailure('parse: $e');
+    }
   }
 
   /// [site] 의 글 [item] 상세(본문 + 페이지에 같이 오는 댓글). 실패하면 [FetchFailure].

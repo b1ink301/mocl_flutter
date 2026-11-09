@@ -13,6 +13,7 @@ import 'package:mocl_shared/radar/issue_feed.dart';
 import 'package:mocl_flutter/features/mute/presentation/mute_page.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/photo_view_dialog.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/video_player_page.dart';
+import 'package:mocl_flutter/features/list_page/presentation/list_search_page.dart';
 import 'package:mocl_flutter/features/list_page/presentation/mocl_list_page.dart';
 import 'package:mocl_flutter/features/login_page/presentation/login_page.dart';
 import 'package:mocl_flutter/features/main_page/presentation/mocl_main_page.dart';
@@ -52,6 +53,15 @@ class AppPages._() {
                     GoRouterState.of(context).extra as MainItem;
                 return MoclListPage.init(item);
               },
+            ),
+      ),
+      GoRoute(
+        path: Routes.search,
+        // 게시판 목록 앱바의 검색 버튼에서 그 게시판(MainItem)을 extra 로 넘긴다.
+        pageBuilder: (BuildContext context, GoRouterState state) =>
+            SwipeBackPage(
+              builder: (BuildContext context) =>
+                  ListSearchPage.init(state.extra! as MainItem),
             ),
       ),
       GoRoute(

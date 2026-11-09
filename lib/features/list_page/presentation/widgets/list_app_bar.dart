@@ -154,13 +154,18 @@ class const _KeywordAlertButton()
 }
 
 // 2. 검색 버튼 분리 (Theme/IconTheme 의존 없는 PlainIconButton 사용)
-class const _SearchButton() extends ConsumerWidget with ListEvent {
+// 검색을 지원하지 않는 사이트(긱뉴스 · 네이버카페 · 보배드림)에서는 숨긴다.
+class const _SearchButton() extends ConsumerWidget with ListState, ListEvent {
   @override
-  Widget build(BuildContext context, WidgetRef ref) => PlainIconButton(
-    semanticLabel: '글 검색',
-    icon: const PlainIcon(Icons.search),
-    onPressed: () => handleShowSearch(ref, context),
-  );
+  Widget build(BuildContext context, WidgetRef ref) {
+    if (!listSearchSupportedState(ref)) return const SizedBox.shrink();
+    return PlainIconButton(
+      semanticLabel: '글 검색',
+      semanticsId: 'list_search',
+      icon: const PlainIcon(Icons.search),
+      onPressed: () => handleShowSearch(ref, context),
+    );
+  }
 }
 
 // 3. 정렬 버튼 분리 (상태 변화에만 반응하도록 함)

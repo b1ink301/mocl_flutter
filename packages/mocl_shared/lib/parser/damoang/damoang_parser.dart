@@ -634,6 +634,12 @@ class const DamoangParser(final bool isShowNickImage) extends BaseParser {
           ? response.data as String
           : response.data.toString();
 
+      // 검색은 로그인해야 된다. 안 했으면 postsData.error 에 사유가 오고 posts 는
+      // 비어 있어 "결과 없음" 으로 보이므로 로그인 실패로 돌려준다.
+      if (responseData.contains(_kSearchNeedsLogin)) {
+        return const Left(NotLoginFailure(message: '다모앙은 로그인해야 검색할 수 있어요.'));
+      }
+
       final items = await ParserIsolateClient.instance.parseList(
         siteType: siteType,
         responseData: responseData,
@@ -648,6 +654,8 @@ class const DamoangParser(final bool isShowNickImage) extends BaseParser {
       return Left(GetListFailure(message: e.toString()));
     }
   }
+
+  static const String _kSearchNeedsLogin = '로그인 후 검색할 수 있습니다';
 
   static Future<void> parseListInWorker(ParseListMessage message) async {
     final replyPort = message.replyPort;
@@ -919,6 +927,9 @@ class const DamoangParser(final bool isShowNickImage) extends BaseParser {
   ) =>
       '$url/__data.json?page=$page&x-sveltekit-invalidated=101'
       '${sortType.toQuery(siteType)}&_ts=$_cacheBustToken';
+
+  @override
+  bool get supportsSearch => true;
 
   @override
   String urlBySearchList(

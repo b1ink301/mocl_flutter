@@ -130,7 +130,7 @@ class const ArcaliveApi(super.dio, super.userAgent) extends BaseApi {
     BaseParser parser,
     Future<List<int>> Function(SiteType, List<int>) isReads,
   ) => withSyncCookie<List<ListItem>>(item.url, () async {
-    final String url = parser.urlBySearchList(
+    final String url = parser.searchListUrl(
       item.url,
       item.board,
       page,

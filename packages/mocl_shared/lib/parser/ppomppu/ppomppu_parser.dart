@@ -95,6 +95,9 @@ class const PpomppuParser() extends BaseParser {
   }
 
   @override
+  bool get supportsSearch => true;
+
+  @override
   String urlBySearchList(
     String url,
     String board,
@@ -103,8 +106,10 @@ class const PpomppuParser() extends BaseParser {
     LastId lastId,
   ) {
     final String id = board.isNotEmpty ? board : 'ppomppu';
-    return 'https://m.ppomppu.co.kr/new/search_result.php'
-        '?id=$id&page=$page&search_type=sub_memo&keyword=$keyword';
+    // 통합 검색(`search_result.php`)은 행 마크업이 달라 목록 파서로 못 읽는다.
+    // 게시판 목록의 검색 폼과 같은 주소를 쓴다(검색어는 UTF-8 그대로 받는다).
+    return 'https://m.ppomppu.co.kr/new/bbs_list.php'
+        '?id=$id&search_type=sub_memo&keyword=$keyword&page=$page';
   }
 
   @override

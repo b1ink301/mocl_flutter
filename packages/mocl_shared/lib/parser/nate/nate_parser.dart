@@ -49,13 +49,16 @@ class const NateParser() extends BaseParser {
   ) => url; // 랭킹은 단일 페이지.
 
   @override
+  bool get supportsSearch => true;
+
+  @override
   String urlBySearchList(
     String url,
     String board,
     int page,
     String keyword,
     LastId lastId,
-  ) => 'https://pann.nate.com/search/talk?q=$keyword&page=$page';
+  ) => 'https://m.pann.nate.com/search/talk?q=$keyword&page=$page';
 
   @override
   Future<Either<Failure, List<ListItem>>> list(
@@ -108,8 +111,13 @@ class const NateParser() extends BaseParser {
       //   today  : <span class="tit"><h2>제목</h2><span class="count">(3)</span></span>
       //   ranking: <h2><span class="tit">제목</span></h2><span class="count">(211)</span>
       // span.tit 안에 h2 가 있으면 그 텍스트, 없으면 span.tit 텍스트를 쓴다.
-      final String title =
-          (a.querySelector('span.tit h2')?.text ?? a.qText('span.tit')).trim();
+      // 검색 결과는 `<h2><span class="tit">제목<span class="count">(0)</span></span></h2>`
+      // 처럼 댓글 수가 span.tit 안에 있어 떼고 읽는다.
+      final titleEl =
+          a.querySelector('span.tit h2') ?? a.querySelector('span.tit');
+      final titleClone = titleEl?.clone(true);
+      titleClone?.querySelectorAll('span.count').forEach((e) => e.remove());
+      final String title = (titleClone?.text ?? '').trim();
       if (title.isEmpty) continue;
 
       // 댓글수 span.count 는 tit 안/밖이 게시판마다 다르므로 anchor 기준 첫 항목.
@@ -120,11 +128,15 @@ class const NateParser() extends BaseParser {
           .querySelectorAll('span.sub span.num')
           .map((e) => e.text.trim())
           .toList();
-      final String hit = nums.isNotEmpty ? nums[0] : '';
-      final String like = nums.length > 1 ? nums[1] : '';
+      // 검색 결과의 sub 는 `글쓴이 | 시각`(span.name + span.num), 목록은 `조회 · 추천`.
+      final String nickName = a.qText('span.sub span.name');
+      final bool searchRow = nickName.isNotEmpty;
+      final String time = searchRow && nums.isNotEmpty ? nums[0] : '';
+      final String hit = !searchRow && nums.isNotEmpty ? nums[0] : '';
+      final String like = !searchRow && nums.length > 1 ? nums[1] : '';
       final String url = '$baseUrl/talk/$id';
 
-      final String info = BaseParser.parserInfo('', hit);
+      final String info = BaseParser.parserInfo(time, hit);
 
       items.add(
         ListItem(
@@ -132,14 +144,14 @@ class const NateParser() extends BaseParser {
           title: title,
           reply: reply,
           category: '',
-          time: '',
+          time: time,
           info: info,
           url: url,
           board: 'ranking',
           boardTitle: boardTitle,
           like: like,
           hit: hit,
-          userInfo: const UserInfo(id: '', nickName: '', nickImage: ''),
+          userInfo: UserInfo(id: '', nickName: nickName, nickImage: ''),
           hasImage: a.querySelector('span.thumb img') != null,
           isRead: false,
         ),
