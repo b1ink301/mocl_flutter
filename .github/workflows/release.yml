@@ -162,7 +162,7 @@ jobs:
           serviceAccountJsonPlainText: ${{ env.PLAY_SERVICE_ACCOUNT_JSON }}
           packageName: kr.b1ink.mocl
           releaseFiles: build/app/outputs/bundle/prdRelease/app-prd-release.aab
-          track: internal
+          tracks: internal # `track` 은 deprecated(곧 제거). 여러 트랙은 쉼표로 구분
           status: completed
           mappingFile: ${{ env.MAPPING }}
           whatsNewDirectory: ${{ steps.notes.outputs.found == 'true' && 'whatsnew' || '' }}
