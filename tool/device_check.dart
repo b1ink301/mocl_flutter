@@ -15,7 +15,7 @@
 // adb forward 로 연결한다. flutter run 은 필요 없다.
 //
 // 화면 요소는 글자 · Semantics identifier · 위젯 종류로 찾는다. 쓰는 id:
-// main_drawer · main_add · add_board_close · drawer_settings · detail_footer.
+// main_site_picker · main_add · add_board_close · tab_settings · detail_footer.
 // FailureView(목록/상세 실패)가 보이면 바로 실패하고, 확인마다 앱 로그(get-logs)의
 // Flutter 오류(main.dart 가 debug 에서 MoclLogger 로 남김)를 검사한다.
 // 스크린샷은 build/device_check/ 에 남는다.
@@ -157,18 +157,18 @@ Future<void> main(List<String> args) async {
 
 /// 사이트 고르기 → 게시판 열기(없으면 담기) → 목록 → 두 번째 글 → 끝까지 스크롤.
 Future<String> _checkSite(App app, SiteType site, String board) async {
-  await app.tapId('main_drawer');
-  // 드로어의 사이트 칸(메인 제목과 글자가 같으므로 위치로 가른다).
+  await app.tapId('main_site_picker');
+  // 사이트 시트의 칩(메인 제목과 글자가 같으므로 위치로 가른다).
   await app.tap(
     await app.waitFor(
       (e) => e.text == site.title && e.y > 200,
-      '드로어의 ${site.title}',
+      '사이트 시트의 ${site.title}',
     ),
   );
-  // 드로어(머리의 "Mocl")가 닫히고 메인 제목이 바뀔 때까지.
+  // 시트("사이트 선택")가 닫히고 메인 제목이 바뀔 때까지.
   await app.waitForAll<bool>(
     (els) =>
-        !els.any((e) => e.text == 'Mocl') &&
+        !els.any((e) => e.text == '사이트 선택') &&
             els.any((e) => e.text == site.title && e.y < 160)
         ? true
         : null,
@@ -182,7 +182,7 @@ Future<String> _checkSite(App app, SiteType site, String board) async {
         final El? found = els.where(isBoardRow).firstOrNull;
         if (found != null) return _Maybe(found);
         final bool loaded =
-            els.any((e) => e.text.contains('담은 게시판이 없습니다')) ||
+            els.any((e) => e.text.contains('담은 게시판이 없어요')) ||
             els.any((e) => e.y > 150 && e.text.isNotEmpty);
         return loaded ? const _Maybe(null) : null;
       }, '${site.title} 메인 목록')
@@ -266,8 +266,7 @@ Future<El> _addBoard(
 
 /// 설정 → 글자 크기: 계속 키워도 +10, 계속 줄여도 −5 에서 멈추고, 초기화하면 기본.
 Future<String> _checkFontSize(App app) async {
-  await app.tapId('main_drawer');
-  await app.tapId('drawer_settings');
+  await app.tapId('tab_settings');
   await app.waitFor((e) => e.text == '글자 크기', '설정의 글자 크기');
 
   /// 값 표시(기본 · +N · -N). 누르면 초기화된다.
@@ -350,7 +349,7 @@ class App(final String _marionette, final String _uri) {
     final Match last = lines.last;
     await adb.run(['forward', 'tcp:$_hostPort', 'tcp:${last[1]}']);
     final App app = App(marionette, 'ws://127.0.0.1:$_hostPort/${last[2]}/ws');
-    await app.waitFor((e) => e.id == 'main_drawer', '앱 첫 화면');
+    await app.waitFor((e) => e.id == 'main_site_picker', '앱 첫 화면');
     return app;
   }
 

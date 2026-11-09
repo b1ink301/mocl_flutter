@@ -1,7 +1,7 @@
 import 'package:mocl_shared/entities/mocl_site_type.dart';
 
 /// 사이트를 성격별로 묶은 기본 카테고리.
-/// 드로어의 사이트 목록 구성과, 즐겨찾기 그룹의 기본값(새로 추가한 게시판이
+/// 사이트 시트의 목록 구성과, 즐겨찾기 그룹의 기본값(새로 추가한 게시판이
 /// 어느 그룹으로 들어갈지) 양쪽에서 같은 정의를 공유한다.
 /// (전체 18개 사이트를 빠짐없이 포함해야 한다)
 typedef SiteCategory = ({String id, String label, List<SiteType> sites});

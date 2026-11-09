@@ -293,7 +293,7 @@ Future<List<FavoriteData>> siteFavorites(Ref ref) async {
     });
 }
 
-/// 사이트별로 담아둔 게시판 개수. 드로어 칩과 빠른 이동 레일이 "갈 곳이 있는
+/// 사이트별로 담아둔 게시판 개수. 사이트 시트 칩과 빠른 이동 레일이 "갈 곳이 있는
 /// 사이트"를 가리는 데 쓴다.
 @riverpod
 Map<SiteType, int> favoriteCountBySite(Ref ref) {

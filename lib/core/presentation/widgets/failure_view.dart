@@ -1,7 +1,8 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
-import 'package:mocl_flutter/core/presentation/widgets/plain_icon.dart';
-import 'package:mocl_flutter/core/presentation/widgets/plain_text.dart';
+import 'package:mocl_flutter/core/presentation/widgets/message_view.dart';
+
+export 'package:mocl_flutter/core/presentation/widgets/message_view.dart';
 
 /// 오류를 사용자에게 보여줄 형태(아이콘 · 제목 · 설명 · 재시도 가능 여부)로 정리한 값.
 class const FailureInfo({
@@ -98,9 +99,9 @@ class const FailureInfo({
 
 /// 오류 화면. 아이콘 + 제목 + 설명 + (재시도 / 보조) 버튼.
 ///
-/// sliver 가 필요한 곳에서는 호출부가 [SliverFillRemaining] 으로 감싼다.
-/// 루트에 [semanticsId] 를 달아 기기 확인 스크립트(`tool/device_check.dart`)가
-/// 목록 · 상세 실패를 알아본다.
+/// 모양은 빈 화면과 같은 [MessageView] 로 그린다. sliver 가 필요한 곳에서는
+/// [SliverMessageView] 로 감싼다. 루트에 [semanticsId] 를 달아 기기 확인
+/// 스크립트(`tool/device_check.dart`)가 목록 · 상세 실패를 알아본다.
 class const FailureView({
   super.key,
   required final Object? error,
@@ -115,73 +116,19 @@ class const FailureView({
   @override
   Widget build(BuildContext context) {
     final FailureInfo info = FailureInfo.of(error);
-    final ThemeData theme = Theme.of(context);
-    final Color foreground =
-        theme.textTheme.bodyMedium?.color ?? theme.colorScheme.onSurface;
-    final Color muted = foreground.withValues(alpha: 0.6);
-
-    final TextStyle title = (titleStyle ?? const TextStyle(fontSize: 16))
-        .copyWith(color: foreground, fontWeight: FontWeight.w600);
-    final TextStyle description =
-        (descriptionStyle ?? const TextStyle(fontSize: 14)).copyWith(
-          color: muted,
-          height: 1.4,
-        );
-
-    return Semantics(
-      identifier: semanticsId,
-      container: true,
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          spacing: 12,
-          children: [
-            PlainIcon(info.icon, size: 44, color: muted),
-            PlainText(info.title, style: title, textAlign: TextAlign.center),
-            PlainText(
-              info.description,
-              style: description,
-              maxLines: 3,
-              textAlign: TextAlign.center,
-            ),
-            ..._buildActions(info, description),
-          ],
-        ),
-      ),
+    // 권한 부족처럼 다시 시도해도 결과가 같은 오류에는 재시도 버튼을 달지 않는다.
+    final VoidCallback? retry = info.retryable ? onRetry : null;
+    return MessageView(
+      semanticsId: semanticsId,
+      icon: info.icon,
+      title: info.title,
+      description: info.description,
+      primaryLabel: '다시 시도',
+      onPrimary: retry,
+      secondaryLabel: secondaryLabel,
+      onSecondary: onSecondary,
+      titleStyle: titleStyle,
+      descriptionStyle: descriptionStyle,
     );
-  }
-
-  /// 권한 부족처럼 다시 시도해도 결과가 같은 오류에는 재시도 버튼을 달지 않는다.
-  List<Widget> _buildActions(FailureInfo info, TextStyle style) {
-    final VoidCallback? retry = onRetry;
-    final VoidCallback? secondary = onSecondary;
-    final String? label = secondaryLabel;
-    final bool showRetry = info.retryable && retry != null;
-    final bool showSecondary = secondary != null && label != null;
-    if (!showRetry && !showSecondary) return const [];
-
-    return [
-      Padding(
-        padding: const EdgeInsets.only(top: 4),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          spacing: 8,
-          children: [
-            if (showRetry)
-              FilledButton.tonal(
-                onPressed: retry,
-                child: PlainText('다시 시도', style: style),
-              ),
-            if (showSecondary)
-              TextButton(
-                onPressed: secondary,
-                child: PlainText(label, style: style),
-              ),
-          ],
-        ),
-      ),
-    ];
   }
 }

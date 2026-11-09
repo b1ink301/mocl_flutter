@@ -12,7 +12,7 @@ import 'package:mocl_flutter/features/main_page/presentation/state/main_state_mi
 
 /// 목록 오른쪽에 세로로 떠 있는 "사이트 바로가기" 레일.
 ///
-/// 홈은 한 사이트의 게시판만 보여주므로 사이트를 바꾸려면 드로어를 열어야
+/// 홈은 한 사이트의 게시판만 보여주므로 사이트를 바꾸려면 사이트 시트를 열어야
 /// 한다. 자주 오가는 사이트는 그마저 번거로워서, 이미 게시판을 담아둔 사이트만
 /// 로고 하나씩 세워 두고 탭 한 번으로 갈아타게 한다. 지금 보고 있는 사이트는
 /// 강조색 링으로 표시된다.
@@ -80,7 +80,7 @@ class _SiteJumpRailState()
     if (searchOpenState(ref)) return const SizedBox.shrink();
 
     final Map<SiteType, int> counts = favoriteCountBySiteState(ref);
-    // 드로어와 같은 순서로 세운다(성격이 비슷한 사이트끼리 이웃한다).
+    // 사이트 시트와 같은 순서로 세운다(성격이 비슷한 사이트끼리 이웃한다).
     final List<SiteType> sites = [
       for (final SiteType siteType in kAllSitesInOrder)
         if ((counts[siteType] ?? 0) > 0) siteType,

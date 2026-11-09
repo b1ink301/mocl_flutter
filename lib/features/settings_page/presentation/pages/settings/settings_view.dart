@@ -8,8 +8,6 @@ import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/features/app_update/domain/app_update_status.dart';
 import 'package:mocl_flutter/features/app_update/presentation/state/app_update_event_mixin.dart';
 import 'package:mocl_flutter/features/app_update/presentation/state/app_update_state_mixin.dart';
-import 'package:mocl_flutter/features/issue_radar/presentation/state/issue_radar_event_mixin.dart';
-import 'package:mocl_flutter/features/issue_radar/presentation/state/issue_radar_state_mixin.dart';
 import 'package:mocl_flutter/features/keyword_alerts/presentation/state/keyword_alert_state_mixin.dart';
 
 import '../../state/settings_event_mixin.dart';
@@ -58,7 +56,6 @@ class const SettingsView({super.key})
                   ),
                 ),
                 const _TileDivider(),
-                const _IssueHomeCardTile(),
                 _SettingsTile(
                   icon: Icons.link,
                   title: '지원 사이트 링크는 앱에서 열기',
@@ -449,35 +446,6 @@ class const _FontSizeButton({
 /// 타일 오른쪽에 값을 담는 작은 칩(캐시 크기 등).
 /// 스토어 버전과 비교한 업데이트 상태. 누르면 확인하고, 새 버전이 있으면
 /// Android 는 Play 인앱 업데이트를, iOS 는 App Store 를 연다.
-/// 메인 위 "지금 이슈" 카드를 켜고 끄는 줄. 서버가 없는 빌드에서는 숨긴다.
-/// 카드의 닫기 버튼으로 끈 사용자가 여기서 되살린다.
-class const _IssueHomeCardTile()
-    extends ConsumerWidget
-    with IssueRadarState, IssueRadarEvent {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    if (!issueRadarAvailableState(ref)) return const SizedBox.shrink();
-    final bool on = issueHomeCardState(ref);
-    final Color primary = Theme.of(context).colorScheme.primary;
-    return Column(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        _SettingsTile(
-          icon: Icons.radar,
-          title: '메인에 지금 이슈 보기',
-          onTap: () => setIssueHomeCard(ref, !on),
-          trailing: Switch(
-            value: on,
-            activeThumbColor: primary,
-            onChanged: (v) => setIssueHomeCard(ref, v),
-          ),
-        ),
-        const _TileDivider(),
-      ],
-    );
-  }
-}
-
 /// 키워드 알림 관리로 가는 줄. 서버가 없는 빌드 · 데스크톱에서는 숨긴다.
 class const _KeywordAlertTile() extends ConsumerWidget with KeywordAlertState {
   @override

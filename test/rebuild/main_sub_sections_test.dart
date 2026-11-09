@@ -137,7 +137,7 @@ void main() {
     await tester.enterText(find.byType(TextField), '없는이름');
     await tester.pumpAndSettle();
     expect(
-      find.textContaining('맞는 게시판이 없습니다', findRichText: true),
+      find.textContaining('맞는 게시판이 없어요', findRichText: true),
       findsOneWidget,
     );
 

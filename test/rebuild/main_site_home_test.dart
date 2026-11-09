@@ -75,7 +75,7 @@ void main() {
         .changeSiteType(SiteType.theqoo);
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('담은 게시판이 없습니다'), findsOneWidget);
+    expect(find.textContaining('담은 게시판이 없어요', findRichText: true), findsOneWidget);
     expect(label('게시판 0'), findsNothing);
   });
 

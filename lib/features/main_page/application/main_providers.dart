@@ -1,5 +1,4 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/settings_page/application/repository_provider.dart';
@@ -12,30 +11,14 @@ part 'main_providers.g.dart';
 String mainTitle(Ref ref) =>
     ref.watch(currentSiteTypeProvider.select((SiteType state) => state.title));
 
-/// 드로어 사이트 칩이 자기 차례인지만 골라 보게 한다(사이트가 바뀌어도
+/// 사이트 시트의 칩이 자기 차례인지만 골라 보게 한다(사이트가 바뀌어도
 /// 관련 있는 칩 두 개만 다시 그려진다).
 @riverpod
 bool isCurrentSiteType(Ref ref, SiteType siteType) => ref.watch(
   currentSiteTypeProvider.select((SiteType state) => state == siteType),
 );
 
-/// 드로어를 열고 닫기 위한 Scaffold 키.
-@Riverpod(keepAlive: true)
-GlobalKey<ScaffoldState> mainScaffoldState(Ref ref) =>
-    GlobalKey<ScaffoldState>();
-
-/// 드로어가 열려 있는지. 뒤로가기로 드로어부터 닫기 위해 들고 있는다.
-@riverpod
-class MainSidebarNotifier() extends _$MainSidebarNotifier {
-  @override
-  bool build() => false;
-
-  void open() => state = true;
-
-  void close() => state = false;
-}
-
-/// 하단 탭 인덱스(0: 내 게시판, 1: 스크랩, 2: 설정).
+/// 하단 탭 인덱스(보이는 탭 `MainTab` 목록의 순번 — 이슈 레이더가 없는 빌드는 이슈 탭이 빠진다).
 @riverpod
 class MainTabIndex() extends _$MainTabIndex {
   @override

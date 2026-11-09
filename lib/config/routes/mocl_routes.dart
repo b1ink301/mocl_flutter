@@ -5,11 +5,8 @@ abstract class Routes._() {
   static const main = '/main';
   static const list = '/list';
   static const detail = '/detail';
-  static const settings = '/settings';
-  static const bookmarks = '/bookmarks';
   static const mute = '/mute';
   static const keywordAlerts = '/keyword-alerts';
-  static const issues = '/issues';
   static const issueDetail = '/issue';
   static const login = '/login';
   static const video = '/video';

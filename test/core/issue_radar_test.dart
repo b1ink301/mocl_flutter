@@ -89,7 +89,7 @@ void main() {
     expect(read, contains('i_${IssueReadStore.limit + 4}'));
   });
 
-  group('메인 이슈 카드', () {
+  group('지금 이슈 탭의 점', () {
     Future<ProviderContainer> container(Map<String, Object> prefs) async {
       SharedPreferences.setMockInitialValues(prefs);
       final SharedPreferences sp = await SharedPreferences.getInstance();
@@ -102,20 +102,6 @@ void main() {
       addTearDown(c.dispose);
       return c;
     }
-
-    test('기본은 켜짐, 끄면 저장되어 다음 실행에도 꺼져 있다', () async {
-      final c = await container({});
-      expect(c.read(issueHomeCardProvider), isTrue);
-      await c.read(issueHomeCardProvider.notifier).set(false);
-      expect(c.read(issueHomeCardProvider), isFalse);
-
-      final SharedPreferences sp = await SharedPreferences.getInstance();
-      final c2 = ProviderContainer(
-        overrides: [sharedPreferencesProvider.overrideWithValue(sp)],
-      );
-      addTearDown(c2.dispose);
-      expect(c2.read(issueHomeCardProvider), isFalse);
-    });
 
     test('위쪽 이슈를 다 보면 점이 사라진다', () async {
       final c = await container({});

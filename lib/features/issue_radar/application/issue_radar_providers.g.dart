@@ -233,82 +233,19 @@ final class IssueReadStoreProvider
 
 String _$issueReadStoreHash() => r'314e72d312626b568973fab9264f667795b4d8c6';
 
-/// 메인 화면 위에 "지금 이슈" 카드를 둘지. 끄면 앱바의 레이더 아이콘만 남는다.
-/// 카드의 닫기 버튼과 설정 "메인에 지금 이슈 보기" 가 함께 바꾼다.
-
-@ProviderFor(IssueHomeCardNotifier)
-final issueHomeCardProvider = IssueHomeCardNotifierProvider._();
-
-/// 메인 화면 위에 "지금 이슈" 카드를 둘지. 끄면 앱바의 레이더 아이콘만 남는다.
-/// 카드의 닫기 버튼과 설정 "메인에 지금 이슈 보기" 가 함께 바꾼다.
-final class IssueHomeCardNotifierProvider
-    extends $NotifierProvider<IssueHomeCardNotifier, bool> {
-  /// 메인 화면 위에 "지금 이슈" 카드를 둘지. 끄면 앱바의 레이더 아이콘만 남는다.
-  /// 카드의 닫기 버튼과 설정 "메인에 지금 이슈 보기" 가 함께 바꾼다.
-  IssueHomeCardNotifierProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'issueHomeCardProvider',
-        isAutoDispose: false,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$issueHomeCardNotifierHash();
-
-  @$internal
-  @override
-  IssueHomeCardNotifier create() => IssueHomeCardNotifier();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(bool value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<bool>(value),
-    );
-  }
-}
-
-String _$issueHomeCardNotifierHash() =>
-    r'b1519b84fec6b5b45d1af8caaed4ecacff952a39';
-
-/// 메인 화면 위에 "지금 이슈" 카드를 둘지. 끄면 앱바의 레이더 아이콘만 남는다.
-/// 카드의 닫기 버튼과 설정 "메인에 지금 이슈 보기" 가 함께 바꾼다.
-
-abstract class _$IssueHomeCardNotifier extends $Notifier<bool> {
-  bool build();
-  @$mustCallSuper
-  @override
-  WhenComplete runBuild() {
-    final ref = this.ref as $Ref<bool, bool>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<bool, bool>,
-              bool,
-              Object?,
-              Object?
-            >;
-    return element.handleCreate(ref, build);
-  }
-}
-
-/// 위쪽 이슈 중 아직 안 본 게 있는지(앱바 레이더 아이콘의 점).
+/// 위쪽 이슈 중 아직 안 본 게 있는지(홈 "지금 이슈" 탭의 점).
 /// 이슈를 못 받았으면 false.
 
 @ProviderFor(hasUnreadTopIssues)
 final hasUnreadTopIssuesProvider = HasUnreadTopIssuesProvider._();
 
-/// 위쪽 이슈 중 아직 안 본 게 있는지(앱바 레이더 아이콘의 점).
+/// 위쪽 이슈 중 아직 안 본 게 있는지(홈 "지금 이슈" 탭의 점).
 /// 이슈를 못 받았으면 false.
 
 final class HasUnreadTopIssuesProvider
     extends $FunctionalProvider<bool, bool, bool>
     with $Provider<bool> {
-  /// 위쪽 이슈 중 아직 안 본 게 있는지(앱바 레이더 아이콘의 점).
+  /// 위쪽 이슈 중 아직 안 본 게 있는지(홈 "지금 이슈" 탭의 점).
   /// 이슈를 못 받았으면 false.
   HasUnreadTopIssuesProvider._()
     : super(
@@ -344,7 +281,7 @@ final class HasUnreadTopIssuesProvider
 }
 
 String _$hasUnreadTopIssuesHash() =>
-    r'5013a9bc80f7b957325cb9d936c65f0eb314f951';
+    r'40a48ded0c52af543b829d8f67fad6c8d77ea77e';
 
 /// 본 이슈 id.
 

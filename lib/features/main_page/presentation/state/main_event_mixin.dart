@@ -32,16 +32,6 @@ mixin class MainEvent() {
   void toggleSubSection(WidgetRef ref, String key) =>
       ref.read(collapsedSubSectionsProvider.notifier).toggle(key);
 
-  void sidebarOpen(WidgetRef ref) =>
-      ref.read(mainSidebarProvider.notifier).open();
-
-  void sidebarClose(WidgetRef ref) =>
-      ref.read(mainSidebarProvider.notifier).close();
-
-  /// 앱바 햄버거 → 사이트 드로어.
-  void openDrawer(WidgetRef ref) =>
-      ref.read(mainScaffoldStateProvider).currentState?.openDrawer();
-
   void selectTab(WidgetRef ref, int index) =>
       ref.read(mainTabIndexProvider.notifier).select(index);
 
@@ -49,16 +39,10 @@ mixin class MainEvent() {
       ref.read(currentSiteTypeProvider.notifier).changeSiteType(siteType);
 
   /// 뒤로가기는 '가장 최근에 연 것'부터 닫는다:
-  /// 드로어 → 검색 → 다른 탭이면 첫 탭. 모두 닫혀 있으면 앱을 나간다.
+  /// 검색 → 다른 탭이면 첫 탭. 모두 닫혀 있으면 앱을 나간다.
+  /// (사이트 시트는 라우트라 뒤로가기가 먼저 닫는다.)
   void handlePop(WidgetRef ref, bool didPop) {
     if (didPop) {
-      return;
-    }
-    final ScaffoldState? scaffold = ref
-        .read(mainScaffoldStateProvider)
-        .currentState;
-    if (scaffold?.isDrawerOpen == true) {
-      scaffold?.closeDrawer();
       return;
     }
     if (ref.read(mainSearchOpenProvider)) {

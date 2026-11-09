@@ -6,10 +6,9 @@ typedef PillTabItem = ({IconData icon, IconData selectedIcon, String label});
 /// 알약 바깥 테두리의 둥글기. 선택 표시도 같은 값을 써서 바와 같은 곡률로 보인다.
 const double _kPillRadius = 32;
 
-/// 화면 아래 가운데에 떠 있는 알약형 탭바(홈의 [FloatingNavBar] 와 같은 모양).
+/// 화면 아래 가운데에 떠 있는 알약형 탭바(홈 · 차단 화면).
 ///
-/// 홈 전용인 [FloatingNavBar] 와 달리 탭 목록을 밖에서 넘겨받으므로, 하위 화면
-/// 에서도 같은 감각의 탭 전환을 쓸 수 있다. 본문이 바 뒤로 비치도록 Scaffold 는
+/// 탭 목록을 밖에서 넘겨받는다. 본문이 바 뒤로 비치도록 Scaffold 는
 /// `extendBody: true` 로 두고, 목록은 `MediaQuery.padding.bottom` 만큼 아래
 /// 여백을 준다(Scaffold 가 바 높이를 그 값에 더해준다).
 class const FloatingPillTabBar({
@@ -17,6 +16,12 @@ class const FloatingPillTabBar({
   required final List<PillTabItem> items,
   required final int selectedIndex,
   required final ValueChanged<int> onSelected,
+
+  /// 아이콘에 점을 붙일 탭(새 소식 알림).
+  final Set<int> dots = const <int>{},
+
+  /// 탭마다 붙일 `Semantics(identifier:)`(기기 확인 스크립트용). 없으면 붙이지 않는다.
+  final List<String>? semanticsIds,
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -65,6 +70,8 @@ class const FloatingPillTabBar({
                               child: _PillTabItemView(
                                 item: items[i],
                                 isSelected: i == selectedIndex,
+                                dot: dots.contains(i),
+                                semanticsId: semanticsIds?[i],
                                 onTap: () => onSelected(i),
                               ),
                             ),
@@ -85,6 +92,8 @@ class const FloatingPillTabBar({
 class const _PillTabItemView({
   required final PillTabItem item,
   required final bool isSelected,
+  required final bool dot,
+  required final String? semanticsId,
   required final VoidCallback onTap,
 }) extends StatelessWidget {
   @override
@@ -95,7 +104,7 @@ class const _PillTabItemView({
         theme.textTheme.bodySmall?.color ?? theme.colorScheme.onSurfaceVariant;
     final Color tint = isSelected ? focusColor : mutedColor;
 
-    return Padding(
+    final Widget tab = Padding(
       padding: const EdgeInsets.symmetric(horizontal: 2),
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 180),
@@ -117,10 +126,14 @@ class const _PillTabItemView({
               child: Column(
                 mainAxisSize: MainAxisSize.min,
                 children: [
-                  Icon(
-                    isSelected ? item.selectedIcon : item.icon,
-                    size: 22,
-                    color: tint,
+                  Badge(
+                    isLabelVisible: dot,
+                    smallSize: 7,
+                    child: Icon(
+                      isSelected ? item.selectedIcon : item.icon,
+                      size: 22,
+                      color: tint,
+                    ),
                   ),
                   const SizedBox(height: 3),
                   Text(
@@ -142,5 +155,13 @@ class const _PillTabItemView({
         ),
       ),
     );
+    final Widget labeled = Semantics(
+      selected: isSelected,
+      value: dot ? '새 소식 있음' : null,
+      child: tab,
+    );
+    return semanticsId == null
+        ? labeled
+        : Semantics(identifier: semanticsId, child: labeled);
   }
 }

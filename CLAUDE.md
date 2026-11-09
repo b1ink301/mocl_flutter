@@ -142,19 +142,21 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   규칙을 바꾸면 `server/bin/radar_eval.dart` 로 **실제 쌓인 데이터**에 돌려 보고(`--rank` 는 옛 방식과 상위 이슈 비교)
   골든 테스트(`radar_rank_test`)를 고친다.
 - 급상승은 데이터가 1시간 쌓이기 전(서버 재시작 직후)에는 표시하지 않는다.
-- 앱: 드로어 "지금 이슈" → 목록 → 이슈 상세(커뮤니티별 글) → `SiteLinkResolver` 로 앱 상세.
-- 메인 진입점: 게시판 목록 위 `IssueHomeCard`(위쪽 3개 미리보기, 줄 탭 → 이슈 상세). 닫으면(설정
-  "메인에 지금 이슈 보기", `IssueHomeCardNotifier`) 앱바 레이더 아이콘(`main_issues`)만 남는다.
-  배치는 **설정으로** 정한다(이슈 도착 여부로 바꾸면 화면이 튐): 켜면 툴바(`pinned`) · 이슈 카드 ·
-  큰 사이트 제목(`MainSiteTitle`)이 고정 머리(`_MainPinnedHeader`, `PinnedHeaderSliver`)로 붙어 있고
-  게시판 목록만 스크롤된다. 목록이 밑으로 지나가면 머리 아래에 그림자(툴바 그림자는 끔).
-  끄면 기존 큰 제목 앱바(펼침 영역, floating) 그대로.
-  두 배치는 맨 위에서 제목 자리가 같아야 한다(높이 · 여백을 `large_title_metrics` 에서 같이 쓴다).
-  카드는 처음 받는 동안 같은 높이 자리 표시로 칸을 잡고, 실패 · 없음일 때만 접는다.
-  닫기는 카드가 다 접힌 뒤 설정을 끈다(배치가 바뀌는 순간 제목이 제자리).
-  아이콘은 카드가 안 보일 때(닫음 · 이슈 없음 · 받기 실패)만 두고, 카드를 켠 채 받는 중엔 숨긴다(앱바 들썩임 방지).
-  안 본 위쪽 이슈가 있으면 점(`hasUnreadTopIssues`). 편집 · 검색 중엔 카드를 비운다.
-  앱 복귀 때 이슈가 10분 넘었으면 다시 받고, 메인 당겨서 새로고침도 이슈를 같이 받는다.
+- 앱: 홈 하단 탭 "지금 이슈"(`IssueRadarPage`) → 이슈 상세(커뮤니티별 글) → `SiteLinkResolver` 로 앱 상세.
+- 홈 셸(`MainPage`)은 떠 있는 알약형 탭바(`FloatingPillTabBar`)로 **게시판 · 지금 이슈 · 스크랩 · 설정**을 오간다
+  (`MainTab`, 서버가 없는 빌드는 이슈 탭을 뺀다). **드로어는 두지 않는다**(탭과 함께 쓰면 이동 경로가 두 갈래).
+  사이트는 게시판 탭의 큰 제목(`다모앙 ▾`, `main_site_picker`)을 눌러 하단 시트(`showSitePickerSheet`,
+  넓은 화면은 폭 640 로 묶음)에서 바꾼다. 시트는 루트 Navigator 에 뜨므로 홈의 ProviderScope 컨테이너를 넘겨 준다. 탭은 `IndexedStack` 으로 살려 두고(스크롤 · 상태 유지,
+  앱을 켜면 이슈를 바로 받는다), 탭마다 `ScrollController` 를 따로 `PrimaryScrollController` 로 준다
+  (하나를 같이 쓰면 컨트롤러에 스크롤뷰가 여럿 붙는다). 보고 있는 탭을 다시 누르면 맨 위로.
+  모든 탭이 같은 큰 제목 앱바(`MainAppBar` · `LargeTitleSliverAppBar`)라 탭을 오가도 제목 자리가 같다.
+  본문은 바 뒤까지 확장(`extendBody`)하니 목록 아래 여백은 `MediaQuery.padding.bottom` 으로 준다.
+  뒤로가기는 (사이트 시트) → 검색 → 다른 탭이면 게시판 탭 순.
+  메인 위 이슈 카드 · 고정 머리는 게시판 목록을 밀어내 걷어냈다(되살리지 말 것).
+  안 본 위쪽 이슈가 있으면 탭 아이콘에 점(`hasUnreadTopIssues`). 앱 복귀 때 이슈가 10분 넘었으면 다시 받는다.
+- 빈 화면 · 오류 화면은 한 모양으로 그린다: 빈 목록은 `MessageView`(아이콘 · 제목 · 설명 · 주/보조 버튼),
+  오류는 `FailureView`(같은 `MessageView` 로 그림). 스크롤뷰 안에서는 `SliverMessageView` 로 감싼다
+  (떠 있는 탭바만큼 올려 보이는 영역 가운데에 둔다). 글자 크기 설정을 따르도록 제목 · 설명 스타일을 넘긴다.
   차단(뮤트) 제목 키워드로 글을 거른다(`filterMuted`). 본 이슈는 흐리게(`IssueReadStore`).
 
 ## 부팅 (`main.dart`)
@@ -219,7 +221,7 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   fvm dart run tool/device_check.dart nate clien   # 일부(SiteType 이름, font)
   ```
   화면 요소는 글자 · `Semantics(identifier:)` · 위젯 종류로 찾는다. 스크립트가 누르는 id
-  (`main_drawer` · `main_add` · `add_board_close` · `drawer_settings` · `detail_footer`)를 바꾸면 스크립트도 고친다.
+  (`main_site_picker` · `main_add` · `add_board_close` · `tab_settings` · `detail_footer`)를 바꾸면 스크립트도 고친다.
   Flutter 오류는 debug 에서 `MoclLogger` 로도 남겨(`main.dart`) `get-logs` 로 검사한다 — debug 의 오류 콘솔
   출력이 logcat 에 남지 않고, 오류 화면(ErrorWidget)은 위젯 트리 목록에 나오지 않는다.
   아이콘만 있는 `PlainIconButton` 에는 `semanticLabel` 을 준다(없으면 화면 낭독에서 이름 없는 버튼이 된다).
@@ -228,7 +230,7 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   ```bash
   fvm flutter run -d <기기> --flavor dev --dart-define-from-file=ads.json --vm-service-port=9101 --disable-service-auth-codes
   marionette register mocl ws://127.0.0.1:9101/ws     # CLI(dart pub global activate marionette_cli)
-  marionette -i mocl tap --identifier main_drawer      # MCP 서버(marionette_mcp)로도 같은 동작
+  marionette -i mocl tap --identifier tab_settings     # MCP 서버(marionette_mcp)로도 같은 동작
   ```
   `get_logs` 는 `MoclLogger` 로그를 돌려준다. Flutter 밖(AdMob 네이티브 광고 · 로그인 웹뷰 · 권한 창)은 보지 못한다.
   binding 은 앱에 하나뿐이니 `main()` 에서 `WidgetsFlutterBinding.ensureInitialized` 대신 `ensureAppBinding()` 을 쓴다.

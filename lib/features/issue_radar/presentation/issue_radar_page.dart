@@ -1,11 +1,13 @@
 import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
+import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
+import 'package:mocl_flutter/core/presentation/widgets/large_title_sliver_app_bar.dart';
+import 'package:mocl_flutter/core/presentation/widgets/message_view.dart';
 import 'package:mocl_flutter/core/presentation/widgets/site_avatar.dart';
 import 'package:mocl_flutter/core/presentation/widgets/window_size.dart';
 import 'package:mocl_shared/entities/mocl_site_type.dart';
@@ -16,49 +18,70 @@ import 'state/issue_radar_state_mixin.dart';
 import 'widgets/issue_time.dart';
 
 /// 이슈 레이더: 지금 여러 커뮤니티에서 함께 이야기되는 글 묶음.
-class const IssueRadarPage({super.key})
-    extends ConsumerWidget
-    with IssueRadarState, IssueRadarEvent {
+///
+/// 홈의 "지금 이슈" 탭 본문이다. 홈 셸은 탭을 `IndexedStack` 으로 살려 두므로
+/// 앱을 켜면 곧바로 이슈를 받아 탭의 점(안 본 위쪽 이슈)을 맞춘다.
+/// 앱이 오래 뒤에 있다가 돌아오면 이슈를 새로 받는다(그대로 두면 몇 시간 지난
+/// 이슈가 남는다).
+class const IssueRadarPage({super.key}) extends ConsumerStatefulWidget {
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final theme = Theme.of(context);
-    final systemOverlayStyle =
-        theme.appBarTheme.systemOverlayStyle ?? SystemUiOverlayStyle.light;
-    final titleStyle = ref.watch(appbarTextStyleProvider);
-    final AsyncValue<IssueFeed> feed = issueFeedState(ref);
+  ConsumerState<IssueRadarPage> createState() => _IssueRadarPageState();
+}
 
-    return AnnotatedRegion<SystemUiOverlayStyle>(
-      value: systemOverlayStyle,
-      child: Container(
-        color: systemOverlayStyle.statusBarColor,
-        child: SafeArea(
-          bottom: false,
-          child: Scaffold(
-            appBar: AppBar(
-              backgroundColor: theme.appBarTheme.backgroundColor,
-              title: Text('지금 이슈', style: titleStyle),
-              scrolledUnderElevation: 0,
-              titleSpacing: 0,
-            ),
-            body: BoxReadableWidth(
-              child: RefreshIndicator(
-                onRefresh: () => refreshIssues(ref),
-                child: switch (feed) {
-                  AsyncData(:final value) => _IssueList(feed: value),
-                  AsyncError() => _Message(
-                    icon: Icons.cloud_off_outlined,
-                    text: '이슈를 불러오지 못했어요.',
-                    action: TextButton(
-                      onPressed: () => unawaited(refreshIssues(ref)),
-                      child: const Text('다시 시도'),
-                    ),
-                  ),
-                  _ => const Center(child: CircularProgressIndicator()),
-                },
+class _IssueRadarPageState()
+    extends ConsumerState<IssueRadarPage>
+    with IssueRadarState, IssueRadarEvent {
+  /// 앱에 돌아왔을 때 이보다 오래된 이슈면 새로 받는다.
+  static const Duration _staleAfter = Duration(minutes: 10);
+
+  late final AppLifecycleListener _lifecycle;
+
+  @override
+  void initState() {
+    super.initState();
+    _lifecycle = AppLifecycleListener(onResume: _refreshIfStale);
+  }
+
+  @override
+  void dispose() {
+    _lifecycle.dispose();
+    super.dispose();
+  }
+
+  void _refreshIfStale() {
+    final IssueFeed? feed = readIssueFeed(ref);
+    if (feed == null) return;
+    final DateTime at = DateTime.fromMillisecondsSinceEpoch(feed.generatedAt);
+    if (DateTime.now().difference(at) < _staleAfter) return;
+    unawaited(refreshIssues(ref));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final AsyncValue<IssueFeed> feed = issueFeedState(ref);
+    return RefreshIndicator.adaptive(
+      color: Theme.of(context).colorScheme.primary,
+      onRefresh: () => refreshIssues(ref),
+      child: CustomScrollView(
+        // 이슈가 적어도 당겨서 새로고침이 되도록.
+        physics: const AlwaysScrollableScrollPhysics(),
+        slivers: <Widget>[
+          const LargeTitleSliverAppBar(title: '지금 이슈'),
+          SliverReadableWidth(
+            sliver: switch (feed) {
+              AsyncData(:final value) => _IssueList(feed: value),
+              AsyncError() => _IssueMessage(
+                icon: Icons.cloud_off_outlined,
+                title: '이슈를 불러오지 못했어요',
+                description: '잠시 후 다시 시도해 주세요.',
+                onRetry: () => unawaited(refreshIssues(ref)),
               ),
-            ),
+              _ => const SliverMessageView(
+                child: CircularProgressIndicator.adaptive(),
+              ),
+            },
           ),
-        ),
+        ],
       ),
     );
   }
@@ -68,26 +91,32 @@ class const _IssueList({required final IssueFeed feed})
     extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    final double bottom = MediaQuery.of(context).padding.bottom;
+    // 떠 있는 탭바에 가리지 않게 아래 여백을 둔다(Scaffold 가 바 높이를 더해 준다).
+    final double bottom = MediaQuery.paddingOf(context).bottom;
     if (feed.issues.isEmpty) {
-      return ListView(
-        // 당겨서 새로고침이 되도록 스크롤 가능하게 둔다.
-        physics: const AlwaysScrollableScrollPhysics(),
-        children: [
-          _Basis(feed: feed),
-          const SizedBox(height: 120),
-          const _Message(icon: Icons.radar, text: '아직 여러 커뮤니티에 걸친 이슈가 없어요.'),
+      return SliverMainAxisGroup(
+        slivers: [
+          SliverPadding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            sliver: SliverToBoxAdapter(child: _Basis(feed: feed)),
+          ),
+          const _IssueMessage(
+            icon: Icons.radar,
+            title: '아직 이슈가 없어요',
+            description: '여러 커뮤니티에서 함께 이야기되는 글이 생기면 여기에 모여요.',
+          ),
         ],
       );
     }
-    return ListView.separated(
-      physics: const AlwaysScrollableScrollPhysics(),
+    return SliverPadding(
       padding: EdgeInsets.fromLTRB(16, 0, 16, bottom + 24),
-      itemCount: feed.issues.length + 1,
-      separatorBuilder: (_, i) => SizedBox(height: i == 0 ? 4 : 10),
-      itemBuilder: (context, i) => i == 0
-          ? _Basis(feed: feed)
-          : _IssueCard(issue: feed.issues[i - 1], rank: i),
+      sliver: SliverList.separated(
+        itemCount: feed.issues.length + 1,
+        separatorBuilder: (_, i) => SizedBox(height: i == 0 ? 4 : 10),
+        itemBuilder: (context, i) => i == 0
+            ? _Basis(feed: feed)
+            : _IssueCard(issue: feed.issues[i - 1], rank: i),
+      ),
     );
   }
 }
@@ -250,24 +279,25 @@ class const _SiteStack({required final List<SiteType> sites})
   }
 }
 
-class const _Message({
+/// 빈 화면 · 오류 화면. 다른 탭(게시판 · 스크랩)과 같은 [MessageView] 모양.
+class const _IssueMessage({
   required final IconData icon,
-  required final String text,
-  final Widget? action,
-}) extends StatelessWidget {
+  required final String title,
+  required final String description,
+  final VoidCallback? onRetry,
+}) extends ConsumerWidget {
   @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final Color muted = theme.colorScheme.onSurfaceVariant;
-    return Center(
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(icon, size: 44, color: muted.withValues(alpha: 0.6)),
-          const SizedBox(height: 12),
-          Text(text, style: theme.textTheme.bodyLarge?.copyWith(color: muted)),
-          ?action,
-        ],
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AppTextStyles styles = ref.watch(appTextStylesFontSizeProvider);
+    return SliverMessageView(
+      child: MessageView(
+        icon: icon,
+        title: title,
+        description: description,
+        primaryLabel: '다시 시도',
+        onPrimary: onRetry,
+        titleStyle: styles.titleTextStyle,
+        descriptionStyle: styles.smallTextStyle,
       ),
     );
   }

@@ -5,11 +5,9 @@ import 'package:mocl_shared/entities/mocl_main_item.dart';
 import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/presentation/widgets/bottom_sheet_page.dart';
 import 'package:mocl_flutter/features/add_main_dialog/presentation/add_list_modal_sheet_page.dart';
-import 'package:mocl_flutter/features/bookmark/presentation/bookmarks_page.dart';
 import 'package:mocl_flutter/features/detail_page/domain/site_link_resolver.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/mocl_detail_page.dart';
 import 'package:mocl_flutter/features/issue_radar/presentation/issue_detail_page.dart';
-import 'package:mocl_flutter/features/issue_radar/presentation/issue_radar_page.dart';
 import 'package:mocl_flutter/features/keyword_alerts/presentation/keyword_alerts_page.dart';
 import 'package:mocl_shared/radar/issue_feed.dart';
 import 'package:mocl_flutter/features/mute/presentation/mute_page.dart';
@@ -18,7 +16,6 @@ import 'package:mocl_flutter/features/detail_page/presentation/video_player_page
 import 'package:mocl_flutter/features/list_page/presentation/mocl_list_page.dart';
 import 'package:mocl_flutter/features/login_page/presentation/login_page.dart';
 import 'package:mocl_flutter/features/main_page/presentation/mocl_main_page.dart';
-import 'package:mocl_flutter/features/settings_page/presentation/pages/settings/settings_page.dart';
 import 'package:mocl_flutter/core/presentation/widgets/swipe_back_page.dart';
 
 part 'mocl_routes.dart';
@@ -63,7 +60,7 @@ class AppPages._() {
         // (viewPhotoDlg) 로 push 될 때는 extra 가 갤러리 인자(GalleryArgs) 또는
         // 단일 이미지 URL(String) 이라, 부모 가드가 이를 막아 메인으로 튕기던
         // 문제가 있어 두 타입도 통과시킨다. (메인으로 튕기면 이미 스택에 있는
-        // MainPage 가 재생성되어 mainScaffoldState 의 GlobalKey 가 중복된다.)
+        // MainPage 가 재생성된다.)
         // (딥링크/상태 복원 등 extra 가 없거나 타입이 다르면 메인으로 보낸다.)
         // redirect: (BuildContext context, GoRouterState state) =>
         //     (state.extra is ListItem ||
@@ -108,30 +105,9 @@ class AppPages._() {
         ],
       ),
       GoRoute(
-        path: Routes.settings,
-        pageBuilder: (BuildContext context, GoRouterState state) =>
-            SwipeBackPage(
-              builder: (BuildContext context) => SettingsPage.init(context),
-            ),
-      ),
-      GoRoute(
-        path: Routes.bookmarks,
-        pageBuilder: (BuildContext context, GoRouterState state) =>
-            SwipeBackPage(
-              builder: (BuildContext context) => const BookmarksPage(),
-            ),
-      ),
-      GoRoute(
         path: Routes.mute,
         pageBuilder: (BuildContext context, GoRouterState state) =>
             SwipeBackPage(builder: (BuildContext context) => const MutePage()),
-      ),
-      GoRoute(
-        path: Routes.issues,
-        pageBuilder: (BuildContext context, GoRouterState state) =>
-            SwipeBackPage(
-              builder: (BuildContext context) => const IssueRadarPage(),
-            ),
       ),
       GoRoute(
         path: Routes.issueDetail,

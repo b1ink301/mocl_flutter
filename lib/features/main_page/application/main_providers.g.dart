@@ -54,19 +54,19 @@ final class MainTitleProvider
 
 String _$mainTitleHash() => r'57abddfdf2e871b713c4368c9e8e3420a55ee34a';
 
-/// 드로어 사이트 칩이 자기 차례인지만 골라 보게 한다(사이트가 바뀌어도
+/// 사이트 시트의 칩이 자기 차례인지만 골라 보게 한다(사이트가 바뀌어도
 /// 관련 있는 칩 두 개만 다시 그려진다).
 
 @ProviderFor(isCurrentSiteType)
 final isCurrentSiteTypeProvider = IsCurrentSiteTypeFamily._();
 
-/// 드로어 사이트 칩이 자기 차례인지만 골라 보게 한다(사이트가 바뀌어도
+/// 사이트 시트의 칩이 자기 차례인지만 골라 보게 한다(사이트가 바뀌어도
 /// 관련 있는 칩 두 개만 다시 그려진다).
 
 final class IsCurrentSiteTypeProvider
     extends $FunctionalProvider<bool, bool, bool>
     with $Provider<bool> {
-  /// 드로어 사이트 칩이 자기 차례인지만 골라 보게 한다(사이트가 바뀌어도
+  /// 사이트 시트의 칩이 자기 차례인지만 골라 보게 한다(사이트가 바뀌어도
   /// 관련 있는 칩 두 개만 다시 그려진다).
   IsCurrentSiteTypeProvider._({
     required IsCurrentSiteTypeFamily super.from,
@@ -121,7 +121,7 @@ final class IsCurrentSiteTypeProvider
 
 String _$isCurrentSiteTypeHash() => r'2d08740bc69db68baad12dc057b6cab1d5b9a04f';
 
-/// 드로어 사이트 칩이 자기 차례인지만 골라 보게 한다(사이트가 바뀌어도
+/// 사이트 시트의 칩이 자기 차례인지만 골라 보게 한다(사이트가 바뀌어도
 /// 관련 있는 칩 두 개만 다시 그려진다).
 
 final class IsCurrentSiteTypeFamily extends $Family
@@ -135,7 +135,7 @@ final class IsCurrentSiteTypeFamily extends $Family
         isAutoDispose: true,
       );
 
-  /// 드로어 사이트 칩이 자기 차례인지만 골라 보게 한다(사이트가 바뀌어도
+  /// 사이트 시트의 칩이 자기 차례인지만 골라 보게 한다(사이트가 바뀌어도
   /// 관련 있는 칩 두 개만 다시 그려진다).
 
   IsCurrentSiteTypeProvider call(SiteType siteType) =>
@@ -145,125 +145,14 @@ final class IsCurrentSiteTypeFamily extends $Family
   String toString() => r'isCurrentSiteTypeProvider';
 }
 
-/// 드로어를 열고 닫기 위한 Scaffold 키.
-
-@ProviderFor(mainScaffoldState)
-final mainScaffoldStateProvider = MainScaffoldStateProvider._();
-
-/// 드로어를 열고 닫기 위한 Scaffold 키.
-
-final class MainScaffoldStateProvider
-    extends
-        $FunctionalProvider<
-          GlobalKey<ScaffoldState>,
-          GlobalKey<ScaffoldState>,
-          GlobalKey<ScaffoldState>
-        >
-    with $Provider<GlobalKey<ScaffoldState>> {
-  /// 드로어를 열고 닫기 위한 Scaffold 키.
-  MainScaffoldStateProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'mainScaffoldStateProvider',
-        isAutoDispose: false,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$mainScaffoldStateHash();
-
-  @$internal
-  @override
-  $ProviderElement<GlobalKey<ScaffoldState>> $createElement(
-    $ProviderPointer pointer,
-  ) => $ProviderElement(pointer);
-
-  @override
-  GlobalKey<ScaffoldState> create(Ref ref) {
-    return mainScaffoldState(ref);
-  }
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(GlobalKey<ScaffoldState> value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<GlobalKey<ScaffoldState>>(value),
-    );
-  }
-}
-
-String _$mainScaffoldStateHash() => r'e08ed879718fe9af8a42c31c3df1fbd7c053b5eb';
-
-/// 드로어가 열려 있는지. 뒤로가기로 드로어부터 닫기 위해 들고 있는다.
-
-@ProviderFor(MainSidebarNotifier)
-final mainSidebarProvider = MainSidebarNotifierProvider._();
-
-/// 드로어가 열려 있는지. 뒤로가기로 드로어부터 닫기 위해 들고 있는다.
-final class MainSidebarNotifierProvider
-    extends $NotifierProvider<MainSidebarNotifier, bool> {
-  /// 드로어가 열려 있는지. 뒤로가기로 드로어부터 닫기 위해 들고 있는다.
-  MainSidebarNotifierProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'mainSidebarProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$mainSidebarNotifierHash();
-
-  @$internal
-  @override
-  MainSidebarNotifier create() => MainSidebarNotifier();
-
-  /// {@macro riverpod.override_with_value}
-  Override overrideWithValue(bool value) {
-    return $ProviderOverride(
-      origin: this,
-      providerOverride: $SyncValueProvider<bool>(value),
-    );
-  }
-}
-
-String _$mainSidebarNotifierHash() =>
-    r'7f9b142f25e4d7e9ecb95319fb517a947530b27d';
-
-/// 드로어가 열려 있는지. 뒤로가기로 드로어부터 닫기 위해 들고 있는다.
-
-abstract class _$MainSidebarNotifier extends $Notifier<bool> {
-  bool build();
-  @$mustCallSuper
-  @override
-  WhenComplete runBuild() {
-    final ref = this.ref as $Ref<bool, bool>;
-    final element =
-        ref.element
-            as $ClassProviderElement<
-              AnyNotifier<bool, bool>,
-              bool,
-              Object?,
-              Object?
-            >;
-    return element.handleCreate(ref, build);
-  }
-}
-
-/// 하단 탭 인덱스(0: 내 게시판, 1: 스크랩, 2: 설정).
+/// 하단 탭 인덱스(보이는 탭 `MainTab` 목록의 순번 — 이슈 레이더가 없는 빌드는 이슈 탭이 빠진다).
 
 @ProviderFor(MainTabIndex)
 final mainTabIndexProvider = MainTabIndexProvider._();
 
-/// 하단 탭 인덱스(0: 내 게시판, 1: 스크랩, 2: 설정).
+/// 하단 탭 인덱스(보이는 탭 `MainTab` 목록의 순번 — 이슈 레이더가 없는 빌드는 이슈 탭이 빠진다).
 final class MainTabIndexProvider extends $NotifierProvider<MainTabIndex, int> {
-  /// 하단 탭 인덱스(0: 내 게시판, 1: 스크랩, 2: 설정).
+  /// 하단 탭 인덱스(보이는 탭 `MainTab` 목록의 순번 — 이슈 레이더가 없는 빌드는 이슈 탭이 빠진다).
   MainTabIndexProvider._()
     : super(
         from: null,
@@ -293,7 +182,7 @@ final class MainTabIndexProvider extends $NotifierProvider<MainTabIndex, int> {
 
 String _$mainTabIndexHash() => r'815006204bd34ad8aaa78f2b949274b7f3978342';
 
-/// 하단 탭 인덱스(0: 내 게시판, 1: 스크랩, 2: 설정).
+/// 하단 탭 인덱스(보이는 탭 `MainTab` 목록의 순번 — 이슈 레이더가 없는 빌드는 이슈 탭이 빠진다).
 
 abstract class _$MainTabIndex extends $Notifier<int> {
   int build();

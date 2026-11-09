@@ -4,7 +4,6 @@ import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/main_page/application/main_providers.dart';
-import 'package:mocl_flutter/features/settings_page/application/datasource_provider.dart';
 import 'package:mocl_flutter/features/settings_page/application/settings_providers.dart';
 
 mixin class MainState() {
@@ -13,18 +12,9 @@ mixin class MainState() {
   /// 앱바 제목(= 지금 보고 있는 사이트 이름).
   String titleState(WidgetRef ref) => ref.watch(mainTitleProvider);
 
-  /// 드로어 칩이 자기 사이트가 선택됐는지 물어본다.
+  /// 사이트 시트의 칩이 자기 사이트가 선택됐는지 물어본다.
   bool isSiteType(WidgetRef ref, SiteType siteType) =>
       ref.watch(isCurrentSiteTypeProvider(siteType));
-
-  /// 앱 버전(드로어 헤더).
-  AsyncValue<String> appVersionState(WidgetRef ref) =>
-      ref.watch(getAppVersionProvider);
-
-  GlobalKey<ScaffoldState> scaffoldState(WidgetRef ref) =>
-      ref.watch(mainScaffoldStateProvider);
-
-  bool isSidebarExpanded(WidgetRef ref) => ref.watch(mainSidebarProvider);
 
   TextStyle titleTextStyleState(WidgetRef ref) => ref.watch(
     appTextStylesFontSizeProvider.select((state) => state.titleTextStyle),

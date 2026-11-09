@@ -1,97 +1,5 @@
 part of '../mocl_main_view.dart';
 
-/// "지금 이슈" 배치의 고정 머리: 이슈 카드 + 큰 사이트 제목.
-///
-/// 툴바(고정) 바로 밑에 붙어 움직이지 않고, 게시판 목록만 그 밑으로 스크롤된다.
-/// 이슈는 늘 보이고, 목록과의 경계는 목록이 밑으로 지나갈 때 생기는 그림자가
-/// 맡는다(기존 배치에서 툴바가 받던 scrolledUnderElevation 과 같은 값).
-/// 높이는 내용을 따른다(자리 표시 → 이슈, 카드 접힘 · 펼침 애니메이션).
-class const _MainPinnedHeader() extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) =>
-      const PinnedHeaderSliver(child: _PinnedHeaderBox());
-}
-
-class const _PinnedHeaderBox() extends StatefulWidget {
-  @override
-  State<_PinnedHeaderBox> createState() => _PinnedHeaderBoxState();
-}
-
-class _PinnedHeaderBoxState() extends State<_PinnedHeaderBox> {
-  ScrollPosition? _position;
-  bool _scrolled = false;
-
-  @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-    final ScrollPosition? position = Scrollable.maybeOf(context)?.position;
-    if (position == _position) return;
-    _position?.removeListener(_onScroll);
-    _position = position?..addListener(_onScroll);
-    _scrolled = _isScrolled();
-  }
-
-  @override
-  void dispose() {
-    _position?.removeListener(_onScroll);
-    super.dispose();
-  }
-
-  bool _isScrolled() {
-    final ScrollPosition? position = _position;
-    return position != null &&
-        position.hasPixels &&
-        position.hasContentDimensions &&
-        position.pixels > position.minScrollExtent;
-  }
-
-  void _onScroll() {
-    final bool scrolled = _isScrolled();
-    if (scrolled != _scrolled && mounted) setState(() => _scrolled = scrolled);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    return Material(
-      // 아래로 지나가는 게시판이 비치지 않게 툴바와 같은 바탕을 깐다.
-      color: theme.appBarTheme.backgroundColor ?? theme.scaffoldBackgroundColor,
-      shadowColor: theme.appBarTheme.shadowColor,
-      elevation: _scrolled
-          ? (theme.appBarTheme.scrolledUnderElevation ?? 1)
-          : 0,
-      child: const Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          // 넓은 화면에서는 카드를 목록과 같은 폭으로 가운데 모은다.
-          // 카드와 제목 사이 간격은 카드 아래 여백에 있다(카드가 접히면 같이 사라져
-          // 제목이 기존 배치와 같은 자리에 온다).
-          BoxReadableWidth(child: _MainIssueCard()),
-          // 큰 제목은 앱바 펼침 영역처럼 화면 폭 전체를 쓴다(기존 배치와 같은 자리).
-          MainSiteTitle(),
-          // 제목과 첫 게시판 사이.
-          SizedBox(height: 4),
-        ],
-      ),
-    );
-  }
-}
-
-/// 고정 머리 안의 "지금 이슈" 카드 자리.
-///
-/// 편집 · 검색 중에는 비운다(그때 진입점은 앱바 레이더 아이콘과 드로어).
-/// 처음 받는 중에는 카드가 자리 표시로 칸을 잡고, 못 받았거나 없으면 스스로 접힌다.
-class const _MainIssueCard() extends ConsumerWidget with MainState {
-  @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final bool show = !editModeState(ref) && !searchOpenState(ref);
-    return show
-        ? const IssueHomeCard()
-        : const SizedBox(width: double.infinity);
-  }
-}
-
 /// 홈 본문. 지금 고른 사이트에 담아둔 게시판을 한 줄씩 펼친다.
 ///
 /// 같은 카페(부모)의 게시판이 여럿이면 카페 소제목 아래로 한 번 더 묶는다
@@ -138,7 +46,7 @@ class const _MainBody() extends ConsumerWidget with MainState, FavoriteState {
           .where((favorite) => _matches(favorite, query))
           .toList();
       if (hits.isEmpty) {
-        return _buildNoResultView(titleTextStyleState(ref), query);
+        return _NoSearchResult(query: query);
       }
       return SliverMainAxisGroup(
         slivers: [
@@ -158,7 +66,7 @@ class const _MainBody() extends ConsumerWidget with MainState, FavoriteState {
     }
 
     if (favorites.isEmpty) {
-      return _buildEmptyView(titleTextStyleState(ref), titleState(ref));
+      return const _EmptyBoards();
     }
 
     return SliverMainAxisGroup(
@@ -221,36 +129,38 @@ class const _MainBody() extends ConsumerWidget with MainState, FavoriteState {
           ),
     ];
   }
+}
 
-  Widget _buildNoResultView(TextStyle textStyle, String query) =>
-      SliverFillRemaining(
-        hasScrollBody: false,
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 32),
-            child: PlainText(
-              "'$query' 와 맞는 게시판이 없습니다.",
-              textAlign: TextAlign.center,
-              style: textStyle,
-            ),
-          ),
-        ),
-      );
+/// 고른 사이트에 담은 게시판이 없을 때. 담기 · 다른 사이트 고르기로 바로 잇는다.
+class const _EmptyBoards() extends ConsumerWidget with MainState, MainEvent {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => SliverMessageView(
+    child: MessageView(
+      icon: Icons.playlist_add,
+      title: '담은 게시판이 없어요',
+      description: '${titleState(ref)}에서 자주 보는 게시판을 담아 두면 여기에 모여요.',
+      primaryLabel: '게시판 담기',
+      onPrimary: () => handleAddButton(ref, context),
+      secondaryLabel: '다른 사이트',
+      onSecondary: () => showSitePickerSheet(context),
+      titleStyle: titleTextStyleState(ref),
+      descriptionStyle: smallTextStyleState(ref),
+    ),
+  );
+}
 
-  Widget _buildEmptyView(
-    TextStyle textStyle,
-    String siteTitle,
-  ) => SliverFillRemaining(
-    hasScrollBody: false,
-    child: Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 32),
-        child: Text(
-          '$siteTitle 에서 담은 게시판이 없습니다.\n오른쪽 위 + 로 게시판을 담거나,\n왼쪽 위 ☰ 로 다른 사이트를 골라 보세요.',
-          textAlign: TextAlign.center,
-          style: textStyle,
-        ),
-      ),
+/// 내 게시판 검색 결과가 없을 때.
+class const _NoSearchResult({required final String query})
+    extends ConsumerWidget
+    with MainState {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => SliverMessageView(
+    child: MessageView(
+      icon: Icons.search_off,
+      title: '맞는 게시판이 없어요',
+      description: "'$query' 가 들어간 게시판을 담아 두지 않았어요.",
+      titleStyle: titleTextStyleState(ref),
+      descriptionStyle: smallTextStyleState(ref),
     ),
   );
 }
@@ -487,10 +397,15 @@ class const _BoardTile({
 }
 
 class const _ErrorWidget({super.key, required final Object? error})
-    extends StatelessWidget {
+    extends ConsumerWidget
+    with MainState, FavoriteEvent {
   @override
-  Widget build(BuildContext context) => SliverFillRemaining(
-    hasScrollBody: false,
-    child: Center(child: FailureView(error: error)),
+  Widget build(BuildContext context, WidgetRef ref) => SliverMessageView(
+    child: FailureView(
+      error: error,
+      onRetry: () => refreshFavorites(ref),
+      titleStyle: titleTextStyleState(ref),
+      descriptionStyle: smallTextStyleState(ref),
+    ),
   );
 }
