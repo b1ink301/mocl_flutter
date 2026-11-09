@@ -119,6 +119,14 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   (`KeywordAlerts.isExpired`). `startedAt` 이 없거나(옛 앱) 서버가 받은 시각보다 앞서면 등록 시각으로 센다.
   앱은 키워드 저장 · "연장" · "다시 켜기" 때 `startedAt` 을 지금으로 바꾸고(`KeywordAlertsNotifier.upsert`),
   남은 기간은 `KeywordAlertExpiry` 로 보여 준다. 기한이 끝난 게시판은 크롤하지 않고 상태도 지운다(다시 켜면 첫 크롤부터).
+- 한도: 기기당 게시판 3개 · 게시판당 키워드 5개(`KeywordAlerts.maxBoards` · `maxKeywordsPerBoard`, 앱이 막는다).
+  서버는 옛 앱(한도 10)을 위해 10개까지 받고(`acceptBoards` · `acceptKeywordsPerBoard`) `AlertRegistration.limited()`
+  로 앞에서부터 한도만큼만 저장 · 크롤한다. 한도를 바꿀 때 accept 값은 줄이지 말 것(옛 앱 등록이 통째로 거절된다).
+- 서버 크롤러(`AlertCrawler`)는 서버 사양을 늘리지 않고 버티게 짰다:
+  사이트끼리는 동시에 · 한 사이트 안은 1.5초 간격으로 차례로 받고, 사이트마다 게시판 60개(`maxBoardsPerSite`,
+  구독자 많은 순)까지만 본다(넘는 수는 `/healthz/crawl` 의 `skippedBoards`). 알림은 기기마다 차례로, 기기끼리
+  16대(`pushConcurrency`)까지 동시에 보낸다. 구독이 모두 기한을 넘기고 7일(`staleGrace`) 지난 기기 등록은 지운다
+  (`AlertStore.maxDevices` 자리를 비운다).
 - 서버는 사용자가 준 게시판 URL 을 요청하므로 호스트를 `KeywordAlerts.isAllowedBoardUrl` 로 제한한다(SSRF).
   게시판 첫 크롤은 지금 글을 "본 것" 으로만 기록한다(옛 글로 알림 폭탄 방지). 실패하면 간격을 늘린다.
 - Android: 채널 `keyword_alerts` 는 `MainActivity` 가 만들고 매니페스트가 FCM 기본 채널 · 아이콘으로 지정한다.

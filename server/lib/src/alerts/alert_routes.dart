@@ -23,7 +23,8 @@ void mountAlertRoutes(Router router, AlertStore store, RateLimiter limiter) {
       if (body == null) return _error(413, 'too_large');
       final AlertRegistration registration;
       try {
-        registration = AlertRegistration.fromJson(jsonDecode(body));
+        // 옛 앱은 한도(게시판 · 키워드)를 넘겨 보낼 수 있다 → 앞에서부터 한도만큼만 쓴다.
+        registration = AlertRegistration.fromJson(jsonDecode(body)).limited();
       } on FormatException catch (e) {
         return _error(400, 'invalid', detail: e.message);
       }

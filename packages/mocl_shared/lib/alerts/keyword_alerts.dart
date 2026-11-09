@@ -25,9 +25,15 @@ abstract final class KeywordAlerts() {
     SiteType.ppomppu,
   };
 
-  /// 한 기기가 구독할 수 있는 게시판 수 / 게시판당 키워드 수.
-  static const int maxBoards = 10;
-  static const int maxKeywordsPerBoard = 10;
+  /// 한 기기가 알림을 받는 게시판 수 / 게시판당 키워드 수. 앱은 이 한도로 막고,
+  /// 서버는 넘는 것을 앞에서부터 잘라 쓴다([AlertRegistration.limited]).
+  static const int maxBoards = 3;
+  static const int maxKeywordsPerBoard = 5;
+
+  /// 서버가 받아 주는 상한. 한도가 10 이던 옛 앱의 등록이 통째로 거절되지 않게
+  /// 여기까지는 받고([AlertRegistration.limited] 로 잘라 쓴다), 넘으면 거절한다.
+  static const int acceptBoards = 10;
+  static const int acceptKeywordsPerBoard = 10;
   static const int maxKeywordLength = 30;
 
   /// 게시판 URL 로 허용하는 호스트. 서버가 사용자가 준 URL 을 그대로 요청하므로
@@ -146,7 +152,7 @@ class const AlertSubscription({
       if (!keywords.contains(trimmed)) keywords.add(trimmed);
     }
     if (keywords.isEmpty ||
-        keywords.length > KeywordAlerts.maxKeywordsPerBoard) {
+        keywords.length > KeywordAlerts.acceptKeywordsPerBoard) {
       throw const FormatException('키워드 수가 잘못됐다');
     }
     final Object? startedAt = json['startedAt'];
@@ -172,6 +178,35 @@ class const AlertRegistration({
 }) {
   static const Set<String> platforms = {'android', 'ios'};
 
+  /// 한도([KeywordAlerts.maxBoards] · [KeywordAlerts.maxKeywordsPerBoard])에 맞춘 등록.
+  /// 넘는 게시판 · 키워드는 앞에서부터 한도만큼만 남긴다(앱 목록 순서 = 화면 순서).
+  /// 서버가 저장 · 크롤할 때 쓴다. 앱의 로컬 구독은 자르지 않는다.
+  AlertRegistration limited() {
+    final bool within =
+        subscriptions.length <= KeywordAlerts.maxBoards &&
+        subscriptions.every(
+          (AlertSubscription s) =>
+              s.keywords.length <= KeywordAlerts.maxKeywordsPerBoard,
+        );
+    if (within) return this;
+    return AlertRegistration(
+      fcmToken: fcmToken,
+      platform: platform,
+      subscriptions: [
+        for (final AlertSubscription s in subscriptions.take(
+          KeywordAlerts.maxBoards,
+        ))
+          s.keywords.length <= KeywordAlerts.maxKeywordsPerBoard
+              ? s
+              : s.copyWith(
+                  keywords: s.keywords
+                      .take(KeywordAlerts.maxKeywordsPerBoard)
+                      .toList(),
+                ),
+      ],
+    );
+  }
+
   Map<String, Object?> toJson() => {
     'fcmToken': fcmToken,
     'platform': platform,
@@ -189,7 +224,7 @@ class const AlertRegistration({
     if (platform is! String || !platforms.contains(platform)) {
       throw FormatException('모르는 platform: $platform');
     }
-    if (subs is! List || subs.length > KeywordAlerts.maxBoards) {
+    if (subs is! List || subs.length > KeywordAlerts.acceptBoards) {
       throw const FormatException('subscriptions 가 잘못됐다');
     }
     final List<AlertSubscription> parsed = [

@@ -543,7 +543,7 @@ async function loadStatus() {
   const c = data.crawl;
   if (c) {
     rows.push(`키워드 알림 등록 기기: ${c.devices}`);
-    rows.push(`감시 게시판: ${c.boards}개 · 실패 중: ${c.failingBoards}개 · 기한 지난 구독: ${c.expiredSubscriptions ?? 0}개`);
+    rows.push(`감시 게시판: ${c.boards}개 · 실패 중: ${c.failingBoards}개 · 기한 지난 구독: ${c.expiredSubscriptions ?? 0}개 · 상한으로 건너뛴 게시판: ${c.skippedBoards ?? 0}개`);
     rows.push(`알림 크롤 마지막: ${ago(c.lastTickAgoSec)} · 이슈 레이더 마지막: ${ago(c.radarLastRunAgoSec)}`);
   }
   rows.push(`적용 중인 설정 ETag: ${data.servedEtag}`);

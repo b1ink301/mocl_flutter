@@ -94,6 +94,48 @@ void main() {
     });
   });
 
+  group('AlertRegistration.limited', () {
+    Map<String, Object?> reg(List<Object?> subs) => {
+      'fcmToken': 'tok',
+      'platform': 'android',
+      'subscriptions': subs,
+    };
+
+    test('한도 안이면 그대로 돌려준다', () {
+      final r = AlertRegistration.fromJson(reg([_sub()]));
+      expect(identical(r.limited(), r), isTrue);
+    });
+
+    test('옛 앱(한도 10)의 등록은 받되 앞에서부터 한도만큼만 쓴다', () {
+      final r = AlertRegistration.fromJson(
+        reg(
+          List.generate(
+            KeywordAlerts.acceptBoards,
+            (i) => _sub(
+              board: 'b$i',
+              keywords: List.generate(
+                KeywordAlerts.acceptKeywordsPerBoard,
+                (k) => 'k$k',
+              ),
+            ),
+          ),
+        ),
+      );
+      final limited = r.limited();
+      expect(
+        limited.subscriptions.map((s) => s.board),
+        List.generate(KeywordAlerts.maxBoards, (i) => 'b$i'),
+      );
+      for (final s in limited.subscriptions) {
+        expect(
+          s.keywords,
+          List.generate(KeywordAlerts.maxKeywordsPerBoard, (k) => 'k$k'),
+        );
+      }
+      expect(limited.fcmToken, 'tok');
+    });
+  });
+
   group('기한', () {
     test('startedAt 은 선택이고 왕복한다 · 음수나 문자열은 거절한다', () {
       expect(AlertSubscription.fromJson(_sub()).startedAt, isNull);

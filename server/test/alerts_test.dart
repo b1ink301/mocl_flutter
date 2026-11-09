@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -40,6 +41,25 @@ class _ScriptedSender(final PushResult result) implements PushSender {
   Future<PushResult> send(PushMessage message) async {
     sent.add(message);
     return result;
+  }
+
+  @override
+  Future<void> close() async {}
+}
+
+/// 느린 발송기. 동시에 몇 개까지 보냈는지 기록한다.
+class _SlowSender() implements PushSender {
+  final List<PushMessage> sent = [];
+  int _inFlight = 0;
+  int peak = 0;
+  @override
+  Future<PushResult> send(PushMessage message) async {
+    _inFlight++;
+    peak = _inFlight > peak ? _inFlight : peak;
+    await Future<void>.delayed(const Duration(milliseconds: 5));
+    sent.add(message);
+    _inFlight--;
+    return PushResult.sent;
   }
 
   @override
@@ -303,6 +323,158 @@ void main() {
         await c.tick(23 * day);
         expect(fetches, 1, reason: '기기 시계가 앞서도 기한을 미래로 늘리지 못한다');
       });
+    });
+
+    test('기한이 끝나고 유예가 지난 기기 등록은 지운다', () async {
+      const int day = 24 * 60 * 60 * 1000;
+      final AlertCrawler c = AlertCrawler(
+        store: store,
+        push: DryRunPushSender(),
+        politeDelay: Duration.zero,
+        ttl: () => const Duration(days: 3),
+        staleGrace: const Duration(days: 7),
+        fetch: (_) async => page,
+      );
+      // setUp 의 기기는 startedAt 없음 → 등록 시각(0)부터 3일, 유예 7일 → 10일째 삭제
+      await c.tick(10 * day - 1);
+      expect(await store.devices(), hasLength(1));
+      await c.tick(10 * day);
+      expect(await store.devices(), isEmpty);
+      expect(c.status.devices, 0);
+    });
+
+    test('옛 등록이 한도를 넘으면 앞에서부터 한도만큼만 본다', () async {
+      final List<String> fetched = [];
+      await store.putDevice(
+        _install,
+        AlertRegistration.fromJson({
+          ..._reg(),
+          'subscriptions': [
+            for (int i = 0; i < KeywordAlerts.acceptBoards; i++)
+              {
+                ...(_reg()['subscriptions']! as List).single as Map,
+                'board': 'b$i',
+                'url': 'https://m.ppomppu.co.kr/new/bbs_list.php?id=b$i',
+              },
+          ],
+        }),
+        0,
+      );
+      final AlertCrawler c = AlertCrawler(
+        store: store,
+        push: DryRunPushSender(),
+        politeDelay: Duration.zero,
+        fetch: (AlertSubscription sub) async {
+          fetched.add(sub.board);
+          return page;
+        },
+      );
+      await c.tick(0);
+      expect(fetched, List.generate(KeywordAlerts.maxBoards, (i) => 'b$i'));
+    });
+
+    test('사이트별 상한을 넘으면 구독자가 많은 게시판부터 본다', () async {
+      await store.deleteDevice(_install);
+      Map<String, Object?> sub(String board) => {
+        ...(_reg()['subscriptions']! as List).single as Map<String, Object?>,
+        'board': board,
+        'url': 'https://m.ppomppu.co.kr/new/bbs_list.php?id=$board',
+      };
+      // popular: 3명, a · b · c: 1명씩
+      for (int i = 0; i < 3; i++) {
+        await store.putDevice(
+          'install-000000000000010$i',
+          AlertRegistration.fromJson({
+            ..._reg(token: 't$i'),
+            'subscriptions': [sub('popular'), if (i == 0) sub('c')],
+          }),
+          0,
+        );
+      }
+      await store.putDevice(
+        'install-0000000000000200',
+        AlertRegistration.fromJson({
+          ..._reg(token: 'x'),
+          'subscriptions': [sub('a'), sub('b')],
+        }),
+        0,
+      );
+      final List<String> fetched = [];
+      final AlertCrawler c = AlertCrawler(
+        store: store,
+        push: DryRunPushSender(),
+        politeDelay: Duration.zero,
+        maxBoardsPerSite: 2,
+        fetch: (AlertSubscription s) async {
+          fetched.add(s.board);
+          return page;
+        },
+      );
+      await c.tick(0);
+      expect(fetched, ['popular', 'a'], reason: '구독자 수 → 이름 순');
+      expect(c.status.boards, 2);
+      expect(c.status.skippedBoards, 2);
+      expect((await store.boardState('ppomppu|b')).isSeeded, isFalse);
+    });
+
+    test('사이트끼리는 동시에 받는다', () async {
+      await store.putDevice(
+        'install-0000000000000300',
+        AlertRegistration.fromJson({
+          ..._reg(token: 'c'),
+          'subscriptions': [
+            {
+              'site': 'clien',
+              'board': 'news',
+              'url': 'https://m.clien.net/service/board/news',
+              'title': '새로운소식',
+              'keywords': ['에어팟'],
+            },
+          ],
+        }),
+        0,
+      );
+      final Completer<List<ListItem>> gate = Completer();
+      final List<String> started = [];
+      final AlertCrawler c = AlertCrawler(
+        store: store,
+        push: DryRunPushSender(),
+        politeDelay: Duration.zero,
+        fetch: (AlertSubscription s) {
+          started.add(s.site.name);
+          return gate.future;
+        },
+      );
+      final Future<void> tick = c.tick(0);
+      await Future<void>.delayed(Duration.zero);
+      await Future<void>.delayed(Duration.zero);
+      expect(started, unorderedEquals(['ppomppu', 'clien']));
+      gate.complete(page);
+      await tick;
+    });
+
+    test('알림은 기기끼리 동시에 보내되 상한을 넘지 않는다', () async {
+      await store.deleteDevice(_install);
+      for (int i = 0; i < 6; i++) {
+        await store.putDevice(
+          'install-00000000000004$i$i',
+          AlertRegistration.fromJson(_reg(token: 't$i')),
+          0,
+        );
+      }
+      final _SlowSender push = _SlowSender();
+      final AlertCrawler c = AlertCrawler(
+        store: store,
+        push: push,
+        politeDelay: Duration.zero,
+        pushConcurrency: 2,
+        fetch: (_) async => page,
+      );
+      await c.tick(0);
+      page = [_item(5, '에어팟 4'), _item(1, '옛 글 에어팟')];
+      await c.tick(3 * 60 * 1000);
+      expect(push.sent, hasLength(6));
+      expect(push.peak, 2);
     });
 
     test('구독자가 없어진 게시판 상태는 지운다', () async {
