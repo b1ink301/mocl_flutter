@@ -139,9 +139,13 @@ class const KeywordChip({
   @override
   Widget build(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-    return InputChip(
+    // InputChip 은 콜백(onDeleted 등)이 없으면 비활성 색으로 그려진다.
+    // 목록처럼 지우기 버튼 없이 보여 주기만 할 때도 같은 색이 나오게 Chip 을 쓴다.
+    return Chip(
       label: Text(label),
+      labelStyle: TextStyle(color: scheme.onSecondaryContainer),
       onDeleted: onDeleted,
+      deleteIcon: const Icon(Icons.clear, size: 18),
       visualDensity: VisualDensity.compact,
       materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
       backgroundColor: scheme.secondaryContainer.withValues(alpha: 0.6),
@@ -201,6 +205,15 @@ class KeywordEditorSheetState2() extends State<KeywordEditorSheet> {
   void _save() {
     if (_controller.text.trim().isNotEmpty) _add();
     if (_error != null || _keywords.isEmpty) return;
+    // 한도가 10 이던 옛 버전에서 더 걸어 둔 키워드는 줄여야 저장된다.
+    if (_keywords.length > KeywordAlerts.maxKeywordsPerBoard) {
+      setState(
+        () => _error =
+            '게시판마다 키워드는 ${KeywordAlerts.maxKeywordsPerBoard}개까지예요. '
+            '${_keywords.length - KeywordAlerts.maxKeywordsPerBoard}개를 지워 주세요.',
+      );
+      return;
+    }
     Navigator.of(context).pop(List<String>.of(_keywords));
   }
 

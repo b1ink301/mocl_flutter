@@ -121,7 +121,9 @@ class _KeywordAlertsPageState()
                       itemCount: subs.length + 1,
                       separatorBuilder: (_, _) => const SizedBox(height: 8),
                       itemBuilder: (context, i) {
-                        if (i == 0) return _Description(ttl: ttl);
+                        if (i == 0) {
+                          return _Description(ttl: ttl, count: subs.length);
+                        }
                         final AlertSubscription sub = subs[i - 1];
                         return _SubscriptionCard(
                           subscription: sub,
@@ -140,21 +142,44 @@ class _KeywordAlertsPageState()
   }
 }
 
-class const _Description({required final Duration? ttl})
-    extends StatelessWidget {
+class const _Description({
+  required final Duration? ttl,
+
+  /// 걸어 둔 게시판 수. 한도가 10 이던 옛 버전에서 더 걸어 둔 경우 안내한다.
+  required final int count,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final String? days = keywordAlertTtlLabel(ttl);
     return Padding(
       padding: const EdgeInsets.fromLTRB(4, 4, 4, 8),
-      child: Text(
-        '게시판에 키워드가 들어간 새 글이 올라오면 알려 드려요. '
-        '서버가 몇 분마다 확인하므로 조금 늦게 올 수 있어요.'
-        '${days == null ? '' : ' 알림은 걸거나 고친 뒤 $days 동안 오고, 끝나면 다시 켜야 해요.'}',
-        style: theme.textTheme.bodySmall?.copyWith(
-          color: theme.colorScheme.onSurfaceVariant,
-        ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '게시판에 키워드가 들어간 새 글이 올라오면 알려 드려요. '
+            '서버가 몇 분마다 확인하므로 조금 늦게 올 수 있어요. '
+            '게시판은 ${KeywordAlerts.maxBoards}개, 게시판마다 키워드는 '
+            '${KeywordAlerts.maxKeywordsPerBoard}개까지 걸 수 있어요.'
+            '${days == null ? '' : ' 알림은 걸거나 고친 뒤 $days 동안 오고, 끝나면 다시 켜야 해요.'}',
+            style: theme.textTheme.bodySmall?.copyWith(
+              color: theme.colorScheme.onSurfaceVariant,
+            ),
+          ),
+          if (count > KeywordAlerts.maxBoards)
+            Padding(
+              padding: const EdgeInsets.only(top: 8),
+              child: Text(
+                '지금은 위의 게시판 ${KeywordAlerts.maxBoards}개만 알려 드려요'
+                '(게시판마다 앞의 키워드 ${KeywordAlerts.maxKeywordsPerBoard}개). '
+                '나머지는 꺼 주세요.',
+                style: theme.textTheme.bodySmall?.copyWith(
+                  color: theme.colorScheme.error,
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
