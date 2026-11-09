@@ -1,7 +1,7 @@
 name: mocl_flutter
 description: "Mocl Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.6.0+402
+version: 1.6.0+403
 
 environment:
   sdk: ">=3.13.0"
@@ -62,7 +62,7 @@ dependencies:
   google_sign_in: ^7.2.0
   # iOS SPM 에서 GoogleSignIn 10(firebase-ios-sdk 13 과 호환)을 받는 첫 버전
   google_sign_in_ios: ^6.4.0
-  googleapis: ^17.0.0
+  googleapis: ^18.0.0
   googleapis_auth: ^2.3.5
 
   # class 자동화
@@ -128,9 +128,9 @@ dependencies:
   photo_view: ^0.15.0
 
   # riverpod
-  flutter_riverpod: ^3.4.3
-  riverpod_annotation: ^4.0.7
-  hooks_riverpod: ^3.4.3
+  flutter_riverpod: ^3.5.0
+  riverpod_annotation: ^4.0.8
+  hooks_riverpod: ^3.5.0
 
   flutter_hooks: ^0.21.3+1
   # sliver list
@@ -178,8 +178,8 @@ dev_dependencies:
   analyzer: ^14.7.0
 #  test: ^1.25.10
 #  test_api: ^0.7.4
-  riverpod_generator: ^4.0.9
-  riverpod_lint: ^3.1.9
+  riverpod_generator: ^4.0.10
+  riverpod_lint: ^3.2.0
 
   # 사이트 로고 생성(tool/fetch_site_icons.dart) — ico/gif 디코딩 + 리사이즈
   image: ^4.12.0
