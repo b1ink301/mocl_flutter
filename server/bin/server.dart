@@ -36,6 +36,8 @@ Future<void> main() async {
     store: alerts,
     push: push,
     ttl: () => configs.current.config.alerts.ttl,
+    isAlertBoard: (site, board) =>
+        configs.current.config.alerts.isAlertBoard(site, board),
     fetch: (sub) => boards.fetch(
       sub.site,
       board: sub.board,
@@ -85,8 +87,11 @@ Future<void> main() async {
 
   // 요청 제한용 IP 는 1분마다 비운다(요청이 없을 때도).
   final RateLimiter limiter = RateLimiter();
+  // 이슈 목록은 앱이 탭을 열 때 · 복귀 때 받는다. 사람이 쓰는 양보다 넉넉하게.
+  final RateLimiter issueLimiter = RateLimiter(limit: 120);
   final Timer pruneTimer = Timer.periodic(const Duration(minutes: 1), (_) {
     limiter.prune();
+    issueLimiter.prune();
     admin?.prune();
   });
 
@@ -95,6 +100,8 @@ Future<void> main() async {
       configs,
       alerts: alerts,
       alertLimiter: limiter,
+      validateToken: push is FcmPushSender ? push.validateToken : null,
+      issueLimiter: issueLimiter,
       crawlStatus: crawlStatus,
       radarFeed: radarFeed,
       admin: admin,

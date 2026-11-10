@@ -85,6 +85,8 @@ button:disabled { opacity: .45; cursor: default; }
 /* UA */
 .site-row { display: grid; grid-template-columns: 1.1fr 1fr auto; gap: 6px; margin-bottom: 6px; }
 .site-row input { grid-column: 1 / -1; }
+.board-row { display: grid; grid-template-columns: 1fr 1fr 1.4fr auto; gap: 6px; margin-bottom: 6px; align-items: center; }
+.board-row span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
 /* 이력 */
 .hist { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-top: 1px solid var(--line); }
@@ -176,6 +178,22 @@ button:disabled { opacity: .45; cursor: default; }
       <label class="muted"><input id="ttlDaysDefault" type="checkbox"> 기본값</label>
     </div>
     <p id="ttlSummary" class="muted" style="margin:12px 0 0"></p>
+  </section>
+
+  <section class="card">
+    <h2>키워드 알림 게시판</h2>
+    <p class="desc">알림을 걸 수 있는 게시판입니다. 게시판 id 는 앱 <code>assets/{사이트}/board_link.json</code> 의 <code>board</code> 값.
+      서버는 저장 즉시(다음 크롤 바퀴부터), 앱(종 버튼 · 게시판 고르기)은 <b>다음 실행부터</b> 따릅니다.
+      넣기 전에 서버에서 <code>bin/probe.dart</code> 로 그 게시판이 받아지는지 확인하세요.</p>
+    <label class="muted"><input id="boardsDefault" type="checkbox"> 기본값</label>
+    <div id="boardRows" style="margin-top:10px"></div>
+    <div class="board-row">
+      <select id="boardSite"></select>
+      <input id="boardId" type="text" placeholder="게시판 id (예: park)">
+      <input id="boardTitle" type="text" placeholder="보일 이름 (예: 모두의공원)">
+      <button id="addBoard" type="button">추가</button>
+    </div>
+    <p id="boardsSummary" class="muted" style="margin:12px 0 0"></p>
   </section>
 
   <section class="card">
@@ -325,6 +343,12 @@ function setAlerts(mut) {
   if (Object.keys(next).length === 0) delete cfg.alerts; else cfg.alerts = next;
   render();
 }
+function setBoards(mut) {
+  const next = clone(alerts().boards ?? meta.defaults.boards);
+  mut(next);
+  for (const k of Object.keys(next)) if (!Object.keys(next[k]).length) delete next[k];
+  setAlerts((x) => { x.boards = next; });
+}
 function setAds(mut) {
   const next = clone(ads());
   mut(next);
@@ -351,6 +375,8 @@ function renderStatic() {
   $('intervalRange').textContent = `(${n[0]}~${n[1]})`;
   const t = meta.limits.ttlDays;
   $('ttlRange').textContent = `(${t[0]}~${t[1]}, 기본 ${meta.defaults.ttlDays})`;
+  $('boardSite').replaceChildren(
+    ...meta.alertSites.map((s) => el('option', { value: s }, `${meta.siteTitles[s] || s} (${s})`)));
   for (const id of ['listFirst', 'listInterval', 'ttlDays']) {
     const range = meta.limits[id];
     $(id).min = range[0]; $(id).max = range[1];
@@ -402,6 +428,26 @@ function render() {
   $('ttlSummary').textContent = days === 0
     ? '기한 없이 계속 보냅니다.'
     : `알림을 걸거나 연장하면 ${days}일 동안 보냅니다. 지난 알림은 앱에서 연장해야 다시 옵니다.`;
+
+  // 키워드 알림 게시판
+  const ownBoards = alerts().boards;
+  const boards = ownBoards ?? meta.defaults.boards;
+  $('boardsDefault').checked = ownBoards == null;
+  const boardRows = [];
+  for (const [site, list] of Object.entries(boards)) {
+    for (const [id, title] of Object.entries(list)) {
+      boardRows.push(el('div', { class: 'board-row' },
+        el('span', {}, meta.siteTitles[site] || site),
+        el('span', { class: 'muted' }, id),
+        el('span', {}, title),
+        el('button', { type: 'button', class: 'danger', onclick: () => setBoards((x) => { delete x[site][id]; }) }, '삭제')));
+    }
+  }
+  $('boardRows').replaceChildren(...boardRows);
+  $('boardsSummary').textContent = boardRows.length === 0
+    ? '알림을 걸 수 있는 게시판이 없습니다(키워드 알림이 사실상 꺼집니다).'
+    : `${boardRows.length}개 게시판 (사이트당 ${meta.limits.boards[0]}개 · 모두 ${meta.limits.boards[1]}개까지)` +
+      (ownBoards == null ? ' · 기본값 사용 중' : '');
 
   // UA 프리셋
   $('presetFields').replaceChildren(
@@ -590,6 +636,19 @@ $('addSite').addEventListener('click', () => {
   if (!site) return toast('모든 사이트가 이미 있습니다');
   cfg.sites = { ...(cfg.sites || {}), [site]: { userAgent: meta.presets[0] } };
   render();
+});
+$('boardsDefault').addEventListener('change', (e) => setAlerts((x) => {
+  if (e.target.checked) delete x.boards; else x.boards = clone(meta.defaults.boards);
+}));
+$('addBoard').addEventListener('click', () => {
+  const site = $('boardSite').value;
+  const id = $('boardId').value.trim();
+  const title = $('boardTitle').value.trim();
+  if (!id || !title) return toast('게시판 id 와 이름을 모두 적어 주세요');
+  const current = alerts().boards ?? meta.defaults.boards;
+  if (current[site]?.[id] != null) return toast('이미 있는 게시판입니다');
+  setBoards((x) => { x[site] = { ...(x[site] || {}), [id]: title }; });
+  $('boardId').value = ''; $('boardTitle').value = '';
 });
 $('toggleJson').addEventListener('click', () => {
   const box = $('jsonBox');

@@ -28,7 +28,9 @@ class _KeywordAlertsPageState()
       KeywordAlertFlow.showMessage(context, message, action: action);
 
   Future<void> _addBoard(List<AlertSubscription> current) async {
-    if (current.length >= KeywordAlerts.maxBoards) {
+    // 허용 목록에서 빠진 게시판(알림이 오지 않음)은 한도에 세지 않는다.
+    final int active = current.where((s) => readIsAlertBoard(ref, s)).length;
+    if (active >= KeywordAlerts.maxBoards) {
       _showMessage('게시판은 ${KeywordAlerts.maxBoards}개까지 걸 수 있어요.');
       return;
     }
@@ -124,13 +126,22 @@ class _KeywordAlertsPageState()
                       separatorBuilder: (_, _) => const SizedBox(height: 8),
                       itemBuilder: (context, i) {
                         if (i == 0) {
-                          return _Description(ttl: ttl, count: subs.length);
+                          return _Description(
+                            ttl: ttl,
+                            count: keywordAlertActiveCountState(ref),
+                          );
                         }
                         final AlertSubscription sub = subs[i - 1];
+                        final bool supported = keywordAlertBoardAllowedState(
+                          ref,
+                          sub.site,
+                          sub.board,
+                        );
                         return _SubscriptionCard(
                           subscription: sub,
+                          supported: supported,
                           expiry: KeywordAlertExpiry.of(sub, ttl, now),
-                          onTap: () => _editKeywords(sub),
+                          onTap: supported ? () => _editKeywords(sub) : null,
                           onRenew: () => _renew(sub),
                           onRemove: () => _remove(sub, i - 1),
                         );
@@ -189,16 +200,19 @@ class const _Description({
 
 class const _SubscriptionCard({
   required final AlertSubscription subscription,
+
+  /// 지금 알림을 받는 게시판인지. 허용 목록(원격 설정)에서 빠지면 false — 끄기만 할 수 있다.
+  required final bool supported,
   required final KeywordAlertExpiry expiry,
-  required final VoidCallback onTap,
+  required final VoidCallback? onTap,
   required final VoidCallback onRenew,
   required final VoidCallback onRemove,
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final bool expired = expiry.isExpired;
-    final String? label = expiry.label;
+    final bool expired = !supported || expiry.isExpired;
+    final String? label = supported ? expiry.label : null;
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surfaceContainerHighest.withValues(
@@ -236,6 +250,28 @@ class const _SubscriptionCard({
                 ),
               ),
             ),
+            if (!supported)
+              Padding(
+                padding: const EdgeInsets.only(top: 6),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.notifications_off_outlined,
+                      size: 14,
+                      color: theme.colorScheme.onSurfaceVariant,
+                    ),
+                    const SizedBox(width: 4),
+                    Expanded(
+                      child: Text(
+                        '이제 알림을 받지 않는 게시판이에요. 꺼 주세요.',
+                        style: theme.textTheme.bodySmall?.copyWith(
+                          color: theme.colorScheme.onSurfaceVariant,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             if (label != null)
               Padding(
                 padding: const EdgeInsets.only(top: 6),
@@ -319,7 +355,7 @@ class const _EmptyView() extends StatelessWidget {
   }
 }
 
-/// 알림을 걸 게시판 고르기(담은 게시판 중 지원 사이트).
+/// 알림을 걸 게시판 고르기(담은 게시판 중 허용 게시판, 원격 설정 `alerts.boards`).
 class const _BoardPickerSheet({required final Set<String> taken})
     extends ConsumerWidget
     with KeywordAlertState {
@@ -341,6 +377,9 @@ class const _BoardPickerSheet({required final Set<String> taken})
             child: Text('게시판을 불러오지 못했어요: $e'),
           ),
           data: (boards) {
+            final String allowed = keywordAlertBoardsState(ref).entries
+                .map((e) => '${e.key.title} ${e.value.values.join(' · ')}')
+                .join(', ');
             final List<FavoriteData> available = boards
                 .where((b) => !taken.contains('${b.siteType.name}|${b.board}'))
                 .toList();
@@ -355,17 +394,22 @@ class const _BoardPickerSheet({required final Set<String> taken})
                 Padding(
                   padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
                   child: Text(
-                    '담은 게시판 중에서 고릅니다. 지원 사이트: '
-                    '${KeywordAlerts.sites.map((s) => s.title).join(', ')}',
+                    allowed.isEmpty
+                        ? '지금은 알림을 걸 수 있는 게시판이 없어요.'
+                        : '담은 게시판 중에서 고릅니다. 알림을 걸 수 있는 게시판: $allowed',
                     style: theme.textTheme.bodySmall?.copyWith(
                       color: theme.colorScheme.onSurfaceVariant,
                     ),
                   ),
                 ),
                 if (available.isEmpty)
-                  const Padding(
-                    padding: EdgeInsets.fromLTRB(24, 16, 24, 32),
-                    child: Text('고를 수 있는 게시판이 없어요. 지원 사이트의 게시판을 먼저 담아 주세요.'),
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(24, 16, 24, 32),
+                    child: Text(
+                      allowed.isEmpty
+                          ? '고를 수 있는 게시판이 없어요.'
+                          : '고를 수 있는 게시판이 없어요. 위 게시판을 메인에 먼저 담아 주세요.',
+                    ),
                   )
                 else
                   Flexible(

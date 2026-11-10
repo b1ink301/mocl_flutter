@@ -111,6 +111,12 @@ void main() {
     final Map<String, Object?> meta = body['meta'] as Map<String, Object?>;
     expect(meta['detailSizes'], containsAll(['compact', 'small', 'off']));
     expect(meta['sites'], contains('clien'));
+    expect(meta['alertSites'], containsAll(['clien', 'damoang']));
+    expect(meta['alertSites'], isNot(contains('ruliweb')));
+    expect(
+      (meta['defaults'] as Map<String, Object?>)['boards'],
+      containsPair('clien', containsPair('park', '모두의공원')),
+    );
   });
 
   test('검사는 문제를 모두 돌려준다', () async {

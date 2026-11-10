@@ -451,7 +451,7 @@ class const _KeywordAlertTile() extends ConsumerWidget with KeywordAlertState {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (!keywordAlertsAvailableState(ref)) return const SizedBox.shrink();
-    final int count = keywordAlertsState(ref).length;
+    final int count = keywordAlertActiveCountState(ref);
     final int unread = keywordAlertUnreadCountState(ref);
     final AppTextStyles styles = ref.watch(appTextStylesFontSizeProvider);
     return Column(

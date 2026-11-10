@@ -16,12 +16,15 @@ Mocl 앱 서버. **원격 설정**(`GET /v1/config`)과 **키워드 알림**(공
 | `GET /v1/config` | 원격 설정 JSON. `ETag` 를 주고 `If-None-Match` 가 같으면 `304` |
 | `GET /v1/issues` | 이슈 레이더 목록(`IssueFeed`). ETag / `304`, 첫 수집 전에는 `503` |
 | `GET /v1/issues/{id}` | 이슈 하나 |
-| `PUT /v1/alerts/{installId}` | 기기의 키워드 알림 등록을 통째로 덮어쓴다(`AlertRegistration`). 구독이 비면 삭제. `204` |
+| `PUT /v1/alerts/{installId}` | 기기의 키워드 알림 등록을 통째로 덮어쓴다(`AlertRegistration`). 허용 게시판만 저장, 남는 게 없으면 삭제. `204` · 무효 FCM 토큰 `400 invalid_token` |
 | `DELETE /v1/alerts/{installId}` | 등록 삭제. `204` |
 | `GET /admin` | 관리 화면(원격 설정 편집). `ADMIN_TOKEN` 이 있을 때만. 아래 "관리 화면" |
 | `/admin/api/*` | 관리 API. `Authorization: Bearer {ADMIN_TOKEN}` 필수 |
 
-알림 API 는 IP 당 분당 30회로 제한하고(`429`), 본문은 64KB 까지 받는다.
+알림 API 는 IP 당 분당 30회, 이슈 API 는 120회로 제한하고(`429`), 알림 본문은 64KB 까지 받는다.
+새 기기이거나 FCM 토큰이 바뀐 등록은 FCM 에 `validate_only` 로 시험 발송해 우리 프로젝트의 토큰인지 확인한다
+(지어낸 토큰으로 기기 자리 `AlertStore.maxDevices` 를 채우는 남용 방지). FCM 이 답하지 않으면 막지 않고,
+서비스 계정이 없으면(dry-run) 확인하지 않는다.
 
 설정 형식은 `packages/mocl_shared/lib/remote_config/remote_config.dart` 의 `RemoteConfig`.
 
@@ -135,6 +138,11 @@ docker compose logs api | grep admin                   # "[admin] 관리 화면 
 
 ## 키워드 알림
 
+- **허용 게시판**(원격 설정 `alerts.boards`, 없으면 `KeywordAlerts.defaultBoards` = 클리앙 모두의공원 · 회원중고장터,
+  다모앙 자유게시판)만 받는다. 관리 화면 "키워드 알림 게시판" 에서 더하고 뺀다(사이트는 `KeywordAlerts.sites` 안에서만).
+  서버는 저장 즉시 · 다음 크롤 바퀴부터, 앱(종 버튼 · 게시판 고르기)은 다음 실행부터 따른다.
+  옛 앱은 아무 게시판에나 걸 수 있었으므로 등록은 거절하지 않고 허용 밖 구독만 빼고 저장 · 크롤한다
+  (`/healthz/crawl` 의 `disallowedSubscriptions`). 게시판을 넣기 전에 아래 probe 로 서버 IP 에서 받아지는지 볼 것.
 - 구독된 게시판을 3분마다(실패하면 최대 60분까지 늘려) 1쪽만 받는다. 같은 게시판은 구독자가 몇 명이든 한 번.
 - 첫 크롤은 기록만 하고, 이후 새 글 제목이 키워드에 맞으면 FCM 으로 보낸다. 무효 토큰이면 등록을 지운다.
 - 저장: sembast 파일 DB(`DATA_DIR/alerts.db`, 볼륨 `mocl_data`).

@@ -134,6 +134,23 @@ void main() {
       }
       expect(limited.fcmToken, 'tok');
     });
+
+    test('allow 로 허용 밖 구독을 먼저 걸러 낸 뒤 한도만큼 자른다', () {
+      final r = AlertRegistration.fromJson(
+        reg([
+          for (int i = 0; i < 3; i++) _sub(board: 'x$i'),
+          for (int i = 0; i < 4; i++) _sub(board: 'ok$i'),
+        ]),
+      );
+      final limited = r.limited(allow: (s) => s.board.startsWith('ok'));
+      expect(
+        limited.subscriptions.map((s) => s.board),
+        List.generate(KeywordAlerts.maxBoards, (i) => 'ok$i'),
+      );
+      expect(r.limited(allow: (_) => false).subscriptions, isEmpty);
+      final within = AlertRegistration.fromJson(reg([_sub()]));
+      expect(identical(within.limited(allow: (_) => true), within), isTrue);
+    });
   });
 
   group('기한', () {

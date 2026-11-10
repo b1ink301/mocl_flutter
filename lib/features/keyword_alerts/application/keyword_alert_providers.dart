@@ -8,10 +8,12 @@ import 'package:mocl_flutter/features/keyword_alerts/data/keyword_alert_store.da
 import 'package:mocl_flutter/features/keyword_alerts/data/keyword_alert_sync.dart';
 import 'package:mocl_flutter/features/keyword_alerts/data/push_messaging.dart';
 import 'package:mocl_flutter/features/keyword_alerts/domain/inbox_alert.dart';
+import 'package:mocl_flutter/features/remote_config/application/remote_config_providers.dart';
 import 'package:mocl_flutter/features/remote_config/data/remote_config_fetcher.dart'
     show moclApiBaseUrl;
 import 'package:mocl_flutter/features/settings_page/application/datasource_provider.dart';
 import 'package:mocl_shared/alerts/keyword_alerts.dart';
+import 'package:mocl_shared/remote_config/remote_config.dart';
 import 'package:mocl_shared/util/mocl_logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -45,6 +47,8 @@ KeywordAlertSync keywordAlertSync(Ref ref) {
     ref.watch(keywordAlertStoreProvider),
     ref.watch(pushMessagingProvider),
     Platform.isIOS ? 'ios' : 'android',
+    isAlertBoard: (site, board) =>
+        ref.read(remoteConfigProvider).alerts.isAlertBoard(site, board),
   );
 }
 
@@ -104,19 +108,27 @@ class KeywordAlertsNotifier() extends _$KeywordAlertsNotifier {
       ref.read(keywordAlertSyncProvider).sync(force: force);
 }
 
-/// 알림을 걸 수 있는 내 게시판(담은 게시판 중 서버가 받을 수 있는 사이트).
+/// 알림을 걸 수 있는 내 게시판(담은 게시판 중 허용 게시판, 원격 설정 `alerts.boards`).
+/// 홈과 같은 순서(사이트 → 사용자가 정한 순서 → 담은 시각).
 @riverpod
 Future<List<FavoriteData>> keywordAlertCandidates(Ref ref) async {
+  final AlertsRemoteConfig alerts = ref.watch(remoteConfigProvider).alerts;
   final List<FavoriteData> favorites = await ref.watch(
     favoritesProvider.future,
   );
   return favorites
       .where(
         (f) =>
-            KeywordAlerts.sites.contains(f.siteType) &&
+            alerts.isAlertBoard(f.siteType, f.board) &&
             KeywordAlerts.isAllowedBoardUrl(f.siteType, f.url),
       )
-      .toList();
+      .toList()
+    ..sort((a, b) {
+      final int bySite = a.siteType.index.compareTo(b.siteType.index);
+      if (bySite != 0) return bySite;
+      final int byOrder = a.orderBy.compareTo(b.orderBy);
+      return byOrder != 0 ? byOrder : a.savedAt.compareTo(b.savedAt);
+    });
 }
 
 @Riverpod(keepAlive: true)

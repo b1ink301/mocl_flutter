@@ -27,6 +27,20 @@ enum PushResult() {
   failed,
 }
 
+/// 등록할 때 FCM 토큰을 확인한 결과.
+enum TokenCheck() {
+  valid,
+
+  /// 우리 프로젝트의 토큰이 아니거나 지어낸 값. 등록을 거절한다.
+  invalid,
+
+  /// FCM 이 답하지 않았다(네트워크 · 5xx). 막지 않고 받는다 — FCM 장애로 등록이 멈추지 않게.
+  unknown,
+}
+
+/// 토큰 확인 함수. 서비스 계정이 없으면(dry-run) 없다.
+typedef TokenValidator = Future<TokenCheck> Function(String token);
+
 abstract interface class PushSender() {
   Future<PushResult> send(PushMessage message);
   Future<void> close();
@@ -110,6 +124,45 @@ class FcmPushSender(
     } catch (e) {
       serverLog('[push] 발송 실패: $e', error: true);
       return PushResult.failed;
+    }
+  }
+
+  /// [token] 이 우리 프로젝트의 유효한 FCM 토큰인지 `validate_only` 로 확인한다(알림은 가지 않는다).
+  /// 지어낸 토큰으로 기기 자리(`AlertStore.maxDevices`)를 채우는 남용을 막는다.
+  Future<TokenCheck> validateToken(String token) async {
+    final Uri uri = Uri.parse(
+      'https://fcm.googleapis.com/v1/projects/$_projectId/messages:send',
+    );
+    try {
+      final http.Response response = await _client
+          .post(
+            uri,
+            headers: {'content-type': 'application/json'},
+            body: jsonEncode({
+              'validate_only': true,
+              'message': {
+                'token': token,
+                'data': {'type': 'validate'},
+              },
+            }),
+          )
+          .timeout(const Duration(seconds: 10));
+      if (response.statusCode == 200) return TokenCheck.valid;
+      // 400(INVALID_ARGUMENT, 잘못된 토큰) · 404(UNREGISTERED) · 403 중 SENDER_ID_MISMATCH(다른 프로젝트 토큰).
+      // 그 밖의 403(서비스 계정 권한 문제)은 우리 쪽 문제라 막지 않는다.
+      // 400 은 토큰 문제일 때만(요청 모양 문제로 모든 등록을 막지 않게).
+      if ((response.statusCode == 400 &&
+              response.body.contains('registration token')) ||
+          response.statusCode == 404 ||
+          (response.statusCode == 403 &&
+              response.body.contains('SENDER_ID_MISMATCH'))) {
+        return TokenCheck.invalid;
+      }
+      serverLog('[push] 토큰 확인 ${response.statusCode}', error: true);
+      return TokenCheck.unknown;
+    } catch (e) {
+      serverLog('[push] 토큰 확인 실패: $e', error: true);
+      return TokenCheck.unknown;
     }
   }
 

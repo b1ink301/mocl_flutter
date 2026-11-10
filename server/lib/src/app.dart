@@ -7,6 +7,7 @@ import 'admin/admin_routes.dart';
 import 'alerts/alert_crawler.dart';
 import 'alerts/alert_routes.dart';
 import 'alerts/alert_store.dart';
+import 'alerts/push_sender.dart';
 import 'config_store.dart';
 import 'radar/radar_feed.dart';
 import 'rate_limiter.dart';
@@ -21,6 +22,8 @@ Handler buildHandler(
   ConfigStore configs, {
   AlertStore? alerts,
   RateLimiter? alertLimiter,
+  TokenValidator? validateToken,
+  RateLimiter? issueLimiter,
   CrawlStatus Function()? crawlStatus,
   RadarFeed? radarFeed,
   AdminRoutes? admin,
@@ -47,10 +50,17 @@ Handler buildHandler(
         headers: _jsonHeaders,
       );
     });
-  radarFeed?.mount(router);
+  radarFeed?.mount(router, limiter: issueLimiter);
   admin?.mount(router);
   if (alerts != null) {
-    mountAlertRoutes(router, alerts, alertLimiter ?? RateLimiter());
+    mountAlertRoutes(
+      router,
+      alerts,
+      alertLimiter ?? RateLimiter(),
+      isAlertBoard: (site, board) =>
+          configs.current.config.alerts.isAlertBoard(site, board),
+      validateToken: validateToken,
+    );
   }
 
   return const Pipeline()

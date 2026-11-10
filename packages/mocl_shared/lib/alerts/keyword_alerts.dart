@@ -1,4 +1,5 @@
 import 'package:mocl_shared/entities/mocl_site_type.dart';
+import 'package:mocl_shared/remote_config/alerts_config.dart';
 
 /// 키워드 알림 계약. 앱(구독 · 표시)과 서버(검증 · 매칭)가 같이 쓴다.
 ///
@@ -23,6 +24,14 @@ abstract final class KeywordAlerts() {
     SiteType.mlbpark,
     SiteType.nate,
     SiteType.ppomppu,
+  };
+
+  /// 알림을 걸 수 있는 게시판 기본값(사이트 → 게시판 id → 이름).
+  /// 원격 설정 `alerts.boards` 가 있으면 그것을 쓴다([AlertsRemoteConfig.effectiveBoards]).
+  /// 서버가 사이트에서 받아 오는 양을 관리자가 정한 게시판 수로 묶어 둔다.
+  static const Map<SiteType, Map<String, String>> defaultBoards = {
+    SiteType.clien: {'park': '모두의공원', 'sold': '회원중고장터'},
+    SiteType.damoang: {'free': '자유게시판'},
   };
 
   /// 한 기기가 알림을 받는 게시판 수 / 게시판당 키워드 수. 앱은 이 한도로 막고,
@@ -179,12 +188,17 @@ class const AlertRegistration({
   static const Set<String> platforms = {'android', 'ios'};
 
   /// 한도([KeywordAlerts.maxBoards] · [KeywordAlerts.maxKeywordsPerBoard])에 맞춘 등록.
-  /// 넘는 게시판 · 키워드는 앞에서부터 한도만큼만 남긴다(앱 목록 순서 = 화면 순서).
-  /// 서버가 저장 · 크롤할 때 쓴다. 앱의 로컬 구독은 자르지 않는다.
-  AlertRegistration limited() {
+  /// [allow] 가 있으면 허용 게시판이 아닌 구독을 **먼저** 걸러 낸 뒤(옛 앱이 허용 밖 게시판을
+  /// 앞에 두어도 허용 게시판이 잘리지 않게), 넘는 게시판 · 키워드를 앞에서부터 한도만큼만 남긴다
+  /// (앱 목록 순서 = 화면 순서). 서버가 저장 · 크롤할 때 쓴다. 앱의 로컬 구독은 자르지 않는다.
+  AlertRegistration limited({bool Function(AlertSubscription sub)? allow}) {
+    final List<AlertSubscription> allowed = allow == null
+        ? subscriptions
+        : subscriptions.where(allow).toList();
     final bool within =
-        subscriptions.length <= KeywordAlerts.maxBoards &&
-        subscriptions.every(
+        allowed.length == subscriptions.length &&
+        allowed.length <= KeywordAlerts.maxBoards &&
+        allowed.every(
           (AlertSubscription s) =>
               s.keywords.length <= KeywordAlerts.maxKeywordsPerBoard,
         );
@@ -193,9 +207,7 @@ class const AlertRegistration({
       fcmToken: fcmToken,
       platform: platform,
       subscriptions: [
-        for (final AlertSubscription s in subscriptions.take(
-          KeywordAlerts.maxBoards,
-        ))
+        for (final AlertSubscription s in allowed.take(KeywordAlerts.maxBoards))
           s.keywords.length <= KeywordAlerts.maxKeywordsPerBoard
               ? s
               : s.copyWith(

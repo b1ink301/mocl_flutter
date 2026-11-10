@@ -34,7 +34,7 @@ class const SiteRemoteConfig({
 /// - [userAgents]: 프리셋 UA 를 통째로 바꾼다(브라우저 버전 올리기 등).
 /// - [sites]: 사이트별로 다른 프리셋이나 UA 를 쓴다(차단 회피).
 /// - [ads]: 광고 크기 · 목록 광고 간격([AdsRemoteConfig]).
-/// - [alerts]: 키워드 알림 기한([AlertsRemoteConfig]). 서버 크롤러도 이 값을 따른다.
+/// - [alerts]: 키워드 알림 기한 · 알림을 걸 수 있는 게시판([AlertsRemoteConfig]). 서버 크롤러도 이 값을 따른다.
 ///
 /// JSON 예:
 /// ```json
@@ -43,7 +43,7 @@ class const SiteRemoteConfig({
 ///   "userAgents": { "mobile": "Mozilla/5.0 (Linux; Android 16; ...)" },
 ///   "sites": { "geekNews": { "userAgent": "mobile" } },
 ///   "ads": { "detail": "small", "list": { "first": 5, "interval": 15 } },
-///   "alerts": { "ttlDays": 3 }
+///   "alerts": { "ttlDays": 3, "boards": { "clien": { "park": "모두의공원" } } }
 /// }
 /// ```
 class const RemoteConfig({

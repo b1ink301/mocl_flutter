@@ -29,6 +29,9 @@ class const CrawlStatus({
   /// 사이트별 상한([AlertCrawler.maxBoardsPerSite])에 걸려 이번 바퀴에 보지 않은 게시판 수.
   final int skippedBoards = 0,
 
+  /// 허용 게시판(원격 설정 `alerts.boards`)이 아니라 보지 않는 구독 수(옛 앱 · 목록에서 뺀 게시판).
+  final int disallowedSubscriptions = 0,
+
   /// 이슈 레이더 수집(없으면 0).
   final int radarLastRunAt = 0,
   final int radarFailingBoards = 0,
@@ -40,6 +43,7 @@ class const CrawlStatus({
     'devices': devices,
     'expiredSubscriptions': expiredSubscriptions,
     'skippedBoards': skippedBoards,
+    'disallowedSubscriptions': disallowedSubscriptions,
     'radarLastRunAgoSec': radarLastRunAt == 0
         ? null
         : (now - radarLastRunAt) ~/ 1000,
@@ -52,6 +56,7 @@ class const CrawlStatus({
     devices: devices,
     expiredSubscriptions: expiredSubscriptions,
     skippedBoards: skippedBoards,
+    disallowedSubscriptions: disallowedSubscriptions,
     radarLastRunAt: lastRunAt,
     radarFailingBoards: failing,
   );
@@ -66,6 +71,7 @@ class const CrawlStatus({
 ///   [interval] 안에 끝나게 하는 상한이자, 가짜 등록으로 게시판을 늘리는 남용을 막는다.
 /// - 게시판 첫 크롤은 지금 있는 글을 "본 것" 으로 기록만 한다(옛 글로 알림 폭탄 X).
 /// - 실패하면 간격을 늘린다(최대 [maxBackoff]). 차단당했을 때 계속 두드리지 않는다.
+/// - 허용 게시판([isAlertBoard], 원격 설정 `alerts.boards`)이 아닌 구독은 보지 않는다.
 /// - 기한([ttl], 원격 설정 `alerts.ttlDays`)이 지난 구독은 보지 않는다. 구독이 모두 끝난
 ///   게시판은 받지 않고 상태도 지운다(연장하면 첫 크롤부터 다시).
 /// - 구독이 모두 끝나고 [staleGrace] 가 더 지난 기기는 등록을 지운다(앱을 지운 기기가
@@ -96,8 +102,15 @@ class AlertCrawler({
 
   /// 알림 기한. null 이면 기한 없음. 관리 화면에서 바꾸면 다음 바퀴부터 따른다.
   final Duration? Function() ttl = _defaultTtl,
+
+  /// 알림을 걸 수 있는 게시판인지(원격 설정 `alerts.boards`). 관리 화면에서 바꾸면 다음 바퀴부터 따른다.
+  /// 허용 밖 구독은 보지 않는다 — 옛 앱은 아무 게시판에나 걸 수 있었다.
+  final bool Function(SiteType site, String board) isAlertBoard =
+      _defaultIsAlertBoard,
 }) {
   static Duration? _defaultTtl() => AlertsRemoteConfig.empty.ttl;
+  static bool _defaultIsAlertBoard(SiteType site, String board) =>
+      AlertsRemoteConfig.empty.isAlertBoard(site, board);
 
   /// 구독이 시작된 시각. 앱이 준 값이 없거나(옛 앱) 기기 시계가 앞서 있으면
   /// 서버가 등록을 받은 시각으로 센다(기한을 미래로 늘릴 수 없게).
@@ -151,11 +164,17 @@ class AlertCrawler({
     final Duration? ttl = this.ttl();
     final List<String> stale = [];
     int expired = 0;
+    int disallowed = 0;
     for (final Device device in devices) {
-      // 옛 서버가 한도 없이 저장한 등록도 한도만큼만 본다.
+      // 옛 서버가 한도 없이 저장한 등록도 한도만큼만, 허용 게시판만 본다.
       final List<AlertSubscription> subs = device.registration
-          .limited()
+          .limited(
+            allow: (AlertSubscription s) => isAlertBoard(s.site, s.board),
+          )
           .subscriptions;
+      disallowed += device.registration.subscriptions
+          .where((AlertSubscription s) => !isAlertBoard(s.site, s.board))
+          .length;
       bool active = false;
       int lastExpiry = 0;
       for (final AlertSubscription sub in subs) {
@@ -216,6 +235,7 @@ class AlertCrawler({
       devices: devices.length - stale.length,
       expiredSubscriptions: expired,
       skippedBoards: skipped,
+      disallowedSubscriptions: disallowed,
     );
   }
 

@@ -106,7 +106,7 @@ class const _KeywordAlertButton()
     if (!keywordAlertsAvailableState(ref)) return const SizedBox.shrink();
     final MainItem board = currentBoardState(ref);
     if (board.parentBoard.isNotEmpty ||
-        !KeywordAlerts.sites.contains(board.siteType) ||
+        !keywordAlertBoardAllowedState(ref, board.siteType, board.board) ||
         !KeywordAlerts.isAllowedBoardUrl(board.siteType, board.url)) {
       return const SizedBox.shrink();
     }

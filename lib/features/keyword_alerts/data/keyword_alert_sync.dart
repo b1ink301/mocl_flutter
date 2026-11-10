@@ -4,6 +4,7 @@ import 'package:dio/dio.dart';
 import 'package:mocl_flutter/features/keyword_alerts/data/keyword_alert_store.dart';
 import 'package:mocl_flutter/features/keyword_alerts/data/push_messaging.dart';
 import 'package:mocl_shared/alerts/keyword_alerts.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_shared/util/mocl_logger.dart';
 
 enum AlertSyncResult() {
@@ -23,17 +24,23 @@ enum AlertSyncResult() {
 /// 기기의 구독 목록을 서버(`/v1/alerts/{installId}`)에 맞춘다.
 ///
 /// 항상 전체를 올린다(덮어쓰기). 지난번에 올린 내용과 같으면 요청하지 않는다.
+/// 허용 게시판([isAlertBoard], 원격 설정 `alerts.boards`)이 아닌 구독은 올리지 않는다 —
+/// 남아 있어도 서버가 보지 않는다. 다시 허용되면 올리는 내용이 바뀌어 그때 올라간다.
 final class KeywordAlertSync(
   final Dio _dio,
   final String _baseUrl,
   final KeywordAlertStore _store,
   final PushMessaging _messaging,
-  final String _platform,
-) {
+  final String _platform, {
+  final bool Function(SiteType site, String board)? isAlertBoard,
+}) {
   Future<AlertSyncResult> sync({bool force = false}) async {
     if (_baseUrl.isEmpty) return AlertSyncResult.noServer;
     final String url = '$_baseUrl/v1/alerts/${_store.installId()}';
-    final List<AlertSubscription> subs = _store.subscriptions();
+    final List<AlertSubscription> subs = [
+      for (final AlertSubscription s in _store.subscriptions())
+        if (isAlertBoard?.call(s.site, s.board) ?? true) s,
+    ];
     try {
       if (subs.isEmpty) {
         if (_store.syncedSignature == null && !force) {

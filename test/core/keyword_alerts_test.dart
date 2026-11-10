@@ -111,6 +111,60 @@ void main() {
     expect(adapter.requests, hasLength(2));
   });
 
+  test('허용 게시판이 아닌 구독은 올리지 않고, 다시 허용되면 올린다', () async {
+    final AlertSubscription other = AlertSubscription(
+      site: SiteType.clien,
+      board: 'bug',
+      url: 'https://m.clien.net/service/board/bug',
+      title: '버그신고',
+      keywords: const ['에어팟'],
+    );
+    await store.saveSubscriptions([other, _sub]);
+    final adapter = _FakeAdapter(204);
+    bool allowBug = false;
+    KeywordAlertSync sync() => KeywordAlertSync(
+      Dio()..httpClientAdapter = adapter,
+      'https://api.test',
+      store,
+      _FakeMessaging('tok'),
+      'android',
+      isAlertBoard: (site, board) => board == 'ppomppu' || allowBug,
+    );
+
+    expect(await sync().sync(), AlertSyncResult.synced);
+    expect(
+      AlertRegistration.fromJson(jsonDecode(adapter.bodies.single))
+          .subscriptions
+          .map((s) => s.board),
+      ['ppomppu'],
+    );
+
+    allowBug = true;
+    await sync().sync();
+    expect(adapter.requests, hasLength(2));
+    expect(
+      AlertRegistration.fromJson(jsonDecode(adapter.bodies.last)).subscriptions
+          .map((s) => s.board),
+      ['bug', 'ppomppu'],
+    );
+  });
+
+  test('허용 게시판이 하나도 없으면 서버 등록을 지운다', () async {
+    await store.saveSubscriptions([_sub]);
+    final adapter = _FakeAdapter(204);
+    await syncWith(adapter).sync();
+    final KeywordAlertSync none = KeywordAlertSync(
+      Dio()..httpClientAdapter = adapter,
+      'https://api.test',
+      store,
+      _FakeMessaging('tok'),
+      'android',
+      isAlertBoard: (_, _) => false,
+    );
+    await none.sync();
+    expect(adapter.requests.last.method, 'DELETE');
+  });
+
   test('구독을 다 지우면 서버 등록을 DELETE 한다(등록한 적 있을 때만)', () async {
     final adapter = _FakeAdapter(204);
     final sync = syncWith(adapter);

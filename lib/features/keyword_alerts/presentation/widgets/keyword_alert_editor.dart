@@ -65,7 +65,9 @@ class const _Flow() with KeywordAlertState, KeywordAlertEvent {
     final AlertSubscription? existing = current
         .where((s) => s.boardKey == board.boardKey)
         .firstOrNull;
-    if (existing == null && current.length >= KeywordAlerts.maxBoards) {
+    // 허용 목록에서 빠진 게시판(알림이 오지 않음)은 한도에 세지 않는다.
+    final int active = current.where((s) => readIsAlertBoard(ref, s)).length;
+    if (existing == null && active >= KeywordAlerts.maxBoards) {
       KeywordAlertFlow.showMessage(
         context,
         '게시판은 ${KeywordAlerts.maxBoards}개까지 걸 수 있어요. 설정 → 키워드 알림에서 정리해 주세요.',

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:crypto/crypto.dart';
+import 'package:mocl_shared/alerts/keyword_alerts.dart';
 import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_shared/remote_config/remote_config.dart';
 import 'package:shelf/shelf.dart';
@@ -207,7 +208,18 @@ class AdminRoutes({
       'listFirst': AdsRemoteConfig.defaultListFirst,
       'listInterval': AdsRemoteConfig.defaultListInterval,
       'ttlDays': AlertsRemoteConfig.defaultTtlDays,
+      'boards': {
+        for (final MapEntry<SiteType, Map<String, String>> e
+            in KeywordAlerts.defaultBoards.entries)
+          e.key.name: e.value,
+      },
     },
+    // 키워드 알림 게시판을 고를 수 있는 사이트(서버 IP 에서 받아지는 곳).
+    'alertSites': [
+      for (final SiteType s in SiteType.values)
+        if (KeywordAlerts.sites.contains(s)) s.name,
+    ],
+    'siteTitles': {for (final SiteType s in SiteType.values) s.name: s.title},
     'limits': {
       'listFirst': [AdsRemoteConfig.minListFirst, AdsRemoteConfig.maxListFirst],
       'listInterval': [
@@ -215,6 +227,10 @@ class AdminRoutes({
         AdsRemoteConfig.maxListInterval,
       ],
       'ttlDays': [AlertsRemoteConfig.minTtlDays, AlertsRemoteConfig.maxTtlDays],
+      'boards': [
+        AlertsRemoteConfig.maxBoardsPerSite,
+        AlertsRemoteConfig.maxBoardsTotal,
+      ],
     },
   };
 

@@ -187,7 +187,7 @@ final class KeywordAlertSyncProvider
   }
 }
 
-String _$keywordAlertSyncHash() => r'701fc53e68707f170bb1066df4362f6cd623826c';
+String _$keywordAlertSyncHash() => r'32f58ae0c8e3539ef2f60a702d6f55d962b49e4d';
 
 /// 구독 목록. 바꾸면 기기에 저장하고 서버에 맞춘다.
 
@@ -250,12 +250,14 @@ abstract class _$KeywordAlertsNotifier
   }
 }
 
-/// 알림을 걸 수 있는 내 게시판(담은 게시판 중 서버가 받을 수 있는 사이트).
+/// 알림을 걸 수 있는 내 게시판(담은 게시판 중 허용 게시판, 원격 설정 `alerts.boards`).
+/// 홈과 같은 순서(사이트 → 사용자가 정한 순서 → 담은 시각).
 
 @ProviderFor(keywordAlertCandidates)
 final keywordAlertCandidatesProvider = KeywordAlertCandidatesProvider._();
 
-/// 알림을 걸 수 있는 내 게시판(담은 게시판 중 서버가 받을 수 있는 사이트).
+/// 알림을 걸 수 있는 내 게시판(담은 게시판 중 허용 게시판, 원격 설정 `alerts.boards`).
+/// 홈과 같은 순서(사이트 → 사용자가 정한 순서 → 담은 시각).
 
 final class KeywordAlertCandidatesProvider
     extends
@@ -267,7 +269,8 @@ final class KeywordAlertCandidatesProvider
     with
         $FutureModifier<List<FavoriteData>>,
         $FutureProvider<List<FavoriteData>> {
-  /// 알림을 걸 수 있는 내 게시판(담은 게시판 중 서버가 받을 수 있는 사이트).
+  /// 알림을 걸 수 있는 내 게시판(담은 게시판 중 허용 게시판, 원격 설정 `alerts.boards`).
+  /// 홈과 같은 순서(사이트 → 사용자가 정한 순서 → 담은 시각).
   KeywordAlertCandidatesProvider._()
     : super(
         from: null,
@@ -295,7 +298,7 @@ final class KeywordAlertCandidatesProvider
 }
 
 String _$keywordAlertCandidatesHash() =>
-    r'fa976959d490996a6946934f6d45d4a7bb1f4447';
+    r'd919ed708a2f8b5cf3f1b10caadb0ae4eb4e0049';
 
 @ProviderFor(keywordAlertInboxStore)
 final keywordAlertInboxStoreProvider = KeywordAlertInboxStoreProvider._();
@@ -448,4 +451,4 @@ final class KeywordAlertUnreadCountProvider
 }
 
 String _$keywordAlertUnreadCountHash() =>
-    r'c84f470b1d65aea258f8406e7d356bf56d244ab2';
+    r'0bc216d80f5bd85430d4345fee04caf8aa382870';

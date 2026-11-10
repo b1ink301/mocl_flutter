@@ -5,6 +5,7 @@ import 'package:mocl_flutter/features/keyword_alerts/domain/inbox_alert.dart';
 import 'package:mocl_flutter/features/remote_config/application/remote_config_providers.dart';
 import 'package:mocl_shared/alerts/keyword_alerts.dart';
 import 'package:mocl_shared/entities/mocl_site_type.dart';
+import 'package:mocl_shared/remote_config/remote_config.dart';
 
 mixin class KeywordAlertState() {
   /// 키워드 알림을 쓸 수 있는 빌드인지(서버 주소 · 모바일).
@@ -29,6 +30,32 @@ mixin class KeywordAlertState() {
   /// 알림 기한(원격 설정 `alerts.ttlDays`, null = 기한 없음). 실행 중에는 바뀌지 않는다.
   Duration? keywordAlertTtlState(WidgetRef ref) =>
       ref.watch(remoteConfigProvider.select((c) => c.alerts.ttl));
+
+  /// [site] 의 [board] 에 알림을 걸 수 있는지(원격 설정 `alerts.boards`, 실행 중에는 바뀌지 않는다).
+  bool keywordAlertBoardAllowedState(
+    WidgetRef ref,
+    SiteType site,
+    String board,
+  ) => ref.watch(
+    remoteConfigProvider.select((c) => c.alerts.isAlertBoard(site, board)),
+  );
+
+  /// 알림이 실제로 오는(허용 게시판의) 구독 수. 허용 목록에서 빠진 게시판은 세지 않는다.
+  int keywordAlertActiveCountState(WidgetRef ref) {
+    final AlertsRemoteConfig alerts = ref.watch(
+      remoteConfigProvider.select((c) => c.alerts),
+    );
+    return ref.watch(
+      keywordAlertsProvider.select(
+        (subs) =>
+            subs.where((s) => alerts.isAlertBoard(s.site, s.board)).length,
+      ),
+    );
+  }
+
+  /// 알림을 걸 수 있는 게시판(사이트 → 게시판 id → 이름). 안내 문구에 쓴다.
+  Map<SiteType, Map<String, String>> keywordAlertBoardsState(WidgetRef ref) =>
+      ref.watch(remoteConfigProvider.select((c) => c.alerts.effectiveBoards));
 
   /// 알림을 걸 수 있는 내 게시판.
   AsyncValue<List<FavoriteData>> keywordAlertCandidatesState(WidgetRef ref) =>

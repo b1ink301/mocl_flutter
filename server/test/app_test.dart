@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:mocl_server/server.dart';
+import 'package:sembast/sembast_memory.dart';
 import 'package:shelf/shelf.dart';
 import 'package:test/test.dart';
 
@@ -112,5 +113,21 @@ void main() {
     now = now.add(const Duration(seconds: 61));
     limiter.allow('3.3.3.3');
     expect(limiter.trackedKeys, 1, reason: '지난 창의 IP 는 지워진다');
+  });
+
+  test('이슈 목록은 IP 별 요청 수를 제한한다', () async {
+    writeConfig({'schemaVersion': 1});
+    final RadarFeed feed = RadarFeed(
+      RadarStore(await databaseFactoryMemory.openDatabase('issues_limit')),
+    );
+    final Handler handler = buildHandler(
+      store(),
+      radarFeed: feed,
+      issueLimiter: RateLimiter(limit: 2),
+    );
+    // 아직 계산 전이라 503(warming_up) 이지만, 제한은 그보다 먼저 건다.
+    expect((await get(handler, '/v1/issues')).statusCode, 503);
+    expect((await get(handler, '/v1/issues/x')).statusCode, 404);
+    expect((await get(handler, '/v1/issues')).statusCode, 429);
   });
 }

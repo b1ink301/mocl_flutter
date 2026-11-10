@@ -5,11 +5,19 @@ import 'dart:io';
 import 'package:mocl_server/server.dart';
 import 'package:mocl_shared/alerts/keyword_alerts.dart';
 import 'package:mocl_shared/entities/mocl_list_item.dart';
+import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:sembast/sembast_memory.dart';
 import 'package:shelf/shelf.dart';
 import 'package:test/test.dart';
 
 const String _install = 'install-0000000000000001';
+
+/// 크롤러 테스트는 허용 게시판과 상관없는 동작을 본다.
+bool _allowAll(SiteType site, String board) => true;
+
+/// API 테스트 설정: 뽐뿌게시판만 허용.
+const String _config =
+    '{"schemaVersion":1,"alerts":{"boards":{"ppomppu":{"ppomppu":"뽐뿌게시판"}}}}';
 
 Map<String, Object?> _reg({
   String token = 'tok-1',
@@ -78,7 +86,7 @@ void main() {
       ),
     );
     dir = Directory.systemTemp.createTempSync('alerts_test');
-    File('${dir.path}/c.json').writeAsStringSync('{"schemaVersion":1}');
+    File('${dir.path}/c.json').writeAsStringSync(_config);
     configs = ConfigStore(File('${dir.path}/c.json'))..loadInitial();
   });
   tearDown(() => dir.deleteSync(recursive: true));
@@ -177,12 +185,113 @@ void main() {
     });
   });
 
+  group('허용 게시판 · 토큰 확인', () {
+    Future<Response> put(
+      Handler h,
+      Object body, {
+      String id = _install,
+    }) async => await h(
+      Request(
+        'PUT',
+        Uri.parse('http://localhost/v1/alerts/$id'),
+        body: jsonEncode(body),
+        headers: {'x-forwarded-for': '1.1.1.1'},
+      ),
+    );
+
+    Map<String, Object?> sub(String site, String board, String url) => {
+      'site': site,
+      'board': board,
+      'url': url,
+      'title': board,
+      'keywords': ['에어팟'],
+    };
+
+    test('허용 밖 게시판은 거절하지 않고 빼고 저장한다(옛 앱)', () async {
+      final Handler h = buildHandler(configs, alerts: store);
+      final Response r = await put(h, {
+        ..._reg(),
+        'subscriptions': [
+          sub('clien', 'bug', 'https://m.clien.net/service/board/bug'),
+          sub('clien', 'park', 'https://m.clien.net/service/board/park'),
+          sub('clien', 'kin', 'https://m.clien.net/service/board/kin'),
+          sub(
+            'ppomppu',
+            'ppomppu',
+            'https://m.ppomppu.co.kr/new/bbs_list.php?id=ppomppu',
+          ),
+        ],
+      });
+      expect(r.statusCode, 204);
+      expect(
+        (await store.devices()).single.registration.subscriptions.map(
+          (s) => s.board,
+        ),
+        ['ppomppu'],
+      );
+    });
+
+    test('허용 게시판이 하나도 없으면 등록을 지운다', () async {
+      final Handler h = buildHandler(configs, alerts: store);
+      await put(h, _reg());
+      await put(h, {
+        ..._reg(),
+        'subscriptions': [
+          sub('clien', 'bug', 'https://m.clien.net/service/board/bug'),
+        ],
+      });
+      expect(await store.devices(), isEmpty);
+    });
+
+    test('무효 토큰은 400, 새 기기 · 바뀐 토큰일 때만 확인한다', () async {
+      final List<String> checked = [];
+      TokenCheck result = TokenCheck.valid;
+      final Handler h = buildHandler(
+        configs,
+        alerts: store,
+        validateToken: (String token) async {
+          checked.add(token);
+          return result;
+        },
+      );
+      expect((await put(h, _reg())).statusCode, 204);
+      expect((await put(h, _reg(keywords: ['갤럭시']))).statusCode, 204);
+      expect(checked, ['tok-1'], reason: '같은 토큰은 다시 확인하지 않는다');
+
+      result = TokenCheck.invalid;
+      final Response bad = await put(h, _reg(token: 'fake'));
+      expect(bad.statusCode, 400);
+      expect(await bad.readAsString(), contains('invalid_token'));
+      expect((await store.devices()).single.registration.fcmToken, 'tok-1');
+
+      expect(
+        (await put(
+          h,
+          _reg(token: 'fake-2'),
+          id: 'install-0000000000000009',
+        )).statusCode,
+        400,
+      );
+      expect(await store.devices(), hasLength(1));
+    });
+
+    test('FCM 이 답하지 않으면(unknown) 막지 않는다', () async {
+      final Handler h = buildHandler(
+        configs,
+        alerts: store,
+        validateToken: (_) async => TokenCheck.unknown,
+      );
+      expect((await put(h, _reg())).statusCode, 204);
+    });
+  });
+
   group('AlertCrawler', () {
     late List<ListItem> page;
     late int fetches;
     Object? failWith;
 
     AlertCrawler crawler(PushSender push) => AlertCrawler(
+      isAlertBoard: _allowAll,
       store: store,
       push: push,
       politeDelay: Duration.zero,
@@ -264,6 +373,7 @@ void main() {
       Duration? ttl = const Duration(days: 3);
 
       AlertCrawler withTtl(PushSender push) => AlertCrawler(
+        isAlertBoard: _allowAll,
         store: store,
         push: push,
         politeDelay: Duration.zero,
@@ -328,6 +438,7 @@ void main() {
     test('기한이 끝나고 유예가 지난 기기 등록은 지운다', () async {
       const int day = 24 * 60 * 60 * 1000;
       final AlertCrawler c = AlertCrawler(
+        isAlertBoard: _allowAll,
         store: store,
         push: DryRunPushSender(),
         politeDelay: Duration.zero,
@@ -361,6 +472,7 @@ void main() {
         0,
       );
       final AlertCrawler c = AlertCrawler(
+        isAlertBoard: _allowAll,
         store: store,
         push: DryRunPushSender(),
         politeDelay: Duration.zero,
@@ -401,6 +513,7 @@ void main() {
       );
       final List<String> fetched = [];
       final AlertCrawler c = AlertCrawler(
+        isAlertBoard: _allowAll,
         store: store,
         push: DryRunPushSender(),
         politeDelay: Duration.zero,
@@ -437,6 +550,7 @@ void main() {
       final Completer<List<ListItem>> gate = Completer();
       final List<String> started = [];
       final AlertCrawler c = AlertCrawler(
+        isAlertBoard: _allowAll,
         store: store,
         push: DryRunPushSender(),
         politeDelay: Duration.zero,
@@ -464,6 +578,7 @@ void main() {
       }
       final _SlowSender push = _SlowSender();
       final AlertCrawler c = AlertCrawler(
+        isAlertBoard: _allowAll,
         store: store,
         push: push,
         politeDelay: Duration.zero,
@@ -535,6 +650,7 @@ void main() {
   test('크롤러는 한 바퀴마다 상태를 남긴다', () async {
     await store.putDevice(_install, AlertRegistration.fromJson(_reg()), 0);
     final AlertCrawler c = AlertCrawler(
+      isAlertBoard: _allowAll,
       store: store,
       push: DryRunPushSender(),
       politeDelay: Duration.zero,
@@ -545,5 +661,40 @@ void main() {
     expect(c.status.boards, 1);
     expect(c.status.failingBoards, 1);
     expect(c.status.devices, 1);
+  });
+
+  test('크롤러는 허용 밖 구독을 보지 않고 수를 남긴다', () async {
+    await store.putDevice(
+      _install,
+      AlertRegistration.fromJson({
+        ..._reg(),
+        'subscriptions': [
+          {
+            'site': 'clien',
+            'board': 'bug',
+            'url': 'https://m.clien.net/service/board/bug',
+            'title': '버그신고',
+            'keywords': ['에어팟'],
+          },
+          ...(_reg()['subscriptions']! as List<Object?>),
+        ],
+      }),
+      0,
+    );
+    final List<String> fetched = [];
+    final AlertCrawler c = AlertCrawler(
+      isAlertBoard: (site, board) => board == 'ppomppu',
+      store: store,
+      push: DryRunPushSender(),
+      politeDelay: Duration.zero,
+      fetch: (AlertSubscription sub) async {
+        fetched.add(sub.board);
+        return const [];
+      },
+    );
+    await c.tick(1000);
+    expect(fetched, ['ppomppu']);
+    expect(c.status.boards, 1);
+    expect(c.status.disallowedSubscriptions, 1);
   });
 }

@@ -22,6 +22,10 @@ mixin class KeywordAlertEvent() {
   Duration? readKeywordAlertTtl(WidgetRef ref) =>
       ref.read(remoteConfigProvider).alerts.ttl;
 
+  /// [sub] 가 지금 알림을 받는 게시판인지(허용 목록에서 빠진 구독은 한도에도 세지 않는다).
+  bool readIsAlertBoard(WidgetRef ref, AlertSubscription sub) =>
+      ref.read(remoteConfigProvider).alerts.isAlertBoard(sub.site, sub.board);
+
   Future<AlertSyncResult> removeKeywordAlert(
     WidgetRef ref,
     AlertSubscription sub,

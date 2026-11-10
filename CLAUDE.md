@@ -85,7 +85,7 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
 
 - 서버 `GET /v1/config`(ETag) 로 앱 업데이트 없이 바꿀 값을 받는다. 사이트 요청 UA
   (`userAgents` 프리셋 덮어쓰기 · `sites.{site}.userAgent`)와 광고(`ads`, `AdsRemoteConfig`)가 있다.
-  형식은 `RemoteConfig`. 키워드 알림 기한(`alerts.ttlDays`)도 여기 있다(서버 크롤러는 저장 즉시 따른다).
+  형식은 `RemoteConfig`. 키워드 알림 기한(`alerts.ttlDays`) · 알림 게시판(`alerts.boards`)도 여기 있다(서버 크롤러는 저장 즉시 따른다).
 - 부팅 때 저장된 설정만 동기로 읽어 `remoteConfigProvider` 를 덮어쓰고, 서버 요청은 첫 프레임 2초 뒤.
   **새 설정은 다음 실행부터** 적용된다(실행 중 UA 를 바꾸면 만든 클라이언트 · 쿠키와 어긋난다).
 - 운영 중 설정 편집은 서버 관리 화면(`/admin`, `server/lib/src/admin/`)으로 한다. 토큰(`ADMIN_TOKEN`)은
@@ -104,7 +104,13 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
 - 사용자가 담은 게시판에 키워드를 걸면 서버가 그 게시판 1쪽을 3분마다 받아, 새 글 제목에 키워드가
   있으면 FCM 으로 보낸다. 계약(`AlertSubscription` · `AlertRegistration` · 지원 사이트 ·
   키워드 매칭 `KeywordAlerts.matchedKeywords`)은 `mocl_shared/alerts/keyword_alerts.dart` 하나에 둔다.
-- 지원 사이트(`KeywordAlerts.sites`)는 **서버 IP 에서 실제로 받아 본 결과**다(`server/bin/probe.dart`).
+- 알림은 **허용 게시판에서만** 건다: 원격 설정 `alerts.boards`(사이트 → 게시판 id → 이름, 관리 화면
+  "키워드 알림 게시판" 에서 편집), 없으면 `KeywordAlerts.defaultBoards`(클리앙 모두의공원 · 회원중고장터, 다모앙 자유게시판),
+  빈 객체면 없음. 판정은 `AlertsRemoteConfig.isAlertBoard` 하나로 — 목록 앱바 종 · 게시판 고르기 시트 · 동기화(허용 밖은 안 올림) ·
+  서버 등록(`limited(allow:)`, 허용 밖은 거절하지 않고 뺀다 — 옛 앱 호환) · 크롤러가 모두 이걸 쓴다.
+  허용 목록에서 빠진 구독은 앱에서 지우지 않고 "알림을 받지 않는 게시판" 으로 보이며 한도(3개)에 세지 않는다.
+  게시판을 늘리면 서버 크롤 양도 는다 — 사용자 게시판을 통째로 받던 방식(사이트당 60개 상한에서 조용히 누락)으로 되돌리지 말 것.
+- 지원 사이트(`KeywordAlerts.sites`, 허용 게시판을 고를 수 있는 사이트)는 **서버 IP 에서 실제로 받아 본 결과**다(`server/bin/probe.dart`).
   아카라이브 · 인스티즈 · 더쿠 · 루리웹은 오라클 IP 를 막고, 네이버카페 · 레딧은 로그인이 필요해 뺐다.
   뽐뿌는 목록이 막혀 RSS(`rss.php?id=`)로 받는다. 사이트를 넣고 빼기 전에 probe 를 서버에서 돌려 볼 것.
 - 앱이 원본이다: 구독은 SharedPreferences 에 두고, 바뀔 때마다 `PUT /v1/alerts/{installId}` 로 통째로 올린다
@@ -138,6 +144,8 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   16대(`pushConcurrency`)까지 동시에 보낸다. 구독이 모두 기한을 넘기고 7일(`staleGrace`) 지난 기기 등록은 지운다
   (`AlertStore.maxDevices` 자리를 비운다).
 - 서버는 사용자가 준 게시판 URL 을 요청하므로 호스트를 `KeywordAlerts.isAllowedBoardUrl` 로 제한한다(SSRF).
+  새 기기 · 바뀐 FCM 토큰은 FCM `validate_only` 로 확인해 무효면 `400 invalid_token`(FCM 이 답하지 않으면 통과).
+  알림 API 는 IP 당 분당 30회, 이슈 API(`/v1/issues`)는 120회.
   게시판 첫 크롤은 지금 글을 "본 것" 으로만 기록한다(옛 글로 알림 폭탄 방지). 실패하면 간격을 늘린다.
 - Android: 채널 `keyword_alerts` 는 `MainActivity` 가 만들고 매니페스트가 FCM 기본 채널 · 아이콘으로 지정한다.
   iOS 는 Xcode 에서 Push Notifications · Background Modes(remote notification) 와 Firebase 콘솔 APNs 키가 있어야 온다.

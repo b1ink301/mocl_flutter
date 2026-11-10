@@ -5,6 +5,7 @@ import 'package:mocl_shared/radar/issue_feed.dart';
 import 'package:shelf/shelf.dart';
 import 'package:shelf_router/shelf_router.dart';
 
+import '../rate_limiter.dart';
 import '../server_log.dart';
 import 'radar_ranker.dart';
 import 'radar_store.dart';
@@ -40,12 +41,19 @@ class RadarFeed(
     serverLog('[radar] 이슈 ${feed.issues.length}개 · ${w.elapsedMilliseconds}ms');
   }
 
-  void mount(Router router) {
+  /// [limiter] 가 있으면 IP 당 요청 수를 제한한다(공개 데이터지만 긁어 가기 · 트래픽 남용 방지).
+  void mount(Router router, {RateLimiter? limiter}) {
     const Map<String, String> json = {
       'content-type': 'application/json; charset=utf-8',
     };
+    Response? limited(Request request) =>
+        limiter == null || limiter.allow(RateLimiter.clientKey(request))
+        ? null
+        : Response(429, body: '{"error":"rate_limited"}', headers: json);
     router
       ..get('/v1/issues', (Request request) {
+        final Response? rejected = limited(request);
+        if (rejected != null) return rejected;
         if (_feed == null) {
           return Response(503, body: '{"error":"warming_up"}', headers: json);
         }
@@ -59,6 +67,8 @@ class RadarFeed(
         return Response.ok(_body, headers: {...json, ...headers});
       })
       ..get('/v1/issues/<id>', (Request request, String id) {
+        final Response? rejected = limited(request);
+        if (rejected != null) return rejected;
         final Map<String, Object?>? issue = _byId[id];
         if (issue == null) {
           return Response.notFound('{"error":"not_found"}', headers: json);

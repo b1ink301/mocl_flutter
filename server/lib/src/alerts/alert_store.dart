@@ -72,6 +72,15 @@ class AlertStore(final Database _db) {
         return true;
       });
 
+  /// 저장된 기기의 FCM 토큰(없으면 null).
+  Future<String?> fcmTokenOf(String installId) async {
+    final Map<String, Object?>? json = await _devices
+        .record(installId)
+        .get(_db);
+    final Object? reg = json?['reg'];
+    return reg is Map ? reg['fcmToken'] as String? : null;
+  }
+
   Future<bool> deleteDevice(String installId) async =>
       await _devices.record(installId).delete(_db) != null;
 
