@@ -10,6 +10,7 @@ import 'config/routes/mocl_app_pages.dart';
 import 'core/util/glyph_warmup_manager.dart';
 import 'features/app_update/presentation/widgets/app_update_gate.dart';
 import 'features/keyword_alerts/presentation/widgets/keyword_alert_gate.dart';
+import 'features/media_player/presentation/media_player_host.dart';
 
 class const AppWidget({super.key}) extends HookConsumerWidget {
   @override
@@ -54,7 +55,14 @@ class const AppWidget({super.key}) extends HookConsumerWidget {
           ),
           child: AppUpdateGate(
             navigatorKey: AppPages.router.routerDelegate.navigatorKey,
-            child: KeywordAlertGate(router: AppPages.router, child: child!),
+            child: KeywordAlertGate(
+              router: AppPages.router,
+              // 동영상 플레이어는 라우터 위 한 층(게시판을 오가도 재생이 이어진다).
+              child: MediaPlayerHost(
+                navigatorKey: AppPages.router.routerDelegate.navigatorKey,
+                child: child!,
+              ),
+            ),
           ),
         );
       },

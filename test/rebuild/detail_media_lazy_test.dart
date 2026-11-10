@@ -64,9 +64,9 @@ void main() {
       reason: '탭 전에 fwfh_chewie VideoPlayer 가 mount 되면 ExoPlayer 가 즉시 생성된다',
     );
     expect(
-      hasType('_LazyVideoPlayer'),
+      hasType('_BodyVideoPoster'),
       isTrue,
-      reason: 'video 는 탭 전까지 지연 플레이스홀더로 렌더돼야 한다',
+      reason: '본문 video 는 포스터로만 그리고, 탭하면 앱 플레이어로 연다',
     );
   });
 

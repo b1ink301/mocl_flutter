@@ -179,6 +179,24 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   (떠 있는 탭바만큼 올려 보이는 영역 가운데에 둔다). 글자 크기 설정을 따르도록 제목 · 설명 스타일을 넘긴다.
   차단(뮤트) 제목 키워드로 글을 거른다(`filterMuted`). 본 이슈는 흐리게(`IssueReadStore`).
 
+## 동영상 플레이어 (`features/media_player/`)
+
+- 본문 링크(유튜브 · mp4/m3u8)와 본문 `<video>` 는 앱 플레이어로 연다(설정 "앱에서 동영상 재생" 이 꺼지면
+  유튜브 앱 · 브라우저). 플레이어는 **라우트가 아니라** `MaterialApp.router` builder 의 `MediaPlayerHost`
+  (라우터 위 한 층)에 있어서 게시판을 오가도 재생이 이어진다. 상태는 `MediaPlayerNotifier`(`MediaSession`, 동시에 하나).
+- 펼침(화면 전체) ↔ 미니(떠 있는 작은 창, 끌어 옮김 · 두 손가락으로 크기 · 아래로 던지면 닫힘)는 **같은 위젯의 크기 · 위치만** 바꾼다.
+  `_PlayerLayer` 의 자식 순서 · 종류를 모드마다 바꾸지 말 것 — 웹뷰 · ExoPlayer 가 다시 만들어져 재생이 끊긴다.
+- 펼친 동안은 Navigator 에 보이지 않는 라우트(`_GuardRoute`)를 얹어, 뒤로가기 버튼 · 시스템 제스처가 아래 화면을
+  닫지 않고 이 라우트를 닫게 한다(닫히면 미니로). 라우터 위라 Navigator 가 없으므로 chewie 의 전체화면 · 옵션 메뉴는 끈다.
+- 미니 크기는 두 손가락으로 바꾸고 폭(dp)을 기억한다(`MiniPlayerSizeStore`, 140~640dp, 화면에 들어가게 줄임).
+  미니 터치 층은 scale 제스처 하나로 끌기 · 크기를 함께 받는다(pan 과 같이 쓸 수 없다).
+- 소리: 펼친 화면 위쪽 바의 음소거 버튼 · 음량 슬라이더(0~100%, 3초 안 만지면 닫힘). 기기 볼륨이 아니라 **플레이어 볼륨**
+  (유튜브 IFrame `setVolume`/`mute`, 파일 `VideoPlayerController.setVolume`). 볼륨은 저장(`PlayerVolumeStore`),
+  음소거는 앱이 떠 있는 동안만. 플레이어는 `MediaPlayback.audio` 를 듣고 적용한다. chewie 음소거 버튼은 끈다(값이 어긋난다).
+- "가로로 보기" 는 `OrientationPolicy.setLandscapeOverride`(켜진 동안 창 크기 정책을 건너뜀). 접기 · 닫기 때 끈다.
+- 본문 `<video>` 는 본문 안에서 재생하지 않고 포스터(`_BodyVideoPoster`)만 그린다(여러 개가 동시에 ExoPlayer 를 만들어 힙이 터지던 문제).
+- 시스템 PiP · 백그라운드 재생은 하지 않는다. Flutter 스크린샷엔 웹뷰가 안 찍히니 기기 확인은 `adb exec-out screencap`.
+
 ## 게시판 글 검색 (`list_page` · `ListSearchPage`)
 
 - 목록 앱바의 검색 버튼 → `Routes.search`(`ListSearchPage`, `SwipeBackPage`, 넓은 화면은 `ListDetailLayout`).

@@ -20,6 +20,9 @@ final class OrientationPolicy() with WidgetsBindingObserver {
   bool _installed = false;
   bool? _locked;
 
+  /// 동영상 플레이어의 "가로로 보기". 켜져 있는 동안은 창 크기 정책을 적용하지 않는다.
+  bool _landscapeOverride = false;
+
   /// 지금 화면에 맞춰 적용하고, 이후 창 크기가 바뀌면 다시 적용한다.
   /// 여러 번 불려도 관찰자는 한 번만 붙는다.
   Future<void> install() async {
@@ -33,7 +36,29 @@ final class OrientationPolicy() with WidgetsBindingObserver {
   @override
   void didChangeMetrics() => _apply();
 
+  /// 동영상을 가로로 본다. 끄면 시스템 바를 되돌리고 원래 정책(폰 세로 고정)을 다시 적용한다.
+  Future<void> setLandscapeOverride(bool on) async {
+    if (_landscapeOverride == on) return;
+    _landscapeOverride = on;
+    try {
+      if (on) {
+        await SystemChrome.setPreferredOrientations(const [
+          DeviceOrientation.landscapeLeft,
+          DeviceOrientation.landscapeRight,
+        ]);
+        await SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersiveSticky);
+      } else {
+        await SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+        _locked = null;
+        await _apply();
+      }
+    } catch (e, st) {
+      MoclLogger.e('가로 보기 전환 실패', error: e, stackTrace: st);
+    }
+  }
+
   Future<void> _apply() async {
+    if (_landscapeOverride) return;
     final Iterable<FlutterView> views =
         WidgetsBinding.instance.platformDispatcher.views;
     if (views.isEmpty) return;

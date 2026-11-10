@@ -13,7 +13,6 @@ import 'package:mocl_flutter/features/keyword_alerts/presentation/keyword_alerts
 import 'package:mocl_shared/radar/issue_feed.dart';
 import 'package:mocl_flutter/features/mute/presentation/mute_page.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/photo_view_dialog.dart';
-import 'package:mocl_flutter/features/detail_page/presentation/video_player_page.dart';
 import 'package:mocl_flutter/features/list_page/presentation/list_search_page.dart';
 import 'package:mocl_flutter/features/list_page/presentation/mocl_list_page.dart';
 import 'package:mocl_flutter/features/login_page/presentation/login_page.dart';
@@ -142,12 +141,6 @@ class AppPages._() {
             SwipeBackPage(
               builder: (BuildContext context) => const KeywordAlertInboxPage(),
             ),
-      ),
-      GoRoute(
-        path: Routes.video,
-        // 탐색 막대를 좌우로 끄는 동작과 겹치지 않게 스와이프 뒤로가기는 쓰지 않는다.
-        builder: (BuildContext context, GoRouterState state) =>
-            VideoPlayerPage(args: state.extra as VideoPlayerArgs),
       ),
       GoRoute(
         path: Routes.login,

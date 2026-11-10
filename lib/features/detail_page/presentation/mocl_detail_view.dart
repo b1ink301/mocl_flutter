@@ -753,37 +753,29 @@ class const _HtmlImageErrorWidget({
   }
 }
 
-/// 본문 `<video>` 를 탭하기 전까지 실제 플레이어를 트리에 붙이지 않는다.
+/// 본문 `<video>` 자리. 포스터 + 재생 버튼만 그리고, 탭하면 앱 플레이어(라우터 위 한 층,
+/// 상세를 나가도 미니 창으로 이어서 재생)로 연다.
 ///
-/// fwfh_chewie 의 `VideoPlayer` 는 `initState` 에서 곧바로
-/// `VideoPlayerController.network()` + `initialize()` 를 호출하므로, 본문에
-/// video 가 여러 개면 화면 밖 것까지 ExoPlayer 가 동시에 생성돼 힙이 터진다.
-/// 여기서 자식 mount 자체를 지연시켜 탭한 영상만 컨트롤러를 만들게 한다.
-class const _LazyVideoPlayer({
-  required final Widget player,
+/// 본문 안에서 직접 재생하지 않는다. fwfh_chewie 의 `VideoPlayer` 는 `initState` 에서
+/// 곧바로 컨트롤러를 만들어, 본문에 video 가 여러 개면 ExoPlayer 가 동시에 생겨 힙이 터졌다.
+class const _BodyVideoPoster({
   required final double aspectRatio,
+  required final VoidCallback onTap,
   final Widget? poster,
-}) extends StatefulWidget {
+}) extends StatelessWidget {
   @override
-  State<_LazyVideoPlayer> createState() => _LazyVideoPlayerState();
-}
-
-class _LazyVideoPlayerState() extends State<_LazyVideoPlayer> {
-  bool _started = false;
-
-  @override
-  Widget build(BuildContext context) {
-    if (_started) return widget.player;
-
-    return GestureDetector(
-      onTap: () => setState(() => _started = true),
+  Widget build(BuildContext context) => Semantics(
+    label: '동영상 재생',
+    button: true,
+    child: GestureDetector(
+      onTap: onTap,
       child: AspectRatio(
-        aspectRatio: widget.aspectRatio,
+        aspectRatio: aspectRatio,
         child: Stack(
           alignment: Alignment.center,
           fit: StackFit.expand,
           children: [
-            widget.poster ?? const ColoredBox(color: Color(0xFF000000)),
+            poster ?? const ColoredBox(color: Color(0xFF000000)),
             const Center(
               child: PlainIcon(
                 Icons.play_circle_fill,
@@ -794,8 +786,8 @@ class _LazyVideoPlayerState() extends State<_LazyVideoPlayer> {
           ],
         ),
       ),
-    );
-  }
+    ),
+  );
 }
 
 class const _HtmlWidget({
@@ -807,7 +799,7 @@ class const _HtmlWidget({
   /// true 면 sliver(SliverList)를 반환한다. 긴 본문을 지연 렌더해 화면 밖
   /// 이미지/비디오가 mount 되지 않게 한다. sliver 는 box 위젯으로 감쌀 수 없다.
   final bool sliver = false,
-}) extends ConsumerWidget with DetailState {
+}) extends ConsumerWidget with DetailState, DetailEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // 이미지 Referer 는 "현재 보고 있는 사이트"의 baseUrl(파서 단일 출처)을 쓴다.
@@ -833,8 +825,11 @@ class const _HtmlWidget({
           progress: progress,
         );
       },
-      factoryBuilder: () =>
-          _MoclWidgetFactory(openUrl: openUrl, referer: referer),
+      factoryBuilder: () => _MoclWidgetFactory(
+        openUrl: openUrl,
+        openVideo: (url) => handleOpenBodyVideo(ref, url),
+        referer: referer,
+      ),
       // `<a>` 탭도 [openUrl](동영상 플레이어 · 앱 상세 · 브라우저 분기)로 보낸다.
       // 넘기지 않으면 fwfh 기본 동작(url_launcher)이 바로 인앱 브라우저를 연다.
       onTapUrl: (url) {
@@ -976,6 +971,9 @@ class const _FooterActions({
 class _MoclWidgetFactory({
   required final void Function(String) openUrl,
 
+  /// 본문 `<video>` 를 탭했을 때(앱 플레이어 또는 브라우저).
+  required final void Function(String) openVideo,
+
   /// 본문 이미지 로드 시 보낼 Referer. 보통 현재 사이트의 baseUrl.
   /// (디시 등 일부 CDN 은 Referer 가 사이트 도메인이어야 이미지를 준다.)
   required final String referer,
@@ -1004,8 +1002,7 @@ class _MoclWidgetFactory({
     return super.buildImageWidget(tree, src);
   }
 
-  /// 본문 video 는 자동재생/루프를 끄고, 탭하기 전까지 컨트롤러를 만들지 않는다.
-  /// (clien 등에 apple.com 1080p mp4 가 autoplay+loop 로 여러 개 박혀 오던 케이스)
+  /// 본문 video 는 본문 안에서 재생하지 않고 포스터만 그린다. 탭하면 [openVideo].
   @override
   Widget? buildVideoPlayer(
     BuildTree tree,
@@ -1017,25 +1014,12 @@ class _MoclWidgetFactory({
     String? posterUrl,
     double? width,
   }) {
-    final Widget? player = super.buildVideoPlayer(
-      tree,
-      url,
-      // HTML 의 autoplay/loop 는 무시한다. 탭으로 mount 된 시점부터 재생.
-      autoplay: true,
-      controls: true,
-      height: height,
-      loop: false,
-      posterUrl: posterUrl,
-      width: width,
-    );
-    if (player == null) return null;
-
     final bool dimensOk =
         height != null && height > 0 && width != null && width > 0;
 
-    return _LazyVideoPlayer(
-      player: player,
+    return _BodyVideoPoster(
       aspectRatio: dimensOk ? width / height : 16 / 9,
+      onTap: () => openVideo(url),
       poster: posterUrl != null && posterUrl.isNotEmpty
           ? buildImage(tree, ImageMetadata(sources: [ImageSource(posterUrl)]))
           : null,

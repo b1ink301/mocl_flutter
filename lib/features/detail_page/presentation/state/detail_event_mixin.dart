@@ -16,8 +16,8 @@ import 'package:mocl_flutter/features/bookmark/application/bookmark_providers.da
 import 'package:mocl_flutter/features/database/domain/entities/bookmark_data.dart';
 import 'package:mocl_flutter/features/detail_page/domain/site_link_resolver.dart';
 import 'package:mocl_flutter/features/detail_page/domain/video_link_resolver.dart';
-import 'package:mocl_flutter/features/detail_page/presentation/video_player_page.dart';
 import 'package:mocl_flutter/features/html_parser/application/datasource_provider.dart';
+import 'package:mocl_flutter/features/media_player/application/media_player_provider.dart';
 import 'package:mocl_flutter/features/settings_page/application/settings_providers.dart';
 
 import '../../application/detail_providers.dart';
@@ -62,10 +62,9 @@ mixin class DetailEvent() {
     final VideoLink? video = VideoLinkResolver.resolve(absolute);
     if (video != null) {
       if (ref.read(playVideosInAppProvider)) {
-        context.push(
-          Routes.video,
-          extra: VideoPlayerArgs(link: video, referer: _referer(ref)),
-        );
+        ref
+            .read(mediaPlayerProvider.notifier)
+            .open(video, referer: _referer(ref));
         return true;
       }
       // 끄면 예전처럼 유튜브는 유튜브 앱으로 보낸다(파일은 아래 브라우저 경로).
@@ -85,6 +84,19 @@ mixin class DetailEvent() {
       }
     }
     return absolute.openUrl(context);
+  }
+
+  /// 본문 `<video>` 를 연다. 설정이 켜져 있으면 앱 플레이어(게시판을 보며 미니 창으로
+  /// 이어 볼 수 있다), 꺼져 있으면 브라우저로.
+  Future<bool> handleOpenBodyVideo(WidgetRef ref, String url) async {
+    final String absolute = _absoluteUrl(ref, url);
+    if (ref.read(playVideosInAppProvider)) {
+      ref
+          .read(mediaPlayerProvider.notifier)
+          .open(DirectVideoLink(absolute), referer: _referer(ref));
+      return true;
+    }
+    return absolute.openBrowser();
   }
 
   String _absoluteUrl(WidgetRef ref, String url) {

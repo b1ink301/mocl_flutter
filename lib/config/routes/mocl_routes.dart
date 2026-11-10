@@ -11,7 +11,6 @@ abstract class Routes._() {
   static const keywordAlertInbox = '/keyword-alert-inbox';
   static const issueDetail = '/issue';
   static const login = '/login';
-  static const video = '/video';
   static const viewPhotoDlg = 'viewPhotoDlg';
   static const viewPhotoDlgFull = '$detail/$viewPhotoDlg';
   static const setMainDlg = 'setMainDlg';
