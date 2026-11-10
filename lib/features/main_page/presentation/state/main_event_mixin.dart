@@ -40,7 +40,7 @@ mixin class MainEvent() {
 
   /// 뒤로가기는 '가장 최근에 연 것'부터 닫는다:
   /// 검색 → 다른 탭이면 첫 탭. 모두 닫혀 있으면 앱을 나간다.
-  /// (사이트 시트는 라우트라 뒤로가기가 먼저 닫는다.)
+  /// (사이트 드로어는 Scaffold 가 뒤로가기를 먼저 받아 닫는다.)
   void handlePop(WidgetRef ref, bool didPop) {
     if (didPop) {
       return;

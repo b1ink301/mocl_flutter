@@ -9,7 +9,7 @@ mixin class FavoriteState() {
   AsyncValue<List<FavoriteData>> siteFavoritesState(WidgetRef ref) =>
       ref.watch(siteFavoritesProvider);
 
-  /// 사이트별 담은 개수(사이트 시트 칩 · 빠른 이동 레일).
+  /// 사이트별 담은 개수(사이트 드로어 칩 · 빠른 이동 레일).
   Map<SiteType, int> favoriteCountBySiteState(WidgetRef ref) =>
       ref.watch(favoriteCountBySiteProvider);
 

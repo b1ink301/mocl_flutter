@@ -142,7 +142,7 @@ class const _EmptyBoards() extends ConsumerWidget with MainState, MainEvent {
       primaryLabel: '게시판 담기',
       onPrimary: () => handleAddButton(ref, context),
       secondaryLabel: '다른 사이트',
-      onSecondary: () => showSitePickerSheet(context),
+      onSecondary: () => openSiteDrawer(context),
       titleStyle: titleTextStyleState(ref),
       descriptionStyle: smallTextStyleState(ref),
     ),

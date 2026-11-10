@@ -152,14 +152,16 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
 - 급상승은 데이터가 1시간 쌓이기 전(서버 재시작 직후)에는 표시하지 않는다.
 - 앱: 홈 하단 탭 "지금 이슈"(`IssueRadarPage`) → 이슈 상세(커뮤니티별 글) → `SiteLinkResolver` 로 앱 상세.
 - 홈 셸(`MainPage`)은 떠 있는 알약형 탭바(`FloatingPillTabBar`)로 **게시판 · 지금 이슈 · 스크랩 · 설정**을 오간다
-  (`MainTab`, 서버가 없는 빌드는 이슈 탭을 뺀다). **드로어는 두지 않는다**(탭과 함께 쓰면 이동 경로가 두 갈래).
-  사이트는 게시판 탭의 큰 제목(`다모앙 ▾`, `main_site_picker`)을 눌러 하단 시트(`showSitePickerSheet`,
-  넓은 화면은 폭 640 로 묶음)에서 바꾼다. 시트는 루트 Navigator 에 뜨므로 홈의 ProviderScope 컨테이너를 넘겨 준다. 탭은 `IndexedStack` 으로 살려 두고(스크롤 · 상태 유지,
+  (`MainTab`, 서버가 없는 빌드는 이슈 탭을 뺀다). 사이트는 왼쪽 **사이트 드로어**(`SiteDrawer`, `site_drawer`)에서 바꾼다:
+  게시판 탭의 큰 제목(`다모앙 ▾`, `main_site_picker`)을 누르거나(`openSiteDrawer`) 본문을 오른쪽으로 끌면
+  (화면 왼쪽 절반, `drawerEdgeDragWidth`) 손가락을 따라 열린다. 끌어 열기는 게시판 탭 · 편집 · 검색 중이 아닐 때만.
+  드로어에는 **사이트 칩 · 게시판 추가만** 둔다 — 스크랩 · 설정 · 지금 이슈를 넣으면 탭과 이동 경로가 두 갈래가 된다.
+  하단 시트로 되돌리지 말 것(엄지로 끌어 바꾸는 동작이 사라진다). 탭은 `IndexedStack` 으로 살려 두고(스크롤 · 상태 유지,
   앱을 켜면 이슈를 바로 받는다), 탭마다 `ScrollController` 를 따로 `PrimaryScrollController` 로 준다
   (하나를 같이 쓰면 컨트롤러에 스크롤뷰가 여럿 붙는다). 보고 있는 탭을 다시 누르면 맨 위로.
   모든 탭이 같은 큰 제목 앱바(`MainAppBar` · `LargeTitleSliverAppBar`)라 탭을 오가도 제목 자리가 같다.
   본문은 바 뒤까지 확장(`extendBody`)하니 목록 아래 여백은 `MediaQuery.padding.bottom` 으로 준다.
-  뒤로가기는 (사이트 시트) → 검색 → 다른 탭이면 게시판 탭 순.
+  뒤로가기는 사이트 드로어 → 검색 → 다른 탭이면 게시판 탭 순.
   메인 위 이슈 카드 · 고정 머리는 게시판 목록을 밀어내 걷어냈다(되살리지 말 것).
   안 본 위쪽 이슈가 있으면 탭 아이콘에 점(`hasUnreadTopIssues`). 앱 복귀 때 이슈가 10분 넘었으면 다시 받는다.
 - 빈 화면 · 오류 화면은 한 모양으로 그린다: 빈 목록은 `MessageView`(아이콘 · 제목 · 설명 · 주/보조 버튼),

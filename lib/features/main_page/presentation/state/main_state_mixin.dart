@@ -12,7 +12,7 @@ mixin class MainState() {
   /// 앱바 제목(= 지금 보고 있는 사이트 이름).
   String titleState(WidgetRef ref) => ref.watch(mainTitleProvider);
 
-  /// 사이트 시트의 칩이 자기 사이트가 선택됐는지 물어본다.
+  /// 사이트 드로어의 칩이 자기 사이트가 선택됐는지 물어본다.
   bool isSiteType(WidgetRef ref, SiteType siteType) =>
       ref.watch(isCurrentSiteTypeProvider(siteType));
 

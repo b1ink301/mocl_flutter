@@ -54,19 +54,19 @@ final class MainTitleProvider
 
 String _$mainTitleHash() => r'57abddfdf2e871b713c4368c9e8e3420a55ee34a';
 
-/// 사이트 시트의 칩이 자기 차례인지만 골라 보게 한다(사이트가 바뀌어도
+/// 사이트 드로어의 칩이 자기 차례인지만 골라 보게 한다(사이트가 바뀌어도
 /// 관련 있는 칩 두 개만 다시 그려진다).
 
 @ProviderFor(isCurrentSiteType)
 final isCurrentSiteTypeProvider = IsCurrentSiteTypeFamily._();
 
-/// 사이트 시트의 칩이 자기 차례인지만 골라 보게 한다(사이트가 바뀌어도
+/// 사이트 드로어의 칩이 자기 차례인지만 골라 보게 한다(사이트가 바뀌어도
 /// 관련 있는 칩 두 개만 다시 그려진다).
 
 final class IsCurrentSiteTypeProvider
     extends $FunctionalProvider<bool, bool, bool>
     with $Provider<bool> {
-  /// 사이트 시트의 칩이 자기 차례인지만 골라 보게 한다(사이트가 바뀌어도
+  /// 사이트 드로어의 칩이 자기 차례인지만 골라 보게 한다(사이트가 바뀌어도
   /// 관련 있는 칩 두 개만 다시 그려진다).
   IsCurrentSiteTypeProvider._({
     required IsCurrentSiteTypeFamily super.from,
@@ -121,7 +121,7 @@ final class IsCurrentSiteTypeProvider
 
 String _$isCurrentSiteTypeHash() => r'2d08740bc69db68baad12dc057b6cab1d5b9a04f';
 
-/// 사이트 시트의 칩이 자기 차례인지만 골라 보게 한다(사이트가 바뀌어도
+/// 사이트 드로어의 칩이 자기 차례인지만 골라 보게 한다(사이트가 바뀌어도
 /// 관련 있는 칩 두 개만 다시 그려진다).
 
 final class IsCurrentSiteTypeFamily extends $Family
@@ -135,7 +135,7 @@ final class IsCurrentSiteTypeFamily extends $Family
         isAutoDispose: true,
       );
 
-  /// 사이트 시트의 칩이 자기 차례인지만 골라 보게 한다(사이트가 바뀌어도
+  /// 사이트 드로어의 칩이 자기 차례인지만 골라 보게 한다(사이트가 바뀌어도
   /// 관련 있는 칩 두 개만 다시 그려진다).
 
   IsCurrentSiteTypeProvider call(SiteType siteType) =>

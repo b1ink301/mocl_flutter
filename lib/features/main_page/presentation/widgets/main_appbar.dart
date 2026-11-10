@@ -15,11 +15,11 @@ import '../../../../core/util/platform_util.dart';
 import '../state/main_event_mixin.dart';
 import '../state/main_state_mixin.dart';
 import 'main_search_field.dart';
-import 'site_picker_sheet.dart';
+import 'site_drawer.dart';
 
 /// 메인 앱바. 펼침 영역에 큰 사이트 제목을 두고, 스크롤하면 스르륵 사라진다
 /// (floating — 역스크롤하면 툴바만 내려온다). 툴바 제목은 평소 비어 있다.
-/// 큰 제목(`다모앙 ▾`)을 누르면 사이트 시트([showSitePickerSheet])가 뜬다.
+/// 큰 제목(`다모앙 ▾`)을 누르면 사이트 드로어([openSiteDrawer])가 열린다.
 ///
 /// 다른 홈 탭(지금 이슈 · 설정)의 `LargeTitleSliverAppBar` 와 높이 · 제목 자리가 같다.
 class const MainAppBar({super.key})
@@ -36,13 +36,13 @@ class const MainAppBar({super.key})
     final titleStyle = largeTitleStyle(textStyle);
 
     return SliverAppBar(
-      // 사이트는 큰 제목을 눌러 바꾼다(드로어 없음).
+      // 사이트는 큰 제목을 눌러 드로어에서 바꾼다(앱바에 메뉴 버튼은 두지 않는다).
       automaticallyImplyLeading: false,
       expandedHeight: kLargeTitleExpandedHeightSingleLine,
       flexibleSpace: LargeTitleFlexibleSpace(
         title: titleState(ref),
         style: titleStyle,
-        onTap: () => showSitePickerSheet(context),
+        onTap: () => openSiteDrawer(context),
         semanticLabel: '${titleState(ref)}, 사이트 바꾸기',
         semanticsId: 'main_site_picker',
       ),

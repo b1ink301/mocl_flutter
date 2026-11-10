@@ -272,13 +272,13 @@ final class SiteFavoritesProvider
 
 String _$siteFavoritesHash() => r'b962aef0d73b4b902b044f1cb69882a8e99bdd12';
 
-/// 사이트별로 담아둔 게시판 개수. 사이트 시트 칩과 빠른 이동 레일이 "갈 곳이 있는
+/// 사이트별로 담아둔 게시판 개수. 사이트 드로어 칩과 빠른 이동 레일이 "갈 곳이 있는
 /// 사이트"를 가리는 데 쓴다.
 
 @ProviderFor(favoriteCountBySite)
 final favoriteCountBySiteProvider = FavoriteCountBySiteProvider._();
 
-/// 사이트별로 담아둔 게시판 개수. 사이트 시트 칩과 빠른 이동 레일이 "갈 곳이 있는
+/// 사이트별로 담아둔 게시판 개수. 사이트 드로어 칩과 빠른 이동 레일이 "갈 곳이 있는
 /// 사이트"를 가리는 데 쓴다.
 
 final class FavoriteCountBySiteProvider
@@ -289,7 +289,7 @@ final class FavoriteCountBySiteProvider
           Map<SiteType, int>
         >
     with $Provider<Map<SiteType, int>> {
-  /// 사이트별로 담아둔 게시판 개수. 사이트 시트 칩과 빠른 이동 레일이 "갈 곳이 있는
+  /// 사이트별로 담아둔 게시판 개수. 사이트 드로어 칩과 빠른 이동 레일이 "갈 곳이 있는
   /// 사이트"를 가리는 데 쓴다.
   FavoriteCountBySiteProvider._()
     : super(

@@ -15,7 +15,7 @@
 // adb forward 로 연결한다. flutter run 은 필요 없다.
 //
 // 화면 요소는 글자 · Semantics identifier · 위젯 종류로 찾는다. 쓰는 id:
-// main_site_picker · main_add · add_board_close · tab_settings · detail_footer.
+// main_site_picker · site_drawer · main_add · add_board_close · tab_settings · detail_footer.
 // FailureView(목록/상세 실패)가 보이면 바로 실패하고, 확인마다 앱 로그(get-logs)의
 // Flutter 오류(main.dart 가 debug 에서 MoclLogger 로 남김)를 검사한다.
 // 스크린샷은 build/device_check/ 에 남는다.
@@ -158,24 +158,26 @@ Future<void> main(List<String> args) async {
 /// 사이트 고르기 → 게시판 열기(없으면 담기) → 목록 → 두 번째 글 → 끝까지 스크롤.
 Future<String> _checkSite(App app, SiteType site, String board) async {
   await app.tapId('main_site_picker');
-  // 사이트 시트의 칩(메인 제목과 글자가 같으므로 위치로 가른다).
+  // 사이트 드로어의 칩(메인 제목과 글자가 같으므로 위치로 가른다 — 제목은 y 94~122,
+  // 드로어 첫 줄 칩은 y 162 근처).
   await app.tap(
     await app.waitFor(
-      (e) => e.text == site.title && e.y > 200,
-      '사이트 시트의 ${site.title}',
+      (e) => e.text == site.title && e.y > 140,
+      '사이트 드로어의 ${site.title}',
     ),
   );
-  // 시트("사이트 선택")가 닫히고 메인 제목이 바뀔 때까지.
+  // 드로어(site_drawer)가 닫히고 메인 제목이 바뀔 때까지.
   await app.waitForAll<bool>(
     (els) =>
-        !els.any((e) => e.text == '사이트 선택') &&
+        !els.any((e) => e.id == 'site_drawer') &&
             els.any((e) => e.text == site.title && e.y < 160)
         ? true
         : null,
     '${site.title} 메인',
   );
 
-  bool isBoardRow(El e) => e.text == board && e.y > 150;
+  // 메인 큰 제목은 y 94~122, 첫 게시판 행은 y 149 근처.
+  bool isBoardRow(El e) => e.text == board && e.y > 130;
   // 담은 게시판은 DB 에서 비동기로 뜬다. 게시판 행 · 빈 안내 · 다른 게시판 중 하나가 보이면 판단.
   final El? row = await app
       .waitForAll<_Maybe<El>>((els) {
