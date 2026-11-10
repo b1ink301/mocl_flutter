@@ -12,6 +12,7 @@ import '../../../../core/presentation/widgets/plain_icon_button.dart';
 import '../../../../core/presentation/widgets/plain_text.dart';
 import '../../../../core/presentation/widgets/scroll_to_top_title.dart';
 import '../../../../core/util/platform_util.dart';
+import '../../../keyword_alerts/presentation/widgets/keyword_alert_inbox_button.dart';
 import '../state/main_event_mixin.dart';
 import '../state/main_state_mixin.dart';
 import 'main_search_field.dart';
@@ -112,6 +113,8 @@ class const _MainActions() extends ConsumerWidget with MainState, MainEvent {
               ),
             ]
           : [
+              // 키워드 알림을 쓰는 사람만 보인다(받은 알림으로 바로 간다).
+              const KeywordAlertInboxButton(onlyWhenInUse: true),
               // 담은 게시판이 많아지면 스크롤보다 검색이 빠르다.
               PlainIconButton(
                 onPressed: () => openSearch(ref),

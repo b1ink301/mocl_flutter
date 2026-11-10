@@ -446,12 +446,13 @@ class const _FontSizeButton({
 /// 타일 오른쪽에 값을 담는 작은 칩(캐시 크기 등).
 /// 스토어 버전과 비교한 업데이트 상태. 누르면 확인하고, 새 버전이 있으면
 /// Android 는 Play 인앱 업데이트를, iOS 는 App Store 를 연다.
-/// 키워드 알림 관리로 가는 줄. 서버가 없는 빌드 · 데스크톱에서는 숨긴다.
+/// 키워드 알림 관리 · 받은 알림으로 가는 두 줄. 서버가 없는 빌드 · 데스크톱에서는 숨긴다.
 class const _KeywordAlertTile() extends ConsumerWidget with KeywordAlertState {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (!keywordAlertsAvailableState(ref)) return const SizedBox.shrink();
     final int count = keywordAlertsState(ref).length;
+    final int unread = keywordAlertUnreadCountState(ref);
     final AppTextStyles styles = ref.watch(appTextStylesFontSizeProvider);
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -470,6 +471,25 @@ class const _KeywordAlertTile() extends ConsumerWidget with KeywordAlertState {
             ],
           ),
           onTap: () => context.push(Routes.keywordAlerts),
+        ),
+        const _TileDivider(),
+        _SettingsTile(
+          icon: Icons.inbox_outlined,
+          title: '받은 알림',
+          trailing: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              if (unread > 0) ...[
+                Semantics(
+                  label: '안 읽은 알림 $unread개',
+                  child: Badge(label: Text(unread > 99 ? '99+' : '$unread')),
+                ),
+                const SizedBox(width: 6),
+              ],
+              const Icon(Icons.chevron_right, size: 22),
+            ],
+          ),
+          onTap: () => context.push(Routes.keywordAlertInbox),
         ),
         const _TileDivider(),
       ],

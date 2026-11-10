@@ -22,6 +22,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'features/ads/data/mobile_ads_bootstrap.dart';
 import 'features/database/application/datasource_provider.dart';
 import 'features/database/data/datasources/local/local_database.dart';
+import 'features/keyword_alerts/data/keyword_alert_background.dart';
 import 'features/remote_config/application/remote_config_providers.dart';
 import 'features/remote_config/data/remote_config_fetcher.dart';
 import 'features/remote_config/data/remote_config_store.dart';
@@ -103,6 +104,8 @@ Future<void> _initPlatform() async {
       options: DefaultFirebaseOptions.currentPlatform,
     );
     _installErrorReporting();
+    // 앱이 뒤에 있거나 꺼져 있을 때 온 키워드 알림을 알림함에 남긴다.
+    if (moclApiBaseUrl.isNotEmpty) registerKeywordAlertBackgroundHandler();
   } catch (e, st) {
     // 리포터 없이도 앱은 쓸 수 있다. (이때 MoclLogger.e 는 디버그 콘솔에만 남는다)
     MoclLogger.e('Firebase 초기화 실패', error: e, stackTrace: st);

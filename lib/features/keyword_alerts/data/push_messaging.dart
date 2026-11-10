@@ -3,7 +3,15 @@ import 'dart:async';
 import 'package:firebase_messaging/firebase_messaging.dart';
 
 /// 알림 하나에서 앱이 쓰는 값. 서버는 `KeywordAlertPayload` 로 data 를 채운다.
-class const PushTap(final Map<String, String> data) {
+class const PushTap(
+  final Map<String, String> data, {
+
+  /// 시스템 알림 제목(`'{게시판} · {키워드}'`).
+  final String? notificationTitle,
+
+  /// FCM 이 보낸 시각.
+  final DateTime? sentAt,
+}) {
   String? get url => data['url'];
   String? get title => data['title'];
 }
@@ -29,6 +37,13 @@ abstract interface class PushMessaging() {
 
 class FirebasePushMessaging() implements PushMessaging {
   FirebaseMessaging get _fm => FirebaseMessaging.instance;
+
+  /// [RemoteMessage] 에서 앱이 쓰는 값만 꺼낸다(백그라운드 핸들러도 쓴다).
+  static PushTap tapOf(RemoteMessage m) => PushTap(
+    _data(m),
+    notificationTitle: m.notification?.title,
+    sentAt: m.sentTime,
+  );
 
   static Map<String, String> _data(RemoteMessage m) => {
     for (final MapEntry<String, dynamic> e in m.data.entries)
@@ -58,14 +73,12 @@ class FirebasePushMessaging() implements PushMessaging {
   @override
   Future<PushTap?> initialTap() async {
     final RemoteMessage? m = await _fm.getInitialMessage();
-    return m == null ? null : PushTap(_data(m));
+    return m == null ? null : tapOf(m);
   }
 
   @override
-  Stream<PushTap> get onTap =>
-      FirebaseMessaging.onMessageOpenedApp.map((m) => PushTap(_data(m)));
+  Stream<PushTap> get onTap => FirebaseMessaging.onMessageOpenedApp.map(tapOf);
 
   @override
-  Stream<PushTap> get onForeground =>
-      FirebaseMessaging.onMessage.map((m) => PushTap(_data(m)));
+  Stream<PushTap> get onForeground => FirebaseMessaging.onMessage.map(tapOf);
 }

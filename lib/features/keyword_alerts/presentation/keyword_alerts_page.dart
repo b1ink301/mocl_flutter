@@ -12,6 +12,7 @@ import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'state/keyword_alert_event_mixin.dart';
 import 'state/keyword_alert_state_mixin.dart';
 import 'widgets/keyword_alert_editor.dart';
+import 'widgets/keyword_alert_inbox_button.dart';
 
 /// 키워드 알림 관리. 담은 게시판 중 하나를 골라 키워드를 걸면, 서버가 그 게시판의
 /// 새 글을 보고 제목에 키워드가 있으면 푸시로 알려 준다.
@@ -102,6 +103,7 @@ class _KeywordAlertsPageState()
               title: Text('키워드 알림', style: titleStyle),
               scrolledUnderElevation: 0,
               titleSpacing: 0,
+              actions: const [KeywordAlertInboxButton(), SizedBox(width: 8)],
             ),
             floatingActionButton: FloatingActionButton.extended(
               onPressed: () => _addBoard(subs),

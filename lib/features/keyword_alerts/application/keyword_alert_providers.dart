@@ -3,13 +3,16 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:mocl_flutter/features/database/domain/entities/favorite_data.dart';
 import 'package:mocl_flutter/features/favorite/application/favorite_providers.dart';
+import 'package:mocl_flutter/features/keyword_alerts/data/keyword_alert_inbox.dart';
 import 'package:mocl_flutter/features/keyword_alerts/data/keyword_alert_store.dart';
 import 'package:mocl_flutter/features/keyword_alerts/data/keyword_alert_sync.dart';
 import 'package:mocl_flutter/features/keyword_alerts/data/push_messaging.dart';
+import 'package:mocl_flutter/features/keyword_alerts/domain/inbox_alert.dart';
 import 'package:mocl_flutter/features/remote_config/data/remote_config_fetcher.dart'
     show moclApiBaseUrl;
 import 'package:mocl_flutter/features/settings_page/application/datasource_provider.dart';
 import 'package:mocl_shared/alerts/keyword_alerts.dart';
+import 'package:mocl_shared/util/mocl_logger.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'keyword_alert_providers.g.dart';
@@ -115,3 +118,55 @@ Future<List<FavoriteData>> keywordAlertCandidates(Ref ref) async {
       )
       .toList();
 }
+
+@Riverpod(keepAlive: true)
+KeywordAlertInbox keywordAlertInboxStore(Ref ref) =>
+    KeywordAlertInbox(SharedPreferencesInboxStorage());
+
+/// 받은 알림(최신순). 기기에만 둔다. 앱이 뒤에 있을 때 받은 것은 백그라운드 isolate 가
+/// 저장하므로, 앱으로 돌아올 때 [refresh] 로 다시 읽는다.
+@Riverpod(keepAlive: true)
+class KeywordAlertInboxNotifier() extends _$KeywordAlertInboxNotifier {
+  KeywordAlertInbox get _inbox => ref.read(keywordAlertInboxStoreProvider);
+
+  @override
+  Future<List<InboxAlert>> build() =>
+      ref.watch(keywordAlertInboxStoreProvider).all();
+
+  Future<void> refresh() => _apply(_inbox.all());
+
+  /// 푸시 하나를 넣는다. [read] 면(눌러서 들어옴) 읽음으로 넣는다.
+  Future<InboxAlert?> receive(PushTap tap, {bool read = false}) async {
+    final InboxAlert? alert = InboxAlert.fromPush(
+      tap.data,
+      notificationTitle: tap.notificationTitle,
+      sentAt: tap.sentAt,
+    );
+    if (alert != null) await _apply(_inbox.add(alert, read: read));
+    return alert;
+  }
+
+  Future<void> markRead(String id) => _apply(_inbox.markRead(id));
+
+  Future<void> markAllRead() => _apply(_inbox.markAllRead());
+
+  Future<void> remove(String id) => _apply(_inbox.remove(id));
+
+  Future<void> restore(InboxAlert alert) => _apply(_inbox.restore(alert));
+
+  Future<void> clear() => _apply(_inbox.clear());
+
+  Future<void> _apply(Future<List<InboxAlert>> next) async {
+    try {
+      state = AsyncData(await next);
+    } catch (e, st) {
+      MoclLogger.e('키워드 알림함 저장 실패', error: e, stackTrace: st);
+    }
+  }
+}
+
+/// 안 읽은 받은 알림 수.
+@Riverpod(keepAlive: true)
+int keywordAlertUnreadCount(Ref ref) =>
+    ref.watch(keywordAlertInboxProvider).value?.where((a) => !a.read).length ??
+    0;

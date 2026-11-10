@@ -114,6 +114,16 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   걸려 있으면 채운 종). 켜기 · 고치기 · 끄기 흐름은 `KeywordAlertFlow`(권한 · 서버 반영 · 스낵바) 하나로 모은다.
 - 알림 data 의 `url` 을 `SiteLinkResolver` 로 열어 상세로 간다(`KeywordAlertGate`, `AppUpdateGate` 안쪽).
   앱이 앞에 있으면 시스템이 띄우지 않으므로 스낵바로 보여 준다.
+- 받은 알림은 **기기에만** 쌓는다(알림함, `KeywordAlertInbox` · `KeywordAlertInboxPage`).
+  서버는 보낸 기록을 두지 않는다. 같은 글(`site:url`)은 한 번만, 최신순 100개 · 14일.
+  들어가는 곳은 `KeywordAlertInboxButton`(받은편지함 아이콘 + 안 읽은 수 배지): 홈 게시판 탭 앱바
+  (`onlyWhenInUse` — 알림을 걸었거나 받은 알림이 있을 때만) · 키워드 알림 화면 앱바, 그리고 설정 "받은 알림" 줄.
+  목록 앱바의 종(그 게시판에 알림 걸기)과 헷갈리니 종 아이콘을 쓰지 말 것.
+  모으는 곳은 세 군데: 앞에 있을 때(`onForeground`), 눌러서 들어올 때(`onTap` · `initialTap`, 읽음으로),
+  뒤에 있거나 꺼져 있을 때(`keywordAlertBackgroundHandler`, `main.dart` 에서 Firebase 초기화 뒤 등록).
+  백그라운드 핸들러는 다른 isolate 라 저장은 `SharedPreferencesAsync`(캐시 없음)로 한다 — sembast 나
+  레거시 `SharedPreferences` 로 바꾸지 말 것. 앱 복귀 때 `KeywordAlertGate` 가 다시 읽는다.
+  iOS 는 `content-available` 없이 백그라운드 핸들러가 돌지 않아, 뒤에 있을 때 온 알림은 눌렀을 때만 남는다(감수).
 - 알림에는 기한이 있다(원격 설정 `alerts.ttlDays`, 기본 3일, 0 = 기한 없음, 관리 화면 "키워드 알림 기한").
   구독의 `startedAt`(걸거나 고치거나 연장한 시각)부터 세고, 서버 크롤러가 지난 구독을 건너뛴다
   (`KeywordAlerts.isExpired`). `startedAt` 이 없거나(옛 앱) 서버가 받은 시각보다 앞서면 등록 시각으로 센다.

@@ -296,3 +296,156 @@ final class KeywordAlertCandidatesProvider
 
 String _$keywordAlertCandidatesHash() =>
     r'fa976959d490996a6946934f6d45d4a7bb1f4447';
+
+@ProviderFor(keywordAlertInboxStore)
+final keywordAlertInboxStoreProvider = KeywordAlertInboxStoreProvider._();
+
+final class KeywordAlertInboxStoreProvider
+    extends
+        $FunctionalProvider<
+          KeywordAlertInbox,
+          KeywordAlertInbox,
+          KeywordAlertInbox
+        >
+    with $Provider<KeywordAlertInbox> {
+  KeywordAlertInboxStoreProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'keywordAlertInboxStoreProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$keywordAlertInboxStoreHash();
+
+  @$internal
+  @override
+  $ProviderElement<KeywordAlertInbox> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  KeywordAlertInbox create(Ref ref) {
+    return keywordAlertInboxStore(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(KeywordAlertInbox value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<KeywordAlertInbox>(value),
+    );
+  }
+}
+
+String _$keywordAlertInboxStoreHash() =>
+    r'26309561829f72e5124454ebbb15823144887d8f';
+
+/// 받은 알림(최신순). 기기에만 둔다. 앱이 뒤에 있을 때 받은 것은 백그라운드 isolate 가
+/// 저장하므로, 앱으로 돌아올 때 [refresh] 로 다시 읽는다.
+
+@ProviderFor(KeywordAlertInboxNotifier)
+final keywordAlertInboxProvider = KeywordAlertInboxNotifierProvider._();
+
+/// 받은 알림(최신순). 기기에만 둔다. 앱이 뒤에 있을 때 받은 것은 백그라운드 isolate 가
+/// 저장하므로, 앱으로 돌아올 때 [refresh] 로 다시 읽는다.
+final class KeywordAlertInboxNotifierProvider
+    extends
+        $AsyncNotifierProvider<KeywordAlertInboxNotifier, List<InboxAlert>> {
+  /// 받은 알림(최신순). 기기에만 둔다. 앱이 뒤에 있을 때 받은 것은 백그라운드 isolate 가
+  /// 저장하므로, 앱으로 돌아올 때 [refresh] 로 다시 읽는다.
+  KeywordAlertInboxNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'keywordAlertInboxProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$keywordAlertInboxNotifierHash();
+
+  @$internal
+  @override
+  KeywordAlertInboxNotifier create() => KeywordAlertInboxNotifier();
+}
+
+String _$keywordAlertInboxNotifierHash() =>
+    r'8639bad70d8bc65a43cffa14e4e18e55add6d83a';
+
+/// 받은 알림(최신순). 기기에만 둔다. 앱이 뒤에 있을 때 받은 것은 백그라운드 isolate 가
+/// 저장하므로, 앱으로 돌아올 때 [refresh] 로 다시 읽는다.
+
+abstract class _$KeywordAlertInboxNotifier
+    extends $AsyncNotifier<List<InboxAlert>> {
+  FutureOr<List<InboxAlert>> build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref =
+        this.ref as $Ref<AsyncValue<List<InboxAlert>>, List<InboxAlert>>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<AsyncValue<List<InboxAlert>>, List<InboxAlert>>,
+              AsyncValue<List<InboxAlert>>,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// 안 읽은 받은 알림 수.
+
+@ProviderFor(keywordAlertUnreadCount)
+final keywordAlertUnreadCountProvider = KeywordAlertUnreadCountProvider._();
+
+/// 안 읽은 받은 알림 수.
+
+final class KeywordAlertUnreadCountProvider
+    extends $FunctionalProvider<int, int, int>
+    with $Provider<int> {
+  /// 안 읽은 받은 알림 수.
+  KeywordAlertUnreadCountProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'keywordAlertUnreadCountProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$keywordAlertUnreadCountHash();
+
+  @$internal
+  @override
+  $ProviderElement<int> $createElement($ProviderPointer pointer) =>
+      $ProviderElement(pointer);
+
+  @override
+  int create(Ref ref) {
+    return keywordAlertUnreadCount(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(int value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<int>(value),
+    );
+  }
+}
+
+String _$keywordAlertUnreadCountHash() =>
+    r'c84f470b1d65aea258f8406e7d356bf56d244ab2';

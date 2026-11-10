@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/features/keyword_alerts/application/keyword_alert_providers.dart';
 import 'package:mocl_flutter/features/keyword_alerts/data/keyword_alert_sync.dart';
 import 'package:mocl_flutter/features/keyword_alerts/data/push_messaging.dart';
+import 'package:mocl_flutter/features/keyword_alerts/domain/inbox_alert.dart';
 import 'package:mocl_flutter/features/remote_config/application/remote_config_providers.dart';
 import 'package:mocl_shared/alerts/keyword_alerts.dart';
 
@@ -54,4 +55,32 @@ mixin class KeywordAlertEvent() {
 
   bool readHasKeywordAlerts(WidgetRef ref) =>
       ref.read(keywordAlertsProvider).isNotEmpty;
+
+  // ── 받은 알림(알림함) ──
+
+  /// 푸시 하나를 알림함에 넣는다. [read] 면 읽음으로.
+  Future<InboxAlert?> receiveKeywordAlert(
+    WidgetRef ref,
+    PushTap tap, {
+    bool read = false,
+  }) => ref.read(keywordAlertInboxProvider.notifier).receive(tap, read: read);
+
+  /// 백그라운드에서 쌓인 알림을 다시 읽는다.
+  Future<void> refreshKeywordAlertInbox(WidgetRef ref) =>
+      ref.read(keywordAlertInboxProvider.notifier).refresh();
+
+  Future<void> markKeywordAlertRead(WidgetRef ref, InboxAlert alert) =>
+      ref.read(keywordAlertInboxProvider.notifier).markRead(alert.id);
+
+  Future<void> markAllKeywordAlertsRead(WidgetRef ref) =>
+      ref.read(keywordAlertInboxProvider.notifier).markAllRead();
+
+  Future<void> removeInboxAlert(WidgetRef ref, InboxAlert alert) =>
+      ref.read(keywordAlertInboxProvider.notifier).remove(alert.id);
+
+  Future<void> restoreInboxAlert(WidgetRef ref, InboxAlert alert) =>
+      ref.read(keywordAlertInboxProvider.notifier).restore(alert);
+
+  Future<void> clearKeywordAlertInbox(WidgetRef ref) =>
+      ref.read(keywordAlertInboxProvider.notifier).clear();
 }

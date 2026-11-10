@@ -8,6 +8,7 @@ import 'package:mocl_flutter/features/add_main_dialog/presentation/add_list_moda
 import 'package:mocl_flutter/features/detail_page/domain/site_link_resolver.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/mocl_detail_page.dart';
 import 'package:mocl_flutter/features/issue_radar/presentation/issue_detail_page.dart';
+import 'package:mocl_flutter/features/keyword_alerts/presentation/keyword_alert_inbox_page.dart';
 import 'package:mocl_flutter/features/keyword_alerts/presentation/keyword_alerts_page.dart';
 import 'package:mocl_shared/radar/issue_feed.dart';
 import 'package:mocl_flutter/features/mute/presentation/mute_page.dart';
@@ -133,6 +134,13 @@ class AppPages._() {
         pageBuilder: (BuildContext context, GoRouterState state) =>
             SwipeBackPage(
               builder: (BuildContext context) => const KeywordAlertsPage(),
+            ),
+      ),
+      GoRoute(
+        path: Routes.keywordAlertInbox,
+        pageBuilder: (BuildContext context, GoRouterState state) =>
+            SwipeBackPage(
+              builder: (BuildContext context) => const KeywordAlertInboxPage(),
             ),
       ),
       GoRoute(

@@ -5,16 +5,17 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
-import 'package:mocl_flutter/features/detail_page/domain/site_link_resolver.dart';
 import 'package:mocl_flutter/features/keyword_alerts/data/push_messaging.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../state/keyword_alert_event_mixin.dart';
+import 'keyword_alert_open.dart';
 
 /// 키워드 알림을 받는 쪽. `MaterialApp.router` 의 builder 에서 감싼다.
 ///
 /// - 알림을 눌러 들어오면(꺼져 있었든 뒤에 있었든) 그 글 상세를 연다.
 /// - 앱이 앞에 있을 때 온 알림은 시스템이 띄우지 않으므로 스낵바로 보여 준다.
+/// - 받은 알림은 알림함(받은 알림)에 넣는다. 눌러서 들어온 건 읽음으로.
+///   앱이 뒤에 있을 때 온 건 백그라운드 핸들러가 넣으므로, 돌아올 때 다시 읽는다.
 /// - 실행할 때와 FCM 토큰이 바뀔 때 서버 등록을 다시 맞춘다.
 class const KeywordAlertGate({
   super.key,
@@ -26,6 +27,13 @@ class const KeywordAlertGate({
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    useOnAppLifecycleStateChange((previous, current) {
+      if (current == AppLifecycleState.resumed &&
+          readKeywordAlertsAvailable(ref)) {
+        unawaited(refreshKeywordAlertInbox(ref));
+      }
+    });
+
     useEffect(() {
       if (!readKeywordAlertsAvailable(ref)) return null;
       final PushMessaging messaging = readPushMessaging(ref);
@@ -34,10 +42,11 @@ class const KeywordAlertGate({
 
       try {
         subs
-          ..add(messaging.onTap.listen((tap) => _open(tap)))
+          ..add(messaging.onTap.listen((tap) => _openTapped(ref, tap)))
           ..add(
             messaging.onForeground.listen((tap) {
-              if (context.mounted) _showForeground(context, tap);
+              unawaited(receiveKeywordAlert(ref, tap));
+              if (context.mounted) _showForeground(context, ref, tap);
             }),
           )
           ..add(
@@ -54,7 +63,7 @@ class const KeywordAlertGate({
         timer = Timer(_launchDelay, () async {
           try {
             final PushTap? initial = await messaging.initialTap();
-            if (initial != null) _open(initial);
+            if (initial != null) _openTapped(ref, initial);
           } catch (_) {}
           if (readHasKeywordAlerts(ref)) unawaited(syncKeywordAlerts(ref));
         });
@@ -71,20 +80,18 @@ class const KeywordAlertGate({
     return child;
   }
 
-  void _open(PushTap tap) {
-    final String? url = tap.url;
-    if (url == null || url.isEmpty) return;
-    final SiteLink? link = SiteLinkResolver.resolve(url);
-    if (link != null) {
-      unawaited(router.push(Routes.detail, extra: link));
-    } else {
-      unawaited(
-        launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication),
-      );
-    }
+  /// 알림을 눌렀다: 알림함에 읽음으로 넣고 연다.
+  void _openTapped(WidgetRef ref, PushTap tap) {
+    unawaited(receiveKeywordAlert(ref, tap, read: true));
+    _open(tap);
   }
 
-  void _showForeground(BuildContext context, PushTap tap) {
+  void _open(PushTap tap) => openKeywordAlertUrl(
+    tap.url,
+    pushDetail: (link) => router.push(Routes.detail, extra: link),
+  );
+
+  void _showForeground(BuildContext context, WidgetRef ref, PushTap tap) {
     final ScaffoldMessengerState? messenger = ScaffoldMessenger.maybeOf(
       context,
     );
@@ -102,7 +109,10 @@ class const KeywordAlertGate({
           behavior: SnackBarBehavior.floating,
           margin: const EdgeInsets.fromLTRB(16, 0, 16, 96),
           duration: const Duration(seconds: 6),
-          action: SnackBarAction(label: '보기', onPressed: () => _open(tap)),
+          action: SnackBarAction(
+            label: '보기',
+            onPressed: () => _openTapped(ref, tap),
+          ),
         ),
       );
   }
