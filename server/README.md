@@ -229,16 +229,20 @@ fvm flutter run --flavor dev --dart-define=MOCL_API_BASE_URL=http://10.0.2.2:808
 4. **갱신**: `git pull && docker compose up -d --build`
    (빌드 단계에서 `dart test` 를 돌리므로 테스트가 깨지면 이미지가 만들어지지 않는다)
 
-   운영 서버의 `~/mocl` 을 git 저장소가 아니라 복사본으로 둘 때는 로컬 저장소 루트에서 올린다
-   (비밀 키 · `.env` 는 건드리지 않는다). `SERVER` 는 ssh 접속 이름(`~/.ssh/config` 의 Host):
+   운영 서버의 `~/mocl` 을 git 저장소가 아니라 복사본으로 둘 때는 **개발 PC 의 저장소 루트에서** 스크립트로 올린다.
+   `SERVER` 는 ssh 접속 이름(`~/.ssh/config` 의 Host). 서버 주소는 저장소에 적지 않는다.
    ```bash
-   SERVER=<ssh 호스트>
-   rsync -a --exclude .dart_tool --exclude build packages/mocl_shared $SERVER:mocl/packages/
-   rsync -a --exclude .dart_tool --exclude secrets --exclude .env server/ $SERVER:mocl/server/
-   ssh $SERVER 'cd ~/mocl/server && docker compose up -d --build'
-   curl -s https://$MOCL_DOMAIN/v1/config
+   SERVER=<ssh 호스트> server/ops/deploy.sh               # 로컬 테스트 → rsync → 빌드 · 재시작 → verify.sh
+   SERVER=<ssh 호스트> server/ops/deploy.sh --skip-tests
+   SERVER=<ssh 호스트> server/ops/deploy.sh --rollback    # 직전 이미지(mocl-api:rollback)로 되돌림
+   SERVER=<ssh 호스트> server/ops/verify.sh               # 확인만(읽기 전용)
    ```
-   `server/config/` 도 함께 덮어쓰므로, 서버에서 직접 고친 설정이 있으면 먼저 로컬 파일에 옮겨 둔다.
+   - `deploy.sh` 는 `packages/mocl_shared` · `server/` 를 `rsync --delete` 로 맞추되 `.env` · `secrets/` ·
+     **`config/`**(관리 화면이 고치는 운영 설정) · `data/` 는 올리지 않는다. 서버에 설정이 없을 때만 로컬 것을 처음 한 번 올린다.
+     운영 설정은 관리 화면(`/admin`)으로 바꾼다 — 로컬 `server/config/` 를 고쳐도 운영에는 가지 않는다.
+   - 빌드 전에 지금 이미지를 `mocl-api:rollback` 으로 남기고, 배포한 커밋을 서버 `server/.deployed` 에 적는다.
+   - `verify.sh` 는 컨테이너 · 배포 버전 · `/healthz` · `/v1/config`(ETag) · `/healthz/crawl` · `/v1/issues` · `/admin` ·
+     FCM 발송 모드 · 최근 10분 오류 로그를 본다. 실패가 있으면 종료 코드 1(되돌리기 명령을 알려 준다).
 
 ### 백업 · 감시 (`ops/`)
 
