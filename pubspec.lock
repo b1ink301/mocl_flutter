@@ -1517,10 +1517,10 @@ packages:
     dependency: transitive
     description:
       name: sqflite
-      sha256: "0b341459cb009e219e1d0b2d765622337ce5c4fc86ea6ff6cf523d91a68ece68"
+      sha256: ed2ff27268e051bde8f0848d6ab86e0f6c01566484d3d358a46ff5e842b36216
       url: "https://pub.dev"
     source: hosted
-    version: "2.4.5+1"
+    version: "2.4.6"
   sqflite_android:
     dependency: transitive
     description:
@@ -1533,10 +1533,10 @@ packages:
     dependency: transitive
     description:
       name: sqflite_common
-      sha256: "9df8c7d151dd93aed9239a7e52309944b2af36936d83bec0a84d280f66d915a9"
+      sha256: "35a65713b6695fbc5f3596921c8af1dfe767942c96b6c5c80a739b16a10d47eb"
       url: "https://pub.dev"
     source: hosted
-    version: "2.5.16"
+    version: "2.5.17"
   sqflite_darwin:
     dependency: transitive
     description:
