@@ -115,6 +115,9 @@ class _YouTubePlayerViewState() extends State<YouTubePlayerView> {
       allowsInlineMediaPlayback: true,
       useShouldOverrideUrlLoading: true,
       transparentBackground: true,
+      // Android Hybrid Composition 은 웹뷰가 떠 있는 동안 앱 전체 래스터를 메인 스레드에 묶어
+      // 미니 창을 띄운 채 목록 스크롤 · 화면 전환까지 끊긴다. 텍스처 방식으로 그린다.
+      useHybridComposition: false,
     ),
     onWebViewCreated: (controller) {
       _controller = controller;

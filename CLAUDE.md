@@ -203,6 +203,8 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   음소거는 앱이 떠 있는 동안만. 플레이어는 `MediaPlayback.audio` 를 듣고 적용한다. chewie 음소거 버튼은 끈다(값이 어긋난다).
 - "가로로 보기" 는 `OrientationPolicy.setLandscapeOverride`(켜진 동안 창 크기 정책을 건너뜀). 접기 · 닫기 때 끈다.
 - 본문 `<video>` 는 본문 안에서 재생하지 않고 포스터(`_BodyVideoPoster`)만 그린다(여러 개가 동시에 ExoPlayer 를 만들어 힙이 터지던 문제).
+- 유튜브 웹뷰는 `useHybridComposition: false`(텍스처 방식). Hybrid Composition 은 웹뷰가 떠 있는 동안 앱 전체
+  래스터를 Android 메인 스레드에 묶어, 미니 창을 띄운 채 목록 스크롤 · 상세 진입까지 끊긴다(true 로 되돌리지 말 것).
 - 시스템 PiP · 백그라운드 재생은 하지 않는다. Flutter 스크린샷엔 웹뷰가 안 찍히니 기기 확인은 `adb exec-out screencap`.
 
 ## 게시판 글 검색 (`list_page` · `ListSearchPage`)
