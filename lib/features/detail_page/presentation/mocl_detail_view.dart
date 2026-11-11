@@ -19,6 +19,7 @@ import 'package:mocl_flutter/core/presentation/widgets/failure_view.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart'
     show userAgentMobile;
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
+import 'package:mocl_flutter/core/util/simple_html_text.dart';
 import 'package:mocl_flutter/core/util/utilities.dart';
 import 'package:mocl_flutter/features/ads/presentation/widgets/detail_ad_card.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/state/detail_event_mixin.dart';
@@ -71,6 +72,51 @@ dom.Element? _ownerTable(dom.Element cell) {
     parent = parent.parent;
   }
   return parent;
+}
+
+const Set<String> _tableParts = {
+  'table',
+  'thead',
+  'tbody',
+  'tfoot',
+  'tr',
+  'td',
+  'th',
+};
+
+/// 표마다 한 번만 따진다(표의 줄 · 칸마다 물어본다).
+final Expando<bool> _layoutTables = Expando<bool>('layoutTable');
+
+/// 자리 잡기용 표인지: 테두리가 없고 줄마다 칸이 하나뿐이다.
+///
+/// 옛 편집기는 글 전체를 이런 표 하나로 감싼다. 표 위젯은 칸 폭을 정하려고 칸마다
+/// 레이아웃을 두세 번 하므로(처음 폭 → 최소 폭 → 정해진 폭), 본문이 통째로 든 칸이면
+/// 본문 전체를 그만큼 다시 잰다. 칸이 하나면 폭을 나눌 일이 없어 블록으로 그려도
+/// 모양이 같다.
+bool _isLayoutTable(dom.Element table) =>
+    _layoutTables[table] ??= !_hasOwnBorder(table) && _isSingleColumn(table);
+
+bool _isSingleColumn(dom.Element table) {
+  bool hasRow = false;
+  for (final dom.Element child in table.children) {
+    final List<dom.Element> rows;
+    switch (child.localName) {
+      case 'tr':
+        rows = [child];
+      case 'thead' || 'tbody' || 'tfoot':
+        rows = child.children;
+      default:
+        // caption · colgroup 등이 있으면 진짜 표로 본다.
+        return false;
+    }
+    for (final dom.Element row in rows) {
+      if (row.localName != 'tr' || row.children.length != 1) return false;
+      final String? cell = row.children.first.localName;
+      if (cell != 'td' && cell != 'th') return false;
+      hasRow = true;
+    }
+  }
+  return hasRow;
 }
 
 /// 프로토콜 상대 경로(`//cdn.../x.webp`)는 스킴이 없어 뷰어가 로드하지 못하므로
@@ -479,7 +525,7 @@ class const _CommentItem({
           if (!isEmptyBody)
             Padding(
               padding: const EdgeInsets.only(top: 10),
-              child: _HtmlWidget(
+              child: _CommentBody(
                 html: comment.bodyHtml,
                 textStyle: bodyMedium,
                 hexColor: hexColor,
@@ -489,6 +535,32 @@ class const _CommentItem({
         ],
       ),
     );
+  }
+}
+
+/// 댓글 본문. 글자와 줄바꿈뿐이면(대부분) `Text` 하나로 그리고, 링크 · 이미지 등이
+/// 있을 때만 HTML 위젯을 쓴다.
+///
+/// HTML 위젯은 짧은 HTML 을 UI 스레드에서 바로 파싱하고, 화면 밖으로 나가면 결과를
+/// 버린다. 댓글이 많은 글을 빠르게 넘기면 한 프레임에 여러 댓글을 파싱하느라 끊겼다.
+/// 두 경로의 모양이 같은지는 `test/core/simple_html_text_test.dart` 가 본다.
+class const _CommentBody({
+  required final String html,
+  required final TextStyle? textStyle,
+  required final String hexColor,
+  required final void Function(String) openUrl,
+}) extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    final String? plain = plainTextOfSimpleHtml(html);
+    return plain != null
+        ? Text(plain, style: textStyle)
+        : _HtmlWidget(
+            html: html,
+            textStyle: textStyle,
+            hexColor: hexColor,
+            openUrl: openUrl,
+          );
   }
 }
 
@@ -570,9 +642,16 @@ class _RetryableCachedImageState() extends State<_RetryableCachedImage> {
   ImageStream? _sizeStream;
   ImageStreamListener? _sizeListener;
 
+  /// 비율을 알아내는 로드도 빠르게 넘기는 중에는 미루기 위한 context.
+  late final DisposableBuildContext<State<_RetryableCachedImage>>
+  _scrollAwareContext;
+
   @override
   void initState() {
     super.initState();
+    _scrollAwareContext = DisposableBuildContext<State<_RetryableCachedImage>>(
+      this,
+    );
     _aspectRatio = _imageAspectRatios[widget.url];
   }
 
@@ -596,6 +675,7 @@ class _RetryableCachedImageState() extends State<_RetryableCachedImage> {
     _autoRetryTimer?.cancel();
     _autoRetryTimer = null;
     _stopResolving();
+    _scrollAwareContext.dispose();
     super.dispose();
   }
 
@@ -630,13 +710,21 @@ class _RetryableCachedImageState() extends State<_RetryableCachedImage> {
   /// [CachedNetworkImageProvider] 의 == 는 url/scale/maxWidth/maxHeight 만 보고
   /// (headers 는 제외), octo_image 가 씌우는 [ResizeImage] 래핑까지 맞췄으므로
   /// 이미지 캐시 키가 같다. 즉 추가 네트워크 요청이나 디코딩이 생기지 않는다.
+  ///
+  /// `Image` 위젯처럼 [ScrollAwareImageProvider] 로 감싼다. 그냥 resolve 하면 빠르게
+  /// 넘기는 중에도(지나쳐 버릴 이미지까지) 여기서 내려받기 · 디코딩이 시작돼,
+  /// `Image` 위젯이 로드를 미뤄 주는 것이 소용없어진다. 캐시 키는 안쪽 provider
+  /// 것을 그대로 쓴다.
   void _resolveAspectRatio() {
-    final provider = ResizeImage.resizeIfNeeded(
-      _cacheWidth(context),
-      null,
-      // headers 는 == 에 안 들어가서 캐시 키는 그대로지만, 캐시 미스 때 이쪽이
-      // 먼저 로드를 시작할 수 있으므로 Referer 를 반드시 같이 실어야 한다(디시 등).
-      CachedNetworkImageProvider(widget.url, headers: widget.headers),
+    final provider = ScrollAwareImageProvider<Object>(
+      context: _scrollAwareContext,
+      imageProvider: ResizeImage.resizeIfNeeded(
+        _cacheWidth(context),
+        null,
+        // headers 는 == 에 안 들어가서 캐시 키는 그대로지만, 캐시 미스 때 이쪽이
+        // 먼저 로드를 시작할 수 있으므로 Referer 를 반드시 같이 실어야 한다(디시 등).
+        CachedNetworkImageProvider(widget.url, headers: widget.headers),
+      ),
     );
     final stream = provider.resolve(createLocalImageConfiguration(context));
     final listener = ImageStreamListener((info, _) {
@@ -858,6 +946,15 @@ class const _HtmlWidget({
             (element.classes.contains('emoticon-inline') ||
                 (element.attributes['src'] ?? '').contains('/emoticons/'))) {
           return const {'max-height': '2.5em'};
+        }
+        // 자리 잡기용 표(줄마다 칸 하나)는 표로 그리지 않고 블록으로 푼다.
+        if (_tableParts.contains(element.localName)) {
+          final dom.Element? table = element.localName == 'table'
+              ? element
+              : _ownerTable(element);
+          if (table != null && _isLayoutTable(table)) {
+            return const {'display': 'block'};
+          }
         }
         // 본문의 `<table>` 은 대개 border 속성도 인라인 스타일도 없이 오고
         // (사이트 CSS 가 그려준다), 앱에는 그 CSS 가 없어 선 없는 글자 덩어리로

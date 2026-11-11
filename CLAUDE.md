@@ -228,6 +228,13 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
 - 목록은 끝에서 10개 남았을 때 다음 쪽을 받는다(`invisibleItemsThreshold`). 기본 3 이면 빠르게 넘길 때
   응답보다 먼저 끝에 닿아 멈췄다가, 붙는 순간 빈 화면만큼의 행을 한 프레임에 그린다.
   쪽이 붙을 때 이미 그려진 행(`MoclListItem`)은 리빌드되지 않는다(`list_screen_rebuild_test`).
+- 댓글은 글자와 `<br>` 뿐이면 HTML 위젯 없이 `Text` 로 그린다(`plainTextOfSimpleHtml` · `_CommentBody`).
+  HTML 위젯은 짧은 HTML 을 UI 스레드에서 바로 파싱하고 화면 밖으로 나가면 버린다. 받아들이는 범위를 넓히면
+  `test/core/simple_html_text_test.dart`(두 경로의 글자 · 크기 비교)에 샘플을 더한다.
+- 테두리 없이 줄마다 칸이 하나뿐인 표(글을 감싼 자리 잡기용)는 `display: block` 으로 푼다(`_isLayoutTable`).
+  fwfh 표는 칸마다 레이아웃을 두세 번 한다. 칸이 여럿이거나 테두리를 준 표는 그대로 표로 그린다.
+- 본문 이미지의 비율을 알아내는 로드도 `ScrollAwareImageProvider` 로 감싼다. `provider.resolve` 를 직접 부르면
+  빠르게 넘기는 중에도 내려받기 · 디코딩이 시작돼 `Image` 위젯의 지연 로드가 소용없어진다.
 
 ## 부팅 (`main.dart`)
 
