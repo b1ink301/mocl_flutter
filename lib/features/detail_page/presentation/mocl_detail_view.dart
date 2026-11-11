@@ -940,12 +940,13 @@ class const _HtmlWidget({
         }
         // 이모티콘(다모앙 `/emoticons/*.gif` 50x50 등)은 본문 사진과 달리
         // 폭을 가득 채우면 안 된다. 원본이 작아도 이미지 위젯은 부모 폭에
-        // 맞춰 늘어나므로, 사이트 CSS 와 같은 상한(max-height: 2.5em)을 준다.
+        // 맞춰 늘어나므로 상한을 준다. 높이만 제한하면 폭은 그대로 늘어나
+        // 가로로 찌그러지므로 폭을 제한한다(높이는 비율대로 줄어든다).
         if (element.localName == 'img' &&
             !element.attributes.containsKey('width') &&
             (element.classes.contains('emoticon-inline') ||
                 (element.attributes['src'] ?? '').contains('/emoticons/'))) {
-          return const {'max-height': '2.5em'};
+          return const {'max-width': '2.5em'};
         }
         // 자리 잡기용 표(줄마다 칸 하나)는 표로 그리지 않고 블록으로 푼다.
         if (_tableParts.contains(element.localName)) {

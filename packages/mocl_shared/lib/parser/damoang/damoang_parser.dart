@@ -100,8 +100,29 @@ class const DamoangParser(final bool isShowNickImage) extends BaseParser {
 
   /// 본문/댓글 HTML 공통 정규화. 댓글 전용 API([DamoangApi]) 도 같은 규칙을
   /// 타야 이모티콘·이미지 숏코드가 글자로 새지 않는다.
-  static String normalizeContentHtml(String html) =>
-      _replaceBracketImages(_replaceEmoticonTokens(_unescapeMediaTags(html)));
+  static String normalizeContentHtml(String html) => _replaceBracketImages(
+    _sizeRawEmoticonImages(_replaceEmoticonTokens(_unescapeMediaTags(html))),
+  );
+
+  /// 에디터가 이모티콘을 숏코드가 아니라 `<img src="/emoticons/...">` 로
+  /// 저장한 경우. 폭이 없으면 앱에서 부모 폭만큼 늘어나므로 토큰과 같은
+  /// 규칙으로 폭을 넣는다.
+  static final RegExp _rawEmoticonImg = RegExp(
+    r'''<img\b(?=[^>]*\ssrc=["'](?:https?://(?:www\.)?damoang\.net)?/emoticons/([^"'/?#]+)["'])[^>]*>''',
+    caseSensitive: false,
+  );
+
+  static final RegExp _widthAttr = RegExp(r'\swidth\s*=', caseSensitive: false);
+
+  static String _sizeRawEmoticonImages(String html) =>
+      html.contains('/emoticons/')
+      ? html.replaceAllMapped(_rawEmoticonImg, (m) {
+          final tag = m.group(0)!;
+          if (_widthAttr.hasMatch(tag)) return tag;
+          final width = _emoticonWidthFor(m.group(1)!);
+          return '<img width="$width" class="emoticon-inline"${tag.substring(4)}';
+        })
+      : html;
 
   static bool _isValidEmoticonName(String name) {
     if (name.isEmpty ||

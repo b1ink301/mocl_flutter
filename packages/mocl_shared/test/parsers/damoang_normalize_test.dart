@@ -30,6 +30,23 @@ void main() {
     expect(n('<p>{emo:x.gif:9999}</p>'), contains('width="200"'));
   });
 
+  test('img 로 저장된 이모티콘에 폭을 넣는다', () {
+    final out = n(
+      '<p><img src="/emoticons/onion-013.gif" alt="onion-013.gif"></p>',
+    );
+    expect(out, contains('width="50"'));
+    expect(out, contains('class="emoticon-inline"'));
+    expect(out, contains('src="/emoticons/onion-013.gif"'));
+    expect(
+      n('<img src="https://damoang.net/emoticons/damoang-meme-1.gif">'),
+      contains('width="200"'),
+    );
+    const sized = '<img src="/emoticons/a.gif" width="30">';
+    expect(n(sized), sized);
+    const photo = '<img src="https://cdn.damoang.net/data/editor/a.jpg">';
+    expect(n(photo), photo);
+  });
+
   test('이상한 이모티콘 파일명은 이모지로 대체', () {
     expect(n('<p>{emo:../../etc/passwd}</p>'), '<p>😀</p>');
   });
