@@ -53,45 +53,51 @@ class const FloatingPillTabBar({
         child: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Container(
-              decoration: BoxDecoration(
-                color: barColor,
-                borderRadius: BorderRadius.circular(_kPillRadius),
-                border: Border.all(color: theme.dividerColor),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black.withValues(alpha: isDark ? 0.45 : 0.13),
-                    blurRadius: 20,
-                    offset: const Offset(0, 7),
-                  ),
-                ],
-              ),
-              // 잉크 효과가 알약 안쪽에서 잘리도록 Material 을 여기 둔다.
-              clipBehavior: Clip.antiAlias,
-              child: Material(
-                type: MaterialType.transparency,
-                child: Padding(
-                  // 선택 표시와 바 테두리 사이를 위아래 · 양옆 모두 [_kBarInset] 으로 맞춘다
-                  // (둘 다 양 끝이 반원이라 간격이 같아야 곡선이 나란해 보인다).
-                  // 선택 표시는 탭 자리 밖으로 [_kFocusOverlap] 만큼 나가므로 그만큼 더 띄운다.
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: _kBarInset + _kFocusOverlap,
-                    vertical: _kBarInset,
-                  ),
-                  child: FittedBox(
-                    fit: BoxFit.scaleDown,
-                    child: Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        for (int i = 0; i < items.length; i++)
-                          _PillTabItemView(
-                            item: items[i],
-                            isSelected: i == selectedIndex,
-                            dot: dots.contains(i),
-                            semanticsId: semanticsIds?[i],
-                            onTap: () => onSelected(i),
-                          ),
-                      ],
+            // Row 는 자식에게 폭 제한을 주지 않으므로 Flexible 로 감싸야 바가 화면 폭에
+            // 묶이고, 아래 FittedBox 가 좁은 화면 · 큰 글자에서 넘치는 대신 줄인다.
+            Flexible(
+              child: Container(
+                decoration: BoxDecoration(
+                  color: barColor,
+                  borderRadius: BorderRadius.circular(_kPillRadius),
+                  border: Border.all(color: theme.dividerColor),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(
+                        alpha: isDark ? 0.45 : 0.13,
+                      ),
+                      blurRadius: 20,
+                      offset: const Offset(0, 7),
+                    ),
+                  ],
+                ),
+                // 잉크 효과가 알약 안쪽에서 잘리도록 Material 을 여기 둔다.
+                clipBehavior: Clip.antiAlias,
+                child: Material(
+                  type: MaterialType.transparency,
+                  child: Padding(
+                    // 선택 표시와 바 테두리 사이를 위아래 · 양옆 모두 [_kBarInset] 으로 맞춘다
+                    // (둘 다 양 끝이 반원이라 간격이 같아야 곡선이 나란해 보인다).
+                    // 선택 표시는 탭 자리 밖으로 [_kFocusOverlap] 만큼 나가므로 그만큼 더 띄운다.
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: _kBarInset + _kFocusOverlap,
+                      vertical: _kBarInset,
+                    ),
+                    child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          for (int i = 0; i < items.length; i++)
+                            _PillTabItemView(
+                              item: items[i],
+                              isSelected: i == selectedIndex,
+                              dot: dots.contains(i),
+                              semanticsId: semanticsIds?[i],
+                              onTap: () => onSelected(i),
+                            ),
+                        ],
+                      ),
                     ),
                   ),
                 ),
