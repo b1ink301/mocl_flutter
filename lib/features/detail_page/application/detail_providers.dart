@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:material_ui/material_ui.dart';
@@ -9,6 +10,7 @@ import 'package:mocl_shared/entities/mocl_list_item.dart';
 import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/detail_page/application/use_case_provider.dart';
 import 'package:mocl_flutter/features/detail_page/domain/usecases/set_read_flag.dart';
+import 'package:mocl_flutter/features/history/application/history_providers.dart';
 import 'package:mocl_shared/util/mocl_logger.dart';
 import 'package:mocl_shared/util/reply_count.dart';
 import 'package:mocl_flutter/features/settings_page/application/settings_providers.dart';
@@ -48,6 +50,10 @@ class DetailsNotifier() extends _$DetailsNotifier {
     final data = result.getOrElse((f) => throw f);
     await ref.watch(
       _markAsReadProvider(listItem, _seenReplyCount(listItem, data)).future,
+    );
+    // 최근 본 글. 기다리지 않는다(실패해도 상세는 그대로).
+    unawaited(
+      ref.read(historyProvider.notifier).record(siteType, listItem, data),
     );
     ref.read(detailTitleStateProvider.notifier).update(data.title);
     ref.read(detailCategoryStateProvider.notifier).update(data.category);

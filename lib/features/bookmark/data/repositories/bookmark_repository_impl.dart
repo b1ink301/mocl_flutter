@@ -1,12 +1,12 @@
 import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/bookmark/domain/repositories/bookmark_repository.dart';
 import 'package:mocl_flutter/features/database/data/datasources/local/local_database.dart';
-import 'package:mocl_flutter/features/database/domain/entities/bookmark_data.dart';
+import 'package:mocl_flutter/features/database/domain/entities/post_snapshot.dart';
 
 class const BookmarkRepositoryImpl(final LocalDatabase localDatabase)
     implements BookmarkRepository {
   @override
-  Future<void> add(BookmarkData data) => localDatabase.setBookmark(data);
+  Future<void> add(PostSnapshot data) => localDatabase.setBookmark(data);
 
   @override
   Future<void> remove(SiteType siteType, int id) =>
@@ -17,5 +17,5 @@ class const BookmarkRepositoryImpl(final LocalDatabase localDatabase)
       localDatabase.isBookmarked(siteType, id);
 
   @override
-  Future<List<BookmarkData>> getAll() => localDatabase.getBookmarks();
+  Future<List<PostSnapshot>> getAll() => localDatabase.getBookmarks();
 }

@@ -169,7 +169,7 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   골든 테스트(`radar_rank_test`)를 고친다.
 - 급상승은 데이터가 1시간 쌓이기 전(서버 재시작 직후)에는 표시하지 않는다.
 - 앱: 홈 하단 탭 "지금 이슈"(`IssueRadarPage`) → 이슈 상세(커뮤니티별 글) → `SiteLinkResolver` 로 앱 상세.
-- 홈 셸(`MainPage`)은 떠 있는 알약형 탭바(`FloatingPillTabBar`)로 **게시판 · 지금 이슈 · 스크랩 · 설정**을 오간다
+- 홈 셸(`MainPage`)은 떠 있는 알약형 탭바(`FloatingPillTabBar`)로 **게시판 · 지금 이슈 · 보관함 · 설정**을 오간다
   (`MainTab`, 서버가 없는 빌드는 이슈 탭을 뺀다). 사이트는 왼쪽 **사이트 드로어**(`SiteDrawer`, `site_drawer`)에서 바꾼다:
   게시판 탭의 큰 제목(`다모앙 ▾`, `main_site_picker`)을 누르거나(`openSiteDrawer`) 본문을 오른쪽으로 끌면
   (화면 왼쪽 절반, `drawerEdgeDragWidth`) 손가락을 따라 열린다. 끌어 열기는 게시판 탭 · 편집 · 검색 중이 아닐 때만.
@@ -178,6 +178,7 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   앱을 켜면 이슈를 바로 받는다), 탭마다 `ScrollController` 를 따로 `PrimaryScrollController` 로 준다
   (하나를 같이 쓰면 컨트롤러에 스크롤뷰가 여럿 붙는다). 보고 있는 탭을 다시 누르면 맨 위로.
   모든 탭이 같은 큰 제목 앱바(`MainAppBar` · `LargeTitleSliverAppBar`)라 탭을 오가도 제목 자리가 같다.
+  탭바는 `Flexible` 로 화면 폭에 묶여 있어 좁은 화면 · 큰 글자에서 넘치지 않고 `FittedBox` 로 줄어든다(빼지 말 것).
   본문은 바 뒤까지 확장(`extendBody`)하니 목록 아래 여백은 `MediaQuery.padding.bottom` 으로 준다.
   뒤로가기는 사이트 드로어 → 검색 → 다른 탭이면 게시판 탭 순.
   메인 위 이슈 카드 · 고정 머리는 게시판 목록을 밀어내 걷어냈다(되살리지 말 것).
@@ -186,6 +187,24 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   오류는 `FailureView`(같은 `MessageView` 로 그림). 스크롤뷰 안에서는 `SliverMessageView` 로 감싼다
   (떠 있는 탭바만큼 올려 보이는 영역 가운데에 둔다). 글자 크기 설정을 따르도록 제목 · 설명 스타일을 넘긴다.
   차단(뮤트) 제목 키워드로 글을 거른다(`filterMuted`). 본 이슈는 흐리게(`IssueReadStore`).
+
+## 보관함 · 최근 본 글 (`features/library/` · `features/history/`)
+
+- 홈 "보관함" 탭(`LibraryPage`, id 는 옛 `tab_bookmarks`)은 큰 제목 아래 `스크랩 | 히스토리` 칸 전환
+  (`LibrarySegmentControl`, `library_bookmarks` · `library_history`, 큰 제목과 같은 좌우 여백으로 폭을 채움)으로 `BookmarksPage` · `HistoryPage` 를 오간다.
+  고른 칸은 SharedPreferences(`library_segment`)에 남는다. 두 목록을 `IndexedStack` 으로 함께 살리지 말 것 —
+  홈이 탭마다 준 `PrimaryScrollController` 하나에 스크롤뷰가 둘 붙는다.
+  탭을 늘려 따로 빼지 말 것: 5탭이면 360dp 폰에서 탭바가 넘친다(`floating_pill_tab_bar_test`).
+- 최근 본 글: 상세를 받은 뒤 `DetailsNotifier` 가
+  `HistoryNotifier.record` 를 기다리지 않고 부른다(실패는 `MoclLogger.e`, 상세는 그대로).
+- 스크랩과 같은 엔티티 `PostSnapshot`(옛 `BookmarkData`)을 쓴다. `savedAt` 은 그 스토어에 넣은 시각
+  (스크랩한 때 · 마지막으로 본 때). 저장된 JSON 과 맞물리니 필드 이름을 바꾸지 말 것.
+- 저장은 전역 `history` 스토어, 키 `{site}:{id}`(`PostSnapshot.key`)로 덮어써 맨 앞으로 올린다.
+  같은 내용을 1분 안에 다시 쓰지 않는다(sembast 는 쓸 때마다 줄이 는다). 읽음 기록(`{site}_read`)과는
+  따로다 — 히스토리를 지워도 읽음 표시는 남는다.
+- 링크 · 알림으로 연 글은 목록 항목이 비어 있어 제목 · 작성자를 상세 값으로 채운다(`PostSnapshot.fromDetails`,
+  번역문이 아니라 원문 `Details` 를 넘긴다).
+- 30일 · 300개(`LocalDatabase.kHistoryTtl` · `kMaxHistory`), 읽음 기록 정리(`pruneReadsIfDue`)에서 같이 지운다.
 
 ## 동영상 플레이어 (`features/media_player/`)
 

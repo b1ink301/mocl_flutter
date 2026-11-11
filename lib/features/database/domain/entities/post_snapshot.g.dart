@@ -1,13 +1,13 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'bookmark_data.dart';
+part of 'post_snapshot.dart';
 
 // **************************************************************************
 // JsonSerializableGenerator
 // **************************************************************************
 
-_BookmarkData _$BookmarkDataFromJson(Map<String, dynamic> json) =>
-    _BookmarkData(
+_PostSnapshot _$PostSnapshotFromJson(Map<String, dynamic> json) =>
+    _PostSnapshot(
       siteType: $enumDecode(_$SiteTypeEnumMap, json['siteType']),
       id: (json['id'] as num).toInt(),
       title: json['title'] as String,
@@ -23,7 +23,7 @@ _BookmarkData _$BookmarkDataFromJson(Map<String, dynamic> json) =>
       savedAt: (json['savedAt'] as num).toInt(),
     );
 
-Map<String, dynamic> _$BookmarkDataToJson(_BookmarkData instance) =>
+Map<String, dynamic> _$PostSnapshotToJson(_PostSnapshot instance) =>
     <String, dynamic>{
       'siteType': _$SiteTypeEnumMap[instance.siteType]!,
       'id': instance.id,

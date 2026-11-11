@@ -1,7 +1,7 @@
 import 'dart:async';
 
 import 'package:mocl_shared/entities/mocl_site_type.dart';
-import 'package:mocl_flutter/features/database/domain/entities/bookmark_data.dart';
+import 'package:mocl_flutter/features/database/domain/entities/post_snapshot.dart';
 import 'package:mocl_flutter/features/database/domain/entities/favorite_data.dart';
 import 'package:mocl_flutter/features/database/domain/entities/favorite_group.dart';
 import 'package:mocl_flutter/features/database/domain/entities/mute_rule.dart';
@@ -92,16 +92,17 @@ class LocalDatabase({
   /// [ids] 중 기록이 있는 글의 `id → 본 댓글 수`. 키 조회라 스토어 크기와 무관하다.
   Future<Map<int, int>> seenReplies(SiteType siteType, List<int> ids) async {
     if (ids.isEmpty) return const {};
-    final List<Map<String, Object?>?> values = await seenReplyStoreOf(
-      siteType,
-    ).records(ids).get(_db);
+    final List<Map<String, Object?>?> values = await seenReplyStoreOf(siteType)
+        .records(ids)
+        .get(_db);
     return {
       for (int i = 0; i < ids.length; i++)
         if (values[i]?[_replyCountField] case final int count) ids[i]: count,
     };
   }
 
-  /// [ttl] 보다 오래전에 읽은 기록과 [replyTtl] 보다 오래된 본 댓글 수를 지우고
+  /// [ttl] 보다 오래전에 읽은 기록과 [replyTtl] 보다 오래된 본 댓글 수,
+  /// [historyTtl] 보다 오래됐거나 최근 [maxHistory] 개 밖의 최근 본 글을 지우고
   /// 지운 개수를 돌려준다.
   ///
   /// 지난 정리 후 [interval] 이 지나지 않았으면 아무것도 하지 않는다.
@@ -109,6 +110,8 @@ class LocalDatabase({
   Future<int> pruneReadsIfDue({
     required Duration ttl,
     required Duration replyTtl,
+    Duration historyTtl = kHistoryTtl,
+    int maxHistory = kMaxHistory,
     Duration interval = const Duration(days: 1),
     DateTime? now,
   }) async {
@@ -131,17 +134,86 @@ class LocalDatabase({
       int count = 0;
       for (final SiteType siteType in SiteType.values) {
         count += await readStoreOf(siteType).delete(txn, finder: expired);
-        count += await seenReplyStoreOf(siteType).delete(
-          txn,
-          finder: expiredReplies,
-        );
+        count += await seenReplyStoreOf(siteType)
+            .delete(txn, finder: expiredReplies);
       }
+      count += await _pruneHistory(
+        txn,
+        olderThanMs: nowMs - historyTtl.inMilliseconds,
+        keep: maxHistory,
+      );
       await _metaStore.record(_readsPrunedAtKey).put(txn, nowMs);
       return count;
     });
     // sembast 는 변경을 파일 끝에 덧붙이므로, 지운 만큼 줄이려면 압축해야 한다.
     if (removed > 0) await _db.compact();
     return removed;
+  }
+
+  // ===== 최근 본 글 — 전역 `history` 스토어 (키: `{site}:{id}`, 값: [PostSnapshot]) =====
+
+  static final StoreRef<String, Map<String, Object?>> _historyStore =
+      StoreRef<String, Map<String, Object?>>('history');
+
+  /// 최근 본 글 보관 기간 · 개수. 날마다 [pruneReadsIfDue] 에서 정리한다.
+  static const Duration kHistoryTtl = Duration(days: 30);
+  static const int kMaxHistory = 300;
+
+  /// 같은 글을 이 시간 안에 다시 열면 쓰지 않는다. sembast 는 고칠 때마다 파일 끝에
+  /// 한 줄을 덧붙이므로 새로 고침 · 오가기로 줄이 늘지 않게 한다.
+  static const Duration kHistoryRewriteInterval = Duration(minutes: 1);
+
+  /// 본 글을 남긴다. 이미 있으면 본 시각([PostSnapshot.savedAt])과 내용을 덮어써
+  /// 맨 앞으로 올린다. 실제로 썼으면 true.
+  Future<bool> putHistory(PostSnapshot data) async {
+    final record = _historyStore.record(data.key);
+    final Map<String, Object?>? old = await record.get(_db);
+    if (old != null) {
+      final PostSnapshot prev = PostSnapshot.fromJson(old);
+      final bool recent =
+          data.savedAt - prev.savedAt < kHistoryRewriteInterval.inMilliseconds;
+      if (recent && prev.copyWith(savedAt: data.savedAt) == data) return false;
+    }
+    await record.put(_db, data.toJson());
+    return true;
+  }
+
+  Future<void> removeHistory(SiteType siteType, int id) =>
+      _historyStore.record(PostSnapshot.keyOf(siteType, id)).delete(_db);
+
+  Future<void> clearHistory() async {
+    final int removed = await _historyStore.delete(_db);
+    if (removed > 0) await _db.compact();
+  }
+
+  /// 최근 본 순.
+  Future<List<PostSnapshot>> getHistory() async {
+    final records = await _historyStore.find(
+      _db,
+      finder: Finder(sortOrders: [SortOrder('savedAt', false)]),
+    );
+    return records.map((r) => PostSnapshot.fromJson(r.value)).toList();
+  }
+
+  /// [olderThanMs] 전에 본 글과 최근 [keep] 개 밖의 글을 지운다.
+  Future<int> _pruneHistory(
+    DatabaseClient client, {
+    required int olderThanMs,
+    required int keep,
+  }) async {
+    int count = await _historyStore.delete(
+      client,
+      finder: Finder(filter: Filter.lessThan('savedAt', olderThanMs)),
+    );
+    final List<String> overflow = await _historyStore.findKeys(
+      client,
+      finder: Finder(sortOrders: [SortOrder('savedAt', false)], offset: keep),
+    );
+    if (overflow.isNotEmpty) {
+      await _historyStore.records(overflow).delete(client);
+      count += overflow.length;
+    }
+    return count;
   }
 
   // ===== 북마크(스크랩) — 전역 `bookmarks` 스토어 =====
@@ -156,7 +228,7 @@ class LocalDatabase({
     ]),
   );
 
-  Future<void> setBookmark(BookmarkData data) async {
+  Future<void> setBookmark(PostSnapshot data) async {
     final existing = await _bookmarkStore.find(
       _db,
       finder: _bookmarkFinder(data.siteType, data.id),
@@ -178,12 +250,12 @@ class LocalDatabase({
     return found.isNotEmpty;
   }
 
-  Future<List<BookmarkData>> getBookmarks() async {
+  Future<List<PostSnapshot>> getBookmarks() async {
     final records = await _bookmarkStore.find(
       _db,
       finder: Finder(sortOrders: [SortOrder('savedAt', false)]),
     );
-    return records.map((r) => BookmarkData.fromJson(r.value)).toList();
+    return records.map((r) => PostSnapshot.fromJson(r.value)).toList();
   }
 
   // ===== 즐겨찾기(게시판) — 전역 `favorites` 스토어 =====

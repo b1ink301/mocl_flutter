@@ -6,7 +6,7 @@ import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/presentation/widgets/list_detail_layout.dart';
-import 'package:mocl_flutter/features/database/domain/entities/bookmark_data.dart';
+import 'package:mocl_flutter/features/database/domain/entities/post_snapshot.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/mocl_detail_page.dart';
 import 'package:mocl_flutter/features/bookmark/presentation/state/bookmark_event_mixin.dart';
 import 'package:mocl_flutter/features/bookmark/presentation/state/bookmark_state_mixin.dart';
@@ -14,12 +14,19 @@ import 'package:mocl_flutter/features/bookmark/presentation/state/bookmark_state
 import '../../../core/presentation/widgets/failure_view.dart';
 import '../../../core/presentation/widgets/large_title_sliver_app_bar.dart';
 
-class const BookmarksPage({super.key}) extends StatelessWidget {
+/// 스크랩 목록. 홈 "보관함" 탭의 한 칸이다(`LibraryPage`).
+class const BookmarksPage({
+  super.key,
+  final String title = '스크랩',
+
+  /// 큰 제목 아래에 둘 위젯(보관함의 칸 전환).
+  final Widget? header,
+}) extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       // 넓은 화면(태블릿 가로 · 펼친 폴드 · iPad)에서는 목록 옆에 상세를 둔다.
-      ListDetailLayout<BookmarkData>(
-        list: const _BookmarksScaffold(),
+      ListDetailLayout<PostSnapshot>(
+        list: _BookmarksScaffold(title: title, header: header),
         detailBuilder: (_, b) =>
             DetailPage.init(b.toListItem(), siteType: b.siteType),
         pushDetail: (context, b) =>
@@ -29,12 +36,13 @@ class const BookmarksPage({super.key}) extends StatelessWidget {
       );
 }
 
-String _bookmarkKey(BookmarkData b) => '${b.siteType.name}_${b.id}';
+String _bookmarkKey(PostSnapshot b) => '${b.siteType.name}_${b.id}';
 
-/// 스크랩 목록. 홈의 "스크랩" 탭 본문이다(게시판 탭과 같은 큰 제목 앱바).
-class const _BookmarksScaffold()
-    extends ConsumerWidget
-    with BookmarkState, BookmarkEvent {
+/// 게시판 탭과 같은 큰 제목 앱바 + 스크랩 목록.
+class const _BookmarksScaffold({
+  required final String title,
+  required final Widget? header,
+}) extends ConsumerWidget with BookmarkState, BookmarkEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final async = bookmarksState(ref);
@@ -44,7 +52,8 @@ class const _BookmarksScaffold()
 
     return CustomScrollView(
       slivers: <Widget>[
-        const LargeTitleSliverAppBar(title: '스크랩'),
+        LargeTitleSliverAppBar(title: title),
+        if (header case final Widget header) SliverToBoxAdapter(child: header),
         async.when(
           loading: () => const SliverMessageView(
             child: CircularProgressIndicator.adaptive(),

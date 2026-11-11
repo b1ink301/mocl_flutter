@@ -2,7 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/core/presentation/widgets/plain_icon.dart';
 import 'package:mocl_flutter/core/presentation/widgets/plain_icon_button.dart';
-import 'package:mocl_flutter/features/database/domain/entities/bookmark_data.dart';
+import 'package:mocl_flutter/features/database/domain/entities/post_snapshot.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/state/detail_event_mixin.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/state/detail_state_mixin.dart';
 
@@ -23,7 +23,7 @@ class const BookmarkIconButton({super.key})
     return PlainIconButton(
       semanticLabel: isOn ? '스크랩 해제' : '스크랩',
       onPressed: () {
-        final data = BookmarkData.fromListItem(
+        final data = PostSnapshot.fromListItem(
           siteType,
           item,
           DateTime.now().millisecondsSinceEpoch,

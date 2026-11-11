@@ -14,7 +14,7 @@ import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_shared/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/features/bookmark/application/bookmark_providers.dart';
 import 'package:mocl_flutter/features/bookmark/domain/repositories/bookmark_repository.dart';
-import 'package:mocl_flutter/features/database/domain/entities/bookmark_data.dart';
+import 'package:mocl_flutter/features/database/domain/entities/post_snapshot.dart';
 import 'package:mocl_flutter/features/database/domain/entities/favorite_data.dart';
 import 'package:mocl_flutter/features/database/domain/entities/favorite_group.dart';
 import 'package:mocl_flutter/features/favorite/application/favorite_providers.dart';
@@ -365,7 +365,7 @@ class _FakeBookmarkRepository() implements BookmarkRepository {
   final Set<(SiteType, int)> _bookmarks = <(SiteType, int)>{};
 
   @override
-  Future<void> add(BookmarkData data) async =>
+  Future<void> add(PostSnapshot data) async =>
       _bookmarks.add((data.siteType, data.id));
 
   @override
@@ -377,7 +377,7 @@ class _FakeBookmarkRepository() implements BookmarkRepository {
       _bookmarks.contains((siteType, id));
 
   @override
-  Future<List<BookmarkData>> getAll() async => const <BookmarkData>[];
+  Future<List<PostSnapshot>> getAll() async => const <PostSnapshot>[];
 }
 
 /// `baseUrl` · `supportsTranslation` 만 사용되므로 나머지는 noSuchMethod 로 남긴다.

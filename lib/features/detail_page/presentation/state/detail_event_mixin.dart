@@ -13,7 +13,7 @@ import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_shared/util/mocl_logger.dart';
 import 'package:mocl_flutter/core/util/utilities.dart';
 import 'package:mocl_flutter/features/bookmark/application/bookmark_providers.dart';
-import 'package:mocl_flutter/features/database/domain/entities/bookmark_data.dart';
+import 'package:mocl_flutter/features/database/domain/entities/post_snapshot.dart';
 import 'package:mocl_flutter/features/detail_page/domain/site_link_resolver.dart';
 import 'package:mocl_flutter/features/detail_page/domain/video_link_resolver.dart';
 import 'package:mocl_flutter/features/html_parser/application/datasource_provider.dart';
@@ -153,7 +153,7 @@ mixin class DetailEvent() {
     WidgetRef ref,
     SiteType siteType,
     int id,
-    BookmarkData data,
+    PostSnapshot data,
   ) => ref.read(bookmarkButtonProvider(siteType, id).notifier).toggle(data);
 
   /// [siteType] 은 본문 링크로 다른 사이트 글을 열 때만 넘긴다(없으면 전역 사이트).

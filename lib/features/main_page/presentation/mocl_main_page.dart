@@ -2,7 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/core/presentation/widgets/floating_pill_tab_bar.dart';
-import 'package:mocl_flutter/features/bookmark/presentation/bookmarks_page.dart';
+import 'package:mocl_flutter/features/library/presentation/library_page.dart';
 import 'package:mocl_flutter/features/issue_radar/presentation/issue_radar_page.dart';
 import 'package:mocl_flutter/features/issue_radar/presentation/state/issue_radar_state_mixin.dart';
 import 'package:mocl_flutter/features/main_page/presentation/state/main_state_mixin.dart';
@@ -35,11 +35,13 @@ enum MainTab({
     ),
     semanticsId: 'tab_issues',
   ),
+
+  /// 스크랩 · 최근 본 글(`LibraryPage`). id 는 옛 이름 그대로 둔다.
   bookmarks(
     item: (
-      icon: Icons.bookmark_border,
-      selectedIcon: Icons.bookmark,
-      label: '스크랩',
+      icon: Icons.collections_bookmark_outlined,
+      selectedIcon: Icons.collections_bookmark,
+      label: '보관함',
     ),
     semanticsId: 'tab_bookmarks',
   ),
@@ -55,14 +57,14 @@ enum MainTab({
   Widget get body => switch (this) {
     MainTab.boards => const MainView(),
     MainTab.issues => const IssueRadarPage(),
-    MainTab.bookmarks => const BookmarksPage(),
+    MainTab.bookmarks => const LibraryPage(),
     MainTab.settings => const SettingsPage(),
   };
 }
 
 /// 앱의 홈 셸.
 ///
-/// 하단 알약형 탭으로 **게시판 · 지금 이슈 · 스크랩 · 설정**을 오간다. 게시판 탭은
+/// 하단 알약형 탭으로 **게시판 · 지금 이슈 · 보관함 · 설정**을 오간다. 게시판 탭은
 /// 고른 사이트에 담아둔 게시판만 보여주고(사이트는 왼쪽 드로어에서 바꾼다 — 큰 제목을
 /// 누르거나 게시판 탭 본문을 오른쪽으로 끈다), 이슈는 사이트와 무관하게 여러 커뮤니티를
 /// 가로지르므로 따로 탭을 둔다. 드로어에는 사이트만 둔다 — 스크랩 · 설정까지 넣으면

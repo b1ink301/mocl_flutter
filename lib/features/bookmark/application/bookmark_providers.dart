@@ -2,7 +2,7 @@ import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/bookmark/data/repositories/bookmark_repository_impl.dart';
 import 'package:mocl_flutter/features/bookmark/domain/repositories/bookmark_repository.dart';
 import 'package:mocl_flutter/features/database/application/datasource_provider.dart';
-import 'package:mocl_flutter/features/database/domain/entities/bookmark_data.dart';
+import 'package:mocl_flutter/features/database/domain/entities/post_snapshot.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'bookmark_providers.g.dart';
@@ -15,7 +15,7 @@ BookmarkRepository bookmarkRepository(Ref ref) =>
 @riverpod
 class BookmarksNotifier() extends _$BookmarksNotifier {
   @override
-  Future<List<BookmarkData>> build() =>
+  Future<List<PostSnapshot>> build() =>
       ref.watch(bookmarkRepositoryProvider).getAll();
 
   Future<void> remove(SiteType siteType, int id) async {
@@ -31,7 +31,7 @@ class BookmarkButton() extends _$BookmarkButton {
   Future<bool> build(SiteType siteType, int id) =>
       ref.watch(bookmarkRepositoryProvider).isBookmarked(siteType, id);
 
-  Future<void> toggle(BookmarkData data) async {
+  Future<void> toggle(PostSnapshot data) async {
     final repo = ref.read(bookmarkRepositoryProvider);
     final bool isOn = state.asData?.value ?? false;
     if (isOn) {

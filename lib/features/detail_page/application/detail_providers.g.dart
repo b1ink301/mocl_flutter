@@ -160,7 +160,7 @@ final class DetailsNotifierProvider
   DetailsNotifier create() => DetailsNotifier();
 }
 
-String _$detailsNotifierHash() => r'53b51ad2c1cd141e639ccd353b41d351440cc322';
+String _$detailsNotifierHash() => r'dabc82a20f560798e68621339102047213fc74dc';
 
 abstract class _$DetailsNotifier extends $AsyncNotifier<Details> {
   FutureOr<Details> build();

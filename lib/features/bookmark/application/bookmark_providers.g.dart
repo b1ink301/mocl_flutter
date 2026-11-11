@@ -64,7 +64,7 @@ final bookmarksProvider = BookmarksNotifierProvider._();
 
 /// 스크랩 목록(최신순). 추가/삭제 시 invalidate 되어 화면이 갱신된다.
 final class BookmarksNotifierProvider
-    extends $AsyncNotifierProvider<BookmarksNotifier, List<BookmarkData>> {
+    extends $AsyncNotifierProvider<BookmarksNotifier, List<PostSnapshot>> {
   /// 스크랩 목록(최신순). 추가/삭제 시 invalidate 되어 화면이 갱신된다.
   BookmarksNotifierProvider._()
     : super(
@@ -85,22 +85,22 @@ final class BookmarksNotifierProvider
   BookmarksNotifier create() => BookmarksNotifier();
 }
 
-String _$bookmarksNotifierHash() => r'217f248ab1a10c6c8111fce857e09b7fafdbd206';
+String _$bookmarksNotifierHash() => r'20115e3c7d00869b76b884aca7e66ed831a2bc7c';
 
 /// 스크랩 목록(최신순). 추가/삭제 시 invalidate 되어 화면이 갱신된다.
 
-abstract class _$BookmarksNotifier extends $AsyncNotifier<List<BookmarkData>> {
-  FutureOr<List<BookmarkData>> build();
+abstract class _$BookmarksNotifier extends $AsyncNotifier<List<PostSnapshot>> {
+  FutureOr<List<PostSnapshot>> build();
   @$mustCallSuper
   @override
   WhenComplete runBuild() {
     final ref =
-        this.ref as $Ref<AsyncValue<List<BookmarkData>>, List<BookmarkData>>;
+        this.ref as $Ref<AsyncValue<List<PostSnapshot>>, List<PostSnapshot>>;
     final element =
         ref.element
             as $ClassProviderElement<
-              AnyNotifier<AsyncValue<List<BookmarkData>>, List<BookmarkData>>,
-              AsyncValue<List<BookmarkData>>,
+              AnyNotifier<AsyncValue<List<PostSnapshot>>, List<PostSnapshot>>,
+              AsyncValue<List<PostSnapshot>>,
               Object?,
               Object?
             >;
@@ -153,7 +153,7 @@ final class BookmarkButtonProvider
   }
 }
 
-String _$bookmarkButtonHash() => r'4fdd875962a6b0cbf0208531f2972432ce53288d';
+String _$bookmarkButtonHash() => r'e9d03e88b8fc11529f363fa0d6f2187f186f277a';
 
 /// 특정 게시물의 북마크 여부 + 토글. 상세 화면 버튼이 사용한다.
 
