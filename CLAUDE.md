@@ -220,6 +220,15 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
 - 검색 주소 · 파서를 고치면 `cd server && fvm dart run bin/canary.dart --search {site}` 로 실제 사이트를 확인한다
   (CI 카나리도 매일 검색 단계를 돈다). URL 규칙 테스트는 `packages/mocl_shared/test/parsers/search_test.dart`.
 
+## 목록 · 상세 스크롤 성능
+
+- 측정은 profile 빌드로 한다(debug 는 근거가 못 된다). 프레임이 밀리면 빌드(`buildDuration`) · 래스터 ·
+  **vsync 대기**(`vsyncOverhead`, UI 스레드가 다른 일로 막힘) 중 어디인지 `addTimingsCallback` 으로 먼저 가른다.
+  Android 는 플랫폼 스레드와 UI 스레드가 하나라, 플러그인 SDK 의 메인 스레드 작업이 그대로 프레임을 민다.
+- 목록은 끝에서 10개 남았을 때 다음 쪽을 받는다(`invisibleItemsThreshold`). 기본 3 이면 빠르게 넘길 때
+  응답보다 먼저 끝에 닿아 멈췄다가, 붙는 순간 빈 화면만큼의 행을 한 프레임에 그린다.
+  쪽이 붙을 때 이미 그려진 행(`MoclListItem`)은 리빌드되지 않는다(`list_screen_rebuild_test`).
+
 ## 부팅 (`main.dart`)
 
 - 초기화는 `_prepareApp()` 안에서만 한다. `BootGuard` 가 감싸서, 던지면 실패 화면 +
@@ -346,6 +355,12 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   스위처는 **스크롤 중에는 광고 뷰를 붙이지 않고** 자리 표시를 두었다가 멈추면 붙인다. 플랫폼 뷰를
   붙이는 동안 Android 메인 스레드가 15~20ms 막혀 vsync 가 밀리기 때문이다(S24 Ultra 실측, 플링 중
   2~3 프레임 손실). 이 대기를 빼지 말 것.
+- 목록 광고(`ListAdSlots`)는 넘기는 중에 불러오거나(`NativeAd.load`) 치우지(`dispose`) 않는다.
+  둘 다 SDK 가 Android 메인 스레드(= Flutter UI 스레드)에서 일해서, 넘기는 중에 하면 vsync 를 놓친다
+  (S24 Ultra 실측: 8번 넘길 때 10ms 넘게 밀린 프레임 20개 → 0개). 대신 조용할 때(멈추고 0.3초 뒤) **여분 광고 2개**를
+  미리 받아 두고, 멈추면 0.1초 뒤 화면에 붙은 자리에 넣는다(멈춘 뒤에 받기 시작하면 1~2초 늦게 떠 노출이 준다).
+  여분이 없을 때만 그 자리 몫을 직접 받는다. 자리에 넣었던 광고는 여분으로 되돌리지 않는다(이미 노출된 광고).
+  광고 자리(`_ListAdTile`)가 `watchScroll` 로 목록의 스크롤 상태를 넘긴다. 자리마다 바로 불러오게 되돌리지 말 것.
 - ID 는 **저장소에 두지 않는다.** 루트의 `ads.json`(gitignore, 형식은 `ads.example.json`)에 두고
   `--dart-define-from-file=ads.json` 으로 넣는다. 앱 ID 는 `build.gradle.kts` 가 같은
   define(`MOCL_ADMOB_APP_ID`) 또는 `-PmoclAdmobAppId` 에서 읽고, 광고 단위는 `AdUnitIds` 가 읽는다.

@@ -159,6 +159,9 @@ Future<void> pumpMainScreen(
 Future<void> pumpListScreen(
   WidgetTester tester, {
   List<ListItem>? items,
+
+  /// 끝 가까이 스크롤하면 붙는 다음 쪽들. 비면 첫 쪽에서 끝난다.
+  List<List<ListItem>> nextPages = const <List<ListItem>>[],
   SiteType siteType = SiteType.clien,
 }) async {
   useFixedSurface(tester);
@@ -169,7 +172,10 @@ Future<void> pumpListScreen(
         ...await commonOverrides(siteType: siteType),
         mainItemProvider.overrideWithValue(mainItem),
         listPagingControllerProvider.overrideWith(
-          () => _FakePagingController(items ?? fakeListItems()),
+          () => _FakePagingController(<List<ListItem>>[
+            items ?? fakeListItems(),
+            ...nextPages,
+          ]),
         ),
       ],
       child: _app(const Scaffold(body: MoclListView())),
@@ -337,16 +343,18 @@ class _FakeDetails(final Details _details) extends DetailsNotifier {
 }
 
 /// 네트워크 fetch 없이 한 페이지를 즉시 돌려주는 PagingController.
-class _FakePagingController(final List<ListItem> _items)
+class _FakePagingController(final List<List<ListItem>> _pages)
     extends ListPagingController {
   @override
   PagingController<int, ListItem> build() {
     final PagingController<int, ListItem> controller =
         PagingController<int, ListItem>(
-          // 첫 페이지만 로드하고 종료.
-          getNextPageKey: (PagingState<int, ListItem> state) =>
-              state.keys == null ? 1 : null,
-          fetchPage: (int pageKey) async => _items,
+          // 준비한 쪽을 다 주면 종료.
+          getNextPageKey: (PagingState<int, ListItem> state) {
+            final int next = (state.keys?.length ?? 0) + 1;
+            return next <= _pages.length ? next : null;
+          },
+          fetchPage: (int pageKey) async => _pages[pageKey - 1],
         );
     ref.onDispose(controller.dispose);
     return controller;

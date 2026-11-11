@@ -21,6 +21,9 @@ import 'widgets/list_scope.dart';
 class const MoclListView({super.key})
     extends HookConsumerWidget
     with ListEvent, ListState, AdsState {
+  /// 끝에서 이만큼 남았을 때 다음 쪽을 받는다.
+  static const int _prefetchThreshold = 10;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // 리스트 아이템 읽음 처리 리스너 등록
@@ -71,6 +74,10 @@ class const MoclListView({super.key})
                     state: state,
                     fetchNextPage: fetchNextPage,
                     builderDelegate: PagedChildBuilderDelegate<ListItem>(
+                      // 기본(3)이면 빠르게 넘길 때 응답(150~250ms)보다 먼저 끝에
+                      // 닿아 스크롤이 멈췄다가, 붙는 순간 빈 화면만큼의 행을 한
+                      // 프레임에 그린다. 반 쪽쯤 앞에서 미리 받는다.
+                      invisibleItemsThreshold: _prefetchThreshold,
                       itemBuilder: (context, item, index) => ListItemScope(
                         item: item,
                         child: const MoclListItem(),

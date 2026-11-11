@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
+import 'package:mocl_shared/entities/mocl_list_item.dart';
 import 'package:mocl_shared/entities/sort_type.dart';
 import 'package:mocl_flutter/features/list_page/application/list_providers.dart';
 import 'package:mocl_flutter/features/list_page/presentation/mocl_list_view.dart';
@@ -76,6 +77,32 @@ void main() {
       reason:
           '읽음 처리된 행 1개만 리빌드되어야 한다 (실제: ${rec.builds('MoclListItem')})\n'
           '${rec.report()}',
+    );
+  });
+
+  testWidgets('다음 쪽이 붙을 때 이미 그려진 행은 리빌드되지 않는다', (tester) async {
+    final List<ListItem> all = fakeListItems(count: 60);
+    await pumpListScreen(
+      tester,
+      items: all.sublist(0, 30),
+      nextPages: <List<ListItem>>[all.sublist(30)],
+    );
+
+    final Finder scrollable = find.byType(Scrollable).first;
+    final RebuildRecorder rec = RebuildRecorder.attach();
+    // 첫 쪽 끝까지 내려가면 다음 쪽을 받아 붙인다.
+    await scrollBy(tester, -5000, scrollable: scrollable);
+    await tester.pumpAndSettle();
+    expect(
+      find.textContaining(all[59].title, findRichText: true),
+      findsOneWidget,
+      reason: '둘째 쪽이 붙어야 한다',
+    );
+
+    rec.expectNoRebuild(
+      rowWidgets,
+      allowMounts: true,
+      reason: '다음 쪽이 붙으면서 이미 그려진 행이 리빌드됨',
     );
   });
 

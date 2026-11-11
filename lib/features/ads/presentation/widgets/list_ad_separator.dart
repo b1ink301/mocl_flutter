@@ -47,8 +47,17 @@ class _ListAdTileState() extends State<_ListAdTile> {
   @override
   void initState() {
     super.initState();
+    _watchScroll();
     _entry = widget.slots.acquire(widget.slot, widget.style);
   }
+
+  /// 광고를 불러오고 치우는 일을 스크롤이 멈춘 뒤로 미루게, 목록의 스크롤 상태를 넘긴다.
+  void _watchScroll() => widget.slots.watchScroll(
+    context
+        .findAncestorStateOfType<ScrollableState>()
+        ?.position
+        .isScrollingNotifier,
+  );
 
   @override
   void didUpdateWidget(_ListAdTile oldWidget) {
@@ -56,6 +65,7 @@ class _ListAdTileState() extends State<_ListAdTile> {
     if (oldWidget.style != widget.style || oldWidget.slots != widget.slots) {
       final ListAdSlot previous = _entry;
       final ListAdSlots previousSlots = oldWidget.slots;
+      _watchScroll();
       _entry = widget.slots.acquire(widget.slot, widget.style);
       // 옛 광고의 AdWidget 은 이번 프레임에 빠진다. 그 뒤에 놓아야 그려지는
       // 중인 광고를 치우지 않는다.
