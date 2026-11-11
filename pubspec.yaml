@@ -1,7 +1,7 @@
 name: mocl_flutter
 description: "Mocl Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.6.2+407
+version: 1.6.2+408
 
 environment:
   sdk: ">=3.13.0"
@@ -152,7 +152,7 @@ dependencies:
 
   infinite_scroll_pagination: ^5.1.1
 #  translator: ^1.0.4+1
-  file_picker: ^13.3.2
+  file_picker: ^13.3.3
 
   material_ui: ^1.11.0
   cupertino_ui: ^1.1.6
