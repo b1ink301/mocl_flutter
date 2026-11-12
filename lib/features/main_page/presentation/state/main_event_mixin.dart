@@ -3,9 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
+import 'package:mocl_flutter/features/issue_radar/application/issue_radar_providers.dart';
 import 'package:mocl_shared/entities/mocl_site_type.dart';
 
 import '../../application/main_providers.dart';
+import '../mocl_main_page.dart' show MainTab;
 
 mixin class MainEvent() {
   /// '편집 모드' 토글(켜질 때만 드래그 핸들·편집 버튼 노출).
@@ -34,6 +36,18 @@ mixin class MainEvent() {
 
   void selectTab(WidgetRef ref, int index) =>
       ref.read(mainTabIndexProvider.notifier).select(index);
+
+  /// 탭을 순번이 아니라 종류로 고른다(앱 바로가기 등 홈 밖에서 들어올 때).
+  /// 이 빌드에 없는 탭(서버 없는 빌드의 이슈)이면 false.
+  bool selectMainTab(WidgetRef ref, MainTab tab) {
+    final int index = MainTab.visible(
+      issues: ref.read(issueRadarAvailableProvider),
+    ).indexOf(tab);
+    if (index < 0) return false;
+    if (ref.read(mainSearchOpenProvider)) closeSearch(ref);
+    selectTab(ref, index);
+    return true;
+  }
 
   void changeSiteType(WidgetRef ref, SiteType siteType) =>
       ref.read(currentSiteTypeProvider.notifier).changeSiteType(siteType);

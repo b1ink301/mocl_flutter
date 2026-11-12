@@ -54,6 +54,15 @@ enum MainTab({
     semanticsId: 'tab_settings',
   );
 
+  /// 홈에 보이는 탭과 그 순서. 탭 인덱스(`selectTab`)는 이 목록의 순번이다.
+  /// 서버가 없는 빌드는 [issues] 를 뺀다(주소는 빌드 때 정해져 실행 중에 바뀌지 않는다).
+  static List<MainTab> visible({required bool issues}) => <MainTab>[
+    boards,
+    if (issues) MainTab.issues,
+    bookmarks,
+    settings,
+  ];
+
   Widget get body => switch (this) {
     MainTab.boards => const MainView(),
     MainTab.issues => const IssueRadarPage(),
@@ -77,13 +86,7 @@ class const MainPage({super.key})
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     return _ScaffoldWidget(
-      tabs: <MainTab>[
-        MainTab.boards,
-        // 서버 주소는 빌드 때 정해져 실행 중에 바뀌지 않는다(탭이 들썩이지 않음).
-        if (issueRadarAvailableState(ref)) MainTab.issues,
-        MainTab.bookmarks,
-        MainTab.settings,
-      ],
+      tabs: MainTab.visible(issues: issueRadarAvailableState(ref)),
     );
   }
 }

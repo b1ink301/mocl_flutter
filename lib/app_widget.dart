@@ -8,6 +8,7 @@ import 'package:mocl_flutter/src/generated/i18n/app_localizations.dart';
 
 import 'config/routes/mocl_app_pages.dart';
 import 'core/util/glyph_warmup_manager.dart';
+import 'features/app_entry/presentation/widgets/app_entry_gate.dart';
 import 'features/app_update/presentation/widgets/app_update_gate.dart';
 import 'features/keyword_alerts/presentation/widgets/keyword_alert_gate.dart';
 import 'features/media_player/presentation/media_player_host.dart';
@@ -57,10 +58,14 @@ class const AppWidget({super.key}) extends HookConsumerWidget {
             navigatorKey: AppPages.router.routerDelegate.navigatorKey,
             child: KeywordAlertGate(
               router: AppPages.router,
-              // 동영상 플레이어는 라우터 위 한 층(게시판을 오가도 재생이 이어진다).
-              child: MediaPlayerHost(
-                navigatorKey: AppPages.router.routerDelegate.navigatorKey,
-                child: child!,
+              // 공유로 받은 링크 · 앱 바로가기.
+              child: AppEntryGate(
+                router: AppPages.router,
+                // 동영상 플레이어는 라우터 위 한 층(게시판을 오가도 재생이 이어진다).
+                child: MediaPlayerHost(
+                  navigatorKey: AppPages.router.routerDelegate.navigatorKey,
+                  child: child!,
+                ),
               ),
             ),
           ),

@@ -242,6 +242,20 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
 - 검색 주소 · 파서를 고치면 `cd server && fvm dart run bin/canary.dart --search {site}` 로 실제 사이트를 확인한다
   (CI 카나리도 매일 검색 단계를 돈다). URL 규칙 테스트는 `packages/mocl_shared/test/parsers/search_test.dart`.
 
+## 앱 밖에서 들어오기 (`features/app_entry/`)
+
+- `AppEntryGate`(`KeywordAlertGate` 안쪽)가 두 길을 받는다. 상세 열기는 `SiteLinkResolver`, 탭 고르기는
+  `MainEvent.selectMainTab`(탭 순서는 `MainTab.visible` 하나 — 인덱스를 직접 세지 말 것).
+- **공유 받기(Android만)**: 매니페스트 `SEND text/plain` → `ShareChannel.kt` ↔ `SharedTextChannel`
+  (`net.b1ink.mocl/share`). 꺼져 있다 켜진 공유는 `takeInitial`(한 번만), 떠 있을 때는 `onShared`.
+  글자에서 첫 주소를 `SharedText.firstUrl` 로 꺼내고, 지원하지 않는 주소는 스낵바(브라우저로 열기).
+  iOS 는 공유 확장(별도 타깃)이 필요해 하지 않았다.
+- **앱 바로가기**(`quick_actions`, Android · iOS): `AppShortcut`(지금 이슈 · 스크랩 · 최근 본 글).
+  `type` 은 OS 에 등록되는 값이라 바꾸지 말 것. Android 아이콘은 `res/drawable/ic_shortcut_*.xml` 이고
+  이름 문자열로 찾으므로 `res/raw/keep_shortcuts.xml` 이 리소스 축소에서 지킨다. iOS 는 아이콘 없음.
+- 기기 확인: `adb shell am start -a android.intent.action.SEND -t text/plain --es android.intent.extra.TEXT '<글 주소>' -n <앱 id>/net.b1ink.mocl_flutter.MainActivity`,
+  바로가기는 `-a android.intent.action.RUN --es 'some unique action key' history`.
+
 ## 목록 · 상세 스크롤 성능
 
 - 측정은 profile 빌드로 한다(debug 는 근거가 못 된다). 프레임이 밀리면 빌드(`buildDuration`) · 래스터 ·
@@ -390,6 +404,13 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   미리 받아 두고, 멈추면 0.1초 뒤 화면에 붙은 자리에 넣는다(멈춘 뒤에 받기 시작하면 1~2초 늦게 떠 노출이 준다).
   여분이 없을 때만 그 자리 몫을 직접 받는다. 자리에 넣었던 광고는 여분으로 되돌리지 않는다(이미 노출된 광고).
   광고 자리(`_ListAdTile`)가 `watchScroll` 로 목록의 스크롤 상태를 넘긴다. 자리마다 바로 불러오게 되돌리지 말 것.
+- 상세 광고는 미리 받아 둔다(`NativeAdPreloader.detail`, 들고 있는 광고는 하나). 자리(`DetailAdCard`)가 본문 끝에
+  있어 본문이 길면 끝에 다다라서야 만들어지고, 그때 요청하면 1~2초 자리 표시만 보였다.
+  화면이 열리고 전환이 끝나면(0.3초 뒤) `DetailAdPrefetch`(본문 맨 위, 광고와 같은 폭을 받는 빈 칸)가 받아 두고,
+  광고가 뜬 뒤 스크롤이 멈춰 조용하면 `SingleNativeAd` 가 다음 글 몫을 받아 둔다. 둘이 같은 모양을 쓰도록
+  모양은 `detailAdLook` 하나로 만든다(모양이 다르면 받아 둔 광고를 버린다). 자리는 `SliverList` 안이라
+  받은 광고가 스크롤로 멀어져도 살아 있다(keep-alive, 되돌아올 때 다시 받지 않는다).
+  `NativeAdSwitcher` 는 스크롤 중뿐 아니라 화면 전환 중에도 광고 뷰를 붙이지 않는다.
 - ID 는 **저장소에 두지 않는다.** 루트의 `ads.json`(gitignore, 형식은 `ads.example.json`)에 두고
   `--dart-define-from-file=ads.json` 으로 넣는다. 앱 ID 는 `build.gradle.kts` 가 같은
   define(`MOCL_ADMOB_APP_ID`) 또는 `-PmoclAdmobAppId` 에서 읽고, 광고 단위는 `AdUnitIds` 가 읽는다.
@@ -405,13 +426,6 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   `proguard-rules.pro` 의 RoomDatabase keep 이 필요하다(빠지면 release 가 시작 즉시 죽는다).
 
 ## 앱 업데이트 (`features/app_update/`)
-- 상세 광고는 미리 받아 둔다(`NativeAdPreloader.detail`, 들고 있는 광고는 하나). 자리(`DetailAdCard`)가 본문 끝에
-  있어 본문이 길면 끝에 다다라서야 만들어지고, 그때 요청하면 1~2초 자리 표시만 보였다.
-  화면이 열리고 전환이 끝나면(0.3초 뒤) `DetailAdPrefetch`(본문 맨 위, 광고와 같은 폭을 받는 빈 칸)가 받아 두고,
-  광고가 뜬 뒤 스크롤이 멈춰 조용하면 `SingleNativeAd` 가 다음 글 몫을 받아 둔다. 둘이 같은 모양을 쓰도록
-  모양은 `detailAdLook` 하나로 만든다(모양이 다르면 받아 둔 광고를 버린다). 자리는 `SliverList` 안이라
-  받은 광고가 스크롤로 멀어져도 살아 있다(keep-alive, 되돌아올 때 다시 받지 않는다).
-  `NativeAdSwitcher` 는 스크롤 중뿐 아니라 화면 전환 중에도 광고 뷰를 붙이지 않는다.
 
 - 우리 서버가 아니라 **스토어 버전과 비교**한다. 앱 실행 3초 뒤 `AppUpdateGate` 가 한 번 확인하고,
   설정 "앱 정보 → 업데이트 확인" 으로 직접 확인한다(미룸 무시).

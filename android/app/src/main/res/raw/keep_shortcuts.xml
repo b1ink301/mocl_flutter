@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- quick_actions 플러그인은 바로가기 아이콘을 getIdentifier(이름 문자열)로 찾는다.
+     코드에서 R.drawable 로 가리키지 않으니 리소스 축소(isShrinkResources)가 지우지 않게 지킨다. -->
+<resources xmlns:tools="http://schemas.android.com/tools"
+    tools:keep="@drawable/ic_shortcut_*" />

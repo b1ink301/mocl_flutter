@@ -2,6 +2,7 @@ package net.b1ink.mocl_flutter
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
+import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import io.flutter.embedding.android.FlutterActivity
@@ -10,10 +11,18 @@ import io.flutter.plugins.googlemobileads.GoogleMobileAdsPlugin
 
 class MainActivity: FlutterActivity() {
     private var translationChannel: TranslationChannel? = null
+    private var shareChannel: ShareChannel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         createKeywordAlertChannel()
+        // 다시 만들어진 액티비티(프로세스 복원)는 같은 공유를 두 번 열지 않는다.
+        if (savedInstanceState == null) shareChannel?.handleInitial(intent)
+    }
+
+    override fun onNewIntent(intent: Intent) {
+        super.onNewIntent(intent)
+        shareChannel?.handleNew(intent)
     }
 
     /// 키워드 알림 채널. 서버(server/)가 FCM 메시지에 같은 id 를 넣고,
@@ -36,6 +45,7 @@ class MainActivity: FlutterActivity() {
     override fun configureFlutterEngine(flutterEngine: FlutterEngine) {
         super.configureFlutterEngine(flutterEngine)
         translationChannel = TranslationChannel(flutterEngine.dartExecutor.binaryMessenger)
+        shareChannel = ShareChannel(flutterEngine.dartExecutor.binaryMessenger)
         GoogleMobileAdsPlugin.registerNativeAdFactory(
             flutterEngine,
             ListNativeAdFactory.FACTORY_ID,
@@ -56,6 +66,8 @@ class MainActivity: FlutterActivity() {
     override fun cleanUpFlutterEngine(flutterEngine: FlutterEngine) {
         translationChannel?.dispose()
         translationChannel = null
+        shareChannel?.dispose()
+        shareChannel = null
         GoogleMobileAdsPlugin.unregisterNativeAdFactory(flutterEngine, ListNativeAdFactory.FACTORY_ID)
         GoogleMobileAdsPlugin.unregisterNativeAdFactory(flutterEngine, DetailNativeAdFactory.FACTORY_ID)
         GoogleMobileAdsPlugin.unregisterNativeAdFactory(flutterEngine, DetailSmallNativeAdFactory.FACTORY_ID)
