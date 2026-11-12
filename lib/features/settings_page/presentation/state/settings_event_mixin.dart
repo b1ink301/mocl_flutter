@@ -1,3 +1,4 @@
+import 'package:mocl_flutter/features/list_page/domain/list_density.dart';
 import 'package:material_ui/material_ui.dart' show ThemeMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
@@ -23,6 +24,9 @@ mixin class SettingsEvent() {
 
   void handleTogglePlayVideosInApp(WidgetRef ref) =>
       ref.read(playVideosInAppProvider.notifier).toggle();
+
+  Future<void> handleSelectListDensity(WidgetRef ref, ListDensity density) =>
+      ref.read(listDensityProvider.notifier).select(density);
 
   void handleToggleShowCategory(WidgetRef ref) =>
       ref.read(showCategoryProvider.notifier).toggle();

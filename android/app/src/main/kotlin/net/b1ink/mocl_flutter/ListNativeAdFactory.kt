@@ -44,9 +44,9 @@ class ListNativeAdFactory(context: Context) : BaseNativeAdFactory(context) {
             orientation = LinearLayout.VERTICAL
             setPaddingRelative(
                 dp(o.numOr("paddingStart", PADDING_START)),
-                dp(PADDING_VERTICAL),
+                dp(o.numOr("paddingVertical", PADDING_VERTICAL)),
                 dp(o.numOr("paddingEnd", PADDING_END)),
-                dp(PADDING_VERTICAL),
+                dp(o.numOr("paddingVertical", PADDING_VERTICAL)),
             )
         }
 
@@ -100,7 +100,7 @@ class ListNativeAdFactory(context: Context) : BaseNativeAdFactory(context) {
         column.addView(
             row,
             LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT)
-                .apply { topMargin = dp(ROW_GAP) },
+                .apply { topMargin = dp(o.numOr("rowGap", ROW_GAP)) },
         )
 
         adView.addView(column, ViewGroup.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.MATCH_PARENT))

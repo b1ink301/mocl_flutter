@@ -1,3 +1,6 @@
+import 'package:mocl_flutter/features/list_page/domain/list_density.dart';
+import 'package:mocl_flutter/features/settings_page/application/settings_providers.dart'
+    show ListDensityNotifier, listDensityProvider;
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 // `Override` 타입은 misc.dart 에서 노출된다(앱의 *_event_mixin 과 동일한 경로).
@@ -164,6 +167,9 @@ Future<void> pumpListScreen(
   /// 끝 가까이 스크롤하면 붙는 다음 쪽들. 비면 첫 쪽에서 끝난다.
   List<List<ListItem>> nextPages = const <List<ListItem>>[],
   SiteType siteType = SiteType.clien,
+
+  /// 설정 "목록 밀도".
+  ListDensity density = ListDensity.standard,
 }) async {
   useFixedSurface(tester);
   final MainItem mainItem = fakeMainItems(count: 1).first;
@@ -171,6 +177,7 @@ Future<void> pumpListScreen(
     ProviderScope(
       overrides: <Override>[
         ...await commonOverrides(siteType: siteType),
+        listDensityProvider.overrideWith(() => _FixedDensity(density)),
         mainItemProvider.overrideWithValue(mainItem),
         listPagingControllerProvider.overrideWith(
           () => _FakePagingController(<List<ListItem>>[
@@ -416,4 +423,9 @@ class _FakeApi() implements BaseApi {
 
   @override
   dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+class _FixedDensity(final ListDensity _density) extends ListDensityNotifier {
+  @override
+  ListDensity build() => _density;
 }

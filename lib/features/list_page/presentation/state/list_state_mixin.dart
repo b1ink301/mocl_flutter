@@ -2,6 +2,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
+import 'package:mocl_flutter/features/list_page/domain/list_density.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_shared/entities/mocl_list_item.dart';
 import 'package:mocl_shared/entities/mocl_main_item.dart';
@@ -63,6 +64,9 @@ mixin class ListState() {
 
   /// 설정 "말머리 보기".
   bool showCategoryState(WidgetRef ref) => ref.watch(showCategoryProvider);
+
+  bool compactListState(WidgetRef ref) =>
+      ref.watch(listDensityProvider) == ListDensity.compact;
 
   AppTextStyles appTextStyles(WidgetRef ref) =>
       ref.watch(appTextStylesFontSizeProvider);

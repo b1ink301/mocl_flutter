@@ -11,6 +11,9 @@ import 'native_ad_switcher.dart';
 class const ListAdSeparator({
   required final int index,
   required final AppTextStyles styles,
+
+  /// 컴팩트 목록이면 광고 칸도 같은 여백으로.
+  final bool compact = false,
   super.key,
 }) extends StatelessWidget {
   @override
@@ -26,6 +29,7 @@ class const ListAdSeparator({
       style: ListAdStyle.from(
         styles,
         Theme.of(context).scaffoldBackgroundColor,
+        compact: compact,
       ),
     );
   }

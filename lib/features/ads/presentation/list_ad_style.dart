@@ -20,6 +20,7 @@ class ListAdStyle._({
   required final double badgeLineHeight,
   required final double paddingStart,
   required final double paddingEnd,
+  final bool compact = false,
 }) with Equatable implements NativeAdLook {
   /// 목록 행([AppTextStyles])의 안 읽은 글 스타일을 따른다.
   ///
@@ -30,10 +31,14 @@ class ListAdStyle._({
     Color background, {
     double paddingStart = 16,
     double paddingEnd = 10,
+
+    /// 컴팩트 목록 사이(행과 같은 위아래 여백 · 줄 사이).
+    bool compact = false,
   }) => ListAdStyle._(
     background: background,
     paddingStart: paddingStart,
     paddingEnd: paddingEnd,
+    compact: compact,
     title: styles.titleTextStyle,
     small: styles.smallTextStyle,
     badge: styles.badgeTextStyle,
@@ -42,8 +47,12 @@ class ListAdStyle._({
     badgeLineHeight: adLineHeight(styles.badgeTextStyle),
   );
 
-  static const double _paddingVertical = 14;
-  static const double _rowGap = 8;
+  static const double _paddingVerticalDefault = 14;
+  static const double _rowGapDefault = 8;
+
+  // 컴팩트 목록 행(`_CompactRow`)과 같은 값.
+  double get _paddingVertical => compact ? 9 : _paddingVerticalDefault;
+  double get _rowGap => compact ? 3 : _rowGapDefault;
   static const double _iconSize = 16;
   static const double _badgePaddingVertical = 1.5;
 
@@ -89,7 +98,7 @@ class ListAdStyle._({
               widthFactor: 0.6,
               color: color,
             ),
-            const SizedBox(height: _rowGap),
+            SizedBox(height: _rowGap),
             adSkeletonLine(
               lineHeight: smallLineHeight,
               widthFactor: 0.3,
@@ -107,6 +116,9 @@ class ListAdStyle._({
     'iconSize': _iconSize,
     'paddingStart': paddingStart,
     'paddingEnd': paddingEnd,
+    // 옛 팩토리는 이 두 값을 모르면 상수(14 · 8)를 쓴다.
+    'paddingVertical': _paddingVertical,
+    'rowGap': _rowGap,
     ...adTextOptions('title', title, titleLineHeight),
     ...adTextOptions('small', small, smallLineHeight),
     ...adTextOptions('badge', badge, badgeLineHeight),
@@ -123,5 +135,6 @@ class ListAdStyle._({
     badge,
     paddingStart,
     paddingEnd,
+    compact,
   ];
 }

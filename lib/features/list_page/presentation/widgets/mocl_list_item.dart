@@ -25,7 +25,9 @@ class const MoclListItem({super.key}) extends StatelessWidget with ListEvent {
     final titleStyle = styles.title(isRead);
     final infoStyle = styles.smallTitle(isRead);
 
-    final hasNickImage = item.userInfo.nickImage.isNotEmpty;
+    final bool compact = ListStyleScope.compactOf(context);
+    // 컴팩트는 닉 이미지를 그리지 않는다(행이 낮아 자리가 없고, 넘길 때 이미지 요청도 준다).
+    final hasNickImage = !compact && item.userInfo.nickImage.isNotEmpty;
     final hasReply = item.reply.isNotEmpty && item.reply != '0';
 
     // 답글 배지는 코랄 톤의 필드 칩(강조색 12% 배경, 테두리 없음).
@@ -60,51 +62,73 @@ class const MoclListItem({super.key}) extends StatelessWidget with ListEvent {
 
     final Widget row = InkWell(
       onTap: () => handleItemTap(context, item),
-      child: Padding(
-        padding: const EdgeInsets.only(
-          left: 16,
-          right: 10,
-          top: 14,
-          bottom: 14,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Title (말머리가 있으면 첫 줄 앞에 태그)
-            _ListTitle(
-              title: item.title,
-              category: showCategory ? item.category : '',
-              style: titleStyle,
-              brightness: styles.brightness,
-              dimmed: isRead,
-              highlight: SearchHighlightScope.of(context),
-            ),
+      child: compact
+          ? _CompactRow(
+              title: _ListTitle(
+                title: item.title,
+                category: showCategory ? item.category : '',
+                style: titleStyle,
+                brightness: styles.brightness,
+                dimmed: isRead,
+                maxLines: 1,
+                highlight: SearchHighlightScope.of(context),
+              ),
+              info: item.info.isEmpty
+                  ? null
+                  : AuthorInfoText(
+                      info: item.info,
+                      nickName: item.userInfo.nickName,
+                      style: infoStyle,
+                    ),
+              badge: replyBadge,
+            )
+          : Padding(
+              padding: const EdgeInsets.only(
+                left: 16,
+                right: 10,
+                top: 14,
+                bottom: 14,
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  // Title (말머리가 있으면 첫 줄 앞에 태그)
+                  _ListTitle(
+                    title: item.title,
+                    category: showCategory ? item.category : '',
+                    style: titleStyle,
+                    brightness: styles.brightness,
+                    dimmed: isRead,
+                    highlight: SearchHighlightScope.of(context),
+                  ),
 
-            // Bottom Info (Merged for performance)
-            if (item.info.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.only(top: 8.0),
-                child: Row(
-                  children: [
-                    if (hasNickImage)
-                      Padding(
-                        padding: const EdgeInsets.only(right: 6.0),
-                        child: NickImageWidget(url: item.userInfo.nickImage),
-                      ),
-                    Expanded(
-                      child: AuthorInfoText(
-                        info: item.info,
-                        nickName: item.userInfo.nickName,
-                        style: infoStyle,
+                  // Bottom Info (Merged for performance)
+                  if (item.info.isNotEmpty)
+                    Padding(
+                      padding: const EdgeInsets.only(top: 8.0),
+                      child: Row(
+                        children: [
+                          if (hasNickImage)
+                            Padding(
+                              padding: const EdgeInsets.only(right: 6.0),
+                              child: NickImageWidget(
+                                url: item.userInfo.nickImage,
+                              ),
+                            ),
+                          Expanded(
+                            child: AuthorInfoText(
+                              info: item.info,
+                              nickName: item.userInfo.nickName,
+                              style: infoStyle,
+                            ),
+                          ),
+                          ?replyBadge,
+                        ],
                       ),
                     ),
-                    ?replyBadge,
-                  ],
-                ),
+                ],
               ),
-          ],
-        ),
-      ),
+            ),
     );
 
     // 잉크가 강조색 위에 보이도록 Material 로 칠한다(강조할 때만 만든다).
@@ -210,6 +234,7 @@ class const _ListTitle({
   required final TextStyle style,
   required final Brightness brightness,
   required final bool dimmed,
+  final int maxLines = 3,
   final String highlight = '',
 }) extends ConsumerWidget with ListState {
   @override
@@ -219,10 +244,52 @@ class const _ListTitle({
     style: style,
     brightness: brightness,
     dimmed: dimmed,
-    maxLines: 3,
+    maxLines: maxLines,
     highlight: highlight,
     highlightColor: highlight.isEmpty
         ? null
         : Theme.of(context).colorScheme.primary,
+  );
+}
+
+/// 컴팩트 행: `[제목 한 줄 … 배지]` / 정보 한 줄. 위아래 여백 9 · 줄 사이 3.
+///
+/// 광고 칸(`ListAdStyle.from(compact: true)` ↔ `ListNativeAdFactory.kt`)이 같은 여백을 쓴다 —
+/// 한쪽을 바꾸면 다른 쪽도 같이.
+class const _CompactRow({
+  required final Widget title,
+  required final Widget? info,
+  required final Widget? badge,
+}) extends StatelessWidget {
+  static const double paddingVertical = 9;
+  static const double rowGap = 3;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+    padding: const EdgeInsets.only(
+      left: 16,
+      right: 10,
+      top: paddingVertical,
+      bottom: paddingVertical,
+    ),
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(child: title),
+            if (badge case final Widget badge) ...[
+              const SizedBox(width: 8),
+              badge,
+            ],
+          ],
+        ),
+        if (info case final Widget info)
+          Padding(
+            padding: const EdgeInsets.only(top: rowGap),
+            child: info,
+          ),
+      ],
+    ),
   );
 }

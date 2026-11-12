@@ -24,6 +24,9 @@ class const MoclListView({super.key})
   /// 끝에서 이만큼 남았을 때 다음 쪽을 받는다.
   static const int _prefetchThreshold = 10;
 
+  /// 컴팩트는 한 화면에 약 13개가 들어가 10개면 사실상 한 화면 전이라 더 일찍 받는다.
+  static const int _compactPrefetchThreshold = 15;
+
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // 리스트 아이템 읽음 처리 리스너 등록
@@ -55,9 +58,12 @@ class const MoclListView({super.key})
       onRetry: () => handleRetry(ref),
     );
 
+    final bool compact = compactListState(ref);
+
     return ListStyleScope(
       styles: styles,
       showCategory: showCategoryState(ref),
+      compact: compact,
       child: RefreshIndicator.adaptive(
         color: focusColor,
         onRefresh: () async => handleRefresh(ref),
@@ -78,7 +84,9 @@ class const MoclListView({super.key})
                       // 기본(3)이면 빠르게 넘길 때 응답(150~250ms)보다 먼저 끝에
                       // 닿아 스크롤이 멈췄다가, 붙는 순간 빈 화면만큼의 행을 한
                       // 프레임에 그린다. 반 쪽쯤 앞에서 미리 받는다.
-                      invisibleItemsThreshold: _prefetchThreshold,
+                      invisibleItemsThreshold: compact
+                          ? _compactPrefetchThreshold
+                          : _prefetchThreshold,
                       itemBuilder: (context, item, index) => ListItemScope(
                         item: item,
                         child: const MoclListItem(),
@@ -104,8 +112,11 @@ class const MoclListView({super.key})
                             ),
                     ),
                     // 글 사이사이에 목록 행 모양의 네이티브 광고를 넣는다.
-                    separatorBuilder: (_, index) =>
-                        ListAdSeparator(index: index, styles: styles),
+                    separatorBuilder: (_, index) => ListAdSeparator(
+                      index: index,
+                      styles: styles,
+                      compact: compact,
+                    ),
                   ),
                 ),
               ],

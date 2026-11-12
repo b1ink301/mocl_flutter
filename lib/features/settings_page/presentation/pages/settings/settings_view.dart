@@ -1,3 +1,4 @@
+import 'package:mocl_flutter/features/list_page/domain/list_density.dart';
 import 'package:mocl_flutter/core/application/accent_mixin.dart';
 import 'package:mocl_flutter/features/settings_page/presentation/pages/accent/accent_page.dart';
 import 'package:material_ui/material_ui.dart';
@@ -90,6 +91,15 @@ class const SettingsView({super.key})
                 ),
                 const _TileDivider(),
                 const _AccentTile(),
+                const _TileDivider(),
+                _SettingsTile(
+                  icon: Icons.density_medium,
+                  title: '목록 밀도',
+                  trailing: _ListDensitySelector(
+                    density: listDensityState(ref),
+                    onChanged: (d) => handleSelectListDensity(ref, d),
+                  ),
+                ),
                 const _TileDivider(),
                 _SettingsTile(
                   icon: Icons.format_size,
@@ -298,7 +308,8 @@ class const _ThemeModeSelector({
             children: [
               for (final option in _options)
                 _ThemeModeSegment(
-                  option: option,
+                  icon: option.icon,
+                  label: option.label,
                   isSelected: option.mode == mode,
                   width: _segmentWidth,
                   onTap: () => onChanged(option.mode),
@@ -312,7 +323,8 @@ class const _ThemeModeSelector({
 }
 
 class const _ThemeModeSegment({
-  required final ({ThemeMode mode, IconData icon, String label}) option,
+  required final IconData icon,
+  required final String label,
   required final bool isSelected,
   required final double width,
   required final VoidCallback onTap,
@@ -325,7 +337,7 @@ class const _ThemeModeSegment({
         : theme.colorScheme.onSurfaceVariant;
 
     return Tooltip(
-      message: option.label,
+      message: label,
       child: SizedBox(
         width: width,
         child: Material(
@@ -337,7 +349,7 @@ class const _ThemeModeSegment({
               child: AnimatedSwitcher(
                 duration: const Duration(milliseconds: 200),
                 child: Icon(
-                  option.icon,
+                  icon,
                   key: ValueKey<bool>(isSelected),
                   size: 19,
                   color: tint,
@@ -693,6 +705,83 @@ class const _AccentTile() extends ConsumerWidget with AppAccentState {
             ),
             const SizedBox(width: 4),
             const Icon(Icons.chevron_right, size: 22),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// 목록 밀도 선택(기본 · 컴팩트). 테마 선택과 같은 알약 트랙 모양.
+class const _ListDensitySelector({
+  required final ListDensity density,
+  required final ValueChanged<ListDensity> onChanged,
+}) extends StatelessWidget {
+  static const List<({ListDensity density, IconData icon, String label})>
+  _options = [
+    (
+      density: ListDensity.standard,
+      icon: Icons.view_agenda_outlined,
+      label: '기본',
+    ),
+    (density: ListDensity.compact, icon: Icons.view_headline, label: '컴팩트'),
+  ];
+
+  static const double _segmentWidth = 44;
+  static const double _height = 34;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final bool isDark = theme.brightness == Brightness.dark;
+    final int selected = _options.indexWhere((o) => o.density == density);
+
+    return Semantics(
+      identifier: 'settings_list_density',
+      child: Container(
+        height: _height,
+        width: _segmentWidth * _options.length,
+        decoration: BoxDecoration(
+          color: isDark
+              ? Colors.white.withValues(alpha: 0.07)
+              : Colors.black.withValues(alpha: 0.05),
+          borderRadius: BorderRadius.circular(_height / 2),
+        ),
+        child: Stack(
+          children: [
+            AnimatedPositioned(
+              duration: const Duration(milliseconds: 200),
+              curve: Curves.easeOutCubic,
+              left: _segmentWidth * (selected < 0 ? 0 : selected),
+              top: 0,
+              bottom: 0,
+              width: _segmentWidth,
+              child: Container(
+                margin: const EdgeInsets.all(3),
+                decoration: BoxDecoration(
+                  color: theme.colorScheme.primary.withValues(
+                    alpha: isDark ? 0.30 : 0.16,
+                  ),
+                  borderRadius: BorderRadius.circular(_height / 2),
+                ),
+              ),
+            ),
+            Row(
+              children: [
+                for (final option in _options)
+                  Semantics(
+                    identifier: 'list_density_${option.density.name}',
+                    selected: option.density == density,
+                    child: _ThemeModeSegment(
+                      icon: option.icon,
+                      label: option.label,
+                      isSelected: option.density == density,
+                      width: _segmentWidth,
+                      onTap: () => onChanged(option.density),
+                    ),
+                  ),
+              ],
+            ),
           ],
         ),
       ),

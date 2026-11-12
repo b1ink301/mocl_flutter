@@ -1,5 +1,6 @@
 import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_shared/util/mocl_logger.dart';
+import 'package:mocl_flutter/features/list_page/domain/list_density.dart';
 import 'package:mocl_flutter/features/settings_page/application/repository_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
@@ -137,5 +138,23 @@ class ShowCategoryNotifier() extends _$ShowCategoryNotifier {
     final settings = ref.read(settingsRepositoryProvider);
     state = !state;
     settings.setShowCategory(state);
+  }
+}
+
+/// 글 목록 밀도. 목록 · 검색 결과가 같이 쓴다(앱 전체 하나).
+@Riverpod(keepAlive: true)
+class ListDensityNotifier() extends _$ListDensityNotifier {
+  static const String _key = 'list_density';
+
+  @override
+  ListDensity build() {
+    final String? saved = ref.watch(sharedPreferencesProvider).getString(_key);
+    return ListDensity.values.asNameMap()[saved] ?? ListDensity.standard;
+  }
+
+  Future<void> select(ListDensity density) async {
+    if (state == density) return;
+    state = density;
+    await ref.read(sharedPreferencesProvider).setString(_key, density.name);
   }
 }

@@ -1,5 +1,6 @@
 import 'package:material_ui/material_ui.dart' show ThemeMode;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mocl_flutter/features/list_page/domain/list_density.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/features/google_drive/application/google_drive_providers.dart';
@@ -29,6 +30,8 @@ mixin class SettingsState() {
       ref.watch(playVideosInAppProvider);
 
   bool showCategoryState(WidgetRef ref) => ref.watch(showCategoryProvider);
+
+  ListDensity listDensityState(WidgetRef ref) => ref.watch(listDensityProvider);
 
   ThemeMode themeModeState(WidgetRef ref) => ref.watch(themeModeProvider);
 

@@ -1,3 +1,4 @@
+import 'package:mocl_flutter/features/list_page/domain/list_density.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:infinite_scroll_pagination/infinite_scroll_pagination.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
@@ -32,4 +33,7 @@ mixin class ListSearchState() {
 
   bool searchShowCategoryState(WidgetRef ref) =>
       ref.watch(showCategoryProvider);
+
+  bool searchCompactListState(WidgetRef ref) =>
+      ref.watch(listDensityProvider) == ListDensity.compact;
 }

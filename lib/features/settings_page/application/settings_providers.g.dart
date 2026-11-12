@@ -480,3 +480,62 @@ abstract class _$ShowCategoryNotifier extends $Notifier<bool> {
     return element.handleCreate(ref, build);
   }
 }
+
+/// 글 목록 밀도. 목록 · 검색 결과가 같이 쓴다(앱 전체 하나).
+
+@ProviderFor(ListDensityNotifier)
+final listDensityProvider = ListDensityNotifierProvider._();
+
+/// 글 목록 밀도. 목록 · 검색 결과가 같이 쓴다(앱 전체 하나).
+final class ListDensityNotifierProvider
+    extends $NotifierProvider<ListDensityNotifier, ListDensity> {
+  /// 글 목록 밀도. 목록 · 검색 결과가 같이 쓴다(앱 전체 하나).
+  ListDensityNotifierProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'listDensityProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$listDensityNotifierHash();
+
+  @$internal
+  @override
+  ListDensityNotifier create() => ListDensityNotifier();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(ListDensity value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<ListDensity>(value),
+    );
+  }
+}
+
+String _$listDensityNotifierHash() =>
+    r'b00a34b93a47e82bc8d8d8f85caba2c4fcf9840a';
+
+/// 글 목록 밀도. 목록 · 검색 결과가 같이 쓴다(앱 전체 하나).
+
+abstract class _$ListDensityNotifier extends $Notifier<ListDensity> {
+  ListDensity build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<ListDensity, ListDensity>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<ListDensity, ListDensity>,
+              ListDensity,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}

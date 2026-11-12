@@ -6,6 +6,8 @@ import 'package:mocl_shared/entities/mocl_list_item.dart';
 import 'package:mocl_shared/entities/sort_type.dart';
 import 'package:mocl_flutter/features/list_page/application/list_providers.dart';
 import 'package:mocl_flutter/features/list_page/presentation/mocl_list_view.dart';
+import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
+import 'package:mocl_flutter/features/list_page/domain/list_density.dart';
 import 'package:mocl_flutter/features/list_page/presentation/widgets/mocl_list_item.dart';
 
 import '../helpers/rebuild_recorder.dart';
@@ -104,6 +106,63 @@ void main() {
       allowMounts: true,
       reason: '다음 쪽이 붙으면서 이미 그려진 행이 리빌드됨',
     );
+  });
+
+  testWidgets('컴팩트: 다음 쪽이 붙을 때 이미 그려진 행은 리빌드되지 않는다', (tester) async {
+    final List<ListItem> all = fakeListItems(count: 60);
+    await pumpListScreen(
+      tester,
+      items: all.sublist(0, 30),
+      nextPages: <List<ListItem>>[all.sublist(30)],
+      density: ListDensity.compact,
+    );
+
+    final Finder scrollable = find.byType(Scrollable).first;
+    final RebuildRecorder rec = RebuildRecorder.attach();
+    await scrollBy(tester, -5000, scrollable: scrollable);
+    await tester.pumpAndSettle();
+    expect(
+      find.textContaining(all[59].title, findRichText: true),
+      findsOneWidget,
+      reason: '둘째 쪽이 붙어야 한다',
+    );
+
+    rec.expectNoRebuild(
+      rowWidgets,
+      allowMounts: true,
+      reason: '컴팩트에서 다음 쪽이 붙으면서 이미 그려진 행이 리빌드됨',
+    );
+  });
+
+  testWidgets('컴팩트: 앱바 숨김/보임 반복 시 행이 리빌드되지 않고 닉 이미지를 그리지 않는다', (tester) async {
+    await pumpListScreen(tester, density: ListDensity.compact);
+    expect(find.byType(MoclListItem), findsWidgets);
+    expect(find.byType(NickImageWidget), findsNothing);
+
+    final Finder scrollable = find.byType(Scrollable).first;
+    await scrollBy(tester, -600, scrollable: scrollable);
+    final RebuildRecorder rec = RebuildRecorder.attach();
+    await scrollCycles(tester, times: 3, distance: 300, scrollable: scrollable);
+    rec.expectNoRebuild(
+      rowWidgets,
+      allowMounts: true,
+      reason: '컴팩트에서 스크롤로 리스트 행이 리빌드됨',
+    );
+  });
+
+  testWidgets('컴팩트 행은 기본 행보다 낮다', (tester) async {
+    final List<ListItem> items = fakeListItems(count: 60);
+    await pumpListScreen(tester, items: items);
+    final double standard = tester
+        .getSize(find.byType(MoclListItem).first)
+        .height;
+    // 다른 ProviderScope 로 다시 띄우려면 먼저 내린다(같은 자리면 overrides 가 바뀌지 않는다).
+    await tester.pumpWidget(const SizedBox());
+    await pumpListScreen(tester, items: items, density: ListDensity.compact);
+    final double compact = tester
+        .getSize(find.byType(MoclListItem).first)
+        .height;
+    expect(compact, lessThan(standard), reason: '기본 $standard · 컴팩트 $compact');
   });
 
   testWidgets('정렬 변경은 앱바를 리빌드하지 않는다', (tester) async {

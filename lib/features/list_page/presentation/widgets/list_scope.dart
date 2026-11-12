@@ -25,6 +25,8 @@ class const ListStyleScope({
   required final AppTextStyles styles,
   // 설정 "말머리 보기". 스타일처럼 목록 전체에 같은 값이라 여기서 함께 내린다.
   final bool showCategory = true,
+  // 설정 "목록 밀도" 가 컴팩트인지. 스크롤 중엔 바뀌지 않는다(바꾸면 행을 한 번 다시 그린다).
+  final bool compact = false,
   required super.child,
   super.key,
 }) extends InheritedWidget {
@@ -35,9 +37,14 @@ class const ListStyleScope({
       .dependOnInheritedWidgetOfExactType<ListStyleScope>()!
       .showCategory;
 
+  static bool compactOf(BuildContext context) =>
+      context.dependOnInheritedWidgetOfExactType<ListStyleScope>()!.compact;
+
   @override
   bool updateShouldNotify(ListStyleScope oldWidget) =>
-      styles != oldWidget.styles || showCategory != oldWidget.showCategory;
+      styles != oldWidget.styles ||
+      showCategory != oldWidget.showCategory ||
+      compact != oldWidget.compact;
 }
 
 /// 검색 결과 목록에서 제목에 강조할 검색어. 일반 목록에는 없다(빈 문자열).

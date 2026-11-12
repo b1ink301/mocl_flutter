@@ -162,6 +162,7 @@ class const _SearchResults({
     return ListStyleScope(
       styles: styles,
       showCategory: searchShowCategoryState(ref),
+      compact: searchCompactListState(ref),
       child: SearchHighlightScope(
         query: query,
         child: RefreshIndicator.adaptive(
