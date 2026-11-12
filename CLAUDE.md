@@ -305,6 +305,13 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   다음 쪽을 끝에서 15개 남았을 때 받는다. 목록 광고도 같은 값(`ListAdStyle.from(compact:)` → `paddingVertical` ·
   `rowGap` 옵션 ↔ `ListNativeAdFactory.kt`, 옵션이 없으면 상수 14 · 8). 카드형 · 썸네일은 넣지 않았다(목록 데이터에 썸네일
   주소가 없고, 넘기는 중 이미지 디코딩이 프레임을 민다).
+- 글리프 예열(`GlyphWarmupManager` · `Glyphs.warmupKoreanGlyphs`): 한글은 글자 수가 많아 처음 보는 글자를 GPU 글리프
+  atlas 에 올리는 비용이 스크롤 중 래스터 끊김으로 나온다(레이아웃 · 높이 계산 문제가 아니다 — UI 스레드는 p99 4ms 대).
+  Impeller 는 글리프를 (폰트, 크기, 굵기, 배율, **가로 ¼픽셀 위치**)마다 따로 올리므로 예열은 화면과 같은 배율(DPR)로,
+  가로로 ¼픽셀씩 밀어 네 번 그린다. 하나라도 어긋나면 예열한 글자가 화면에서 다시 올라간다(엔진 · 폰트를 올린 뒤
+  어긋났는지는 profile 빌드의 VM 타임라인 `Embedder` 스트림에서 `AppendToExistingAtlas` · `UpdateAtlasBitmap` 횟수로 본다).
+  atlas 가 차서 통째로 다시 그리는 끊김(`BulkUpdateAtlasBitmap`, 40ms 대)은 엔진 동작이라 줄일 수만 있다.
+  예열 스타일을 늘리면 그래픽 메모리가 는다(지금 +약 40MB) — 목록 · 상세에 실제로 쓰는 (크기, 굵기)만 넣는다.
 - 댓글은 글자와 `<br>` 뿐이면 HTML 위젯 없이 `Text` 로 그린다(`plainTextOfSimpleHtml` · `_CommentBody`).
   HTML 위젯은 짧은 HTML 을 UI 스레드에서 바로 파싱하고 화면 밖으로 나가면 버린다. 받아들이는 범위를 넓히면
   `test/core/simple_html_text_test.dart`(두 경로의 글자 · 크기 비교)에 샘플을 더한다.

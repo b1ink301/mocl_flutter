@@ -81,6 +81,13 @@ class const Glyphs._() {
   /// 그려야 같은 atlas 항목을 재사용한다. 배율 1 로 그리면 화면에서 쓰지 않는
   /// 크기의 글리프만 쌓여 효과가 없다.
   ///
+  /// 또 같은 글리프도 **가로 ¼픽셀 위치마다** 따로 올린다(세로 위치는 구분하지 않는다).
+  /// 목록에서는 글자가 줄 안에서 놓이는 자리가 제각각이라 네 위치가 다 쓰이므로,
+  /// 한 위치로만 그리면 넷 중 하나만 맞는다. 그래서 묶음마다 가로로 ¼픽셀씩 밀어 네 번
+  /// 그린다([_subpixelSteps]). S24 Ultra 실측(새로 켠 뒤 플링): 스크롤 중 atlas 에 새로
+  /// 올리는 프레임 315 → 145, 올리는 시간 164 → 40ms, 40ms 대 끊김 2 → 1회.
+  /// 대신 예열 시간 0.35 → 0.9초(idle), 그래픽 메모리 +26MB.
+  ///
   /// 11k+ 음절을 한 번에 layout 하면 height 가 거대해져 메모리/시간 비용이 크므로,
   /// 청크 단위로 잘라서 처리하고 매 청크 사이에 yield 한다.
   static Future<void> warmupKoreanGlyphs(
@@ -117,6 +124,9 @@ class const Glyphs._() {
     }
   }
 
+  /// 가로 서브픽셀 위치 수. Impeller 가 글리프를 ¼픽셀 단위로 구분한다.
+  static const int _subpixelSteps = 4;
+
   static Future<void> _rasterizeChunk(
     String chunk,
     TextStyle style,
@@ -132,12 +142,16 @@ class const Glyphs._() {
     final recorder = PictureRecorder();
     // 화면과 같은 배율로 그린다([warmupKoreanGlyphs] 주석 참고).
     final canvas = Canvas(recorder)..scale(dpr);
-    tp.paint(canvas, Offset.zero);
+    // 물리 픽셀로 0 · ¼ · ½ · ¾ 만큼 밀어 그린다(겹쳐 그려도 atlas 에는 위치마다 올라간다).
+    for (int step = 0; step < _subpixelSteps; step++) {
+      tp.paint(canvas, Offset(step / _subpixelSteps / dpr, 0));
+    }
     final picture = recorder.endRecording();
 
     // 실제 텍스트 영역에 맞춰 rasterize 해야 glyph 가 atlas 에 업로드됨.
     // 1x1 로 하면 Impeller 가 화면 밖 draw 를 컬링해 워밍업 효과가 사라진다.
-    final int w = (tp.width * dpr).ceil().clamp(8, maxImageExtent);
+    // 밀어 그린 만큼(1픽셀 미만) 폭을 한 칸 더 잡는다.
+    final int w = ((tp.width * dpr).ceil() + 1).clamp(8, maxImageExtent);
     final int h = (tp.height * dpr).ceil().clamp(8, maxImageExtent);
     final image = await picture.toImage(w, h);
     image.dispose();
