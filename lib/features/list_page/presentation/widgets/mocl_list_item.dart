@@ -6,6 +6,7 @@ import 'package:mocl_flutter/core/presentation/widgets/nick_image_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/plain_text.dart';
 import 'package:mocl_flutter/core/presentation/widgets/round_text_widget.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mocl_flutter/features/list_page/domain/list_density.dart';
 import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mixin.dart';
 import 'package:mocl_flutter/features/list_page/presentation/state/list_state_mixin.dart';
 
@@ -25,9 +26,9 @@ class const MoclListItem({super.key}) extends StatelessWidget with ListEvent {
     final titleStyle = styles.title(isRead);
     final infoStyle = styles.smallTitle(isRead);
 
-    final bool compact = ListStyleScope.compactOf(context);
+    final CompactSpacing? compact = ListStyleScope.compactOf(context);
     // 컴팩트는 닉 이미지를 그리지 않는다(행이 낮아 자리가 없고, 넘길 때 이미지 요청도 준다).
-    final hasNickImage = !compact && item.userInfo.nickImage.isNotEmpty;
+    final hasNickImage = compact == null && item.userInfo.nickImage.isNotEmpty;
     final hasReply = item.reply.isNotEmpty && item.reply != '0';
 
     // 답글 배지는 코랄 톤의 필드 칩(강조색 12% 배경, 테두리 없음).
@@ -62,8 +63,9 @@ class const MoclListItem({super.key}) extends StatelessWidget with ListEvent {
 
     final Widget row = InkWell(
       onTap: () => handleItemTap(context, item),
-      child: compact
+      child: compact != null
           ? _CompactRow(
+              spacing: compact,
               title: _ListTitle(
                 title: item.title,
                 category: showCategory ? item.category : '',
@@ -252,25 +254,24 @@ class const _ListTitle({
   );
 }
 
-/// 컴팩트 행: `[제목 한 줄 … 배지]` / 정보 한 줄. 위아래 여백 9 · 줄 사이 3.
+/// 컴팩트 행: `[제목 한 줄 … 배지]` / 정보 한 줄. 위아래 여백 · 줄 사이는 화면 높이에 맞춘
+/// [spacing](`compactSpacingFor`).
 ///
-/// 광고 칸(`ListAdStyle.from(compact: true)` ↔ `ListNativeAdFactory.kt`)이 같은 여백을 쓴다 —
+/// 광고 칸(`ListAdStyle.from(compact:)` ↔ `ListNativeAdFactory.kt`)이 같은 값을 쓴다 —
 /// 한쪽을 바꾸면 다른 쪽도 같이.
 class const _CompactRow({
+  required final CompactSpacing spacing,
   required final Widget title,
   required final Widget? info,
   required final Widget? badge,
 }) extends StatelessWidget {
-  static const double paddingVertical = 9;
-  static const double rowGap = 3;
-
   @override
   Widget build(BuildContext context) => Padding(
-    padding: const EdgeInsets.only(
+    padding: EdgeInsets.only(
       left: 16,
       right: 10,
-      top: paddingVertical,
-      bottom: paddingVertical,
+      top: spacing.padding,
+      bottom: spacing.padding,
     ),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -286,7 +287,7 @@ class const _CompactRow({
         ),
         if (info case final Widget info)
           Padding(
-            padding: const EdgeInsets.only(top: rowGap),
+            padding: EdgeInsets.only(top: spacing.gap),
             child: info,
           ),
       ],

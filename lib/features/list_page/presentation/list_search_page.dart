@@ -1,3 +1,4 @@
+import 'package:mocl_flutter/features/list_page/domain/list_density.dart';
 import 'package:mocl_flutter/core/presentation/widgets/site_accent_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -162,7 +163,9 @@ class const _SearchResults({
     return ListStyleScope(
       styles: styles,
       showCategory: searchShowCategoryState(ref),
-      compact: searchCompactListState(ref),
+      compact: searchCompactListState(ref)
+          ? compactSpacingFor(MediaQuery.sizeOf(context).height)
+          : null,
       child: SearchHighlightScope(
         query: query,
         child: RefreshIndicator.adaptive(

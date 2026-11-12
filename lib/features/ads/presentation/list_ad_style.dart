@@ -20,7 +20,9 @@ class ListAdStyle._({
   required final double badgeLineHeight,
   required final double paddingStart,
   required final double paddingEnd,
-  final bool compact = false,
+
+  /// 컴팩트 목록 행과 같은 위아래 여백 · 줄 사이(기본 목록이면 null).
+  final ({double padding, double gap})? compact,
 }) with Equatable implements NativeAdLook {
   /// 목록 행([AppTextStyles])의 안 읽은 글 스타일을 따른다.
   ///
@@ -33,7 +35,7 @@ class ListAdStyle._({
     double paddingEnd = 10,
 
     /// 컴팩트 목록 사이(행과 같은 위아래 여백 · 줄 사이).
-    bool compact = false,
+    ({double padding, double gap})? compact,
   }) => ListAdStyle._(
     background: background,
     paddingStart: paddingStart,
@@ -51,8 +53,8 @@ class ListAdStyle._({
   static const double _rowGapDefault = 8;
 
   // 컴팩트 목록 행(`_CompactRow`)과 같은 값.
-  double get _paddingVertical => compact ? 9 : _paddingVerticalDefault;
-  double get _rowGap => compact ? 3 : _rowGapDefault;
+  double get _paddingVertical => compact?.padding ?? _paddingVerticalDefault;
+  double get _rowGap => compact?.gap ?? _rowGapDefault;
   static const double _iconSize = 16;
   static const double _badgePaddingVertical = 1.5;
 

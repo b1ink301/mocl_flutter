@@ -299,9 +299,10 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   응답보다 먼저 끝에 닿아 멈췄다가, 붙는 순간 빈 화면만큼의 행을 한 프레임에 그린다.
   쪽이 붙을 때 이미 그려진 행(`MoclListItem`)은 리빌드되지 않는다(`list_screen_rebuild_test`).
 - 목록 밀도(설정 "목록 밀도", `ListDensity` · `list_density`): 기본 · 컴팩트. 컴팩트는 제목 한 줄 + 배지를 제목 옆으로,
-  닉 이미지 없이 위아래 여백 9 · 줄 사이 3(`_CompactRow`). 값은 `ListStyleScope.compact` 로 내려 스크롤 중엔 비용이 없고,
+  닉 이미지 없이 여백을 줄인다(`_CompactRow`). 여백은 화면 세로 길이로 정한다(`compactSpacingFor`: 700dp 이하 9 · 3 →
+  900dp 이상 13 · 4) — 세로로 긴 화면에서 행이 너무 빽빽해지지 않게. 픽셀 밀도는 dp 로 이미 보정돼 보지 않는다. 값은 `ListStyleScope.compact` 로 내려 스크롤 중엔 비용이 없고,
   행은 `const MoclListItem` 그대로(`list_screen_rebuild_test` 의 컴팩트 케이스가 지킨다). 컴팩트는 한 화면에 행이 1.4배라
-  다음 쪽을 끝에서 15개 남았을 때 받는다. 목록 광고도 같은 여백(`ListAdStyle.from(compact:)` → `paddingVertical` ·
+  다음 쪽을 끝에서 15개 남았을 때 받는다. 목록 광고도 같은 값(`ListAdStyle.from(compact:)` → `paddingVertical` ·
   `rowGap` 옵션 ↔ `ListNativeAdFactory.kt`, 옵션이 없으면 상수 14 · 8). 카드형 · 썸네일은 넣지 않았다(목록 데이터에 썸네일
   주소가 없고, 넘기는 중 이미지 디코딩이 프레임을 민다).
 - 댓글은 글자와 `<br>` 뿐이면 HTML 위젯 없이 `Text` 로 그린다(`plainTextOfSimpleHtml` · `_CommentBody`).

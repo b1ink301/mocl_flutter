@@ -12,8 +12,8 @@ class const ListAdSeparator({
   required final int index,
   required final AppTextStyles styles,
 
-  /// 컴팩트 목록이면 광고 칸도 같은 여백으로.
-  final bool compact = false,
+  /// 컴팩트 목록이면 그 행과 같은 위아래 여백 · 줄 사이(기본이면 null).
+  final ({double padding, double gap})? compact,
   super.key,
 }) extends StatelessWidget {
   @override

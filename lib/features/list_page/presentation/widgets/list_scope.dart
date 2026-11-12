@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:mocl_flutter/features/list_page/domain/list_density.dart';
 
 import '../../../../config/mocl_text_styles.dart';
 
@@ -25,8 +26,9 @@ class const ListStyleScope({
   required final AppTextStyles styles,
   // 설정 "말머리 보기". 스타일처럼 목록 전체에 같은 값이라 여기서 함께 내린다.
   final bool showCategory = true,
-  // 설정 "목록 밀도" 가 컴팩트인지. 스크롤 중엔 바뀌지 않는다(바꾸면 행을 한 번 다시 그린다).
-  final bool compact = false,
+  // 설정 "목록 밀도" 가 컴팩트면 그 여백(화면 높이에 맞춤), 기본이면 null.
+  // 스크롤 중엔 바뀌지 않는다(바꾸면 행을 한 번 다시 그린다).
+  final CompactSpacing? compact,
   required super.child,
   super.key,
 }) extends InheritedWidget {
@@ -37,7 +39,7 @@ class const ListStyleScope({
       .dependOnInheritedWidgetOfExactType<ListStyleScope>()!
       .showCategory;
 
-  static bool compactOf(BuildContext context) =>
+  static CompactSpacing? compactOf(BuildContext context) =>
       context.dependOnInheritedWidgetOfExactType<ListStyleScope>()!.compact;
 
   @override

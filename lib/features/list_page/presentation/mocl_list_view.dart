@@ -1,3 +1,4 @@
+import 'package:mocl_flutter/features/list_page/domain/list_density.dart';
 import 'package:mocl_flutter/core/presentation/widgets/window_size.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
@@ -58,7 +59,10 @@ class const MoclListView({super.key})
       onRetry: () => handleRetry(ref),
     );
 
-    final bool compact = compactListState(ref);
+    // 컴팩트면 화면 높이에 맞춘 여백(세로로 긴 화면일수록 넉넉하게).
+    final CompactSpacing? compact = compactListState(ref)
+        ? compactSpacingFor(MediaQuery.sizeOf(context).height)
+        : null;
 
     return ListStyleScope(
       styles: styles,
@@ -84,7 +88,7 @@ class const MoclListView({super.key})
                       // 기본(3)이면 빠르게 넘길 때 응답(150~250ms)보다 먼저 끝에
                       // 닿아 스크롤이 멈췄다가, 붙는 순간 빈 화면만큼의 행을 한
                       // 프레임에 그린다. 반 쪽쯤 앞에서 미리 받는다.
-                      invisibleItemsThreshold: compact
+                      invisibleItemsThreshold: compact != null
                           ? _compactPrefetchThreshold
                           : _prefetchThreshold,
                       itemBuilder: (context, item, index) => ListItemScope(
