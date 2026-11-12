@@ -57,6 +57,8 @@
 -keep class io.flutter.plugins.sharedpreferences.** { *; }
 -keep class io.flutter.embedding.engine.plugins.FlutterPlugin$FlutterPluginBinding { *; }
 -keep class io.flutter.embedding.engine.plugins.activity.ActivityPluginBinding { *; }
+# shared_preferences_android 2.5.5 부터 바인딩이 FlutterEngine 도 이름으로 찾는다.
+-keep class io.flutter.embedding.engine.FlutterEngine { *; }
 
 # ------------------------------------------------------------
 # google_mobile_ads(play-services-ads) → work-runtime 2.7.0 → room-runtime 2.2.5
