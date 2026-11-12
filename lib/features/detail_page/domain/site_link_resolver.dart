@@ -1,3 +1,4 @@
+import 'package:mocl_flutter/features/database/domain/entities/post_snapshot.dart';
 import 'package:mocl_shared/entities/mocl_list_item.dart';
 import 'package:mocl_shared/entities/mocl_site_type.dart';
 
@@ -368,4 +369,9 @@ abstract final class SiteLinkResolver() {
     siteType,
     ListItem.empty().copyWith(id: id, url: url, board: board),
   );
+}
+
+/// 보관함(스크랩 · 히스토리)에서 글을 열 때. 전역 사이트를 바꾸지 않고 그 글의 사이트로 상세를 연다.
+extension PostSnapshotSiteLink on PostSnapshot {
+  SiteLink get siteLink => SiteLink(siteType, toListItem());
 }

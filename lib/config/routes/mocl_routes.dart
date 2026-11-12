@@ -7,6 +7,7 @@ abstract class Routes._() {
   static const search = '/search';
   static const detail = '/detail';
   static const mute = '/mute';
+  static const accent = '/accent';
   static const keywordAlerts = '/keyword-alerts';
   static const keywordAlertInbox = '/keyword-alert-inbox';
   static const issueDetail = '/issue';

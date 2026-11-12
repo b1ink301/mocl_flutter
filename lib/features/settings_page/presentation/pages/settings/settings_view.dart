@@ -1,3 +1,5 @@
+import 'package:mocl_flutter/core/application/accent_mixin.dart';
+import 'package:mocl_flutter/features/settings_page/presentation/pages/accent/accent_page.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -86,6 +88,8 @@ class const SettingsView({super.key})
                     onChanged: (mode) => handleChangeThemeMode(ref, mode),
                   ),
                 ),
+                const _TileDivider(),
+                const _AccentTile(),
                 const _TileDivider(),
                 _SettingsTile(
                   icon: Icons.format_size,
@@ -654,6 +658,42 @@ class const _SettingsTile({
               if (trailing != null) ...[const SizedBox(width: 8), trailing!],
             ],
           ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 강조색 줄: 지금 고른 방식 · 색 점 → 강조색 화면.
+class const _AccentTile() extends ConsumerWidget with AppAccentState {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final ThemeData theme = Theme.of(context);
+    final AppTextStyles styles = ref.watch(appTextStylesFontSizeProvider);
+    return Semantics(
+      identifier: 'settings_accent',
+      child: _SettingsTile(
+        icon: Icons.palette_outlined,
+        title: '강조색',
+        onTap: () => context.push(Routes.accent),
+        trailing: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Text(
+              AccentPage.labelOf(accentSettingState(ref)),
+              style: styles.smallTextStyle,
+            ),
+            const SizedBox(width: 8),
+            DecoratedBox(
+              decoration: BoxDecoration(
+                color: theme.colorScheme.primary,
+                shape: BoxShape.circle,
+              ),
+              child: const SizedBox(width: 12, height: 12),
+            ),
+            const SizedBox(width: 4),
+            const Icon(Icons.chevron_right, size: 22),
+          ],
         ),
       ),
     );

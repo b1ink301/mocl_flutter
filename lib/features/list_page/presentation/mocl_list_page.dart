@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:mocl_flutter/core/presentation/widgets/site_accent_theme.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:material_ui/material_ui.dart';
@@ -16,9 +17,13 @@ import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mi
 import 'mocl_list_view.dart';
 
 class const MoclListPage({super.key}) extends StatelessWidget {
-  static Widget init(MainItem item) => ProviderScope(
-    overrides: ListEvent.overridesProviderScope(item),
-    child: const MoclListPage(),
+  /// "사이트 색" 모드면 그 게시판 사이트의 강조색으로 덮는다.
+  static Widget init(MainItem item) => SiteAccentTheme(
+    site: item.siteType,
+    child: ProviderScope(
+      overrides: ListEvent.overridesProviderScope(item),
+      child: const MoclListPage(),
+    ),
   );
 
   @override

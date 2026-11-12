@@ -134,6 +134,15 @@ class const AppTextStyles({
   static TextStyle _create(Color color, double fontSize) =>
       TextStyle(color: color, fontSize: fontSize, fontFamily: kAppFontFamily);
 
+  /// 안 읽은 글 배지 색을 [accent](그 화면 테마의 강조색)로 바꾼 스타일.
+  ///
+  /// 이 스타일은 provider 로 앱 전체에 하나라 배지 색이 기본 코랄로 들어 있다. 배지를
+  /// 그리는 곳(목록 · 광고)에서 `Theme.of(context).colorScheme.primary` 를 넘겨, 설정한
+  /// 강조색 · 사이트 색을 따르게 한다. 같은 색이면 그대로 돌려준다.
+  AppTextStyles withAccent(Color accent) => badgeTextStyle.color == accent
+      ? this
+      : copyWith(badgeTextStyle: badgeTextStyle.copyWith(color: accent));
+
   @override
   AppTextStyles copyWith({
     TextStyle? titleTextStyle,

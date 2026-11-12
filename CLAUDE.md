@@ -222,6 +222,25 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
 - 상세의 스크랩 버튼으로 켜면(`BookmarkFlow.afterBookmarked`) 폴더가 있을 때만 폴더 · 메모 시트를 띄우고,
   없으면 "스크랩했어요" 스낵바에 "폴더 · 메모" 버튼만 둔다(폴더를 안 쓰는 사람은 한 번에 끝).
 
+## 강조색 (`config/accent_palette.dart` · `core/application/accent_provider.dart`)
+
+- 설정 → 강조색(`AccentPage`, `Routes.accent`): 기본(코랄) · 사이트 색 · 직접 고르기(7색). **강조색만** 바꾸고 종이 배경 ·
+  글자 · 구분선은 그대로 둔다. 설정은 동기 SharedPreferences(`accent_mode` · `accent_custom`)라 첫 프레임부터 그 색이다.
+- 테마는 `MoclTheme.light(accent)` · `dark(accent)`(색마다 캐시). 시드도 강조색으로 만든다 — primary 만 덮으면
+  secondary 등 다른 역할에 코랄이 남는다. `MoclTheme.lightTheme` 는 코랄 기본값(테스트용).
+- 사이트 색은 브랜드색(`AccentPalette.brandOf`, 로고 에셋 · `theme-color`)에서 **색상은 두고 밝기만** 당겨 만든다
+  (`derive`: 라이트는 코랄만큼 읽히고 잉크와 구분되는 밝기, 다크는 어두운 배경 대비 4.5 이상). 색을 바꾸려면 기준값만
+  고친다. `accent_palette_test` 가 모든 사이트 · 팔레트 색의 대비를 지킨다. 뽐뿌 · 아카라이브 · 다모앙은 잠정값.
+- 전역 강조색(`appAccentProvider`)은 사이트 색 모드에서 드로어에서 고른 사이트 색. 목록 · 검색 · 상세는
+  `SiteAccentTheme`(지역 `Theme`)으로 **그 화면의 사이트 색**을 덮는다(이슈 · 보관함 · 링크로 연 다른 사이트 글).
+  `DetailPage.init(siteType:)` 이 있을 때만 덮는다(없으면 전역 사이트 글).
+- 목록 배지 색은 글자 스타일 provider(코랄 고정)가 아니라 화면 테마에서 온다 — 배지를 그리는 곳에서
+  `styles.withAccent(Theme.of(context).colorScheme.primary)`(목록 · 검색 · 광고 모양). 새 배지를 그릴 때도 같이 한다.
+- 광고 배지 · 버튼도 화면 강조색을 따른다. 다른 사이트 글로 건너가면 미리 받아 둔 상세 광고 1개는 모양이 달라 버려진다(감수).
+- 보관함(스크랩 · 히스토리)에서 글을 열 때 전역 사이트를 바꾸지 않는다(`PostSnapshot.siteLink` 로 상세에 사이트를 넘김).
+  바꾸면 게시판 탭과 강조색까지 따라 바뀐다.
+- 드로어 사이트 칩은 사이트 색 모드에서만 색 점을 찍는다. 삭제(밀어서 지우기 등)는 빨강(`Colors.red` · `error`) 그대로.
+
 ## 동영상 플레이어 (`features/media_player/`)
 
 - 본문 링크(유튜브 · mp4/m3u8)와 본문 `<video>` 는 앱 플레이어로 연다(설정 "앱에서 동영상 재생" 이 꺼지면

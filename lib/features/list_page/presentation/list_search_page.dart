@@ -1,3 +1,4 @@
+import 'package:mocl_flutter/core/presentation/widgets/site_accent_theme.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:go_router/go_router.dart';
@@ -31,9 +32,13 @@ import 'widgets/search_history_view.dart';
 /// 결과 행은 게시판 목록과 같은 [MoclListItem] 이고 제목의 검색어를 강조한다.
 /// 넓은 화면에서는 목록처럼 옆 칸에 글을 연다.
 class const ListSearchPage({super.key}) extends StatelessWidget {
-  static Widget init(MainItem item) => ProviderScope(
-    overrides: ListSearchEvent.overridesProviderScope(item),
-    child: const ListSearchPage(),
+  /// "사이트 색" 모드면 그 게시판 사이트의 강조색으로 덮는다.
+  static Widget init(MainItem item) => SiteAccentTheme(
+    site: item.siteType,
+    child: ProviderScope(
+      overrides: ListSearchEvent.overridesProviderScope(item),
+      child: const ListSearchPage(),
+    ),
   );
 
   @override
@@ -55,7 +60,9 @@ class const _SearchScaffold()
     bindSearchReadListener(ref);
 
     final ThemeData theme = Theme.of(context);
-    final AppTextStyles styles = searchTextStyles(ref);
+    // 배지는 이 화면의 강조색(설정 · 사이트 색)을 따른다.
+    final AppTextStyles styles = searchTextStyles(ref)
+        .withAccent(theme.colorScheme.primary);
     final MainItem board = searchBoardState(ref);
     final String query = searchQueryState(ref);
     final TextEditingController controller = useTextEditingController();

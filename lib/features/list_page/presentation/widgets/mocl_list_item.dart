@@ -33,9 +33,9 @@ class const MoclListItem({super.key}) extends StatelessWidget with ListEvent {
     Widget? replyBadge;
     if (hasReply) {
       final badgeStyle = styles.badge(isRead);
-      final badgeBg = (badgeStyle.color ?? const Color(0xFFE8552D)).withValues(
-        alpha: 0.12,
-      );
+      final badgeBg =
+          (badgeStyle.color ?? Theme.of(context).colorScheme.primary)
+              .withValues(alpha: 0.12);
       final int newReplies = isRead ? item.newReplyCount : 0;
       replyBadge = newReplies > 0
           ? _NewReplyBadge(
@@ -146,15 +146,16 @@ class const _NewReplyBadge({
   required final Color background,
   required final TextStyle accentStyle,
 }) extends StatelessWidget {
-
   /// `+` 크기(숫자 대비).
   static const double _plusScale = 0.75;
 
   @override
   Widget build(BuildContext context) {
     // 안 읽은 글의 댓글 배지(RoundTextWidget)와 같은 글자 · 배경.
-    final Color accentBg = (accentStyle.color ?? const Color(0xFFE8552D))
-        .withValues(alpha: 0.12);
+    final Color accentBg =
+        (accentStyle.color ?? Theme.of(context).colorScheme.primary).withValues(
+          alpha: 0.12,
+        );
     final TextStyle newStyle = accentStyle.fontFamily == null
         ? accentStyle.copyWith(fontFamily: kAppFontFamily)
         : accentStyle;

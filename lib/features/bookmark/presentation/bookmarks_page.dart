@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:mocl_flutter/features/detail_page/domain/site_link_resolver.dart';
 import 'package:mocl_flutter/core/presentation/widgets/window_size.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -56,7 +57,7 @@ class const BookmarksPage({
         detailBuilder: (_, b) =>
             DetailPage.init(b.toListItem(), siteType: b.siteType),
         pushDetail: (context, b) =>
-            context.push<void>(Routes.detail, extra: b.toListItem()),
+            context.push<void>(Routes.detail, extra: b.siteLink),
         keyOf: _bookmarkKey,
         detailRoutePath: Routes.detail,
       );
@@ -168,12 +169,10 @@ class const _BookmarksScaffold({
                       onLongPress: () =>
                           unawaited(BookmarkFlow.showActions(context, ref, b)),
                       onTap: () {
-                        // 상세는 현재 사이트 기준으로 동작하므로 먼저 사이트를 전환한다.
-                        ref
-                            .read(currentSiteTypeProvider.notifier)
-                            .changeSiteType(b.siteType);
+                        // 전역 사이트는 그대로 두고 그 글의 사이트로 연다(링크 · 알림과 같은 길).
+                        // 사이트를 바꾸면 게시판 탭 · 강조색까지 따라 바뀐다.
                         if (ListDetailScope.tryOpen(context, b)) return;
-                        context.push(Routes.detail, extra: b.toListItem());
+                        context.push(Routes.detail, extra: b.siteLink);
                       },
                     );
                   },

@@ -1,27 +1,38 @@
 import 'package:material_ui/material_ui.dart';
 import 'package:flutter/services.dart';
+import 'package:mocl_flutter/config/accent_palette.dart';
 import 'package:mocl_flutter/config/mocl_text_styles.dart';
 
 /// "Paper" 디자인 테마.
 ///
-/// 웜 뉴트럴(종이) 배경 + 단일 코랄 강조 + 밝은 앱바(잉크 텍스트).
+/// 웜 뉴트럴(종이) 배경 + 단일 강조색(기본 코랄, 설정 "강조색" 으로 바꿈) + 밝은 앱바(잉크 텍스트).
 /// 경계는 굵은 선이 아니라 헤어라인(1px)과 여백으로 표현한다.
 ///
 /// Material 3 컴포넌트는 색을 [ColorScheme] 역할에서 읽으므로, Paper 토큰을
 /// 스킴 역할에 그대로 박아 기본 시드(보라)가 새어 나오지 않게 한다.
 /// 강조는 [ColorScheme.primary], 보조 텍스트는 [ColorScheme.onSurfaceVariant].
 class MoclTheme() {
-  static final ThemeData lightTheme = _build(
+  /// 기본(코랄) 테마.
+  static final ThemeData lightTheme = light(AccentPalette.coral);
+  static final ThemeData darkTheme = dark(AccentPalette.coral);
+
+  static final Map<AccentColors, ThemeData> _lightCache = {};
+  static final Map<AccentColors, ThemeData> _darkCache = {};
+
+  /// [accent] 로 강조색만 바꾼 라이트 테마. 배경 · 글자 · 구분선은 그대로다.
+  /// 같은 색이면 같은 인스턴스를 돌려준다(사이트를 오갈 때 다시 만들지 않는다).
+  static ThemeData light(AccentColors accent) => _lightCache[accent] ??= _build(
     brightness: Brightness.light,
     colorScheme:
         ColorScheme.fromSeed(
-          seedColor: MoclColors.accentLight,
+          // 시드도 강조색으로 — secondary · tertiary 등 다른 역할에 코랄이 남지 않게.
+          seedColor: accent.light,
           brightness: Brightness.light,
         ).copyWith(
-          primary: MoclColors.accentLight,
+          primary: accent.light,
           onPrimary: Colors.white,
-          primaryContainer: MoclColors.accentWeakLight,
-          onPrimaryContainer: MoclColors.accentLight,
+          primaryContainer: accent.lightWeak,
+          onPrimaryContainer: accent.light,
           surface: MoclColors.bgLight,
           onSurface: MoclColors.inkLight,
           onSurfaceVariant: MoclColors.subLight,
@@ -39,17 +50,17 @@ class MoclTheme() {
     popupColor: MoclColors.surfaceLight,
   );
 
-  static final ThemeData darkTheme = _build(
+  static ThemeData dark(AccentColors accent) => _darkCache[accent] ??= _build(
     brightness: Brightness.dark,
     colorScheme:
         ColorScheme.fromSeed(
-          seedColor: MoclColors.accentDark,
+          seedColor: accent.dark,
           brightness: Brightness.dark,
         ).copyWith(
-          primary: MoclColors.accentDark,
+          primary: accent.dark,
           onPrimary: MoclColors.bgDark,
-          primaryContainer: MoclColors.accentWeakDark,
-          onPrimaryContainer: MoclColors.accentDark,
+          primaryContainer: accent.darkWeak,
+          onPrimaryContainer: accent.dark,
           surface: MoclColors.bgDark,
           onSurface: MoclColors.inkDark,
           onSurfaceVariant: MoclColors.subDark,
@@ -66,6 +77,10 @@ class MoclTheme() {
     faint: MoclColors.faintDark,
     popupColor: MoclColors.surfaceDark,
   );
+
+  /// 밝기에 맞는 테마([SiteAccentTheme] 처럼 화면 일부만 다른 강조색으로 덮을 때).
+  static ThemeData of(Brightness brightness, AccentColors accent) =>
+      brightness == Brightness.dark ? dark(accent) : light(accent);
 
   static ThemeData _build({
     required Brightness brightness,

@@ -1,3 +1,5 @@
+import 'package:mocl_flutter/config/accent_palette.dart';
+import 'package:mocl_flutter/core/application/accent_mixin.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_category.dart';
@@ -162,7 +164,7 @@ class const _DrawerHeader() extends ConsumerWidget with SettingsState {
 class const _SiteTag({
   required final SiteType siteType,
   required final int count,
-}) extends ConsumerWidget with MainState, MainEvent {
+}) extends ConsumerWidget with MainState, MainEvent, AppAccentState {
   // Paper 팔레트에 맞춘 웜 뉴트럴 칩(비선택). 선택 시엔 강조색으로 채운다.
   static const Color _tagBgLight = Color(0xFFF1EEEA);
   static const Color _tagBorderLight = Color(0xFFE4E1DB);
@@ -201,6 +203,17 @@ class const _SiteTag({
           child: Row(
             mainAxisSize: MainAxisSize.min,
             children: [
+              // "사이트 색" 모드면 고르기 전에 색을 알 수 있게 사이트 색 점을 찍는다.
+              if (!isSelected && siteAccentModeState(ref)) ...[
+                DecoratedBox(
+                  decoration: BoxDecoration(
+                    color: AccentPalette.site(siteType).of(theme.brightness),
+                    shape: BoxShape.circle,
+                  ),
+                  child: const SizedBox(width: 8, height: 8),
+                ),
+                const SizedBox(width: 6),
+              ],
               PlainText(
                 siteType.title,
                 style: baseStyle.copyWith(

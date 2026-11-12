@@ -13,7 +13,10 @@ class const MainAdTile({required final AppTextStyles styles, super.key})
   @override
   Widget build(BuildContext context) => SingleNativeAd(
     adUnitId: AdUnitIds.mainNative,
-    look: ListAdStyle.from(styles, Theme.of(context).scaffoldBackgroundColor),
+    look: ListAdStyle.from(
+      styles.withAccent(Theme.of(context).colorScheme.primary),
+      Theme.of(context).scaffoldBackgroundColor,
+    ),
     frame: (ad) => Column(
       mainAxisSize: MainAxisSize.min,
       children: [ad, const PlainDividerWidget()],

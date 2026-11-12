@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mocl_flutter/features/detail_page/domain/site_link_resolver.dart';
 import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/core/presentation/widgets/category_tag.dart';
@@ -49,7 +50,7 @@ class const HistoryPage({
         detailBuilder: (_, p) =>
             DetailPage.init(p.toListItem(), siteType: p.siteType),
         pushDetail: (context, p) =>
-            context.push<void>(Routes.detail, extra: p.toListItem()),
+            context.push<void>(Routes.detail, extra: p.siteLink),
         keyOf: _keyOf,
         detailRoutePath: Routes.detail,
       );
@@ -162,12 +163,10 @@ class const _HistoryScaffold({
                       onRemove: () =>
                           unawaited(removeHistory(ref, post.siteType, post.id)),
                       onTap: () {
-                        // 상세는 현재 사이트 기준으로 동작하므로 먼저 사이트를 전환한다.
-                        ref
-                            .read(currentSiteTypeProvider.notifier)
-                            .changeSiteType(post.siteType);
+                        // 전역 사이트는 그대로 두고 그 글의 사이트로 연다(링크 · 알림과 같은 길).
+                        // 사이트를 바꾸면 게시판 탭 · 강조색까지 따라 바뀐다.
                         if (ListDetailScope.tryOpen(context, post)) return;
-                        context.push(Routes.detail, extra: post.toListItem());
+                        context.push(Routes.detail, extra: post.siteLink);
                       },
                     ),
                   },

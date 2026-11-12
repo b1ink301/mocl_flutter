@@ -41,8 +41,9 @@ class const MoclListView({super.key})
 
     final controller = listPageController(ref);
     final singlePageBoard = isSinglePageBoardState(ref);
-    final styles = appTextStyles(ref);
     final focusColor = Theme.of(context).colorScheme.primary;
+    // 배지 · 광고는 이 화면의 강조색(설정 · 사이트 색)을 따른다.
+    final styles = appTextStyles(ref).withAccent(focusColor);
     final bottom = MediaQuery.of(context).padding.bottom;
     final adSlots = useListAdSlots(listAdPlacementState(ref));
 

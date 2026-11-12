@@ -12,6 +12,7 @@ import 'package:mocl_flutter/features/keyword_alerts/presentation/keyword_alert_
 import 'package:mocl_flutter/features/keyword_alerts/presentation/keyword_alerts_page.dart';
 import 'package:mocl_shared/radar/issue_feed.dart';
 import 'package:mocl_flutter/features/mute/presentation/mute_page.dart';
+import 'package:mocl_flutter/features/settings_page/presentation/pages/accent/accent_page.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/photo_view_dialog.dart';
 import 'package:mocl_flutter/features/list_page/presentation/list_search_page.dart';
 import 'package:mocl_flutter/features/list_page/presentation/mocl_list_page.dart';
@@ -118,6 +119,13 @@ class AppPages._() {
         path: Routes.mute,
         pageBuilder: (BuildContext context, GoRouterState state) =>
             SwipeBackPage(builder: (BuildContext context) => const MutePage()),
+      ),
+      GoRoute(
+        path: Routes.accent,
+        pageBuilder: (BuildContext context, GoRouterState state) =>
+            SwipeBackPage(
+              builder: (BuildContext context) => const AccentPage(),
+            ),
       ),
       GoRoute(
         path: Routes.issueDetail,

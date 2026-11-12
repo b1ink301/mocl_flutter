@@ -9,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:mocl_shared/entities/mocl_list_item.dart';
 import 'package:mocl_shared/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/core/presentation/widgets/site_accent_theme.dart';
 import 'package:mocl_flutter/core/presentation/widgets/list_detail_layout.dart';
 import 'package:mocl_flutter/core/presentation/widgets/window_size.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/widgets/detail_scope.dart';
@@ -21,10 +22,17 @@ import 'mocl_detail_view.dart';
 import 'state/detail_event_mixin.dart';
 
 class const DetailPage({super.key}) extends StatelessWidget {
-  static Widget init(ListItem item, {SiteType? siteType}) => ProviderScope(
-    overrides: DetailEvent.overridesProviderScope(item, siteType: siteType),
-    child: const DetailPage(),
-  );
+  /// [siteType] 이 있으면(링크 · 이슈 · 보관함에서 연 글) "사이트 색" 모드에서 그 사이트
+  /// 강조색으로 덮는다. 없으면 전역 사이트 글이라 앱 테마가 이미 그 색이다.
+  static Widget init(ListItem item, {SiteType? siteType}) {
+    final Widget page = ProviderScope(
+      overrides: DetailEvent.overridesProviderScope(item, siteType: siteType),
+      child: const DetailPage(),
+    );
+    return siteType == null
+        ? page
+        : SiteAccentTheme(site: siteType, child: page);
+  }
 
   @override
   Widget build(BuildContext context) {

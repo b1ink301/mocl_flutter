@@ -51,6 +51,17 @@ class const DetailAdCard({required final AppTextStyles styles, super.key})
 /// 상세 광고 모양. [DetailAdCard] 와 [DetailAdPrefetch] 가 같은 값을 써야 미리 받은 광고를 쓴다.
 NativeAdLook detailAdLook(
   DetailAdSize size,
+  AppTextStyles appStyles,
+  ThemeData theme,
+  double width,
+) {
+  // 배지 · 버튼은 이 화면의 강조색(설정 · 사이트 색)을 따른다.
+  final AppTextStyles styles = appStyles.withAccent(theme.colorScheme.primary);
+  return _detailAdLook(size, styles, theme, width);
+}
+
+NativeAdLook _detailAdLook(
+  DetailAdSize size,
   AppTextStyles styles,
   ThemeData theme,
   double width,
