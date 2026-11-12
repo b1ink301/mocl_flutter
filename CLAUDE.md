@@ -404,6 +404,13 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   `proguard-rules.pro` 의 RoomDatabase keep 이 필요하다(빠지면 release 가 시작 즉시 죽는다).
 
 ## 앱 업데이트 (`features/app_update/`)
+- 상세 광고는 미리 받아 둔다(`NativeAdPreloader.detail`, 들고 있는 광고는 하나). 자리(`DetailAdCard`)가 본문 끝에
+  있어 본문이 길면 끝에 다다라서야 만들어지고, 그때 요청하면 1~2초 자리 표시만 보였다.
+  화면이 열리고 전환이 끝나면(0.3초 뒤) `DetailAdPrefetch`(본문 맨 위, 광고와 같은 폭을 받는 빈 칸)가 받아 두고,
+  광고가 뜬 뒤 스크롤이 멈춰 조용하면 `SingleNativeAd` 가 다음 글 몫을 받아 둔다. 둘이 같은 모양을 쓰도록
+  모양은 `detailAdLook` 하나로 만든다(모양이 다르면 받아 둔 광고를 버린다). 자리는 `SliverList` 안이라
+  받은 광고가 스크롤로 멀어져도 살아 있다(keep-alive, 되돌아올 때 다시 받지 않는다).
+  `NativeAdSwitcher` 는 스크롤 중뿐 아니라 화면 전환 중에도 광고 뷰를 붙이지 않는다.
 
 - 우리 서버가 아니라 **스토어 버전과 비교**한다. 앱 실행 3초 뒤 `AppUpdateGate` 가 한 번 확인하고,
   설정 "앱 정보 → 업데이트 확인" 으로 직접 확인한다(미룸 무시).

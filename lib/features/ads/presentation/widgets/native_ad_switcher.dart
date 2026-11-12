@@ -18,8 +18,9 @@ Duration nativeAdTransition(BuildContext context) =>
 ///
 /// 광고 뷰(플랫폼 뷰)를 붙이는 동안 Android 메인 스레드가 15~20ms 막혀
 /// vsync 가 밀린다(S24 Ultra 120Hz 실측, 2~3 프레임이 빠진다). 그래서 스크롤
-/// 중에는 자리 표시를 유지하다가 스크롤이 멈추면 붙인다. 한 번 붙은 광고는
-/// 스크롤을 다시 시작해도 그대로 둔다.
+/// 중에는 자리 표시를 유지하다가 스크롤이 멈추면 붙인다. 화면이 열리거나 닫히는
+/// 전환 중에도 같은 이유로 기다린다(미리 받아 둔 광고는 화면이 열리자마자 와 있다).
+/// 한 번 붙은 광고는 스크롤을 다시 시작해도 그대로 둔다.
 class const NativeAdSwitcher({
   required final NativeAd? ad,
   required final NativeAdLook look,
@@ -31,6 +32,7 @@ class const NativeAdSwitcher({
 
 class _NativeAdSwitcherState() extends State<NativeAdSwitcher> {
   ValueListenable<bool>? _scrolling;
+  Animation<double>? _route;
 
   /// 화면에 붙인 광고. 스크롤이 멈춰야 [NativeAdSwitcher.ad] 를 여기로 옮긴다.
   NativeAd? _shown;
@@ -38,12 +40,17 @@ class _NativeAdSwitcherState() extends State<NativeAdSwitcher> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    final ValueListenable<bool>? scrolling = Scrollable.maybeOf(
-      context,
-    )?.position.isScrollingNotifier;
+    final ValueListenable<bool>? scrolling = Scrollable.maybeOf(context)
+        ?.position
+        .isScrollingNotifier;
     if (scrolling != _scrolling) {
       _scrolling?.removeListener(_onScrollingChanged);
       _scrolling = scrolling?..addListener(_onScrollingChanged);
+    }
+    final Animation<double>? route = ModalRoute.of(context)?.animation;
+    if (route != _route) {
+      _route?.removeStatusListener(_onRouteStatus);
+      _route = route?..addStatusListener(_onRouteStatus);
     }
     _shown = _next();
   }
@@ -57,6 +64,7 @@ class _NativeAdSwitcherState() extends State<NativeAdSwitcher> {
   @override
   void dispose() {
     _scrolling?.removeListener(_onScrollingChanged);
+    _route?.removeStatusListener(_onRouteStatus);
     super.dispose();
   }
 
@@ -65,8 +73,11 @@ class _NativeAdSwitcherState() extends State<NativeAdSwitcher> {
   NativeAd? _next() {
     final NativeAd? ad = widget.ad;
     if (ad == null || ad == _shown) return ad;
-    return (_scrolling?.value ?? false) ? null : ad;
+    final bool transitioning = !(_route?.isCompleted ?? true);
+    return (_scrolling?.value ?? false) || transitioning ? null : ad;
   }
+
+  void _onRouteStatus(AnimationStatus _) => _onScrollingChanged();
 
   void _onScrollingChanged() {
     final NativeAd? next = _next();

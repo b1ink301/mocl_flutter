@@ -292,6 +292,8 @@ class const _DetailView({
           padding: const EdgeInsets.only(left: 16, right: 8),
           sliver: SliverMainAxisGroup(
             slivers: [
+              // 본문 끝 광고를 화면이 열릴 때 미리 받아 둔다(광고와 같은 폭을 받는 자리).
+              SliverToBoxAdapter(child: DetailAdPrefetch(styles: styles)),
               const _SpaceWidget(),
               // 본문은 sliver(SliverList)로 렌더돼 화면 밖 요소가 mount 되지
               // 않는다. RepaintBoundary 는 SliverListMode 가 자체적으로
@@ -303,8 +305,9 @@ class const _DetailView({
                 onTapUrl: onOpenUrl,
               ),
               const _SpaceWidget(),
-              // 본문을 다 읽고 댓글로 넘어가는 자리에 광고 하나.
-              SliverToBoxAdapter(child: DetailAdCard(styles: styles)),
+              // 본문을 다 읽고 댓글로 넘어가는 자리에 광고 하나. SliverList 라
+              // 받은 광고가 스크롤로 멀어져도 살아 있다(keep-alive, 되돌아올 때 다시 받지 않는다).
+              SliverList.list(children: [DetailAdCard(styles: styles)]),
               if (detail.comments.isNotEmpty) ...[
                 const _SliverDivider(),
                 _CommentHeader(
