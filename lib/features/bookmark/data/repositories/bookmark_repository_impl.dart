@@ -1,6 +1,7 @@
 import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/bookmark/domain/repositories/bookmark_repository.dart';
 import 'package:mocl_flutter/features/database/data/datasources/local/local_database.dart';
+import 'package:mocl_flutter/features/database/domain/entities/bookmark_folder.dart';
 import 'package:mocl_flutter/features/database/domain/entities/post_snapshot.dart';
 
 class const BookmarkRepositoryImpl(final LocalDatabase localDatabase)
@@ -18,4 +19,29 @@ class const BookmarkRepositoryImpl(final LocalDatabase localDatabase)
 
   @override
   Future<List<PostSnapshot>> getAll() => localDatabase.getBookmarks();
+
+  @override
+  Future<void> updateMeta(
+    SiteType siteType,
+    int id, {
+    required List<String> folders,
+    required String memo,
+  }) => localDatabase.updateBookmarkMeta(
+    siteType,
+    id,
+    folders: folders,
+    memo: memo,
+  );
+
+  @override
+  Future<List<BookmarkFolder>> getFolders() =>
+      localDatabase.getBookmarkFolders();
+
+  @override
+  Future<void> putFolder(BookmarkFolder folder) =>
+      localDatabase.putBookmarkFolder(folder);
+
+  @override
+  Future<void> deleteFolder(String id) =>
+      localDatabase.deleteBookmarkFolder(id);
 }

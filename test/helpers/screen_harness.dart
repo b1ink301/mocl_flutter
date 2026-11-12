@@ -14,6 +14,7 @@ import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_shared/entities/mocl_user_info.dart';
 import 'package:mocl_flutter/features/bookmark/application/bookmark_providers.dart';
 import 'package:mocl_flutter/features/bookmark/domain/repositories/bookmark_repository.dart';
+import 'package:mocl_flutter/features/database/domain/entities/bookmark_folder.dart';
 import 'package:mocl_flutter/features/database/domain/entities/post_snapshot.dart';
 import 'package:mocl_flutter/features/database/domain/entities/favorite_data.dart';
 import 'package:mocl_flutter/features/database/domain/entities/favorite_group.dart';
@@ -378,6 +379,23 @@ class _FakeBookmarkRepository() implements BookmarkRepository {
 
   @override
   Future<List<PostSnapshot>> getAll() async => const <PostSnapshot>[];
+
+  @override
+  Future<void> updateMeta(
+    SiteType siteType,
+    int id, {
+    required List<String> folders,
+    required String memo,
+  }) async {}
+
+  @override
+  Future<List<BookmarkFolder>> getFolders() async => const <BookmarkFolder>[];
+
+  @override
+  Future<void> putFolder(BookmarkFolder folder) async {}
+
+  @override
+  Future<void> deleteFolder(String id) async {}
 }
 
 /// `baseUrl` · `supportsTranslation` 만 사용되므로 나머지는 noSuchMethod 로 남긴다.

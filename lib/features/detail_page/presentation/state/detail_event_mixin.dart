@@ -149,7 +149,8 @@ mixin class DetailEvent() {
   Future<bool> handleShareUrl(WidgetRef ref) =>
       ref.read(detailUrlProvider).shareUrl();
 
-  void toggleBookmark(
+  /// 스크랩을 켜고 끈다. 켜졌으면 true.
+  Future<bool> toggleBookmark(
     WidgetRef ref,
     SiteType siteType,
     int id,

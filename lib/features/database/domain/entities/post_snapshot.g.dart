@@ -21,6 +21,12 @@ _PostSnapshot _$PostSnapshotFromJson(Map<String, dynamic> json) =>
       nickName: json['nickName'] as String,
       nickImage: json['nickImage'] as String,
       savedAt: (json['savedAt'] as num).toInt(),
+      folders:
+          (json['folders'] as List<dynamic>?)
+              ?.map((e) => e as String)
+              .toList() ??
+          const <String>[],
+      memo: json['memo'] as String? ?? '',
     );
 
 Map<String, dynamic> _$PostSnapshotToJson(_PostSnapshot instance) =>
@@ -38,6 +44,8 @@ Map<String, dynamic> _$PostSnapshotToJson(_PostSnapshot instance) =>
       'nickName': instance.nickName,
       'nickImage': instance.nickImage,
       'savedAt': instance.savedAt,
+      'folders': instance.folders,
+      'memo': instance.memo,
     };
 
 const _$SiteTypeEnumMap = {

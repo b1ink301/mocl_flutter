@@ -206,6 +206,15 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
 - 링크 · 알림으로 연 글은 목록 항목이 비어 있어 제목 · 작성자를 상세 값으로 채운다(`PostSnapshot.fromDetails`,
   번역문이 아니라 원문 `Details` 를 넘긴다).
 - 30일 · 300개(`LocalDatabase.kHistoryTtl` · `kMaxHistory`), 읽음 기록 정리(`pruneReadsIfDue`)에서 같이 지운다.
+- 스크랩 폴더 · 메모: 한 글을 여러 폴더에 넣는 태그 방식(`PostSnapshot.folders` = 폴더 id 목록, `memo`).
+  두 필드는 `@Default` 라 옛 JSON 도 읽히고, 폴더 목록은 새 스토어 `bookmark_folders`(`BookmarkFolder`, 만든 순)라
+  DB 버전은 올리지 않았다. 폴더를 지우면 모든 스크랩에서 그 id 만 뺀다(글은 남음, `deleteBookmarkFolder` 한 트랜잭션).
+  폴더 색은 말머리 태그 색(`CategoryTone` 순번). 한도: 폴더 20개 · 이름 20자 · 메모 200자.
+- 스크랩 목록(`BookmarksPage`): 칸 전환 아래 검색창(`bookmark_search`, 제목 · 메모 · 사이트 · 게시판, 띄어 쓴 말은 모두 포함)과
+  폴더 칩(`전체 · 폴더… · ＋`, 고른 폴더는 앱이 떠 있는 동안 유지). 거르기는 `BookmarkFilter` 하나로.
+  행 길게 누르기 = 폴더 · 메모 고치기 · 공유 · 지우기, 칩 길게 누르기 = 폴더 고치기 · 지우기. 흐름은 `BookmarkFlow` 에 모은다.
+- 상세의 스크랩 버튼으로 켜면(`BookmarkFlow.afterBookmarked`) 폴더가 있을 때만 폴더 · 메모 시트를 띄우고,
+  없으면 "스크랩했어요" 스낵바에 "폴더 · 메모" 버튼만 둔다(폴더를 안 쓰는 사람은 한 번에 끝).
 
 ## 동영상 플레이어 (`features/media_player/`)
 

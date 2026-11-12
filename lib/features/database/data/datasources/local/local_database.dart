@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:mocl_shared/entities/mocl_site_type.dart';
+import 'package:mocl_flutter/features/database/domain/entities/bookmark_folder.dart';
 import 'package:mocl_flutter/features/database/domain/entities/post_snapshot.dart';
 import 'package:mocl_flutter/features/database/domain/entities/favorite_data.dart';
 import 'package:mocl_flutter/features/database/domain/entities/favorite_group.dart';
@@ -256,6 +257,57 @@ class LocalDatabase({
       finder: Finder(sortOrders: [SortOrder('savedAt', false)]),
     );
     return records.map((r) => PostSnapshot.fromJson(r.value)).toList();
+  }
+
+  /// 스크랩의 폴더 · 메모를 바꾼다. 다른 필드(스크랩한 시각 등)는 그대로.
+  Future<void> updateBookmarkMeta(
+    SiteType siteType,
+    int id, {
+    required List<String> folders,
+    required String memo,
+  }) async {
+    await _bookmarkStore.update(_db, <String, Object?>{
+      'folders': folders,
+      'memo': memo,
+    }, finder: _bookmarkFinder(siteType, id));
+  }
+
+  // ===== 스크랩 폴더 — 전역 `bookmark_folders` 스토어 (키: 폴더 id) =====
+  // 새 스토어라 DB 버전은 올리지 않는다(옛 DB 에는 그냥 비어 있다).
+
+  static final StoreRef<String, Map<String, Object?>> _folderStore =
+      StoreRef<String, Map<String, Object?>>('bookmark_folders');
+
+  /// 만든 순.
+  Future<List<BookmarkFolder>> getBookmarkFolders() async {
+    final records = await _folderStore.find(
+      _db,
+      finder: Finder(sortOrders: [SortOrder('createdAt')]),
+    );
+    return records
+        .map((r) => BookmarkFolder.fromJson(r.key, r.value))
+        .toList(growable: false);
+  }
+
+  Future<void> putBookmarkFolder(BookmarkFolder folder) =>
+      _folderStore.record(folder.id).put(_db, folder.toJson());
+
+  /// 폴더를 지우고 모든 스크랩에서 그 폴더를 뺀다(글은 남는다).
+  Future<void> deleteBookmarkFolder(String id) async {
+    await _db.transaction((txn) async {
+      await _folderStore.record(id).delete(txn);
+      final records = await _bookmarkStore.find(txn);
+      for (final r in records) {
+        final Object? folders = r.value['folders'];
+        if (folders is! List || !folders.contains(id)) continue;
+        await _bookmarkStore.record(r.key).update(txn, <String, Object?>{
+          'folders': [
+            for (final Object? f in folders)
+              if (f != id) f,
+          ],
+        });
+      }
+    });
   }
 
   // ===== 즐겨찾기(게시판) — 전역 `favorites` 스토어 =====

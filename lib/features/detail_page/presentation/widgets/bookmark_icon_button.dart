@@ -1,5 +1,9 @@
 import 'package:material_ui/material_ui.dart';
+
+import 'dart:async';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:mocl_flutter/features/bookmark/presentation/widgets/bookmark_flow.dart';
 import 'package:mocl_flutter/core/presentation/widgets/plain_icon.dart';
 import 'package:mocl_flutter/core/presentation/widgets/plain_icon_button.dart';
 import 'package:mocl_flutter/features/database/domain/entities/post_snapshot.dart';
@@ -22,13 +26,17 @@ class const BookmarkIconButton({super.key})
 
     return PlainIconButton(
       semanticLabel: isOn ? '스크랩 해제' : '스크랩',
-      onPressed: () {
+      onPressed: () async {
         final data = PostSnapshot.fromListItem(
           siteType,
           item,
           DateTime.now().millisecondsSinceEpoch,
         );
-        toggleBookmark(ref, siteType, item.id, data);
+        final bool on = await toggleBookmark(ref, siteType, item.id, data);
+        // 켰으면 폴더 · 메모를 붙일 수 있게 한다(폴더가 없으면 스낵바만).
+        if (on && context.mounted) {
+          unawaited(BookmarkFlow.afterBookmarked(context, ref, data));
+        }
       },
       icon: PlainIcon(isOn ? Icons.bookmark : Icons.bookmark_border),
     );

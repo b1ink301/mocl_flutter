@@ -14,7 +14,8 @@ part 'post_snapshot.g.dart';
 /// 필드를 명시적으로 보관하고 [toListItem] 으로 복원한다.
 ///
 /// [savedAt] 은 그 스토어에 넣은 시각(ms) — 스크랩은 스크랩한 때, 최근 본 글은 마지막으로 본 때.
-/// 필드 이름을 바꾸면 저장된 JSON 과 어긋나니 바꾸지 말 것.
+/// 필드 이름을 바꾸면 저장된 JSON 과 어긋나니 바꾸지 말 것. 나중에 더한 필드([folders] ·
+/// [memo])는 기본값이 있어 옛 JSON 도 그대로 읽힌다.
 @freezed
 abstract class const PostSnapshot._() with _$PostSnapshot {
   const factory({
@@ -31,6 +32,12 @@ abstract class const PostSnapshot._() with _$PostSnapshot {
     required String nickName,
     required String nickImage,
     required int savedAt,
+
+    /// 스크랩 폴더 id(`BookmarkFolder.id`). 한 글을 여러 폴더에 넣을 수 있다. 스크랩에서만 쓴다.
+    @Default(<String>[]) List<String> folders,
+
+    /// 스크랩에 붙인 한 줄 메모. 스크랩에서만 쓴다.
+    @Default('') String memo,
   }) = _PostSnapshot;
 
   factory fromJson(Map<String, dynamic> json) => _$PostSnapshotFromJson(json);
