@@ -10,7 +10,7 @@ import '../../../../core/presentation/widgets/plain_text.dart';
 import '../state/main_event_mixin.dart';
 import '../state/main_state_mixin.dart';
 
-/// 사이트 드로어를 연다(메인 큰 제목 · 빈 게시판 안내의 "다른 사이트").
+/// 사이트 드로어를 연다(메인 앱바 메뉴 버튼 · 빈 게시판 안내의 "다른 사이트").
 ///
 /// 드로어는 홈 셸(`MainPage`)의 Scaffold 에 붙어 있다. 게시판 탭 본문을
 /// 오른쪽으로 끌어도 손가락을 따라 열린다.

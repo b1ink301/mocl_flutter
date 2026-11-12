@@ -7,6 +7,7 @@ import '../../../../config/large_title_metrics.dart';
 import '../../../../core/presentation/widgets/adaptive_popup_menu.dart';
 import '../../../../core/presentation/widgets/appbar_actions_icon_theme.dart';
 import '../../../../core/presentation/widgets/large_title_flexible_space.dart';
+import '../../../../core/presentation/widgets/menu_lines_icon.dart';
 import '../../../../core/presentation/widgets/plain_icon.dart';
 import '../../../../core/presentation/widgets/plain_icon_button.dart';
 import '../../../../core/presentation/widgets/plain_text.dart';
@@ -20,7 +21,8 @@ import 'site_drawer.dart';
 
 /// 메인 앱바. 펼침 영역에 큰 사이트 제목을 두고, 스크롤하면 스르륵 사라진다
 /// (floating — 역스크롤하면 툴바만 내려온다). 툴바 제목은 평소 비어 있다.
-/// 큰 제목(`다모앙 ▾`)을 누르면 사이트 드로어([openSiteDrawer])가 열린다.
+/// 왼쪽 메뉴 버튼(☰)이 사이트 드로어([openSiteDrawer])를 연다. 큰 제목은 누르지
+/// 않는다 — `▾` 는 제자리에서 펼쳐지는 것처럼 보여 옆에서 나오는 드로어와 맞지 않았다.
 ///
 /// 다른 홈 탭(지금 이슈 · 설정)의 `LargeTitleSliverAppBar` 와 높이 · 제목 자리가 같다.
 class const MainAppBar({super.key})
@@ -37,20 +39,23 @@ class const MainAppBar({super.key})
     final titleStyle = largeTitleStyle(textStyle);
 
     return SliverAppBar(
-      // 사이트는 큰 제목을 눌러 드로어에서 바꾼다(앱바에 메뉴 버튼은 두지 않는다).
-      automaticallyImplyLeading: false,
+      // 사이트 드로어가 있다는 걸 보이게 메뉴 버튼을 둔다(본문을 끌어도 열린다).
+      leading: AppbarFixedIconTheme(
+        child: PlainIconButton(
+          onPressed: () => openSiteDrawer(context),
+          icon: const MenuLinesIcon(),
+          semanticLabel: '사이트 메뉴',
+          semanticsId: 'main_drawer',
+        ),
+      ),
       expandedHeight: kLargeTitleExpandedHeightSingleLine,
       flexibleSpace: LargeTitleFlexibleSpace(
         title: titleState(ref),
         style: titleStyle,
-        onTap: () => openSiteDrawer(context),
-        semanticLabel: '${titleState(ref)}, 사이트 바꾸기',
-        semanticsId: 'main_site_picker',
       ),
       title: _MainAppBarTitle(style: menuStyle),
       titleTextStyle: menuStyle,
-      // 왼쪽 버튼이 없으니 편집 라벨 · 검색창을 큰 제목과 같은 선에 맞춘다.
-      titleSpacing: kLargeTitleStartInset,
+      titleSpacing: 0,
       floating: true,
       centerTitle: false,
       toolbarHeight: kToolbarHeight,

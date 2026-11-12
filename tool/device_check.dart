@@ -15,7 +15,7 @@
 // adb forward 로 연결한다. flutter run 은 필요 없다.
 //
 // 화면 요소는 글자 · Semantics identifier · 위젯 종류로 찾는다. 쓰는 id:
-// main_site_picker · site_drawer · main_add · add_board_close · tab_settings · detail_footer.
+// main_drawer · site_drawer · main_add · add_board_close · tab_settings · detail_footer.
 // FailureView(목록/상세 실패)가 보이면 바로 실패하고, 확인마다 앱 로그(get-logs)의
 // Flutter 오류(main.dart 가 debug 에서 MoclLogger 로 남김)를 검사한다.
 // 스크린샷은 build/device_check/ 에 남는다.
@@ -157,7 +157,7 @@ Future<void> main(List<String> args) async {
 
 /// 사이트 고르기 → 게시판 열기(없으면 담기) → 목록 → 두 번째 글 → 끝까지 스크롤.
 Future<String> _checkSite(App app, SiteType site, String board) async {
-  await app.tapId('main_site_picker');
+  await app.tapId('main_drawer');
   // 사이트 드로어의 칩(메인 제목과 글자가 같으므로 위치로 가른다 — 제목은 y 94~122,
   // 드로어 첫 줄 칩은 y 162 근처).
   await app.tap(
@@ -351,7 +351,7 @@ class App(final String _marionette, final String _uri) {
     final Match last = lines.last;
     await adb.run(['forward', 'tcp:$_hostPort', 'tcp:${last[1]}']);
     final App app = App(marionette, 'ws://127.0.0.1:$_hostPort/${last[2]}/ws');
-    await app.waitFor((e) => e.id == 'main_site_picker', '앱 첫 화면');
+    await app.waitFor((e) => e.id == 'main_drawer', '앱 첫 화면');
     return app;
   }
 

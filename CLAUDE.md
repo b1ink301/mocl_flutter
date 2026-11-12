@@ -171,8 +171,9 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
 - 앱: 홈 하단 탭 "지금 이슈"(`IssueRadarPage`) → 이슈 상세(커뮤니티별 글) → `SiteLinkResolver` 로 앱 상세.
 - 홈 셸(`MainPage`)은 떠 있는 알약형 탭바(`FloatingPillTabBar`)로 **게시판 · 지금 이슈 · 보관함 · 설정**을 오간다
   (`MainTab`, 서버가 없는 빌드는 이슈 탭을 뺀다). 사이트는 왼쪽 **사이트 드로어**(`SiteDrawer`, `site_drawer`)에서 바꾼다:
-  게시판 탭의 큰 제목(`다모앙 ▾`, `main_site_picker`)을 누르거나(`openSiteDrawer`) 본문을 오른쪽으로 끌면
+  게시판 탭 앱바 왼쪽 메뉴 버튼(`MenuLinesIcon`, `main_drawer`)을 누르거나(`openSiteDrawer`) 본문을 오른쪽으로 끌면
   (화면 왼쪽 절반, `drawerEdgeDragWidth`) 손가락을 따라 열린다. 끌어 열기는 게시판 탭 · 편집 · 검색 중이 아닐 때만.
+  큰 제목은 누르지 않는다(`▾` 를 붙여 제목으로 열면 드로어가 있는 줄 모르고, 제자리 펼침처럼 보여 어긋났다).
   드로어에는 **사이트 칩 · 게시판 추가만** 둔다 — 스크랩 · 설정 · 지금 이슈를 넣으면 탭과 이동 경로가 두 갈래가 된다.
   하단 시트로 되돌리지 말 것(엄지로 끌어 바꾸는 동작이 사라진다). 탭은 `IndexedStack` 으로 살려 두고(스크롤 · 상태 유지,
   앱을 켜면 이슈를 바로 받는다), 탭마다 `ScrollController` 를 따로 `PrimaryScrollController` 로 준다
@@ -324,7 +325,7 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   fvm dart run tool/device_check.dart nate clien   # 일부(SiteType 이름, font)
   ```
   화면 요소는 글자 · `Semantics(identifier:)` · 위젯 종류로 찾는다. 스크립트가 누르는 id
-  (`main_site_picker` · `main_add` · `add_board_close` · `tab_settings` · `detail_footer`)를 바꾸면 스크립트도 고친다.
+  (`main_drawer` · `main_add` · `add_board_close` · `tab_settings` · `detail_footer`)를 바꾸면 스크립트도 고친다.
   Flutter 오류는 debug 에서 `MoclLogger` 로도 남겨(`main.dart`) `get-logs` 로 검사한다 — debug 의 오류 콘솔
   출력이 logcat 에 남지 않고, 오류 화면(ErrorWidget)은 위젯 트리 목록에 나오지 않는다.
   아이콘만 있는 `PlainIconButton` 에는 `semanticLabel` 을 준다(없으면 화면 낭독에서 이름 없는 버튼이 된다).

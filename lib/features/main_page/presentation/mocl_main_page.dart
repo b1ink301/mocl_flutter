@@ -65,7 +65,7 @@ enum MainTab({
 /// 앱의 홈 셸.
 ///
 /// 하단 알약형 탭으로 **게시판 · 지금 이슈 · 보관함 · 설정**을 오간다. 게시판 탭은
-/// 고른 사이트에 담아둔 게시판만 보여주고(사이트는 왼쪽 드로어에서 바꾼다 — 큰 제목을
+/// 고른 사이트에 담아둔 게시판만 보여주고(사이트는 왼쪽 드로어에서 바꾼다 — 앱바 메뉴 버튼을
 /// 누르거나 게시판 탭 본문을 오른쪽으로 끈다), 이슈는 사이트와 무관하게 여러 커뮤니티를
 /// 가로지르므로 따로 탭을 둔다. 드로어에는 사이트만 둔다 — 스크랩 · 설정까지 넣으면
 /// 탭과 이동 경로가 두 갈래가 된다.
@@ -147,10 +147,11 @@ class _ScaffoldWidgetState()
 
     return PopScope(
       // 드로어 · 검색 · 다른 탭 중 열려 있는 것을 먼저 닫고, 다 닫혀 있을 때만
-      // 뒤로가기가 앱을 나간다. 드로어가 열려 있으면 막지 않는다 — Scaffold 가
-      // 라우트의 로컬 기록으로 받아 드로어만 닫는다(canPop 이 false 면 그 기록까지
-      // 막혀 검색이 먼저 닫힌다).
-      canPop: _drawerOpen || (tabIndex == 0 && !searchOpenState(ref)),
+      // 뒤로가기가 앱을 나간다. 드로어가 열려 있으면 막고 아래에서 직접 닫는다.
+      // 막지 않고 Scaffold 의 로컬 기록에 맡기면, 게시판 탭에서는 canPop 이 열기 전후
+      // 모두 true 라 Android 에 "앱이 뒤로가기를 받는다" 는 알림이 가지 않아
+      // (predictive back) 드로어가 닫히지 않고 앱이 나간다.
+      canPop: !_drawerOpen && tabIndex == 0 && !searchOpenState(ref),
       onPopInvokedWithResult: (bool didPop, _) {
         if (didPop) return;
         if (_drawerOpen) {
