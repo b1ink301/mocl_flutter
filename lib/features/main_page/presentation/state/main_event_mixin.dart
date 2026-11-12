@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_flutter/features/issue_radar/application/issue_radar_providers.dart';
+import 'package:mocl_flutter/features/library/application/library_providers.dart';
 import 'package:mocl_shared/entities/mocl_site_type.dart';
 
 import '../../application/main_providers.dart';
@@ -34,8 +35,13 @@ mixin class MainEvent() {
   void toggleSubSection(WidgetRef ref, String key) =>
       ref.read(collapsedSubSectionsProvider.notifier).toggle(key);
 
-  void selectTab(WidgetRef ref, int index) =>
-      ref.read(mainTabIndexProvider.notifier).select(index);
+  /// 탭을 바꾼다. 보관함 검색은 탭을 떠나면 닫는다.
+  void selectTab(WidgetRef ref, int index) {
+    if (ref.read(librarySearchProvider) != null) {
+      ref.read(librarySearchProvider.notifier).close();
+    }
+    ref.read(mainTabIndexProvider.notifier).select(index);
+  }
 
   /// 탭을 순번이 아니라 종류로 고른다(앱 바로가기 등 홈 밖에서 들어올 때).
   /// 이 빌드에 없는 탭(서버 없는 빌드의 이슈)이면 false.
@@ -53,7 +59,7 @@ mixin class MainEvent() {
       ref.read(currentSiteTypeProvider.notifier).changeSiteType(siteType);
 
   /// 뒤로가기는 '가장 최근에 연 것'부터 닫는다:
-  /// 검색 → 다른 탭이면 첫 탭. 모두 닫혀 있으면 앱을 나간다.
+  /// 검색(게시판 · 보관함) → 다른 탭이면 첫 탭. 모두 닫혀 있으면 앱을 나간다.
   /// (사이트 드로어는 Scaffold 가 뒤로가기를 먼저 받아 닫는다.)
   void handlePop(WidgetRef ref, bool didPop) {
     if (didPop) {
@@ -61,6 +67,10 @@ mixin class MainEvent() {
     }
     if (ref.read(mainSearchOpenProvider)) {
       closeSearch(ref);
+      return;
+    }
+    if (ref.read(librarySearchProvider) != null) {
+      ref.read(librarySearchProvider.notifier).close();
       return;
     }
     selectTab(ref, 0);

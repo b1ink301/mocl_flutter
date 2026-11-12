@@ -66,3 +66,128 @@ abstract class _$LibrarySegmentNotifier extends $Notifier<LibrarySegment> {
     return element.handleCreate(ref, build);
   }
 }
+
+/// 보관함 검색어. null 이면 검색을 닫은 것, '' 이면 열었지만 아직 비어 있음.
+///
+/// 스크랩 · 히스토리 두 칸이 같이 쓴다(검색 중에 칸을 바꾸면 그 칸에서 같은 말로 찾는다).
+/// 보관함 탭을 떠나면 닫는다(`MainEvent.selectTab`).
+
+@ProviderFor(LibrarySearch)
+final librarySearchProvider = LibrarySearchProvider._();
+
+/// 보관함 검색어. null 이면 검색을 닫은 것, '' 이면 열었지만 아직 비어 있음.
+///
+/// 스크랩 · 히스토리 두 칸이 같이 쓴다(검색 중에 칸을 바꾸면 그 칸에서 같은 말로 찾는다).
+/// 보관함 탭을 떠나면 닫는다(`MainEvent.selectTab`).
+final class LibrarySearchProvider
+    extends $NotifierProvider<LibrarySearch, String?> {
+  /// 보관함 검색어. null 이면 검색을 닫은 것, '' 이면 열었지만 아직 비어 있음.
+  ///
+  /// 스크랩 · 히스토리 두 칸이 같이 쓴다(검색 중에 칸을 바꾸면 그 칸에서 같은 말로 찾는다).
+  /// 보관함 탭을 떠나면 닫는다(`MainEvent.selectTab`).
+  LibrarySearchProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'librarySearchProvider',
+        isAutoDispose: false,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$librarySearchHash();
+
+  @$internal
+  @override
+  LibrarySearch create() => LibrarySearch();
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(String? value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<String?>(value),
+    );
+  }
+}
+
+String _$librarySearchHash() => r'db3442292526a6c856ee5627d105a4923bdfd83d';
+
+/// 보관함 검색어. null 이면 검색을 닫은 것, '' 이면 열었지만 아직 비어 있음.
+///
+/// 스크랩 · 히스토리 두 칸이 같이 쓴다(검색 중에 칸을 바꾸면 그 칸에서 같은 말로 찾는다).
+/// 보관함 탭을 떠나면 닫는다(`MainEvent.selectTab`).
+
+abstract class _$LibrarySearch extends $Notifier<String?> {
+  String? build();
+  @$mustCallSuper
+  @override
+  WhenComplete runBuild() {
+    final ref = this.ref as $Ref<String?, String?>;
+    final element =
+        ref.element
+            as $ClassProviderElement<
+              AnyNotifier<String?, String?>,
+              String?,
+              Object?,
+              Object?
+            >;
+    return element.handleCreate(ref, build);
+  }
+}
+
+/// 검색어에 맞는 스크랩 · 히스토리 수(세그먼트 숫자). 받는 중이면 null.
+
+@ProviderFor(librarySegmentCounts)
+final librarySegmentCountsProvider = LibrarySegmentCountsProvider._();
+
+/// 검색어에 맞는 스크랩 · 히스토리 수(세그먼트 숫자). 받는 중이면 null.
+
+final class LibrarySegmentCountsProvider
+    extends
+        $FunctionalProvider<
+          ({int? bookmarks, int? history}),
+          ({int? bookmarks, int? history}),
+          ({int? bookmarks, int? history})
+        >
+    with $Provider<({int? bookmarks, int? history})> {
+  /// 검색어에 맞는 스크랩 · 히스토리 수(세그먼트 숫자). 받는 중이면 null.
+  LibrarySegmentCountsProvider._()
+    : super(
+        from: null,
+        argument: null,
+        retry: null,
+        name: r'librarySegmentCountsProvider',
+        isAutoDispose: true,
+        dependencies: null,
+        $allTransitiveDependencies: null,
+      );
+
+  @override
+  String debugGetCreateSourceHash() => _$librarySegmentCountsHash();
+
+  @$internal
+  @override
+  $ProviderElement<({int? bookmarks, int? history})> $createElement(
+    $ProviderPointer pointer,
+  ) => $ProviderElement(pointer);
+
+  @override
+  ({int? bookmarks, int? history}) create(Ref ref) {
+    return librarySegmentCounts(ref);
+  }
+
+  /// {@macro riverpod.override_with_value}
+  Override overrideWithValue(({int? bookmarks, int? history}) value) {
+    return $ProviderOverride(
+      origin: this,
+      providerOverride: $SyncValueProvider<({int? bookmarks, int? history})>(
+        value,
+      ),
+    );
+  }
+}
+
+String _$librarySegmentCountsHash() =>
+    r'8731b753af3cf735b4af4558624e69f67d359d7b';

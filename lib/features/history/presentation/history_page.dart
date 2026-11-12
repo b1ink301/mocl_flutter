@@ -5,12 +5,15 @@ import 'package:go_router/go_router.dart';
 import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/config/routes/mocl_app_pages.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
+import 'package:mocl_flutter/core/presentation/widgets/category_tag.dart';
 import 'package:mocl_flutter/core/presentation/widgets/failure_view.dart';
 import 'package:mocl_flutter/core/presentation/widgets/large_title_sliver_app_bar.dart';
 import 'package:mocl_flutter/core/presentation/widgets/list_detail_layout.dart';
+import 'package:mocl_flutter/core/presentation/widgets/plain_divider_widget.dart';
 import 'package:mocl_flutter/core/presentation/widgets/plain_icon.dart';
 import 'package:mocl_flutter/core/presentation/widgets/plain_icon_button.dart';
 import 'package:mocl_flutter/core/presentation/widgets/window_size.dart';
+import 'package:mocl_flutter/features/bookmark/domain/bookmark_filter.dart';
 import 'package:mocl_flutter/features/database/domain/entities/post_snapshot.dart';
 import 'package:mocl_flutter/features/detail_page/presentation/mocl_detail_page.dart';
 import 'package:mocl_flutter/features/history/presentation/state/history_event_mixin.dart';
@@ -26,12 +29,23 @@ class const HistoryPage({
 
   /// 큰 제목 아래에 둘 위젯(보관함의 칸 전환).
   final Widget? header,
+
+  /// 앱바 검색(보관함이 준다).
+  final AppBarSearch? search,
+
+  /// 검색어(비면 거르지 않음).
+  final String query = '',
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       // 넓은 화면(태블릿 가로 · 펼친 폴드 · iPad)에서는 목록 옆에 상세를 둔다.
       ListDetailLayout<PostSnapshot>(
-        list: _HistoryScaffold(title: title, header: header),
+        list: _HistoryScaffold(
+          title: title,
+          header: header,
+          search: search,
+          query: query,
+        ),
         detailBuilder: (_, p) =>
             DetailPage.init(p.toListItem(), siteType: p.siteType),
         pushDetail: (context, p) =>
@@ -47,6 +61,8 @@ String _keyOf(PostSnapshot p) => p.key;
 class const _HistoryScaffold({
   required final String title,
   required final Widget? header,
+  required final AppBarSearch? search,
+  required final String query,
 }) extends ConsumerWidget with HistoryState, HistoryEvent {
   Future<void> _clear(BuildContext context, WidgetRef ref) async {
     final bool? ok = await showDialog<bool>(
@@ -71,7 +87,8 @@ class const _HistoryScaffold({
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final async = historyState(ref);
+    final async = historyState(ref)
+        .whenData((items) => BookmarkFilter.apply(items, query: query));
     final styles = ref.watch(appTextStylesFontSizeProvider);
     // 떠 있는 탭바에 가리지 않게(홈 Scaffold 가 바 높이를 더해 준다).
     final double bottom = MediaQuery.paddingOf(context).bottom;
@@ -81,6 +98,7 @@ class const _HistoryScaffold({
       slivers: <Widget>[
         LargeTitleSliverAppBar(
           title: title,
+          search: search,
           actions: [
             if (hasItems)
               PlainIconButton(
@@ -106,11 +124,14 @@ class const _HistoryScaffold({
           ),
           data: (items) {
             if (items.isEmpty) {
+              final String q = query.trim();
               return SliverMessageView(
                 child: MessageView(
-                  icon: Icons.history,
-                  title: '최근 본 글이 없어요',
-                  description: '글을 열면 여기에 30일 동안 남겨 둬요.',
+                  icon: q.isEmpty ? Icons.history : Icons.search_off,
+                  title: q.isEmpty ? '최근 본 글이 없어요' : '\'$q\' 에 맞는 글이 없어요',
+                  description: q.isEmpty
+                      ? '글을 열면 여기에 30일 동안 남겨 둬요.'
+                      : '제목 · 사이트 · 게시판 이름에서 찾아요.',
                   titleStyle: styles.titleTextStyle,
                   descriptionStyle: styles.smallTextStyle,
                 ),
@@ -121,8 +142,13 @@ class const _HistoryScaffold({
             return SliverReadableWidth(
               sliver: SliverPadding(
                 padding: EdgeInsets.only(bottom: bottom + 16),
-                sliver: SliverList.builder(
+                sliver: SliverList.separated(
                   itemCount: rows.length,
+                  // 구분선은 글과 글 사이에만(날짜 머리 앞뒤는 여백으로 갈린다).
+                  separatorBuilder: (_, i) =>
+                      rows[i] is _Item && rows[i + 1] is _Item
+                      ? const PlainDividerWidget()
+                      : const SizedBox.shrink(),
                   itemBuilder: (context, i) => switch (rows[i]) {
                     _Header(:final String label) => _DayHeader(
                       label: label,
@@ -130,6 +156,7 @@ class const _HistoryScaffold({
                     ),
                     _Item(:final PostSnapshot post) => _HistoryTile(
                       post: post,
+                      query: query,
                       titleStyle: styles.titleTextStyle,
                       subtitleStyle: styles.smallTextStyle,
                       onRemove: () =>
@@ -205,6 +232,7 @@ class const _DayHeader({required final String label, final TextStyle? style})
 
 class const _HistoryTile({
   required final PostSnapshot post,
+  required final String query,
   required final TextStyle? titleStyle,
   required final TextStyle? subtitleStyle,
   required final VoidCallback onRemove,
@@ -231,8 +259,17 @@ class const _HistoryTile({
         child: const Icon(Icons.delete, color: Colors.white),
       ),
       child: ListTile(
-        title: Text(
-          post.title,
+        title: Text.rich(
+          TextSpan(
+            children: highlightSpans(
+              post.title,
+              query,
+              TextStyle(
+                color: Theme.of(context).colorScheme.primary,
+                fontWeight: FontWeight.w700,
+              ),
+            ),
+          ),
           maxLines: 2,
           overflow: TextOverflow.ellipsis,
           style: titleStyle,

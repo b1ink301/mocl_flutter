@@ -210,8 +210,14 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   두 필드는 `@Default` 라 옛 JSON 도 읽히고, 폴더 목록은 새 스토어 `bookmark_folders`(`BookmarkFolder`, 만든 순)라
   DB 버전은 올리지 않았다. 폴더를 지우면 모든 스크랩에서 그 id 만 뺀다(글은 남음, `deleteBookmarkFolder` 한 트랜잭션).
   폴더 색은 말머리 태그 색(`CategoryTone` 순번). 한도: 폴더 20개 · 이름 20자 · 메모 200자.
-- 스크랩 목록(`BookmarksPage`): 칸 전환 아래 검색창(`bookmark_search`, 제목 · 메모 · 사이트 · 게시판, 띄어 쓴 말은 모두 포함)과
-  폴더 칩(`전체 · 폴더… · ＋`, 고른 폴더는 앱이 떠 있는 동안 유지). 거르기는 `BookmarkFilter` 하나로.
+- 스크랩 목록(`BookmarksPage`): 칸 전환 아래 폴더 칩(`전체 · 폴더… · ＋`, 선택은 잉크색 채움 · 고른 폴더는 앱이 떠 있는 동안 유지).
+  거르기는 `BookmarkFilter` 하나로(제목 · 메모 · 사이트 · 게시판, 띄어 쓴 말은 모두 포함, 히스토리 검색도 같이 쓴다).
+- 보관함 검색은 게시판 탭처럼 **앱바에서** 한다(`LargeTitleSliverAppBar(search: AppBarSearch)`, `library_search` →
+  툴바 제목 자리가 입력창, 닫기만 남음). 검색어는 `LibrarySearch`(null = 닫힘) 하나를 스크랩 · 히스토리가 같이 쓰고,
+  칸 전환의 숫자는 검색어에 맞는 글 수다. 탭을 바꾸면 닫히고(`MainEvent.selectTab`), 뒤로가기는 검색을 먼저 닫는다.
+  검색창을 목록 위 한 줄로 되돌리지 말 것(칸 전환 · 검색 · 칩 세 줄이 쌓여 글이 밀린다).
+- 칸 전환(`LibrarySegmentControl`)은 회색 트랙 + 흰 손잡이(그림자)로 그리고 **강조색을 쓰지 않는다** —
+  폴더 칩 · 탭바 선택과 같은 색이면 어느 쪽이 위 단계인지 헷갈린다.
   행 길게 누르기 = 폴더 · 메모 고치기 · 공유 · 지우기, 칩 길게 누르기 = 폴더 고치기 · 지우기. 흐름은 `BookmarkFlow` 에 모은다.
 - 상세의 스크랩 버튼으로 켜면(`BookmarkFlow.afterBookmarked`) 폴더가 있을 때만 폴더 · 메모 시트를 띄우고,
   없으면 "스크랩했어요" 스낵바에 "폴더 · 메모" 버튼만 둔다(폴더를 안 쓰는 사람은 한 번에 끝).

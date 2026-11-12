@@ -1,6 +1,5 @@
 import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/bookmark/data/repositories/bookmark_repository_impl.dart';
-import 'package:mocl_flutter/features/bookmark/domain/bookmark_filter.dart';
 import 'package:mocl_flutter/features/bookmark/domain/repositories/bookmark_repository.dart';
 import 'package:mocl_flutter/features/database/application/datasource_provider.dart';
 import 'package:mocl_flutter/features/database/domain/entities/bookmark_folder.dart';
@@ -92,28 +91,6 @@ class BookmarkFolderFilter() extends _$BookmarkFolderFilter {
   String? build() => null;
 
   void select(String? id) => state = id;
-}
-
-/// 스크랩 검색어. 스크랩 목록을 떠나면 비운다.
-@riverpod
-class BookmarkQuery() extends _$BookmarkQuery {
-  @override
-  String build() => '';
-
-  void update(String query) => state = query;
-}
-
-/// 고른 폴더 · 검색어로 거른 스크랩.
-@riverpod
-AsyncValue<List<PostSnapshot>> filteredBookmarks(Ref ref) {
-  final String? folderId = ref.watch(bookmarkFolderFilterProvider);
-  final String query = ref.watch(bookmarkQueryProvider);
-  return ref
-      .watch(bookmarksProvider)
-      .whenData(
-        (items) =>
-            BookmarkFilter.apply(items, folderId: folderId, query: query),
-      );
 }
 
 /// 특정 게시물의 북마크 여부 + 토글. 상세 화면 버튼이 사용한다.

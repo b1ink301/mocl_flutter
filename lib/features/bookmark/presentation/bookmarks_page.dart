@@ -18,13 +18,17 @@ import 'package:mocl_flutter/features/bookmark/presentation/state/bookmark_event
 import 'package:mocl_flutter/features/bookmark/presentation/state/bookmark_state_mixin.dart';
 
 import '../../../core/presentation/widgets/failure_view.dart';
-import '../../../core/presentation/widgets/large_title_sliver_app_bar.dart';
+
+import 'package:mocl_flutter/core/presentation/widgets/large_title_sliver_app_bar.dart';
+
+import '../../../core/presentation/widgets/plain_divider_widget.dart';
 import 'widgets/bookmark_flow.dart';
 import 'widgets/bookmark_folder_tag.dart';
 
 /// 스크랩 목록. 홈 "보관함" 탭의 한 칸이다(`LibraryPage`).
 ///
-/// 칸 전환 아래에 검색창과 폴더 칩을 두고, 고른 폴더 · 검색어로 거른다.
+/// 칸 전환 아래에 폴더 칩을 두고, 고른 폴더 · 검색어로 거른다. 검색은 보관함 앱바에서
+/// 하고([search], 검색어는 [query]) 여기서는 받은 말로 거르기만 한다.
 /// 행을 길게 누르면 폴더 · 메모 고치기 · 공유 · 지우기, 폴더 칩을 길게 누르면 폴더 고치기.
 class const BookmarksPage({
   super.key,
@@ -32,12 +36,23 @@ class const BookmarksPage({
 
   /// 큰 제목 아래에 둘 위젯(보관함의 칸 전환).
   final Widget? header,
+
+  /// 앱바 검색(보관함이 준다).
+  final AppBarSearch? search,
+
+  /// 검색어(비면 거르지 않음).
+  final String query = '',
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) =>
       // 넓은 화면(태블릿 가로 · 펼친 폴드 · iPad)에서는 목록 옆에 상세를 둔다.
       ListDetailLayout<PostSnapshot>(
-        list: _BookmarksScaffold(title: title, header: header),
+        list: _BookmarksScaffold(
+          title: title,
+          header: header,
+          search: search,
+          query: query,
+        ),
         detailBuilder: (_, b) =>
             DetailPage.init(b.toListItem(), siteType: b.siteType),
         pushDetail: (context, b) =>
@@ -53,35 +68,41 @@ String _bookmarkKey(PostSnapshot b) => '${b.siteType.name}_${b.id}';
 class const _BookmarksScaffold({
   required final String title,
   required final Widget? header,
+  required final AppBarSearch? search,
+  required final String query,
 }) extends ConsumerWidget with BookmarkState, BookmarkEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final AsyncValue<List<PostSnapshot>> all = bookmarksState(ref);
-    final AsyncValue<List<PostSnapshot>> filtered = filteredBookmarksState(ref);
     final List<BookmarkFolder> folders = bookmarkFoldersState(ref);
     final String? folderId = selectedBookmarkFolderState(ref);
-    final String query = bookmarkQueryState(ref);
+    final AsyncValue<List<PostSnapshot>> filtered = all.whenData(
+      (items) => BookmarkFilter.apply(items, folderId: folderId, query: query),
+    );
     final styles = ref.watch(appTextStylesFontSizeProvider);
     // 떠 있는 탭바에 가리지 않게(홈 Scaffold 가 바 높이를 더해 준다).
     final double bottom = MediaQuery.paddingOf(context).bottom;
     final List<PostSnapshot> allItems = all.value ?? const [];
+    final List<PostSnapshot> searched = BookmarkFilter.apply(
+      allItems,
+      query: query,
+    );
     final Map<String, BookmarkFolder> folderById = {
       for (final BookmarkFolder f in folders) f.id: f,
     };
 
     return CustomScrollView(
       slivers: <Widget>[
-        LargeTitleSliverAppBar(title: title),
+        LargeTitleSliverAppBar(title: title, search: search),
         if (header case final Widget header) SliverToBoxAdapter(child: header),
-        // 스크랩이 하나라도 있을 때만 검색 · 폴더 줄을 보인다.
+        // 스크랩이 하나라도 있을 때만 폴더 줄을 보인다. 숫자는 검색어에 맞는 글 수.
         if (allItems.isNotEmpty)
           SliverToBoxAdapter(
-            child: _SearchAndFolders(
+            child: _FolderChips(
               folders: folders,
-              counts: BookmarkFilter.countByFolder(allItems),
-              total: allItems.length,
+              counts: BookmarkFilter.countByFolder(searched),
+              total: searched.length,
               selected: folderId,
-              query: query,
               labelStyle: styles.smallTextStyle,
             ),
           ),
@@ -130,7 +151,7 @@ class const _BookmarksScaffold({
                 padding: EdgeInsets.only(bottom: bottom + 16),
                 sliver: SliverList.separated(
                   itemCount: items.length,
-                  separatorBuilder: (_, _) => const Divider(height: 1),
+                  separatorBuilder: (_, _) => const PlainDividerWidget(),
                   itemBuilder: (context, i) {
                     final PostSnapshot b = items[i];
                     return _BookmarkTile(
@@ -166,124 +187,52 @@ class const _BookmarksScaffold({
   }
 }
 
-/// 검색창 + 폴더 칩 줄.
-class const _SearchAndFolders({
+/// 폴더 칩 줄: 전체 · 폴더… · 새 폴더.
+class const _FolderChips({
   required final List<BookmarkFolder> folders,
   required final Map<String, int> counts,
   required final int total,
   required final String? selected,
-  required final String query,
   required final TextStyle labelStyle,
-}) extends ConsumerStatefulWidget {
+}) extends ConsumerWidget with BookmarkEvent {
   @override
-  ConsumerState<_SearchAndFolders> createState() => _SearchAndFoldersState();
-}
-
-class _SearchAndFoldersState()
-    extends ConsumerState<_SearchAndFolders>
-    with BookmarkEvent {
-  late final TextEditingController _controller = TextEditingController(
-    text: widget.query,
-  );
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
-  }
-
-  void _clear() {
-    _controller.clear();
-    updateBookmarkQuery(ref, '');
-    setState(() {});
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    final ThemeData theme = Theme.of(context);
-    final ColorScheme scheme = theme.colorScheme;
-    return Padding(
-      // 큰 제목 · 칸 전환과 같은 좌우 여백.
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 4),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+  Widget build(BuildContext context, WidgetRef ref) {
+    final Brightness brightness = Theme.of(context).brightness;
+    return SizedBox(
+      // 큰 글자 설정에서 칩 글자가 잘리지 않게 줄 높이도 같이 키운다.
+      height: MediaQuery.textScalerOf(context).scale(32).clamp(32, 68),
+      child: ListView(
+        // 큰 제목 · 칸 전환과 같은 좌우 여백.
+        padding: const EdgeInsets.symmetric(horizontal: 16),
+        scrollDirection: Axis.horizontal,
         children: [
-          Semantics(
-            identifier: 'bookmark_search',
-            child: TextField(
-              controller: _controller,
-              textInputAction: TextInputAction.search,
-              onChanged: (text) {
-                updateBookmarkQuery(ref, text);
-                setState(() {});
-              },
-              onTapOutside: (_) => FocusScope.of(context).unfocus(),
-              style: widget.labelStyle.copyWith(color: scheme.onSurface),
-              decoration: InputDecoration(
-                isDense: true,
-                hintText: '스크랩에서 찾기 (제목 · 메모)',
-                hintStyle: widget.labelStyle.copyWith(color: scheme.outline),
-                prefixIcon: Icon(Icons.search, size: 20, color: scheme.outline),
-                suffixIcon: _controller.text.isEmpty
-                    ? null
-                    : IconButton(
-                        tooltip: '지우기',
-                        icon: const Icon(Icons.close, size: 18),
-                        onPressed: _clear,
-                      ),
-                filled: true,
-                fillColor: scheme.surfaceContainerLowest,
-                contentPadding: const EdgeInsets.symmetric(vertical: 10),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: scheme.outlineVariant),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
-                  borderSide: BorderSide(color: scheme.outlineVariant),
-                ),
-              ),
-            ),
+          _FolderChip(
+            label: '전체',
+            count: total,
+            selected: selected == null,
+            style: labelStyle,
+            onTap: () => selectBookmarkFolder(ref, null),
           ),
-          const SizedBox(height: 10),
-          SizedBox(
-            height: 36,
-            child: ListView(
-              scrollDirection: Axis.horizontal,
-              children: [
-                _FolderChip(
-                  label: '전체',
-                  count: widget.total,
-                  selected: widget.selected == null,
-                  style: widget.labelStyle,
-                  onTap: () => selectBookmarkFolder(ref, null),
-                ),
-                for (final BookmarkFolder f in widget.folders)
-                  _FolderChip(
-                    label: f.name,
-                    count: widget.counts[f.id] ?? 0,
-                    dot: f.colorOf(theme.brightness),
-                    selected: widget.selected == f.id,
-                    style: widget.labelStyle,
-                    onTap: () => selectBookmarkFolder(
-                      ref,
-                      widget.selected == f.id ? null : f.id,
-                    ),
-                    onLongPress: () =>
-                        unawaited(BookmarkFlow.editFolder(context, ref, f)),
-                  ),
-                if (widget.folders.length < BookmarkFolder.maxFolders)
-                  _FolderChip(
-                    label: widget.folders.isEmpty ? '폴더 만들기' : '',
-                    icon: Icons.add,
-                    semanticLabel: '새 폴더',
-                    style: widget.labelStyle,
-                    onTap: () =>
-                        unawaited(BookmarkFlow.createFolder(context, ref)),
-                  ),
-              ],
+          for (final BookmarkFolder f in folders)
+            _FolderChip(
+              label: f.name,
+              count: counts[f.id] ?? 0,
+              dot: f.colorOf(brightness),
+              selected: selected == f.id,
+              style: labelStyle,
+              onTap: () =>
+                  selectBookmarkFolder(ref, selected == f.id ? null : f.id),
+              onLongPress: () =>
+                  unawaited(BookmarkFlow.editFolder(context, ref, f)),
             ),
-          ),
+          if (folders.length < BookmarkFolder.maxFolders)
+            _FolderChip(
+              label: folders.isEmpty ? '폴더 만들기' : '',
+              icon: Icons.add,
+              semanticLabel: '새 폴더',
+              style: labelStyle,
+              onTap: () => unawaited(BookmarkFlow.createFolder(context, ref)),
+            ),
         ],
       ),
     );
@@ -304,7 +253,8 @@ class const _FolderChip({
   @override
   Widget build(BuildContext context) {
     final ColorScheme scheme = Theme.of(context).colorScheme;
-    final Color fg = selected ? scheme.primary : scheme.onSurface;
+    // 선택은 잉크색으로 채운다(위의 칸 전환 · 탭바와 강조색이 겹치지 않게).
+    final Color fg = selected ? scheme.surface : scheme.onSurface;
     return Padding(
       padding: const EdgeInsets.only(right: 6),
       child: Semantics(
@@ -312,7 +262,7 @@ class const _FolderChip({
         selected: selected,
         label: semanticLabel,
         child: Material(
-          color: selected ? scheme.primaryContainer : scheme.surfaceContainer,
+          color: selected ? scheme.onSurface : scheme.surfaceContainerLowest,
           shape: StadiumBorder(
             side: BorderSide(
               color: selected ? Colors.transparent : scheme.outlineVariant,
@@ -354,7 +304,9 @@ class const _FolderChip({
                     Text(
                       '$count',
                       style: style.copyWith(
-                        color: selected ? scheme.primary : scheme.outline,
+                        color: selected
+                            ? scheme.surface.withValues(alpha: 0.7)
+                            : scheme.outline,
                         fontSize: (style.fontSize ?? 13) * 0.85,
                       ),
                     ),

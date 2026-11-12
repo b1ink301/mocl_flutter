@@ -20,9 +20,6 @@ mixin class BookmarkEvent() {
   void selectBookmarkFolder(WidgetRef ref, String? id) =>
       ref.read(bookmarkFolderFilterProvider.notifier).select(id);
 
-  void updateBookmarkQuery(WidgetRef ref, String query) =>
-      ref.read(bookmarkQueryProvider.notifier).update(query);
-
   Future<BookmarkFolder?> addBookmarkFolder(
     WidgetRef ref,
     String name,
