@@ -13,9 +13,8 @@ void main() {
     await tester.pumpWidget(
       MaterialApp(
         builder: (context, child) => MediaQuery(
-          data: MediaQuery.of(
-            context,
-          ).copyWith(textScaler: TextScaler.linear(scale)),
+          data: MediaQuery.of(context)
+              .copyWith(textScaler: TextScaler.linear(scale)),
           child: child!,
         ),
         home: Scaffold(
@@ -47,11 +46,47 @@ void main() {
   testWidgets('넉넉한 화면에서는 줄이지 않는다', (tester) async {
     await pump(tester, 412, 1.0);
     final Size fitted = tester.getSize(find.byType(FittedBox));
+    // FittedBox 바로 아래 탭 줄(선택 표시를 그리는 줄)의 크기.
     final Size row = tester.getSize(
       find
-          .descendant(of: find.byType(FittedBox), matching: find.byType(Row))
+          .descendant(
+            of: find.byType(FittedBox),
+            matching: find.byWidgetPredicate(
+              (w) => w.runtimeType.toString() == '_PillTabRow',
+            ),
+          )
           .first,
     );
     expect(fitted.width, closeTo(row.width, 0.5));
+  });
+
+  testWidgets('탭을 바꾸면 선택 표시가 옮겨 가고, 움직이는 중에 또 바꿔도 제자리에 멈춘다', (tester) async {
+    int selected = 0;
+    late StateSetter setState;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: StatefulBuilder(
+          builder: (context, set) {
+            setState = set;
+            return Scaffold(
+              bottomNavigationBar: FloatingPillTabBar(
+                items: [for (final MainTab tab in MainTab.values) tab.item],
+                selectedIndex: selected,
+                onSelected: (i) => set(() => selected = i),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+
+    await tester.tap(find.text(MainTab.values[1].item.label));
+    await tester.pump();
+    expect(selected, 1);
+    await tester.pump(const Duration(milliseconds: 100));
+    // 움직이는 중에 다른 탭으로 방향을 튼다.
+    setState(() => selected = 3);
+    await tester.pumpAndSettle();
+    expect(tester.takeException(), isNull);
   });
 }
