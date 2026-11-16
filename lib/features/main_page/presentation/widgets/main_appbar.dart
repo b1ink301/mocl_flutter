@@ -48,7 +48,7 @@ class const MainAppBar({super.key})
           semanticsId: 'main_drawer',
         ),
       ),
-      expandedHeight: kLargeTitleExpandedHeightSingleLine,
+      expandedHeight: largeTitleSingleLineExpandedHeight(titleStyle),
       flexibleSpace: LargeTitleFlexibleSpace(
         title: titleState(ref),
         style: titleStyle,
@@ -58,7 +58,7 @@ class const MainAppBar({super.key})
       titleSpacing: 0,
       floating: true,
       centerTitle: false,
-      toolbarHeight: kToolbarHeight,
+      toolbarHeight: kLargeTitleToolbarHeight,
       actions: const <Widget>[_MainActions()],
     );
   }

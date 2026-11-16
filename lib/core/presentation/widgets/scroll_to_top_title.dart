@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:mocl_flutter/config/large_title_metrics.dart';
 
 /// 앱바 툴바 제목 자리. 탭하면 감싸고 있는 스크롤뷰를 맨 위로 올린다.
 ///
@@ -43,7 +44,7 @@ class const ScrollToTopTitle({super.key, required final Widget child})
     onTap: () => _scrollToTop(context),
     child: SizedBox(
       width: double.infinity,
-      height: kToolbarHeight,
+      height: kLargeTitleToolbarHeight,
       child: Align(alignment: AlignmentDirectional.centerStart, child: child),
     ),
   );

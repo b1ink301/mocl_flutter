@@ -27,7 +27,7 @@ class const ListAppBar({super.key}) extends ConsumerWidget with ListState {
     final titleStyle = largeTitleStyle(styleScope.titleTextStyle);
 
     return SliverAppBar(
-      expandedHeight: kLargeTitleExpandedHeightSingleLine,
+      expandedHeight: largeTitleSingleLineExpandedHeight(titleStyle),
       automaticallyImplyLeading: true,
       // 툴바에는 상위 경로만(= 사이트). 큰 제목은 게시판 이름을 쓴다.
       title: ScrollToTopTitle(
@@ -43,7 +43,7 @@ class const ListAppBar({super.key}) extends ConsumerWidget with ListState {
         title: titleState(ref),
         style: titleStyle,
       ),
-      toolbarHeight: kToolbarHeight,
+      toolbarHeight: kLargeTitleToolbarHeight,
       floating: true,
       pinned: false,
       centerTitle: false,

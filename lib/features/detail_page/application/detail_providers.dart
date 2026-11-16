@@ -277,7 +277,7 @@ class _DetailHeightCache() {
       textDirection: TextDirection.ltr,
     )..layout(minWidth: 0, maxWidth: availableWidth);
 
-    final double height = max(kLargeTitleLineHeight, textPainter.height);
+    final double height = max(largeTitleLineHeight(style), textPainter.height);
     textPainter.dispose();
 
     if (_entries.length >= _kCapacity) {

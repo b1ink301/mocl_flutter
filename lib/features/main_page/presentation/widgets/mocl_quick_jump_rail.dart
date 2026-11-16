@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
+import 'package:mocl_flutter/config/large_title_metrics.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_site_category.dart';
 import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/core/presentation/widgets/site_avatar.dart';
@@ -95,7 +96,7 @@ class _SiteJumpRailState()
     return Padding(
       padding: EdgeInsets.only(
         // 앱바(고정)와 떠 있는 탭바를 피해 그 사이에만 자리 잡는다.
-        top: media.padding.top + kToolbarHeight + 8,
+        top: media.padding.top + kLargeTitleToolbarHeight + 8,
         // Scaffold(extendBody) 가 탭바 높이를 bottom 패딩으로 내려준다.
         bottom: media.padding.bottom + 8,
         right: 6,

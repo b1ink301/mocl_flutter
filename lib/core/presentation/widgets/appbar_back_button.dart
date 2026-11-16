@@ -17,7 +17,8 @@ class const AppbarBackButton({super.key}) extends StatelessWidget {
       child: PlainIconButton(
         semanticLabel: '뒤로 가기',
         onPressed: () => context.pop(),
-        padding: EdgeInsets.zero,
+        // 터치 영역 48(아이콘 24 + 12씩). leading 칸(56) 가운데라 아이콘은 왼쪽 끝에서 16.
+        padding: const EdgeInsets.all(12),
         icon: const PlainIcon(Icons.arrow_back_rounded),
       ),
     ),

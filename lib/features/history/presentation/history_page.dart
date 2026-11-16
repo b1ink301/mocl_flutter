@@ -105,7 +105,6 @@ class const _HistoryScaffold({
               PlainIconButton(
                 semanticLabel: '최근 본 글 모두 지우기',
                 semanticsId: 'history_clear',
-                padding: const EdgeInsets.symmetric(horizontal: 12),
                 onPressed: () => _clear(context, ref),
                 icon: const PlainIcon(Icons.delete_sweep_outlined),
               ),

@@ -25,10 +25,7 @@ class const LargeTitleFlexibleSpace({
       collapseMode: CollapseMode.parallax,
       background: Align(
         alignment: AlignmentDirectional.bottomStart,
-        child: Padding(
-          padding: kLargeTitlePadding,
-          child: text,
-        ),
+        child: Padding(padding: kLargeTitlePadding, child: text),
       ),
     );
   }

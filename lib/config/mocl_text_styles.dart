@@ -63,10 +63,14 @@ class MoclColors() {
   static const Color tagSlateDark = Color(0xFFA2A6AF);
 }
 
+/// 목록 제목(본문) 기준 글자 크기. 글자 크기 설정 0단계 값.
+/// 큰 제목(`largeTitleStyle`)이 설정 배율을 이 값과 비교해 얻는다.
+const double kAppTitleFontSize = 16.0;
+
 /// 기본 폰트 사이즈 정의
 /// Flutter의 Text 위젯이 시스템 폰트 설정을 자동으로 반영하므로 기준값만 정의합니다.
 class _AppFontSizes() {
-  static const double title = 16.0;
+  static const double title = kAppTitleFontSize;
   static const double small = 13.0;
   static const double badge = 11.0;
 }

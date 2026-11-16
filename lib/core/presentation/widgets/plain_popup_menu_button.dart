@@ -1,12 +1,14 @@
 import 'package:material_ui/material_ui.dart';
 
+import 'plain_icon_button.dart';
+
 class const PlainPopupMenuButton<T>({
   super.key,
   required final Widget icon,
   required final List<PopupMenuEntry<T>> Function(BuildContext context)
   itemBuilder,
   final ValueChanged<T>? onSelected,
-  final EdgeInsetsGeometry padding = const EdgeInsets.all(8),
+  final EdgeInsetsGeometry? padding,
 }) extends StatefulWidget {
   @override
   State<PlainPopupMenuButton<T>> createState() =>
@@ -46,7 +48,10 @@ class _PlainPopupMenuButtonState<T>() extends State<PlainPopupMenuButton<T>> {
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: _showMenu,
-      child: Padding(padding: widget.padding, child: widget.icon),
+      child: Padding(
+        padding: widget.padding ?? AppbarIconButtonScope.paddingOf(context),
+        child: widget.icon,
+      ),
     );
   }
 }

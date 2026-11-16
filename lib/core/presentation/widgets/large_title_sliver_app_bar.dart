@@ -3,6 +3,7 @@ import 'package:material_ui/material_ui.dart';
 import 'package:mocl_flutter/config/large_title_metrics.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 
+import 'appbar_actions_icon_theme.dart';
 import 'large_title_flexible_space.dart';
 import 'scroll_to_top_title.dart';
 
@@ -26,7 +27,7 @@ class const LargeTitleSliverAppBar({
     );
     return SliverAppBar(
       automaticallyImplyLeading: false,
-      expandedHeight: kLargeTitleExpandedHeightSingleLine,
+      expandedHeight: largeTitleSingleLineExpandedHeight(style),
       flexibleSpace: LargeTitleFlexibleSpace(title: title, style: style),
       title: switch (search) {
         AppBarSearch(open: true, :final Widget field) => Padding(
@@ -40,12 +41,17 @@ class const LargeTitleSliverAppBar({
       titleSpacing: 0,
       floating: true,
       centerTitle: false,
-      toolbarHeight: kToolbarHeight,
-      actions: switch (search) {
-        null => actions,
-        AppBarSearch(open: true, :final Widget toggle) => [toggle],
-        AppBarSearch(:final Widget toggle) => [toggle, ...?actions],
-      },
+      toolbarHeight: kLargeTitleToolbarHeight,
+      // 버튼을 앱바 아이콘 테마로 묶는다(고정 IconTheme · 터치 영역 48).
+      actions: [
+        AppbarActionsIconTheme(
+          children: switch (search) {
+            null => [...?actions],
+            AppBarSearch(open: true, :final Widget toggle) => [toggle],
+            AppBarSearch(:final Widget toggle) => [toggle, ...?actions],
+          },
+        ),
+      ],
     );
   }
 }

@@ -51,6 +51,7 @@ class const DetailAppBar({super.key})
       // 목록 옆 칸의 상세는 라우트가 아니라 닫을 것이 없다.
       // scrolledUnderElevation: 1,
       expandedHeight: height,
+      toolbarHeight: kLargeTitleToolbarHeight,
       automaticallyImplyLeading: !inPane,
       // 툴바에는 상위 경로만(= 사이트 › 게시판). 큰 제목은 글 제목을 쓴다.
       title: ScrollToTopTitle(

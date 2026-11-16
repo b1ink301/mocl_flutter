@@ -1,4 +1,5 @@
 import 'package:material_ui/material_ui.dart';
+import 'package:mocl_flutter/config/mocl_text_styles.dart';
 
 /// 메인 / 목록 / 상세 앱바의 확장 영역 큰 제목 치수.
 ///
@@ -6,18 +7,25 @@ import 'package:material_ui/material_ui.dart';
 /// 같은 값**을 봐야 한다. 두 곳이 각자 숫자를 들고 있으면 제목이 툴바 위로
 /// 삐져나오거나 아래가 뜨는데, 화면에서 눈으로만 잡히는 종류의 버그라
 /// 값을 여기 한 곳에만 둔다.
-const double kLargeTitleFontSize = 24.0;
-const double kLargeTitleLineSpacing = 1.15;
+/// 큰 제목 기준 크기 · 줄높이(M3 Headline Medium 28/36). 글자 크기 설정 0단계 값.
+const double kLargeTitleBaseFontSize = 28.0;
+const double kLargeTitleLineSpacing = 36.0 / 28.0;
 
-/// 큰 제목 한 줄이 차지하는 세로 크기.
-const double kLargeTitleLineHeight =
-    kLargeTitleFontSize * kLargeTitleLineSpacing;
+/// 큰 제목이 글자 크기 설정을 따라가는 비율. 본문이 1.1배면 제목은 1.05배.
+///
+/// 본문과 같은 비율로 키우면 큰 단계에서 제목이 지나치게 커지고(+10단계 42sp),
+/// 고정이면 본문과 크기 차이가 사라진다(예전 24 고정: +10단계에서 본문과 같았다).
+/// 큰 글자는 덜 키우는 Android 14 비선형 글꼴 배율과 같은 방향이다.
+const double kLargeTitleScaleFollow = 0.5;
+
+/// 큰 제목 앱바의 툴바 높이(M3 top app bar 64).
+const double kLargeTitleToolbarHeight = 64.0;
 
 const double kLargeTitleStartInset = 16.0;
 const double kLargeTitleEndInset = 4.0;
 
 /// 제목 아래 여백(앱바 하단과의 간격).
-const double kLargeTitleBottomSpace = 6.0;
+const double kLargeTitleBottomSpace = 16.0;
 
 /// 제목 위 여백(툴바와의 간격).
 const double kLargeTitleTopSpace = 4.0;
@@ -33,21 +41,35 @@ const EdgeInsetsDirectional kLargeTitlePadding = EdgeInsetsDirectional.only(
 const double kLargeTitleHorizontalInset =
     kLargeTitleStartInset + kLargeTitleEndInset;
 
+/// 본문 제목 글자 크기([bodyFontSize], 설정 배율 반영)에 맞춘 큰 제목 글자 크기.
+double largeTitleFontSize(double bodyFontSize) {
+  final double factor = bodyFontSize / kAppTitleFontSize;
+  return kLargeTitleBaseFontSize * (1 + (factor - 1) * kLargeTitleScaleFollow);
+}
+
 /// 큰 제목 스타일. 측정과 렌더가 같은 스타일을 써야 줄 수가 일치한다.
+/// [base] 는 글자 크기 설정이 반영된 목록 제목 스타일이다.
 TextStyle largeTitleStyle(TextStyle base) => base.copyWith(
-  fontSize: kLargeTitleFontSize,
-  fontWeight: FontWeight.w600,
+  fontSize: largeTitleFontSize(base.fontSize ?? kAppTitleFontSize),
+  fontWeight: FontWeight.w500,
   height: kLargeTitleLineSpacing,
 );
 
+/// 큰 제목 한 줄이 차지하는 세로 크기.
+double largeTitleLineHeight(TextStyle style) =>
+    (style.fontSize ?? kLargeTitleBaseFontSize) *
+    (style.height ?? kLargeTitleLineSpacing);
+
 /// 제목 높이([textHeight])로부터 `SliverAppBar.expandedHeight` 를 구한다.
 double largeTitleExpandedHeight(double textHeight) =>
-    textHeight + kLargeTitleTopSpace + kLargeTitleBottomSpace + kToolbarHeight;
+    textHeight +
+    kLargeTitleTopSpace +
+    kLargeTitleBottomSpace +
+    kLargeTitleToolbarHeight;
 
-/// 한 줄짜리 제목(메인 · 목록)의 확장 높이.
-final double kLargeTitleExpandedHeightSingleLine = largeTitleExpandedHeight(
-  kLargeTitleLineHeight,
-);
+/// 한 줄짜리 제목(메인 · 목록 · 홈 탭)의 확장 높이. [style] 은 [largeTitleStyle] 결과.
+double largeTitleSingleLineExpandedHeight(TextStyle style) =>
+    largeTitleExpandedHeight(largeTitleLineHeight(style));
 
 /// 상세 제목이 늘어날 수 있는 최대 줄 수.
 const int kDetailTitleMaxLines = 3;

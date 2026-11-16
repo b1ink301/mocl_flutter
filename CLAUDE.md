@@ -339,6 +339,15 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   항목 탭은 `ListDetailScope.tryOpen` 을 먼저 부르고 false 일 때만 push 한다.
   옆 칸 안인지는 `ListDetailPane.isPane` 으로 본다(뒤로가기 버튼 · 우클릭 닫기 없음).
 
+## 큰 제목 앱바 (`config/large_title_metrics.dart`)
+
+- 홈 탭 · 목록 · 상세 앱바는 M3 Large 를 줄인 절충형이다: 툴바 64, 제목 28/36(w500, 0단계), 아래 여백 16 →
+  한 줄일 때 펼침 120. 치수는 이 파일 한 곳에만 둔다(렌더와 상세 높이 측정이 같은 값을 봐야 한다).
+- 제목은 글자 크기 설정을 **절반 비율**로 따라간다(`largeTitleFontSize`, 본문 1.1배 → 제목 1.05배). 고정하면 큰 단계에서
+  본문과 크기가 같아지고, 같은 비율이면 지나치게 커진다. 펼침 높이도 제목 높이로 계산한다(상수로 박지 말 것).
+- 앱바 아이콘 버튼은 터치 영역 48(아이콘 24 + 12씩). `AppbarFixedIconTheme` · `AppbarActionsIconTheme` 안의
+  `PlainIconButton` · `PlainPopupMenuButton` 은 여백을 주지 않으면 `AppbarIconButtonScope` 로 12 를 쓴다(밖은 8).
+
 ## 스와이프 뒤로가기 (`SwipeBackPage`)
 
 - 화면 라우트는 `SwipeBackPage`(`core/presentation/widgets/swipe_back_page.dart`)로 만든다.

@@ -10,7 +10,10 @@ class const PlainIconButton({
   super.key,
   required final Widget icon,
   final VoidCallback? onPressed,
-  final EdgeInsetsGeometry padding = const EdgeInsets.all(8),
+
+  /// 아이콘 둘레 여백. 없으면 앱바 안([AppbarIconButtonScope])에서는 12(터치 영역 48),
+  /// 그 밖에서는 8.
+  final EdgeInsetsGeometry? padding,
 
   /// 화면 낭독(TalkBack · VoiceOver)이 읽는 버튼 이름. 없으면 이름 없는 버튼이 된다.
   final String? semanticLabel,
@@ -24,7 +27,10 @@ class const PlainIconButton({
     final Widget button = GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onPressed,
-      child: Padding(padding: padding, child: icon),
+      child: Padding(
+        padding: padding ?? AppbarIconButtonScope.paddingOf(context),
+        child: icon,
+      ),
     );
     if (semanticLabel == null && semanticsId == null) return button;
     return Semantics(
@@ -35,4 +41,22 @@ class const PlainIconButton({
       child: ExcludeSemantics(child: button),
     );
   }
+}
+
+/// 앱바 아이콘 버튼 자리. 안쪽 [PlainIconButton] · `PlainPopupMenuButton` 이
+/// 여백을 따로 받지 않으면 M3 터치 영역(48 = 아이콘 24 + 12씩)으로 그린다.
+///
+/// 값이 바뀌지 않으므로 의존을 걸지 않고 읽는다(floating 앱바 리빌드와 무관).
+class const AppbarIconButtonScope({super.key, required super.child})
+    extends InheritedWidget {
+  static const EdgeInsets appbarPadding = EdgeInsets.all(12);
+  static const EdgeInsets defaultPadding = EdgeInsets.all(8);
+
+  static EdgeInsets paddingOf(BuildContext context) =>
+      context.getInheritedWidgetOfExactType<AppbarIconButtonScope>() == null
+      ? defaultPadding
+      : appbarPadding;
+
+  @override
+  bool updateShouldNotify(AppbarIconButtonScope oldWidget) => false;
 }
