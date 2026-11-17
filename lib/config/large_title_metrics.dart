@@ -7,9 +7,14 @@ import 'package:mocl_flutter/config/mocl_text_styles.dart';
 /// 같은 값**을 봐야 한다. 두 곳이 각자 숫자를 들고 있으면 제목이 툴바 위로
 /// 삐져나오거나 아래가 뜨는데, 화면에서 눈으로만 잡히는 종류의 버그라
 /// 값을 여기 한 곳에만 둔다.
-/// 큰 제목 기준 크기 · 줄높이(M3 Headline Medium 28/36). 글자 크기 설정 0단계 값.
-const double kLargeTitleBaseFontSize = 28.0;
-const double kLargeTitleLineSpacing = 36.0 / 28.0;
+/// 큰 제목 기준 크기 · 줄높이(글자 크기 설정 0단계 30/36).
+///
+/// iOS Large Title 을 따른다: 굵고 촘촘한 제목을 목록 바로 위에 붙여 머리글처럼 읽히게 한다.
+/// iOS 의 34pt 는 한글이 같은 크기 영문보다 크고 무거워 보여 30 으로 줄였다.
+/// M3 Large(28/36 · w400 · 아래 28 · 펼침 152)는 위쪽을 넓게 써서 글이 주인공인 목록이
+/// 한 줄 밀리고 제목이 떠 보여 쓰지 않는다(1.6.3 에서 절충형으로 써 본 뒤 되돌림).
+const double kLargeTitleBaseFontSize = 30.0;
+const double kLargeTitleLineSpacing = 1.2;
 
 /// 큰 제목이 글자 크기 설정을 따라가는 비율. 본문이 1.1배면 제목은 1.05배.
 ///
@@ -18,17 +23,17 @@ const double kLargeTitleLineSpacing = 36.0 / 28.0;
 /// 큰 글자는 덜 키우는 Android 14 비선형 글꼴 배율과 같은 방향이다.
 const double kLargeTitleScaleFollow = 0.5;
 
-/// 큰 제목 앱바의 툴바 높이(M3 top app bar 64).
-const double kLargeTitleToolbarHeight = 64.0;
+/// 큰 제목 앱바의 툴바 높이. 48 버튼이 들어가는 Android 기본 높이(iOS 44 보다 크다).
+const double kLargeTitleToolbarHeight = 56.0;
 
 const double kLargeTitleStartInset = 16.0;
 const double kLargeTitleEndInset = 4.0;
 
 /// 제목 아래 여백(앱바 하단과의 간격).
-const double kLargeTitleBottomSpace = 16.0;
+const double kLargeTitleBottomSpace = 8.0;
 
 /// 제목 위 여백(툴바와의 간격).
-const double kLargeTitleTopSpace = 4.0;
+const double kLargeTitleTopSpace = 0.0;
 
 const EdgeInsetsDirectional kLargeTitlePadding = EdgeInsetsDirectional.only(
   top: kLargeTitleTopSpace,
@@ -42,17 +47,38 @@ const double kLargeTitleHorizontalInset =
     kLargeTitleStartInset + kLargeTitleEndInset;
 
 /// 본문 제목 글자 크기([bodyFontSize], 설정 배율 반영)에 맞춘 큰 제목 글자 크기.
-double largeTitleFontSize(double bodyFontSize) {
+/// [base] 는 0단계 크기(상세는 [kDetailTitleBaseFontSize]).
+double largeTitleFontSize(
+  double bodyFontSize, {
+  double base = kLargeTitleBaseFontSize,
+}) {
   final double factor = bodyFontSize / kAppTitleFontSize;
-  return kLargeTitleBaseFontSize * (1 + (factor - 1) * kLargeTitleScaleFollow);
+  return base * (1 + (factor - 1) * kLargeTitleScaleFollow);
 }
 
 /// 큰 제목 스타일. 측정과 렌더가 같은 스타일을 써야 줄 수가 일치한다.
 /// [base] 는 글자 크기 설정이 반영된 목록 제목 스타일이다.
 TextStyle largeTitleStyle(TextStyle base) => base.copyWith(
   fontSize: largeTitleFontSize(base.fontSize ?? kAppTitleFontSize),
-  fontWeight: FontWeight.w500,
+  fontWeight: FontWeight.w700,
   height: kLargeTitleLineSpacing,
+);
+
+/// 상세 큰 제목(글 제목) 기준 크기 · 줄높이(0단계 24/30).
+///
+/// 글 제목은 사이트 · 게시판 이름과 달리 길어서 두세 줄이 흔하다. 홈 · 목록과 같은
+/// 30 굵게면 세 줄에 화면 위쪽을 다 쓰고 무거워 한 단계 줄였다. 굵기 · 여백은 같다.
+const double kDetailTitleBaseFontSize = 24.0;
+const double kDetailTitleLineSpacing = 1.25;
+
+/// 상세 큰 제목 스타일. 렌더(`DetailAppBar`)와 높이 측정(`detailAppbarHeight`)이 함께 쓴다.
+TextStyle detailTitleStyle(TextStyle base) => base.copyWith(
+  fontSize: largeTitleFontSize(
+    base.fontSize ?? kAppTitleFontSize,
+    base: kDetailTitleBaseFontSize,
+  ),
+  fontWeight: FontWeight.w700,
+  height: kDetailTitleLineSpacing,
 );
 
 /// 큰 제목 한 줄이 차지하는 세로 크기.

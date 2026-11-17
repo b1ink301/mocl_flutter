@@ -297,7 +297,7 @@ class _DetailHeightCache() {
 /// 폴드를 접고 펼친 뒤에도 제목 줄 수를 맞게 잰다.
 @Riverpod(dependencies: [appbarTextStyle])
 double detailAppbarHeight(Ref ref, String text, double width) {
-  final TextStyle style = largeTitleStyle(ref.watch(appbarTextStyleProvider));
+  final TextStyle style = detailTitleStyle(ref.watch(appbarTextStyleProvider));
   final double availableWidth = width - kLargeTitleHorizontalInset;
 
   return largeTitleExpandedHeight(

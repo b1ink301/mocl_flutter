@@ -42,7 +42,7 @@ class const DetailAppBar({super.key})
     final double height = appbarHeight(ref, title, width);
 
     final styleScope = DetailStyleScope.of(context).$1;
-    final titleStyle = largeTitleStyle(styleScope.titleTextStyle);
+    final titleStyle = detailTitleStyle(styleScope.titleTextStyle);
     final theme = Theme.of(context);
     final primaryColor = theme.colorScheme.primary;
     final crumbStyle = appbarCrumbStyle(styleScope.smallTextStyle);
