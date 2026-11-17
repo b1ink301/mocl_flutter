@@ -1,7 +1,7 @@
 name: mocl_flutter
 description: "Mocl Flutter project."
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
-version: 1.6.3+410
+version: 1.6.3+411
 
 environment:
   sdk: ">=3.13.0"
@@ -89,10 +89,10 @@ dependencies:
   # firebase
   # 5.x(firebase-ios-sdk 13) 는 google_sign_in_ios 6.4.0+(GoogleSignIn 10)와 함께 써야
   # SPM 에서 gtm-session-fetcher 범위가 맞는다.
-  firebase_core: ^5.1.0
-  firebase_crashlytics: ^6.0.1
+  firebase_core: ^5.2.0
+  firebase_crashlytics: ^6.1.0
   # 키워드 알림 푸시(서버 server/ 가 FCM HTTP v1 로 보낸다)
-  firebase_messaging: ^17.0.1
+  firebase_messaging: ^17.1.0
 
   # async
   async: ^2.13.1
@@ -152,10 +152,10 @@ dependencies:
 
   infinite_scroll_pagination: ^5.1.1
 #  translator: ^1.0.4+1
-  file_picker: ^13.3.3
+  file_picker: ^13.4.0
 
-  material_ui: ^1.11.0
-  cupertino_ui: ^1.1.6
+  material_ui: ^1.11.1
+  cupertino_ui: ^1.1.7
   intl: any
   google_mobile_ads: ^9.2.0
   in_app_update: ^5.0.0

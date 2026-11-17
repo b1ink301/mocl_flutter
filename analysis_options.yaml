@@ -41,6 +41,8 @@ analyzer:
     - "build/**"
     - "**/*.g.dart"
     - "**/*.freezed.dart"
+    # flutter gen-l10n 출력. 생성기가 아직 flutter_localizations(3.50 에서 deprecated)를 쓴다.
+    - "lib/src/generated/**"
     - android/**
     - ios/**
     - web/**
