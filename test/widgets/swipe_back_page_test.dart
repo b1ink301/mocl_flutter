@@ -111,6 +111,98 @@ void main() {
       expect(find.text('상세'), findsOneWidget);
     });
 
+    group('세로 스크롤 중에는 받지 않는다', () {
+      Future<ScrollController> pumpList(WidgetTester tester) async {
+        final controller = ScrollController(initialScrollOffset: 2000);
+        addTearDown(controller.dispose);
+        await pumpDetail(
+          tester,
+          detail: Scaffold(
+            body: Stack(
+              children: [
+                ListView.builder(
+                  controller: controller,
+                  itemExtent: 50,
+                  itemCount: 200,
+                  itemBuilder: (_, i) => Text('행 $i'),
+                ),
+                const Center(child: Text('상세')),
+              ],
+            ),
+          ),
+        );
+        return controller;
+      }
+
+      Future<void> expectScrolledNotPopped(
+        WidgetTester tester,
+        ScrollController controller,
+        double start,
+      ) async {
+        await tester.pumpAndSettle();
+        expect(find.text('상세'), findsOneWidget);
+        expect(controller.offset, greaterThan(start));
+      }
+
+      testWidgets('한 이벤트에 두 축이 슬롭을 넘는 빠른 플링(세로가 더 큼)', (tester) async {
+        final ScrollController controller = await pumpList(tester);
+        final double start = controller.offset;
+        final double left = detailLeft(tester);
+
+        final TestGesture gesture = await tester.startGesture(
+          const Offset(200, 400),
+        );
+        // 위로 쓸어 올리는데 첫 이벤트에서 dx 도 슬롭(18)을 넘는다.
+        await gesture.moveBy(const Offset(20, -28));
+        await tester.pump();
+        await gesture.moveBy(const Offset(10, -60));
+        await tester.pump();
+        expect(detailLeft(tester), left);
+        await gesture.up();
+        await expectScrolledNotPopped(tester, controller, start);
+      });
+
+      testWidgets('엄지처럼 오른쪽으로 휘며 위로 미는 경우', (tester) async {
+        final ScrollController controller = await pumpList(tester);
+        final double start = controller.offset;
+        final double left = detailLeft(tester);
+
+        final TestGesture gesture = await tester.startGesture(
+          const Offset(200, 400),
+        );
+        for (final Offset step in const [
+          Offset(2, -4),
+          Offset(3, -5),
+          Offset(5, -6),
+          Offset(8, -6),
+          Offset(10, -6),
+        ]) {
+          await gesture.moveBy(step);
+          await tester.pump(const Duration(milliseconds: 8));
+        }
+        expect(detailLeft(tester), left);
+        await gesture.up();
+        await expectScrolledNotPopped(tester, controller, start);
+      });
+
+      testWidgets('목록 위에서도 가로로 끌면 뒤로 간다', (tester) async {
+        await pumpList(tester);
+        final double width = tester.getSize(find.byType(MaterialApp)).width;
+
+        final TestGesture gesture = await tester.startGesture(
+          const Offset(200, 300),
+        );
+        // 살짝 기울어진 가로 드래그.
+        await gesture.moveBy(const Offset(30, 10));
+        await tester.pump();
+        await gesture.moveBy(Offset(width * 0.6, 20));
+        await tester.pump();
+        await gesture.up();
+        await tester.pumpAndSettle();
+        expect(find.text('상세'), findsNothing);
+      });
+    });
+
     testWidgets('본문 안에 가로 드래그 · 텍스트 선택이 있어도 뒤로가기가 먼저 받는다', (tester) async {
       var innerDrags = 0;
       await pumpDetail(

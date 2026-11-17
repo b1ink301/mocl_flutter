@@ -451,29 +451,43 @@ class _SwipeBackGestureDetectorState<T>()
 ///
 /// 반대 방향(LTR 에서 왼쪽)으로 먼저 움직이면 일찍 포기해서, 왼쪽으로 미는
 /// 다른 제스처(북마크 지우기 [Dismissible] 등)에 양보한다.
+/// 세로로 더 많이 움직여도 포기해서 세로 스크롤에 양보한다.
 class _BackDragGestureRecognizer({
   required final bool Function(double dx) isBackward,
   super.debugOwner,
 }) extends HorizontalDragGestureRecognizer {
-  /// 드래그가 시작되기 전까지 포인터별로 움직인 가로 거리.
-  final Map<int, double> _pendingDx = <int, double>{};
+  /// 가로 이동이 세로 이동의 이 배수 이상이어야 뒤로가기로 본다(1 = 45°).
+  static const double _kMinHorizontalRatio = 1;
+
+  /// 드래그가 시작되기 전까지 포인터별로 움직인 거리.
+  final Map<int, Offset> _pending = <int, Offset>{};
   bool _started = false;
 
   @override
   void addAllowedPointer(PointerDownEvent event) {
-    _pendingDx[event.pointer] = 0;
+    _pending[event.pointer] = Offset.zero;
     super.addAllowedPointer(event);
   }
 
   @override
   void handleEvent(PointerEvent event) {
     if (!_started && event is PointerMoveEvent) {
-      final double dx = (_pendingDx[event.pointer] ?? 0) + event.delta.dx;
-      _pendingDx[event.pointer] = dx;
+      final Offset moved =
+          (_pending[event.pointer] ?? Offset.zero) + event.delta;
+      _pending[event.pointer] = moved;
+      final double dx = moved.dx;
+      final double dy = moved.dy.abs();
       // 손떨림은 봐주고, 반대 방향으로 터치 슬롭 절반을 넘게 가면 포기한다.
       // (슬롭을 넘기 전에 포기해야 가로 드래그로 받아들여지지 않는다.)
       final double slop = computeHitSlop(event.kind, gestureSettings);
       if (!isBackward(dx) && dx.abs() > slop / 2) {
+        stopTrackingPointer(event.pointer);
+        return;
+      }
+      // 세로로 더 움직였으면 스크롤로 보고 포기한다. 가로 recognizer 는 dx 만 보고
+      // 받아들이므로, 엄지가 오른쪽으로 휘며 위로 밀거나 빠른 플링에서 두 축이 한
+      // 이벤트에 슬롭을 넘으면(이 감지기가 본문 위라 먼저 판정한다) 뒤로가기가 됐다.
+      if (dy > slop / 2 && dx.abs() < dy * _kMinHorizontalRatio) {
         stopTrackingPointer(event.pointer);
         return;
       }
@@ -494,7 +508,7 @@ class _BackDragGestureRecognizer({
 
   @override
   void stopTrackingPointer(int pointer) {
-    _pendingDx.remove(pointer);
+    _pending.remove(pointer);
     super.stopTrackingPointer(pointer);
   }
 
