@@ -7,14 +7,15 @@ import 'package:mocl_flutter/config/mocl_text_styles.dart';
 /// 같은 값**을 봐야 한다. 두 곳이 각자 숫자를 들고 있으면 제목이 툴바 위로
 /// 삐져나오거나 아래가 뜨는데, 화면에서 눈으로만 잡히는 종류의 버그라
 /// 값을 여기 한 곳에만 둔다.
-/// 큰 제목 기준 크기 · 줄높이(글자 크기 설정 0단계 30/36).
+/// 큰 제목 기준 크기 · 줄높이(글자 크기 설정 0단계 28/34).
 ///
 /// iOS Large Title 을 따른다: 굵고 촘촘한 제목을 목록 바로 위에 붙여 머리글처럼 읽히게 한다.
-/// iOS 의 34pt 는 한글이 같은 크기 영문보다 크고 무거워 보여 30 으로 줄였다.
+/// iOS 의 34pt 는 한글이 같은 크기 영문보다 크고 무거워 보여 줄였다. 30 도 2~5글자 게시판 이름이
+/// 목록 행(16)을 누르는 덩어리로 보여 28 로 내렸다. 26 이면 상세 제목(24)과 구분이 흐려진다.
 /// M3 Large(28/36 · w400 · 아래 28 · 펼침 152)는 위쪽을 넓게 써서 글이 주인공인 목록이
 /// 한 줄 밀리고 제목이 떠 보여 쓰지 않는다(1.6.3 에서 절충형으로 써 본 뒤 되돌림).
-const double kLargeTitleBaseFontSize = 30.0;
-const double kLargeTitleLineSpacing = 1.2;
+const double kLargeTitleBaseFontSize = 28.0;
+const double kLargeTitleLineSpacing = 34 / 28;
 
 /// 큰 제목이 글자 크기 설정을 따라가는 비율. 본문이 1.1배면 제목은 1.05배.
 ///
