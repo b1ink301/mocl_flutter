@@ -3,6 +3,7 @@ import 'dart:isolate';
 
 import 'package:dio/dio.dart';
 import 'package:fpdart/fpdart.dart';
+import 'package:html/dom.dart';
 import 'package:html/parser.dart';
 import 'package:mocl_shared/entities/last_id.dart';
 import 'package:mocl_shared/entities/mocl_comment_item.dart';
@@ -324,15 +325,7 @@ class const DcinsideParser() extends BaseParser {
         document.querySelector('div.thum-txt div.thum-txtin') ??
         document.querySelector('div.thum-txt');
     bodyEl.removeAll('script, style, ins, iframe, .adv-inner');
-    // lazy 이미지: data-original → src 치환.
-    if (bodyEl != null) {
-      for (final img in bodyEl.querySelectorAll('img')) {
-        final orig = img.attributes['data-original'];
-        if (orig != null && orig.isNotEmpty) {
-          img.attributes['src'] = orig;
-        }
-      }
-    }
+    if (bodyEl != null) _resolveLazyImages(bodyEl);
     final bodyHtml = bodyEl?.innerHtml ?? '';
 
     final parsedTime = formatTimeago(time);
@@ -342,8 +335,13 @@ class const DcinsideParser() extends BaseParser {
     for (final li in document.querySelectorAll('li.comment, li.comment-add')) {
       final bool isReply = li.className.contains('comment-add');
       final cNick = li.qText('div.ginfo-area button.nick');
-      final bodyP = li.querySelector('p.txt');
+      // 글 댓글은 `p.txt`, 글자 디시콘은 `div.txt`.
+      final bodyP = li.querySelector('.txt');
       bodyP.removeAll('script, button');
+      if (bodyP != null) {
+        _resolveLazyImages(bodyP);
+        _unwrapTextDccon(bodyP);
+      }
       final cBody = bodyP?.innerHtml.trim() ?? '';
       if (cBody.isEmpty && cNick.isEmpty) continue;
       final cTime = li.qText('span.date');
@@ -382,5 +380,35 @@ class const DcinsideParser() extends BaseParser {
     );
 
     return Right<Failure, Details>(detail);
+  }
+
+  static const _lazyPlaceholder = 'dccon_loading';
+
+  /// lazy 이미지(`data-original`)를 `src` 로 바꾼다. 움직이는 디시콘은
+  /// `data-original` 도 로딩 그림이고 실제 주소는 `data-gif`(`data-mp4` 는 동영상)에 있다.
+  static void _resolveLazyImages(Element root) {
+    for (final img in root.querySelectorAll('img')) {
+      final String? real =
+          [
+            img.attributes['data-original'],
+            img.attributes['data-gif'],
+          ].firstWhere(
+            (u) => u != null && u.isNotEmpty && !u.contains(_lazyPlaceholder),
+            orElse: () => null,
+          );
+      if (real != null) {
+        img.attributes['src'] = real;
+      } else if ((img.attributes['src'] ?? '').contains(_lazyPlaceholder)) {
+        img.remove();
+      }
+    }
+  }
+
+  /// 글자 디시콘(`div.txtdccon`, 색 상자 안 글자)은 상자를 걷고 글자만 남긴다.
+  static void _unwrapTextDccon(Element root) {
+    for (final box in root.querySelectorAll('div.dccon-view-box')) {
+      final text = box.querySelector('div.txtdccon p') ?? box;
+      box.replaceWith(Element.html('<span>${text.innerHtml}</span>'));
+    }
   }
 }

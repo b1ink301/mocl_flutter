@@ -52,5 +52,25 @@ void main() {
       expect(details.category, isEmpty);
       expect(details.title, '[속보] 대괄호로 시작하는 제목');
     });
+
+    test('댓글 디시콘(lazy · 움직이는 · 글자)을 그릴 수 있게 바꾼다', () async {
+      final details = await _detail('test/fixtures/dcinside_detail_dccon.html');
+      final bodies = details.comments.map((c) => c.bodyHtml).toList();
+      expect(bodies, hasLength(3));
+      expect(
+        bodies[0],
+        contains('src="https://dcimg5.dcinside.com/dccon.php?no=still"'),
+      );
+      expect(
+        bodies[1],
+        allOf(contains('너정말'), isNot(contains('dccon-view-box'))),
+      );
+      expect(
+        bodies[2],
+        contains('src="https://dcimg5.dcinside.com/dccon.php?no=anim"'),
+      );
+      expect(bodies.join(), isNot(contains('src="https://nstatic')));
+      expect(details.comments[2].isReply, isTrue);
+    });
   });
 }
