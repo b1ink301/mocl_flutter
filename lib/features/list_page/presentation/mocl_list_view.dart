@@ -14,6 +14,9 @@ import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mi
 import 'package:mocl_flutter/features/list_page/presentation/state/list_state_mixin.dart';
 import 'package:mocl_flutter/features/list_page/presentation/widgets/list_app_bar.dart';
 import 'package:mocl_flutter/features/list_page/presentation/widgets/mocl_list_item.dart';
+import 'package:mocl_flutter/features/site_health/presentation/state/site_report_event_mixin.dart';
+import 'package:mocl_flutter/features/site_health/presentation/widgets/site_report_sheet.dart';
+import 'package:mocl_shared/reports/site_report.dart';
 
 import '../../../core/presentation/widgets/plain_divider_widget.dart';
 import '../../../core/presentation/widgets/plain_text.dart';
@@ -21,7 +24,7 @@ import 'widgets/list_scope.dart';
 
 class const MoclListView({super.key})
     extends HookConsumerWidget
-    with ListEvent, ListState, AdsState {
+    with ListEvent, ListState, AdsState, SiteReportEvent {
   /// 끝에서 이만큼 남았을 때 다음 쪽을 받는다.
   static const int _prefetchThreshold = 10;
 
@@ -57,6 +60,13 @@ class const MoclListView({super.key})
       descriptionStyle: styles.smallTextStyle,
       titleStyle: styles.titleTextStyle,
       onRetry: () => handleRetry(ref),
+      // 다시 해도 안 되면 알려 달라고(사이트가 바뀌었을 수 있다).
+      secondaryLabel: readSiteReportsAvailable(ref) ? '문제 알리기' : null,
+      onSecondary: () => SiteReportFlow.open(
+        context,
+        readSiteReportTarget(ref),
+        initialReason: SiteReportReason.list,
+      ),
     );
 
     // 컴팩트면 화면 높이에 맞춘 여백(세로로 긴 화면일수록 넉넉하게).

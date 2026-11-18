@@ -6,6 +6,9 @@ import 'package:mocl_flutter/features/keyword_alerts/domain/keyword_alert_expiry
 import 'package:mocl_flutter/features/keyword_alerts/presentation/state/keyword_alert_state_mixin.dart';
 import 'package:mocl_flutter/features/keyword_alerts/presentation/widgets/keyword_alert_editor.dart';
 import 'package:mocl_flutter/features/list_page/presentation/state/list_event_mixin.dart';
+import 'package:mocl_flutter/features/site_health/presentation/state/site_report_event_mixin.dart';
+import 'package:mocl_flutter/features/site_health/presentation/widgets/site_report_sheet.dart';
+import 'package:mocl_shared/reports/site_report.dart';
 import 'package:mocl_shared/alerts/keyword_alerts.dart';
 import 'package:mocl_shared/entities/mocl_main_item.dart';
 
@@ -191,16 +194,29 @@ class const _SortButton() extends ConsumerWidget with ListState, ListEvent {
 }
 
 // 4. 더보기 버튼 분리 (PlainPopupMenuButton 사용)
-class const _MoreButton() extends ConsumerWidget with ListEvent {
+class const _MoreButton()
+    extends ConsumerWidget
+    with ListEvent, SiteReportEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) =>
       PlainPopupMenuButton<int>(
         icon: const PlainIcon(Icons.more_vert),
         onSelected: (int value) {
-          if (value == 0) handleRefresh(ref);
+          switch (value) {
+            case 0:
+              handleRefresh(ref);
+            case 1:
+              SiteReportFlow.open(
+                context,
+                readSiteReportTarget(ref),
+                initialReason: SiteReportReason.list,
+              );
+          }
         },
-        itemBuilder: (BuildContext context) => [
+        itemBuilder: (BuildContext menuContext) => [
           const PopupMenuItem(value: 0, child: Text('새로고침')),
+          if (readSiteReportsAvailable(ref))
+            const PopupMenuItem(value: 1, child: Text('문제 알리기')),
         ],
       );
 }

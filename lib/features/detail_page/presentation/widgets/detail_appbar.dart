@@ -9,6 +9,8 @@ import 'package:mocl_flutter/core/presentation/widgets/large_title_flexible_spac
 import 'package:mocl_flutter/core/presentation/widgets/list_detail_layout.dart';
 import 'package:mocl_flutter/core/presentation/widgets/plain_icon_button.dart';
 import 'package:mocl_flutter/core/presentation/widgets/scroll_to_top_title.dart';
+import 'package:mocl_flutter/features/site_health/presentation/state/site_report_event_mixin.dart';
+import 'package:mocl_flutter/features/site_health/presentation/widgets/site_report_sheet.dart';
 
 import '../../../../core/presentation/widgets/plain_icon.dart';
 import '../../../../core/presentation/widgets/plain_text.dart';
@@ -26,7 +28,7 @@ import 'detail_scope.dart';
 /// 필요한 북마크는 액션에 두고, 헤더는 툴바를 탭해 맨 위로 올려 본다.
 class const DetailAppBar({super.key})
     extends ConsumerWidget
-    with DetailState, DetailEvent {
+    with DetailState, DetailEvent, SiteReportEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     // 제목 줄 수는 화면 폭이 아니라 상세 화면이 받은 폭으로 잰다(목록 옆 상세 칸,
@@ -87,6 +89,13 @@ class const DetailAppBar({super.key})
               onIncreaseFontSize: () => adjustFontSize(ref, 1),
               onDecreaseFontSize: () => adjustFontSize(ref, -1),
               onResetFontSize: () => resetFontSize(ref),
+              onReport: readSiteReportsAvailable(ref)
+                  ? () => SiteReportFlow.open(
+                      context,
+                      readSiteReportTarget(ref),
+                      initialReason: readSiteReportReason(ref),
+                    )
+                  : null,
             ),
           ],
         ),
@@ -103,6 +112,9 @@ class const _DetailPopupMenuButton({
   required final void Function() onIncreaseFontSize,
   required final void Function() onDecreaseFontSize,
   required final void Function() onResetFontSize,
+
+  /// 문제 알리기(서버가 없는 빌드면 null — 메뉴에서 뺀다).
+  final void Function()? onReport,
 }) extends StatelessWidget {
   @override
   Widget build(BuildContext context) => AdaptivePopupMenu(
@@ -126,6 +138,8 @@ class const _DetailPopupMenuButton({
           ),
         ),
       ),
+      if (onReport case final void Function() report)
+        AdaptiveMenuOption(label: '문제 알리기', onTap: report),
     ],
   );
 }

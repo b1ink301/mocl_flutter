@@ -9,6 +9,7 @@ import 'package:mocl_flutter/features/database/data/datasources/local/local_data
 import 'package:mocl_shared/parser/base/base_parser.dart';
 import 'package:mocl_shared/util/reply_count.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_api.dart';
+import 'package:mocl_flutter/features/site_health/data/site_health_reporter.dart';
 
 abstract class ListDataSource() {
   Future<Either<Failure, List<ListItem>>> getList(
@@ -35,6 +36,9 @@ class const ListDataSourceImpl({
   required final LocalDatabase localDatabase,
   required final BaseApi apiClient,
   required final BaseParser parser,
+
+  /// 파서 고장을 스스로 알린다(검색은 보지 않는다 — 0건이 정상일 수 있다).
+  final SiteHealthReporter? health,
 }) implements ListDataSource {
   @override
   Future<Either<Failure, List<ListItem>>> getList(
@@ -42,10 +46,25 @@ class const ListDataSourceImpl({
     int page,
     LastId lastId,
     SortType sortType,
-  ) async => _withNewReplies(
-    item.siteType,
-    await apiClient.list(item, page, lastId, sortType, parser, isReadFlags),
-  );
+  ) async {
+    final Either<Failure, List<ListItem>> result = await apiClient.list(
+      item,
+      page,
+      lastId,
+      sortType,
+      parser,
+      isReadFlags,
+    );
+    health?.onList(
+      item.siteType,
+      item.board,
+      item.url,
+      result,
+      // 첫 쪽(클리앙 0, 그 외 1 — ListPagingController._initialPage 와 같다).
+      firstPage: page == (item.siteType == SiteType.clien ? 0 : 1),
+    );
+    return _withNewReplies(item.siteType, result);
+  }
 
   @override
   Future<Either<Failure, List<ListItem>>> getSearchList(

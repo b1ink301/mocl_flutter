@@ -71,7 +71,7 @@ final class DetailDatasourceProvider
   }
 }
 
-String _$detailDatasourceHash() => r'ac93f38e54ee98446f887d811d54d807c95bcc9f';
+String _$detailDatasourceHash() => r'30c722771aefbb44a6af8e610305c3884b578ffc';
 
 final class DetailDatasourceFamily extends $Family
     with $FunctionalFamilyOverride<DetailDataSource, SiteType> {

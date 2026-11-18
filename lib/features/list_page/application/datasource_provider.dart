@@ -2,6 +2,7 @@ import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/database/application/datasource_provider.dart';
 import 'package:mocl_flutter/features/html_parser/application/datasource_provider.dart';
 import 'package:mocl_flutter/features/list_page/data/datasources/list_data_source.dart';
+import 'package:mocl_flutter/features/site_health/application/site_health_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'datasource_provider.g.dart';
@@ -14,5 +15,6 @@ ListDataSource listDatasource(Ref ref, SiteType siteType) {
     localDatabase: localDatabase,
     apiClient: apiClient,
     parser: parser,
+    health: ref.watch(siteHealthReporterProvider),
   );
 }

@@ -13,6 +13,8 @@ import 'package:mocl_flutter/core/presentation/widgets/list_detail_layout.dart';
 import 'package:mocl_shared/entities/mocl_list_item.dart';
 import 'package:mocl_shared/util/mocl_logger.dart';
 
+import 'package:mocl_flutter/features/site_health/domain/site_report_target.dart';
+
 import '../../application/list_providers.dart';
 import '../../../settings_page/application/settings_providers.dart';
 import '../../../translation/application/translation_providers.dart';
@@ -35,6 +37,17 @@ mixin class ListEvent() {
   /// 백그라운드 → 포그라운드 복귀 시 호출. 멈춘 fetch 가 있으면 강제 재시작.
   void handleAppResumed(WidgetRef ref) =>
       ref.read(listPagingControllerProvider.notifier).kickIfStale();
+
+  /// "문제 알리기" 가 가리킬 게시판.
+  SiteReportTarget readSiteReportTarget(WidgetRef ref) {
+    final MainItem item = ref.read(mainItemProvider);
+    return SiteReportTarget.of(
+      site: item.siteType,
+      board: item.board,
+      boardTitle: item.text,
+      url: item.url,
+    );
+  }
 
   /// 이 게시판 안 글 검색 화면을 연다.
   Future<void> handleShowSearch(WidgetRef ref, BuildContext context) =>

@@ -295,6 +295,26 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
 - 기기 확인: `adb shell am start -a android.intent.action.SEND -t text/plain --es android.intent.extra.TEXT '<글 주소>' -n <앱 id>/net.b1ink.mocl_flutter.MainActivity`,
   바로가기는 `-a android.intent.action.RUN --es 'some unique action key' history`.
 
+## 사이트 고장 감지 · 문제 알리기 (`features/site_health/` · `server/lib/src/reports/`)
+
+- 계약은 `mocl_shared/reports/site_report.dart`(`SiteReport`, `kind` auto · user, 이유 `SiteReportReason`) 하나.
+  서버 `POST /v1/reports` 가 받아 `reports.db` 에 두고 ntfy(`NTFY_TOPIC`, `ops/healthcheck.sh` 와 같은 토픽)로 알린다.
+  메일로 보내는 길은 두지 않는다(서버가 없는 빌드는 진입점을 숨긴다).
+- **자동 감지**(`SiteHealthReporter`): `ListDataSourceImpl.getList` · `DetailDataSourceImpl.getDetail` 결과를 보고,
+  파서 실패(`GetListFailure` · `GetDetailFailure` 중 `response.statusCode` 로 시작하지 않는 것)와 첫 쪽 0개만 신고한다.
+  차단 · 네트워크 · 로그인 · 요청 제한 · HTTP 실패 · 검색은 신고하지 않는다(`SiteHealthClassifier`) — 기기 · 망 사정이라 시끄럽다.
+  같은 (사이트, 게시판, 이유)는 기기당 하루 한 번(SharedPreferences `site_health_sent`), release 빌드에서만 보낸다.
+  Crashlytics 에도 `SiteParseError` non-fatal 로 남긴다. 결과는 바꾸지 않고 기다리지 않는다.
+  네이버카페 · 레딧(`hasCuratedBoardList` false)은 무엇을 보는지 드러나므로 게시판 · 주소를 빼고 보낸다.
+  첫 쪽 판정(클리앙 0, 그 외 1)은 `ListPagingController._initialPage` 와 같아야 한다.
+- **사용자 제보**: `SiteReportFlow.open`(이유 칩 · 메모 200자 · "함께 보내는 정보" 표시). 들어가는 곳은 상세 더보기 메뉴,
+  목록 더보기 메뉴 · 목록 오류 화면 보조 버튼, 설정 → 앱 정보 "문제 · 의견 보내기"(사이트 없는 의견). 대상은 각 화면의
+  event mixin `readSiteReportTarget` 이 만든다(`SiteReportTarget.of` 가 계약 길이 · http(s) 로 거른다).
+- 서버 알림(`ReportAlerter`): 제보는 사이트마다 10분에 한 번(그 사이는 묶음), 자동은 (사이트, 이유) 1시간 5건부터 한 번 ·
+  6시간 쉼. 관리 화면 "사이트 문제 신고" 에서 보고 "확인함" 으로 치운다. 서버는 IP · 기기 id 를 저장하지 않는다.
+- 이유를 늘리면 관리 화면 `REASON_LABEL`(`admin_page.dart`)도 같이 고친다. 옛 앱이 모르는 이유를 보내지 않도록
+  자동 이유는 늘릴 때 서버를 먼저 배포한다(모르는 이유는 `400`).
+
 ## 목록 · 상세 스크롤 성능
 
 - 측정은 profile 빌드로 한다(debug 는 근거가 못 된다). 프레임이 밀리면 빌드(`buildDuration`) · 래스터 ·

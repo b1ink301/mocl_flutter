@@ -3,6 +3,7 @@ import 'package:mocl_flutter/features/database/application/datasource_provider.d
 import 'package:mocl_flutter/features/database/data/datasources/local/local_database.dart';
 import 'package:mocl_flutter/features/detail_page/data/datasources/detail_data_source.dart';
 import 'package:mocl_flutter/features/html_parser/application/datasource_provider.dart';
+import 'package:mocl_flutter/features/site_health/application/site_health_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'datasource_provider.g.dart';
@@ -17,5 +18,6 @@ DetailDataSource detailDatasource(Ref ref, SiteType siteType) {
     apiClient: currentApi,
     parser: currentParser,
     localDatabase: localDatabase,
+    health: ref.watch(siteHealthReporterProvider),
   );
 }

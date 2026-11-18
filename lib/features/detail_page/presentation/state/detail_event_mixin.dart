@@ -19,6 +19,8 @@ import 'package:mocl_flutter/features/detail_page/domain/video_link_resolver.dar
 import 'package:mocl_flutter/features/html_parser/application/datasource_provider.dart';
 import 'package:mocl_flutter/features/media_player/application/media_player_provider.dart';
 import 'package:mocl_flutter/features/settings_page/application/settings_providers.dart';
+import 'package:mocl_flutter/features/site_health/domain/site_report_target.dart';
+import 'package:mocl_shared/reports/site_report.dart';
 
 import '../../application/detail_providers.dart';
 import '../../application/use_case_provider.dart';
@@ -37,6 +39,23 @@ mixin class DetailEvent() {
       return false;
     }
   }
+
+  /// "문제 알리기" 가 가리킬 글(사이트 · 게시판 · 원문 주소).
+  SiteReportTarget readSiteReportTarget(WidgetRef ref) {
+    final ListItem item = ref.read(listItemProvider);
+    return SiteReportTarget.of(
+      site: ref.read(detailSiteTypeProvider),
+      board: item.board,
+      boardTitle: item.boardTitle,
+      url: ref.read(detailUrlProvider),
+    );
+  }
+
+  /// 제보 시트의 처음 이유: 글을 못 읽었으면 "안 열려요", 아니면 "본문이 이상해요".
+  SiteReportReason readSiteReportReason(WidgetRef ref) =>
+      ref.read(detailsProvider).hasError
+      ? SiteReportReason.notOpening
+      : SiteReportReason.content;
 
   void adjustFontSize(WidgetRef ref, double step) =>
       ref.read(appTextStylesFontSizeProvider.notifier).adjustFontSize(step);

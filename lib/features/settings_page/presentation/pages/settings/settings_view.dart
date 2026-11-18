@@ -13,12 +13,16 @@ import 'package:mocl_flutter/features/app_update/presentation/state/app_update_e
 import 'package:mocl_flutter/features/app_update/presentation/state/app_update_state_mixin.dart';
 import 'package:mocl_flutter/features/keyword_alerts/presentation/state/keyword_alert_state_mixin.dart';
 
+import 'package:mocl_flutter/features/site_health/domain/site_report_target.dart';
+import 'package:mocl_flutter/features/site_health/presentation/state/site_report_event_mixin.dart';
+import 'package:mocl_flutter/features/site_health/presentation/widgets/site_report_sheet.dart';
+
 import '../../state/settings_event_mixin.dart';
 import '../../state/settings_state_mixin.dart';
 
 class const SettingsView({super.key})
     extends ConsumerWidget
-    with SettingsState, SettingsEvent {
+    with SettingsState, SettingsEvent, SiteReportEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     listenSyncStatus(ref);
@@ -224,7 +228,21 @@ class const SettingsView({super.key})
               ),
 
             const _SectionHeader('앱 정보'),
-            const _SettingsCard(children: [_AppUpdateTile()]),
+            _SettingsCard(
+              children: [
+                const _AppUpdateTile(),
+                if (readSiteReportsAvailable(ref)) ...[
+                  const _TileDivider(),
+                  _SettingsTile(
+                    icon: Icons.feedback_outlined,
+                    title: '문제 · 의견 보내기',
+                    trailing: const Icon(Icons.chevron_right, size: 22),
+                    onTap: () =>
+                        SiteReportFlow.open(context, SiteReportTarget.general),
+                  ),
+                ],
+              ],
+            ),
 
             const SizedBox(height: 28),
             Center(
