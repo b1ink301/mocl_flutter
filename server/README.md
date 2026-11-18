@@ -18,10 +18,20 @@ Mocl 앱 서버. **원격 설정**(`GET /v1/config`)과 **키워드 알림**(공
 | `GET /v1/issues/{id}` | 이슈 하나 |
 | `PUT /v1/alerts/{installId}` | 기기의 키워드 알림 등록을 통째로 덮어쓴다(`AlertRegistration`). 허용 게시판만 저장, 남는 게 없으면 삭제. `204` · 무효 FCM 토큰 `400 invalid_token` |
 | `DELETE /v1/alerts/{installId}` | 등록 삭제. `204` |
+| `POST /v1/reports` | 사이트 문제 신고(`SiteReport`, 자동 감지 · 사용자 제보). 저장 후 ntfy 알림. `204` · 잘못된 형식 `400` |
 | `GET /admin` | 관리 화면(원격 설정 편집). `ADMIN_TOKEN` 이 있을 때만. 아래 "관리 화면" |
 | `/admin/api/*` | 관리 API. `Authorization: Bearer {ADMIN_TOKEN}` 필수 |
 
-알림 API 는 IP 당 분당 30회, 이슈 API 는 120회로 제한하고(`429`), 알림 본문은 64KB 까지 받는다.
+알림 API 는 IP 당 분당 30회, 이슈 API 는 120회, 신고 API 는 10회로 제한하고(`429`), 알림 본문은 64KB · 신고 본문은 4KB 까지 받는다.
+
+### 사이트 문제 신고 (`lib/src/reports/`)
+
+- 앱이 파서 고장을 스스로 감지하면(`kind: auto`, 기기당 같은 게시판 · 이유 하루 한 번) 또는 사용자가
+  "문제 알리기" 를 보내면(`kind: user`) 받는다. `reports.db` 에 30일 · 5000건까지, IP · 기기 id 없이 저장한다.
+- 알림(`ReportAlerter`, `NTFY_TOPIC` 이 있을 때 ntfy, 없으면 로그만):
+  - 제보: 사이트마다 10분에 한 번, 그 사이 온 건 "외 N건" 으로 묶는다.
+  - 자동: (사이트, 이유)마다 1시간 안 5건이 모이면 한 번(≈ 겪은 기기 5대), 6시간 동안 다시 알리지 않는다.
+- 관리 화면 "사이트 문제 신고" 에서 목록 · 24시간 사이트별 건수를 보고 "확인함" 으로 치운다.
 새 기기이거나 FCM 토큰이 바뀐 등록은 FCM 에 `validate_only` 로 시험 발송해 우리 프로젝트의 토큰인지 확인한다
 (지어낸 토큰으로 기기 자리 `AlertStore.maxDevices` 를 채우는 남용 방지). FCM 이 답하지 않으면 막지 않고,
 서비스 계정이 없으면(dry-run) 확인하지 않는다.
@@ -257,6 +267,7 @@ ops/install-cron.sh     # 한 번만(여러 번 실행해도 됨). crontab 의 "
 
 - 상태 알림: `server/.env` 의 `NTFY_TOPIC` 이 있으면 상태가 **바뀔 때만**(OK ↔ WARN ↔ DOWN) ntfy.sh 로 보낸다.
   폰에 ntfy 앱을 깔고 같은 토픽을 구독한다. 토픽 이름이 비밀번호 구실이니 남에게 알리지 않는다.
+  같은 토픽이 api 컨테이너에도 들어가(`docker-compose.yml`) 사이트 문제 신고도 이리로 온다. 바꾼 뒤 `docker compose up -d`.
 - 로그: `~/backup/mocl-ops.log`
 - 같은 서버 안의 검사라 인스턴스가 통째로 죽으면 알 수 없다. 외부 감시(UptimeRobot 무료 등)로
   `https://도메인/healthz/crawl` 도 함께 본다.

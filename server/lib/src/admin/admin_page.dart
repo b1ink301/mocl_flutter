@@ -91,6 +91,11 @@ button:disabled { opacity: .45; cursor: default; }
 /* 이력 */
 .hist { display: flex; align-items: center; gap: 8px; padding: 8px 0; border-top: 1px solid var(--line); }
 .hist:first-child { border-top: 0; }
+.report { padding: 10px 0; border-top: 1px solid var(--line); }
+.report:first-child { border-top: 0; }
+.report .memo { margin-top: 4px; white-space: pre-wrap; word-break: break-word; }
+.report a { color: var(--accent); word-break: break-all; font-size: 13px; }
+.report.acked { opacity: .55; }
 
 /* 문제 · 변경 목록 */
 .issues { margin: 10px 0 0; padding: 10px 12px; border-radius: 10px; background: rgba(229,72,77,.08); color: var(--danger); font-size: 13px; }
@@ -221,6 +226,15 @@ button:disabled { opacity: .45; cursor: default; }
   </section>
 
   <section class="card">
+    <div class="row"><h2 class="grow">사이트 문제 신고</h2>
+      <label class="muted"><input type="checkbox" id="reportsAll"> 확인한 것도</label>
+      <button id="reloadReports" type="button" class="ghost">새로고침</button></div>
+    <p class="desc"><b>자동</b>은 앱이 스스로 감지한 파서 고장(기기당 하루 한 번), <b>제보</b>는 사용자가 "문제 알리기" 로 보낸 것입니다. 30일 보관, 최근 200건.</p>
+    <div id="reportSummary" class="muted"></div>
+    <div id="reports" class="muted">불러오는 중…</div>
+  </section>
+
+  <section class="card">
     <h2>서버 상태</h2>
     <div id="serverStatus" class="muted">불러오는 중…</div>
   </section>
@@ -320,6 +334,7 @@ async function enter() {
     render();
     loadHistory();
     loadStatus();
+    loadReports();
   } catch (e) {
     showLogin(e.message);
   }
@@ -572,6 +587,41 @@ async function loadHistory() {
     el('button', { type: 'button', onclick: () => viewHistory(it.id, true) }, '불러오기'))));
 }
 
+// ---------- 신고 ----------
+const REASON_LABEL = {
+  listParse: '목록 파싱 실패', detailParse: '상세 파싱 실패', emptyList: '목록 0개',
+  notOpening: '글이 안 열려요', content: '본문 · 이미지가 이상해요', comments: '댓글이 안 보여요',
+  list: '목록이 이상해요', other: '기타 · 의견',
+};
+async function loadReports() {
+  const all = $('reportsAll').checked;
+  const { data } = await api('GET', '/reports' + (all ? '?all=1' : ''));
+  const box = $('reports');
+  if (!data || data.enabled === false) { box.textContent = '신고를 받지 않는 서버입니다'; return; }
+  const by = Object.entries(data.bySite24h || {}).sort((a, b) => b[1] - a[1]);
+  $('reportSummary').textContent = by.length
+    ? '최근 24시간: ' + by.map(([s, n]) => `${s === '_' ? '일반' : s} ${n}`).join(' · ')
+    : '최근 24시간 신고 없음';
+  const items = data.items || [];
+  if (!items.length) { box.textContent = all ? '아직 없습니다' : '확인하지 않은 신고가 없습니다'; return; }
+  box.classList.remove('muted');
+  box.replaceChildren(...items.map((r) => el('div', { class: 'report' + (r.acked ? ' acked' : '') },
+    el('div', { class: 'row' },
+      el('span', { class: 'pill' + (r.kind === 'auto' ? ' bad' : '') }, r.kind === 'auto' ? '자동' : '제보'),
+      el('b', {}, r.site || '일반'),
+      el('span', { class: 'grow' }, REASON_LABEL[r.reason] || r.reason, r.board ? el('span', { class: 'muted' }, ` · ${r.board}`) : null),
+      el('button', { type: 'button', class: 'ghost', onclick: () => ackReport(r.id, !r.acked) }, r.acked ? '되돌리기' : '확인함')),
+    el('div', { class: 'muted' }, `${new Date(r.receivedAt).toLocaleString('ko-KR')} · 앱 ${r.appVersion} · ${r.platform}`),
+    r.message ? el('div', { class: 'memo' }, r.message) : null,
+    // 서버가 http(s) 만 받는다. 한 번 더 확인하고 링크로 단다.
+    r.url && /^https?:\/\//.test(r.url) ? el('a', { href: r.url, target: '_blank', rel: 'noopener noreferrer' }, r.url) : null)));
+}
+async function ackReport(id, acked) {
+  const { status } = await api('POST', `/reports/${id}/ack`, { acked });
+  if (status !== 200) return toast('바꾸지 못했습니다');
+  loadReports();
+}
+
 async function viewHistory(id, load) {
   const { status, data } = await api('GET', '/history/' + id);
   if (status !== 200) return toast('이력을 읽지 못했습니다');
@@ -630,6 +680,8 @@ $('logout').addEventListener('click', logout);
 $('save').addEventListener('click', () => save().catch((e) => toast(e.message)));
 $('revert').addEventListener('click', () => { cfg = clone(base); render(); });
 $('reloadHistory').addEventListener('click', () => { loadHistory(); loadStatus(); });
+$('reloadReports').addEventListener('click', () => loadReports().catch((e) => toast(e.message)));
+$('reportsAll').addEventListener('change', () => loadReports().catch((e) => toast(e.message)));
 $('addSite').addEventListener('click', () => {
   const used = Object.keys(cfg.sites || {});
   const site = meta.sites.find((s) => !used.includes(s));

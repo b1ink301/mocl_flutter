@@ -23,4 +23,7 @@ export 'src/radar/radar_feed.dart' show RadarFeed;
 export 'src/radar/radar_ranker.dart' show RadarRanker, ScoredIssue;
 export 'src/radar/radar_store.dart' show RadarPost, RadarSample, RadarStore;
 export 'src/rate_limiter.dart' show RateLimiter;
+export 'src/reports/report_notifier.dart'
+    show LogOpsNotifier, NtfyNotifier, OpsAlert, OpsNotifier, ReportAlerter;
+export 'src/reports/report_store.dart' show ReportStore, StoredReport;
 export 'src/server_log.dart' show installServerLogging, serverLog;

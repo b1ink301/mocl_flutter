@@ -22,6 +22,8 @@ services:
       FIREBASE_SERVICE_ACCOUNT: /app/secrets/firebase-service-account.json
       # 관리 화면 토큰(.env 의 ADMIN_TOKEN, 32자 이상). 비우면 /admin 을 열지 않는다.
       ADMIN_TOKEN: ${ADMIN_TOKEN:-}
+      # 사이트 문제 신고 알림(ops/healthcheck.sh 와 같은 ntfy 토픽). 비우면 로그만 남긴다.
+      NTFY_TOPIC: ${NTFY_TOPIC:-}
     logging: &bounded-logs
       # 로그가 끝없이 쌓이지 않게 용량으로 순환한다(오래된 것부터 지워짐).
       driver: json-file

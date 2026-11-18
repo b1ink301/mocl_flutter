@@ -10,6 +10,9 @@ import 'alerts/alert_store.dart';
 import 'alerts/push_sender.dart';
 import 'config_store.dart';
 import 'radar/radar_feed.dart';
+import 'reports/report_notifier.dart';
+import 'reports/report_routes.dart';
+import 'reports/report_store.dart';
 import 'rate_limiter.dart';
 import 'server_log.dart';
 
@@ -27,6 +30,9 @@ Handler buildHandler(
   CrawlStatus Function()? crawlStatus,
   RadarFeed? radarFeed,
   AdminRoutes? admin,
+  ReportStore? reports,
+  RateLimiter? reportLimiter,
+  ReportAlerter? reportAlerter,
   Duration crawlStaleAfter = const Duration(minutes: 10),
 }) {
   final Router router = Router()
@@ -52,6 +58,14 @@ Handler buildHandler(
     });
   radarFeed?.mount(router, limiter: issueLimiter);
   admin?.mount(router);
+  if (reports != null) {
+    mountReportRoutes(
+      router,
+      reports,
+      reportLimiter ?? RateLimiter(limit: 10),
+      alerter: reportAlerter,
+    );
+  }
   if (alerts != null) {
     mountAlertRoutes(
       router,

@@ -286,6 +286,7 @@ flowchart LR
 | `GET /v1/issues/{id}` | 이슈 하나 |
 | `PUT /v1/alerts/{installId}` | 기기의 알림 구독 전체를 덮어쓴다(`AlertRegistration`). 구독이 비면 삭제 |
 | `DELETE /v1/alerts/{installId}` | 알림 등록 삭제 |
+| `POST /v1/reports` | 사이트 문제 신고(자동 감지 · 사용자 제보, `SiteReport`). 저장 후 ntfy 로 알림 |
 
 알림 API 는 IP 당 분당 30회 · 본문 64KB 로 제한하고, 게시판 URL 은 지원 사이트 도메인만 받는다(SSRF 방지).
 
@@ -325,7 +326,7 @@ docker compose logs -f api                          # 로그
 | FCM 발송 키 | 서버 `~/mocl/server/secrets/firebase-service-account.json` (**git 밖**. 없으면 dry-run) |
 | 도메인 · 알림 토픽 | 서버 `~/mocl/server/.env` (`MOCL_DOMAIN`, `NTFY_TOPIC`) |
 | 백업 | `ops/backup.sh` 매일 04:30 KST → `~/backup/mocl/`, 14일 보관 |
-| 감시 | `ops/healthcheck.sh` 5분마다. 상태가 바뀔 때만 ntfy 로 알림 |
+| 감시 | `ops/healthcheck.sh` 5분마다. 상태가 바뀔 때만 ntfy 로 알림. 사이트 문제 신고도 같은 토픽으로 |
 
 - 같은 서버 안의 검사라 인스턴스가 통째로 죽으면 알 수 없다 → 외부 감시(UptimeRobot 등)로 `/healthz/crawl` 도 본다.
 - Always Free 인스턴스는 사용률이 낮으면 회수될 수 있다 → 계정을 종량제(PAYG)로 두면 회수 대상에서 빠진다.

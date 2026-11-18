@@ -11,6 +11,7 @@ import 'package:shelf/shelf_io.dart' as shelf_io;
 /// - `DATA_DIR`: 알림 DB 위치(기본 data)
 /// - `FIREBASE_SERVICE_ACCOUNT`: FCM 발송용 서비스 계정 JSON 경로. 없으면 보내지 않고 로그만 남긴다.
 /// - `ADMIN_TOKEN`: 관리 화면(`/admin`) 토큰(32자 이상). 없거나 짧으면 관리 화면을 열지 않는다.
+/// - `NTFY_TOPIC`: 사이트 문제 신고를 알릴 ntfy.sh 토픽(`ops/healthcheck.sh` 와 같은 것). 없으면 로그만.
 Future<void> main() async {
   installServerLogging();
   final Map<String, String> env = Platform.environment;
@@ -24,6 +25,20 @@ Future<void> main() async {
   await Directory(dataDir).create(recursive: true);
   final AlertStore alerts = AlertStore(
     await databaseFactoryIo.openDatabase('$dataDir/alerts.db'),
+  );
+
+  final ReportStore reports = ReportStore(
+    await databaseFactoryIo.openDatabase('$dataDir/reports.db'),
+  );
+  final String ntfyTopic = env['NTFY_TOPIC']?.trim() ?? '';
+  final NtfyNotifier? ntfy = ntfyTopic.isEmpty ? null : NtfyNotifier(ntfyTopic);
+  final ReportAlerter reportAlerter = ReportAlerter(
+    notifier: ntfy ?? LogOpsNotifier(),
+  );
+  serverLog(
+    ntfy == null
+        ? '[report] NTFY_TOPIC 이 없어 신고 알림은 로그로만 남긴다'
+        : '[report] 신고 알림을 ntfy 로 보낸다',
   );
 
   final PushSender push = await _pushSender(env['FIREBASE_SERVICE_ACCOUNT']);
@@ -73,6 +88,7 @@ Future<void> main() async {
           auth: adminAuth,
           // 데이터 볼륨에 두어 매일 백업에 함께 묶인다.
           history: ConfigHistory(Directory('$dataDir/config-history')),
+          reports: reports,
           status: () async => {
             'crawl': crawlStatus().toJson(
               DateTime.now().millisecondsSinceEpoch,
@@ -89,10 +105,15 @@ Future<void> main() async {
   final RateLimiter limiter = RateLimiter();
   // 이슈 목록은 앱이 탭을 열 때 · 복귀 때 받는다. 사람이 쓰는 양보다 넉넉하게.
   final RateLimiter issueLimiter = RateLimiter(limit: 120);
+  // 신고는 사람이 누르거나 앱이 하루 한 번 보내는 양이라 적게.
+  final RateLimiter reportLimiter = RateLimiter(limit: 10);
   final Timer pruneTimer = Timer.periodic(const Duration(minutes: 1), (_) {
     limiter.prune();
     issueLimiter.prune();
+    reportLimiter.prune();
     admin?.prune();
+    // 묶어 둔 사용자 제보를 내보낸다.
+    unawaited(reportAlerter.flush(DateTime.now().millisecondsSinceEpoch));
   });
 
   final HttpServer server = await shelf_io.serve(
@@ -105,6 +126,9 @@ Future<void> main() async {
       crawlStatus: crawlStatus,
       radarFeed: radarFeed,
       admin: admin,
+      reports: reports,
+      reportLimiter: reportLimiter,
+      reportAlerter: reportAlerter,
     ),
     InternetAddress.anyIPv4,
     port,
@@ -128,6 +152,7 @@ Future<void> main() async {
     await server.close();
     fetcher.close();
     await push.close();
+    ntfy?.close();
   }
 
   sigterm = ProcessSignal.sigterm.watch().listen(shutdown);

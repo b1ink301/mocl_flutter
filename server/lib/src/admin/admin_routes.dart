@@ -9,6 +9,7 @@ import 'package:shelf_router/shelf_router.dart';
 
 import '../config_store.dart';
 import '../rate_limiter.dart';
+import '../reports/report_store.dart';
 import '../server_log.dart';
 import 'admin_page.dart';
 import 'config_history.dart';
@@ -55,6 +56,7 @@ class AdminRoutes({
   required final AdminAuth auth,
   required final ConfigHistory history,
   final Future<Map<String, Object?>> Function()? status,
+  final ReportStore? reports,
   final int failLimit = 5,
   final DateTime Function() clock = DateTime.now,
 }) {
@@ -71,7 +73,11 @@ class AdminRoutes({
       ..get('/admin/api/history/<id>', (Request request, String id) {
         return _guard((Request r) async => _historyItem(id))(request);
       })
-      ..get('/admin/api/status', _guard(_status));
+      ..get('/admin/api/status', _guard(_status))
+      ..get('/admin/api/reports', _guard(_reports))
+      ..post('/admin/api/reports/<id>/ack', (Request request, String id) {
+        return _guard((Request r) => _ackReport(r, id))(request);
+      });
   }
 
   /// 요청 제한용 IP 를 비운다(서버가 1분마다 부른다).
@@ -193,6 +199,35 @@ class AdminRoutes({
     final String? text = history.read(id);
     if (text == null) return _error(404, 'not_found');
     return _json({'id': id, 'text': text});
+  }
+
+  /// 최근 신고와 24시간 사이트별 건수. `?all=1` 이 아니면 확인한 신고는 뺀다.
+  Future<Response> _reports(Request request) async {
+    final ReportStore? store = reports;
+    if (store == null) return _json({'enabled': false, 'items': []});
+    final int now = clock().millisecondsSinceEpoch;
+    final bool all = request.url.queryParameters['all'] == '1';
+    return _json({
+      'enabled': true,
+      'items': [
+        for (final StoredReport r in await store.recent())
+          if (all || !r.acked) r.toJson(),
+      ],
+      'bySite24h': await store.countBySite(
+        now - const Duration(hours: 24).inMilliseconds,
+      ),
+    });
+  }
+
+  Future<Response> _ackReport(Request request, String id) async {
+    final int? key = int.tryParse(id);
+    final ReportStore? store = reports;
+    if (key == null || store == null) return _error(404, 'not_found');
+    final Object? body = _tryDecode(await _readLimited(request) ?? '');
+    final bool acked = body is! Map || body['acked'] != false;
+    return await store.ack(key, acked: acked)
+        ? _json({'id': key, 'acked': acked})
+        : _error(404, 'not_found');
   }
 
   Future<Response> _status(Request request) async =>
