@@ -61,7 +61,7 @@ class RadarCollector({
     for (int i = 0; i < boards.length; i++) {
       final RadarBoard board = boards[i];
       if (i > 0 && politeDelay > Duration.zero) {
-        await Future<void>.delayed(politeDelay);
+        await Future.pause(politeDelay);
       }
       final List<ListItem> items;
       try {

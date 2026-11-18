@@ -279,7 +279,7 @@ class PagingItems() extends _$PagingItems {
 
   static List<ListItem> _flatten(List<List<ListItem>>? pages) {
     if (pages == null) return const <ListItem>[];
-    return List<ListItem>.unmodifiable([for (final p in pages) ...p]);
+    return List<ListItem>.unmodifiableOf([for (final p in pages) ...p]);
   }
 }
 

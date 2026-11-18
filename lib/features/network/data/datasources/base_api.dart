@@ -408,7 +408,7 @@ abstract class const BaseApi(final Dio _dio, final String userAgent)
       final controller = headless.webViewController;
       String? last;
       for (int i = 0; i < maxTries; i++) {
-        await Future<void>.delayed(interval);
+        await Future.pause(interval);
         final result = await controller?.evaluateJavascript(
           source: 'document.documentElement.outerHTML',
         );

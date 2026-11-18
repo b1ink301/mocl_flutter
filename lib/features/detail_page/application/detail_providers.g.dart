@@ -747,7 +747,7 @@ final class DetailAppbarHeightProvider
 }
 
 String _$detailAppbarHeightHash() =>
-    r'c74ddc5011cc99242713599a93f1d29e4c3d2a1e';
+    r'473b24d7e8b8c9a7b7a93680da7f74333400f11c';
 
 /// 상세 앱바의 expandedHeight.
 ///

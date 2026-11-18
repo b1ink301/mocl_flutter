@@ -256,7 +256,7 @@ void main() {
       }
 
       final Object? before = await savedAt();
-      await Future<void>.delayed(const Duration(milliseconds: 5));
+      await Future.pause(const Duration(milliseconds: 5));
       final LocalDatabase again = await open();
       await again.setSeenReplies(SiteType.clien, 1, 3);
       await again.dispose();

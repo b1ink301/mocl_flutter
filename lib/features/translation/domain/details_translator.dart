@@ -30,7 +30,7 @@ class const DetailsTranslator(
       for (var i = start; i < end; i++) {
         comments[i] = comments[i].copyWith(bodyHtml: bodies[i - start]);
       }
-      current = current.copyWith(comments: List.unmodifiable(comments));
+      current = current.copyWith(comments: List.unmodifiableOf(comments));
       yield current;
     }
   }

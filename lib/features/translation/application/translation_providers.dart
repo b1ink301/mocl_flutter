@@ -56,7 +56,7 @@ class TitleTranslationsNotifier() extends _$TitleTranslationsNotifier {
     if (todo.isEmpty) return;
     _inFlight.addAll(todo);
     // 위젯 빌드 중(목록 갱신 알림 안)에 불려도 상태를 바꾸지 않도록 한 박자 쉰다.
-    await Future<void>.delayed(Duration.zero);
+    await Future.pause();
     if (!ref.mounted) return;
     state = TitleTranslations(
       translated: state.translated,

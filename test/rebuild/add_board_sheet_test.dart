@@ -349,7 +349,7 @@ class _FakeMainRepository({final Duration? delay, final int count = 12})
   Future<Either<Failure, List<MainItem>>> getMainListFromJson({
     required SiteType siteType,
   }) async {
-    if (delay != null) await Future<void>.delayed(delay!);
+    if (delay != null) await Future.pause(delay!);
     return Right(<MainItem>[
       for (int i = 0; i < count; i++)
         MainItem(
@@ -376,7 +376,7 @@ class _FakeMainRepository({final Duration? delay, final int count = 12})
   Future<Either<Failure, List<MainItem>>> getSubMenuList({
     required MainItem parent,
   }) async {
-    if (delay != null) await Future<void>.delayed(delay!);
+    if (delay != null) await Future.pause(delay!);
     return Right(<MainItem>[
       // 컨테이너 자신(전체글)은 부모와 board 가 같다.
       MainItem(

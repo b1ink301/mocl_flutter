@@ -5,7 +5,7 @@ version: 1.6.4+412
 
 environment:
   sdk: ">=3.13.0"
-  flutter: ">=3.47.0"
+  flutter: ">=3.50.0"
 
 dependencies:
   flutter:
@@ -121,7 +121,7 @@ dependencies:
   flutter_inappwebview: ^6.2.0-beta.3
 
   # video (본문 <video> 는 fwfh_chewie 가 이미 끌어온다. 링크 재생 화면에서 직접 쓴다)
-  chewie: ^1.17.4
+  chewie: ^1.18.1
   video_player: ^2.14.1
 
   # photo view

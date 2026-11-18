@@ -23,5 +23,5 @@ Future<void> clearData(Ref ref) async {
   await InAppWebViewController.clearAllCache();
 
   // CookieManager.instance().deleteAllCookies();
-  await Future<void>.delayed(Duration(milliseconds: 300));
+  await Future.pause(const Duration(milliseconds: 300));
 }

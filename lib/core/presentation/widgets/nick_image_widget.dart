@@ -107,7 +107,7 @@ class const NickImageWidget({
     if (libCacheDir.existsSync()) {
       await libCacheDir.delete(recursive: true);
     } else {
-      await Future<void>.delayed(Duration(milliseconds: 300));
+      await Future.pause(const Duration(milliseconds: 300));
     }
   }
 

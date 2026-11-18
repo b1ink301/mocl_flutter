@@ -258,7 +258,7 @@ class AlertCrawler({
       }
 
       if (!first && politeDelay > Duration.zero) {
-        await Future<void>.delayed(politeDelay);
+        await Future.pause(politeDelay);
       }
       first = false;
 

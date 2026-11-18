@@ -344,7 +344,7 @@ class _FakeDetails(final Details _details) extends DetailsNotifier {
   Future<Details> build() async {
     // 실제 구현은 getDetail() await 이후에 제목을 갱신한다. 동기 초기화 구간에서
     // 다른 provider 를 수정하면 Riverpod 이 assert 하므로 await 지점을 만들어준다.
-    await Future<void>.delayed(Duration.zero);
+    await Future.pause();
     ref.read(detailTitleStateProvider.notifier).update(_details.title);
     return _details;
   }

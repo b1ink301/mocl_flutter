@@ -227,7 +227,7 @@ final class TitleTranslationsNotifierProvider
 }
 
 String _$titleTranslationsNotifierHash() =>
-    r'af2f0ad062418f2288fc6c154a37f6dcdaf072f7';
+    r'0ea1182a94ffcd881bfb1d6eb1464ec0552d0528';
 
 /// 목록 제목 번역 저장소. 앱이 떠 있는 동안 유지해서, 같은 제목은 게시판을
 /// 다시 열거나 새로고침해도 다시 번역하지 않는다.

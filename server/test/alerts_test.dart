@@ -64,7 +64,7 @@ class _SlowSender() implements PushSender {
   Future<PushResult> send(PushMessage message) async {
     _inFlight++;
     peak = _inFlight > peak ? _inFlight : peak;
-    await Future<void>.delayed(const Duration(milliseconds: 5));
+    await Future.pause(const Duration(milliseconds: 5));
     sent.add(message);
     _inFlight--;
     return PushResult.sent;
@@ -560,8 +560,8 @@ void main() {
         },
       );
       final Future<void> tick = c.tick(0);
-      await Future<void>.delayed(Duration.zero);
-      await Future<void>.delayed(Duration.zero);
+      await Future.pause();
+      await Future.pause();
       expect(started, unorderedEquals(['ppomppu', 'clien']));
       gate.complete(page);
       await tick;

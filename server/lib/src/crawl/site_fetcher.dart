@@ -201,9 +201,7 @@ class SiteFetcher({
         // 알림으로 보낸 주소를 앱이 그대로 열 수 있게 절대 주소로 맞춘다.
         (List<ListItem> items) => [
           for (final ListItem item in items)
-            item.copyWith(
-              url: Uri.parse(listUrl).resolve(item.url).toString(),
-            ),
+            item.copyWith(url: Uri.parse(listUrl).resolve(item.url).toString()),
         ],
       );
     } on FetchFailure {

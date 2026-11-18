@@ -159,7 +159,7 @@ class Canary({
     ];
     CanaryResult? last;
     for (final ListItem item in picks) {
-      await Future<void>.delayed(pause);
+      await Future.pause(pause);
       try {
         final Details details = await fetcher.fetchDetail(target.site, item);
         if (details.title.trim().isEmpty) {
@@ -208,7 +208,7 @@ class Canary({
     if (keyword == null) {
       return CanaryResult(target, CanaryStatus.broken, '검색어를 고르지 못함');
     }
-    await Future<void>.delayed(pause);
+    await Future.pause(pause);
     final List<ListItem> found;
     try {
       found = await fetcher.fetchSearch(

@@ -34,7 +34,7 @@ void main() {
     runApp: shown.add,
   );
 
-  Future<void> pastTimeout() => Future<void>.delayed(timeout * 2);
+  Future<void> pastTimeout() => Future.pause(timeout * 2);
 
   test('정상 부팅이면 앱만 띄우고, 시간이 지나도 실패 화면이 끼어들지 않는다', () async {
     await guard(() async => app).start();
