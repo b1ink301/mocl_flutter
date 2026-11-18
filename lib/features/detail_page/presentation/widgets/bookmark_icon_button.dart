@@ -14,7 +14,8 @@ import 'package:mocl_flutter/features/detail_page/presentation/state/detail_stat
 ///
 /// 본문 중간에서도 누를 수 있게 작성자 헤더가 아니라 앱바 액션에 둔다
 /// (floating 앱바라 살짝 역스크롤하면 바로 나온다). 목록 항목 기준으로
-/// 동작하므로 본문 로딩 전에도 쓸 수 있다. (provider 접근은 detail mixin 경유)
+/// 동작하므로 본문 로딩 전에도 쓸 수 있다(상세를 받았으면
+/// 상세 원문 값으로 제목 · 작성자를 채운다). (provider 접근은 detail mixin 경유)
 class const BookmarkIconButton({super.key})
     extends ConsumerWidget
     with DetailState, DetailEvent {
@@ -27,9 +28,10 @@ class const BookmarkIconButton({super.key})
     return PlainIconButton(
       semanticLabel: isOn ? '스크랩 해제' : '스크랩',
       onPressed: () async {
-        final data = PostSnapshot.fromListItem(
+        final data = PostSnapshot.forBookmark(
           siteType,
           item,
+          originalDetailsState(ref),
           DateTime.now().millisecondsSinceEpoch,
         );
         final bool on = await toggleBookmark(ref, siteType, item.id, data);

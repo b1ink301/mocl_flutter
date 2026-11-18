@@ -28,6 +28,11 @@ mixin class DetailState() {
         : original;
   }
 
+  /// 번역하지 않은 원문 상세(받기 전 · 실패면 null). 스크랩처럼 저장할 값을 만들 때 쓴다.
+  /// 버튼을 누를 때 한 번 읽으므로 watch 하지 않는다.
+  Details? originalDetailsState(WidgetRef ref) =>
+      ref.read(detailsProvider).asData?.value;
+
   /// 상세 번역 상태(앱바 번역 버튼).
   DetailTranslation translationState(WidgetRef ref) =>
       ref.watch(detailTranslationProvider);

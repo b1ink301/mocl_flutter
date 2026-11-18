@@ -229,14 +229,38 @@ class LocalDatabase({
     ]),
   );
 
+  /// 스크랩을 넣는다. 이미 있으면 내용(제목 · 게시판 · 작성자 등)만 새 값으로 바꾸고
+  /// 폴더 · 메모 · 스크랩한 시각은 그대로 둔다. 게시판 이름이 비어 있으면(링크 · 알림으로
+  /// 연 글) 즐겨찾기한 같은 게시판의 이름으로 채운다.
   Future<void> setBookmark(PostSnapshot data) async {
-    final existing = await _bookmarkStore.find(
-      _db,
-      finder: _bookmarkFinder(data.siteType, data.id),
-    );
-    if (existing.isEmpty) {
-      await _bookmarkStore.add(_db, data.toJson());
-    }
+    await _db.transaction((txn) async {
+      PostSnapshot snapshot = data;
+      if (snapshot.boardTitle.isEmpty && snapshot.board.isNotEmpty) {
+        final favorite = await _favoriteStore.findFirst(
+          txn,
+          finder: _favoriteFinder(snapshot.siteType, snapshot.board),
+        );
+        final Object? text = favorite?.value['text'];
+        if (text is String && text.isNotEmpty) {
+          snapshot = snapshot.copyWith(boardTitle: text);
+        }
+      }
+      final existing = await _bookmarkStore.findFirst(
+        txn,
+        finder: _bookmarkFinder(snapshot.siteType, snapshot.id),
+      );
+      if (existing == null) {
+        await _bookmarkStore.add(txn, snapshot.toJson());
+        return;
+      }
+      final Map<String, Object?> content = snapshot.toJson()
+        ..remove('folders')
+        ..remove('memo')
+        ..remove('savedAt');
+      // 새 값이 비어 있으면 저장된 값을 지우지 않는다.
+      content.removeWhere((key, value) => value is String && value.isEmpty);
+      await _bookmarkStore.record(existing.key).update(txn, content);
+    });
   }
 
   Future<void> removeBookmark(SiteType siteType, int id) async {

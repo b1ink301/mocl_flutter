@@ -80,6 +80,32 @@ abstract class const PostSnapshot._() with _$PostSnapshot {
     );
   }
 
+  /// 스크랩할 때. 상세를 받았으면 상세 원문 값(제목 · 작성자)을 **목록 값보다 먼저** 쓴다 —
+  /// 보관함 · 링크로 연 글은 목록 항목이 옛 스냅샷이거나 비어 있어서, 목록 값을 쓰면
+  /// 다시 스크랩해도 옛 값(빈 값)이 그대로 남는다. 상세가 아직 없으면 목록 값만 쓴다.
+  /// 번역본이 아니라 원문 [details] 를 넘길 것.
+  factory forBookmark(
+    SiteType siteType,
+    ListItem item,
+    Details? details,
+    int savedAt,
+  ) {
+    if (details == null) {
+      return PostSnapshot.fromListItem(siteType, item, savedAt);
+    }
+    return PostSnapshot.fromListItem(
+      siteType,
+      item.copyWith(
+        title: details.title.isNotEmpty ? details.title : item.title,
+        time: item.time.isNotEmpty ? item.time : details.time,
+        userInfo: details.userInfo.nickName.isNotEmpty
+            ? details.userInfo
+            : item.userInfo,
+      ),
+      savedAt,
+    );
+  }
+
   /// 스토어 · 화면에서 쓰는 키(`clien:42`).
   String get key => keyOf(siteType, id);
 

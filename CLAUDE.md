@@ -207,6 +207,9 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   따로다 — 히스토리를 지워도 읽음 표시는 남는다.
 - 링크 · 알림으로 연 글은 목록 항목이 비어 있어 제목 · 작성자를 상세 값으로 채운다(`PostSnapshot.fromDetails`,
   번역문이 아니라 원문 `Details` 를 넘긴다).
+- 스크랩 버튼은 `PostSnapshot.forBookmark` 로 만든다 — 상세를 받았으면 상세 원문 값이 목록 값보다 먼저다
+  (보관함 · 링크로 연 글은 목록 항목이 옛 스냅샷 · 빈 값이라 `fromListItem` 이면 다시 스크랩해도 갱신되지 않는다).
+  `setBookmark` 는 upsert(내용만 갱신, 폴더 · 메모 · `savedAt` 유지, 빈 새 값은 덮지 않음)이고, 게시판 이름이 비면 즐겨찾기 이름으로 채운다.
 - 30일 · 300개(`LocalDatabase.kHistoryTtl` · `kMaxHistory`), 읽음 기록 정리(`pruneReadsIfDue`)에서 같이 지운다.
 - 스크랩 폴더 · 메모: 한 글을 여러 폴더에 넣는 태그 방식(`PostSnapshot.folders` = 폴더 id 목록, `memo`).
   두 필드는 `@Default` 라 옛 JSON 도 읽히고, 폴더 목록은 새 스토어 `bookmark_folders`(`BookmarkFolder`, 만든 순)라
