@@ -192,6 +192,14 @@ dev_dependencies:
   # flavor
 #  flutter_flavorizr: ^2.4.1
 
+dependency_overrides:
+  # shared_preferences_android · path_provider_android 가 쓰는 jni.
+  # jni 1.2.0 + jni_flutter 1.1.0 은 release 기동 때 ClassNotFoundException
+  # "Landroid/content/Context;" 로 부팅 실패한다(tool/release_smoke_test.sh).
+  # 확인된 조합으로 둘 다 고정한다. 올리려면 smoke test 를 통과한 뒤에 푼다.
+  jni: 1.1.2
+  jni_flutter: 1.0.4+1
+
 flutter:
   # iOS · macOS 플러그인은 CocoaPods 대신 Swift Package Manager 로 받는다.
   config:
