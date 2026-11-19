@@ -75,7 +75,7 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   ```
   파서 테스트 · 픽스처는 `packages/mocl_shared/test/` 에 있다(순수 Dart 로 돈다).
 - 서버는 `server/`(shelf, Docker + Caddy, arm64 클라우드 VM). 사용법 · 배포는 [server/README.md](server/README.md).
-- 사이트 카나리(`server/bin/canary.dart`, GitHub Actions `Site canary` 매일): 실제 사이트에서 목록 · 상세
+- 사이트 카나리(`server/bin/canary.dart`, GitHub Actions `Site canary` 매일, 보안 검사는 `FetchFailure(Cloudflare 보안 검사, 403)` 로 표시): 실제 사이트에서 목록 · 상세
   (`--search` 는 게시판 검색)를 받아 파서가 아직 읽는지 본다. 파서를 고치면 `cd server && fvm dart run bin/canary.dart {site}` 로 확인한다.
   사이트를 넣고 빼거나 기본 게시판을 바꾸면 `canaryTargets` 도 같이 고친다.
   서버 로그는 `print` 가 아니라 `serverLog`(운영에서도 남음) 또는 `MoclLogger`(개발 실행에서만).
@@ -96,6 +96,25 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
 - 서버가 없거나 실패해도 앱은 그대로여야 한다. 서버 쪽 실패(5xx · 오프라인 · 모르는 schemaVersion)는
   `MoclLogger.w` 로만 남기고 Crashlytics 로 올리지 않는다.
 - 사이트 API 클라이언트는 UA 상수를 직접 쓰지 말고 `network_provider.dart` 의 `_userAgent(ref, site, preset)` 를 거친다.
+- 받는 방식 `sites.{site}.fetch`(`SiteFetchMode`): `auto`(기본) · `webview` · `dio`. 관리 화면 사이트 줄의 "받기" 로 고른다.
+  옛 앱은 모르는 키를 건너뛰니 `schemaVersion` 은 그대로, 서버를 먼저 배포한 뒤 설정을 넣는다.
+
+## Cloudflare 보안 검사 폴백 (`features/network/data/webview_fetch/`)
+
+- 사이트 Dio(`_buildDio`)마다 `ChallengeInterceptor` 가 붙어, 보안 검사 응답(403/503 + `cf-mitigated` 헤더나
+  검사 페이지, `CloudflareChallenge.isChallenge` — `mocl_shared`, 서버 카나리도 같이 씀)이면 웹뷰로 다시 받아
+  Dio 응답처럼 돌려준다. 사이트 API · 파서는 모른다 — **사이트마다 웹뷰 폴백을 따로 짜지 말 것**(더쿠에 넣었다가 걷어냈다).
+  그 호스트는 10분 동안 Dio 를 건너뛴다. 웹뷰로도 못 넘으면 `ChallengeException` → "보안 검사를 통과하지 못했어요"
+  `ServerFailure`(자동 신고 · Crashlytics 제외).
+- 웹뷰 cf_clearance 쿠키를 Dio 에 실어도 통과하지 못한다(브라우저 지문까지 본다). 그래서 쿠키를 옮기지 않고
+  웹뷰 안의 `fetch` 로 **원본 응답**을 받는다(렌더된 DOM 이 아니라 파서가 Dio 때와 같은 HTML 을 받는다).
+  POST 본문(JSON · 폼) · 헤더도 옮긴다. FormData · 바이트 응답은 옮기지 않는다.
+- `HeadlessWebViewFetcher`: 출처 · UA 마다 헤드리스 웹뷰 하나를 살려 두고(동시에 2개, 3분 안 쓰면 버림), 처음 쓸 때만
+  페이지를 띄워 검사를 통과시킨다. 웹뷰 생성 · 해제는 Android 메인 스레드를 막으니 해제는 스크롤이 멈춘 뒤
+  (`AppScrollActivity`, 앱 맨 위 `AppScrollActivityListener` 가 기록)로 미룬다. 요청마다 웹뷰를 만들지 말 것.
+- `BaseApi.init` 은 쿠키 매니저만 바꾼다 — `interceptors.clear()` 로 되돌리면 폴백이 지워진다.
+- 아카라이브 · 뽐뿌의 `fetchRenderedHtml`(JS 로 그려지는 화면을 렌더해 받기)은 다른 목적이라 남겨 두었다.
+- 사람이 체크박스를 눌러야 하는 검사는 넘지 못한다(보이는 웹뷰로 사용자가 넘기는 화면은 아직 없음).
 - 앱은 모르는 항목을 건너뛰고(느슨), 서버는 설정 파일을 엄격하게 검사한다. 호환이 깨지는 변경만
   `RemoteConfig.schemaVersion` 을 올린다(옛 앱은 그 설정을 버리고 기본값을 쓴다).
 

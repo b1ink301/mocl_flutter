@@ -1,3 +1,4 @@
+import 'package:mocl_flutter/features/network/data/webview_fetch/app_scroll_activity.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:material_ui/material_ui.dart';
@@ -74,7 +75,8 @@ class const AppWidget({super.key}) extends HookConsumerWidget {
                 // 동영상 플레이어는 라우터 위 한 층(게시판을 오가도 재생이 이어진다).
                 child: MediaPlayerHost(
                   navigatorKey: AppPages.router.routerDelegate.navigatorKey,
-                  child: child!,
+                  // 웹뷰 정리를 스크롤이 멈춘 뒤로 미루려고 앱 전체 스크롤을 기록한다.
+                  child: AppScrollActivityListener(child: child!),
                 ),
               ),
             ),

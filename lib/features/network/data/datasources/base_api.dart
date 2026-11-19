@@ -9,6 +9,7 @@ import 'package:fpdart/fpdart.dart';
 import 'package:mocl_flutter/core/domain/entities/mocl_comment_write.dart';
 import 'package:mocl_shared/entities/mocl_main_item.dart';
 import 'package:mocl_flutter/core/error/failures.dart';
+import 'package:mocl_flutter/features/network/data/webview_fetch/webview_fetcher.dart';
 import 'package:mocl_shared/util/mocl_logger.dart';
 import 'package:mocl_shared/parser/base/base_parser.dart';
 import 'package:mocl_flutter/features/network/data/datasources/base_action.dart';
@@ -21,6 +22,10 @@ export 'package:mocl_shared/remote_config/user_agents.dart'
 /// [Failure] 로 바꾼다. dio 의 기본 message 는 영문 설명 + MDN 링크까지 담긴
 /// 여러 줄 문자열이라 화면에 노출하면 안 된다.
 Failure failureFromDio(DioException e) => switch (e.type) {
+  // 웹뷰로도 Cloudflare 보안 검사를 통과하지 못함(ChallengeInterceptor).
+  _ when e.error is ChallengeException => const ServerFailure(
+    message: '사이트 보안 검사를 통과하지 못했어요. 잠시 뒤 다시 시도해 주세요.',
+  ),
   DioExceptionType.connectionTimeout ||
   DioExceptionType.sendTimeout ||
   DioExceptionType.receiveTimeout => const NetworkFailure(
@@ -44,6 +49,7 @@ Failure failureFromDio(DioException e) => switch (e.type) {
 /// 코드 결함이 아니라 네트워크 상태나 사이트 정책 때문에 생기는 실패인지.
 /// 이런 실패는 Crashlytics 로 올리지 않는다(진짜 결함이 묻힌다).
 bool isExpectedDioFailure(DioException e) => switch (e.type) {
+  _ when e.error is ChallengeException => true,
   DioExceptionType.connectionTimeout ||
   DioExceptionType.sendTimeout ||
   DioExceptionType.receiveTimeout ||
@@ -57,7 +63,10 @@ abstract class const BaseApi(final Dio _dio, final String userAgent)
     with BaseAction {
   void init(cookiejar.CookieJar cookieJar) {
     if (!kIsWeb) {
-      _dio.interceptors.clear();
+      // 쿠키 매니저만 바꾼다. clear() 하면 보안 검사 폴백(ChallengeInterceptor)도 지워진다.
+      _dio.interceptors.removeWhere(
+        (Interceptor i) => i is diocookie.CookieManager,
+      );
       _dio.interceptors.add(diocookie.CookieManager(cookieJar));
     }
   }
@@ -389,25 +398,8 @@ abstract class const BaseApi(final Dio _dio, final String userAgent)
     List<String> readyMarkers = const [],
     int maxTries = 25,
     Duration interval = const Duration(milliseconds: 800),
-  }) async => (await fetchRenderedPage(
-    url,
-    readyMarkers: readyMarkers,
-    maxTries: maxTries,
-    interval: interval,
-  )).html;
-
-  /// [fetchRenderedHtml] 과 같고, 페이지가 준비되면 같은 웹뷰에서 [script]
-  /// (async 함수 본문, `return` 값을 돌려받음)를 실행한다. Cloudflare 를 통과한
-  /// 웹뷰 안에서만 되는 같은 출처 요청(`fetch`)에 쓴다. 준비되지 않았거나
-  /// 스크립트가 실패하면 `scriptResult` 는 null.
-  Future<({String? html, Object? scriptResult})> fetchRenderedPage(
-    String url, {
-    List<String> readyMarkers = const [],
-    String? script,
-    int maxTries = 25,
-    Duration interval = const Duration(milliseconds: 800),
   }) async {
-    if (kIsWeb) return (html: null, scriptResult: null);
+    if (kIsWeb) return null;
     webview.HeadlessInAppWebView? headless;
     try {
       headless = webview.HeadlessInAppWebView(
@@ -435,22 +427,12 @@ abstract class const BaseApi(final Dio _dio, final String userAgent)
         final bool ready = readyMarkers.isEmpty
             ? !blocked
             : readyMarkers.any(result.contains);
-        if (ready) {
-          if (script == null) return (html: result, scriptResult: null);
-          final webview.CallAsyncJavaScriptResult? scriptResult =
-              await controller?.callAsyncJavaScript(functionBody: script);
-          if (scriptResult?.error != null) {
-            MoclLogger.w(
-              () => '[fetchRenderedPage] script error: ${scriptResult?.error}',
-            );
-          }
-          return (html: result, scriptResult: scriptResult?.value);
-        }
+        if (ready) return result;
       }
-      return (html: last, scriptResult: null);
+      return last;
     } catch (e) {
       MoclLogger.e('[fetchRenderedHtml] $url error', error: e);
-      return (html: null, scriptResult: null);
+      return null;
     } finally {
       await headless?.dispose();
     }
