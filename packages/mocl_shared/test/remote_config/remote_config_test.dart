@@ -91,6 +91,37 @@ void main() {
     });
   });
 
+  group('fetch(받는 방식)', () {
+    test('없으면 auto, 있으면 그 값', () {
+      final config = RemoteConfig.fromJson({
+        'schemaVersion': 1,
+        'sites': {
+          'theqoo': {'fetch': 'webview'},
+          'clien': {'userAgent': 'pc', 'fetch': 'dio'},
+          'nate': {'userAgent': 'mobile'},
+        },
+      }, strict: true);
+      expect(config.fetchModeFor(SiteType.theqoo), SiteFetchMode.webview);
+      expect(config.fetchModeFor(SiteType.clien), SiteFetchMode.dio);
+      expect(config.fetchModeFor(SiteType.nate), SiteFetchMode.auto);
+      expect(config.fetchModeFor(SiteType.ruliweb), SiteFetchMode.auto);
+      expect(RemoteConfig.fromJson(config.toJson()).toJson(), config.toJson());
+    });
+
+    test('모르는 값은 앱이 건너뛰고(UA 는 살림) 서버는 거절한다', () {
+      final Map<String, Object?> json = {
+        'schemaVersion': 1,
+        'sites': {
+          'clien': {'userAgent': 'pc', 'fetch': 'teleport'},
+        },
+      };
+      final config = RemoteConfig.fromJson(json);
+      expect(config.fetchModeFor(SiteType.clien), SiteFetchMode.auto);
+      expect(config.sites[SiteType.clien]?.userAgent, 'pc');
+      expect(RemoteConfig.validate(json), isNotEmpty);
+    });
+  });
+
   test('UA 검사는 제어 문자와 빈 값을 막는다', () {
     expect(RemoteConfig.isValidUserAgent('Mozilla/5.0'), isTrue);
     expect(RemoteConfig.isValidUserAgent('  '), isFalse);

@@ -20,19 +20,44 @@ enum UserAgentPreset() {
   }
 }
 
+/// 사이트 페이지를 받는 방식.
+enum SiteFetchMode() {
+  /// Dio 로 받고, Cloudflare 보안 검사에 걸리면 웹뷰로 받는다(기본).
+  auto,
+
+  /// 처음부터 웹뷰로 받는다(검사가 늘 걸려 있는 사이트의 403 왕복을 없앤다).
+  webview,
+
+  /// Dio 로만 받는다(웹뷰 폴백이 문제를 일으킬 때 끄는 스위치).
+  dio;
+
+  static SiteFetchMode? tryParse(String name) {
+    for (final SiteFetchMode mode in values) {
+      if (mode.name == name) return mode;
+    }
+    return null;
+  }
+}
+
 /// 사이트 하나에 대한 원격 설정.
 class const SiteRemoteConfig({
   /// `mobile` · `pc`(프리셋 이름) 또는 UA 문자열 그대로. `null` 이면 앱 기본값.
   final String? userAgent,
+
+  /// 받는 방식. `null` 이면 [SiteFetchMode.auto].
+  final SiteFetchMode? fetch,
 }) {
-  Map<String, Object?> toJson() => {'userAgent': ?userAgent};
+  Map<String, Object?> toJson() => {
+    'userAgent': ?userAgent,
+    'fetch': ?fetch?.name,
+  };
 }
 
 /// 서버가 내려주는 원격 설정(`GET /v1/config`).
 ///
 /// 앱과 서버가 같은 클래스로 읽고 쓴다. 앱 업데이트 없이 바꿀 값만 둔다.
 /// - [userAgents]: 프리셋 UA 를 통째로 바꾼다(브라우저 버전 올리기 등).
-/// - [sites]: 사이트별로 다른 프리셋이나 UA 를 쓴다(차단 회피).
+/// - [sites]: 사이트별로 다른 프리셋이나 UA 를 쓴다(차단 회피). 받는 방식([SiteFetchMode])도 고른다.
 /// - [ads]: 광고 크기 · 목록 광고 간격([AdsRemoteConfig]).
 /// - [alerts]: 키워드 알림 기한 · 알림을 걸 수 있는 게시판([AlertsRemoteConfig]). 서버 크롤러도 이 값을 따른다.
 ///
@@ -41,7 +66,7 @@ class const SiteRemoteConfig({
 /// {
 ///   "schemaVersion": 1,
 ///   "userAgents": { "mobile": "Mozilla/5.0 (Linux; Android 16; ...)" },
-///   "sites": { "geekNews": { "userAgent": "mobile" } },
+///   "sites": { "geekNews": { "userAgent": "mobile", "fetch": "auto" } },
 ///   "ads": { "detail": "small", "list": { "first": 5, "interval": 15 } },
 ///   "alerts": { "ttlDays": 3, "boards": { "clien": { "park": "모두의공원" } } }
 /// }
@@ -113,7 +138,18 @@ class const RemoteConfig({
                     !isValidUserAgent(userAgent)))) {
           return fail('잘못된 sites.$key.userAgent: $userAgent');
         }
-        sites[site] = SiteRemoteConfig(userAgent: userAgent as String?);
+        final Object? rawFetch = value['fetch'];
+        final SiteFetchMode? fetch = rawFetch is String
+            ? SiteFetchMode.tryParse(rawFetch)
+            : null;
+        if (rawFetch != null && fetch == null) {
+          // 받는 방식만 잘못됐으면 UA 설정은 살린다(앱 쪽, strict 가 아닐 때).
+          fail('잘못된 sites.$key.fetch: $rawFetch');
+        }
+        sites[site] = SiteRemoteConfig(
+          userAgent: userAgent as String?,
+          fetch: fetch,
+        );
       });
     } else if (rawSites != null) {
       fail('sites 는 객체여야 한다');
@@ -171,6 +207,10 @@ class const RemoteConfig({
     final UserAgentPreset? named = UserAgentPreset.tryParse(override);
     return named != null ? preset(named) : override;
   }
+
+  /// [site] 를 받는 방식. 설정이 없으면 [SiteFetchMode.auto].
+  SiteFetchMode fetchModeFor(SiteType site) =>
+      sites[site]?.fetch ?? SiteFetchMode.auto;
 
   /// HTTP 헤더에 그대로 넣어도 되는 UA 인지. 제어 문자(줄바꿈 등)가 들어가면
   /// 헤더가 깨지거나 다른 헤더를 끼워 넣을 수 있다.
