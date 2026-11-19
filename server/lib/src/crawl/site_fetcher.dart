@@ -5,6 +5,7 @@ import 'dart:typed_data';
 import 'package:cp949_codec/cp949_codec.dart';
 import 'package:dio/dio.dart';
 import 'package:dio/io.dart';
+import 'package:mocl_shared/util/cloudflare_challenge.dart';
 import 'package:mocl_shared/entities/last_id.dart';
 import 'package:mocl_shared/entities/mocl_details.dart';
 import 'package:mocl_shared/entities/mocl_list_item.dart';
@@ -70,6 +71,21 @@ class const FetchFailure(
   @override
   String toString() =>
       'FetchFailure($message${statusCode != null ? ', $statusCode' : ''})';
+}
+
+/// 200 이 아닌 응답. Cloudflare 보안 검사면 그렇게 적는다 — 앱은 웹뷰로 받아 버틸 수
+/// 있으니(`ChallengeInterceptor`) IP 차단과 구분해 본다.
+FetchFailure _httpFailure(Response<List<int>> response, int status) {
+  final bool challenge = CloudflareChallenge.isChallenge(
+    status: status,
+    headers: response.headers.map,
+    // 검사 페이지 표시는 ASCII 라 문자셋을 따지지 않는다.
+    body: utf8.decode(response.data ?? const [], allowMalformed: true),
+  );
+  return FetchFailure(
+    challenge ? 'Cloudflare 보안 검사' : 'HTTP',
+    statusCode: status,
+  );
 }
 
 /// 공개 게시판 목록 1쪽을 받아 파싱한다.
@@ -178,7 +194,7 @@ class SiteFetcher({
       throw FetchFailure('${e.type}', network: true);
     }
     final int status = response.statusCode ?? 0;
-    if (status != 200) throw FetchFailure('HTTP', statusCode: status);
+    if (status != 200) throw _httpFailure(response, status);
 
     final Response<String> decoded = Response<String>(
       data: decodeBody(response.data ?? const []),
@@ -234,7 +250,7 @@ class SiteFetcher({
       throw FetchFailure('${e.type}', network: true);
     }
     final int status = response.statusCode ?? 0;
-    if (status != 200) throw FetchFailure('HTTP', statusCode: status);
+    if (status != 200) throw _httpFailure(response, status);
 
     final String html = decodeBody(response.data ?? const []);
     // 앱이 본문과 댓글을 따로 받아 [본문, 댓글] 로 넘기는 사이트는 댓글 칸을 비워 넘긴다.
@@ -277,7 +293,7 @@ class SiteFetcher({
       throw FetchFailure('${e.type}', network: true);
     }
     final int status = response.statusCode ?? 0;
-    if (status != 200) throw FetchFailure('HTTP', statusCode: status);
+    if (status != 200) throw _httpFailure(response, status);
     try {
       return parsePpomppuRss(
         decodeBody(response.data ?? const []),

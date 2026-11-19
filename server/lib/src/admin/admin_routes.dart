@@ -237,6 +237,7 @@ class AdminRoutes({
     'schemaVersion': RemoteConfig.schemaVersion,
     'sites': [for (final SiteType s in SiteType.values) s.name],
     'presets': [for (final UserAgentPreset p in UserAgentPreset.values) p.name],
+    'fetchModes': [for (final SiteFetchMode m in SiteFetchMode.values) m.name],
     'detailSizes': [for (final DetailAdSize s in DetailAdSize.values) s.name],
     'defaults': {
       'detail': AdsRemoteConfig.defaultDetail.name,

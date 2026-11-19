@@ -83,7 +83,7 @@ button:disabled { opacity: .45; cursor: default; }
 .preview-list span.ad { background: var(--accent); }
 
 /* UA */
-.site-row { display: grid; grid-template-columns: 1.1fr 1fr auto; gap: 6px; margin-bottom: 6px; }
+.site-row { display: grid; grid-template-columns: 1.1fr 1fr 1fr auto; gap: 6px; margin-bottom: 6px; }
 .site-row input { grid-column: 1 / -1; }
 .board-row { display: grid; grid-template-columns: 1fr 1fr 1.4fr auto; gap: 6px; margin-bottom: 6px; align-items: center; }
 .board-row span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -202,8 +202,10 @@ button:disabled { opacity: .45; cursor: default; }
   </section>
 
   <section class="card">
-    <h2>사이트 요청 UA</h2>
-    <p class="desc">비우면 앱에 박힌 값을 씁니다. 사이트별로 프리셋(mobile · pc) 또는 UA 문자열을 지정할 수 있습니다.</p>
+    <h2>사이트 요청 UA · 받는 방식</h2>
+    <p class="desc">비우면 앱에 박힌 값을 씁니다. 사이트별로 프리셋(mobile · pc) 또는 UA 문자열과,
+      받는 방식(자동: Cloudflare 보안 검사에 걸리면 웹뷰 · 처음부터 웹뷰 · Dio 만)을 지정할 수 있습니다.
+      앱은 다음 실행부터 따릅니다.</p>
     <div id="presetFields"></div>
     <label class="field">사이트별</label>
     <div id="siteRows"></div>
@@ -483,7 +485,7 @@ function render() {
   // 사이트별 UA
   const sites = cfg.sites || {};
   $('siteRows').replaceChildren(
-    ...Object.entries(sites).map(([site, value]) => siteRow(site, value?.userAgent ?? '')),
+    ...Object.entries(sites).map(([site, value]) => siteRow(site, value || {})),
   );
   if (!Object.keys(sites).length) $('siteRows').append(el('p', { class: 'muted', style: 'margin:0 0 8px' }, '지정한 사이트 없음'));
 
@@ -493,30 +495,43 @@ function render() {
   updateDirty();
 }
 
-function siteRow(site, ua) {
-  const isPreset = meta.presets.includes(ua);
+const FETCH_LABEL = { auto: '받기: 자동(검사면 웹뷰)', webview: '받기: 처음부터 웹뷰', dio: '받기: Dio 만' };
+
+function siteRow(site, value) {
+  const ua = value.userAgent ?? '';
+  const fetch = value.fetch ?? 'auto';
+  const isPreset = ua === '' || meta.presets.includes(ua);
+  const update = (patch) => {
+    const next = { ...value, ...patch };
+    for (const k of Object.keys(next)) if (next[k] === undefined) delete next[k];
+    setSite(site, site, next);
+  };
   const mode = el('select', {
     onchange: (e) => {
       const v = e.target.value;
-      setSite(site, site, v === 'custom' ? (isPreset ? '' : ua) : v);
+      update({ userAgent: v === '' ? undefined : v === 'custom' ? (isPreset ? '' : ua) : v });
     },
   },
+  el('option', { value: '', selected: ua === '' }, 'UA 기본값'),
   ...meta.presets.map((p) => el('option', { value: p, selected: ua === p }, `프리셋 ${p}`)),
   el('option', { value: 'custom', selected: !isPreset }, 'UA 직접 입력'));
+  const fetchSel = el('select', {
+    onchange: (e) => update({ fetch: e.target.value === 'auto' ? undefined : e.target.value }),
+  }, ...meta.fetchModes.map((m) => el('option', { value: m, selected: fetch === m }, FETCH_LABEL[m] || m)));
   const used = Object.keys(cfg.sites || {});
-  const siteSel = el('select', { onchange: (e) => setSite(site, e.target.value, ua) },
+  const siteSel = el('select', { onchange: (e) => setSite(site, e.target.value, value) },
     ...meta.sites.filter((s) => s === site || !used.includes(s)).map((s) => el('option', { value: s, selected: s === site }, s)));
   return el('div', { class: 'site-row' },
-    siteSel, mode,
+    siteSel, mode, fetchSel,
     el('button', { type: 'button', class: 'danger', onclick: () => setSite(site, null) }, '삭제'),
-    isPreset ? null : el('input', { type: 'text', value: ua, placeholder: 'Mozilla/5.0 …', onchange: (e) => setSite(site, site, e.target.value.trim()) }));
+    isPreset ? null : el('input', { type: 'text', value: ua, placeholder: 'Mozilla/5.0 …', onchange: (e) => update({ userAgent: e.target.value.trim() }) }));
 }
 
-function setSite(oldSite, newSite, ua) {
+function setSite(oldSite, newSite, value) {
   const next = {};
   for (const [k, v] of Object.entries(cfg.sites || {})) {
     if (k !== oldSite) next[k] = v;
-    else if (newSite) next[newSite] = { userAgent: ua };
+    else if (newSite) next[newSite] = value;
   }
   if (Object.keys(next).length) cfg.sites = next; else delete cfg.sites;
   render();
@@ -686,7 +701,7 @@ $('addSite').addEventListener('click', () => {
   const used = Object.keys(cfg.sites || {});
   const site = meta.sites.find((s) => !used.includes(s));
   if (!site) return toast('모든 사이트가 이미 있습니다');
-  cfg.sites = { ...(cfg.sites || {}), [site]: { userAgent: meta.presets[0] } };
+  cfg.sites = { ...(cfg.sites || {}), [site]: {} };
   render();
 });
 $('boardsDefault').addEventListener('change', (e) => setAlerts((x) => {
