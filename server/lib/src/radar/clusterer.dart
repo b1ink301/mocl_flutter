@@ -65,15 +65,23 @@ class Cluster(final int index) {
 ///
 /// 글을 처음 본 순서대로 넣으면서 가장 비슷한 묶음에 합류시키고, 맞는 묶음이
 /// 없으면 새 묶음을 만든다. 합류 조건(짧은 제목은 코사인만으로는 갈리지 않는다):
-/// - 코사인 ≥ [threshold], 또는
-/// - 코사인 ≥ [weakThreshold] 이면서 근거가 있을 때 — 이웃 단어 쌍("아이폰 듀오")을
-///   함께 갖거나 단어를 2개 이상 함께 가짐. 단어 하나("반도체")만 겹치면 묶지 않는다.
+/// - 묶음 중심과 코사인 ≥ [threshold], 또는
+/// - 중심과 코사인 ≥ [weakThreshold] 이면서 묶음 안의 **어떤 글 하나와** 근거가 있을 때
+///   — 이웃 단어 쌍("아이폰 듀오")을 함께 갖거나 단어를 2개 이상 함께 가짐.
+///   단어 하나("반도체")만 겹치면 묶지 않는다.
+/// 후보가 여럿이면 중심 코사인이 높은 묶음부터 본다.
+///
+/// 근거를 중심(모든 글의 특징을 더한 것)과 따지면, A 글과 단어 하나 · B 글과 단어
+/// 하나만 겹쳐도 "단어 2개 공유" 가 되어 묶음이 클수록 엉뚱한 글이 이어 붙는다
+/// ([memberLink]). 코사인은 중심과 본다 — 글 하나와 보면 흔한 쌍("리트 만점자")을
+/// 공유하는 긴 제목이 0.2 에 못 미쳐 같은 사건에서 떨어져 나가고, 한 단어 제목
+/// ("[여농] 사쿠라")은 글 하나와 쉽게 0.45 를 넘어 엉뚱한 글과 붙었다(실데이터 확인).
 /// 비교는 특징을 하나라도 공유하는 묶음만(역색인) 한다.
 ///
 /// 증분 방식이라 들어온 순서에 따라 같은 이야기가 두 묶음으로 갈릴 수 있다
 /// ("코스피 5천 붕괴" 묶음이 커진 뒤에야 "5천피 붕괴" 묶음과 닮아진다). 그래서 다 넣은
-/// 뒤 묶음 중심끼리 다시 비교해 합친다([merge]). 중심은 글보다 단어가 많아 우연히
-/// 겹치기 쉬우므로 약한 기준은 [mergeWeakThreshold] 로 더 엄하게 본다.
+/// 뒤 묶음 중심끼리 다시 비교해 합친다([merge]): 중심 코사인 ≥ [threshold] 이거나,
+/// ≥ [mergeWeakThreshold] 이면서 두 묶음에서 한 글씩 뽑은 쌍에 근거가 있을 때.
 class const Clusterer({
   final double threshold = 0.45,
   final double weakThreshold = 0.2,
@@ -83,7 +91,14 @@ class const Clusterer({
 
   /// 다 묶은 뒤 비슷한 묶음끼리 합칠지.
   final bool merge = true,
+
+  /// 합칠 후보로 볼 중심 코사인 하한. 중심은 글보다 단어가 많아 우연히 겹치기 쉬우므로
+  /// 합류 후보([weakThreshold])보다 엄하게 본다.
   final double mergeWeakThreshold = 0.3,
+
+  /// 합류 · 합치기 근거를 묶음 안의 글 하나와 따질지. false 면 옛 방식(근거도 중심과
+  /// 따짐) — 비교 도구(`radar_eval --diff`) · 테스트용.
+  final bool memberLink = true,
 }) {
   static int compareInputs(ClusterInput a, ClusterInput b) =>
       a.at != b.at ? a.at.compareTo(b.at) : a.key.compareTo(b.key);
@@ -108,16 +123,9 @@ class const Clusterer({
         if (idf.df(f) > maxDf) continue;
         candidates.addAll(index[f] ?? const {});
       }
-      Cluster? best;
-      double bestSim = 0;
-      for (final int c in candidates) {
-        final Map<String, double> centroid = clusters[c].centroid;
-        final double sim = Idf.cosine(v, centroid);
-        if (sim <= bestSim || sim < weakThreshold) continue;
-        if (sim < threshold && !_hasEvidence(v, centroid)) continue;
-        bestSim = sim;
-        best = clusters[c];
-      }
+      final Cluster? best = memberLink
+          ? _bestByMember(v, candidates, clusters)
+          : _bestByCentroid(v, candidates, clusters);
       final Cluster target;
       if (best != null) {
         target = best;
@@ -131,6 +139,60 @@ class const Clusterer({
       }
     }
     return merge ? _merge(clusters, idf, maxDf) : clusters;
+  }
+
+  /// 옛 방식: 중심과 근거를 따진다.
+  Cluster? _bestByCentroid(
+    Map<String, double> v,
+    Set<int> candidates,
+    List<Cluster> clusters,
+  ) {
+    Cluster? best;
+    double bestSim = 0;
+    for (final int c in candidates) {
+      final Map<String, double> centroid = clusters[c].centroid;
+      final double sim = Idf.cosine(v, centroid);
+      if (sim <= bestSim || sim < weakThreshold) continue;
+      if (sim < threshold && !_hasEvidence(v, centroid)) continue;
+      bestSim = sim;
+      best = clusters[c];
+    }
+    return best;
+  }
+
+  /// 중심 코사인이 높은 묶음부터 보며, 중심 코사인이 [threshold] 이상이거나 그 안의
+  /// 글 하나와 근거가 있는 첫 묶음. 글과 비교하는 건 중심 기준을 넘은 몇 개 묶음뿐이고
+  /// 근거 검사는 코사인보다 싸서 계산량은 거의 그대로다.
+  Cluster? _bestByMember(
+    Map<String, double> v,
+    Set<int> candidates,
+    List<Cluster> clusters,
+  ) {
+    final List<(int, double)> ranked =
+        [
+          for (final int c in candidates)
+            if (Idf.cosine(v, clusters[c].centroid) case final double sim
+                when sim >= weakThreshold)
+              (c, sim),
+        ]..sort(
+          (a, b) => a.$2 != b.$2 ? b.$2.compareTo(a.$2) : a.$1.compareTo(b.$1),
+        );
+    for (final (int c, double sim) in ranked) {
+      final Cluster cluster = clusters[c];
+      if (sim >= threshold || cluster.vectors.any((m) => _hasEvidence(v, m))) {
+        return cluster;
+      }
+    }
+    return null;
+  }
+
+  bool _clustersLinked(Cluster a, Cluster b) {
+    for (final Map<String, double> x in a.vectors) {
+      for (final Map<String, double> y in b.vectors) {
+        if (_hasEvidence(x, y)) return true;
+      }
+    }
+    return false;
   }
 
   /// 중심이 닮은 묶음을 합친다. 앞(먼저 생긴) 묶음이 뒤 묶음을 받아 들이므로
@@ -148,15 +210,27 @@ class const Clusterer({
           if (idf.df(f) > maxDf) continue;
           candidates.addAll(index[f] ?? const {});
         }
+        final List<(int, double)> ranked =
+            [
+              for (final int i in candidates)
+                if (Idf.cosine(centroid, alive[i].centroid)
+                    case final double sim when sim >= mergeWeakThreshold)
+                  (i, sim),
+            ]..sort(
+              (a, b) =>
+                  a.$2 != b.$2 ? b.$2.compareTo(a.$2) : a.$1.compareTo(b.$1),
+            );
         int best = -1;
-        double bestSim = 0;
-        for (final int i in candidates) {
-          final Map<String, double> other = alive[i].centroid;
-          final double sim = Idf.cosine(centroid, other);
-          if (sim <= bestSim || sim < mergeWeakThreshold) continue;
-          if (sim < threshold && !_hasEvidence(centroid, other)) continue;
-          bestSim = sim;
-          best = i;
+        for (final (int i, double sim) in ranked) {
+          final bool ok =
+              sim >= threshold ||
+              (memberLink
+                  ? _clustersLinked(alive[i], c)
+                  : _hasEvidence(centroid, alive[i].centroid));
+          if (ok) {
+            best = i;
+            break;
+          }
         }
         final int at;
         if (best >= 0) {

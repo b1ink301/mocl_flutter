@@ -126,6 +126,29 @@ void main() {
       expect(merged.where((c) => c.members.length > 1), hasLength(1));
     });
 
+    test('근거는 묶음 안의 글 하나와 따진다(여러 글에서 끌어모아 이어 붙지 않는다)', () {
+      // "발열" 은 앞 두 글, "배터리" 는 뒤 두 글에만 있다. 중심에는 둘 다 있어
+      // 중심과 따지면 "단어 2개 공유" 가 되지만, 어느 글과도 쌍 · 단어 2개를 함께 갖지 않는다.
+      final List<ClusterInput> inputs = _inputs([
+        for (final t in _background) ('dcinside', t),
+        ('clien', '갤럭시 s26 발열 논란'),
+        ('dcinside', '갤럭시 s26 발열 심하네'),
+        ('inven', '갤럭시 s26 배터리 광탈'),
+        ('meeco', '갤럭시 s26 배터리 불량'),
+        ('mlbpark', '발열 배터리'),
+      ]);
+      Cluster of(List<Cluster> cs, String title) =>
+          cs.firstWhere((c) => c.members.any((m) => m.title == title));
+      expect(
+        of(const Clusterer(memberLink: false).run(inputs), '발열 배터리').members,
+        hasLength(5),
+        reason: '옛 방식(중심과 따짐)에서는 붙어야 의미 있는 테스트',
+      );
+      final List<Cluster> clusters = const Clusterer().run(inputs);
+      expect(of(clusters, '발열 배터리').members, hasLength(1));
+      expect(of(clusters, '갤럭시 s26 발열 논란').members, hasLength(4));
+    });
+
     test('대표 제목은 묶음 안의 글이다', () {
       final Cluster c = clusterOf('아이폰 듀오 힌지사태 의문');
       expect(c.members.map((m) => m.title), contains(c.representative.title));
