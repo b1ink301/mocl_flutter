@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'title_features.dart';
 
 /// 묶을 글 하나(저장소 형식과 떨어뜨려 테스트하기 쉽게).
@@ -69,7 +71,8 @@ class Cluster(final int index) {
 /// - 중심과 코사인 ≥ [weakThreshold] 이면서 묶음 안의 **어떤 글 하나와** 근거가 있을 때
 ///   — 이웃 단어 쌍("아이폰 듀오")을 함께 갖거나 단어를 2개 이상 함께 가짐.
 ///   단어 하나("반도체")만 겹치면 묶지 않는다.
-/// 후보가 여럿이면 중심 코사인이 높은 묶음부터 본다.
+/// 후보가 여럿이면 중심 코사인이 높은 묶음부터 본다. 묶음의 마지막 글에서
+/// [maxGap] 넘게 지난 글은 합류하지 않는다(매일 나오는 주제가 한 이슈가 되지 않게).
 ///
 /// 근거를 중심(모든 글의 특징을 더한 것)과 따지면, A 글과 단어 하나 · B 글과 단어
 /// 하나만 겹쳐도 "단어 2개 공유" 가 되어 묶음이 클수록 엉뚱한 글이 이어 붙는다
@@ -82,6 +85,7 @@ class Cluster(final int index) {
 /// ("코스피 5천 붕괴" 묶음이 커진 뒤에야 "5천피 붕괴" 묶음과 닮아진다). 그래서 다 넣은
 /// 뒤 묶음 중심끼리 다시 비교해 합친다([merge]): 중심 코사인 ≥ [threshold] 이거나,
 /// ≥ [mergeWeakThreshold] 이면서 두 묶음에서 한 글씩 뽑은 쌍에 근거가 있을 때.
+/// 두 묶음의 시간대 사이가 [maxGap] 을 넘으면 합치지 않는다.
 class const Clusterer({
   final double threshold = 0.45,
   final double weakThreshold = 0.2,
@@ -99,6 +103,16 @@ class const Clusterer({
   /// 합류 · 합치기 근거를 묶음 안의 글 하나와 따질지. false 면 옛 방식(근거도 중심과
   /// 따짐) — 비교 도구(`radar_eval --diff`) · 테스트용.
   final bool memberLink = true,
+
+  /// 묶음의 마지막 글에서 이 시간 안에 처음 본 글만 합류한다(합치기는 두 묶음의
+  /// 시간대가 이만큼 가까울 때만). null 이면 시간을 보지 않는다(옛 방식).
+  ///
+  /// 시간을 보지 않으면 매일 나오는 주제("엔비디아 실발", "코스피 마감")나 흔한 말투
+  /// ("~ 이유가 뭔가요")가 하루 내내 한 묶음으로 이어졌다. 실데이터(24시간 6,580글)에서
+  /// 8시간이면 이슈 묶음 88개, 12시간이면 53개가 갈라졌는데 8~10시간은 띄엄띄엄 이어지는
+  /// 같은 사건(후원 릴레이 · 재게시)까지 갈랐다. 12시간에서 갈라지는 옛 쪽은 반감기
+  /// (3시간)로 이미 점수가 거의 없어 순위 손실이 작다.
+  final Duration? maxGap = const Duration(hours: 12),
 }) {
   static int compareInputs(ClusterInput a, ClusterInput b) =>
       a.at != b.at ? a.at.compareTo(b.at) : a.key.compareTo(b.key);
@@ -122,6 +136,12 @@ class const Clusterer({
       for (final String f in v.keys) {
         if (idf.df(f) > maxDf) continue;
         candidates.addAll(index[f] ?? const {});
+      }
+      final int at = ordered[i].at;
+      if (maxGap case final Duration gap) {
+        candidates.removeWhere(
+          (c) => at - clusters[c].members.last.at > gap.inMilliseconds,
+        );
       }
       final Cluster? best = memberLink
           ? _bestByMember(v, candidates, clusters)
@@ -186,6 +206,17 @@ class const Clusterer({
     return null;
   }
 
+  /// 두 묶음의 시간대(첫 글 ~ 마지막 글) 사이가 [maxGap] 안인가. 겹치면 0.
+  bool _closeInTime(Cluster a, Cluster b) {
+    final Duration? gap = maxGap;
+    if (gap == null) return true;
+    final int between = max(
+      b.members.first.at - a.members.last.at,
+      a.members.first.at - b.members.last.at,
+    );
+    return between <= gap.inMilliseconds;
+  }
+
   bool _clustersLinked(Cluster a, Cluster b) {
     for (final Map<String, double> x in a.vectors) {
       for (final Map<String, double> y in b.vectors) {
@@ -213,9 +244,10 @@ class const Clusterer({
         final List<(int, double)> ranked =
             [
               for (final int i in candidates)
-                if (Idf.cosine(centroid, alive[i].centroid)
-                    case final double sim when sim >= mergeWeakThreshold)
-                  (i, sim),
+                if (_closeInTime(alive[i], c))
+                  if (Idf.cosine(centroid, alive[i].centroid)
+                      case final double sim when sim >= mergeWeakThreshold)
+                    (i, sim),
             ]..sort(
               (a, b) =>
                   a.$2 != b.$2 ? b.$2.compareTo(a.$2) : a.$1.compareTo(b.$1),

@@ -14,8 +14,8 @@ import 'package:sembast/sembast_io.dart';
 /// `--diff` 는 옛 묶기(중심과 근거를 따짐 · 시간 조건 없음)와 지금 묶기의 차이만 찍는다:
 /// 옛 이슈 묶음이 갈라진 것 · 지금 이슈 묶음이 옛 묶음 여럿을 합친 것.
 ///
-/// `--rank` 는 지금 랭킹과 옛 방식(합치기 · 속도 · 새로움 · 사이트 감쇠 없음)의 상위
-/// 이슈를 나란히 찍는다. 기준 시각은 DB 의 마지막 수집 시각이다.
+/// `--rank` 는 지금 랭킹과 옛 방식(합치기 · 속도 · 새로움 · 사이트 감쇠 없음), 옛 묶기
+/// (근거를 중심과 따짐 · 시간 조건 없음, 랭킹은 지금)의 상위 이슈를 나란히 찍는다. 기준 시각은 DB 의 마지막 수집 시각이다.
 ///
 /// 서버에서: docker run --rm -v mocl_mocl_data:/data:ro -v ~/mocl:/src -w /src/server \
 ///   dart:3.13.7 sh -c "dart pub get >/dev/null && dart run bin/radar_eval.dart /data/radar.db 0.3 0.35 0.45"
@@ -70,11 +70,15 @@ Future<void> main(List<String> args) async {
     show(
       '옛 방식',
       const RadarRanker(
-        clusterer: Clusterer(merge: false, memberLink: false),
+        clusterer: Clusterer(merge: false, memberLink: false, maxGap: null),
         siteDecay: 0,
         velocityWeight: 0,
         noveltyWeight: 0,
       ),
+    );
+    show(
+      '옛 묶기(랭킹은 지금)',
+      const RadarRanker(clusterer: Clusterer(memberLink: false, maxGap: null)),
     );
     show('지금', const RadarRanker());
     exit(0);
@@ -115,7 +119,10 @@ Future<void> main(List<String> args) async {
 bool _isIssue(Cluster c) => c.sites.length >= 2 || c.members.length >= 3;
 
 void _diff(List<ClusterInput> inputs, int now) {
-  final List<Cluster> before = const Clusterer(memberLink: false).run(inputs);
+  final List<Cluster> before = const Clusterer(
+    memberLink: false,
+    maxGap: null,
+  ).run(inputs);
   final List<Cluster> after = const Clusterer().run(inputs);
   Map<String, Cluster> owner(List<Cluster> cs) => {
     for (final c in cs)

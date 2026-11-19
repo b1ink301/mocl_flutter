@@ -149,6 +149,47 @@ void main() {
       expect(of(clusters, '갤럭시 s26 발열 논란').members, hasLength(4));
     });
 
+    test('같은 주제라도 시간이 멀리 떨어지면 묶지 않는다', () {
+      const int hour = 3600 * 1000;
+      final List<ClusterInput> inputs = [
+        for (final (i, t) in _background.indexed)
+          ClusterInput('bg|$i', 'dcinside', t, 0),
+        // 어제 저녁 마감 글과 오늘 저녁 마감 글(24시간 차이).
+        const ClusterInput('a', 'clien', '엔비디아 실적 발표 주가 급락', 0),
+        const ClusterInput('b', 'mlbpark', '엔비디아 실적 발표 이후 주가', 1 * hour),
+        const ClusterInput('c', 'damoang', '엔비디아 실적 발표 주가 반등', 25 * hour),
+        const ClusterInput('d', 'inven', '엔비디아 실적 발표 주가 반등 ㄷㄷ', 26 * hour),
+      ];
+      Cluster of(List<Cluster> cs, String key) =>
+          cs.firstWhere((c) => c.members.any((m) => m.key == key));
+      expect(
+        of(const Clusterer(maxGap: null).run(inputs), 'a').members,
+        hasLength(4),
+        reason: '시간을 보지 않으면 한 묶음이어야 의미 있는 테스트',
+      );
+      final List<Cluster> clusters = const Clusterer().run(inputs);
+      expect(of(clusters, 'a').members.map((m) => m.key), ['a', 'b']);
+      expect(of(clusters, 'c').members.map((m) => m.key), ['c', 'd']);
+    });
+
+    test('12시간 안에 띄엄띄엄 이어지는 같은 사건은 하나로 묶는다', () {
+      const int hour = 3600 * 1000;
+      final List<ClusterInput> inputs = [
+        for (final (i, t) in _background.indexed)
+          ClusterInput('bg|$i', 'dcinside', t, 0),
+        const ClusterInput('a', 'damoang', '추경호 1심 무죄', 0),
+        const ClusterInput('b', 'inven', '[속보] 추경호 계엄표결 방해 1심 무죄', 6 * hour),
+        const ClusterInput('c', 'clien', '추경호 1심 무죄 판결문 보니', 17 * hour),
+      ];
+      expect(
+        const Clusterer()
+            .run(inputs)
+            .firstWhere((c) => c.members.any((m) => m.key == 'a'))
+            .members,
+        hasLength(3),
+      );
+    });
+
     test('대표 제목은 묶음 안의 글이다', () {
       final Cluster c = clusterOf('아이폰 듀오 힌지사태 의문');
       expect(c.members.map((m) => m.title), contains(c.representative.title));
