@@ -389,8 +389,25 @@ abstract class const BaseApi(final Dio _dio, final String userAgent)
     List<String> readyMarkers = const [],
     int maxTries = 25,
     Duration interval = const Duration(milliseconds: 800),
+  }) async => (await fetchRenderedPage(
+    url,
+    readyMarkers: readyMarkers,
+    maxTries: maxTries,
+    interval: interval,
+  )).html;
+
+  /// [fetchRenderedHtml] 과 같고, 페이지가 준비되면 같은 웹뷰에서 [script]
+  /// (async 함수 본문, `return` 값을 돌려받음)를 실행한다. Cloudflare 를 통과한
+  /// 웹뷰 안에서만 되는 같은 출처 요청(`fetch`)에 쓴다. 준비되지 않았거나
+  /// 스크립트가 실패하면 `scriptResult` 는 null.
+  Future<({String? html, Object? scriptResult})> fetchRenderedPage(
+    String url, {
+    List<String> readyMarkers = const [],
+    String? script,
+    int maxTries = 25,
+    Duration interval = const Duration(milliseconds: 800),
   }) async {
-    if (kIsWeb) return null;
+    if (kIsWeb) return (html: null, scriptResult: null);
     webview.HeadlessInAppWebView? headless;
     try {
       headless = webview.HeadlessInAppWebView(
@@ -418,12 +435,22 @@ abstract class const BaseApi(final Dio _dio, final String userAgent)
         final bool ready = readyMarkers.isEmpty
             ? !blocked
             : readyMarkers.any(result.contains);
-        if (ready) return result;
+        if (ready) {
+          if (script == null) return (html: result, scriptResult: null);
+          final webview.CallAsyncJavaScriptResult? scriptResult =
+              await controller?.callAsyncJavaScript(functionBody: script);
+          if (scriptResult?.error != null) {
+            MoclLogger.w(
+              () => '[fetchRenderedPage] script error: ${scriptResult?.error}',
+            );
+          }
+          return (html: result, scriptResult: scriptResult?.value);
+        }
       }
-      return last;
+      return (html: last, scriptResult: null);
     } catch (e) {
       MoclLogger.e('[fetchRenderedHtml] $url error', error: e);
-      return null;
+      return (html: null, scriptResult: null);
     } finally {
       await headless?.dispose();
     }
