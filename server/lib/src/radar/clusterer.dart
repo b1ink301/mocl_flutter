@@ -70,7 +70,8 @@ class Cluster(final int index) {
 /// - 묶음 중심과 코사인 ≥ [threshold], 또는
 /// - 중심과 코사인 ≥ [weakThreshold] 이면서 묶음 안의 **어떤 글 하나와** 근거가 있을 때
 ///   — 이웃 단어 쌍("아이폰 듀오")을 함께 갖거나 단어를 2개 이상 함께 가짐.
-///   단어 하나("반도체")만 겹치면 묶지 않는다.
+///   단어 하나("반도체")만 겹치면 묶지 않는다. 서술어 · 어미가 낀 말("뭔가요")은
+///   근거로 세지 않는다([contentEvidence]).
 /// 후보가 여럿이면 중심 코사인이 높은 묶음부터 본다. 묶음의 마지막 글에서
 /// [maxGap] 넘게 지난 글은 합류하지 않는다(매일 나오는 주제가 한 이슈가 되지 않게).
 ///
@@ -113,6 +114,12 @@ class const Clusterer({
   /// 같은 사건(후원 릴레이 · 재게시)까지 갈랐다. 12시간에서 갈라지는 옛 쪽은 반감기
   /// (3시간)로 이미 점수가 거의 없어 순위 손실이 작다.
   final Duration? maxGap = const Duration(hours: 12),
+
+  /// 서술어 · 어미([TitleFeatures.isPredicate])가 낀 단어 · 쌍은 근거로 세지 않는다.
+  /// "이유가 뭔가요" · "없지 않나요" 같은 말투 하나로 서로 다른 질문글이 묶였다.
+  /// IDF 로는 못 거른다 — 이런 쌍은 드물어(실데이터 df 2~4) IDF 가 높고, 오히려 진짜
+  /// 이슈의 쌍("리트 만점자" 79 · "한한령 해제" 17)이 흔하다. 코사인 계산에는 그대로 쓴다.
+  final bool contentEvidence = true,
 }) {
   static int compareInputs(ClusterInput a, ClusterInput b) =>
       a.at != b.at ? a.at.compareTo(b.at) : a.key.compareTo(b.key);
@@ -283,12 +290,23 @@ class const Clusterer({
     return current;
   }
 
-  static bool _hasEvidence(Map<String, double> a, Map<String, double> b) {
+  bool _hasEvidence(Map<String, double> a, Map<String, double> b) {
     int words = 0;
     for (final String k in a.keys) {
       if (!b.containsKey(k)) continue;
-      if (k.startsWith('p:')) return true;
-      if (k.startsWith('w:') && ++words >= 2) return true;
+      if (k.startsWith('p:')) {
+        if (!contentEvidence) return true;
+        final int space = k.indexOf(' ');
+        if (!TitleFeatures.isPredicate(k.substring(2, space)) &&
+            !TitleFeatures.isPredicate(k.substring(space + 1))) {
+          return true;
+        }
+      } else if (k.startsWith('w:')) {
+        if (contentEvidence && TitleFeatures.isPredicate(k.substring(2))) {
+          continue;
+        }
+        if (++words >= 2) return true;
+      }
     }
     return false;
   }

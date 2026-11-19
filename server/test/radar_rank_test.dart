@@ -58,6 +58,24 @@ void main() {
       ]);
     });
 
+    test('서술어 · 어미로 끝나는 말을 가린다(명사는 아님)', () {
+      for (final w in [
+        '뭔가요',
+        '않나요',
+        '같습니다',
+        '아니겠죠',
+        '할듯',
+        '보니까',
+        '최악이네',
+        '있다',
+      ]) {
+        expect(TitleFeatures.isPredicate(w), isTrue, reason: w);
+      }
+      for (final w in ['캐나다', '바다', '동네', '무죄', '재난문자', '리트냥이', '증후군']) {
+        expect(TitleFeatures.isPredicate(w), isFalse, reason: w);
+      }
+    });
+
     test('조사가 달라도 2-gram 이 겹친다', () {
       final a = TitleFeatures.raw('윤석열이 말했다').keys.toSet();
       final b = TitleFeatures.raw('윤석열은 답했다').keys.toSet();
@@ -188,6 +206,57 @@ void main() {
             .members,
         hasLength(3),
       );
+    });
+
+    test('말투(서술어 · 어미)만 같은 제목은 묶지 않는다', () {
+      // 실제 수집분. "이유가 뭔가요" · "같지 않나요" 쌍 하나로 엮이던 글들.
+      final List<(String, String)> items = [
+        for (final t in _background) ('dcinside', t),
+        ('mlbpark', '자동차 썬팅 진하게 하는 이유가 뭔가요?'),
+        ('damoang', '이게 트레블링이 아닌 이유가 뭔가요?'),
+        ('clien', '고양이가 몸을 콩처럼 감는 이유가 뭔가요?'),
+        ('mlbpark', '홍진호는 이제는 그냥 체급이 안되는거 같지 않나요??'),
+        ('inven', '영호 나솔사계 나올 것 같지 않나요?'),
+      ];
+      final List<ClusterInput> inputs = _inputs(items);
+      bool together(List<Cluster> cs) => cs.any(
+        (c) => c.members.where((m) => m.title.contains('뭔가요')).length > 1,
+      );
+      expect(
+        together(const Clusterer(contentEvidence: false).run(inputs)),
+        isTrue,
+        reason: '서술어도 근거로 세면 묶여야 의미 있는 테스트',
+      );
+      final List<Cluster> clusters = const Clusterer().run(inputs);
+      expect(together(clusters), isFalse);
+      expect(
+        clusters.where((c) => c.members.length > 1 && c.sites.length > 1),
+        isEmpty,
+      );
+    });
+
+    test('조사 · 어미만 다르거나 여러 사이트에 올라온 같은 사건은 여전히 묶는다', () {
+      // 실제 수집분.
+      final List<(String, String)> items = [
+        for (final t in _background) ('dcinside', t),
+        ('damoang', '추경호 1심 무죄네요?'),
+        ('inven', '[속보] 추경호 \'계엄표결 방해\' 1심 무죄'),
+        ('bobaedream', '속보) 추경호 1심 무죄'),
+        ('clien', '추경호 무죄 ㅋ'),
+        ('cook82', '[속보]추경호 \'계엄 표결 방해\' 1심무죄'),
+        ('mlbpark', '[속보] 수능 시험장에 \'흑색 연필\'만 반입 허용'),
+        ('inven', '수능 하루 앞두고 필기구 반입 기준 변경…\'흑색 연필\'만 허용'),
+        ('damoang', '수능 시험장에 흑색 연필만 반입 허용 한다는데..'),
+      ];
+      final List<Cluster> clusters = const Clusterer().run(_inputs(items));
+      Cluster of(String title) =>
+          clusters.firstWhere((c) => c.members.any((m) => m.title == title));
+      expect(of('추경호 1심 무죄네요?').members, hasLength(5));
+      expect(of('수능 시험장에 흑색 연필만 반입 허용 한다는데..').sites, {
+        'mlbpark',
+        'inven',
+        'damoang',
+      });
     });
 
     test('대표 제목은 묶음 안의 글이다', () {
