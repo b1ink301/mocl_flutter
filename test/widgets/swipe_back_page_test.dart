@@ -201,6 +201,62 @@ void main() {
         await tester.pumpAndSettle();
         expect(find.text('상세'), findsNothing);
       });
+
+      Future<void> expectSwipeStillPops(WidgetTester tester) async {
+        expect(find.text('상세'), findsOneWidget);
+        final double width = tester.getSize(find.byType(MaterialApp)).width;
+        final TestGesture swipe = await tester.startGesture(
+          const Offset(200, 300),
+        );
+        await swipe.moveBy(const Offset(30, 0));
+        await tester.pump();
+        await swipe.moveBy(Offset(width * 0.6, 0));
+        await tester.pump();
+        await swipe.up();
+        await tester.pumpAndSettle();
+        expect(find.text('상세'), findsNothing);
+      }
+
+      testWidgets('두 손가락이 겹친 채 세로로 움직이다 떼어도 다음 가로 드래그를 받는다', (tester) async {
+        await pumpList(tester);
+
+        // 연달아 넘기다 보면 앞 손가락을 떼기 전에 다음 손가락이 닿는다.
+        final TestGesture first = await tester.startGesture(
+          const Offset(200, 400),
+          pointer: 11,
+        );
+        final TestGesture second = await tester.startGesture(
+          const Offset(260, 460),
+          pointer: 12,
+        );
+        // 뒤로가기는 포기하지만 스크롤이 시작되기엔 모자란 거리.
+        await first.moveBy(const Offset(0, -12));
+        await tester.pump();
+        await first.up();
+        await tester.pump();
+        await second.up();
+        await tester.pumpAndSettle();
+
+        await expectSwipeStillPops(tester);
+      });
+
+      testWidgets('혼자 받은 터치를 세로로 움직이다 떼어도 다음 가로 드래그를 받는다', (tester) async {
+        // 스크롤뷰가 없어 누르는 순간 이 감지기가 경쟁에서 이긴다.
+        await pumpDetail(tester);
+
+        final TestGesture gesture = await tester.startGesture(
+          const Offset(200, 400),
+        );
+        await gesture.moveBy(const Offset(0, -40));
+        await tester.pump();
+        // 세로로 포기한 터치는 뒤에 가로로 움직여도 받지 않는다.
+        await gesture.moveBy(const Offset(60, 0));
+        await tester.pump();
+        await gesture.up();
+        await tester.pumpAndSettle();
+
+        await expectSwipeStillPops(tester);
+      });
     });
 
     testWidgets('본문 안에 가로 드래그 · 텍스트 선택이 있어도 뒤로가기가 먼저 받는다', (tester) async {

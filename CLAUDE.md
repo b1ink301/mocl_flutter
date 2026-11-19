@@ -402,6 +402,8 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
 - 본문 드래그 recognizer(`_BackDragGestureRecognizer`)는 시작 전 세로 이동이 가로 이동보다 크면 포기한다.
   `HorizontalDragGestureRecognizer` 는 dx 만 보고 받아들이고, 감지기가 본문 위라 같은 이벤트에서 세로 스크롤보다
   먼저 판정한다 — 이 검사를 빼면 위로 빠르게 쓸어 올릴 때 간헐적으로 뒤로 간다.
+  포기는 `_abandon`(`resolvePointer(rejected)`)으로 한다. `stopTrackingPointer` 만 부르면 경쟁(arena)에 남아,
+  두 손가락이 겹쳤을 때 뗀 손가락으로 이기고 부모의 `_activePointer` 가 굳어 이후 뒤로가기가 먹지 않는다.
 - 가로로 끄는 동작이 따로 있는 화면(영상 탐색 막대 등)은 `SwipeBackPage` 대신 `builder:` 를 쓰거나
   `canSwipe: false` 로 끈다.
 

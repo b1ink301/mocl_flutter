@@ -461,6 +461,9 @@ class _BackDragGestureRecognizer({
 
   /// 드래그가 시작되기 전까지 포인터별로 움직인 거리.
   final Map<int, Offset> _pending = <int, Offset>{};
+
+  /// 뒤로가기가 아니라고 보고 포기한 포인터. 손을 뗄 때까지 움직임을 무시한다.
+  final Set<int> _abandoned = <int>{};
   bool _started = false;
 
   @override
@@ -471,28 +474,43 @@ class _BackDragGestureRecognizer({
 
   @override
   void handleEvent(PointerEvent event) {
-    if (!_started && event is PointerMoveEvent) {
-      final Offset moved =
-          (_pending[event.pointer] ?? Offset.zero) + event.delta;
-      _pending[event.pointer] = moved;
-      final double dx = moved.dx;
-      final double dy = moved.dy.abs();
-      // 손떨림은 봐주고, 반대 방향으로 터치 슬롭 절반을 넘게 가면 포기한다.
-      // (슬롭을 넘기 전에 포기해야 가로 드래그로 받아들여지지 않는다.)
-      final double slop = computeHitSlop(event.kind, gestureSettings);
-      if (!isBackward(dx) && dx.abs() > slop / 2) {
-        stopTrackingPointer(event.pointer);
-        return;
-      }
-      // 세로로 더 움직였으면 스크롤로 보고 포기한다. 가로 recognizer 는 dx 만 보고
-      // 받아들이므로, 엄지가 오른쪽으로 휘며 위로 밀거나 빠른 플링에서 두 축이 한
-      // 이벤트에 슬롭을 넘으면(이 감지기가 본문 위라 먼저 판정한다) 뒤로가기가 됐다.
-      if (dy > slop / 2 && dx.abs() < dy * _kMinHorizontalRatio) {
-        stopTrackingPointer(event.pointer);
+    if (event is PointerMoveEvent) {
+      if (_abandoned.contains(event.pointer)) return;
+      if (!_started && _shouldAbandon(event)) {
+        _abandon(event.pointer);
         return;
       }
     }
     super.handleEvent(event);
+  }
+
+  bool _shouldAbandon(PointerMoveEvent event) {
+    final Offset moved = (_pending[event.pointer] ?? Offset.zero) + event.delta;
+    _pending[event.pointer] = moved;
+    final double dx = moved.dx;
+    final double dy = moved.dy.abs();
+    // 손떨림은 봐주고, 반대 방향으로 터치 슬롭 절반을 넘게 가면 포기한다.
+    // (슬롭을 넘기 전에 포기해야 가로 드래그로 받아들여지지 않는다.)
+    final double slop = computeHitSlop(event.kind, gestureSettings);
+    if (!isBackward(dx) && dx.abs() > slop / 2) return true;
+    // 세로로 더 움직였으면 스크롤로 보고 포기한다. 가로 recognizer 는 dx 만 보고
+    // 받아들이므로, 엄지가 오른쪽으로 휘며 위로 밀거나 빠른 플링에서 두 축이 한
+    // 이벤트에 슬롭을 넘으면(이 감지기가 본문 위라 먼저 판정한다) 뒤로가기가 됐다.
+    return dy > slop / 2 && dx.abs() < dy * _kMinHorizontalRatio;
+  }
+
+  /// 이 포인터의 경쟁에서 빠진다.
+  ///
+  /// `stopTrackingPointer` 만 부르면 안 된다. 경쟁(arena)에는 남아 있어서, 다른 손가락이
+  /// 아직 닿아 있으면 이 손가락을 뗄 때 남은 참가자로 이겨 버리고(acceptGesture),
+  /// 그 뒤 손 뗌을 못 받아 부모의 "지금 따라가는 포인터" 가 이 포인터로 굳는다.
+  /// 그러면 다음 터치의 움직임을 모두 건너뛰어 뒤로가기가 먹지 않는다.
+  void _abandon(int pointer) {
+    _abandoned.add(pointer);
+    // 거절하면 rejectGesture 가 불려 부모가 추적을 끝내고 정리한다.
+    // 이미 이긴 포인터(혼자라 누르는 순간 이긴 경우)는 거절이 먹지 않으니
+    // 추적은 두고 움직임만 무시해, 손을 뗄 때 부모가 평소대로 정리하게 한다.
+    resolvePointer(pointer, GestureDisposition.rejected);
   }
 
   // 방향 검사는 드래그가 실제로 시작될 때까지 한다. 경쟁에서 이긴 시점(acceptGesture)은
@@ -509,6 +527,7 @@ class _BackDragGestureRecognizer({
   @override
   void stopTrackingPointer(int pointer) {
     _pending.remove(pointer);
+    _abandoned.remove(pointer);
     super.stopTrackingPointer(pointer);
   }
 
