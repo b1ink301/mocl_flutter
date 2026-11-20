@@ -50,6 +50,13 @@ class const SettingsRepositoryImpl({required final SharedPreferences _prefs})
       _prefs.setBool(_extraShowBoardIcon, showBoardIcon);
 
   @override
+  bool isHomeAllSites() => _prefs.getBool(_extraHomeAllSites) ?? false;
+
+  @override
+  void setHomeAllSites(bool allSites) =>
+      _prefs.setBool(_extraHomeAllSites, allSites);
+
+  @override
   bool isShowQuickJump() => true;
 
   @override
@@ -103,6 +110,7 @@ class const SettingsRepositoryImpl({required final SharedPreferences _prefs})
   static final String _extraShowNickImage = 'show_nick_image';
   static final String _extraShowBoardIcon = 'show_board_icon';
   static final String _extraShowQuickJump = 'show_quick_jump';
+  static final String _extraHomeAllSites = 'home_all_sites';
   static final String _extraOpenSiteLinksInApp = 'open_site_links_in_app';
   static final String _extraPlayVideosInApp = 'play_videos_in_app';
   static final String _extraAutoTranslate = 'auto_translate';

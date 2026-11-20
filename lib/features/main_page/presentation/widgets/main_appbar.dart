@@ -37,17 +37,22 @@ class const MainAppBar({super.key})
     // 같은 자리의 글자 크기 · 색이 바뀌어 보인다.
     final menuStyle = appbarCrumbStyle(smallTextStyleState(ref));
     final titleStyle = largeTitleStyle(textStyle);
+    // 모든 사이트 모아 보기에서는 사이트 드로어가 없어 메뉴 버튼도 뺀다.
+    final bool allSites = homeAllSitesState(ref);
 
     return SliverAppBar(
       // 사이트 드로어가 있다는 걸 보이게 메뉴 버튼을 둔다(본문을 끌어도 열린다).
-      leading: AppbarFixedIconTheme(
-        child: PlainIconButton(
-          onPressed: () => openSiteDrawer(context),
-          icon: const MenuLinesIcon(),
-          semanticLabel: '사이트 메뉴',
-          semanticsId: 'main_drawer',
-        ),
-      ),
+      leading: allSites
+          ? null
+          : AppbarFixedIconTheme(
+              child: PlainIconButton(
+                onPressed: () => openSiteDrawer(context),
+                icon: const MenuLinesIcon(),
+                semanticLabel: '사이트 메뉴',
+                semanticsId: 'main_drawer',
+              ),
+            ),
+      automaticallyImplyLeading: false,
       expandedHeight: largeTitleSingleLineExpandedHeight(titleStyle),
       flexibleSpace: LargeTitleFlexibleSpace(
         title: titleState(ref),
@@ -55,7 +60,8 @@ class const MainAppBar({super.key})
       ),
       title: _MainAppBarTitle(style: menuStyle),
       titleTextStyle: menuStyle,
-      titleSpacing: 0,
+      // 메뉴 버튼이 없으면 검색창 · 편집 라벨이 화면 끝에 붙지 않게 띄운다.
+      titleSpacing: allSites ? 16 : 0,
       floating: true,
       centerTitle: false,
       toolbarHeight: kLargeTitleToolbarHeight,

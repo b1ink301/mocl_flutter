@@ -9,6 +9,10 @@ mixin class FavoriteState() {
   AsyncValue<List<FavoriteData>> siteFavoritesState(WidgetRef ref) =>
       ref.watch(siteFavoritesProvider);
 
+  /// 모든 사이트의 담은 게시판을 사이트별로 묶은 목록(모아 보기 홈).
+  AsyncValue<List<SiteFavorites>> favoritesBySiteState(WidgetRef ref) =>
+      ref.watch(favoritesBySiteProvider);
+
   /// 사이트별 담은 개수(사이트 드로어 칩 · 빠른 이동 레일).
   Map<SiteType, int> favoriteCountBySiteState(WidgetRef ref) =>
       ref.watch(favoriteCountBySiteProvider);

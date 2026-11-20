@@ -41,6 +41,19 @@ class const SettingsView({super.key})
             const _SectionHeader('일반'),
             _SettingsCard(
               children: [
+                // 켜면 홈 게시판 탭이 모든 사이트의 담은 게시판을 사이트별로 모아
+                // 보이고 사이트 드로어를 숨긴다.
+                _SettingsTile(
+                  icon: Icons.dashboard_outlined,
+                  title: '모든 사이트 게시판 모아 보기',
+                  onTap: () => handleToggleHomeAllSites(ref),
+                  trailing: Switch(
+                    value: homeAllSitesState(ref),
+                    activeThumbColor: theme.colorScheme.primary,
+                    onChanged: (_) => handleToggleHomeAllSites(ref),
+                  ),
+                ),
+                const _TileDivider(),
                 _SettingsTile(
                   icon: Icons.image_outlined,
                   title: '닉 이미지 보기',

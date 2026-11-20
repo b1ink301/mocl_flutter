@@ -200,7 +200,12 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
   (화면 왼쪽 절반, `drawerEdgeDragWidth`) 손가락을 따라 열린다. 끌어 열기는 게시판 탭 · 편집 · 검색 중이 아닐 때만.
   큰 제목은 누르지 않는다(`▾` 를 붙여 제목으로 열면 드로어가 있는 줄 모르고, 제자리 펼침처럼 보여 어긋났다).
   드로어에는 **사이트 칩 · 게시판 추가만** 둔다 — 스크랩 · 설정 · 지금 이슈를 넣으면 탭과 이동 경로가 두 갈래가 된다.
-  하단 시트로 되돌리지 말 것(엄지로 끌어 바꾸는 동작이 사라진다). 탭은 `IndexedStack` 으로 살려 두고(스크롤 · 상태 유지,
+  하단 시트로 되돌리지 말 것(엄지로 끌어 바꾸는 동작이 사라진다).
+  설정 "모든 사이트 게시판 모아 보기"(`HomeAllSitesNotifier`, `home_all_sites`, 기본 끔)를 켜면 게시판 탭이 담은 게시판
+  전부를 사이트 머리글로 묶어 보이고(`favoritesBySiteProvider`, 사이트 순서는 `kAllSitesInOrder`) 드로어 · 메뉴 버튼을 숨긴다.
+  제목은 "내 게시판". 데이터는 같은 전역 즐겨찾기 · 같은 사이트 안 순서(`reorderInSite`)라 두 보기를 오가도 그대로다.
+  모아 보기에서는 카페 소구획으로 묶지 않는다(사이트 → 카페 → 게시판 세 겹이 그룹 홈을 걷어낸 이유, 카페는 배지로만).
+  사이트 머리글 접힘은 카페 소구획과 같은 `CollapsedSubSections` 에 `site:{site}` 키로 남고, 편집 중에는 모두 펼친다. 탭은 `IndexedStack` 으로 살려 두고(스크롤 · 상태 유지,
   앱을 켜면 이슈를 바로 받는다), 탭마다 `ScrollController` 를 따로 `PrimaryScrollController` 로 준다
   (하나를 같이 쓰면 컨트롤러에 스크롤뷰가 여럿 붙는다). 보고 있는 탭을 다시 누르면 맨 위로.
   모든 탭이 같은 큰 제목 앱바(`MainAppBar` · `LargeTitleSliverAppBar`)라 탭을 오가도 제목 자리가 같다.
@@ -472,9 +477,10 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
 - `package:jni` 를 쓰는 플러그인은 Dart 가 Java/Kotlin 클래스를 이름 문자열로 찾으므로
   R8 이 지우거나 줄이면 런타임에 멈춘다. `fvm dart run tool/check_jni_keep.dart` 가
   실패하면 `android/app/proguard-rules.pro` 의 "package:jni" 항목에 keep 을 추가한다.
-- `jni` · `jni_flutter` 는 `pubspec.yaml` `dependency_overrides` 로 1.1.2 · 1.0.4+1 에 고정했다. jni 1.2.0 + jni_flutter 1.1.0 은 keep 검사를
-  통과하고도 release 기동 때 `ClassNotFoundException: "Landroid/content/Context;"` 로 부팅 실패 화면이 뜬다
-  (R8 이 아니라 jni 쪽 문제). 고정을 풀 때는 smoke test 로 기동을 확인한다.
+- `jni` · `jni_flutter` 는 한때 `pubspec.yaml` `dependency_overrides` 로 1.1.2 · 1.0.4+1 에 고정했었다. jni 1.2.0 + jni_flutter 1.1.0 은 keep 검사를
+  통과하고도 release 기동 때 `ClassNotFoundException: "Landroid/content/Context;"` 로 부팅 실패 화면이 떴다
+  (R8 이 아니라 jni 쪽 문제). jni 1.2.1 + jni_flutter 1.1.0 은 smoke test 를 통과해 고정을 풀었다(override 는 주석으로 남김).
+  다시 부팅 실패가 보이면 주석을 풀어 되돌린다. jni 를 올릴 때마다 smoke test 로 기동을 확인한다.
 
 ## iOS · macOS 네이티브 의존성 (Swift Package Manager)
 

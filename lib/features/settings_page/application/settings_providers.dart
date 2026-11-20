@@ -57,6 +57,24 @@ class ShowBoardIconNotifier() extends _$ShowBoardIconNotifier {
   }
 }
 
+/// 홈 게시판 탭을 '모든 사이트 모아 보기'로 쓸지. 켜면 담은 게시판을 사이트별
+/// 머리글로 묶어 한 화면에 보이고 사이트 드로어를 숨긴다. 끄면(기본) 드로어에서
+/// 고른 사이트의 게시판만 보인다.
+@Riverpod(keepAlive: true)
+class HomeAllSitesNotifier() extends _$HomeAllSitesNotifier {
+  @override
+  bool build() {
+    final settings = ref.watch(settingsRepositoryProvider);
+    return settings.isHomeAllSites();
+  }
+
+  void toggle() {
+    final settings = ref.read(settingsRepositoryProvider);
+    state = !state;
+    settings.setHomeAllSites(state);
+  }
+}
+
 /// 메인 화면 오른쪽의 사이트 빠른 이동 레일을 보일지. 등록한 게시판이
 /// 적어 스크롤이 짧다면 꺼서 화면을 넓게 쓸 수 있다.
 @Riverpod(keepAlive: true)

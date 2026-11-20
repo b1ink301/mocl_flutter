@@ -9,16 +9,19 @@ part of 'main_providers.dart';
 // GENERATED CODE - DO NOT MODIFY BY HAND
 // ignore_for_file: type=lint, type=warning
 /// 앱바 제목. 홈은 '지금 보고 있는 사이트'의 담은 게시판 목록이다.
+/// 모든 사이트 모아 보기에서는 사이트가 하나가 아니라 '내 게시판'.
 
 @ProviderFor(mainTitle)
 final mainTitleProvider = MainTitleProvider._();
 
 /// 앱바 제목. 홈은 '지금 보고 있는 사이트'의 담은 게시판 목록이다.
+/// 모든 사이트 모아 보기에서는 사이트가 하나가 아니라 '내 게시판'.
 
 final class MainTitleProvider
     extends $FunctionalProvider<String, String, String>
     with $Provider<String> {
   /// 앱바 제목. 홈은 '지금 보고 있는 사이트'의 담은 게시판 목록이다.
+  /// 모든 사이트 모아 보기에서는 사이트가 하나가 아니라 '내 게시판'.
   MainTitleProvider._()
     : super(
         from: null,
@@ -52,7 +55,7 @@ final class MainTitleProvider
   }
 }
 
-String _$mainTitleHash() => r'57abddfdf2e871b713c4368c9e8e3420a55ee34a';
+String _$mainTitleHash() => r'b4a88b9c437ad22d7f42d923782b9f9ee892e99a';
 
 /// 사이트 드로어의 칩이 자기 차례인지만 골라 보게 한다(사이트가 바뀌어도
 /// 관련 있는 칩 두 개만 다시 그려진다).
