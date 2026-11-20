@@ -477,9 +477,10 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
 - `package:jni` 를 쓰는 플러그인은 Dart 가 Java/Kotlin 클래스를 이름 문자열로 찾으므로
   R8 이 지우거나 줄이면 런타임에 멈춘다. `fvm dart run tool/check_jni_keep.dart` 가
   실패하면 `android/app/proguard-rules.pro` 의 "package:jni" 항목에 keep 을 추가한다.
-- `jni` · `jni_flutter` 는 `pubspec.yaml` `dependency_overrides` 로 1.1.2 · 1.0.4+1 에 고정했다. jni 1.2.0 + jni_flutter 1.1.0 은 keep 검사를
-  통과하고도 release 기동 때 `ClassNotFoundException: "Landroid/content/Context;"` 로 부팅 실패 화면이 뜬다
-  (R8 이 아니라 jni 쪽 문제). 고정을 풀 때는 smoke test 로 기동을 확인한다.
+- `jni` · `jni_flutter` 는 한때 `pubspec.yaml` `dependency_overrides` 로 1.1.2 · 1.0.4+1 에 고정했었다. jni 1.2.0 + jni_flutter 1.1.0 은 keep 검사를
+  통과하고도 release 기동 때 `ClassNotFoundException: "Landroid/content/Context;"` 로 부팅 실패 화면이 떴다
+  (R8 이 아니라 jni 쪽 문제). jni 1.2.1 + jni_flutter 1.1.0 은 smoke test 를 통과해 고정을 풀었다(override 는 주석으로 남김).
+  다시 부팅 실패가 보이면 주석을 풀어 되돌린다. jni 를 올릴 때마다 smoke test 로 기동을 확인한다.
 
 ## iOS · macOS 네이티브 의존성 (Swift Package Manager)
 
