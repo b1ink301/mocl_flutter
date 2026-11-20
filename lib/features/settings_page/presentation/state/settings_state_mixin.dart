@@ -23,6 +23,9 @@ mixin class SettingsState() {
 
   bool showQuickJumpState(WidgetRef ref) => ref.watch(showQuickJumpProvider);
 
+  /// 홈 게시판 탭을 모든 사이트 모아 보기로 쓰는지.
+  bool homeAllSitesState(WidgetRef ref) => ref.watch(homeAllSitesProvider);
+
   bool openSiteLinksInAppState(WidgetRef ref) =>
       ref.watch(openSiteLinksInAppProvider);
 

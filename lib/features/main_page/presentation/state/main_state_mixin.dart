@@ -37,6 +37,9 @@ mixin class MainState() {
   /// 게시판 목록에 사이트 아이콘을 보일지(설정에서 끌 수 있다).
   bool showBoardIconState(WidgetRef ref) => ref.watch(showBoardIconProvider);
 
+  /// 홈이 모든 사이트 모아 보기인지(설정). 켜면 사이트 드로어를 숨긴다.
+  bool homeAllSitesState(WidgetRef ref) => ref.watch(homeAllSitesProvider);
+
   /// 오른쪽 사이트 빠른 이동 레일을 보일지(설정에서 끌 수 있다).
   bool showQuickJumpState(WidgetRef ref) => ref.watch(showQuickJumpProvider);
 

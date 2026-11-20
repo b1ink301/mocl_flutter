@@ -1,10 +1,22 @@
 part of '../mocl_main_view.dart';
 
-/// 홈 본문. 지금 고른 사이트에 담아둔 게시판을 한 줄씩 펼친다.
+/// 홈 본문. 설정에 따라 두 가지로 그린다.
+///
+/// - 기본: 드로어에서 고른 사이트에 담아둔 게시판만([_SiteBody])
+/// - 모든 사이트 모아 보기: 담은 게시판 전부를 사이트 머리글로 묶어서([_AllSitesBody])
+///
+/// 데이터는 같은 전역 즐겨찾기라 둘을 오가도 담은 게시판 · 사이트 안 순서는 같다.
+class const _MainBody() extends ConsumerWidget with MainState {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) =>
+      homeAllSitesState(ref) ? const _AllSitesBody() : const _SiteBody();
+}
+
+/// 지금 고른 사이트에 담아둔 게시판을 한 줄씩 펼친다.
 ///
 /// 같은 카페(부모)의 게시판이 여럿이면 카페 소제목 아래로 한 번 더 묶는다
 /// (2단 게시판). 그 밖에는 평평한 목록이라 탭 한 번이면 글 목록으로 들어간다.
-class const _MainBody() extends ConsumerWidget with MainState, FavoriteState {
+class const _SiteBody() extends ConsumerWidget with MainState, FavoriteState {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final double bottom = MediaQuery.of(context).padding.bottom;
@@ -16,18 +28,7 @@ class const _MainBody() extends ConsumerWidget with MainState, FavoriteState {
       data: (favorites) => _buildList(ref, favorites, bottom),
       error: (error, _) =>
           _ErrorWidget(key: ValueKey(error.hashCode), error: error),
-      loading: () => SliverFillRemaining(
-        hasScrollBody: false,
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          mainAxisAlignment: MainAxisAlignment.center,
-          spacing: 8,
-          children: [
-            const LoadingWidget(),
-            PlainText('로딩 중...', style: smallTextStyleState(ref)),
-          ],
-        ),
-      ),
+      loading: () => const _LoadingBoards(),
     );
   }
 
@@ -42,31 +43,17 @@ class const _MainBody() extends ConsumerWidget with MainState, FavoriteState {
     final bool editMode = editModeState(ref) && query.isEmpty;
 
     if (query.isNotEmpty) {
-      final List<FavoriteData> hits = favorites
-          .where((favorite) => _matches(favorite, query))
-          .toList();
-      if (hits.isEmpty) {
-        return _NoSearchResult(query: query);
-      }
-      return SliverMainAxisGroup(
-        slivers: [
-          // 검색 결과는 소구획으로 묶지 않는다(어느 카페 것인지는 배지로 밝힌다).
-          SliverList.builder(
-            itemCount: hits.length,
-            itemBuilder: (context, index) => _BoardTile(
-              key: ValueKey(_tileKeyOf(hits[index])),
-              favorite: hits[index],
-              index: index,
-              editMode: false,
-            ),
-          ),
-          SliverToBoxAdapter(child: SizedBox(height: bottom)),
-        ],
+      return _searchResults(
+        favorites
+            .where((favorite) => _matches(favorite, query, withSite: false))
+            .toList(),
+        query,
+        bottom,
       );
     }
 
     if (favorites.isEmpty) {
-      return const _EmptyBoards();
+      return const _EmptyBoards(allSites: false);
     }
 
     return SliverMainAxisGroup(
@@ -131,18 +118,240 @@ class const _MainBody() extends ConsumerWidget with MainState, FavoriteState {
   }
 }
 
-/// 고른 사이트에 담은 게시판이 없을 때. 담기 · 다른 사이트 고르기로 바로 잇는다.
-class const _EmptyBoards() extends ConsumerWidget with MainState, MainEvent {
+/// 모든 사이트의 담은 게시판을 사이트 머리글로 묶어 한 화면에 펼친다.
+///
+/// 사이트 안에서는 카페 소제목으로 한 번 더 묶지 않는다 — 사이트 → 카페 → 게시판
+/// 세 겹이 되면 같은 이름을 거듭 읽게 된다(그룹 홈을 걷어낸 이유). 카페 이름은
+/// 행 오른쪽 배지로만 밝힌다. 사이트 머리글을 눌러 접고, 접힘은 카페 소구획과
+/// 같은 저장소(`CollapsedSubSections`)에 사이트 키로 남는다.
+class const _AllSitesBody()
+    extends ConsumerWidget
+    with MainState, FavoriteState {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final double bottom = MediaQuery.of(context).padding.bottom;
+
+    return favoritesBySiteState(ref).when(
+      skipLoadingOnReload: true,
+      data: (sites) => _buildList(ref, sites, bottom),
+      error: (error, _) =>
+          _ErrorWidget(key: ValueKey(error.hashCode), error: error),
+      loading: () => const _LoadingBoards(),
+    );
+  }
+
+  Widget _buildList(WidgetRef ref, List<SiteFavorites> sites, double bottom) {
+    final String query = searchQueryState(ref).trim().toLowerCase();
+
+    if (query.isNotEmpty) {
+      // 여러 사이트가 섞이므로 사이트 이름으로도 찾는다.
+      return _searchResults(
+        [
+          for (final SiteFavorites site in sites)
+            for (final FavoriteData favorite in site.items)
+              if (_matches(favorite, query, withSite: true)) favorite,
+        ],
+        query,
+        bottom,
+      );
+    }
+
+    if (sites.isEmpty) {
+      return const _EmptyBoards(allSites: true);
+    }
+
+    // 편집 중에는 접힌 사이트도 펼쳐 둔다(접힌 채로는 고칠 게 안 보인다).
+    final bool editMode = editModeState(ref);
+    final Set<String> collapsed = collapsedSubSectionsState(ref);
+
+    return SliverMainAxisGroup(
+      slivers: [
+        for (final SiteFavorites site in sites)
+          _siteSection(
+            site,
+            collapsed:
+                !editMode &&
+                collapsed.contains(siteSectionKeyOf(site.siteType)),
+            editMode: editMode,
+          ),
+        // bottom 에는 떠 있는 탭바 높이가 들어온다(Scaffold extendBody).
+        SliverToBoxAdapter(child: SizedBox(height: bottom)),
+      ],
+    );
+  }
+
+  Widget _siteSection(
+    SiteFavorites site, {
+    required bool collapsed,
+    required bool editMode,
+  }) => SliverMainAxisGroup(
+    key: ValueKey('site_section_${site.siteType.name}'),
+    slivers: [
+      SliverToBoxAdapter(
+        child: _SiteSectionHeader(
+          siteType: site.siteType,
+          count: site.items.length,
+          collapsed: collapsed,
+          editMode: editMode,
+        ),
+      ),
+      // 순서는 사이트 안에서만 바꾼다(사이트별 보기와 같은 순서 값을 쓴다).
+      if (editMode)
+        _ReorderableBoards(favorites: site.items)
+      else if (!collapsed)
+        SliverList.builder(
+          itemCount: site.items.length,
+          itemBuilder: (context, index) => _BoardTile(
+            key: ValueKey(_tileKeyOf(site.items[index])),
+            favorite: site.items[index],
+            index: index,
+            editMode: false,
+          ),
+        ),
+    ],
+  );
+}
+
+/// 모아 보기의 사이트 접힘 키. 카페 소구획 키(`{site}_{parent}`)와 겹치지 않게 접두를 단다.
+String siteSectionKeyOf(SiteType siteType) => 'site:${siteType.name}';
+
+/// 모아 보기의 사이트 머리글. 눌러서 그 사이트의 게시판을 접거나 펼친다.
+///
+/// 게시판 행과 글자 크기만 달라서는 어디서 사이트가 바뀌는지 안 보였다. 그래서
+/// 옅은 띠(배경 + 아래 헤어라인)를 깔고 사이트 로고를 앞에 둬, 행과 층이 다른
+/// 머리글로 읽히게 한다. 강조색은 쓰지 않는다 — 탭바 · 칩의 선택 표시와 같은 색이면
+/// 머리글이 "골라진 것" 처럼 보이고, 사이트 색 모드에서는 사이트마다 색이 바뀌어 산만하다.
+/// 접으면 안이 안 보이므로 게시판 개수를 함께 두고, 화살표는 개수 바로 옆에 붙인다.
+class const _SiteSectionHeader({
+  required final SiteType siteType,
+  required final int count,
+  required final bool collapsed,
+  required final bool editMode,
+}) extends ConsumerWidget with MainState, MainEvent {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final theme = Theme.of(context);
+    final bool dark = theme.brightness == Brightness.dark;
+    final Color subColor =
+        theme.textTheme.bodySmall?.color ?? theme.colorScheme.onSurfaceVariant;
+    final TextStyle base = smallTextStyleState(ref);
+
+    return Semantics(
+      identifier: 'main_site_${siteType.name}',
+      button: !editMode,
+      child: Material(
+        color: dark
+            ? Colors.white.withValues(alpha: 0.05)
+            : Colors.black.withValues(alpha: 0.035),
+        child: InkWell(
+          onTap: editMode
+              ? null
+              : () => toggleSubSection(ref, siteSectionKeyOf(siteType)),
+          child: Container(
+            decoration: BoxDecoration(
+              // 위쪽은 앞 사이트 마지막 행의 구분선이 이미 있어 아래만 긋는다.
+              border: Border(
+                bottom: BorderSide(color: theme.dividerColor, width: 0.5),
+              ),
+            ),
+            padding: const EdgeInsets.fromLTRB(16, 9, 12, 9),
+            child: Row(
+              children: [
+                SiteAvatar(siteType: siteType, radius: 11),
+                const SizedBox(width: 10),
+                Flexible(
+                  child: PlainText(
+                    siteType.title,
+                    style: base.copyWith(
+                      fontWeight: FontWeight.w700,
+                      color: theme.textTheme.bodyMedium?.color,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 6),
+                PlainText(
+                  '$count',
+                  style: base.copyWith(
+                    fontSize: (base.fontSize ?? 13) - 1,
+                    fontWeight: FontWeight.w600,
+                    color: subColor,
+                  ),
+                ),
+                if (!editMode) ...[
+                  const SizedBox(width: 2),
+                  PlainIcon(
+                    collapsed
+                        ? Icons.chevron_right_rounded
+                        : Icons.expand_more_rounded,
+                    size: 18,
+                    color: subColor,
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// 처음 불러오는 동안.
+class const _LoadingBoards() extends ConsumerWidget with MainState {
+  @override
+  Widget build(BuildContext context, WidgetRef ref) => SliverFillRemaining(
+    hasScrollBody: false,
+    child: Column(
+      crossAxisAlignment: CrossAxisAlignment.center,
+      mainAxisAlignment: MainAxisAlignment.center,
+      spacing: 8,
+      children: [
+        const LoadingWidget(),
+        PlainText('로딩 중...', style: smallTextStyleState(ref)),
+      ],
+    ),
+  );
+}
+
+/// 내 게시판 검색 결과. 소구획 · 사이트로 묶지 않는다(어느 카페 것인지는 배지,
+/// 어느 사이트 것인지는 행 왼쪽 아이콘으로 밝힌다).
+Widget _searchResults(List<FavoriteData> hits, String query, double bottom) {
+  if (hits.isEmpty) {
+    return _NoSearchResult(query: query);
+  }
+  return SliverMainAxisGroup(
+    slivers: [
+      SliverList.builder(
+        itemCount: hits.length,
+        itemBuilder: (context, index) => _BoardTile(
+          key: ValueKey(_tileKeyOf(hits[index])),
+          favorite: hits[index],
+          index: index,
+          editMode: false,
+        ),
+      ),
+      SliverToBoxAdapter(child: SizedBox(height: bottom)),
+    ],
+  );
+}
+
+/// 담은 게시판이 없을 때. 담기로 바로 잇는다. 사이트별 보기에서는 다른 사이트
+/// 고르기도 둔다(모아 보기는 드로어가 없고, 비었다면 어느 사이트에도 없다).
+class const _EmptyBoards({required final bool allSites})
+    extends ConsumerWidget
+    with MainState, MainEvent {
   @override
   Widget build(BuildContext context, WidgetRef ref) => SliverMessageView(
     child: MessageView(
       icon: Icons.playlist_add,
       title: '담은 게시판이 없어요',
-      description: '${titleState(ref)}에서 자주 보는 게시판을 담아 두면 여기에 모여요.',
+      description: allSites
+          ? '자주 보는 게시판을 담아 두면 사이트별로 여기에 모여요.'
+          : '${titleState(ref)}에서 자주 보는 게시판을 담아 두면 여기에 모여요.',
       primaryLabel: '게시판 담기',
       onPrimary: () => handleAddButton(ref, context),
-      secondaryLabel: '다른 사이트',
-      onSecondary: () => openSiteDrawer(context),
+      secondaryLabel: allSites ? null : '다른 사이트',
+      onSecondary: allSites ? null : () => openSiteDrawer(context),
       titleStyle: titleTextStyleState(ref),
       descriptionStyle: smallTextStyleState(ref),
     ),
@@ -191,10 +400,12 @@ String _tileKeyOf(FavoriteData favorite) =>
     '${favorite.siteType.name}_${favorite.board}';
 
 /// 검색어가 게시판 이름이나 카페 이름에 걸리는지.
-/// (목록이 이미 한 사이트로 좁혀져 있어 사이트 이름은 볼 필요가 없다)
-bool _matches(FavoriteData favorite, String query) =>
+/// 사이트별 보기는 목록이 이미 한 사이트라 사이트 이름을 보지 않고([withSite] false),
+/// 모아 보기는 여러 사이트가 섞여 사이트 이름으로도 찾는다.
+bool _matches(FavoriteData favorite, String query, {required bool withSite}) =>
     favorite.text.toLowerCase().contains(query) ||
-    favorite.parentText.toLowerCase().contains(query);
+    favorite.parentText.toLowerCase().contains(query) ||
+    (withSite && favorite.siteType.title.toLowerCase().contains(query));
 
 /// 컨테이너(카페) 자체를 담은 항목인지. 하위 메뉴 목록의 '전체글' 이 이렇게
 /// 저장된다(board 가 부모와 같다). 이 항목만 제목이 '전체글' 이라 여러 카페를

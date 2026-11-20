@@ -2,14 +2,22 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:mocl_flutter/core/application/app_provider.dart';
 import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/settings_page/application/repository_provider.dart';
+import 'package:mocl_flutter/features/settings_page/application/settings_providers.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'main_providers.g.dart';
 
 /// 앱바 제목. 홈은 '지금 보고 있는 사이트'의 담은 게시판 목록이다.
+/// 모든 사이트 모아 보기에서는 사이트가 하나가 아니라 '내 게시판'.
 @riverpod
-String mainTitle(Ref ref) =>
-    ref.watch(currentSiteTypeProvider.select((SiteType state) => state.title));
+String mainTitle(Ref ref) => ref.watch(homeAllSitesProvider)
+    ? kAllSitesHomeTitle
+    : ref.watch(
+        currentSiteTypeProvider.select((SiteType state) => state.title),
+      );
+
+/// 모든 사이트 모아 보기 홈의 앱바 제목.
+const String kAllSitesHomeTitle = '내 게시판';
 
 /// 사이트 드로어의 칩이 자기 차례인지만 골라 보게 한다(사이트가 바뀌어도
 /// 관련 있는 칩 두 개만 다시 그려진다).
