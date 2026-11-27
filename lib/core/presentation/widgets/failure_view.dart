@@ -26,6 +26,12 @@ class const FailureInfo({
       description: _humanize(message, '게시판 등급이 올라가면 읽을 수 있어요.'),
       retryable: false,
     ),
+    DeletedPostFailure() => const FailureInfo(
+      icon: Icons.delete_outline,
+      title: '삭제된 글이에요',
+      description: '글이 지워졌거나 없는 글이에요.',
+      retryable: false,
+    ),
     NetworkFailure(:final message) => FailureInfo(
       icon: Icons.wifi_off_outlined,
       title: '연결에 실패했어요',

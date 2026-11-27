@@ -181,6 +181,12 @@ class const MlbparkParser() extends BaseParser {
     final bodyEl =
         document.querySelector('div.ar_txt#contentDetail') ??
         document.querySelector('div.ar_txt');
+    // 지워진 글은 본문 자리에 "해당 글이 삭제되었거나 잘못된 유입경로입니다." 안내만 온다.
+    // 그대로 두면 제목 · 본문이 빈 글로 열린다.
+    if (bodyEl == null &&
+        (document.querySelector('div.message')?.text.contains('삭제') ?? false)) {
+      return const Left(DeletedPostFailure());
+    }
     bodyEl.removeAll('script, style, input, button, ins, iframe');
     final String bodyHtml = bodyEl?.innerHtml ?? '';
 

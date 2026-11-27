@@ -277,12 +277,18 @@ class const BobaedreamParser() extends BaseParser {
     return Isolate.run(() => _parseDetail(responseData));
   }
 
+  static final RegExp _deletedAlert = RegExp(r'''alert\(\s*['"][^'"]*삭제된''');
+
   static Either<Failure, Details> _parseDetail(String responseData) {
     timeago.setLocaleMessages('ko', timeago.KoMessages());
 
     final document = parse(responseData);
     final container = document.querySelector('article.article');
     if (container == null) {
+      // 지워진 글은 본문 없이 `<script>alert('삭제된 글 입니다.');history.back();</script>` 만 온다.
+      if (_deletedAlert.hasMatch(responseData)) {
+        return const Left(DeletedPostFailure());
+      }
       return Left(GetDetailFailure(message: 'container is null'));
     }
 

@@ -24,6 +24,10 @@ class const NotLoginFailure({required super.message}) extends Failure;
 /// 재시도해도 결과가 같으므로 UI 는 재시도 대신 안내를 보여준다.
 class const PermissionFailure({required super.message}) extends Failure;
 
+/// 글이 지워졌거나 없는 경우(사이트가 "삭제된 글" 안내만 준다).
+/// 파서 고장이 아니므로 자동 신고하지 않고, 다시 받아도 같아 재시도하지 않는다.
+class const DeletedPostFailure({super.message = '삭제된 글이에요.'}) extends Failure;
+
 class const UnknownFailure({required super.message}) extends Failure;
 
 /// 댓글을 쓰지 못한 경우. [message] 는 사이트가 준 사유(금칙어 · 글자 수 등)라
