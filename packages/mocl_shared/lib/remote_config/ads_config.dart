@@ -28,12 +28,16 @@ enum DetailAdSize() {
 /// ```json
 /// "ads": {
 ///   "detail": "small",
-///   "list": { "first": 5, "interval": 15 }
+///   "list": { "enabled": true, "first": 5, "interval": 15 }
 /// }
 /// ```
 class const AdsRemoteConfig({
   /// 상세 광고 크기. `null` 이면 [defaultDetail].
   final DetailAdSize? detail,
+
+  /// 목록(글 사이) 광고를 넣을지. `null` 이면 넣는다([defaultListEnabled]).
+  /// 이 키를 모르는 옛 앱은 끌 수 없다(계속 넣는다).
+  final bool? listEnabled,
 
   /// 목록에서 첫 광고를 넣을 위치(이 개수의 글 뒤). `null` 이면 [defaultListFirst].
   final int? listFirst,
@@ -42,6 +46,7 @@ class const AdsRemoteConfig({
   final int? listInterval,
 }) {
   static const DetailAdSize defaultDetail = DetailAdSize.small;
+  static const bool defaultListEnabled = true;
   static const int defaultListFirst = 5;
   static const int defaultListInterval = 15;
 
@@ -57,9 +62,13 @@ class const AdsRemoteConfig({
   static const AdsRemoteConfig empty = AdsRemoteConfig();
 
   bool get isEmpty =>
-      detail == null && listFirst == null && listInterval == null;
+      detail == null &&
+      listEnabled == null &&
+      listFirst == null &&
+      listInterval == null;
 
   DetailAdSize get effectiveDetail => detail ?? defaultDetail;
+  bool get effectiveListEnabled => listEnabled ?? defaultListEnabled;
   int get effectiveListFirst => listFirst ?? defaultListFirst;
   int get effectiveListInterval => listInterval ?? defaultListInterval;
 
@@ -79,10 +88,18 @@ class const AdsRemoteConfig({
       if (detail == null) fail('모르는 ads.detail: $rawDetail');
     }
 
+    bool? listEnabled;
     int? listFirst;
     int? listInterval;
     final Object? rawList = json['list'];
     if (rawList is Map) {
+      final Object? rawEnabled = rawList['enabled'];
+      if (rawEnabled is bool) {
+        listEnabled = rawEnabled;
+      } else if (rawEnabled != null) {
+        fail('ads.list.enabled 는 true · false 여야 한다: $rawEnabled');
+      }
+
       int? range(String key, int min, int max) {
         final Object? value = rawList[key];
         if (value == null) return null;
@@ -99,6 +116,7 @@ class const AdsRemoteConfig({
 
     return AdsRemoteConfig(
       detail: detail,
+      listEnabled: listEnabled,
       listFirst: listFirst,
       listInterval: listInterval,
     );
@@ -106,7 +124,11 @@ class const AdsRemoteConfig({
 
   Map<String, Object?> toJson() => {
     'detail': ?detail?.name,
-    if (listFirst != null || listInterval != null)
-      'list': {'first': ?listFirst, 'interval': ?listInterval},
+    if (listEnabled != null || listFirst != null || listInterval != null)
+      'list': {
+        'enabled': ?listEnabled,
+        'first': ?listFirst,
+        'interval': ?listInterval,
+      },
   };
 }

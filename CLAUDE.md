@@ -508,6 +508,8 @@ MoclLogger.e('DB 업로드 실패', error: e, stackTrace: st);                  
     - medium(미디어 폭×0.4, 120~160) · large(16:9, 120~280) — `DetailAdStyle` ↔ `DetailNativeAdFactory.kt`(`detailCard`)
     - off — 넣지 않음
 - 목록 광고 자리(`ListAdPlacement`, 기본 5번째 글 뒤 · 15개마다)는 원격 설정 `ads.list.first` · `interval`.
+  `ads.list.enabled: false` 면 목록 광고를 넣지 않는다(관리 화면 "목록 광고 끄기", `listAdPlacementState` 가 null →
+  광고를 받지도 않는다). 옛 앱은 이 키를 몰라 계속 넣는다.
   위젯은 `AdsState` mixin(`ads/presentation/state/`)으로 읽는다. 미디어 칸은 120dp 아래로 줄이지 말 것(AdMob 정책).
 - Dart 스타일과 Kotlin 팩토리는 같은 여백 상수로 높이를 맞춘다(한쪽을 바꾸면 다른 쪽도 함께).
   한 자리에 하나만 두는 광고는 `SingleNativeAd` 를 쓴다.

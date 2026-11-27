@@ -324,15 +324,16 @@ class ListAdSlot._(final int index) {
 
 /// 이 목록 화면에서 쓸 광고 묶음. 광고를 쓰지 않는 빌드이거나 아직 광고를
 /// 요청할 수 없으면(동의 확인 · SDK 초기화 전) null.
-/// 화면이 사라질 때 광고도 함께 정리한다. [placement] 는 광고를 넣을 자리.
-ListAdSlots? useListAdSlots(ListAdPlacement placement) {
+/// 화면이 사라질 때 광고도 함께 정리한다. [placement] 는 광고를 넣을 자리이고,
+/// null(원격 설정이 목록 광고를 끔)이면 광고를 받지 않는다.
+ListAdSlots? useListAdSlots(ListAdPlacement? placement) {
   final bool ready = useValueListenable(mobileAdsReady);
   final ListAdSlots? slots = useMemoized(() {
     final String? adUnitId = AdUnitIds.listNative;
-    return adUnitId == null || !ready
+    return adUnitId == null || !ready || placement == null
         ? null
         : ListAdSlots(adUnitId: adUnitId, placement: placement);
-  }, [ready, placement.first, placement.interval]);
+  }, [ready, placement?.first, placement?.interval]);
   useEffect(() => slots?.dispose, [slots]);
   return slots;
 }

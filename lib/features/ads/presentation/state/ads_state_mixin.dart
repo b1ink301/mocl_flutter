@@ -11,13 +11,17 @@ mixin class AdsState() {
   DetailAdSize detailAdSizeState(WidgetRef ref) =>
       ref.watch(remoteConfigProvider.select((c) => c.ads.effectiveDetail));
 
-  /// 목록에서 광고를 넣을 자리.
-  ListAdPlacement listAdPlacementState(WidgetRef ref) {
-    final (int first, int interval) = ref.watch(
+  /// 목록에서 광고를 넣을 자리. 원격 설정이 목록 광고를 껐으면(`ads.list.enabled`) null.
+  ListAdPlacement? listAdPlacementState(WidgetRef ref) {
+    final (bool enabled, int first, int interval) = ref.watch(
       remoteConfigProvider.select(
-        (c) => (c.ads.effectiveListFirst, c.ads.effectiveListInterval),
+        (c) => (
+          c.ads.effectiveListEnabled,
+          c.ads.effectiveListFirst,
+          c.ads.effectiveListInterval,
+        ),
       ),
     );
-    return ListAdPlacement(first: first, interval: interval);
+    return enabled ? ListAdPlacement(first: first, interval: interval) : null;
   }
 }

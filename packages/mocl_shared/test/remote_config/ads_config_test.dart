@@ -6,6 +6,7 @@ void main() {
     final config = RemoteConfig.fromJson({'schemaVersion': 1});
     expect(config.ads.isEmpty, isTrue);
     expect(config.ads.effectiveDetail, DetailAdSize.small);
+    expect(config.ads.effectiveListEnabled, isTrue);
     expect(config.ads.effectiveListFirst, 5);
     expect(config.ads.effectiveListInterval, 15);
     expect(config.toJson().containsKey('ads'), isFalse);
@@ -25,6 +26,35 @@ void main() {
     expect(
       RemoteConfig.fromJson(config.toJson(), strict: true).toJson(),
       config.toJson(),
+    );
+  });
+
+  test('목록 광고를 끈다', () {
+    final config = RemoteConfig.fromJson({
+      'schemaVersion': 1,
+      'ads': {
+        'list': {'enabled': false, 'interval': 20},
+      },
+    }, strict: true);
+    expect(config.ads.isEmpty, isFalse);
+    expect(config.ads.effectiveListEnabled, isFalse);
+    expect(config.ads.effectiveListInterval, 20);
+    expect(config.toJson()['ads'], {
+      'list': {'enabled': false, 'interval': 20},
+    });
+  });
+
+  test('enabled 가 true · false 가 아니면 앱은 건너뛰고(켬) 서버는 던진다', () {
+    final Map<String, Object?> bad = {
+      'schemaVersion': 1,
+      'ads': {
+        'list': {'enabled': 'off'},
+      },
+    };
+    expect(RemoteConfig.fromJson(bad).ads.effectiveListEnabled, isTrue);
+    expect(
+      () => RemoteConfig.fromJson(bad, strict: true),
+      throwsFormatException,
     );
   });
 

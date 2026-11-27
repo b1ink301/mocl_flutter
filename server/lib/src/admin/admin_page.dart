@@ -152,6 +152,7 @@ button:disabled { opacity: .45; cursor: default; }
   <section class="card">
     <h2>목록 광고 위치</h2>
     <p class="desc">첫 광고를 몇 번째 글 뒤에 넣고, 그다음 몇 개마다 넣을지.</p>
+    <label style="display:block; margin-bottom:14px"><input id="listOff" type="checkbox"> 목록 광고 끄기 <span class="muted">(이 설정을 아는 앱 버전부터 꺼집니다. 옛 앱은 계속 넣습니다)</span></label>
     <div class="row" style="flex-wrap:wrap; gap:18px">
       <div>
         <label class="field">첫 광고 위치 <span id="firstRange" class="muted"></span></label>
@@ -424,14 +425,18 @@ function render() {
 
   // 목록 광고
   const first = a.list?.first, interval = a.list?.interval;
+  const listOff = a.list?.enabled === false;
+  $('listOff').checked = listOff;
   $('listFirst').value = first ?? def.listFirst;
   $('listInterval').value = interval ?? def.listInterval;
   $('listFirst').disabled = first == null; $('listInterval').disabled = interval == null;
   $('listFirstDefault').checked = first == null; $('listIntervalDefault').checked = interval == null;
   const f = first ?? def.listFirst, n = interval ?? def.listInterval;
   const slots = [];
-  for (let k = f; k <= 60; k += n) slots.push(k);
-  $('listSummary').textContent = `${slots.slice(0, 4).join(', ')}${slots.length > 4 ? ', …' : ''}번째 글 뒤에 광고 (60개 중 ${slots.length}개)`;
+  if (!listOff) for (let k = f; k <= 60; k += n) slots.push(k);
+  $('listSummary').textContent = listOff
+    ? '목록에 광고를 넣지 않습니다 (옛 앱은 아래 위치 · 간격대로 계속 넣습니다)'
+    : `${slots.slice(0, 4).join(', ')}${slots.length > 4 ? ', …' : ''}번째 글 뒤에 광고 (60개 중 ${slots.length}개)`;
   $('listPreview').replaceChildren(
     ...Array.from({ length: 60 }, (_, idx) => el('span', { class: slots.includes(idx + 1) ? 'ad' : '', title: `${idx + 1}` })),
   );
@@ -729,6 +734,12 @@ $('applyJson').addEventListener('click', () => {
     cfg = next; $('json').blur(); render(); toast('적용했습니다. 저장을 눌러야 서버에 반영됩니다.');
   } catch (e) { toast('JSON 오류: ' + e.message); }
 });
+$('listOff').addEventListener('change', (e) => setAds((x) => {
+  x.list = { ...(x.list || {}) };
+  // 켜는 쪽이 기본이라 키를 지운다(옛 설정 파일과 같은 모양으로 남는다).
+  if (e.target.checked) x.list.enabled = false; else delete x.list.enabled;
+  if (!Object.keys(x.list).length) delete x.list;
+}));
 for (const key of ['listFirst', 'listInterval']) {
   const field = key === 'listFirst' ? 'first' : 'interval';
   const clamp = (v) => Math.min(meta.limits[key][1], Math.max(meta.limits[key][0], v));
