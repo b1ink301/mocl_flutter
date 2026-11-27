@@ -62,12 +62,12 @@ class SearchPagingController() extends _$SearchPagingController {
     controller = PagingController<int, ListItem>(
       getNextPageKey: (state) {
         if (keyword.isEmpty || _exhausted) return null;
-        final int? lastKey = state.keys?.lastOrNull;
+        final int? lastKey = state.keys.lastOrNull;
         return lastKey == null ? firstPage : lastKey + 1;
       },
       fetchPage: (pageKey) async {
         // 레딧은 다음 쪽을 마지막 글 id(`after`) 로 받는다. 나머지 사이트는 쓰지 않는다.
-        final ListItem? lastItem = controller.value.items?.lastOrNull;
+        final ListItem? lastItem = controller.value.items.lastOrNull;
         final LastId lastId = lastItem != null
             ? LastId(stringId: lastItem.url)
             : const LastId();
@@ -83,7 +83,7 @@ class SearchPagingController() extends _$SearchPagingController {
         );
         return result.fold((Failure f) => throw SearchFailure(f), (items) {
           final Set<int> seen = {
-            for (final ListItem i in controller.value.items ?? const []) i.id,
+            for (final ListItem i in controller.value.items) i.id,
           };
           final List<ListItem> fresh = [
             for (final ListItem i in items)
@@ -117,7 +117,6 @@ class SearchPagingController() extends _$SearchPagingController {
   void markAsReadById(int id) {
     final ctrl = state;
     final pages = ctrl.value.pages;
-    if (pages == null) return;
     for (int p = 0; p < pages.length; p++) {
       final int idx = pages[p].indexWhere((e) => e.id == id);
       if (idx < 0) continue;

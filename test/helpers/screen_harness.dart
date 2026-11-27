@@ -359,7 +359,7 @@ class _FakePagingController(final List<List<ListItem>> _pages)
         PagingController<int, ListItem>(
           // 준비한 쪽을 다 주면 종료.
           getNextPageKey: (PagingState<int, ListItem> state) {
-            final int next = (state.keys?.length ?? 0) + 1;
+            final int next = state.keys.length + 1;
             return next <= _pages.length ? next : null;
           },
           fetchPage: (int pageKey) async => _pages[pageKey - 1],

@@ -191,11 +191,12 @@ class const _SearchResults({
                       ),
                       newPageProgressIndicatorBuilder: (_) =>
                           const LoadingWidget(),
-                      firstPageErrorIndicatorBuilder: (_) => Padding(
+                      firstPageErrorIndicatorBuilder: (_, error) => Padding(
                         padding: const EdgeInsets.only(top: 48),
                         child: failure(state.error),
                       ),
-                      newPageErrorIndicatorBuilder: (_) => failure(state.error),
+                      newPageErrorIndicatorBuilder: (_, error) =>
+                          failure(state.error),
                       noItemsFoundIndicatorBuilder: (_) => Padding(
                         padding: const EdgeInsets.only(top: 48),
                         child: MessageView(

@@ -109,9 +109,9 @@ class const MoclListView({super.key})
                           const _FirstPageLoading(),
                       newPageProgressIndicatorBuilder: (_) =>
                           const _NewPageLoading(),
-                      firstPageErrorIndicatorBuilder: (_) =>
+                      firstPageErrorIndicatorBuilder: (_, error) =>
                           buildErrorIndicator(state.error),
-                      newPageErrorIndicatorBuilder: (_) =>
+                      newPageErrorIndicatorBuilder: (_, error) =>
                           buildErrorIndicator(state.error),
                       noItemsFoundIndicatorBuilder: (_) =>
                           const _NoItemsFound(),

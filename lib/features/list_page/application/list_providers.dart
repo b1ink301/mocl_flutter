@@ -111,7 +111,7 @@ class ListPagingController() extends _$ListPagingController {
     controller = PagingController<int, ListItem>(
       getNextPageKey: (state) {
         // 단일 페이지 게시판: 한 번 fetch 후 종료
-        if (singlePageBoard && (state.keys?.isNotEmpty ?? false)) {
+        if (singlePageBoard && (state.keys.isNotEmpty)) {
           return null;
         }
         // 연속 2페이지가 비어있으면 종료. 한 페이지만 빈 경우는 뮤트 규칙이나
@@ -120,16 +120,15 @@ class ListPagingController() extends _$ListPagingController {
         // 다시 주는 사이트는 중복 필터로 매번 빈 페이지가 되어 2연속에서 멈춘다.
         // forceLoadMore('더 불러오기')가 허용량을 부여한 동안은 종료하지 않고
         // 계속 다음 키로 전진한다(오래 방치 후 offset 이 여러 페이지 밀린 경우).
-        final List<List<ListItem>>? pages = state.pages;
-        if (pages != null &&
-            pages.isNotEmpty &&
+        final List<List<ListItem>> pages = state.pages;
+        if (pages.isNotEmpty &&
             pages.last.isEmpty &&
             (pages.length < 2 || pages[pages.length - 2].isEmpty)) {
           if (_forcedFetchAllowance <= 0) return null;
           _forcedFetchAllowance--;
         }
 
-        final int? lastKey = state.keys?.lastOrNull;
+        final int? lastKey = state.keys.lastOrNull;
         return lastKey == null ? initialPage : lastKey + 1;
       },
       fetchPage: (pageKey) async {
@@ -142,7 +141,7 @@ class ListPagingController() extends _$ListPagingController {
         final bool useLastId =
             sortType == SortType.recent || mainItem.siteType == SiteType.reddit;
         final ListItem? lastItem = useLastId
-            ? controller.value.items?.lastOrNull
+            ? controller.value.items.lastOrNull
             : null;
         final LastId lastId = lastItem != null
             ? LastId(intId: lastItem.id, stringId: lastItem.url)
@@ -239,7 +238,6 @@ class ListPagingController() extends _$ListPagingController {
   void markAsReadById(int id) {
     final ctrl = state;
     final pages = ctrl.value.pages;
-    if (pages == null) return;
 
     for (int p = 0; p < pages.length; p++) {
       final page = pages[p];
