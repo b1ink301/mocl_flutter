@@ -16,6 +16,10 @@ import 'package:mocl_shared/parser/base/base_parser.dart';
 /// 디시인사이드 읽기는 비로그인도 가능하지만, 로그인 시 회원/연령 제한 글
 /// 열람을 위해 [getWithCookies] 로 로그인 쿠키를 함께 보낸다.
 class const DcinsideApi(super.dio, super.userAgent) extends BaseApi {
+  static const String _detailAccept =
+      'text/html,application/xhtml+xml,application/xml;q=0.9,'
+      'image/avif,image/webp,image/apng,*/*;q=0.8';
+
   @override
   Future<Either<Failure, Details>> detail(
     ListItem item,
@@ -27,6 +31,9 @@ class const DcinsideApi(super.dio, super.userAgent) extends BaseApi {
       final Map<String, String> headers = {
         'Host': host,
         'User-Agent': userAgent,
+        // 디시는 Accept 에 image/webp 가 없으면 webp 이미지 주소 대신
+        // "webp" 자리 그림(m_webp.png)을 준다(브라우저가 못 읽는다고 본다).
+        'Accept': _detailAccept,
       };
       final Response<dynamic> response = await getWithCookies(
         url,
