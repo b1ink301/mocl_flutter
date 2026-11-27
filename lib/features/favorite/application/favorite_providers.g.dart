@@ -270,65 +270,7 @@ final class SiteFavoritesProvider
   }
 }
 
-String _$siteFavoritesHash() => r'4eea2d26dc8815294439561ff16badf3263a6bd0';
-
-/// 모든 사이트의 담은 게시판을 사이트별로 묶은 목록('모든 사이트 모아 보기' 홈).
-///
-/// 사이트 순서는 드로어 · 게시판 추가 화면과 같은 [kAllSitesInOrder] 를 따르고,
-/// 담은 게시판이 없는 사이트는 뺀다. 사이트 안 순서는 [siteFavorites] 와 같아서
-/// 두 보기를 오가도 순서가 같고, 정렬도 같은 [FavoritesNotifier.reorderInSite] 를 쓴다.
-
-@ProviderFor(favoritesBySite)
-final favoritesBySiteProvider = FavoritesBySiteProvider._();
-
-/// 모든 사이트의 담은 게시판을 사이트별로 묶은 목록('모든 사이트 모아 보기' 홈).
-///
-/// 사이트 순서는 드로어 · 게시판 추가 화면과 같은 [kAllSitesInOrder] 를 따르고,
-/// 담은 게시판이 없는 사이트는 뺀다. 사이트 안 순서는 [siteFavorites] 와 같아서
-/// 두 보기를 오가도 순서가 같고, 정렬도 같은 [FavoritesNotifier.reorderInSite] 를 쓴다.
-
-final class FavoritesBySiteProvider
-    extends
-        $FunctionalProvider<
-          AsyncValue<List<SiteFavorites>>,
-          List<SiteFavorites>,
-          FutureOr<List<SiteFavorites>>
-        >
-    with
-        $FutureModifier<List<SiteFavorites>>,
-        $FutureProvider<List<SiteFavorites>> {
-  /// 모든 사이트의 담은 게시판을 사이트별로 묶은 목록('모든 사이트 모아 보기' 홈).
-  ///
-  /// 사이트 순서는 드로어 · 게시판 추가 화면과 같은 [kAllSitesInOrder] 를 따르고,
-  /// 담은 게시판이 없는 사이트는 뺀다. 사이트 안 순서는 [siteFavorites] 와 같아서
-  /// 두 보기를 오가도 순서가 같고, 정렬도 같은 [FavoritesNotifier.reorderInSite] 를 쓴다.
-  FavoritesBySiteProvider._()
-    : super(
-        from: null,
-        argument: null,
-        retry: null,
-        name: r'favoritesBySiteProvider',
-        isAutoDispose: true,
-        dependencies: null,
-        $allTransitiveDependencies: null,
-      );
-
-  @override
-  String debugGetCreateSourceHash() => _$favoritesBySiteHash();
-
-  @$internal
-  @override
-  $FutureProviderElement<List<SiteFavorites>> $createElement(
-    $ProviderPointer pointer,
-  ) => $FutureProviderElement(pointer);
-
-  @override
-  FutureOr<List<SiteFavorites>> create(Ref ref) {
-    return favoritesBySite(ref);
-  }
-}
-
-String _$favoritesBySiteHash() => r'12666be205736563e5451a7bb0e7194070da872c';
+String _$siteFavoritesHash() => r'b962aef0d73b4b902b044f1cb69882a8e99bdd12';
 
 /// 사이트별로 담아둔 게시판 개수. 사이트 드로어 칩과 빠른 이동 레일이 "갈 곳이 있는
 /// 사이트"를 가리는 데 쓴다.

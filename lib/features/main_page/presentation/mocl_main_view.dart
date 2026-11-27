@@ -14,7 +14,6 @@ import 'package:mocl_flutter/features/main_page/presentation/state/main_event_mi
 import 'package:mocl_flutter/features/main_page/presentation/state/main_state_mixin.dart';
 import 'package:mocl_flutter/features/main_page/presentation/widgets/main_appbar.dart';
 import 'package:mocl_flutter/features/main_page/presentation/widgets/site_drawer.dart';
-import 'package:mocl_shared/entities/mocl_site_type.dart';
 
 import '../../../core/presentation/widgets/failure_view.dart';
 import '../../../core/presentation/widgets/plain_divider_widget.dart';

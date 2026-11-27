@@ -147,8 +147,6 @@ class _ScaffoldWidgetState()
     final List<MainTab> tabs = widget.tabs;
     final int tabIndex = tabIndexState(ref).clamp(0, tabs.length - 1);
     final MainTab current = tabs[tabIndex];
-    // 모든 사이트 모아 보기에서는 고를 사이트가 없으니 드로어를 두지 않는다.
-    final bool allSites = homeAllSitesState(ref);
 
     return PopScope(
       // 드로어 · 검색 · 다른 탭 중 열려 있는 것을 먼저 닫고, 다 닫혀 있을 때만
@@ -174,14 +172,13 @@ class _ScaffoldWidgetState()
             // 탭바가 목록 위에 떠 있도록 본문을 바 뒤까지 확장한다. Scaffold 가
             // 본문 MediaQuery 의 padding.bottom 에 바 높이를 더해 준다.
             extendBody: true,
-            drawer: allSites ? null : const SiteDrawer(),
+            drawer: const SiteDrawer(),
             onDrawerChanged: (bool isOpen) =>
                 setState(() => _drawerOpen = isOpen),
             // 옛 드로어처럼 화면 왼쪽 절반 어디서 끌어도 손가락을 따라 열린다.
             // 게시판 탭에서만, 편집 · 검색 중이 아닐 때만(드래그 · 입력과 겹치지 않게).
             drawerEdgeDragWidth: MediaQuery.sizeOf(context).width / 2,
             drawerEnableOpenDragGesture:
-                !allSites &&
                 current == MainTab.boards &&
                 !editModeState(ref) &&
                 !searchOpenState(ref),

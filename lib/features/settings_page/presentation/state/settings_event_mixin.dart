@@ -16,9 +16,6 @@ mixin class SettingsEvent() {
   void handleToggleBoardIcon(WidgetRef ref) =>
       ref.read(showBoardIconProvider.notifier).toggle();
 
-  void handleToggleHomeAllSites(WidgetRef ref) =>
-      ref.read(homeAllSitesProvider.notifier).toggle();
-
   void handleToggleQuickJump(WidgetRef ref) =>
       ref.read(showQuickJumpProvider.notifier).toggle();
 

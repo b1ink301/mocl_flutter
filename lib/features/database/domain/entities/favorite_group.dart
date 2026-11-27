@@ -27,9 +27,6 @@ abstract class FavoriteGroup with _$FavoriteGroup {
 /// 그룹과 그 그룹에 속한 즐겨찾기 게시판 묶음. 메인 화면이 이 단위로 그려진다.
 typedef FavoriteSection = ({FavoriteGroup group, List<FavoriteData> items});
 
-/// 한 사이트의 담은 게시판('모든 사이트 모아 보기' 홈의 사이트 묶음 하나).
-typedef SiteFavorites = ({SiteType siteType, List<FavoriteData> items});
-
 /// 그룹 안에서 같은 부모(네이버 카페 등)의 게시판을 한 번 더 묶은 소구획.
 ///
 /// 부모 이름을 행마다 부제로 반복하면 같은 글자를 여러 번 읽게 되고 행 높이도

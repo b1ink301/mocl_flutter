@@ -1,5 +1,4 @@
 import 'package:mocl_flutter/core/application/app_provider.dart';
-import 'package:mocl_flutter/core/domain/entities/mocl_site_category.dart';
 import 'package:mocl_shared/entities/mocl_main_item.dart';
 import 'package:mocl_shared/entities/mocl_site_type.dart';
 import 'package:mocl_flutter/features/database/application/datasource_provider.dart';
@@ -288,41 +287,10 @@ Future<List<FavoriteData>> siteFavorites(Ref ref) async {
   );
 
   return favorites.where((favorite) => favorite.siteType == siteType).toList()
-    ..sort(_bySiteOrder);
-}
-
-/// 사이트 안 표시 순서: 사용자가 정한 orderBy, 같으면 담은 시각.
-int _bySiteOrder(FavoriteData a, FavoriteData b) {
-  final int byOrder = a.orderBy.compareTo(b.orderBy);
-  return byOrder != 0 ? byOrder : a.savedAt.compareTo(b.savedAt);
-}
-
-/// 모든 사이트의 담은 게시판을 사이트별로 묶은 목록('모든 사이트 모아 보기' 홈).
-///
-/// 사이트 순서는 드로어 · 게시판 추가 화면과 같은 [kAllSitesInOrder] 를 따르고,
-/// 담은 게시판이 없는 사이트는 뺀다. 사이트 안 순서는 [siteFavorites] 와 같아서
-/// 두 보기를 오가도 순서가 같고, 정렬도 같은 [FavoritesNotifier.reorderInSite] 를 쓴다.
-@riverpod
-Future<List<SiteFavorites>> favoritesBySite(Ref ref) async {
-  final List<FavoriteData> favorites = await ref.watch(
-    favoritesProvider.future,
-  );
-  final Map<SiteType, List<FavoriteData>> bySite = {};
-  for (final FavoriteData favorite in favorites) {
-    (bySite[favorite.siteType] ??= <FavoriteData>[]).add(favorite);
-  }
-
-  // 카테고리에 없는 사이트(새로 넣고 카테고리를 빠뜨린 경우)도 맨 뒤에 남긴다.
-  final List<SiteType> order = [
-    ...kAllSitesInOrder,
-    for (final SiteType siteType in SiteType.values)
-      if (!kAllSitesInOrder.contains(siteType)) siteType,
-  ];
-  return [
-    for (final SiteType siteType in order)
-      if (bySite[siteType] case final List<FavoriteData> items)
-        (siteType: siteType, items: items..sort(_bySiteOrder)),
-  ];
+    ..sort((a, b) {
+      final int byOrder = a.orderBy.compareTo(b.orderBy);
+      return byOrder != 0 ? byOrder : a.savedAt.compareTo(b.savedAt);
+    });
 }
 
 /// 사이트별로 담아둔 게시판 개수. 사이트 드로어 칩과 빠른 이동 레일이 "갈 곳이 있는

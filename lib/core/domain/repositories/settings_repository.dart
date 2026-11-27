@@ -12,11 +12,6 @@ abstract class SettingsRepository() {
   bool isShowBoardIcon();
   void setShowBoardIcon(bool showBoardIcon);
 
-  /// 홈 게시판 탭에 모든 사이트의 담은 게시판을 사이트별로 모아 보일지.
-  /// 끄면(기본) 드로어에서 고른 사이트의 게시판만 보인다.
-  bool isHomeAllSites();
-  void setHomeAllSites(bool allSites);
-
   /// 메인 화면 오른쪽의 사이트 빠른 이동 레일을 보일지.
   bool isShowQuickJump();
   void setShowQuickJump(bool showQuickJump);
